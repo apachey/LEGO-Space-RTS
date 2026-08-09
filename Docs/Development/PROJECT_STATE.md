@@ -5,10 +5,12 @@ remain authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M2 — First Controllable RTS Map / Movement Architecture v2 implementation.**
+**M2 — accepted completion candidate; M3 is the next approved milestone.**
 
-M3 has not begun and cannot begin until the revised M2 automated and human
-acceptance gates pass.
+The revised M2 automated gates pass. Human movement-feel acceptance is also
+complete: the remaining settling jitter is minimal and some movement actions
+can still read oddly, but the game director accepted both as non-blocking
+polish rather than further M2 work. M3 has not begun.
 
 ## Engine / architecture
 
@@ -83,8 +85,10 @@ narrow placement cases allowed by Phase 09B.
 
 ## Known unresolved work
 
-- human movement-feel acceptance, especially confirmation that completed units
-  no longer visibly jitter/dance and that Heavy/Small yielding reads naturally;
+- residual movement polish: completed units can still show minimal settling
+  jitter and some movement actions can read oddly. This is accepted as
+  non-blocking for M2; address only from a concrete reproduction or a later
+  milestone requirement rather than reopening broad movement architecture;
 - pre-existing HPA cluster-size discrepancy: Phase 09 specifies 10 build cells
   / 20 navigation nodes, while the imported runtime/static validator currently
   use 10 navigation nodes / 5 build cells; resolve in a separate canon-alignment
@@ -101,6 +105,6 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Human movement-feel playtest of the exported macOS build.
-2. Merge and close M2 only after human acceptance.
-3. Only after M2 acceptance: M3.
+1. Merge PR #8 to record the accepted M2 baseline on `main`.
+2. Bootstrap M3 from its directly relevant canon and current merged repository
+   state, then identify the smallest approved M3 implementation task.
