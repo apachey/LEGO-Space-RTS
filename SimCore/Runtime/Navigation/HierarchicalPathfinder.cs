@@ -151,11 +151,14 @@ public sealed class HierarchicalPathfinder
     public NavPath FindPath(NavCell start, NavCell goal, FootprintClass footprint)
     {
         NavPath result = new NavPath();
-        FindPath(start, goal, footprint, result, MovementLayer.Ground);
+        FindCorridor(start, goal, footprint, result, MovementLayer.Ground);
         return result;
     }
 
     public void FindPath(NavCell start, NavCell goal, FootprintClass footprint, NavPath result, MovementLayer layer = MovementLayer.Ground)
+        => FindCorridor(start, goal, footprint, result, layer);
+
+    public void FindCorridor(NavCell start, NavCell goal, FootprintClass footprint, RouteCorridor result, MovementLayer layer = MovementLayer.Ground)
     {
         result.Cells.Clear(); result.TopologyVersion = _map.TopologyVersion;
         if (layer == MovementLayer.TrueAir)
@@ -281,7 +284,7 @@ public sealed class HierarchicalPathfinder
             }
     }
 
-    private void LocalAStar(NavCell start, NavCell goal, FootprintClass footprint, NavPath output, MovementLayer layer)
+    private void LocalAStar(NavCell start, NavCell goal, FootprintClass footprint, RouteCorridor output, MovementLayer layer)
     {
         int stamp = NextStamp(ref _navStamp, _navSeen, _navClosed);
         _navOpen.Clear();
@@ -315,7 +318,7 @@ public sealed class HierarchicalPathfinder
         }
     }
 
-    private void SimplifyPath(NavPath path, FootprintClass footprint, MovementLayer layer)
+    private void SimplifyPath(RouteCorridor path, FootprintClass footprint, MovementLayer layer)
     {
         if (path.Cells.Count <= 2) return;
         const int MaxLookAheadCells = 48; // 24 build cells at the canonical 0.5-cell nav resolution.
@@ -389,7 +392,7 @@ public sealed class HierarchicalPathfinder
         if (af != bf) return af < bf; if (ah != bh) return ah < bh; if (ay != by) return ay < by; return ax < bx;
     }
 
-    private void ReconstructCells(int current, NavPath output)
+    private void ReconstructCells(int current, RouteCorridor output)
     {
         _reverseCells.Clear();
         while (current >= 0) { _reverseCells.Add(new NavCell((short)(current % MapGrid.NavWidth), (short)(current / MapGrid.NavWidth))); current = _navParent[current]; }

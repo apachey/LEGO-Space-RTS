@@ -21,7 +21,7 @@ public static class AuthoritativeStateDumper
             if(world.Entities.Selectable.TryGet(id,out Selectable s))b.Append(" content=").Append(s.ContentType.Value).Append(" kind=").Append((byte)s.Kind);
             if(world.Entities.Vision.TryGet(id,out Vision v))b.Append(" vision=").Append(v.RadiusBuildCells);
             UnitCommandQueue q=world.GetQueue(id);b.Append(" queue=").Append(q.Count);
-            NavPath? path=world.GetPath(id);if(path!=null)b.Append(" pathCells=").Append(path.Cells.Count).Append(" pathTopo=").Append(path.TopologyVersion);
+            RouteCorridor? corridor=world.GetCorridor(id);if(corridor!=null)b.Append(" corridorCells=").Append(corridor.Cells.Count).Append(" corridorTopo=").Append(corridor.TopologyVersion);
             b.AppendLine();
         }
         b.Append("pendingCommands=").Append(world.Commands.Count).Append(" stateHash=").Append(StateHasher.HashHex(world)).AppendLine();

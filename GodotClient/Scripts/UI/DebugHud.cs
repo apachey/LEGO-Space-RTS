@@ -57,9 +57,9 @@ public partial class DebugHud : CanvasLayer
             if (_selection.Selected.Count > 12) _builder.Append(" …");
             if (_bridge.World.Entities.Navigation.TryGet(first, out NavigationAgent n) && _bridge.World.Entities.Movement.TryGet(first, out Movement m) && _bridge.World.Entities.Transform.TryGet(first, out SimTransform t))
             {
-                NavPath? path = _bridge.World.GetPath(first);
+                RouteCorridor? corridor = _bridge.World.GetCorridor(first);
                 VisibilityState fog = _bridge.World.Fog.Get(0, t.Position.X.FloorToInt(), t.Position.Y.FloorToInt());
-                _builder.Append("\nFirst: footprint=").Append(n.Footprint).Append(" pathIndex=").Append(m.PathIndex).Append('/').Append(path?.Cells.Count ?? 0)
+                _builder.Append("\nFirst: footprint=").Append(n.Footprint).Append(" pathIndex=").Append(m.PathIndex).Append('/').Append(corridor?.Cells.Count ?? 0)
                     .Append(" reservation=").Append(_bridge.World.HasReservationPermit(first) ? "yes" : "no").Append(" fog=").Append(fog).Append(" compressTicks=").Append(m.CompressionTicks);
             }
         }

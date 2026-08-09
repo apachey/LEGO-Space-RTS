@@ -40,8 +40,12 @@ narrow placement cases allowed by Phase 09B.
   Stop clears movement and queued orders correctly, Stable IDs normalize case,
   and reservation determinism uses a dedicated conflict fixture.
 - PR #3 Phase 09B governance sync and canon-index entry are merged.
-- The current fast verification gate is green, including builds, NUnit,
-  compiled-content validation, HeadlessSim and Godot headless smoke.
+- Persistent route-corridor foundation is implemented: corridors persist in
+  authoritative SimCore state, constrain bounded local deviation, participate
+  in snapshot/state hashing, and selectively invalidate on topology changes.
+- The current full verification blocking gate is green, including builds,
+  NUnit, compiled-content validation, HeadlessSim, replay/snapshot determinism,
+  Godot headless smoke and macOS export smoke.
 
 ## Current gates
 
@@ -52,9 +56,13 @@ narrow placement cases allowed by Phase 09B.
 
 ## Known unresolved work
 
-- Movement Architecture v2 runtime implementation;
+- deterministic local separation/yield and formation/cohort reflow integration;
 - representative 24-mover gate implementation;
 - final M2 playable macOS build and human movement-feel acceptance.
+- pre-existing HPA cluster-size discrepancy: Phase 09 specifies 10 build cells
+  / 20 navigation nodes, while the imported runtime/static validator currently
+  use 10 navigation nodes / 5 build cells; resolve in a separate canon-alignment
+  task before changing cluster geometry.
 
 ## Explicitly rejected / do not resurrect
 
@@ -67,11 +75,10 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Persistent route-corridor foundation.
-2. Deterministic local separation/yield integration.
-3. Formation/cohort reflow integration.
-4. Representative 24-mover M2 scenario.
-5. Automated M2 verification.
-6. macOS playable build.
-7. Human playtest.
-8. Only after M2 acceptance: M3.
+1. Deterministic local separation/yield integration.
+2. Formation/cohort reflow integration.
+3. Representative 24-mover M2 scenario.
+4. Automated M2 verification.
+5. macOS playable build.
+6. Human playtest.
+7. Only after M2 acceptance: M3.

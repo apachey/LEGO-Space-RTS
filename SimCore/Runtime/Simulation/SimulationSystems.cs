@@ -66,7 +66,7 @@ public sealed class CommandExecutionSystem : ISimSystem
             ref Movement move = ref world.Entities.Movement.Get(id);
             world.GetQueue(id).Clear();
             nav.HasTarget = false; nav.PathDirty = false; move.PathIndex = 0;
-            world.Paths.Remove(id.Value);
+            world.Corridors.Remove(id.Value);
             move.CurrentSpeed = Fix32.Zero; move.CurrentVelocity = FixVec2.Zero; move.DesiredMovement = FixVec2.Zero;
             move.State = command.Type == SimCommandType.HoldPosition ? MovementState.Holding : MovementState.Idle;
         }
@@ -236,14 +236,14 @@ public sealed class NavigationRequestSystem : ISimSystem
             EntityId id = world.ScratchEntities[i];
             ref NavigationAgent nav = ref world.Entities.Navigation.Get(id);
             SimTransform transform = world.Entities.Transform.Get(id);
-            NavPath path;
-            if (!world.Paths.TryGetValue(id.Value, out path)) { path = new NavPath(); world.Paths[id.Value] = path; }
-            world.Pathfinder.FindPath(MapGrid.BuildToNav(transform.Position), MapGrid.BuildToNav(nav.Target), nav.Footprint, path, nav.Layer);
+            RouteCorridor corridor;
+            if (!world.Corridors.TryGetValue(id.Value, out corridor)) { corridor = new RouteCorridor(); world.Corridors[id.Value] = corridor; }
+            world.Pathfinder.FindCorridor(MapGrid.BuildToNav(transform.Position), MapGrid.BuildToNav(nav.Target), nav.Footprint, corridor, nav.Layer);
             world.PathRequestsProcessed++;
             nav.PathDirty = false; nav.PathTopologyVersion = world.Map.TopologyVersion; nav.RequestAge = 0;
             ref Movement move = ref world.Entities.Movement.Get(id);
-            move.PathIndex = path.Cells.Count > 1 ? 1 : 0;
-            move.State = path.IsValid ? MovementState.Moving : MovementState.StuckRecovery;
+            move.PathIndex = corridor.Cells.Count > 1 ? 1 : 0;
+            move.State = corridor.IsValid ? MovementState.Moving : MovementState.StuckRecovery;
         }
     }
 
@@ -297,7 +297,7 @@ public sealed class ReservationPlanningSystem : ISimSystem
             Movement movement = world.Entities.Movement.Get(id);
             if (!nav.HasTarget) { world.ReservationPermit[id.Value] = false; continue; }
             if (nav.Layer == MovementLayer.TrueAir) { world.ReservationPermit[id.Value] = true; continue; }
-            if (!world.Paths.TryGetValue(id.Value, out NavPath path) || movement.PathIndex >= path.Cells.Count)
+            if (!world.Corridors.TryGetValue(id.Value, out RouteCorridor path) || movement.PathIndex >= path.Cells.Count)
             { world.ReservationPermit[id.Value] = false; continue; }
 
             int horizonNavCells = Fix32.Max(Fix32.One, movement.MaxSpeed * horizonFactor).CeilToInt();
@@ -310,7 +310,7 @@ public sealed class ReservationPlanningSystem : ISimSystem
         }
     }
 
-    private void CollectHorizonCells(SimulationWorld world, EntityId id, NavPath path, int pathIndex, int maxSteps)
+    private void CollectHorizonCells(SimulationWorld world, EntityId id, RouteCorridor path, int pathIndex, int maxSteps)
     {
         _horizonCells.Clear();
         NavCell current = MapGrid.BuildToNav(world.Entities.Transform.Get(id).Position);
@@ -410,7 +410,7 @@ public sealed class MovementIntentSystem : ISimSystem
             if (!world.Entities.Navigation.TryGet(id, out NavigationAgent nav) || !world.Entities.Movement.Has(id) || !world.Entities.Transform.TryGet(id, out SimTransform transform)) continue;
             ref Movement move = ref world.Entities.Movement.Get(id);
             move.DesiredMovement = FixVec2.Zero;
-            if (!nav.HasTarget || move.State == MovementState.Holding || !world.Paths.TryGetValue(id.Value, out NavPath path) || move.PathIndex >= path.Cells.Count)
+            if (!nav.HasTarget || move.State == MovementState.Holding || !world.Corridors.TryGetValue(id.Value, out RouteCorridor path) || move.PathIndex >= path.Cells.Count)
             { world.PendingVelocity[id.Value] = FixVec2.Zero; continue; }
 
             bool permit = world.ReservationPermit.TryGetValue(id.Value, out bool reservationPermit) && reservationPermit;
@@ -472,7 +472,9 @@ public sealed class LocalAvoidanceSystem : ISimSystem
     {
         // Prefer route progress and small heading changes; stuck units progressively care less about heading change.
         FixVec2 immediate=self.Position+candidate;
-        if(selfNav.Layer!=MovementLayer.TrueAir&&!world.Pathfinder.IsPassable(MapGrid.BuildToNav(immediate),selfNav.Footprint))return long.MaxValue/4;
+        NavCell immediateCell=MapGrid.BuildToNav(immediate);
+        if(selfNav.Layer!=MovementLayer.TrueAir&&!world.Pathfinder.IsPassable(immediateCell,selfNav.Footprint))return long.MaxValue/4;
+        if(world.Corridors.TryGetValue(selfId.Value,out RouteCorridor corridor)&&!corridor.Contains(immediateCell,selfMove.PathIndex))return long.MaxValue/4;
         long dotRaw = ((long)candidate.X.Raw*desired.X.Raw + (long)candidate.Y.Raw*desired.Y.Raw) >> Fix32.FractionalBits;
         long score = -dotRaw * 8L;
         int headingWeight=selfMove.StuckTicks>=20?2:12;
@@ -612,7 +614,7 @@ public sealed class TransformMovementSystem : ISimSystem
             else move.StuckTicks = 0;
             move.LastPosition = transform.Position;
 
-            if (world.Paths.TryGetValue(id.Value, out NavPath path) && move.PathIndex < path.Cells.Count)
+            if (world.Corridors.TryGetValue(id.Value, out RouteCorridor path) && move.PathIndex < path.Cells.Count)
             {
                 FixVec2 waypoint = MapGrid.NavCellCenterToBuild(path.Cells[move.PathIndex]);
                 if (FixVec2.Distance(transform.Position, waypoint) <= ArriveDistance) move.PathIndex++;
@@ -646,7 +648,7 @@ public sealed class TransformMovementSystem : ISimSystem
         }
         else
         {
-            nav.HasTarget = false; nav.PathDirty = false; move.PathIndex = 0; world.Paths.Remove(id.Value); move.State = MovementState.Idle; move.CurrentSpeed = Fix32.Zero; move.CurrentVelocity = FixVec2.Zero; move.DesiredMovement = FixVec2.Zero;
+            nav.HasTarget = false; nav.PathDirty = false; move.PathIndex = 0; world.Corridors.Remove(id.Value); move.State = MovementState.Idle; move.CurrentSpeed = Fix32.Zero; move.CurrentVelocity = FixVec2.Zero; move.DesiredMovement = FixVec2.Zero;
         }
     }
 }
