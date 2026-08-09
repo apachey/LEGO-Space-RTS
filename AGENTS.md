@@ -20,6 +20,35 @@ understand code for routine decisions.
 
 ## 2. SOURCE OF TRUTH
 
+### Repository context is authoritative
+
+Before planning, answering project-state questions, or changing code:
+
+1. inspect the current Git branch, status, and recent history;
+2. read `Docs/Development/PROJECT_STATE.md`;
+3. read `Docs/Canon/INDEX.md`;
+4. read only the canon directly relevant to the task;
+5. inspect the current implementation and tests relevant to the task.
+
+Repository evidence newer than conversation memory wins. Do not rely on
+remembered ChatGPT or Codex conversation state when the repository can answer
+the question.
+
+If user instructions conflict with current canon or merged implementation,
+identify the conflict explicitly before changing anything. Do not ask the user
+to copy reports between ChatGPT and Codex merely to recover repository state.
+
+### New-thread bootstrap
+
+A new Codex development thread should normally be able to start from only:
+
+> Read AGENTS.md and the current repository state. Determine the next approved
+> task.
+
+The agent must derive the specifics from `PROJECT_STATE.md`, canon, Git history,
+the implementation, and tests instead of requiring a large pasted conversation
+context.
+
 Canonical design documents live in:
 
 Docs/Canon/
@@ -51,6 +80,17 @@ Do not silently resolve a canon conflict.
 If a required canonical document is missing, do not reconstruct its contents
 from assumptions. Ask for the missing source when the missing information is
 necessary to make a design decision.
+
+### PROJECT_STATE maintenance
+
+Every task that materially changes milestone status, accepted architecture,
+merged functionality, blockers, or the next approved task must update
+`Docs/Development/PROJECT_STATE.md` as part of the same Pull Request.
+
+`PROJECT_STATE.md` describes the current merged/project state. It must remain a
+short current-state summary rather than becoming a historical log. Historical
+decisions belong in `Docs/Development/TECH_DECISION_LOG.md`, canon, or Git
+history.
 
 ---
 
