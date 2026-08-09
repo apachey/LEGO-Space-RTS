@@ -9,9 +9,10 @@ public readonly struct PresentationEntity
     public readonly VisibilityState Visibility;
     public readonly FootprintClass Footprint;
     public readonly SelectableKind SelectableKind;
+    public readonly ResourceVisualState ResourceState;
     public readonly bool Snap;
-    public PresentationEntity(EntityId entityId, ContentId contentType, byte owner, FixVec2 position, Angle16 orientation, MovementState movement, VisibilityState visibility, FootprintClass footprint, SelectableKind selectableKind, bool snap = false)
-    { EntityId = entityId; ContentType = contentType; Owner = owner; Position = position; Orientation = orientation; Movement = movement; Visibility = visibility; Footprint = footprint; SelectableKind=selectableKind; Snap = snap; }
+    public PresentationEntity(EntityId entityId, ContentId contentType, byte owner, FixVec2 position, Angle16 orientation, MovementState movement, VisibilityState visibility, FootprintClass footprint, SelectableKind selectableKind, bool snap = false, ResourceVisualState resourceState = ResourceVisualState.Full)
+    { EntityId = entityId; ContentType = contentType; Owner = owner; Position = position; Orientation = orientation; Movement = movement; Visibility = visibility; Footprint = footprint; SelectableKind=selectableKind; ResourceState=resourceState; Snap = snap; }
 }
 
 public sealed class PresentationSnapshot
@@ -27,6 +28,22 @@ public sealed class PresentationSnapshot
         for (int i = 0; i < alive.Count; i++)
         {
             EntityId id = alive[i];
+            if (world.Entities.ResourceNode.TryGet(id, out ResourceNode resource) && world.Entities.Transform.TryGet(id, out SimTransform resourceTransform) && world.Entities.Selectable.TryGet(id, out Selectable resourceSelectable))
+            {
+                int rx = resourceTransform.Position.X.FloorToInt(), ry = resourceTransform.Position.Y.FloorToInt();
+                VisibilityState resourceVisibility = world.Fog.Get(viewerPlayer, rx, ry);
+                if (resourceVisibility != VisibilityState.Visible) continue;
+                FootprintClass visualSize = resource.DepositSize switch
+                {
+                    ResourceDepositSize.Small => FootprintClass.Small,
+                    ResourceDepositSize.Standard => FootprintClass.Medium,
+                    ResourceDepositSize.Rich => FootprintClass.Large,
+                    _ => FootprintClass.Huge
+                };
+                list.Add(new PresentationEntity(id, resourceSelectable.ContentType, byte.MaxValue, resourceTransform.Position, resourceTransform.Orientation,
+                    MovementState.Idle, resourceVisibility, visualSize, SelectableKind.ResourceNode, resourceState: resource.VisualState));
+                continue;
+            }
             if (!world.Entities.Transform.TryGet(id, out SimTransform t) || !world.Entities.Ownership.TryGet(id, out Ownership o) || !world.Entities.Selectable.TryGet(id, out Selectable s) || !world.Entities.Movement.TryGet(id, out Movement m) || !world.Entities.Navigation.TryGet(id, out NavigationAgent n)) continue;
             int fx = t.Position.X.FloorToInt(), fy = t.Position.Y.FloorToInt();
             VisibilityState v = o.PlayerSlot == viewerPlayer ? VisibilityState.Visible : world.Fog.Get(viewerPlayer, fx, fy);

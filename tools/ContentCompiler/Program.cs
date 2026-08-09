@@ -17,7 +17,7 @@ byte[] contentBytes = PrototypeContentCodec.Write(catalog);
 string contentOutput = Path.Combine(outputDirectory, "PrototypeEntities.contentbin");
 File.WriteAllBytes(contentOutput, contentBytes);
 PrototypeContentCatalog contentRoundTrip = PrototypeContentCodec.Read(contentBytes);
-if (contentRoundTrip.ContentHash != catalog.ContentHash || contentRoundTrip.Entities.Length != catalog.Entities.Length)
+if (contentRoundTrip.ContentHash != catalog.ContentHash || contentRoundTrip.Entities.Length != catalog.Entities.Length || contentRoundTrip.ResourceNodes.Length != catalog.ResourceNodes.Length)
     throw new InvalidDataException("Prototype content round-trip validation failed.");
 
 MapDefinition definition = CompileMap(mapSource, catalog);
@@ -25,18 +25,18 @@ byte[] mapBytes = CompiledMapCodec.Write(definition);
 string mapOutput = Path.Combine(outputDirectory, "DEV_FirstControllableRTS.mapbin");
 File.WriteAllBytes(mapOutput, mapBytes);
 MapDefinition mapRoundTrip = CompiledMapCodec.ReadDefinition(mapBytes);
-if (mapRoundTrip.Grid.Id.Value != definition.Grid.Id.Value || mapRoundTrip.InitialEntities.Length != definition.InitialEntities.Length)
+if (mapRoundTrip.Grid.Id.Value != definition.Grid.Id.Value || mapRoundTrip.InitialEntities.Length != definition.InitialEntities.Length || mapRoundTrip.InitialResourceNodes.Length != definition.InitialResourceNodes.Length)
     throw new InvalidDataException("Compiled map round-trip validation failed.");
 
-Console.WriteLine($"Prototype content: {contentOutput} ({contentBytes.Length} bytes), hash={catalog.ContentHash:X16}, entities={catalog.Entities.Length}");
-Console.WriteLine($"Map: {mapOutput} ({mapBytes.Length} bytes), starts={definition.Starts.Length}, spawns={definition.InitialEntities.Length}, features={definition.Grid.Features.Count}");
+Console.WriteLine($"Prototype content: {contentOutput} ({contentBytes.Length} bytes), hash={catalog.ContentHash:X16}, entities={catalog.Entities.Length}, resourceDefinitions={catalog.ResourceNodes.Length}");
+Console.WriteLine($"Map: {mapOutput} ({mapBytes.Length} bytes), starts={definition.Starts.Length}, spawns={definition.InitialEntities.Length}, resourceNodes={definition.InitialResourceNodes.Length}, features={definition.Grid.Features.Count}");
 return 0;
 
 static PrototypeContentCatalog CompilePrototypeCatalog(string path)
 {
     using JsonDocument document = JsonDocument.Parse(File.ReadAllText(path));
     JsonElement root = document.RootElement;
-    if (root.GetProperty("schemaVersion").GetInt32() != 2) throw new InvalidDataException("Unsupported prototype content schema.");
+    if (root.GetProperty("schemaVersion").GetInt32() != 3) throw new InvalidDataException("Unsupported prototype content schema.");
     if (!string.Equals(root.GetProperty("contentKind").GetString(), "prototype_entities", StringComparison.Ordinal)) throw new InvalidDataException("Unexpected contentKind.");
 
     List<PrototypeMovementProfile> profiles = new();
@@ -57,6 +57,26 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
     }
     profiles.Sort((a, b) => string.CompareOrdinal(a.StableKey, b.StableKey));
 
+    List<ResourceNodeDefinition> resourceNodes = new();
+    HashSet<string> resourceKeys = new(StringComparer.Ordinal);
+    foreach (JsonElement item in root.GetProperty("resourceNodeDefinitions").EnumerateArray())
+    {
+        string key = RequiredString(item, "stableId");
+        if (!resourceKeys.Add(key)) throw new InvalidDataException($"Duplicate resource node key {key}.");
+        uint id = StableId.FromKey(key).Value; if (!stableIds.Add(id)) throw new InvalidDataException($"Stable ID collision at resource node {key}.");
+        JsonElement thresholds = item.GetProperty("modelStateThresholdBasisPoints");
+        if (thresholds.GetArrayLength() != 3) throw new InvalidDataException($"{key}: modelStateThresholdBasisPoints must contain reduced, low and critical thresholds.");
+        resourceNodes.Add(new ResourceNodeDefinition(key,
+            Enum.Parse<ResourceType>(RequiredString(item, "type"), false),
+            Enum.Parse<ResourceDepositSize>(RequiredString(item, "depositSize"), false),
+            item.GetProperty("capacity").GetInt32(),
+            Enum.Parse<HarvestInteraction>(RequiredString(item, "harvestInteraction"), false),
+            Enum.Parse<ResourceDepletionProfile>(RequiredString(item, "depletionProfile"), false),
+            checked((ushort)thresholds[0].GetInt32()), checked((ushort)thresholds[1].GetInt32()), checked((ushort)thresholds[2].GetInt32()),
+            RequiredString(item, "viewProfile")));
+    }
+    resourceNodes.Sort((a, b) => string.CompareOrdinal(a.StableKey, b.StableKey));
+
     List<PrototypeEntityDefinition> entities = new();
     HashSet<string> entityKeys = new(StringComparer.Ordinal);
     foreach (JsonElement item in root.GetProperty("entities").EnumerateArray())
@@ -70,7 +90,7 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
             checked((byte)item.GetProperty("visionRadius").GetInt32()), RequiredString(item, "viewProfile")));
     }
     entities.Sort((a, b) => string.CompareOrdinal(a.StableKey, b.StableKey));
-    return new PrototypeContentCatalog(profiles.ToArray(), entities.ToArray());
+    return new PrototypeContentCatalog(profiles.ToArray(), entities.ToArray(), resourceNodes.ToArray());
 }
 
 static MapDefinition CompileMap(string path, PrototypeContentCatalog catalog)
@@ -78,7 +98,7 @@ static MapDefinition CompileMap(string path, PrototypeContentCatalog catalog)
     using JsonDocument document = JsonDocument.Parse(File.ReadAllText(path));
     JsonElement root = document.RootElement;
     int schemaVersion = root.GetProperty("schemaVersion").GetInt32();
-    if (schemaVersion != 1) throw new InvalidDataException($"Unsupported map source schema {schemaVersion}.");
+    if (schemaVersion != 2) throw new InvalidDataException($"Unsupported map source schema {schemaVersion}.");
     string stableId = RequiredString(root, "stableId");
     int width = root.GetProperty("buildSize")[0].GetInt32();
     int height = root.GetProperty("buildSize")[1].GetInt32();
@@ -124,9 +144,20 @@ static MapDefinition CompileMap(string path, PrototypeContentCatalog catalog)
         spawns.Add(new InitialEntitySpawn(player, contentKey, position, footprint, layer, kind, vision));
     }
 
+    List<InitialResourceNodeSpawn> resourceNodes = new();
+    foreach (JsonElement item in root.GetProperty("resourceNodes").EnumerateArray())
+    {
+        string contentKey = RequiredString(item, "contentKey");
+        if (!catalog.ContainsResourceNodeKey(contentKey)) throw new InvalidDataException($"Map resource node references unknown prototype content key {contentKey}.");
+        FixVec2 position = ReadBuildPosition(item.GetProperty("position")); ValidateBuildPosition(position, $"resource node {contentKey}");
+        NavCell cell = MapGrid.BuildToNav(position);
+        if ((map.GetFlags(cell.X, cell.Y) & MapCellFlags.Impassable) != 0) throw new InvalidDataException($"{contentKey}: resource node is authored on impassable terrain.");
+        resourceNodes.Add(new InitialResourceNodeSpawn(contentKey, position));
+    }
+
     List<VisionTestRegion> visionRegions = new();
     foreach (JsonElement item in root.GetProperty("visionTestGeometry").EnumerateArray()) { IntRect rect=ReadRect(item.GetProperty("navRect")); ValidateRect(rect,"vision geometry"); visionRegions.Add(new VisionTestRegion(RequiredString(item, "name"), rect)); }
-    return new MapDefinition(map, starts.ToArray(), spawns.ToArray(), visionRegions.ToArray());
+    return new MapDefinition(map, starts.ToArray(), spawns.ToArray(), visionRegions.ToArray(), resourceNodes.ToArray());
 }
 
 static Fix32 ReadRatio(JsonElement item,string key,string property)

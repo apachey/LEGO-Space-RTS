@@ -108,7 +108,7 @@ for token in ['SimCommandType.Move','SimCommandType.Stop','SimCommandType.HoldPo
     check(token in input_controller, f'Godot M2 command missing: {token}')
 
 source = json.loads((ROOT/'Content/Maps/DEV_FirstControllableRTS.map.json').read_text())
-check(source.get('schemaVersion') == 1, 'map source schema version mismatch')
+check(source.get('schemaVersion') == 2, 'map source schema version mismatch')
 check(source.get('stableId') == 'map.dev_first_controllable_rts', 'map stable ID mismatch')
 check(source.get('buildSize') == [160,160] and source.get('navScale') == 2, 'map source dimensions mismatch')
 check(len(source.get('starts',[])) >= 2, 'map starts missing')
@@ -116,10 +116,11 @@ check(len(source.get('flagRects',[])) >= 10, 'authored obstacle/pathing data mis
 check(len(source.get('elevationRects',[])) >= 2, 'elevation test data missing')
 check(len(source.get('excavatableFeatures',[])) == 1, 'expected one M2 Excavatable feature')
 check(len(source.get('initialEntities',[])) >= 26, 'initial prototype entity spawns missing')
+check(len(source.get('resourceNodes',[])) == 4, 'M3 starting Ore node spawns missing')
 check(len(source.get('visionTestGeometry',[])) >= 4, 'vision test geometry missing')
 
 content_source = json.loads((ROOT/'Content/PrototypeEntities.json').read_text())
-check(content_source.get('schemaVersion') == 2 and content_source.get('contentKind') == 'prototype_entities', 'prototype content schema mismatch')
+check(content_source.get('schemaVersion') == 3 and content_source.get('contentKind') == 'prototype_entities', 'prototype content schema mismatch')
 entity_keys = [e.get('stableId') for e in content_source.get('entities',[])]
 check(len(entity_keys) >= 5 and len(entity_keys) == len(set(entity_keys)), 'prototype content entries missing/duplicated')
 for required_key in ['unit.rock_raiders.crew','unit.rock_raiders.hover_scout','unit.rock_raiders.loader_dozer','unit.rock_raiders.chrome_crusher','prototype.nav.huge']:
@@ -135,6 +136,13 @@ check(profile_by_key.get('movement.prototype.loader_dozer',{}).get('speedRatio')
 check(profile_by_key.get('movement.prototype.chrome_crusher',{}).get('speedRatio')==[92,100],'Chrome Crusher M2 speed must match Phase 06 0.92')
 map_keys = [e.get('contentKey') for e in source.get('initialEntities',[])]
 check(all(k in set(entity_keys) for k in map_keys), 'map source contains unknown prototype entity reference')
+resource_by_key={r.get('stableId'):r for r in content_source.get('resourceNodeDefinitions',[])}
+expected_ore={'resource.ore.small':600,'resource.ore.standard':900,'resource.ore.rich':1350,'resource.ore.deep_contested_seam':2400}
+check({key:resource_by_key.get(key,{}).get('capacity') for key in expected_ore} == expected_ore, 'canonical M3 Ore capacities missing or incorrect')
+check(all(resource_by_key.get(key,{}).get('type') == 'Ore' and resource_by_key.get(key,{}).get('depletionProfile') == 'Finite' for key in expected_ore), 'Ore resource nodes must use finite depletion')
+resource_map_keys=[e.get('contentKey') for e in source.get('resourceNodes',[])]
+check(all(k in resource_by_key for k in resource_map_keys), 'map source contains unknown resource node reference')
+check(resource_map_keys.count('resource.ore.standard') == 4, 'prototype map must provide two Standard Ore deposits per start')
 
 headless = (ROOT/'HeadlessSim/Program.cs').read_text()
 for token in ['--snapshot-in','--snapshot-out','--replay','--record-replay','--benchmark','--path-benchmark','--hash-every','--repeat','--golden-manifest-out','--golden-manifest-in','--dump-state','--compiled-dir']:

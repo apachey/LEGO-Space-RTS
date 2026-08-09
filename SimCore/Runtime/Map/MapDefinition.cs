@@ -33,6 +33,18 @@ public readonly struct InitialEntitySpawn
     }
 }
 
+public readonly struct InitialResourceNodeSpawn
+{
+    public readonly string ContentKey;
+    public readonly FixVec2 Position;
+
+    public InitialResourceNodeSpawn(string contentKey, FixVec2 position)
+    {
+        ContentKey = contentKey ?? throw new ArgumentNullException(nameof(contentKey));
+        Position = position;
+    }
+}
+
 public readonly struct VisionTestRegion
 {
     public readonly string Name;
@@ -43,20 +55,23 @@ public readonly struct VisionTestRegion
 /// <summary>
 /// Runtime map definition compiled from human-editable map source. MapGrid carries the dense
 /// pathing/elevation/topology raster; the remaining fields carry authored starts, prototype spawns,
-/// and engineering geometry metadata needed by M2 tools/tests.
+/// resource nodes and engineering geometry metadata needed by prototype tools/tests.
 /// </summary>
 public sealed class MapDefinition
 {
     public MapGrid Grid { get; }
     public MapStart[] Starts { get; }
     public InitialEntitySpawn[] InitialEntities { get; }
+    public InitialResourceNodeSpawn[] InitialResourceNodes { get; }
     public VisionTestRegion[] VisionTestGeometry { get; }
 
-    public MapDefinition(MapGrid grid, MapStart[] starts, InitialEntitySpawn[] initialEntities, VisionTestRegion[] visionTestGeometry)
+    public MapDefinition(MapGrid grid, MapStart[] starts, InitialEntitySpawn[] initialEntities, VisionTestRegion[] visionTestGeometry,
+        InitialResourceNodeSpawn[]? initialResourceNodes = null)
     {
         Grid = grid ?? throw new ArgumentNullException(nameof(grid));
         Starts = starts ?? Array.Empty<MapStart>();
         InitialEntities = initialEntities ?? Array.Empty<InitialEntitySpawn>();
+        InitialResourceNodes = initialResourceNodes ?? Array.Empty<InitialResourceNodeSpawn>();
         VisionTestGeometry = visionTestGeometry ?? Array.Empty<VisionTestRegion>();
     }
 
@@ -78,6 +93,12 @@ public sealed class MapDefinition
             writer.Write(s.Position.X.Raw); writer.Write(s.Position.Y.Raw);
             writer.Write((byte)s.Footprint); writer.Write((byte)s.Layer); writer.Write((byte)s.SelectableKind); writer.Write(s.VisionRadius);
         }
+        writer.Write(InitialResourceNodes.Length);
+        for (int i = 0; i < InitialResourceNodes.Length; i++)
+        {
+            InitialResourceNodeSpawn s = InitialResourceNodes[i];
+            writer.Write(s.ContentKey); writer.Write(s.Position.X.Raw); writer.Write(s.Position.Y.Raw);
+        }
         writer.Write(VisionTestGeometry.Length);
         for (int i = 0; i < VisionTestGeometry.Length; i++)
         {
@@ -86,7 +107,7 @@ public sealed class MapDefinition
         }
     }
 
-    internal static MapDefinition Deserialize(BinaryReader reader)
+    internal static MapDefinition Deserialize(BinaryReader reader, ushort formatVersion)
     {
         MapGrid grid = MapGrid.Deserialize(reader);
         int startCount = reader.ReadInt32();
@@ -102,11 +123,20 @@ public sealed class MapDefinition
             SelectableKind kind = (SelectableKind)reader.ReadByte(); byte vision = reader.ReadByte();
             spawns[i] = new InitialEntitySpawn(player, key, position, fp, layer, kind, vision);
         }
+        InitialResourceNodeSpawn[] resourceNodes = Array.Empty<InitialResourceNodeSpawn>();
+        if (formatVersion >= 2)
+        {
+            int resourceCount = reader.ReadInt32();
+            if (resourceCount < 0 || resourceCount > 4096) throw new InvalidDataException("Invalid initial resource node count.");
+            resourceNodes = new InitialResourceNodeSpawn[resourceCount];
+            for (int i = 0; i < resourceCount; i++)
+                resourceNodes[i] = new InitialResourceNodeSpawn(reader.ReadString(), new FixVec2(Fix32.FromRaw(reader.ReadInt32()), Fix32.FromRaw(reader.ReadInt32())));
+        }
         int visionCount = reader.ReadInt32();
         VisionTestRegion[] visionRegions = new VisionTestRegion[visionCount];
         for (int i = 0; i < visionCount; i++)
             visionRegions[i] = new VisionTestRegion(reader.ReadString(), new IntRect(reader.ReadInt16(), reader.ReadInt16(), reader.ReadInt16(), reader.ReadInt16()));
-        return new MapDefinition(grid, starts, spawns, visionRegions);
+        return new MapDefinition(grid, starts, spawns, visionRegions, resourceNodes);
     }
 }
 }

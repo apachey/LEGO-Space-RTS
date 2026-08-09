@@ -23,6 +23,7 @@ public static class ScenarioFactory
             SpawnAuthored(world, spawn, content);
             if (spawn.PlayerSlot == 0) player0Remaining--; else if (spawn.PlayerSlot == 1) player1Remaining--;
         }
+        for (int i = 0; i < definition.InitialResourceNodes.Length; i++) SpawnResourceNode(world, definition.InitialResourceNodes[i], content);
         world.Spatial.Rebuild(world.Entities);
         new VisionSystem().Step(world);
         return world;
@@ -98,6 +99,27 @@ public static class ScenarioFactory
             MaxSpeed=profile.MaxSpeed, Acceleration=profile.Acceleration, Deceleration=profile.Deceleration, TurnRatePerTick=profile.TurnRatePerTick, ReversePolicy=profile.ReversePolicy,
             CurrentSpeed=Fix32.Zero, CurrentVelocity=FixVec2.Zero, DesiredMovement=FixVec2.Zero, PathIndex=0, State=MovementState.Idle, StuckTicks=0, CompressionTicks=0, LastPosition=position
         };
+    }
+
+    private static void SpawnResourceNode(SimulationWorld world, InitialResourceNodeSpawn spawn, PrototypeContentCatalog content)
+    {
+        if (!content.TryGetResourceNode(spawn.ContentKey, out ResourceNodeDefinition definition))
+            throw new InvalidOperationException($"Missing resource node content {spawn.ContentKey}.");
+        EntityId id = world.Entities.Create();
+        world.Entities.Transform.Set(id, new SimTransform { Position = spawn.Position, Orientation = Angle16.Zero });
+        world.Entities.Selectable.Set(id, new Selectable { IsSelectable = true, ContentType = definition.Id, Kind = SelectableKind.ResourceNode });
+        world.Entities.ResourceNode.Set(id, new ResourceNode
+        {
+            Type = definition.Type,
+            DepositSize = definition.DepositSize,
+            HarvestInteraction = definition.HarvestInteraction,
+            DepletionProfile = definition.DepletionProfile,
+            Capacity = definition.Capacity,
+            Remaining = definition.Capacity,
+            ReducedThresholdBasisPoints = definition.ReducedThresholdBasisPoints,
+            LowThresholdBasisPoints = definition.LowThresholdBasisPoints,
+            CriticalThresholdBasisPoints = definition.CriticalThresholdBasisPoints
+        });
     }
 
     private static void SpawnGrid(SimulationWorld world, PrototypeContentCatalog content, byte player, int count, int originX, int originY, int columns)

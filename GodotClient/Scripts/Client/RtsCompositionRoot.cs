@@ -24,7 +24,7 @@ public partial class RtsCompositionRoot : Node3D
         FogPresenter fog = new() { Name = "FogPresentation" }; AddChild(fog); fog.Configure(bridge);
         DebugRenderer debug = new() { Name = "DebugVisualization" }; AddChild(debug); debug.Configure(bridge);
         DebugHud hud = new() { Name = "PrototypeHUD" }; AddChild(hud); hud.Configure(bridge, selection, debug, fog);
-        GD.Print($"M2 content source: {(scenario.LoadedFromCompiledData ? "compiled runtime data" : "built-in deterministic fallback")}, content hash={scenario.GameplayContentHash:X16}");
+        GD.Print($"Prototype content source: {(scenario.LoadedFromCompiledData ? "compiled runtime data" : "built-in deterministic fallback")}, content hash={scenario.GameplayContentHash:X16}");
 
         DirectionalLight3D sun = new() { Name = "Sun", RotationDegrees = new Vector3(-58f, -35f, 0f), LightEnergy = 1.2f, ShadowEnabled = true }; AddChild(sun);
         WorldEnvironment environment = new() { Name = "WorldEnvironment", Environment = new Godot.Environment { BackgroundMode = Godot.Environment.BGMode.Color, BackgroundColor = new Color(0.035f, 0.04f, 0.05f), AmbientLightSource = Godot.Environment.AmbientSource.Color, AmbientLightColor = new Color(0.64f, 0.64f, 0.68f), AmbientLightEnergy = 0.72f } }; AddChild(environment);

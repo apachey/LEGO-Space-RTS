@@ -20,7 +20,8 @@ public static class AuthoritativeStateDumper
             if(world.Entities.Navigation.TryGet(id,out NavigationAgent n))b.Append(" fp=").Append((byte)n.Footprint).Append(" layer=").Append((byte)n.Layer).Append(" target=").Append(n.Target.X.Raw).Append(',').Append(n.Target.Y.Raw).Append(" hasTarget=").Append(n.HasTarget?1:0).Append(" dirty=").Append(n.PathDirty?1:0).Append(" topo=").Append(n.PathTopologyVersion).Append(" age=").Append(n.RequestAge).Append(" cohort=").Append(n.Formation.CohortId).Append(" slot=").Append(n.Formation.SlotIndex).Append('/').Append(n.Formation.MemberCount).Append(" cols=").Append(n.Formation.Columns).Append(" reflowTick=").Append(n.Formation.LastReflowTick);
             if(world.Entities.Selectable.TryGet(id,out Selectable s))b.Append(" content=").Append(s.ContentType.Value).Append(" kind=").Append((byte)s.Kind);
             if(world.Entities.Vision.TryGet(id,out Vision v))b.Append(" vision=").Append(v.RadiusBuildCells);
-            UnitCommandQueue q=world.GetQueue(id);b.Append(" queue=").Append(q.Count);
+            if(world.Entities.ResourceNode.TryGet(id,out ResourceNode resource))b.Append(" resourceType=").Append((byte)resource.Type).Append(" depositSize=").Append((byte)resource.DepositSize).Append(" remaining=").Append(resource.Remaining).Append('/').Append(resource.Capacity).Append(" visualState=").Append((byte)resource.VisualState);
+            if(world.TryGetQueue(id,out UnitCommandQueue q))b.Append(" queue=").Append(q.Count);
             RouteCorridor? corridor=world.GetCorridor(id);if(corridor!=null)b.Append(" corridorCells=").Append(corridor.Cells.Count).Append(" corridorTopo=").Append(corridor.TopologyVersion);
             b.AppendLine();
         }

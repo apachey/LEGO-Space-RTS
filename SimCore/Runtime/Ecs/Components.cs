@@ -5,7 +5,12 @@ public enum MovementState : byte { Idle = 0, Moving = 1, Holding = 2, WaitingFor
 public enum MovementLayer : byte { Ground = 0, GroundHover = 1, TrueAir = 2 }
 public enum ReversePolicy : byte { None = 0, Reduced = 1, Full = 2 }
 public enum VisibilityState : byte { Unseen = 0, Explored = 1, Visible = 2 }
-public enum SelectableKind : byte { CombatSupport = 0, Worker = 1, Building = 2 }
+public enum SelectableKind : byte { CombatSupport = 0, Worker = 1, Building = 2, ResourceNode = 3 }
+public enum ResourceType : byte { Ore = 0, Crystal = 1 }
+public enum ResourceDepositSize : byte { Small = 0, Standard = 1, Rich = 2, DeepContestedSeam = 3 }
+public enum HarvestInteraction : byte { Mine = 0, Harvest = 1 }
+public enum ResourceDepletionProfile : byte { Finite = 0 }
+public enum ResourceVisualState : byte { Full = 0, Reduced = 1, Low = 2, Critical = 3, Exhausted = 4 }
 
 public struct Ownership
 {
@@ -73,5 +78,33 @@ public struct Vision
     public bool IsAirVision;
     public int LastFogX;
     public int LastFogY;
+}
+
+public struct ResourceNode
+{
+    public ResourceType Type;
+    public ResourceDepositSize DepositSize;
+    public HarvestInteraction HarvestInteraction;
+    public ResourceDepletionProfile DepletionProfile;
+    public int Capacity;
+    public int Remaining;
+    public ushort ReducedThresholdBasisPoints;
+    public ushort LowThresholdBasisPoints;
+    public ushort CriticalThresholdBasisPoints;
+
+    public bool IsDepleted => Remaining == 0;
+
+    public ResourceVisualState VisualState
+    {
+        get
+        {
+            if (Remaining <= 0) return ResourceVisualState.Exhausted;
+            long basisPoints = (long)Remaining * 10_000 / Capacity;
+            if (basisPoints <= CriticalThresholdBasisPoints) return ResourceVisualState.Critical;
+            if (basisPoints <= LowThresholdBasisPoints) return ResourceVisualState.Low;
+            if (basisPoints <= ReducedThresholdBasisPoints) return ResourceVisualState.Reduced;
+            return ResourceVisualState.Full;
+        }
+    }
 }
 }

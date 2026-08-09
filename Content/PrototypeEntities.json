@@ -1,7 +1,7 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "contentKind": "prototype_entities",
-  "policy": "M2 technical fields only; no combat/economy fields are invented here.",
+  "policy": "M2 movement metadata plus the canonical M3 Ore resource-node baseline; no unapproved combat/economy fields are invented here.",
   "movementProfiles": [
     {
       "stableId": "movement.prototype.crew",
@@ -92,6 +92,48 @@
       "turnRatePerTick": 410,
       "reversePolicy": "Reduced",
       "layer": "Ground"
+    }
+  ],
+  "resourceNodeDefinitions": [
+    {
+      "stableId": "resource.ore.small",
+      "type": "Ore",
+      "depositSize": "Small",
+      "capacity": 600,
+      "harvestInteraction": "Mine",
+      "depletionProfile": "Finite",
+      "modelStateThresholdBasisPoints": [7500, 5000, 2500],
+      "viewProfile": "view.placeholder.resource.ore.small"
+    },
+    {
+      "stableId": "resource.ore.standard",
+      "type": "Ore",
+      "depositSize": "Standard",
+      "capacity": 900,
+      "harvestInteraction": "Mine",
+      "depletionProfile": "Finite",
+      "modelStateThresholdBasisPoints": [7500, 5000, 2500],
+      "viewProfile": "view.placeholder.resource.ore.standard"
+    },
+    {
+      "stableId": "resource.ore.rich",
+      "type": "Ore",
+      "depositSize": "Rich",
+      "capacity": 1350,
+      "harvestInteraction": "Mine",
+      "depletionProfile": "Finite",
+      "modelStateThresholdBasisPoints": [7500, 5000, 2500],
+      "viewProfile": "view.placeholder.resource.ore.rich"
+    },
+    {
+      "stableId": "resource.ore.deep_contested_seam",
+      "type": "Ore",
+      "depositSize": "DeepContestedSeam",
+      "capacity": 2400,
+      "harvestInteraction": "Mine",
+      "depletionProfile": "Finite",
+      "modelStateThresholdBasisPoints": [7500, 5000, 2500],
+      "viewProfile": "view.placeholder.resource.ore.deep_contested_seam"
     }
   ],
   "entities": [

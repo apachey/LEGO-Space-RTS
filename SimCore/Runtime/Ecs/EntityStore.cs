@@ -15,6 +15,7 @@ public sealed class EntityStore
     public readonly ComponentStore<NavigationAgent> Navigation = new();
     public readonly ComponentStore<Selectable> Selectable = new();
     public readonly ComponentStore<Vision> Vision = new();
+    public readonly ComponentStore<ResourceNode> ResourceNode = new();
 
     public IReadOnlyList<EntityId> Alive => _alive;
 
@@ -59,6 +60,7 @@ public sealed class EntityStore
         Navigation.Remove(id);
         Selectable.Remove(id);
         Vision.Remove(id);
+        ResourceNode.Remove(id);
         return true;
     }
 

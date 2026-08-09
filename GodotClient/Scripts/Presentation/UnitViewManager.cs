@@ -15,6 +15,8 @@ public partial class UnitViewManager : Node3D
     private readonly StandardMaterial3D _friendly = MakeMaterial(new Color(0.10f, 0.82f, 0.66f));
     private readonly StandardMaterial3D _other = MakeMaterial(new Color(0.92f, 0.30f, 0.18f));
     private readonly StandardMaterial3D _hover = MakeMaterial(new Color(0.55f, 0.95f, 1f));
+    private readonly StandardMaterial3D _resource = MakeMaterial(new Color(0.72f, 0.48f, 0.20f));
+    private readonly StandardMaterial3D _resourceExhausted = MakeMaterial(new Color(0.28f, 0.25f, 0.22f));
 
     public void Configure(GodotSimBridge bridge, SelectionController selection, ControlGroups groups)
     {
@@ -39,7 +41,12 @@ public partial class UnitViewManager : Node3D
             float renderedYaw = c.Snap ? yawB : Mathf.RadToDeg(Mathf.LerpAngle(Mathf.DegToRad(yawA), Mathf.DegToRad(yawB), alpha));
             view.RotationDegrees = new Vector3(0f, renderedYaw, 0f);
             bool selected = ContainsSelection(c.EntityId), hovered = _selection.Hovered == c.EntityId;
-            view.MaterialOverride = hovered && !selected ? _hover : (c.Owner == 0 ? _friendly : _other);
+            if (c.SelectableKind == SelectableKind.ResourceNode)
+            {
+                view.MaterialOverride = c.ResourceState == ResourceVisualState.Exhausted ? _resourceExhausted : _resource;
+                view.Scale = ResourceScale(c.Footprint, c.ResourceState);
+            }
+            else view.MaterialOverride = hovered && !selected ? _hover : (c.Owner == 0 ? _friendly : _other);
             Node3D? ring = view.GetNodeOrNull<Node3D>("SelectionRing");
             if (ring is not null) ring.Visible = selected || hovered;
             Label3D? groupLabel = view.GetNodeOrNull<Label3D>("ControlGroupLabel");
@@ -73,7 +80,14 @@ public partial class UnitViewManager : Node3D
         float ringRadiusWorld;
         float labelHeightWorld;
         PrimitiveMesh mesh;
-        switch (entity.Footprint)
+        if (entity.SelectableKind == SelectableKind.ResourceNode)
+        {
+            mesh = new SphereMesh { Radius = 0.65f, Height = 1.1f, RadialSegments = 12, Rings = 6 };
+            visualScale = ResourceScale(entity.Footprint, entity.ResourceState);
+            ringRadiusWorld = entity.Footprint switch { FootprintClass.Medium => 1.6f, FootprintClass.Large => 2.1f, FootprintClass.Huge => 2.8f, _ => 1.2f };
+            labelHeightWorld = 1.5f;
+        }
+        else switch (entity.Footprint)
         {
             case FootprintClass.Tiny:
                 mesh = new CapsuleMesh { Radius = 0.35f, Height = 1.0f };
@@ -153,6 +167,26 @@ public partial class UnitViewManager : Node3D
         };
         view.AddChild(groupLabel);
         return view;
+    }
+
+    private static Vector3 ResourceScale(FootprintClass size, ResourceVisualState state)
+    {
+        Vector3 baseline = size switch
+        {
+            FootprintClass.Medium => new Vector3(2.6f, 1.7f, 2.2f),
+            FootprintClass.Large => new Vector3(3.4f, 2.2f, 2.9f),
+            FootprintClass.Huge => new Vector3(4.4f, 2.8f, 3.7f),
+            _ => new Vector3(2.0f, 1.3f, 1.7f)
+        };
+        float multiplier = state switch
+        {
+            ResourceVisualState.Reduced => 0.86f,
+            ResourceVisualState.Low => 0.70f,
+            ResourceVisualState.Critical => 0.52f,
+            ResourceVisualState.Exhausted => 0.30f,
+            _ => 1.0f
+        };
+        return baseline * multiplier;
     }
 
     private static StandardMaterial3D MakeMaterial(Color color) => new() { AlbedoColor = color, Roughness = 0.45f };

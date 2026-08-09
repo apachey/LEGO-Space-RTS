@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "stableId": "map.dev_first_controllable_rts",
   "buildSize": [
     160,
@@ -615,6 +615,24 @@
       "movementLayer": "Ground",
       "selectableKind": "CombatSupport",
       "visionRadius": 8
+    }
+  ],
+  "resourceNodes": [
+    {
+      "contentKey": "resource.ore.standard",
+      "position": [18, 71]
+    },
+    {
+      "contentKey": "resource.ore.standard",
+      "position": [18, 77]
+    },
+    {
+      "contentKey": "resource.ore.standard",
+      "position": [138, 71]
+    },
+    {
+      "contentKey": "resource.ore.standard",
+      "position": [138, 77]
     }
   ],
   "visionTestGeometry": [

@@ -54,7 +54,20 @@ public sealed class SimulationWorld
         return queue;
     }
 
+    internal bool TryGetQueue(EntityId id, out UnitCommandQueue queue) => Queues.TryGetValue(id.Value, out queue!);
+
     public RouteCorridor? GetCorridor(EntityId id) => Corridors.TryGetValue(id.Value, out RouteCorridor corridor) ? corridor : null;
+
+    public bool TryExtractResource(EntityId id, int requestedAmount, out int extractedAmount)
+    {
+        if (requestedAmount <= 0) throw new System.ArgumentOutOfRangeException(nameof(requestedAmount));
+        if (!Entities.ResourceNode.Has(id)) { extractedAmount = 0; return false; }
+        ref ResourceNode node = ref Entities.ResourceNode.Get(id);
+        if (node.Remaining <= 0) { extractedAmount = 0; return false; }
+        extractedAmount = System.Math.Min(requestedAmount, node.Remaining);
+        node.Remaining -= extractedAmount;
+        return true;
+    }
 
     public void OpenExcavatable(ushort featureId)
     {

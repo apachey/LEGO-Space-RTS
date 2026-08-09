@@ -86,13 +86,18 @@ compile_and_compare_content() {
 }
 
 regenerate_tracked_content() {
+  local temp_dir
+  temp_dir="$(mktemp -d "${TMPDIR:-/tmp}/lego-space-rts-regenerate.XXXXXX")" || return 1
+  cp "${ROOT}/GodotClient/Compiled/PrototypeEntities.contentbin" "${temp_dir}/PrototypeEntities.contentbin" || { rm -rf "${temp_dir}"; return 1; }
+  cp "${ROOT}/GodotClient/Compiled/DEV_FirstControllableRTS.mapbin" "${temp_dir}/DEV_FirstControllableRTS.mapbin" || { rm -rf "${temp_dir}"; return 1; }
   dotnet run --project "${ROOT}/tools/ContentCompiler/ContentCompiler.csproj" -c Release --no-build --no-restore -- \
     "${ROOT}/Content/PrototypeEntities.json" \
     "${ROOT}/Content/Maps/DEV_FirstControllableRTS.map.json" \
-    "${ROOT}/GodotClient/Compiled" || return $?
-  git -C "${ROOT}" diff --exit-code -- \
-    GodotClient/Compiled/PrototypeEntities.contentbin \
-    GodotClient/Compiled/DEV_FirstControllableRTS.mapbin
+    "${ROOT}/GodotClient/Compiled" || { local rc=$?; rm -rf "${temp_dir}"; return "${rc}"; }
+  cmp "${temp_dir}/PrototypeEntities.contentbin" "${ROOT}/GodotClient/Compiled/PrototypeEntities.contentbin" || { rm -rf "${temp_dir}"; printf 'Compiled entity content regeneration is not idempotent.\n' >&2; return 1; }
+  cmp "${temp_dir}/DEV_FirstControllableRTS.mapbin" "${ROOT}/GodotClient/Compiled/DEV_FirstControllableRTS.mapbin" || { rm -rf "${temp_dir}"; printf 'Compiled map regeneration is not idempotent.\n' >&2; return 1; }
+  rm -rf "${temp_dir}"
+  printf 'Tracked compiled content regenerates idempotently.\n'
 }
 
 headless_dll() {

@@ -52,9 +52,14 @@ dotnet run --project HeadlessSim -- --replay golden.replay --ticks 3200
 
 Phase 09B replaces the former blocking M2 torture gate with a representative
 24-mover Movement Architecture v2 scenario. The scenario and Movement
-Architecture v2 implementation are not part of this governance sync; they must
-be added and verified by the next approved movement implementation task before
-M2 can close.
+Architecture v2 implementation are now present and accepted. The focused gate
+is `M2MovementAcceptanceTests`; it remains in the suite as regression coverage.
+
+## M3 resource-node foundation
+
+`M3ResourceNodeTests` validates the canonical finite Ore capacities, 1,800 safe
+starting Ore per side, clamped depletion/model states, and snapshot/state-hash
+continuation for heterogeneous mover/resource-node entities.
 
 ## Performance / 60 movers (`BLOCKING_LATER` — PRE-M6; `DIAGNOSTIC` — M2–M5)
 

@@ -47,14 +47,55 @@ public readonly struct PrototypeEntityDefinition
     }
 }
 
-/// <summary>M2-only immutable gameplay metadata compiled from Content/PrototypeEntities.json.</summary>
+public readonly struct ResourceNodeDefinition
+{
+    public readonly string StableKey;
+    public readonly ContentId Id;
+    public readonly ResourceType Type;
+    public readonly ResourceDepositSize DepositSize;
+    public readonly int Capacity;
+    public readonly HarvestInteraction HarvestInteraction;
+    public readonly ResourceDepletionProfile DepletionProfile;
+    public readonly ushort ReducedThresholdBasisPoints;
+    public readonly ushort LowThresholdBasisPoints;
+    public readonly ushort CriticalThresholdBasisPoints;
+    public readonly string ViewProfileKey;
+
+    public ResourceNodeDefinition(string stableKey, ResourceType type, ResourceDepositSize depositSize, int capacity,
+        HarvestInteraction harvestInteraction, ResourceDepletionProfile depletionProfile,
+        ushort reducedThresholdBasisPoints, ushort lowThresholdBasisPoints, ushort criticalThresholdBasisPoints,
+        string viewProfileKey)
+    {
+        if (capacity <= 0) throw new ArgumentOutOfRangeException(nameof(capacity));
+        if (reducedThresholdBasisPoints > 10_000 || lowThresholdBasisPoints > reducedThresholdBasisPoints || criticalThresholdBasisPoints > lowThresholdBasisPoints)
+            throw new ArgumentOutOfRangeException(nameof(reducedThresholdBasisPoints), "Resource model-state thresholds must descend within 0..10000 basis points.");
+        StableKey = stableKey ?? throw new ArgumentNullException(nameof(stableKey));
+        Id = StableId.FromKey(stableKey);
+        Type = type;
+        DepositSize = depositSize;
+        Capacity = capacity;
+        HarvestInteraction = harvestInteraction;
+        DepletionProfile = depletionProfile;
+        ReducedThresholdBasisPoints = reducedThresholdBasisPoints;
+        LowThresholdBasisPoints = lowThresholdBasisPoints;
+        CriticalThresholdBasisPoints = criticalThresholdBasisPoints;
+        ViewProfileKey = viewProfileKey ?? throw new ArgumentNullException(nameof(viewProfileKey));
+    }
+}
+
+/// <summary>Immutable prototype gameplay metadata compiled from Content/PrototypeEntities.json.</summary>
 public sealed class PrototypeContentCatalog
 {
     public PrototypeMovementProfile[] MovementProfiles { get; }
     public PrototypeEntityDefinition[] Entities { get; }
+    public ResourceNodeDefinition[] ResourceNodes { get; }
     public ulong ContentHash { get; internal set; }
-    public PrototypeContentCatalog(PrototypeMovementProfile[] movementProfiles, PrototypeEntityDefinition[] entities)
-    { MovementProfiles = movementProfiles ?? Array.Empty<PrototypeMovementProfile>(); Entities = entities ?? Array.Empty<PrototypeEntityDefinition>(); }
+    public PrototypeContentCatalog(PrototypeMovementProfile[] movementProfiles, PrototypeEntityDefinition[] entities, ResourceNodeDefinition[]? resourceNodes = null)
+    {
+        MovementProfiles = movementProfiles ?? Array.Empty<PrototypeMovementProfile>();
+        Entities = entities ?? Array.Empty<PrototypeEntityDefinition>();
+        ResourceNodes = resourceNodes ?? Array.Empty<ResourceNodeDefinition>();
+    }
 
     public bool ContainsEntityKey(string stableKey) => TryGetEntity(stableKey, out _);
     public bool TryGetEntity(string stableKey, out PrototypeEntityDefinition definition)
@@ -67,11 +108,17 @@ public sealed class PrototypeContentCatalog
         for (int i = 0; i < MovementProfiles.Length; i++) if (string.Equals(MovementProfiles[i].StableKey, stableKey, StringComparison.Ordinal)) { profile = MovementProfiles[i]; return true; }
         profile = default; return false;
     }
+    public bool ContainsResourceNodeKey(string stableKey) => TryGetResourceNode(stableKey, out _);
+    public bool TryGetResourceNode(string stableKey, out ResourceNodeDefinition definition)
+    {
+        for (int i = 0; i < ResourceNodes.Length; i++) if (string.Equals(ResourceNodes[i].StableKey, stableKey, StringComparison.Ordinal)) { definition = ResourceNodes[i]; return true; }
+        definition = default; return false;
+    }
 }
 
 public static class PrototypeContentFactory
 {
-    /// <summary>Built-in mirror of the checked-in M2 source data; used by headless/debug startup before generated files are present.</summary>
+    /// <summary>Built-in mirror of the checked-in prototype source data; used by headless/debug startup before generated files are present.</summary>
     public static PrototypeContentCatalog CreateM2Catalog()
     {
         PrototypeMovementProfile[] profiles =
@@ -90,7 +137,14 @@ public static class PrototypeContentFactory
             new PrototypeEntityDefinition("unit.rock_raiders.hover_scout", "RockRaiders", "OFFICIAL_DIRECT", "movement.prototype.hover_scout", FootprintClass.Small, SelectableKind.CombatSupport, 9, "view.placeholder.rock_raiders.hover_scout"),
             new PrototypeEntityDefinition("unit.rock_raiders.loader_dozer", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.loader_dozer", FootprintClass.Medium, SelectableKind.CombatSupport, 7, "view.placeholder.rock_raiders.loader_dozer")
         };
-        PrototypeContentCatalog catalog = new PrototypeContentCatalog(profiles, entities);
+        ResourceNodeDefinition[] resources =
+        {
+            new ResourceNodeDefinition("resource.ore.deep_contested_seam", ResourceType.Ore, ResourceDepositSize.DeepContestedSeam, 2400, HarvestInteraction.Mine, ResourceDepletionProfile.Finite, 7500, 5000, 2500, "view.placeholder.resource.ore.deep_contested_seam"),
+            new ResourceNodeDefinition("resource.ore.rich", ResourceType.Ore, ResourceDepositSize.Rich, 1350, HarvestInteraction.Mine, ResourceDepletionProfile.Finite, 7500, 5000, 2500, "view.placeholder.resource.ore.rich"),
+            new ResourceNodeDefinition("resource.ore.small", ResourceType.Ore, ResourceDepositSize.Small, 600, HarvestInteraction.Mine, ResourceDepletionProfile.Finite, 7500, 5000, 2500, "view.placeholder.resource.ore.small"),
+            new ResourceNodeDefinition("resource.ore.standard", ResourceType.Ore, ResourceDepositSize.Standard, 900, HarvestInteraction.Mine, ResourceDepletionProfile.Finite, 7500, 5000, 2500, "view.placeholder.resource.ore.standard")
+        };
+        PrototypeContentCatalog catalog = new PrototypeContentCatalog(profiles, entities, resources);
         PrototypeContentCodec.Write(catalog);
         return catalog;
     }
@@ -100,7 +154,7 @@ public static class PrototypeContentFactory
 public static class PrototypeContentCodec
 {
     private const int Magic = 0x4350534C; // LSPC little-endian bytes.
-    public const int FormatVersion = 2;
+    public const int FormatVersion = 3;
 
     public static byte[] Write(PrototypeContentCatalog catalog)
     {
@@ -121,6 +175,14 @@ public static class PrototypeContentCodec
             writer.Write(e.StableKey); writer.Write(e.Id.Value); writer.Write(e.FactionKey); writer.Write(e.SourceClassification);
             writer.Write(e.MovementProfileKey); writer.Write((byte)e.Footprint); writer.Write((byte)e.SelectableKind); writer.Write(e.VisionRadius); writer.Write(e.ViewProfileKey);
         }
+        writer.Write(catalog.ResourceNodes.Length);
+        for (int i = 0; i < catalog.ResourceNodes.Length; i++)
+        {
+            ResourceNodeDefinition n = catalog.ResourceNodes[i];
+            writer.Write(n.StableKey); writer.Write(n.Id.Value); writer.Write((byte)n.Type); writer.Write((byte)n.DepositSize); writer.Write(n.Capacity);
+            writer.Write((byte)n.HarvestInteraction); writer.Write((byte)n.DepletionProfile);
+            writer.Write(n.ReducedThresholdBasisPoints); writer.Write(n.LowThresholdBasisPoints); writer.Write(n.CriticalThresholdBasisPoints); writer.Write(n.ViewProfileKey);
+        }
         writer.Flush();
         byte[] bytes = stream.ToArray(); catalog.ContentHash = DeterministicHash.Fnv1A64(bytes); return bytes;
     }
@@ -130,7 +192,8 @@ public static class PrototypeContentCodec
         using MemoryStream stream = new MemoryStream(bytes, false);
         using BinaryReader reader = new BinaryReader(stream);
         if (reader.ReadInt32() != Magic) throw new InvalidDataException("Prototype content magic mismatch.");
-        if (reader.ReadInt32() != FormatVersion) throw new InvalidDataException("Prototype content format version mismatch.");
+        int formatVersion = reader.ReadInt32();
+        if (formatVersion != 2 && formatVersion != FormatVersion) throw new InvalidDataException("Prototype content format version mismatch.");
         int profileCount = reader.ReadInt32(); if (profileCount < 0 || profileCount > 1024) throw new InvalidDataException("Invalid movement profile count.");
         PrototypeMovementProfile[] profiles = new PrototypeMovementProfile[profileCount];
         for (int i = 0; i < profileCount; i++)
@@ -148,8 +211,22 @@ public static class PrototypeContentCodec
             FootprintClass fp = (FootprintClass)reader.ReadByte(); SelectableKind kind = (SelectableKind)reader.ReadByte(); byte vision = reader.ReadByte(); string view = reader.ReadString();
             entities[i] = new PrototypeEntityDefinition(key, faction, source, movement, fp, kind, vision, view); if (entities[i].Id.Value != id) throw new InvalidDataException("Stable entity ID mismatch.");
         }
+        ResourceNodeDefinition[] resourceNodes = Array.Empty<ResourceNodeDefinition>();
+        if (formatVersion >= 3)
+        {
+            int resourceCount = reader.ReadInt32(); if (resourceCount < 0 || resourceCount > 1024) throw new InvalidDataException("Invalid resource node definition count.");
+            resourceNodes = new ResourceNodeDefinition[resourceCount];
+            for (int i = 0; i < resourceCount; i++)
+            {
+                string key = reader.ReadString(); uint id = reader.ReadUInt32(); ResourceType type = (ResourceType)reader.ReadByte(); ResourceDepositSize size = (ResourceDepositSize)reader.ReadByte(); int capacity = reader.ReadInt32();
+                HarvestInteraction interaction = (HarvestInteraction)reader.ReadByte(); ResourceDepletionProfile depletion = (ResourceDepletionProfile)reader.ReadByte();
+                ushort reduced = reader.ReadUInt16(); ushort low = reader.ReadUInt16(); ushort critical = reader.ReadUInt16(); string view = reader.ReadString();
+                resourceNodes[i] = new ResourceNodeDefinition(key, type, size, capacity, interaction, depletion, reduced, low, critical, view);
+                if (resourceNodes[i].Id.Value != id) throw new InvalidDataException("Stable resource node ID mismatch.");
+            }
+        }
         if (stream.Position != stream.Length) throw new InvalidDataException("Trailing prototype content bytes.");
-        PrototypeContentCatalog result = new PrototypeContentCatalog(profiles, entities) { ContentHash = DeterministicHash.Fnv1A64(bytes) };
+        PrototypeContentCatalog result = new PrototypeContentCatalog(profiles, entities, resourceNodes) { ContentHash = DeterministicHash.Fnv1A64(bytes) };
         return result;
     }
 }

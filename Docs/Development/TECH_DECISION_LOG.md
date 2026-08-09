@@ -59,3 +59,28 @@ These are implementation workflow decisions only. They do not change game canon 
 
 These are implementation decisions within Movement Architecture v2 and do not
 change gameplay canon.
+
+---
+
+## 2026-08-09 — M3 deterministic resource-node foundation
+
+- M3 begins with dependency task T030 only. Worker job acquisition, mining
+  cadence, payload carrying and delivery remain T031 rather than being folded
+  into the resource-node component.
+- Canonical Ore definitions use stable IDs and the Phase 04 capacities: Small
+  600, Standard 900, Rich 1,350 and Deep contested seam 2,400. All use finite
+  depletion; authored model thresholds expose readable full, reduced, low,
+  critical and exhausted presentation states without hidden yield modifiers.
+- The prototype map authors two Standard deposits per starting side for the
+  canonical 1,800 safe starting Ore. Resource nodes are neutral heterogeneous
+  ECS entities rather than stationary movement agents.
+- Content format v3 and compiled-map format v2 add resource definitions and
+  authored node spawns. Their readers retain compatibility with content v2 and
+  map v1 respectively.
+- Snapshot format v3 adds an ordered component mask per entity so authoritative
+  snapshots can represent both movers and resource nodes. The reader retains
+  M2 snapshot-v2 compatibility; resource capacity, remaining amount and model
+  thresholds participate in deterministic state hashing.
+
+These are implementation decisions within the approved M3 architecture and do
+not change gameplay canon.
