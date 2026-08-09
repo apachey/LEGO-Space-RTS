@@ -20,4 +20,18 @@ public class CommandTests
         Assert.That(q.Enqueue(new UnitOrder(UnitOrderType.Move,FixVec2.Zero)),Is.False); Assert.That(q.Count,Is.EqualTo(UnitCommandQueue.Capacity));
     }
     [Test] public void UnknownCommandsFailLoudly() => Assert.Throws<ArgumentOutOfRangeException>(()=>new CommandEnvelope(new SimTick(1),0,1,(SimCommandType)999,Array.Empty<EntityId>(),FixVec2.Zero));
+    [Test] public void RunnerExecutesCommandsOnTheirDeclaredTick()
+    {
+        SimulationWorld world=ScenarioFactory.CreateFirstControllable(1); EntityId id=ScenarioFactory.OwnedIds(world,0)[0];
+        world.Commands.Enqueue(new CommandEnvelope(new SimTick(1),0,1,SimCommandType.Move,new[]{id},FixVec2.FromInts(100,30)));
+        new SimulationRunner(world).StepTicks(1);
+        Assert.That(world.Tick.Value,Is.EqualTo(1)); Assert.That(world.Entities.Navigation.Get(id).HasTarget,Is.True);
+    }
+    [Test] public void ProfiledRunnerExecutesCommandsOnTheirDeclaredTick()
+    {
+        SimulationWorld world=ScenarioFactory.CreateFirstControllable(1); EntityId id=ScenarioFactory.OwnedIds(world,0)[0];
+        world.Commands.Enqueue(new CommandEnvelope(new SimTick(1),0,1,SimCommandType.Move,new[]{id},FixVec2.FromInts(100,30)));
+        new SimulationRunner(world).StepOneTickProfiled();
+        Assert.That(world.Tick.Value,Is.EqualTo(1)); Assert.That(world.Entities.Navigation.Get(id).HasTarget,Is.True);
+    }
 }

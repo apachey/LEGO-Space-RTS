@@ -14,7 +14,8 @@ public class MovementFogTests
     {
         SimulationWorld world=ScenarioFactory.CreateFirstControllable(4); EntityId id=ScenarioFactory.OwnedIds(world,0)[0]; SimulationRunner runner=new(world);
         world.Commands.Enqueue(new CommandEnvelope(new SimTick(1),0,1,SimCommandType.Move,new[]{id},FixVec2.FromInts(100,30)));
-        world.Commands.Enqueue(new CommandEnvelope(new SimTick(20),0,2,SimCommandType.Stop,new[]{id},FixVec2.Zero)); runner.StepTicks(20);
+        world.Commands.Enqueue(new CommandEnvelope(new SimTick(2),0,2,SimCommandType.Move,new[]{id},FixVec2.FromInts(110,40),CommandModifiers.Queue));
+        world.Commands.Enqueue(new CommandEnvelope(new SimTick(20),0,3,SimCommandType.Stop,new[]{id},FixVec2.Zero)); runner.StepTicks(20);
         Assert.That(world.Entities.Navigation.Get(id).HasTarget,Is.False); Assert.That(world.Entities.Movement.Get(id).State,Is.EqualTo(MovementState.Idle)); Assert.That(world.GetQueue(id).Count,Is.EqualTo(0));
     }
     [Test] public void CpuFogMarksVisionAndPreservesExploration()
