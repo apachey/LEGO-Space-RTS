@@ -60,9 +60,26 @@ public partial class RtsInputController : Node
         if (_bridge is null || _selection is null || _camera is null) return;
         if (@event is InputEventMouseButton mouse && mouse.Pressed && mouse.ButtonIndex == MouseButton.Right && _selection.Selected.Count > 0)
         {
-            if (_camera.TryProjectToGround(mouse.Position, out Vector3 point)) IssueMove(point);
+            EntityId resource = _selection.FindResourceAtScreen(mouse.Position);
+            if (resource != EntityId.None) IssueHarvest(resource);
+            else if (_camera.TryProjectToGround(mouse.Position, out Vector3 point)) IssueMove(point);
             GetViewport().SetInputAsHandled();
         }
+    }
+
+    private void IssueHarvest(EntityId resource)
+    {
+        if (_bridge is null || _selection is null) return;
+        List<EntityId> workers = new(_selection.Selected.Count);
+        for (int i = 0; i < _selection.Selected.Count; i++)
+        {
+            EntityId id = _selection.Selected[i];
+            if (_bridge.World.Entities.Worker.Has(id)) workers.Add(id);
+        }
+        if (workers.Count == 0) return;
+        CommandModifiers modifiers = Input.IsKeyPressed(Key.Shift) ? CommandModifiers.Queue : CommandModifiers.None;
+        _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, _sequence++, SimCommandType.Harvest, workers.ToArray(), FixVec2.Zero, modifiers, resource));
+        if (modifiers == CommandModifiers.None) ClearMovePreviews();
     }
 
     private void IssueMove(Vector3 world)

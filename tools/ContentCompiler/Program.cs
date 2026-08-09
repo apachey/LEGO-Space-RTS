@@ -25,18 +25,18 @@ byte[] mapBytes = CompiledMapCodec.Write(definition);
 string mapOutput = Path.Combine(outputDirectory, "DEV_FirstControllableRTS.mapbin");
 File.WriteAllBytes(mapOutput, mapBytes);
 MapDefinition mapRoundTrip = CompiledMapCodec.ReadDefinition(mapBytes);
-if (mapRoundTrip.Grid.Id.Value != definition.Grid.Id.Value || mapRoundTrip.InitialEntities.Length != definition.InitialEntities.Length || mapRoundTrip.InitialResourceNodes.Length != definition.InitialResourceNodes.Length)
+if (mapRoundTrip.Grid.Id.Value != definition.Grid.Id.Value || mapRoundTrip.InitialEntities.Length != definition.InitialEntities.Length || mapRoundTrip.InitialResourceNodes.Length != definition.InitialResourceNodes.Length || mapRoundTrip.InitialResourceReceivers.Length != definition.InitialResourceReceivers.Length)
     throw new InvalidDataException("Compiled map round-trip validation failed.");
 
 Console.WriteLine($"Prototype content: {contentOutput} ({contentBytes.Length} bytes), hash={catalog.ContentHash:X16}, entities={catalog.Entities.Length}, resourceDefinitions={catalog.ResourceNodes.Length}");
-Console.WriteLine($"Map: {mapOutput} ({mapBytes.Length} bytes), starts={definition.Starts.Length}, spawns={definition.InitialEntities.Length}, resourceNodes={definition.InitialResourceNodes.Length}, features={definition.Grid.Features.Count}");
+Console.WriteLine($"Map: {mapOutput} ({mapBytes.Length} bytes), starts={definition.Starts.Length}, spawns={definition.InitialEntities.Length}, resourceNodes={definition.InitialResourceNodes.Length}, resourceReceivers={definition.InitialResourceReceivers.Length}, features={definition.Grid.Features.Count}");
 return 0;
 
 static PrototypeContentCatalog CompilePrototypeCatalog(string path)
 {
     using JsonDocument document = JsonDocument.Parse(File.ReadAllText(path));
     JsonElement root = document.RootElement;
-    if (root.GetProperty("schemaVersion").GetInt32() != 3) throw new InvalidDataException("Unsupported prototype content schema.");
+    if (root.GetProperty("schemaVersion").GetInt32() != 4) throw new InvalidDataException("Unsupported prototype content schema.");
     if (!string.Equals(root.GetProperty("contentKind").GetString(), "prototype_entities", StringComparison.Ordinal)) throw new InvalidDataException("Unexpected contentKind.");
 
     List<PrototypeMovementProfile> profiles = new();
@@ -85,9 +85,17 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
         if (!entityKeys.Add(key)) throw new InvalidDataException($"Duplicate entity key {key}.");
         uint id = StableId.FromKey(key).Value; if (!stableIds.Add(id)) throw new InvalidDataException($"Stable ID collision at entity {key}.");
         string movement = RequiredString(item, "movementProfile"); if (!profileKeys.Contains(movement)) throw new InvalidDataException($"{key}: unknown movementProfile {movement}.");
+        SelectableKind selectableKind = Enum.Parse<SelectableKind>(RequiredString(item, "selectableKind"), false);
+        ushort oreTicks = 0; byte oreCapacity = 0;
+        if (item.TryGetProperty("workerHarvest", out JsonElement workerHarvest))
+        {
+            oreTicks = checked((ushort)workerHarvest.GetProperty("oreTicksPerUnit").GetInt32());
+            oreCapacity = checked((byte)workerHarvest.GetProperty("oreCarryCapacity").GetInt32());
+        }
+        if (selectableKind == SelectableKind.Worker && (oreTicks == 0 || oreCapacity == 0)) throw new InvalidDataException($"{key}: Worker requires workerHarvest metadata.");
         entities.Add(new PrototypeEntityDefinition(key, RequiredString(item, "faction"), RequiredString(item, "sourceClassification"), movement,
-            Enum.Parse<FootprintClass>(RequiredString(item, "footprint"), false), Enum.Parse<SelectableKind>(RequiredString(item, "selectableKind"), false),
-            checked((byte)item.GetProperty("visionRadius").GetInt32()), RequiredString(item, "viewProfile")));
+            Enum.Parse<FootprintClass>(RequiredString(item, "footprint"), false), selectableKind,
+            checked((byte)item.GetProperty("visionRadius").GetInt32()), RequiredString(item, "viewProfile"), oreTicks, oreCapacity));
     }
     entities.Sort((a, b) => string.CompareOrdinal(a.StableKey, b.StableKey));
     return new PrototypeContentCatalog(profiles.ToArray(), entities.ToArray(), resourceNodes.ToArray());
@@ -98,7 +106,7 @@ static MapDefinition CompileMap(string path, PrototypeContentCatalog catalog)
     using JsonDocument document = JsonDocument.Parse(File.ReadAllText(path));
     JsonElement root = document.RootElement;
     int schemaVersion = root.GetProperty("schemaVersion").GetInt32();
-    if (schemaVersion != 2) throw new InvalidDataException($"Unsupported map source schema {schemaVersion}.");
+    if (schemaVersion != 3) throw new InvalidDataException($"Unsupported map source schema {schemaVersion}.");
     string stableId = RequiredString(root, "stableId");
     int width = root.GetProperty("buildSize")[0].GetInt32();
     int height = root.GetProperty("buildSize")[1].GetInt32();
@@ -155,9 +163,20 @@ static MapDefinition CompileMap(string path, PrototypeContentCatalog catalog)
         resourceNodes.Add(new InitialResourceNodeSpawn(contentKey, position));
     }
 
+    List<InitialResourceReceiverSpawn> receivers = new();
+    foreach (JsonElement item in root.GetProperty("resourceReceivers").EnumerateArray())
+    {
+        byte player = checked((byte)item.GetProperty("playerSlot").GetInt32());
+        string contentKey = RequiredString(item, "contentKey");
+        if (!catalog.TryGetEntity(contentKey, out PrototypeEntityDefinition receiverDefinition) || receiverDefinition.SelectableKind != SelectableKind.Building)
+            throw new InvalidDataException($"Map receiver references invalid building content key {contentKey}.");
+        FixVec2 position = ReadBuildPosition(item.GetProperty("position")); ValidateBuildPosition(position, $"resource receiver {contentKey}");
+        receivers.Add(new InitialResourceReceiverSpawn(player, contentKey, position));
+    }
+
     List<VisionTestRegion> visionRegions = new();
     foreach (JsonElement item in root.GetProperty("visionTestGeometry").EnumerateArray()) { IntRect rect=ReadRect(item.GetProperty("navRect")); ValidateRect(rect,"vision geometry"); visionRegions.Add(new VisionTestRegion(RequiredString(item, "name"), rect)); }
-    return new MapDefinition(map, starts.ToArray(), spawns.ToArray(), visionRegions.ToArray(), resourceNodes.ToArray());
+    return new MapDefinition(map, starts.ToArray(), spawns.ToArray(), visionRegions.ToArray(), resourceNodes.ToArray(), receivers.ToArray());
 }
 
 static Fix32 ReadRatio(JsonElement item,string key,string property)

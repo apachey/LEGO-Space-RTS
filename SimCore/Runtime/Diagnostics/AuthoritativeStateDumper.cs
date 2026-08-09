@@ -21,6 +21,9 @@ public static class AuthoritativeStateDumper
             if(world.Entities.Selectable.TryGet(id,out Selectable s))b.Append(" content=").Append(s.ContentType.Value).Append(" kind=").Append((byte)s.Kind);
             if(world.Entities.Vision.TryGet(id,out Vision v))b.Append(" vision=").Append(v.RadiusBuildCells);
             if(world.Entities.ResourceNode.TryGet(id,out ResourceNode resource))b.Append(" resourceType=").Append((byte)resource.Type).Append(" depositSize=").Append((byte)resource.DepositSize).Append(" remaining=").Append(resource.Remaining).Append('/').Append(resource.Capacity).Append(" visualState=").Append((byte)resource.VisualState);
+            if(world.Entities.Worker.TryGet(id,out Worker worker))b.Append(" workerState=").Append((byte)worker.TaskState).Append(" resourceTarget=").Append(worker.ResourceTarget.Value).Append(" receiverTarget=").Append(worker.ReceiverTarget.Value).Append(" extractionTicks=").Append(worker.ExtractionTicks).Append('/').Append(worker.TicksPerOre);
+            if(world.Entities.ResourceCarrier.TryGet(id,out ResourceCarrier carrier))b.Append(" cargoType=").Append((byte)carrier.Type).Append(" cargo=").Append(carrier.Amount).Append('/').Append(carrier.Capacity);
+            if(world.Entities.ResourceReceiver.TryGet(id,out ResourceReceiver receiver))b.Append(" receiverType=").Append((byte)receiver.AcceptedType).Append(" pendingHauled=").Append(receiver.PendingHauledAmount).Append(" hqEmergency=").Append(receiver.IsHqEmergencyReceiver);
             if(world.TryGetQueue(id,out UnitCommandQueue q))b.Append(" queue=").Append(q.Count);
             RouteCorridor? corridor=world.GetCorridor(id);if(corridor!=null)b.Append(" corridorCells=").Append(corridor.Cells.Count).Append(" corridorTopo=").Append(corridor.TopologyVersion);
             b.AppendLine();

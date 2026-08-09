@@ -7,8 +7,8 @@ namespace LegoSpaceRTS.SimCore
 public static class SnapshotSerializer
 {
     public const uint Magic = 0x53525453; // STRS
-    public const ushort FormatVersion = 3;
-    public const ushort SimulationProtocolVersion = 1;
+    public const ushort FormatVersion = 4;
+    public const ushort SimulationProtocolVersion = 2;
 
     [Flags]
     private enum EntityComponents : ushort
@@ -23,7 +23,10 @@ public static class SnapshotSerializer
         ResourceNode = 1 << 6,
         CommandQueue = 1 << 7,
         RouteCorridor = 1 << 8,
-        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor
+        Worker = 1 << 9,
+        ResourceCarrier = 1 << 10,
+        ResourceReceiver = 1 << 11,
+        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver
     }
 
     public static byte[] Serialize(SimulationWorld world)
@@ -44,14 +47,15 @@ public static class SnapshotSerializer
         using MemoryStream ms = new(bytes, false); using BinaryReader r = new(ms);
         if (r.ReadUInt32() != Magic) throw new InvalidDataException("Snapshot magic mismatch.");
         ushort format = r.ReadUInt16(), protocol = r.ReadUInt16();
-        if ((format != 2 && format != FormatVersion) || protocol != SimulationProtocolVersion) throw new InvalidDataException($"Unsupported snapshot {format}/{protocol}.");
+        bool legacy = (format == 2 || format == 3) && protocol == 1;
+        if (!legacy && (format != FormatVersion || protocol != SimulationProtocolVersion)) throw new InvalidDataException($"Unsupported snapshot {format}/{protocol}.");
         SimTick tick = new(r.ReadInt32()); MapGrid map = MapGrid.Deserialize(r); uint nextEntity = r.ReadUInt32();
         EntityStore entities = new(); int entityCount = r.ReadInt32(); if (entityCount < 0 || entityCount > 10000) throw new InvalidDataException("Invalid entity count.");
         SimulationWorld temp = new(map, entities, new FogState(2), tick);
         for (int i = 0; i < entityCount; i++)
         {
             if (format == 2) ReadEntityV2(r, temp);
-            else ReadEntity(r, temp);
+            else ReadEntity(r, temp, format);
         }
         entities.RestoreNextEntityValue(nextEntity);
         temp.Commands.Deserialize(r);
@@ -72,6 +76,9 @@ public static class SnapshotSerializer
         if (world.Entities.Selectable.Has(id)) components |= EntityComponents.Selectable;
         if (world.Entities.Vision.Has(id)) components |= EntityComponents.Vision;
         if (world.Entities.ResourceNode.Has(id)) components |= EntityComponents.ResourceNode;
+        if (world.Entities.Worker.Has(id)) components |= EntityComponents.Worker;
+        if (world.Entities.ResourceCarrier.Has(id)) components |= EntityComponents.ResourceCarrier;
+        if (world.Entities.ResourceReceiver.Has(id)) components |= EntityComponents.ResourceReceiver;
         if (world.TryGetQueue(id, out _)) components |= EntityComponents.CommandQueue;
         if (world.Corridors.ContainsKey(id.Value)) components |= EntityComponents.RouteCorridor;
         w.Write((ushort)components);
@@ -89,7 +96,10 @@ public static class SnapshotSerializer
             Vision v = world.Entities.Vision.Get(id); w.Write(v.RadiusBuildCells); w.Write(v.IsAirVision); w.Write(v.LastFogX); w.Write(v.LastFogY);
         }
         if ((components & EntityComponents.ResourceNode) != 0) WriteResourceNode(w, world.Entities.ResourceNode.Get(id));
-        if ((components & EntityComponents.CommandQueue) != 0) world.GetQueue(id).Serialize(w);
+        if ((components & EntityComponents.Worker) != 0) WriteWorker(w, world.Entities.Worker.Get(id));
+        if ((components & EntityComponents.ResourceCarrier) != 0) WriteResourceCarrier(w, world.Entities.ResourceCarrier.Get(id));
+        if ((components & EntityComponents.ResourceReceiver) != 0) WriteResourceReceiver(w, world.Entities.ResourceReceiver.Get(id));
+        if ((components & EntityComponents.CommandQueue) != 0) world.GetQueue(id).Serialize(w, includeTargetEntity: true);
         if ((components & EntityComponents.RouteCorridor) != 0) WriteCorridor(w, world.Corridors[id.Value]);
     }
 
@@ -116,13 +126,28 @@ public static class SnapshotSerializer
         w.Write(n.Capacity); w.Write(n.Remaining); w.Write(n.ReducedThresholdBasisPoints); w.Write(n.LowThresholdBasisPoints); w.Write(n.CriticalThresholdBasisPoints);
     }
 
+    private static void WriteWorker(BinaryWriter w, Worker worker)
+    {
+        w.Write(worker.ResourceTarget.Value); w.Write(worker.ReceiverTarget.Value); w.Write((byte)worker.TaskState); w.Write(worker.ExtractionTicks); w.Write(worker.TicksPerOre);
+    }
+
+    private static void WriteResourceCarrier(BinaryWriter w, ResourceCarrier carrier)
+    {
+        w.Write((byte)carrier.Type); w.Write(carrier.Amount); w.Write(carrier.Capacity);
+    }
+
+    private static void WriteResourceReceiver(BinaryWriter w, ResourceReceiver receiver)
+    {
+        w.Write((byte)receiver.AcceptedType); w.Write(receiver.PendingHauledAmount); w.Write(receiver.IsHqEmergencyReceiver);
+    }
+
     private static void WriteCorridor(BinaryWriter w, RouteCorridor path)
     {
         w.Write(path.TopologyVersion); w.Write(path.Cells.Count);
         for (int p = 0; p < path.Cells.Count; p++) { w.Write(path.Cells[p].X); w.Write(path.Cells[p].Y); }
     }
 
-    private static void ReadEntity(BinaryReader r, SimulationWorld world)
+    private static void ReadEntity(BinaryReader r, SimulationWorld world, ushort format)
     {
         EntityId id = world.Entities.CreateRestored(r.ReadUInt32());
         EntityComponents components = (EntityComponents)r.ReadUInt16();
@@ -134,7 +159,10 @@ public static class SnapshotSerializer
         if ((components & EntityComponents.Selectable) != 0) world.Entities.Selectable.Set(id, new Selectable { IsSelectable = r.ReadBoolean(), ContentType = new ContentId(r.ReadUInt32()), Kind=(SelectableKind)r.ReadByte() });
         if ((components & EntityComponents.Vision) != 0) world.Entities.Vision.Set(id, new Vision { RadiusBuildCells = r.ReadByte(), IsAirVision = r.ReadBoolean(), LastFogX = r.ReadInt32(), LastFogY = r.ReadInt32() });
         if ((components & EntityComponents.ResourceNode) != 0) world.Entities.ResourceNode.Set(id, ReadResourceNode(r));
-        if ((components & EntityComponents.CommandQueue) != 0) world.GetQueue(id).Deserialize(r);
+        if ((components & EntityComponents.Worker) != 0) world.Entities.Worker.Set(id, ReadWorker(r));
+        if ((components & EntityComponents.ResourceCarrier) != 0) world.Entities.ResourceCarrier.Set(id, ReadResourceCarrier(r));
+        if ((components & EntityComponents.ResourceReceiver) != 0) world.Entities.ResourceReceiver.Set(id, ReadResourceReceiver(r));
+        if ((components & EntityComponents.CommandQueue) != 0) world.GetQueue(id).Deserialize(r, includeTargetEntity: format >= 4);
         if ((components & EntityComponents.RouteCorridor) != 0) world.Corridors[id.Value] = ReadCorridor(r);
     }
 
@@ -159,6 +187,15 @@ public static class SnapshotSerializer
             Capacity=r.ReadInt32(), Remaining=r.ReadInt32(), ReducedThresholdBasisPoints=r.ReadUInt16(), LowThresholdBasisPoints=r.ReadUInt16(), CriticalThresholdBasisPoints=r.ReadUInt16()
         };
 
+    private static Worker ReadWorker(BinaryReader r)
+        => new() { ResourceTarget = new EntityId(r.ReadUInt32()), ReceiverTarget = new EntityId(r.ReadUInt32()), TaskState = (WorkerTaskState)r.ReadByte(), ExtractionTicks = r.ReadUInt16(), TicksPerOre = r.ReadUInt16() };
+
+    private static ResourceCarrier ReadResourceCarrier(BinaryReader r)
+        => new() { Type = (ResourceType)r.ReadByte(), Amount = r.ReadByte(), Capacity = r.ReadByte() };
+
+    private static ResourceReceiver ReadResourceReceiver(BinaryReader r)
+        => new() { AcceptedType = (ResourceType)r.ReadByte(), PendingHauledAmount = r.ReadInt32(), IsHqEmergencyReceiver = r.ReadBoolean() };
+
     private static RouteCorridor ReadCorridor(BinaryReader r)
     {
         RouteCorridor path = new() { TopologyVersion = r.ReadInt32() }; int count = r.ReadInt32(); if (count < 0 || count > 20000) throw new InvalidDataException("Invalid path count.");
@@ -175,7 +212,7 @@ public static class SnapshotSerializer
         world.Entities.Navigation.Set(id, ReadNavigation(r));
         world.Entities.Selectable.Set(id, new Selectable { IsSelectable = r.ReadBoolean(), ContentType = new ContentId(r.ReadUInt32()), Kind=(SelectableKind)r.ReadByte() });
         world.Entities.Vision.Set(id, new Vision { RadiusBuildCells = r.ReadByte(), IsAirVision = r.ReadBoolean(), LastFogX = r.ReadInt32(), LastFogY = r.ReadInt32() });
-        world.GetQueue(id).Deserialize(r);
+        world.GetQueue(id).Deserialize(r, includeTargetEntity: false);
         if (r.ReadBoolean()) world.Corridors[id.Value] = ReadCorridor(r);
     }
 }

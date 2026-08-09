@@ -49,6 +49,23 @@ public sealed class M3ResourceNodeTests
     }
 
     [Test]
+    public void PrototypeMapSpawnsOneHqEmergencyReceiverPerPlayer()
+    {
+        SimulationWorld world = ScenarioFactory.CreateFirstControllable(0);
+        int[] receivers = new int[2];
+        foreach (EntityId id in world.Entities.Alive)
+        {
+            if (!world.Entities.ResourceReceiver.TryGet(id, out ResourceReceiver receiver)) continue;
+            Ownership owner = world.Entities.Ownership.Get(id);
+            receivers[owner.PlayerSlot]++;
+            Assert.That(receiver.AcceptedType, Is.EqualTo(ResourceType.Ore));
+            Assert.That(receiver.IsHqEmergencyReceiver, Is.True);
+            Assert.That(receiver.PendingHauledAmount, Is.Zero);
+        }
+        Assert.That(receivers, Is.EqualTo(new[] { 1, 1 }));
+    }
+
+    [Test]
     public void ExtractionClampsAtZeroAndAdvancesVisibleDepletionStates()
     {
         SimulationWorld world = ScenarioFactory.CreateFirstControllable(0);

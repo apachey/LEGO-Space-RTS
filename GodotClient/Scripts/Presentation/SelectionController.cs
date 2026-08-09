@@ -19,6 +19,25 @@ public partial class SelectionController : Node
     public Vector2 DragStart => _dragStart;
     public int LastFilteredWorkerCount { get; private set; }
 
+    public EntityId FindResourceAtScreen(Vector2 screen)
+    {
+        if (_bridge?.Current is null || _camera is null) return EntityId.None;
+        EntityId best = EntityId.None;
+        float bestNormalized = 1f;
+        for (int i = 0; i < _bridge.Current.Entities.Count; i++)
+        {
+            PresentationEntity entity = _bridge.Current.Entities[i];
+            if (entity.SelectableKind != SelectableKind.ResourceNode) continue;
+            Vector3 world = entity.Position.ToWorld(0.5f);
+            if (_camera.IsPositionBehind(world)) continue;
+            Vector2 projected = _camera.UnprojectPosition(world);
+            float radius = ScreenPickRadius(entity.Footprint) * 1.35f;
+            float normalized = (projected - screen).LengthSquared() / (radius * radius);
+            if (normalized < bestNormalized) { bestNormalized = normalized; best = entity.EntityId; }
+        }
+        return best;
+    }
+
     public void Configure(GodotSimBridge bridge, RtsCameraController camera)
     {
         _bridge = bridge;

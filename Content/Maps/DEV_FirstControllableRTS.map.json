@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "stableId": "map.dev_first_controllable_rts",
   "buildSize": [
     160,
@@ -633,6 +633,18 @@
     {
       "contentKey": "resource.ore.standard",
       "position": [138, 77]
+    }
+  ],
+  "resourceReceivers": [
+    {
+      "playerSlot": 0,
+      "contentKey": "building.rock_raiders.hq",
+      "position": [10, 74]
+    },
+    {
+      "playerSlot": 1,
+      "contentKey": "building.rock_raiders.hq",
+      "position": [150, 74]
     }
   ],
   "visionTestGeometry": [

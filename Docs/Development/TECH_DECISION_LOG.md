@@ -84,3 +84,30 @@ change gameplay canon.
 
 These are implementation decisions within the approved M3 architecture and do
 not change gameplay canon.
+
+---
+
+## 2026-08-09 — M3 deterministic worker harvesting and hauled-resource boundary
+
+- T031 adds a queueable entity-targeted Harvest command. Only authoritative
+  Worker entities can accept it; mixed selections leave non-workers unchanged.
+- Basic Crew use the canonical 30-tick / 1.5-second Ore cadence and eight-Ore
+  payload. Task phase, extraction progress, resource/receiver targets and cargo
+  are ECS state rather than presentation timing.
+- Outside the later Worksite-service implementation, Crew physically return
+  full or final partial loads to the nearest owned HQ receiver. One starting HQ
+  receiver is authored per player; no resource teleports and no player-issued
+  hauler micro or persistent logistics manager is introduced.
+- Receiver inventory is stored as hauled-but-unprocessed material. T031 does
+  not create a spendable bank; T032 owns banking and whole-system conservation
+  from finite deposits through carried, hauled and processed states.
+- Snapshot format v4 / simulation protocol v2 add Worker, ResourceCarrier and
+  ResourceReceiver state plus queued entity targets. Readers retain snapshot
+  v2/v3 compatibility. Compiled-map format v3 adds authored starting receivers
+  while retaining v1/v2 reads.
+- Prototype content format v4 stores the canonical Crew extraction cadence and
+  carry capacity in compiled gameplay metadata; the v2/v3 readers apply the
+  same canonical baseline when loading older Worker definitions.
+
+These are implementation decisions within the approved M3 economy and Rock
+Raider resource-flow canon. They do not change gameplay canon.

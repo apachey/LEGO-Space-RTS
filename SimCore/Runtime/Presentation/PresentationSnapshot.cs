@@ -44,6 +44,15 @@ public sealed class PresentationSnapshot
                     MovementState.Idle, resourceVisibility, visualSize, SelectableKind.ResourceNode, resourceState: resource.VisualState));
                 continue;
             }
+            if (world.Entities.ResourceReceiver.Has(id) && world.Entities.Transform.TryGet(id, out SimTransform receiverTransform) &&
+                world.Entities.Ownership.TryGet(id, out Ownership receiverOwner) && world.Entities.Selectable.TryGet(id, out Selectable receiverSelectable))
+            {
+                VisibilityState receiverVisibility = receiverOwner.PlayerSlot == viewerPlayer ? VisibilityState.Visible : world.Fog.Get(viewerPlayer, receiverTransform.Position.X.FloorToInt(), receiverTransform.Position.Y.FloorToInt());
+                if (receiverOwner.PlayerSlot != viewerPlayer && receiverVisibility != VisibilityState.Visible) continue;
+                list.Add(new PresentationEntity(id, receiverSelectable.ContentType, receiverOwner.PlayerSlot, receiverTransform.Position, receiverTransform.Orientation,
+                    MovementState.Idle, receiverVisibility, FootprintClass.Huge, SelectableKind.Building));
+                continue;
+            }
             if (!world.Entities.Transform.TryGet(id, out SimTransform t) || !world.Entities.Ownership.TryGet(id, out Ownership o) || !world.Entities.Selectable.TryGet(id, out Selectable s) || !world.Entities.Movement.TryGet(id, out Movement m) || !world.Entities.Navigation.TryGet(id, out NavigationAgent n)) continue;
             int fx = t.Position.X.FloorToInt(), fy = t.Position.Y.FloorToInt();
             VisibilityState v = o.PlayerSlot == viewerPlayer ? VisibilityState.Visible : world.Fog.Get(viewerPlayer, fx, fy);

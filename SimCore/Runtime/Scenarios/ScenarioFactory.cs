@@ -24,6 +24,7 @@ public static class ScenarioFactory
             if (spawn.PlayerSlot == 0) player0Remaining--; else if (spawn.PlayerSlot == 1) player1Remaining--;
         }
         for (int i = 0; i < definition.InitialResourceNodes.Length; i++) SpawnResourceNode(world, definition.InitialResourceNodes[i], content);
+        for (int i = 0; i < definition.InitialResourceReceivers.Length; i++) SpawnResourceReceiver(world, definition.InitialResourceReceivers[i], content);
         world.Spatial.Rebuild(world.Entities);
         new VisionSystem().Step(world);
         return world;
@@ -72,7 +73,8 @@ public static class ScenarioFactory
     public static EntityId[] OwnedIds(SimulationWorld world, byte player)
     {
         List<EntityId> ids = new(); IReadOnlyList<EntityId> alive = world.Entities.Alive;
-        for (int i = 0; i < alive.Count; i++) if (world.Entities.Ownership.TryGet(alive[i], out Ownership o) && o.PlayerSlot == player) ids.Add(alive[i]);
+        for (int i = 0; i < alive.Count; i++)
+            if (world.Entities.Navigation.Has(alive[i]) && world.Entities.Ownership.TryGet(alive[i], out Ownership o) && o.PlayerSlot == player) ids.Add(alive[i]);
         return ids.ToArray();
     }
 
@@ -89,6 +91,7 @@ public static class ScenarioFactory
         world.Entities.Navigation.Set(id, new NavigationAgent { Footprint = spawn.Footprint, Layer = spawn.Layer, Target = spawn.Position, PathTopologyVersion = world.Map.TopologyVersion });
         world.Entities.Selectable.Set(id, new Selectable { IsSelectable = true, ContentType = StableId.FromKey(spawn.ContentKey), Kind = spawn.SelectableKind });
         world.Entities.Vision.Set(id, new Vision { RadiusBuildCells = spawn.VisionRadius, LastFogX = -1, LastFogY = -1 });
+        AddWorkerComponents(world, id, definition);
         world.GetQueue(id);
     }
 
@@ -153,6 +156,26 @@ public static class ScenarioFactory
         world.Entities.Movement.Set(id,CreateMovement(profile,position));world.Entities.Navigation.Set(id,new NavigationAgent{Footprint=definition.Footprint,Layer=profile.Layer,Target=position,PathTopologyVersion=world.Map.TopologyVersion});
         world.Entities.Selectable.Set(id,new Selectable{IsSelectable=true,ContentType=definition.Id,Kind=definition.SelectableKind});
         world.Entities.Vision.Set(id,new Vision{RadiusBuildCells=definition.VisionRadius,LastFogX=-1,LastFogY=-1});world.GetQueue(id);
+        AddWorkerComponents(world,id,definition);
+    }
+
+    private static void AddWorkerComponents(SimulationWorld world, EntityId id, PrototypeEntityDefinition definition)
+    {
+        if (definition.SelectableKind != SelectableKind.Worker) return;
+        if (definition.OreTicksPerUnit == 0 || definition.OreCarryCapacity == 0) throw new InvalidOperationException($"Worker content {definition.StableKey} has no Ore harvesting metadata.");
+        world.Entities.Worker.Set(id, new Worker { ResourceTarget = EntityId.None, ReceiverTarget = EntityId.None, TaskState = WorkerTaskState.Idle, TicksPerOre = definition.OreTicksPerUnit });
+        world.Entities.ResourceCarrier.Set(id, new ResourceCarrier { Type = ResourceType.Ore, Amount = 0, Capacity = definition.OreCarryCapacity });
+    }
+
+    private static void SpawnResourceReceiver(SimulationWorld world, InitialResourceReceiverSpawn spawn, PrototypeContentCatalog content)
+    {
+        if (!content.TryGetEntity(spawn.ContentKey, out PrototypeEntityDefinition definition) || definition.SelectableKind != SelectableKind.Building)
+            throw new InvalidOperationException($"Missing resource receiver content {spawn.ContentKey}.");
+        EntityId id = world.Entities.Create();
+        world.Entities.Ownership.Set(id, new Ownership { PlayerSlot = spawn.PlayerSlot });
+        world.Entities.Transform.Set(id, new SimTransform { Position = spawn.Position, Orientation = Angle16.Zero });
+        world.Entities.Selectable.Set(id, new Selectable { IsSelectable = false, ContentType = definition.Id, Kind = SelectableKind.Building });
+        world.Entities.ResourceReceiver.Set(id, new ResourceReceiver { AcceptedType = ResourceType.Ore, PendingHauledAmount = 0, IsHqEmergencyReceiver = true });
     }
 }
 }

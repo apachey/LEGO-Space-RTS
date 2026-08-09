@@ -45,7 +45,7 @@ public partial class DebugHud : CanvasLayer
         double now = Time.GetTicksMsec() / 1000.0;
         if (now >= _nextHashUpdate) { _cachedHash = _bridge.StateHashHex(); _nextHashUpdate = now + 0.25; }
         _builder.Clear();
-        _builder.Append("LEGO Space RTS — Godot M2 Technical Prototype\nTick: ").Append(_bridge.World.Tick.Value).Append("   Hash: ").Append(_cachedHash)
+        _builder.Append("LEGO Space RTS — M3 Economy Prototype\nTick: ").Append(_bridge.World.Tick.Value).Append("   Hash: ").Append(_cachedHash)
             .Append("   Content: ").Append(_bridge.GameplayContentHash.ToString("X16")).Append('\n')
             .Append("Sim: ").Append(_bridge.LastSimulationMs.ToString("F3")).Append(" ms   Path: ").Append(_bridge.LastPathfindingMs.ToString("F3")).Append(" ms   Entities: ").Append(_bridge.World.Entities.Alive.Count).Append('\n')
             .Append("Selected: ").Append(_selection.Selected.Count).Append(" / 128");
@@ -62,10 +62,13 @@ public partial class DebugHud : CanvasLayer
                 _builder.Append("\nFirst: footprint=").Append(n.Footprint).Append(" pathIndex=").Append(m.PathIndex).Append('/').Append(corridor?.Cells.Count ?? 0)
                     .Append(" local=").Append(m.CompressionTicks > 0 ? "compressed" : "clear").Append(" fog=").Append(fog).Append(" compressTicks=").Append(m.CompressionTicks);
             }
+            if (_bridge.World.Entities.Worker.TryGet(first, out Worker worker) && _bridge.World.Entities.ResourceCarrier.TryGet(first, out ResourceCarrier carrier))
+                _builder.Append("\nWorker: ").Append(worker.TaskState).Append(" cargo=").Append(carrier.Amount).Append('/').Append(carrier.Capacity)
+                    .Append(" resource=").Append(worker.ResourceTarget.Value).Append(" receiver=").Append(worker.ReceiverTarget.Value);
         }
         if (_selection.LastFilteredWorkerCount > 0)
             _builder.Append("\nBox-select priority filtered ").Append(_selection.LastFilteredWorkerCount).Append(" worker(s); Ctrl+drag includes workers.");
-        _builder.Append("\nRMB Move | Shift+RMB Queue (numbered markers) | S Stop | H Hold");
+        _builder.Append("\nRMB Move / Harvest Ore | Shift+RMB Queue | S Stop | H Hold");
         _builder.Append("\nM2 note: Hold and Stop both halt movement now; Hold differs once combat exists (fires without chasing).");
         _builder.Append("\nCtrl+0–9 assign | 0–9 recall | F9 topology-open | ,/. rotate | wheel zoom");
         _label.Text = _builder.ToString();

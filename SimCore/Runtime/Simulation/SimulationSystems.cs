@@ -31,6 +31,24 @@ public sealed class CommandExecutionSystem : ISimSystem
         }
         world.ScratchEntities.Sort(EntityIdComparer.Instance);
 
+        if (command.Type == SimCommandType.Harvest)
+        {
+            if (!world.Entities.ResourceNode.TryGet(command.TargetEntity, out ResourceNode node) || node.IsDepleted || !world.Entities.Transform.Has(command.TargetEntity)) return;
+            bool queued = (command.Modifiers & CommandModifiers.Queue) != 0;
+            for (int i = 0; i < world.ScratchEntities.Count; i++)
+            {
+                EntityId id = world.ScratchEntities[i];
+                if (!world.Entities.Worker.Has(id) || !world.Entities.ResourceCarrier.TryGet(id, out ResourceCarrier carrier) || carrier.IsFull || carrier.Type != node.Type) continue;
+                if (queued && IsBusy(world, id)) world.GetQueue(id).Enqueue(new UnitOrder(UnitOrderType.Harvest, FixVec2.Zero, targetEntity: command.TargetEntity));
+                else
+                {
+                    if (!queued) world.GetQueue(id).Clear();
+                    StartHarvest(world, id, command.TargetEntity);
+                }
+            }
+            return;
+        }
+
         if (command.Type == SimCommandType.Move)
         {
             FixVec2 centroid = FormationPlanner.ComputeCentroid(world, world.ScratchEntities);
@@ -51,13 +69,14 @@ public sealed class CommandExecutionSystem : ISimSystem
                     Columns=columns,SpacingFootprint=spacingClass,LastReflowTick=-1
                 } : default;
                 bool queued = (command.Modifiers & CommandModifiers.Queue) != 0;
-                if (queued && world.Entities.Navigation.Get(id).HasTarget)
+                if (queued && IsBusy(world, id))
                 {
                     world.GetQueue(id).Enqueue(new UnitOrder(UnitOrderType.Move, slotTarget, formation));
                 }
                 else
                 {
                     if (!queued) world.GetQueue(id).Clear();
+                    CancelHarvest(world, id);
                     SetMove(world, id, slotTarget, formation);
                 }
             }
@@ -70,11 +89,117 @@ public sealed class CommandExecutionSystem : ISimSystem
             ref NavigationAgent nav = ref world.Entities.Navigation.Get(id);
             ref Movement move = ref world.Entities.Movement.Get(id);
             world.GetQueue(id).Clear();
-            nav.HasTarget = false; nav.PathDirty = false; nav.Formation=default; move.PathIndex = 0;
-            world.Corridors.Remove(id.Value);
-            move.CurrentSpeed = Fix32.Zero; move.CurrentVelocity = FixVec2.Zero; move.DesiredMovement = FixVec2.Zero;
+            CancelHarvest(world, id);
+            StopMovement(world, id, ref nav, ref move);
             move.State = command.Type == SimCommandType.HoldPosition ? MovementState.Holding : MovementState.Idle;
         }
+    }
+
+    internal static bool IsBusy(SimulationWorld world, EntityId id)
+    {
+        if (world.Entities.Navigation.TryGet(id, out NavigationAgent nav) && nav.HasTarget) return true;
+        return world.Entities.Worker.TryGet(id, out Worker worker) && (worker.TaskState == WorkerTaskState.MovingToResource || worker.TaskState == WorkerTaskState.Mining || worker.TaskState == WorkerTaskState.ReturningToReceiver);
+    }
+
+    internal static bool StartHarvest(SimulationWorld world, EntityId id, EntityId resourceId)
+    {
+        if (!world.Entities.Worker.Has(id) || !world.Entities.ResourceCarrier.TryGet(id, out ResourceCarrier carrier) || carrier.IsFull ||
+            !world.Entities.ResourceNode.TryGet(resourceId, out ResourceNode node) || node.IsDepleted || carrier.Type != node.Type ||
+            !world.Entities.Transform.TryGet(id, out SimTransform workerTransform) || !world.Entities.Transform.TryGet(resourceId, out SimTransform resourceTransform)) return false;
+
+        ref Worker worker = ref world.Entities.Worker.Get(id);
+        worker.ResourceTarget = resourceId;
+        worker.ReceiverTarget = EntityId.None;
+        worker.ExtractionTicks = 0;
+        if (FixVec2.Distance(workerTransform.Position, resourceTransform.Position) <= HarvestSystem.InteractionRange)
+        {
+            ref NavigationAgent nearNav = ref world.Entities.Navigation.Get(id);
+            ref Movement nearMove = ref world.Entities.Movement.Get(id);
+            StopMovement(world, id, ref nearNav, ref nearMove);
+            worker.TaskState = WorkerTaskState.Mining;
+            return true;
+        }
+
+        FixVec2 direction = (workerTransform.Position - resourceTransform.Position).NormalizeSafe();
+        if (direction.Equals(FixVec2.Zero)) direction = (id.Value & 1) == 0 ? new FixVec2(Fix32.One, Fix32.Zero) : new FixVec2(Fix32.Zero, Fix32.One);
+        NavigationAgent nav = world.Entities.Navigation.Get(id);
+        FixVec2 approach = FormationPlanner.ResolvePassableSlot(world, resourceTransform.Position + direction * Fix32.FromRatio(3, 2), nav.Footprint);
+        worker.TaskState = WorkerTaskState.MovingToResource;
+        SetMove(world, id, approach);
+        return true;
+    }
+
+    internal static void CancelHarvest(SimulationWorld world, EntityId id)
+    {
+        if (!world.Entities.Worker.Has(id)) return;
+        ref Worker worker = ref world.Entities.Worker.Get(id);
+        worker.ResourceTarget = EntityId.None;
+        worker.ReceiverTarget = EntityId.None;
+        worker.ExtractionTicks = 0;
+        worker.TaskState = world.Entities.ResourceCarrier.TryGet(id, out ResourceCarrier carrier) && carrier.Amount > 0
+            ? WorkerTaskState.AwaitingDelivery : WorkerTaskState.Idle;
+    }
+
+    internal static bool StartDelivery(SimulationWorld world, EntityId id)
+    {
+        if (!world.Entities.Worker.Has(id) || !world.Entities.ResourceCarrier.TryGet(id, out ResourceCarrier carrier) || carrier.Amount == 0 ||
+            !world.Entities.Ownership.TryGet(id, out Ownership owner) || !world.Entities.Transform.TryGet(id, out SimTransform workerTransform)) return false;
+        EntityId receiverId = FindNearestReceiver(world, workerTransform.Position, owner.PlayerSlot, carrier.Type);
+        if (receiverId == EntityId.None || !world.Entities.Transform.TryGet(receiverId, out SimTransform receiverTransform)) return false;
+        ref Worker worker = ref world.Entities.Worker.Get(id);
+        worker.ReceiverTarget = receiverId;
+        worker.TaskState = WorkerTaskState.ReturningToReceiver;
+        worker.ExtractionTicks = 0;
+        FixVec2 direction = (workerTransform.Position - receiverTransform.Position).NormalizeSafe();
+        if (direction.Equals(FixVec2.Zero)) direction = new FixVec2(Fix32.One, Fix32.Zero);
+        NavigationAgent nav = world.Entities.Navigation.Get(id);
+        FixVec2 approach = FormationPlanner.ResolvePassableSlot(world, receiverTransform.Position + direction * Fix32.FromRatio(5, 2), nav.Footprint);
+        SetMove(world, id, approach);
+        return true;
+    }
+
+    private static EntityId FindNearestReceiver(SimulationWorld world, FixVec2 origin, byte playerSlot, ResourceType type)
+    {
+        EntityId best = EntityId.None; Fix32 bestDistance = Fix32.MaxValue;
+        IReadOnlyList<EntityId> alive = world.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId candidate = alive[i];
+            if (!world.Entities.ResourceReceiver.TryGet(candidate, out ResourceReceiver receiver) || receiver.AcceptedType != type ||
+                !world.Entities.Ownership.TryGet(candidate, out Ownership ownership) || ownership.PlayerSlot != playerSlot ||
+                !world.Entities.Transform.TryGet(candidate, out SimTransform transform)) continue;
+            Fix32 distance = FixVec2.Distance(origin, transform.Position);
+            if (best == EntityId.None || distance < bestDistance || (distance == bestDistance && candidate.Value < best.Value)) { best = candidate; bestDistance = distance; }
+        }
+        return best;
+    }
+
+    internal static bool TryStartNextOrder(SimulationWorld world, EntityId id)
+    {
+        UnitCommandQueue queue = world.GetQueue(id);
+        while (queue.TryPeek(out UnitOrder next))
+        {
+            queue.Dequeue();
+            if (next.Type == UnitOrderType.Harvest)
+            {
+                if (StartHarvest(world, id, next.TargetEntity)) return true;
+                continue;
+            }
+            if (next.Type == UnitOrderType.Move)
+            {
+                CancelHarvest(world, id);
+                SetMove(world, id, next.Position, next.Formation);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    internal static void StopMovement(SimulationWorld world, EntityId id, ref NavigationAgent nav, ref Movement move)
+    {
+        nav.HasTarget = false; nav.PathDirty = false; nav.Formation = default; move.PathIndex = 0;
+        world.Corridors.Remove(id.Value);
+        move.CurrentSpeed = Fix32.Zero; move.CurrentVelocity = FixVec2.Zero; move.DesiredMovement = FixVec2.Zero; move.State = MovementState.Idle;
     }
 
     internal static void SetMove(SimulationWorld world, EntityId id, FixVec2 target, FormationIntent formation = default)
@@ -83,6 +208,99 @@ public sealed class CommandExecutionSystem : ISimSystem
         ref Movement move = ref world.Entities.Movement.Get(id);
         nav.Target = target; nav.HasTarget = true; nav.PathDirty = true; nav.Formation=formation; move.PathIndex = 0; nav.RequestAge = 0;
         move.DesiredMovement = FixVec2.Zero; move.State = MovementState.WaitingForPath;
+    }
+}
+
+public sealed class HarvestSystem : ISimSystem
+{
+    public static readonly Fix32 InteractionRange = Fix32.FromInt(2);
+    public static readonly Fix32 ReceiverInteractionRange = Fix32.FromInt(3);
+
+    public void Step(SimulationWorld world)
+    {
+        IReadOnlyList<EntityId> alive = world.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (!world.Entities.Worker.Has(id) || !world.Entities.ResourceCarrier.Has(id) || !world.Entities.Transform.TryGet(id, out SimTransform workerTransform)) continue;
+            ref Worker worker = ref world.Entities.Worker.Get(id);
+            if (worker.TaskState == WorkerTaskState.ReturningToReceiver)
+            {
+                StepDelivery(world, id, workerTransform, ref worker);
+                continue;
+            }
+            if (worker.TaskState != WorkerTaskState.MovingToResource && worker.TaskState != WorkerTaskState.Mining) continue;
+
+            if (!world.Entities.ResourceNode.TryGet(worker.ResourceTarget, out ResourceNode resource) || resource.IsDepleted ||
+                !world.Entities.Transform.TryGet(worker.ResourceTarget, out SimTransform resourceTransform))
+            {
+                FinishMining(world, id);
+                continue;
+            }
+
+            Fix32 distance = FixVec2.Distance(workerTransform.Position, resourceTransform.Position);
+            if (worker.TaskState == WorkerTaskState.MovingToResource)
+            {
+                if (distance > InteractionRange) continue;
+                ref NavigationAgent nav = ref world.Entities.Navigation.Get(id);
+                ref Movement move = ref world.Entities.Movement.Get(id);
+                CommandExecutionSystem.StopMovement(world, id, ref nav, ref move);
+                worker.TaskState = WorkerTaskState.Mining;
+            }
+            else if (distance > InteractionRange)
+            {
+                CommandExecutionSystem.StartHarvest(world, id, worker.ResourceTarget);
+                continue;
+            }
+
+            worker.ExtractionTicks++;
+            if (worker.ExtractionTicks < worker.TicksPerOre) continue;
+            worker.ExtractionTicks = 0;
+            if (!world.TryExtractResource(worker.ResourceTarget, 1, out int extracted) || extracted == 0)
+            {
+                FinishMining(world, id);
+                continue;
+            }
+            ref ResourceCarrier carrier = ref world.Entities.ResourceCarrier.Get(id);
+            carrier.Amount = checked((byte)(carrier.Amount + extracted));
+            if (carrier.IsFull || world.Entities.ResourceNode.Get(worker.ResourceTarget).IsDepleted) FinishMining(world, id);
+        }
+    }
+
+    private static void FinishMining(SimulationWorld world, EntityId id)
+    {
+        if (world.Entities.ResourceCarrier.TryGet(id, out ResourceCarrier carrier) && carrier.Amount > 0 && CommandExecutionSystem.StartDelivery(world, id)) return;
+        FinishAssignment(world, id);
+    }
+
+    private static void StepDelivery(SimulationWorld world, EntityId id, SimTransform workerTransform, ref Worker worker)
+    {
+        if (!world.Entities.ResourceReceiver.Has(worker.ReceiverTarget) || !world.Entities.Transform.TryGet(worker.ReceiverTarget, out SimTransform receiverTransform))
+        {
+            worker.ReceiverTarget = EntityId.None;
+            worker.TaskState = WorkerTaskState.AwaitingDelivery;
+            return;
+        }
+        if (FixVec2.Distance(workerTransform.Position, receiverTransform.Position) > ReceiverInteractionRange) return;
+        ref NavigationAgent nav = ref world.Entities.Navigation.Get(id);
+        ref Movement move = ref world.Entities.Movement.Get(id);
+        CommandExecutionSystem.StopMovement(world, id, ref nav, ref move);
+        ref ResourceCarrier carrier = ref world.Entities.ResourceCarrier.Get(id);
+        ref ResourceReceiver receiver = ref world.Entities.ResourceReceiver.Get(worker.ReceiverTarget);
+        receiver.PendingHauledAmount = checked(receiver.PendingHauledAmount + carrier.Amount);
+        carrier.Amount = 0;
+        worker.ReceiverTarget = EntityId.None;
+        if (world.Entities.ResourceNode.TryGet(worker.ResourceTarget, out ResourceNode resource) && !resource.IsDepleted && CommandExecutionSystem.StartHarvest(world, id, worker.ResourceTarget)) return;
+        FinishAssignment(world, id);
+    }
+
+    private static void FinishAssignment(SimulationWorld world, EntityId id)
+    {
+        CommandExecutionSystem.CancelHarvest(world, id);
+        if (CommandExecutionSystem.TryStartNextOrder(world, id)) return;
+        ref NavigationAgent nav = ref world.Entities.Navigation.Get(id);
+        ref Movement move = ref world.Entities.Movement.Get(id);
+        CommandExecutionSystem.StopMovement(world, id, ref nav, ref move);
     }
 }
 
@@ -711,14 +929,13 @@ public sealed class TransformMovementSystem : ISimSystem
 
     private static void CompleteOrder(SimulationWorld world, EntityId id, ref NavigationAgent nav, ref Movement move)
     {
-        UnitCommandQueue queue = world.GetQueue(id);
-        if (queue.TryPeek(out UnitOrder next))
+        if (world.Entities.Worker.TryGet(id, out Worker worker) && (worker.TaskState == WorkerTaskState.MovingToResource || worker.TaskState == WorkerTaskState.ReturningToReceiver))
         {
-            queue.Dequeue(); CommandExecutionSystem.SetMove(world, id, next.Position, next.Formation);
+            CommandExecutionSystem.StopMovement(world, id, ref nav, ref move);
         }
-        else
+        else if (!CommandExecutionSystem.TryStartNextOrder(world, id))
         {
-            nav.HasTarget = false; nav.PathDirty = false; nav.Formation=default; move.PathIndex = 0; world.Corridors.Remove(id.Value); move.State = MovementState.Idle; move.CurrentSpeed = Fix32.Zero; move.CurrentVelocity = FixVec2.Zero; move.DesiredMovement = FixVec2.Zero;
+            CommandExecutionSystem.StopMovement(world, id, ref nav, ref move);
         }
     }
 }

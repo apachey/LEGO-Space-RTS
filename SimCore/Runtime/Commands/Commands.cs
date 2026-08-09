@@ -4,7 +4,7 @@ using System.IO;
 
 namespace LegoSpaceRTS.SimCore
 {
-public enum SimCommandType : ushort { Move = 1, Stop = 2, HoldPosition = 3, DebugOpenExcavatable = 1000 }
+public enum SimCommandType : ushort { Move = 1, Stop = 2, HoldPosition = 3, Harvest = 4, DebugOpenExcavatable = 1000 }
 [Flags] public enum CommandModifiers : byte { None = 0, Queue = 1 }
 
 public readonly struct CommandEnvelope
@@ -24,17 +24,18 @@ public readonly struct CommandEnvelope
     {
         ValidateType(type);
         if (entities == null) throw new ArgumentNullException(nameof(entities));
-        if (entities.Length > 128) throw new ArgumentOutOfRangeException(nameof(entities), "A command may address at most 128 entities in M2.");
-        if ((modifiers & ~CommandModifiers.Queue) != 0) throw new ArgumentOutOfRangeException(nameof(modifiers), "Unknown M2 command modifier bits.");
-        if (type != SimCommandType.Move && modifiers != CommandModifiers.None) throw new ArgumentException("Only Move may be queued in M2.", nameof(modifiers));
+        if (entities.Length > 128) throw new ArgumentOutOfRangeException(nameof(entities), "A command may address at most 128 entities.");
+        if ((modifiers & ~CommandModifiers.Queue) != 0) throw new ArgumentOutOfRangeException(nameof(modifiers), "Unknown command modifier bits.");
+        if (type != SimCommandType.Move && type != SimCommandType.Harvest && modifiers != CommandModifiers.None) throw new ArgumentException("Only Move and Harvest may be queued.", nameof(modifiers));
+        if (type == SimCommandType.Harvest && targetEntity == EntityId.None) throw new ArgumentException("Harvest requires a resource target.", nameof(targetEntity));
         ExecutionTick = executionTick; PlayerSlot = playerSlot; Sequence = sequence; Type = type; Entities = entities;
         TargetEntity = targetEntity; TargetPosition = targetPosition; Modifiers = modifiers; DebugFeatureId = debugFeatureId;
     }
 
     private static void ValidateType(SimCommandType type)
     {
-        if (type != SimCommandType.Move && type != SimCommandType.Stop && type != SimCommandType.HoldPosition && type != SimCommandType.DebugOpenExcavatable)
-            throw new ArgumentOutOfRangeException(nameof(type), type, "Unknown M2 command type.");
+        if (type != SimCommandType.Move && type != SimCommandType.Stop && type != SimCommandType.HoldPosition && type != SimCommandType.Harvest && type != SimCommandType.DebugOpenExcavatable)
+            throw new ArgumentOutOfRangeException(nameof(type), type, "Unknown command type.");
     }
 
     public void Write(BinaryWriter w)
@@ -56,13 +57,14 @@ public readonly struct CommandEnvelope
     }
 }
 
-public enum UnitOrderType : byte { Move = 1, Hold = 2 }
+public enum UnitOrderType : byte { Move = 1, Hold = 2, Harvest = 3 }
 public readonly struct UnitOrder
 {
     public readonly UnitOrderType Type;
     public readonly FixVec2 Position;
     public readonly FormationIntent Formation;
-    public UnitOrder(UnitOrderType type, FixVec2 position, FormationIntent formation = default) { Type = type; Position = position; Formation = formation; }
+    public readonly EntityId TargetEntity;
+    public UnitOrder(UnitOrderType type, FixVec2 position, FormationIntent formation = default, EntityId targetEntity = default) { Type = type; Position = position; Formation = formation; TargetEntity = targetEntity; }
 }
 
 public sealed class UnitCommandQueue
@@ -84,19 +86,24 @@ public sealed class UnitCommandQueue
         for (int i = 1; i < Count; i++) _orders[i - 1] = _orders[i];
         Count--;
     }
-    public void Serialize(BinaryWriter w)
+    public void Serialize(BinaryWriter w, bool includeTargetEntity = true)
     {
         w.Write(Count);
         for (int i = 0; i < Count; i++)
         {
             UnitOrder order=_orders[i];w.Write((byte)order.Type);w.Write(order.Position.X.Raw);w.Write(order.Position.Y.Raw);
             FormationIntentCodec.Write(w,order.Formation);
+            if(includeTargetEntity)w.Write(order.TargetEntity.Value);
         }
     }
-    public void Deserialize(BinaryReader r)
+    public void Deserialize(BinaryReader r, bool includeTargetEntity = true)
     {
         Clear();int count=r.ReadInt32();if(count<0||count>Capacity)throw new InvalidDataException("Invalid order queue.");
-        for(int i=0;i<count;i++)Enqueue(new UnitOrder((UnitOrderType)r.ReadByte(),new FixVec2(Fix32.FromRaw(r.ReadInt32()),Fix32.FromRaw(r.ReadInt32())),FormationIntentCodec.Read(r)));
+        for(int i=0;i<count;i++)
+        {
+            UnitOrderType type=(UnitOrderType)r.ReadByte();FixVec2 position=new(Fix32.FromRaw(r.ReadInt32()),Fix32.FromRaw(r.ReadInt32()));FormationIntent formation=FormationIntentCodec.Read(r);
+            EntityId target=includeTargetEntity?new EntityId(r.ReadUInt32()):EntityId.None;Enqueue(new UnitOrder(type,position,formation,target));
+        }
     }
 }
 

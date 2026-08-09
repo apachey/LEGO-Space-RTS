@@ -5,7 +5,7 @@ remain authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M3 — Economy & Base Building / resource-node foundation in progress.**
+**M3 — Economy & Base Building / deterministic Ore loop in progress.**
 
 The revised M2 automated gates pass and PR #8 is merged. Human movement-feel
 acceptance is also complete: the remaining settling jitter is minimal and some
@@ -63,8 +63,8 @@ narrow placement cases allowed by Phase 09B.
 - Meaningful-progress recovery is measured toward the active route waypoint
   over accumulated movement rather than reset by arbitrary per-tick motion, so
   arrival micro-movement cannot indefinitely suppress reflow/repath.
-- The current M3 T030 full verification is green across every
-  `BLOCKING_NOW` stage: builds, 73 NUnit tests, the explicit representative
+- The current M3 T031 full verification is green across every
+  `BLOCKING_NOW` stage: builds, 79 NUnit tests, the explicit representative
   24-mover gate, compiled content, HeadlessSim, Godot headless smoke, 100-repeat
   determinism, replay, snapshot continuation, regeneration and macOS export.
 - A launchable debug build was produced at
@@ -77,6 +77,17 @@ narrow placement cases allowed by Phase 09B.
   depletion stages plus exhaustion, participates in state hashing and survives
   snapshot/replay continuation. Snapshot v3 supports heterogeneous ECS entities
   while retaining read compatibility with M2 snapshot v2.
+- M3 T031 worker harvesting is implemented on the current task branch. A
+  player-facing right-click Harvest command affects eligible Crew only; each
+  Crew extracts exactly 1 Ore per 30 authoritative ticks and carries at most 8.
+- Full and partial loads are physically returned to the nearest owned starting
+  HQ receiver. Delivered material remains explicitly `PendingHauledAmount`, not
+  a spendable/global bank, preserving the canonical raw → hauled → processed
+  boundary for T032.
+- The prototype map now includes one visible starting HQ receiver per player.
+  Snapshot v4 / simulation protocol v2 preserve worker task progress, carrier
+  payloads, receiver targets, queued Harvest targets and hauled receiver state;
+  legacy snapshot v2/v3 readers remain supported.
 
 ## Current gates
 
@@ -101,8 +112,9 @@ narrow placement cases allowed by Phase 09B.
   / 20 navigation nodes, while the imported runtime/static validator currently
   use 10 navigation nodes / 5 build cells; resolve in a separate canon-alignment
   task before changing cluster geometry;
-- T031 worker harvesting, payload carrying and physical delivery have not begun;
-  T030 exposes only the deterministic resource-node/depletion contract they use.
+- T032 resource banking and conservation coverage have not begun. Hauled Ore is
+  deliberately staged at its receiver and is not yet spendable or shown in a
+  production economy HUD.
 
 ## Explicitly rejected / do not resurrect
 
@@ -115,6 +127,6 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Merge T030 resource nodes.
-2. T031 worker harvesting and Ore carry loop.
-3. T032 resource banking and conservation coverage.
+1. Merge the stacked T030 resource-node branch, then this T031 Ore-loop branch.
+2. T032 resource banking and conservation coverage.
+3. T033 construction placement after T032 acceptance.

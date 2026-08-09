@@ -63,7 +63,12 @@ public static class DevMapFactory
             new InitialResourceNodeSpawn("resource.ore.standard", FixVec2.FromInts(138, 71)),
             new InitialResourceNodeSpawn("resource.ore.standard", FixVec2.FromInts(138, 77))
         };
-        return new MapDefinition(map, starts, spawns, vision, resourceNodes);
+        InitialResourceReceiverSpawn[] receivers =
+        {
+            new InitialResourceReceiverSpawn(0, "building.rock_raiders.hq", FixVec2.FromInts(10, 74)),
+            new InitialResourceReceiverSpawn(1, "building.rock_raiders.hq", FixVec2.FromInts(150, 74))
+        };
+        return new MapDefinition(map, starts, spawns, vision, resourceNodes, receivers);
     }
 
     private static InitialEntitySpawn[] BuildPrototypeSpawns()

@@ -11,6 +11,7 @@ public enum ResourceDepositSize : byte { Small = 0, Standard = 1, Rich = 2, Deep
 public enum HarvestInteraction : byte { Mine = 0, Harvest = 1 }
 public enum ResourceDepletionProfile : byte { Finite = 0 }
 public enum ResourceVisualState : byte { Full = 0, Reduced = 1, Low = 2, Critical = 3, Exhausted = 4 }
+public enum WorkerTaskState : byte { Idle = 0, MovingToResource = 1, Mining = 2, ReturningToReceiver = 3, AwaitingDelivery = 4 }
 
 public struct Ownership
 {
@@ -106,5 +107,29 @@ public struct ResourceNode
             return ResourceVisualState.Full;
         }
     }
+}
+
+public struct Worker
+{
+    public EntityId ResourceTarget;
+    public EntityId ReceiverTarget;
+    public WorkerTaskState TaskState;
+    public ushort ExtractionTicks;
+    public ushort TicksPerOre;
+}
+
+public struct ResourceCarrier
+{
+    public ResourceType Type;
+    public byte Amount;
+    public byte Capacity;
+    public bool IsFull => Amount >= Capacity;
+}
+
+public struct ResourceReceiver
+{
+    public ResourceType AcceptedType;
+    public int PendingHauledAmount;
+    public bool IsHqEmergencyReceiver;
 }
 }

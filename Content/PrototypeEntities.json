@@ -1,7 +1,7 @@
 {
-  "schemaVersion": 3,
+  "schemaVersion": 4,
   "contentKind": "prototype_entities",
-  "policy": "M2 movement metadata plus the canonical M3 Ore resource-node baseline; no unapproved combat/economy fields are invented here.",
+  "policy": "M2 movement metadata plus canonical M3 Ore nodes, basic Crew harvesting and starting HQ receiving; no unapproved combat/economy values are invented here.",
   "movementProfiles": [
     {
       "stableId": "movement.prototype.crew",
@@ -92,6 +92,15 @@
       "turnRatePerTick": 410,
       "reversePolicy": "Reduced",
       "layer": "Ground"
+    },
+    {
+      "stableId": "movement.prototype.static",
+      "speedRatio": [0, 1],
+      "accelerationRatio": [0, 1],
+      "decelerationRatio": [0, 1],
+      "turnRatePerTick": 0,
+      "reversePolicy": "None",
+      "layer": "Ground"
     }
   ],
   "resourceNodeDefinitions": [
@@ -138,6 +147,16 @@
   ],
   "entities": [
     {
+      "stableId": "building.rock_raiders.hq",
+      "faction": "RockRaiders",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Huge",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "viewProfile": "view.placeholder.rock_raiders.hq"
+    },
+    {
       "stableId": "unit.rock_raiders.crew",
       "faction": "RockRaiders",
       "sourceClassification": "OFFICIAL_ADAPTED",
@@ -145,6 +164,10 @@
       "footprint": "Tiny",
       "selectableKind": "Worker",
       "visionRadius": 7,
+      "workerHarvest": {
+        "oreTicksPerUnit": 30,
+        "oreCarryCapacity": 8
+      },
       "viewProfile": "view.placeholder.rock_raiders.crew"
     },
     {

@@ -10,15 +10,16 @@ public readonly struct TickProfile
     public readonly long MovementIntentTimestampTicks;
     public readonly long LocalSeparationTimestampTicks;
     public readonly long TransformTimestampTicks;
+    public readonly long HarvestTimestampTicks;
     public readonly long SpatialTimestampTicks;
     public readonly long VisionTimestampTicks;
 
     public TickProfile(long totalTimestampTicks,long commandTimestampTicks,long navigationTimestampTicks,
-        long movementIntentTimestampTicks,long localSeparationTimestampTicks,long transformTimestampTicks,long spatialTimestampTicks,long visionTimestampTicks)
+        long movementIntentTimestampTicks,long localSeparationTimestampTicks,long transformTimestampTicks,long harvestTimestampTicks,long spatialTimestampTicks,long visionTimestampTicks)
     {
         TotalTimestampTicks=totalTimestampTicks;CommandTimestampTicks=commandTimestampTicks;NavigationTimestampTicks=navigationTimestampTicks;
         MovementIntentTimestampTicks=movementIntentTimestampTicks;LocalSeparationTimestampTicks=localSeparationTimestampTicks;
-        TransformTimestampTicks=transformTimestampTicks;SpatialTimestampTicks=spatialTimestampTicks;VisionTimestampTicks=visionTimestampTicks;
+        TransformTimestampTicks=transformTimestampTicks;HarvestTimestampTicks=harvestTimestampTicks;SpatialTimestampTicks=spatialTimestampTicks;VisionTimestampTicks=visionTimestampTicks;
     }
 
     public long PathfindingTimestampTicks => NavigationTimestampTicks;
@@ -39,6 +40,7 @@ public sealed class SimulationRunner
             new MovementIntentSystem(),
             new LocalSeparationSystem(),
             new TransformMovementSystem(),
+            new HarvestSystem(),
             new SpatialIndexSystem(),
             new VisionSystem()
         };
@@ -55,14 +57,14 @@ public sealed class SimulationRunner
     public TickProfile StepOneTickProfiled()
     {
         long totalStart=Stopwatch.GetTimestamp();
-        long c=0,n=0,m=0,l=0,t=0,s=0,v=0;
+        long c=0,n=0,m=0,l=0,t=0,h=0,s=0,v=0;
         World.Tick=World.Tick.Next();
         for(int i=0;i<_systems.Length;i++)
         {
             long start=Stopwatch.GetTimestamp();_systems[i].Step(World);long elapsed=Stopwatch.GetTimestamp()-start;
-            switch(i){case 0:c=elapsed;break;case 1:n=elapsed;break;case 2:m=elapsed;break;case 3:l=elapsed;break;case 4:t=elapsed;break;case 5:s=elapsed;break;case 6:v=elapsed;break;}
+            switch(i){case 0:c=elapsed;break;case 1:n=elapsed;break;case 2:m=elapsed;break;case 3:l=elapsed;break;case 4:t=elapsed;break;case 5:h=elapsed;break;case 6:s=elapsed;break;case 7:v=elapsed;break;}
         }
-        return new TickProfile(Stopwatch.GetTimestamp()-totalStart,c,n,m,l,t,s,v);
+        return new TickProfile(Stopwatch.GetTimestamp()-totalStart,c,n,m,l,t,h,s,v);
     }
 
     public void StepTicks(int count) { for (int i = 0; i < count; i++) StepOneTick(); }

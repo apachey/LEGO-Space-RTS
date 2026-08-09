@@ -16,6 +16,9 @@ public sealed class EntityStore
     public readonly ComponentStore<Selectable> Selectable = new();
     public readonly ComponentStore<Vision> Vision = new();
     public readonly ComponentStore<ResourceNode> ResourceNode = new();
+    public readonly ComponentStore<Worker> Worker = new();
+    public readonly ComponentStore<ResourceCarrier> ResourceCarrier = new();
+    public readonly ComponentStore<ResourceReceiver> ResourceReceiver = new();
 
     public IReadOnlyList<EntityId> Alive => _alive;
 
@@ -61,6 +64,9 @@ public sealed class EntityStore
         Selectable.Remove(id);
         Vision.Remove(id);
         ResourceNode.Remove(id);
+        Worker.Remove(id);
+        ResourceCarrier.Remove(id);
+        ResourceReceiver.Remove(id);
         return true;
     }
 
