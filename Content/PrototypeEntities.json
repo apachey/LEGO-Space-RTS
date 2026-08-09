@@ -1,7 +1,7 @@
 {
-  "schemaVersion": 4,
+  "schemaVersion": 5,
   "contentKind": "prototype_entities",
-  "policy": "M2 movement metadata plus canonical M3 Ore nodes, basic Crew harvesting and starting HQ receiving; no unapproved combat/economy values are invented here.",
+  "policy": "M2 movement metadata plus canonical M3 Ore flow and first-playable Rock Raiders building placement; no unapproved combat/economy values are invented here.",
   "movementProfiles": [
     {
       "stableId": "movement.prototype.crew",
@@ -145,6 +145,38 @@
       "viewProfile": "view.placeholder.resource.ore.deep_contested_seam"
     }
   ],
+  "buildingDefinitions": [
+    {
+      "stableId": "building.rock_raiders.hq",
+      "footprintMask": ["11111111", "11111111", "11111111", "11111111", "11111111", "11111111", "11111111", "11111111"],
+      "rotatable": false,
+      "cost": { "ore": 320, "energy": 40 },
+      "buildTicks": 1200,
+      "productionExit": { "width": 2, "depth": 2, "largestFootprint": "Tiny" }
+    },
+    {
+      "stableId": "building.rock_raiders.ore_processing_plant",
+      "footprintMask": ["111111", "111111", "111111", "111111", "111111", "111111"],
+      "rotatable": false,
+      "cost": { "ore": 140, "energy": 15 },
+      "buildTicks": 600
+    },
+    {
+      "stableId": "building.rock_raiders.power_station",
+      "footprintMask": ["11111", "11111", "11111", "11111", "11111"],
+      "rotatable": false,
+      "cost": { "ore": 150, "energy": 20 },
+      "buildTicks": 700
+    },
+    {
+      "stableId": "building.rock_raiders.vehicle_service_bay",
+      "footprintMask": ["11111111", "11111111", "11111111", "11111111", "11111111", "11111111"],
+      "rotatable": true,
+      "cost": { "ore": 160, "energy": 20 },
+      "buildTicks": 800,
+      "productionExit": { "width": 3, "depth": 3, "largestFootprint": "Medium" }
+    }
+  ],
   "entities": [
     {
       "stableId": "building.rock_raiders.hq",
@@ -155,6 +187,36 @@
       "selectableKind": "Building",
       "visionRadius": 0,
       "viewProfile": "view.placeholder.rock_raiders.hq"
+    },
+    {
+      "stableId": "building.rock_raiders.ore_processing_plant",
+      "faction": "RockRaiders",
+      "sourceClassification": "COMPOSITE_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Large",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "viewProfile": "view.placeholder.rock_raiders.ore_processing_plant"
+    },
+    {
+      "stableId": "building.rock_raiders.power_station",
+      "faction": "RockRaiders",
+      "sourceClassification": "COMPOSITE_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Large",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "viewProfile": "view.placeholder.rock_raiders.power_station"
+    },
+    {
+      "stableId": "building.rock_raiders.vehicle_service_bay",
+      "faction": "RockRaiders",
+      "sourceClassification": "COMPOSITE_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Huge",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "viewProfile": "view.placeholder.rock_raiders.vehicle_service_bay"
     },
     {
       "stableId": "unit.rock_raiders.crew",

@@ -7,8 +7,8 @@ namespace LegoSpaceRTS.SimCore
 public static class SnapshotSerializer
 {
     public const uint Magic = 0x53525453; // STRS
-    public const ushort FormatVersion = 5;
-    public const ushort SimulationProtocolVersion = 3;
+    public const ushort FormatVersion = 6;
+    public const ushort SimulationProtocolVersion = 4;
 
     [Flags]
     private enum EntityComponents : ushort
@@ -27,7 +27,9 @@ public static class SnapshotSerializer
         ResourceCarrier = 1 << 10,
         ResourceReceiver = 1 << 11,
         ResourceBank = 1 << 12,
-        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver | ResourceBank
+        Building = 1 << 13,
+        ConstructionSite = 1 << 14,
+        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver | ResourceBank | Building | ConstructionSite
     }
 
     public static byte[] Serialize(SimulationWorld world)
@@ -43,24 +45,25 @@ public static class SnapshotSerializer
         w.Flush(); return ms.ToArray();
     }
 
-    public static SimulationWorld Deserialize(byte[] bytes)
+    public static SimulationWorld Deserialize(byte[] bytes, PrototypeContentCatalog? content = null)
     {
         using MemoryStream ms = new(bytes, false); using BinaryReader r = new(ms);
         if (r.ReadUInt32() != Magic) throw new InvalidDataException("Snapshot magic mismatch.");
         ushort format = r.ReadUInt16(), protocol = r.ReadUInt16();
-        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2);
+        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3);
         if (!supportedLegacy && (format != FormatVersion || protocol != SimulationProtocolVersion)) throw new InvalidDataException($"Unsupported snapshot {format}/{protocol}.");
         SimTick tick = new(r.ReadInt32()); MapGrid map = MapGrid.Deserialize(r); uint nextEntity = r.ReadUInt32();
         EntityStore entities = new(); int entityCount = r.ReadInt32(); if (entityCount < 0 || entityCount > 10000) throw new InvalidDataException("Invalid entity count.");
-        SimulationWorld temp = new(map, entities, new FogState(2), tick);
+        SimulationWorld temp = new(map, entities, new FogState(2), tick, content);
         for (int i = 0; i < entityCount; i++)
         {
             if (format == 2) ReadEntityV2(r, temp);
             else ReadEntity(r, temp, format);
         }
         if (format < 5) AddLegacyResourceBanks(entities);
+        if (format < 6) AddLegacyBuildings(temp);
         entities.RestoreNextEntityValue(nextEntity);
-        temp.Commands.Deserialize(r);
+        temp.Commands.Deserialize(r, includeBuildFields: format >= 6);
         temp.Fog = FogState.Deserialize(r);
         if (ms.Position != ms.Length) throw new InvalidDataException("Trailing snapshot bytes.");
         temp.Spatial.Rebuild(temp.Entities);
@@ -82,6 +85,8 @@ public static class SnapshotSerializer
         if (world.Entities.ResourceCarrier.Has(id)) components |= EntityComponents.ResourceCarrier;
         if (world.Entities.ResourceReceiver.Has(id)) components |= EntityComponents.ResourceReceiver;
         if (world.Entities.ResourceBank.Has(id)) components |= EntityComponents.ResourceBank;
+        if (world.Entities.Building.Has(id)) components |= EntityComponents.Building;
+        if (world.Entities.ConstructionSite.Has(id)) components |= EntityComponents.ConstructionSite;
         if (world.TryGetQueue(id, out _)) components |= EntityComponents.CommandQueue;
         if (world.Corridors.ContainsKey(id.Value)) components |= EntityComponents.RouteCorridor;
         w.Write((ushort)components);
@@ -103,6 +108,8 @@ public static class SnapshotSerializer
         if ((components & EntityComponents.ResourceCarrier) != 0) WriteResourceCarrier(w, world.Entities.ResourceCarrier.Get(id));
         if ((components & EntityComponents.ResourceReceiver) != 0) WriteResourceReceiver(w, world.Entities.ResourceReceiver.Get(id));
         if ((components & EntityComponents.ResourceBank) != 0) WriteResourceBank(w, world.Entities.ResourceBank.Get(id));
+        if ((components & EntityComponents.Building) != 0) WriteBuilding(w, world.Entities.Building.Get(id));
+        if ((components & EntityComponents.ConstructionSite) != 0) WriteConstructionSite(w, world.Entities.ConstructionSite.Get(id));
         if ((components & EntityComponents.CommandQueue) != 0) world.GetQueue(id).Serialize(w, includeTargetEntity: true);
         if ((components & EntityComponents.RouteCorridor) != 0) WriteCorridor(w, world.Corridors[id.Value]);
     }
@@ -150,6 +157,18 @@ public static class SnapshotSerializer
         w.Write((byte)bank.Type); w.Write(bank.ProcessedAmount);
     }
 
+    private static void WriteBuilding(BinaryWriter w, Building building)
+    {
+        w.Write(building.Type.Value); w.Write(building.AnchorX); w.Write(building.AnchorY); w.Write(building.Orientation);
+        w.Write(building.FootprintWidth); w.Write(building.FootprintHeight); w.Write((byte)building.State);
+    }
+
+    private static void WriteConstructionSite(BinaryWriter w, ConstructionSite site)
+    {
+        w.Write(site.AssignedBuilder.Value); w.Write(site.FundingBank.Value); w.Write(site.ReservedOre); w.Write(site.RequiredEnergy);
+        w.Write(site.RequiredTicks); w.Write(site.ProgressTicks);
+    }
+
     private static void WriteCorridor(BinaryWriter w, RouteCorridor path)
     {
         w.Write(path.TopologyVersion); w.Write(path.Cells.Count);
@@ -172,6 +191,8 @@ public static class SnapshotSerializer
         if ((components & EntityComponents.ResourceCarrier) != 0) world.Entities.ResourceCarrier.Set(id, ReadResourceCarrier(r));
         if ((components & EntityComponents.ResourceReceiver) != 0) world.Entities.ResourceReceiver.Set(id, ReadResourceReceiver(r));
         if ((components & EntityComponents.ResourceBank) != 0) world.Entities.ResourceBank.Set(id, ReadResourceBank(r));
+        if ((components & EntityComponents.Building) != 0) world.Entities.Building.Set(id, ReadBuilding(r));
+        if ((components & EntityComponents.ConstructionSite) != 0) world.Entities.ConstructionSite.Set(id, ReadConstructionSite(r));
         if ((components & EntityComponents.CommandQueue) != 0) world.GetQueue(id).Deserialize(r, includeTargetEntity: format >= 4);
         if ((components & EntityComponents.RouteCorridor) != 0) world.Corridors[id.Value] = ReadCorridor(r);
     }
@@ -209,6 +230,12 @@ public static class SnapshotSerializer
     private static ResourceBank ReadResourceBank(BinaryReader r)
         => new() { Type = (ResourceType)r.ReadByte(), ProcessedAmount = r.ReadInt32() };
 
+    private static Building ReadBuilding(BinaryReader r)
+        => new() { Type = new ContentId(r.ReadUInt32()), AnchorX = r.ReadInt16(), AnchorY = r.ReadInt16(), Orientation = r.ReadByte(), FootprintWidth = r.ReadByte(), FootprintHeight = r.ReadByte(), State = (BuildingState)r.ReadByte() };
+
+    private static ConstructionSite ReadConstructionSite(BinaryReader r)
+        => new() { AssignedBuilder = new EntityId(r.ReadUInt32()), FundingBank = new EntityId(r.ReadUInt32()), ReservedOre = r.ReadInt32(), RequiredEnergy = r.ReadInt32(), RequiredTicks = r.ReadUInt16(), ProgressTicks = r.ReadUInt16() };
+
     private static void AddLegacyResourceBanks(EntityStore entities)
     {
         IReadOnlyList<EntityId> alive = entities.Alive;
@@ -217,6 +244,26 @@ public static class SnapshotSerializer
             EntityId id = alive[i];
             if (!entities.ResourceReceiver.TryGet(id, out ResourceReceiver receiver)) continue;
             entities.ResourceBank.Set(id, new ResourceBank { Type = receiver.AcceptedType, ProcessedAmount = 0 });
+        }
+    }
+
+    private static void AddLegacyBuildings(SimulationWorld world)
+    {
+        IReadOnlyList<EntityId> alive = world.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (!world.Entities.ResourceReceiver.Has(id) || !world.Entities.Selectable.TryGet(id, out Selectable selectable) ||
+                !world.Entities.Transform.TryGet(id, out SimTransform transform) || !world.Content.TryGetBuilding(selectable.ContentType, out BuildingDefinition definition)) continue;
+            byte width = definition.RotatedWidth(0), height = definition.RotatedHeight(0);
+            Building building = new()
+            {
+                Type = selectable.ContentType, AnchorX = checked((short)(transform.Position.X.FloorToInt() - width / 2)),
+                AnchorY = checked((short)(transform.Position.Y.FloorToInt() - height / 2)), Orientation = 0,
+                FootprintWidth = width, FootprintHeight = height, State = BuildingState.Completed
+            };
+            world.Entities.Building.Set(id, building);
+            world.SetConstructionOccupied(building, true);
         }
     }
 

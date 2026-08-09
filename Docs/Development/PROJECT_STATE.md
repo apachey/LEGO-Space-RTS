@@ -63,8 +63,8 @@ narrow placement cases allowed by Phase 09B.
 - Meaningful-progress recovery is measured toward the active route waypoint
   over accumulated movement rather than reset by arbitrary per-tick motion, so
   arrival micro-movement cannot indefinitely suppress reflow/repath.
-- The current M3 T032 full verification is green across every
-  `BLOCKING_NOW` stage: builds, 83 NUnit tests, the explicit representative
+- The current M3 T033 full verification is green across every
+  `BLOCKING_NOW` stage: builds, 91 NUnit tests, the explicit representative
   24-mover gate, compiled content, HeadlessSim, Godot headless smoke, 100-repeat
   determinism, replay, snapshot continuation, regeneration and macOS export.
 - A launchable debug build was produced at
@@ -104,6 +104,22 @@ narrow placement cases allowed by Phase 09B.
   director confirmed that Ore is successfully harvested and reaches the
   authoritative processed reserve. No blocking economy-loop defect was
   reported.
+- M3 T033 construction placement is implemented on the current task branch.
+  Build Mode previews grid-snapped ghosts for the four first-playable Rock
+  Raider structures and reports server-equivalent invalid-placement reasons.
+- Each standard player start now receives the canonical 500 processed Ore,
+  making the approved early buildings immediately placeable. The scheduled
+  T037 Energy implementation will add the separate canonical starting Energy.
+- Authoritative placement validates an owned Crew builder, prerequisite HQ,
+  compiled rotated footprint mask, terrain/elevation, entity and resource-node
+  occupancy, authored production exit and a single local Ore reserve. A valid
+  order reserves its full Ore cost and creates the Construction Site with the
+  final entity identity and final blocking footprint.
+- Unstarted cancellation returns the full Ore reservation and releases the
+  topology footprint. Snapshot v6 / simulation protocol v4 and replay v2
+  preserve placed sites and pending Build commands. Prototype content v5 adds
+  the canonical 8x8 HQ, 6x6 Processing Plant, 5x5 Power Station and rotatable
+  8x6 Vehicle Service Bay definitions.
 
 ## Current gates
 
@@ -128,9 +144,11 @@ narrow placement cases allowed by Phase 09B.
   / 20 navigation nodes, while the imported runtime/static validator currently
   use 10 navigation nodes / 5 build cells; resolve in a separate canon-alignment
   task before changing cluster geometry;
-- Processed Ore is not yet consumed or reserved by construction; T033 owns that
-  boundary together with construction placement. The full production economy
-  HUD remains a later M3 task; T032 exposes totals in the development HUD only.
+- Construction Sites do not progress yet; T034 owns Crew travel, physical
+  construction start, progressive commitment and completion. Canonical Energy
+  costs are compiled and retained on sites, but authoritative Energy-domain
+  availability begins with T037 as scheduled. The full production economy HUD
+  remains a later M3 task.
 
 ## Explicitly rejected / do not resurrect
 
@@ -144,5 +162,5 @@ narrow placement cases allowed by Phase 09B.
 ## Next approved development sequence
 
 1. Merge the accepted stacked T030-T032 M3 economy branches.
-2. Begin T033 construction placement.
-3. T034 construction jobs after T033 acceptance.
+2. Accept and merge the stacked T033 construction-placement branch.
+3. Begin T034 construction jobs after T033 acceptance.

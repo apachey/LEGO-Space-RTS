@@ -12,7 +12,7 @@ public static class ScenarioFactory
     {
         if (definition == null) throw new ArgumentNullException(nameof(definition));
         if (content == null) throw new ArgumentNullException(nameof(content));
-        SimulationWorld world = new(definition.Grid, 2);
+        SimulationWorld world = new(definition.Grid, 2, content);
         int player0Remaining = count;
         int player1Remaining = Math.Min(8, count);
         for (int i = 0; i < definition.InitialEntities.Length; i++)
@@ -176,7 +176,21 @@ public static class ScenarioFactory
         world.Entities.Transform.Set(id, new SimTransform { Position = spawn.Position, Orientation = Angle16.Zero });
         world.Entities.Selectable.Set(id, new Selectable { IsSelectable = false, ContentType = definition.Id, Kind = SelectableKind.Building });
         world.Entities.ResourceReceiver.Set(id, new ResourceReceiver { AcceptedType = ResourceType.Ore, PendingHauledAmount = 0, IsHqEmergencyReceiver = true });
-        world.Entities.ResourceBank.Set(id, new ResourceBank { Type = ResourceType.Ore, ProcessedAmount = 0 });
+        world.Entities.ResourceBank.Set(id, new ResourceBank { Type = ResourceType.Ore, ProcessedAmount = 500 });
+        if (!content.TryGetBuilding(definition.Id, out BuildingDefinition buildingDefinition)) throw new InvalidOperationException($"Missing building definition {spawn.ContentKey}.");
+        byte width = buildingDefinition.RotatedWidth(0), height = buildingDefinition.RotatedHeight(0);
+        Building building = new()
+        {
+            Type = definition.Id,
+            AnchorX = checked((short)(spawn.Position.X.FloorToInt() - width / 2)),
+            AnchorY = checked((short)(spawn.Position.Y.FloorToInt() - height / 2)),
+            Orientation = 0,
+            FootprintWidth = width,
+            FootprintHeight = height,
+            State = BuildingState.Completed
+        };
+        world.Entities.Building.Set(id, building);
+        world.SetConstructionOccupied(building, true);
     }
 }
 }

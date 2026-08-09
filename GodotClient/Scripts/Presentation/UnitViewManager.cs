@@ -17,6 +17,7 @@ public partial class UnitViewManager : Node3D
     private readonly StandardMaterial3D _hover = MakeMaterial(new Color(0.55f, 0.95f, 1f));
     private readonly StandardMaterial3D _resource = MakeMaterial(new Color(0.72f, 0.48f, 0.20f));
     private readonly StandardMaterial3D _resourceExhausted = MakeMaterial(new Color(0.28f, 0.25f, 0.22f));
+    private readonly StandardMaterial3D _construction = MakeConstructionMaterial();
 
     public void Configure(GodotSimBridge bridge, SelectionController selection, ControlGroups groups)
     {
@@ -46,6 +47,7 @@ public partial class UnitViewManager : Node3D
                 view.MaterialOverride = c.ResourceState == ResourceVisualState.Exhausted ? _resourceExhausted : _resource;
                 view.Scale = ResourceScale(c.Footprint, c.ResourceState);
             }
+            else if (c.SelectableKind == SelectableKind.Building && c.IsConstructionSite) view.MaterialOverride = _construction;
             else view.MaterialOverride = hovered && !selected ? _hover : (c.Owner == 0 ? _friendly : _other);
             Node3D? ring = view.GetNodeOrNull<Node3D>("SelectionRing");
             if (ring is not null) ring.Visible = selected || hovered;
@@ -80,7 +82,14 @@ public partial class UnitViewManager : Node3D
         float ringRadiusWorld;
         float labelHeightWorld;
         PrimitiveMesh mesh;
-        if (entity.SelectableKind == SelectableKind.ResourceNode)
+        if (entity.SelectableKind == SelectableKind.Building && entity.BuildingWidth > 0 && entity.BuildingHeight > 0)
+        {
+            mesh = new BoxMesh { Size = new Vector3(1f, 1f, 1f) };
+            visualScale = new Vector3(entity.BuildingWidth * GodotConversions.WorldUnitsPerBuildCell, entity.IsConstructionSite ? 0.45f : 2.4f, entity.BuildingHeight * GodotConversions.WorldUnitsPerBuildCell);
+            ringRadiusWorld = Mathf.Max(entity.BuildingWidth, entity.BuildingHeight) * GodotConversions.WorldUnitsPerBuildCell * 0.55f;
+            labelHeightWorld = entity.IsConstructionSite ? 0.8f : 2.8f;
+        }
+        else if (entity.SelectableKind == SelectableKind.ResourceNode)
         {
             mesh = new SphereMesh { Radius = 0.65f, Height = 1.1f, RadialSegments = 12, Rings = 6 };
             visualScale = ResourceScale(entity.Footprint, entity.ResourceState);
@@ -190,4 +199,10 @@ public partial class UnitViewManager : Node3D
     }
 
     private static StandardMaterial3D MakeMaterial(Color color) => new() { AlbedoColor = color, Roughness = 0.45f };
+    private static StandardMaterial3D MakeConstructionMaterial() => new()
+    {
+        AlbedoColor = new Color(1.0f, 0.72f, 0.12f, 0.78f),
+        Roughness = 0.55f,
+        Transparency = BaseMaterial3D.TransparencyEnum.Alpha
+    };
 }

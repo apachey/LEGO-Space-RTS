@@ -29,5 +29,21 @@ public sealed class PrototypeContentTests
         Assert.That(restored.ResourceNodes[0].Capacity, Is.EqualTo(900));
         Assert.That(restored.ResourceNodes[0].CriticalThresholdBasisPoints, Is.EqualTo(2500));
     }
+
+    [Test]
+    public void BuildingDefinitionsRoundTripExplicitFootprintsCostsAndExits()
+    {
+        BuildingDefinition sourceBuilding = new("building.test", 3, 2, 0b11_1111UL, true, 140, 15, 600, 2, 1, FootprintClass.Medium);
+        PrototypeContentCatalog source = new(System.Array.Empty<PrototypeMovementProfile>(), System.Array.Empty<PrototypeEntityDefinition>(), buildings: new[] { sourceBuilding });
+        PrototypeContentCatalog restored = PrototypeContentCodec.Read(PrototypeContentCodec.Write(source));
+        BuildingDefinition building = restored.Buildings[0];
+        Assert.That(building.Id, Is.EqualTo(StableId.FromKey("building.test")));
+        Assert.That(building.FootprintWidth, Is.EqualTo(3));
+        Assert.That(building.FootprintHeight, Is.EqualTo(2));
+        Assert.That(building.RotatedWidth(1), Is.EqualTo(2));
+        Assert.That(building.OreCost, Is.EqualTo(140));
+        Assert.That(building.EnergyCost, Is.EqualTo(15));
+        Assert.That(building.ProductionExitFootprint, Is.EqualTo(FootprintClass.Medium));
+    }
 }
 }

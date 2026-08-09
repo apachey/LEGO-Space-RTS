@@ -12,6 +12,7 @@ public enum HarvestInteraction : byte { Mine = 0, Harvest = 1 }
 public enum ResourceDepletionProfile : byte { Finite = 0 }
 public enum ResourceVisualState : byte { Full = 0, Reduced = 1, Low = 2, Critical = 3, Exhausted = 4 }
 public enum WorkerTaskState : byte { Idle = 0, MovingToResource = 1, Mining = 2, ReturningToReceiver = 3, AwaitingDelivery = 4 }
+public enum BuildingState : byte { ConstructionSite = 0, Completed = 1 }
 
 public struct Ownership
 {
@@ -137,5 +138,26 @@ public struct ResourceBank
 {
     public ResourceType Type;
     public int ProcessedAmount;
+}
+
+public struct Building
+{
+    public ContentId Type;
+    public short AnchorX;
+    public short AnchorY;
+    public byte Orientation;
+    public byte FootprintWidth;
+    public byte FootprintHeight;
+    public BuildingState State;
+}
+
+public struct ConstructionSite
+{
+    public EntityId AssignedBuilder;
+    public EntityId FundingBank;
+    public int ReservedOre;
+    public int RequiredEnergy;
+    public ushort RequiredTicks;
+    public ushort ProgressTicks;
 }
 }

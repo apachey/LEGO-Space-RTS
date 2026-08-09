@@ -27,12 +27,12 @@ public sealed class M3ResourceBankingTests
         runner.StepOneTick();
 
         Assert.That(world.Entities.ResourceReceiver.Get(receiverId).PendingHauledAmount, Is.EqualTo(3));
-        Assert.That(world.Entities.ResourceBank.Get(receiverId).ProcessedAmount, Is.Zero);
+        Assert.That(world.Entities.ResourceBank.Get(receiverId).ProcessedAmount, Is.EqualTo(500));
 
         runner.StepOneTick();
 
         Assert.That(world.Entities.ResourceReceiver.Get(receiverId).PendingHauledAmount, Is.Zero);
-        Assert.That(world.Entities.ResourceBank.Get(receiverId).ProcessedAmount, Is.EqualTo(3));
+        Assert.That(world.Entities.ResourceBank.Get(receiverId).ProcessedAmount, Is.EqualTo(503));
     }
 
     [Test]
@@ -50,9 +50,9 @@ public sealed class M3ResourceBankingTests
         Assert.That(after.Total, Is.EqualTo(before.Total));
         Assert.That(after.Hauled, Is.EqualTo(before.Hauled - 7));
         Assert.That(after.Processed, Is.EqualTo(before.Processed + 7));
-        Assert.That(world.GetProcessedResourceTotal(0, ResourceType.Ore), Is.EqualTo(7));
-        Assert.That(world.GetProcessedResourceTotal(1, ResourceType.Ore), Is.Zero);
-        Assert.That(world.Entities.ResourceBank.Get(player1).ProcessedAmount, Is.Zero);
+        Assert.That(world.GetProcessedResourceTotal(0, ResourceType.Ore), Is.EqualTo(507));
+        Assert.That(world.GetProcessedResourceTotal(1, ResourceType.Ore), Is.EqualTo(500));
+        Assert.That(world.Entities.ResourceBank.Get(player1).ProcessedAmount, Is.EqualTo(500));
     }
 
     [Test]
@@ -81,7 +81,7 @@ public sealed class M3ResourceBankingTests
         Assert.That(sawCarried, Is.True);
         Assert.That(sawHauled, Is.True);
         Assert.That(sawProcessed, Is.True);
-        Assert.That(world.GetProcessedResourceTotal(0, ResourceType.Ore), Is.EqualTo(3));
+        Assert.That(world.GetProcessedResourceTotal(0, ResourceType.Ore), Is.EqualTo(503));
     }
 
     [Test]

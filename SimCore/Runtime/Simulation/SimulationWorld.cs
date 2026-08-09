@@ -6,6 +6,7 @@ public sealed class SimulationWorld
 {
     public SimTick Tick { get; internal set; }
     public EntityStore Entities { get; }
+    public PrototypeContentCatalog Content { get; }
     public MapGrid Map { get; private set; }
     public HierarchicalPathfinder Pathfinder { get; private set; }
     public SpatialGrid Spatial { get; } = new();
@@ -26,20 +27,22 @@ public sealed class SimulationWorld
     internal readonly Dictionary<uint, FixVec2> DiagnosticLastDelta = new();
     internal readonly Dictionary<uint, int> DiagnosticLastReversalTick = new();
 
-    public SimulationWorld(MapGrid map, int playerCount = 2)
+    public SimulationWorld(MapGrid map, int playerCount = 2, PrototypeContentCatalog? content = null)
     {
         Map = map;
         Pathfinder = new HierarchicalPathfinder(map);
         Entities = new EntityStore();
+        Content = content ?? PrototypeContentFactory.CreateM2Catalog();
         Fog = new FogState(playerCount);
         Tick = new SimTick(0);
     }
 
-    internal SimulationWorld(MapGrid map, EntityStore entities, FogState fog, SimTick tick)
+    internal SimulationWorld(MapGrid map, EntityStore entities, FogState fog, SimTick tick, PrototypeContentCatalog? content = null)
     {
         Map = map;
         Pathfinder = new HierarchicalPathfinder(map);
         Entities = entities;
+        Content = content ?? PrototypeContentFactory.CreateM2Catalog();
         Fog = fog;
         Tick = tick;
     }
@@ -100,6 +103,18 @@ public sealed class SimulationWorld
     public void OpenExcavatable(ushort featureId)
     {
         IntRect rect = Map.OpenFeature(featureId);
+        ApplyTopologyChange(rect);
+    }
+
+    internal void SetConstructionOccupied(Building building, bool occupied)
+    {
+        if (!Content.TryGetBuilding(building.Type, out BuildingDefinition definition)) throw new System.InvalidOperationException($"Unknown building definition {building.Type}.");
+        IntRect rect = Map.SetConstructionOccupied(building.AnchorX, building.AnchorY, definition, building.Orientation, occupied);
+        ApplyTopologyChange(rect);
+    }
+
+    private void ApplyTopologyChange(IntRect rect)
+    {
         Pathfinder.RebuildAffected(rect);
         IReadOnlyList<EntityId> alive = Entities.Alive;
         for (int i = 0; i < alive.Count; i++)

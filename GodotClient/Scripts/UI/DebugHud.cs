@@ -10,15 +10,16 @@ public partial class DebugHud : CanvasLayer
     private GodotSimBridge? _bridge;
     private SelectionController? _selection;
     private DebugRenderer? _debug;
+    private RtsInputController? _input;
     private FogPresenter? _fog;
     private Label? _label;
     private double _nextHashUpdate;
     private string _cachedHash = "-";
     private readonly StringBuilder _builder = new(1024);
 
-    public void Configure(GodotSimBridge bridge, SelectionController selection, DebugRenderer debug, FogPresenter fog)
+    public void Configure(GodotSimBridge bridge, SelectionController selection, RtsInputController input, DebugRenderer debug, FogPresenter fog)
     {
-        _bridge = bridge; _selection = selection; _debug = debug; _fog = fog;
+        _bridge = bridge; _selection = selection; _input = input; _debug = debug; _fog = fog;
         Layer = 10;
         PanelContainer panel = new() { Name = "DebugPanel", Position = new Vector2(12, 12), CustomMinimumSize = new Vector2(760, 0) };
         VBoxContainer box = new(); panel.AddChild(box);
@@ -70,7 +71,9 @@ public partial class DebugHud : CanvasLayer
         }
         if (_selection.LastFilteredWorkerCount > 0)
             _builder.Append("\nBox-select priority filtered ").Append(_selection.LastFilteredWorkerCount).Append(" worker(s); Ctrl+drag includes workers.");
+        if (_input?.BuildModeActive == true) _builder.Append("\nBUILD: ").Append(_input.BuildStatus);
         _builder.Append("\nRMB Move / Harvest Ore | Shift+RMB Queue | S Stop | H Hold");
+        _builder.Append("\nB Build Mode | Tab building | R rotate | LMB place | Esc/RMB cancel | Ctrl+Z refund latest unstarted site");
         _builder.Append("\nM2 note: Hold and Stop both halt movement now; Hold differs once combat exists (fires without chasing).");
         _builder.Append("\nCtrl+0–9 assign | 0–9 recall | F9 topology-open | ,/. rotate | wheel zoom");
         _label.Text = _builder.ToString();

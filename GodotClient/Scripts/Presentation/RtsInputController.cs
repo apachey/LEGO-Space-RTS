@@ -12,9 +12,24 @@ public partial class RtsInputController : Node
     private readonly double[] _lastGroupTap = new double[10];
     private readonly List<Node3D> _movePreviewMarkers = new(16);
     private EntityId[] _previewEntities = Array.Empty<EntityId>();
+    private static readonly string[] BuildKeys =
+    {
+        "building.rock_raiders.ore_processing_plant",
+        "building.rock_raiders.power_station",
+        "building.rock_raiders.vehicle_service_bay",
+        "building.rock_raiders.hq"
+    };
+    private bool _buildMode;
+    private int _buildIndex;
+    private byte _buildOrientation;
+    private MeshInstance3D? _buildGhost;
+    private StandardMaterial3D? _buildGhostMaterial;
+    private string _buildStatus = "Off";
     private uint _sequence = 1;
 
     public ControlGroups Groups => _groups;
+    public bool BuildModeActive => _buildMode;
+    public string BuildStatus => _buildStatus;
 
     public void Configure(GodotSimBridge bridge, SelectionController selection, RtsCameraController camera)
     {
@@ -28,12 +43,19 @@ public partial class RtsInputController : Node
         double now = Time.GetTicksMsec() / 1000.0;
         if (_movePreviewMarkers.Count > 0 && PreviewGroupFinished()) ClearMovePreviews();
 
+        if (Input.IsActionJustPressed("build_toggle")) { if (_buildMode) ExitBuildMode(); else EnterBuildMode(); }
+        if (_buildMode && Input.IsActionJustPressed("build_cycle")) CycleBuilding();
+        if (_buildMode && Input.IsActionJustPressed("build_rotate")) RotateBuilding();
+        if (Input.IsActionJustPressed("build_cancel_recent") && Input.IsKeyPressed(Key.Ctrl)) CancelMostRecentSite();
+        if (_buildMode) UpdateBuildPreview();
+
         if (Input.IsActionJustPressed("command_move") && _selection.Selected.Count > 0 && _camera.TryProjectToGround(GetViewport().GetMousePosition(), out Vector3 movePoint)) IssueMove(movePoint);
         if (Input.IsActionJustPressed("command_stop") && _selection.Selected.Count > 0 && !Input.IsKeyPressed(Key.Ctrl)) { IssueSimple(SimCommandType.Stop); ClearMovePreviews(); }
         if (Input.IsActionJustPressed("command_hold") && _selection.Selected.Count > 0) { IssueSimple(SimCommandType.HoldPosition); ClearMovePreviews(); }
         if (Input.IsActionJustPressed("debug_open_excavatable"))
             _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, _sequence++, SimCommandType.DebugOpenExcavatable, Array.Empty<EntityId>(), FixVec2.Zero, debugFeatureId: DevMapFactory.ExcavatableFeatureId));
 
+        if (_buildMode) return;
         for (int i = 0; i < 10; i++)
         {
             if (!Input.IsActionJustPressed($"group_{i}")) continue;
@@ -58,6 +80,18 @@ public partial class RtsInputController : Node
     public override void _UnhandledInput(InputEvent @event)
     {
         if (_bridge is null || _selection is null || _camera is null) return;
+        if (_buildMode && @event is InputEventMouseButton buildMouse && buildMouse.Pressed)
+        {
+            if (buildMouse.ButtonIndex == MouseButton.Left) ConfirmBuildPlacement(buildMouse.Position);
+            else if (buildMouse.ButtonIndex == MouseButton.Right) ExitBuildMode();
+            else return;
+            GetViewport().SetInputAsHandled();
+            return;
+        }
+        if (_buildMode && @event is InputEventKey buildKey && buildKey.Pressed && buildKey.Keycode == Key.Escape)
+        {
+            ExitBuildMode(); GetViewport().SetInputAsHandled(); return;
+        }
         if (@event is InputEventMouseButton mouse && mouse.Pressed && mouse.ButtonIndex == MouseButton.Right && _selection.Selected.Count > 0)
         {
             EntityId resource = _selection.FindResourceAtScreen(mouse.Position);
@@ -119,6 +153,121 @@ public partial class RtsInputController : Node
     }
 
     private void IssueSimple(SimCommandType type) => _bridge!.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, _sequence++, type, SelectionArray(), FixVec2.Zero));
+
+    private void EnterBuildMode()
+    {
+        _buildMode = true; _buildIndex = 0; _buildOrientation = 0; ClearMovePreviews();
+        if (_buildGhost is null)
+        {
+            _buildGhostMaterial = new StandardMaterial3D
+            {
+                AlbedoColor = new Color(0.18f, 0.92f, 0.55f, 0.55f),
+                Transparency = BaseMaterial3D.TransparencyEnum.Alpha,
+                ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
+                NoDepthTest = true
+            };
+            BoxMesh mesh = new() { Size = Vector3.One, Material = _buildGhostMaterial };
+            _buildGhost = new MeshInstance3D { Name = "ConstructionGhost", Mesh = mesh };
+            AddChild(_buildGhost);
+        }
+        _buildGhost.Visible = true;
+    }
+
+    private void ExitBuildMode()
+    {
+        _buildMode = false; _buildStatus = "Off";
+        if (_buildGhost is not null) _buildGhost.Visible = false;
+    }
+
+    private void CycleBuilding()
+    {
+        _buildIndex = (_buildIndex + 1) % BuildKeys.Length;
+        _buildOrientation = 0;
+    }
+
+    private void RotateBuilding()
+    {
+        if (_bridge is null || !_bridge.World.Content.TryGetBuilding(BuildKeys[_buildIndex], out BuildingDefinition definition) || !definition.Rotatable) return;
+        _buildOrientation = (byte)((_buildOrientation + 1) & 3);
+    }
+
+    private void UpdateBuildPreview()
+    {
+        if (_bridge is null || _camera is null || _buildGhost is null || _buildGhostMaterial is null ||
+            !_bridge.World.Content.TryGetBuilding(BuildKeys[_buildIndex], out BuildingDefinition definition) ||
+            !_camera.TryProjectToGround(GetViewport().GetMousePosition(), out Vector3 point))
+        {
+            if (_buildGhost is not null) _buildGhost.Visible = false;
+            return;
+        }
+        GetBuildAnchor(point, definition, out short anchorX, out short anchorY);
+        byte width = definition.RotatedWidth(_buildOrientation), height = definition.RotatedHeight(_buildOrientation);
+        FixVec2 center = new(Fix32.FromRatio(anchorX * 2 + width, 2), Fix32.FromRatio(anchorY * 2 + height, 2));
+        _buildGhost.Visible = true;
+        _buildGhost.GlobalPosition = center.ToWorld(0.22f);
+        _buildGhost.Scale = new Vector3(width * GodotConversions.WorldUnitsPerBuildCell, 0.35f, height * GodotConversions.WorldUnitsPerBuildCell);
+        PlacementValidation validation = ConstructionPlacement.Validate(_bridge.World, 0, SelectionArray(), definition.Id, anchorX, anchorY, _buildOrientation);
+        _buildGhostMaterial.AlbedoColor = validation.IsValid ? new Color(0.18f, 0.92f, 0.55f, 0.55f) : new Color(1f, 0.20f, 0.12f, 0.58f);
+        _buildStatus = $"{DisplayName(definition.StableKey)} — {definition.OreCost} Ore / {PlacementFailureText(validation.Failure)}";
+    }
+
+    private void ConfirmBuildPlacement(Vector2 mousePosition)
+    {
+        if (_bridge is null || _camera is null || !_bridge.World.Content.TryGetBuilding(BuildKeys[_buildIndex], out BuildingDefinition definition) ||
+            !_camera.TryProjectToGround(mousePosition, out Vector3 point)) return;
+        GetBuildAnchor(point, definition, out short anchorX, out short anchorY);
+        EntityId[] builders = SelectionArray();
+        PlacementValidation validation = ConstructionPlacement.Validate(_bridge.World, 0, builders, definition.Id, anchorX, anchorY, _buildOrientation);
+        if (!validation.IsValid) { _buildStatus = $"{DisplayName(definition.StableKey)} — {PlacementFailureText(validation.Failure)}"; return; }
+        _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, _sequence++, SimCommandType.Build, builders,
+            FixVec2.FromInts(anchorX, anchorY), contentType: definition.Id, orientation: _buildOrientation));
+        if (!Input.IsKeyPressed(Key.Shift)) ExitBuildMode();
+    }
+
+    private void CancelMostRecentSite()
+    {
+        if (_bridge is null) return;
+        IReadOnlyList<EntityId> alive = _bridge.World.Entities.Alive;
+        for (int i = alive.Count - 1; i >= 0; i--)
+        {
+            EntityId id = alive[i];
+            if (!_bridge.World.Entities.ConstructionSite.Has(id) || !_bridge.World.Entities.Ownership.TryGet(id, out Ownership ownership) || ownership.PlayerSlot != 0) continue;
+            _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, _sequence++, SimCommandType.CancelConstruction, Array.Empty<EntityId>(), FixVec2.Zero, targetEntity: id));
+            return;
+        }
+    }
+
+    private void GetBuildAnchor(Vector3 point, BuildingDefinition definition, out short anchorX, out short anchorY)
+    {
+        Vector2 build = point.ToBuildXZ();
+        int width = definition.RotatedWidth(_buildOrientation), height = definition.RotatedHeight(_buildOrientation);
+        anchorX = checked((short)(Mathf.FloorToInt(build.X) - width / 2));
+        anchorY = checked((short)(Mathf.FloorToInt(build.Y) - height / 2));
+    }
+
+    private static string DisplayName(string key) => key switch
+    {
+        "building.rock_raiders.hq" => "Rock Raiders HQ",
+        "building.rock_raiders.ore_processing_plant" => "Ore Processing Plant",
+        "building.rock_raiders.power_station" => "Power Station",
+        "building.rock_raiders.vehicle_service_bay" => "Vehicle Service Bay",
+        _ => key
+    };
+
+    private static string PlacementFailureText(PlacementFailure failure) => failure switch
+    {
+        PlacementFailure.None => "Valid — left click to place",
+        PlacementFailure.NoEligibleBuilder => "Select a Crew builder",
+        PlacementFailure.MissingPrerequisite => "Requires a completed HQ",
+        PlacementFailure.OutsideMap => "Outside map",
+        PlacementFailure.FootprintOccupied => "Footprint occupied",
+        PlacementFailure.ResourceAccessBlocked => "Resource access blocked",
+        PlacementFailure.NonBuildableTerrain => "Non-buildable terrain",
+        PlacementFailure.TerrainFeature => "Terrain feature prevents construction",
+        PlacementFailure.NoLegalProductionExit => "No legal production exit",
+        PlacementFailure.InsufficientOre => "Insufficient processed Ore",
+        _ => "Invalid placement"
+    };
 
     private void AddMovePreview(FixVec2 target, int number, bool queued)
     {

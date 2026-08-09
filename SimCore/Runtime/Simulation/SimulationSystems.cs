@@ -21,6 +21,19 @@ public sealed class CommandExecutionSystem : ISimSystem
             world.OpenExcavatable(command.DebugFeatureId);
             return;
         }
+        if (command.Type == SimCommandType.Build)
+        {
+            if ((command.TargetPosition.X.Raw & (Fix32.OneRaw - 1)) != 0 || (command.TargetPosition.Y.Raw & (Fix32.OneRaw - 1)) != 0) return;
+            int anchorX = command.TargetPosition.X.FloorToInt(), anchorY = command.TargetPosition.Y.FloorToInt();
+            if (anchorX < short.MinValue || anchorX > short.MaxValue || anchorY < short.MinValue || anchorY > short.MaxValue) return;
+            ConstructionPlacement.TryPlace(world, command.PlayerSlot, command.Entities, command.ContentType, (short)anchorX, (short)anchorY, command.Orientation, out _, out _);
+            return;
+        }
+        if (command.Type == SimCommandType.CancelConstruction)
+        {
+            ConstructionPlacement.TryCancelUnstarted(world, command.PlayerSlot, command.TargetEntity);
+            return;
+        }
 
         world.ScratchEntities.Clear();
         for (int i = 0; i < command.Entities.Length; i++)
@@ -150,12 +163,23 @@ public sealed class CommandExecutionSystem : ISimSystem
         worker.ReceiverTarget = receiverId;
         worker.TaskState = WorkerTaskState.ReturningToReceiver;
         worker.ExtractionTicks = 0;
-        FixVec2 direction = (workerTransform.Position - receiverTransform.Position).NormalizeSafe();
+        FixVec2 receiverEdge = ClosestReceiverEdge(world, receiverId, workerTransform.Position, receiverTransform.Position);
+        FixVec2 direction = (workerTransform.Position - receiverEdge).NormalizeSafe();
         if (direction.Equals(FixVec2.Zero)) direction = new FixVec2(Fix32.One, Fix32.Zero);
         NavigationAgent nav = world.Entities.Navigation.Get(id);
-        FixVec2 approach = FormationPlanner.ResolvePassableSlot(world, receiverTransform.Position + direction * Fix32.FromRatio(5, 2), nav.Footprint);
+        FixVec2 approach = FormationPlanner.ResolvePassableSlot(world, receiverEdge + direction * Fix32.FromRatio(3, 4), nav.Footprint);
         SetMove(world, id, approach);
         return true;
+    }
+
+    private static FixVec2 ClosestReceiverEdge(SimulationWorld world, EntityId receiverId, FixVec2 workerPosition, FixVec2 fallbackCenter)
+    {
+        if (!world.Entities.Building.TryGet(receiverId, out Building building)) return fallbackCenter;
+        Fix32 minX = Fix32.FromInt(building.AnchorX), maxX = Fix32.FromInt(building.AnchorX + building.FootprintWidth);
+        Fix32 minY = Fix32.FromInt(building.AnchorY), maxY = Fix32.FromInt(building.AnchorY + building.FootprintHeight);
+        Fix32 x = workerPosition.X < minX ? minX : workerPosition.X > maxX ? maxX : workerPosition.X;
+        Fix32 y = workerPosition.Y < minY ? minY : workerPosition.Y > maxY ? maxY : workerPosition.Y;
+        return new FixVec2(x, y);
     }
 
     private static EntityId FindNearestReceiver(SimulationWorld world, FixVec2 origin, byte playerSlot, ResourceType type)
@@ -235,6 +259,7 @@ public sealed class HarvestSystem : ISimSystem
 {
     public static readonly Fix32 InteractionRange = Fix32.FromInt(2);
     public static readonly Fix32 ReceiverInteractionRange = Fix32.FromInt(3);
+    private static readonly Fix32 ReceiverEdgeInteractionRange = Fix32.FromRatio(5, 4);
 
     public void Step(SimulationWorld world)
     {
@@ -301,7 +326,7 @@ public sealed class HarvestSystem : ISimSystem
             worker.TaskState = WorkerTaskState.AwaitingDelivery;
             return;
         }
-        if (FixVec2.Distance(workerTransform.Position, receiverTransform.Position) > ReceiverInteractionRange) return;
+        if (!IsWithinReceiverRange(world, worker.ReceiverTarget, workerTransform.Position, receiverTransform.Position)) return;
         ref NavigationAgent nav = ref world.Entities.Navigation.Get(id);
         ref Movement move = ref world.Entities.Movement.Get(id);
         CommandExecutionSystem.StopMovement(world, id, ref nav, ref move);
@@ -312,6 +337,16 @@ public sealed class HarvestSystem : ISimSystem
         worker.ReceiverTarget = EntityId.None;
         if (world.Entities.ResourceNode.TryGet(worker.ResourceTarget, out ResourceNode resource) && !resource.IsDepleted && CommandExecutionSystem.StartHarvest(world, id, worker.ResourceTarget)) return;
         FinishAssignment(world, id);
+    }
+
+    private static bool IsWithinReceiverRange(SimulationWorld world, EntityId receiverId, FixVec2 workerPosition, FixVec2 fallbackCenter)
+    {
+        if (!world.Entities.Building.TryGet(receiverId, out Building building)) return FixVec2.Distance(workerPosition, fallbackCenter) <= ReceiverInteractionRange;
+        Fix32 minX = Fix32.FromInt(building.AnchorX), maxX = Fix32.FromInt(building.AnchorX + building.FootprintWidth);
+        Fix32 minY = Fix32.FromInt(building.AnchorY), maxY = Fix32.FromInt(building.AnchorY + building.FootprintHeight);
+        Fix32 nearestX = workerPosition.X < minX ? minX : workerPosition.X > maxX ? maxX : workerPosition.X;
+        Fix32 nearestY = workerPosition.Y < minY ? minY : workerPosition.Y > maxY ? maxY : workerPosition.Y;
+        return FixVec2.Distance(workerPosition, new FixVec2(nearestX, nearestY)) <= ReceiverEdgeInteractionRange;
     }
 
     private static void FinishAssignment(SimulationWorld world, EntityId id)

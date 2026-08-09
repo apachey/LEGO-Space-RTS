@@ -121,10 +121,10 @@ check(len(source.get('resourceReceivers',[])) == 2, 'M3 starting HQ resource rec
 check(len(source.get('visionTestGeometry',[])) >= 4, 'vision test geometry missing')
 
 content_source = json.loads((ROOT/'Content/PrototypeEntities.json').read_text())
-check(content_source.get('schemaVersion') == 4 and content_source.get('contentKind') == 'prototype_entities', 'prototype content schema mismatch')
+check(content_source.get('schemaVersion') == 5 and content_source.get('contentKind') == 'prototype_entities', 'prototype content schema mismatch')
 entity_keys = [e.get('stableId') for e in content_source.get('entities',[])]
 check(len(entity_keys) >= 5 and len(entity_keys) == len(set(entity_keys)), 'prototype content entries missing/duplicated')
-for required_key in ['building.rock_raiders.hq','unit.rock_raiders.crew','unit.rock_raiders.hover_scout','unit.rock_raiders.loader_dozer','unit.rock_raiders.chrome_crusher','prototype.nav.huge']:
+for required_key in ['building.rock_raiders.hq','building.rock_raiders.ore_processing_plant','building.rock_raiders.power_station','building.rock_raiders.vehicle_service_bay','unit.rock_raiders.crew','unit.rock_raiders.hover_scout','unit.rock_raiders.loader_dozer','unit.rock_raiders.chrome_crusher','prototype.nav.huge']:
     check(required_key in entity_keys, f'prototype content key missing: {required_key}')
 by_key={e.get('stableId'):e for e in content_source.get('entities',[])}
 check(by_key.get('unit.rock_raiders.loader_dozer',{}).get('footprint')=='Medium','Loader Dozer M2 footprint must match Phase 06 Medium')
@@ -147,6 +147,18 @@ check(all(k in resource_by_key for k in resource_map_keys), 'map source contains
 check(resource_map_keys.count('resource.ore.standard') == 4, 'prototype map must provide two Standard Ore deposits per start')
 receiver_map_keys=[e.get('contentKey') for e in source.get('resourceReceivers',[])]
 check(receiver_map_keys == ['building.rock_raiders.hq','building.rock_raiders.hq'], 'prototype map must provide one HQ receiver per start')
+building_by_key={b.get('stableId'):b for b in content_source.get('buildingDefinitions',[])}
+expected_buildings={
+    'building.rock_raiders.hq':([8,8],320,40,1200),
+    'building.rock_raiders.ore_processing_plant':([6,6],140,15,600),
+    'building.rock_raiders.power_station':([5,5],150,20,700),
+    'building.rock_raiders.vehicle_service_bay':([8,6],160,20,800),
+}
+for key,(size,ore,energy,ticks) in expected_buildings.items():
+    definition=building_by_key.get(key,{})
+    mask=definition.get('footprintMask',[])
+    actual_size=[len(mask[0]) if mask else 0,len(mask)]
+    check(actual_size==size and definition.get('cost')=={'ore':ore,'energy':energy} and definition.get('buildTicks')==ticks, f'canonical M3 building definition mismatch: {key}')
 
 headless = (ROOT/'HeadlessSim/Program.cs').read_text()
 for token in ['--snapshot-in','--snapshot-out','--replay','--record-replay','--benchmark','--path-benchmark','--hash-every','--repeat','--golden-manifest-out','--golden-manifest-in','--dump-state','--compiled-dir']:

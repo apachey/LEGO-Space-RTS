@@ -3,7 +3,7 @@ using NUnit.Framework;
 
 public class SnapshotReplayTests
 {
-    [Test] public void SnapshotFormatSupportsM3ResourceBankComponents() => Assert.That(SnapshotSerializer.FormatVersion,Is.EqualTo(5));
+    [Test] public void SnapshotFormatSupportsM3ConstructionComponents() => Assert.That(SnapshotSerializer.FormatVersion,Is.EqualTo(6));
     [Test] public void SnapshotRoundTripPreservesHash()
     {
         SimulationRunner r = new(ScenarioFactory.CreateStress60()); r.StepTicks(200); ulong before = StateHasher.Hash(r.World);

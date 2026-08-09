@@ -137,3 +137,40 @@ Raider resource-flow canon. They do not change gameplay canon.
 
 These are implementation decisions within approved M3 resource-flow canon.
 They do not change gameplay canon.
+
+---
+
+## 2026-08-10 — M3 authoritative construction placement boundary
+
+- T033 compiles explicit footprint masks, rotation, Ore/Energy cost, build
+  ticks and authored production-exit reservations for the four first-playable
+  Rock Raider buildings. Rectangular prototype masks use the same data path as
+  future non-rectangular structures.
+- A Build command contains the final Stable Content ID, integer build-cell
+  anchor, legal 90-degree orientation and candidate builders. SimCore
+  revalidates builder ownership/eligibility, completed-HQ prerequisite,
+  terrain/elevation, occupancy, resource access, production exit and local Ore
+  affordability in deterministic Entity ID order.
+- A valid order creates the Construction Site with its final Entity ID and
+  immediately applies its final footprint to authoritative map topology. T034
+  will progress that same entity to a completed building rather than spawning
+  a replacement.
+- Full Ore cost moves from one nearest eligible local reserve into the site's
+  reservation. Conservation includes this reserved state. Cancelling an
+  unstarted site returns the reservation in full and releases the footprint.
+- Starting HQ reserves contain the canonical 500 processed Ore from Phase 04,
+  so the first approved building can be placed immediately rather than making
+  T033 depend on an unintended pre-build harvesting delay.
+- Energy costs are compiled and retained on Construction Sites, but are not
+  rejected against an Energy Domain before the scheduled T037 implementation.
+  This staged enforcement keeps T033 playable without inventing a temporary
+  energy wallet or implementing T037 early.
+- Starting HQs now own their canonical 8x8 gameplay footprints. Crew delivery
+  targets the accessible building perimeter, preserving physical hauling after
+  the HQ becomes navigation-blocking.
+- Snapshot format v6 / simulation protocol v4 add Building and
+  ConstructionSite state plus Build command fields. Replay format v2 adds the
+  same command payload; current readers retain prior snapshot/replay support.
+
+These are implementation decisions within approved M3 construction canon.
+They do not change gameplay canon.

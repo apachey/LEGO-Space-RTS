@@ -17,7 +17,7 @@ byte[] contentBytes = PrototypeContentCodec.Write(catalog);
 string contentOutput = Path.Combine(outputDirectory, "PrototypeEntities.contentbin");
 File.WriteAllBytes(contentOutput, contentBytes);
 PrototypeContentCatalog contentRoundTrip = PrototypeContentCodec.Read(contentBytes);
-if (contentRoundTrip.ContentHash != catalog.ContentHash || contentRoundTrip.Entities.Length != catalog.Entities.Length || contentRoundTrip.ResourceNodes.Length != catalog.ResourceNodes.Length)
+if (contentRoundTrip.ContentHash != catalog.ContentHash || contentRoundTrip.Entities.Length != catalog.Entities.Length || contentRoundTrip.ResourceNodes.Length != catalog.ResourceNodes.Length || contentRoundTrip.Buildings.Length != catalog.Buildings.Length)
     throw new InvalidDataException("Prototype content round-trip validation failed.");
 
 MapDefinition definition = CompileMap(mapSource, catalog);
@@ -28,7 +28,7 @@ MapDefinition mapRoundTrip = CompiledMapCodec.ReadDefinition(mapBytes);
 if (mapRoundTrip.Grid.Id.Value != definition.Grid.Id.Value || mapRoundTrip.InitialEntities.Length != definition.InitialEntities.Length || mapRoundTrip.InitialResourceNodes.Length != definition.InitialResourceNodes.Length || mapRoundTrip.InitialResourceReceivers.Length != definition.InitialResourceReceivers.Length)
     throw new InvalidDataException("Compiled map round-trip validation failed.");
 
-Console.WriteLine($"Prototype content: {contentOutput} ({contentBytes.Length} bytes), hash={catalog.ContentHash:X16}, entities={catalog.Entities.Length}, resourceDefinitions={catalog.ResourceNodes.Length}");
+Console.WriteLine($"Prototype content: {contentOutput} ({contentBytes.Length} bytes), hash={catalog.ContentHash:X16}, entities={catalog.Entities.Length}, resourceDefinitions={catalog.ResourceNodes.Length}, buildingDefinitions={catalog.Buildings.Length}");
 Console.WriteLine($"Map: {mapOutput} ({mapBytes.Length} bytes), starts={definition.Starts.Length}, spawns={definition.InitialEntities.Length}, resourceNodes={definition.InitialResourceNodes.Length}, resourceReceivers={definition.InitialResourceReceivers.Length}, features={definition.Grid.Features.Count}");
 return 0;
 
@@ -36,7 +36,7 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
 {
     using JsonDocument document = JsonDocument.Parse(File.ReadAllText(path));
     JsonElement root = document.RootElement;
-    if (root.GetProperty("schemaVersion").GetInt32() != 4) throw new InvalidDataException("Unsupported prototype content schema.");
+    if (root.GetProperty("schemaVersion").GetInt32() != 5) throw new InvalidDataException("Unsupported prototype content schema.");
     if (!string.Equals(root.GetProperty("contentKind").GetString(), "prototype_entities", StringComparison.Ordinal)) throw new InvalidDataException("Unexpected contentKind.");
 
     List<PrototypeMovementProfile> profiles = new();
@@ -98,7 +98,45 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
             checked((byte)item.GetProperty("visionRadius").GetInt32()), RequiredString(item, "viewProfile"), oreTicks, oreCapacity));
     }
     entities.Sort((a, b) => string.CompareOrdinal(a.StableKey, b.StableKey));
-    return new PrototypeContentCatalog(profiles.ToArray(), entities.ToArray(), resourceNodes.ToArray());
+
+    List<BuildingDefinition> buildings = new();
+    HashSet<string> buildingKeys = new(StringComparer.Ordinal);
+    foreach (JsonElement item in root.GetProperty("buildingDefinitions").EnumerateArray())
+    {
+        string key = RequiredString(item, "stableId");
+        if (!buildingKeys.Add(key)) throw new InvalidDataException($"Duplicate building definition key {key}.");
+        if (!entityKeys.Contains(key)) throw new InvalidDataException($"{key}: building definition has no matching entity definition.");
+        JsonElement rows = item.GetProperty("footprintMask");
+        byte height = checked((byte)rows.GetArrayLength());
+        if (height == 0 || height > 8) throw new InvalidDataException($"{key}: footprintMask height must be 1..8.");
+        string firstRow = rows[0].GetString() ?? string.Empty;
+        byte width = checked((byte)firstRow.Length);
+        if (width == 0 || width > 8) throw new InvalidDataException($"{key}: footprintMask width must be 1..8.");
+        ulong mask = 0;
+        for (int y = 0; y < height; y++)
+        {
+            string row = rows[y].GetString() ?? string.Empty;
+            if (row.Length != width) throw new InvalidDataException($"{key}: footprintMask rows must share one width.");
+            for (int x = 0; x < width; x++)
+            {
+                if (row[x] == '1') mask |= 1UL << (y * width + x);
+                else if (row[x] != '0') throw new InvalidDataException($"{key}: footprintMask accepts only 0 and 1.");
+            }
+        }
+        JsonElement cost = item.GetProperty("cost");
+        byte exitWidth = 0, exitDepth = 0; FootprintClass exitFootprint = FootprintClass.Tiny;
+        if (item.TryGetProperty("productionExit", out JsonElement exit))
+        {
+            exitWidth = checked((byte)exit.GetProperty("width").GetInt32());
+            exitDepth = checked((byte)exit.GetProperty("depth").GetInt32());
+            exitFootprint = Enum.Parse<FootprintClass>(RequiredString(exit, "largestFootprint"), false);
+        }
+        buildings.Add(new BuildingDefinition(key, width, height, mask, item.GetProperty("rotatable").GetBoolean(),
+            checked((ushort)cost.GetProperty("ore").GetInt32()), checked((ushort)cost.GetProperty("energy").GetInt32()),
+            checked((ushort)item.GetProperty("buildTicks").GetInt32()), exitWidth, exitDepth, exitFootprint));
+    }
+    buildings.Sort((a, b) => string.CompareOrdinal(a.StableKey, b.StableKey));
+    return new PrototypeContentCatalog(profiles.ToArray(), entities.ToArray(), resourceNodes.ToArray(), buildings.ToArray());
 }
 
 static MapDefinition CompileMap(string path, PrototypeContentCatalog catalog)

@@ -4,7 +4,7 @@ using System.IO;
 
 namespace LegoSpaceRTS.SimCore
 {
-public enum SimCommandType : ushort { Move = 1, Stop = 2, HoldPosition = 3, Harvest = 4, DebugOpenExcavatable = 1000 }
+public enum SimCommandType : ushort { Move = 1, Stop = 2, HoldPosition = 3, Harvest = 4, Build = 5, CancelConstruction = 6, DebugOpenExcavatable = 1000 }
 [Flags] public enum CommandModifiers : byte { None = 0, Queue = 1 }
 
 public readonly struct CommandEnvelope
@@ -18,9 +18,12 @@ public readonly struct CommandEnvelope
     public readonly FixVec2 TargetPosition;
     public readonly CommandModifiers Modifiers;
     public readonly ushort DebugFeatureId;
+    public readonly ContentId ContentType;
+    public readonly byte Orientation;
 
     public CommandEnvelope(SimTick executionTick, byte playerSlot, uint sequence, SimCommandType type, EntityId[] entities,
-        FixVec2 targetPosition, CommandModifiers modifiers = CommandModifiers.None, EntityId targetEntity = default, ushort debugFeatureId = 0)
+        FixVec2 targetPosition, CommandModifiers modifiers = CommandModifiers.None, EntityId targetEntity = default, ushort debugFeatureId = 0,
+        ContentId contentType = default, byte orientation = 0)
     {
         ValidateType(type);
         if (entities == null) throw new ArgumentNullException(nameof(entities));
@@ -28,13 +31,15 @@ public readonly struct CommandEnvelope
         if ((modifiers & ~CommandModifiers.Queue) != 0) throw new ArgumentOutOfRangeException(nameof(modifiers), "Unknown command modifier bits.");
         if (type != SimCommandType.Move && type != SimCommandType.Harvest && modifiers != CommandModifiers.None) throw new ArgumentException("Only Move and Harvest may be queued.", nameof(modifiers));
         if (type == SimCommandType.Harvest && targetEntity == EntityId.None) throw new ArgumentException("Harvest requires a resource target.", nameof(targetEntity));
+        if (type == SimCommandType.Build && contentType.Value == 0) throw new ArgumentException("Build requires a building content type.", nameof(contentType));
+        if (type == SimCommandType.CancelConstruction && targetEntity == EntityId.None) throw new ArgumentException("CancelConstruction requires a site target.", nameof(targetEntity));
         ExecutionTick = executionTick; PlayerSlot = playerSlot; Sequence = sequence; Type = type; Entities = entities;
-        TargetEntity = targetEntity; TargetPosition = targetPosition; Modifiers = modifiers; DebugFeatureId = debugFeatureId;
+        TargetEntity = targetEntity; TargetPosition = targetPosition; Modifiers = modifiers; DebugFeatureId = debugFeatureId; ContentType = contentType; Orientation = orientation;
     }
 
     private static void ValidateType(SimCommandType type)
     {
-        if (type != SimCommandType.Move && type != SimCommandType.Stop && type != SimCommandType.HoldPosition && type != SimCommandType.Harvest && type != SimCommandType.DebugOpenExcavatable)
+        if (type != SimCommandType.Move && type != SimCommandType.Stop && type != SimCommandType.HoldPosition && type != SimCommandType.Harvest && type != SimCommandType.Build && type != SimCommandType.CancelConstruction && type != SimCommandType.DebugOpenExcavatable)
             throw new ArgumentOutOfRangeException(nameof(type), type, "Unknown command type.");
     }
 
@@ -42,18 +47,20 @@ public readonly struct CommandEnvelope
     {
         w.Write(ExecutionTick.Value); w.Write(PlayerSlot); w.Write(Sequence); w.Write((ushort)Type); w.Write((byte)Modifiers);
         w.Write(TargetEntity.Value); w.Write(TargetPosition.X.Raw); w.Write(TargetPosition.Y.Raw); w.Write(DebugFeatureId);
+        w.Write(ContentType.Value); w.Write(Orientation);
         w.Write(Entities.Length); for (int i = 0; i < Entities.Length; i++) w.Write(Entities[i].Value);
     }
 
-    public static CommandEnvelope Read(BinaryReader r)
+    public static CommandEnvelope Read(BinaryReader r, bool includeBuildFields = true)
     {
         SimTick tick = new(r.ReadInt32()); byte player = r.ReadByte(); uint seq = r.ReadUInt32(); SimCommandType type = (SimCommandType)r.ReadUInt16();
         ValidateType(type);
         CommandModifiers mod = (CommandModifiers)r.ReadByte(); EntityId target = new(r.ReadUInt32());
         FixVec2 pos = new(Fix32.FromRaw(r.ReadInt32()), Fix32.FromRaw(r.ReadInt32())); ushort feature = r.ReadUInt16();
+        ContentId contentType = includeBuildFields ? new ContentId(r.ReadUInt32()) : default; byte orientation = includeBuildFields ? r.ReadByte() : (byte)0;
         int count = r.ReadInt32(); if (count < 0 || count > 128) throw new InvalidDataException("Invalid command entity count.");
         EntityId[] ids = new EntityId[count]; for (int i = 0; i < count; i++) ids[i] = new EntityId(r.ReadUInt32());
-        return new CommandEnvelope(tick, player, seq, type, ids, pos, mod, target, feature);
+        return new CommandEnvelope(tick, player, seq, type, ids, pos, mod, target, feature, contentType, orientation);
     }
 }
 
@@ -152,7 +159,7 @@ public sealed class CommandBuffer
         if (remove > 0) _commands.RemoveRange(0, remove);
     }
     public void Serialize(BinaryWriter w) { w.Write(_commands.Count); for (int i = 0; i < _commands.Count; i++) _commands[i].Write(w); }
-    public void Deserialize(BinaryReader r) { _commands.Clear(); int n = r.ReadInt32(); if (n < 0 || n > 100000) throw new InvalidDataException("Invalid command buffer."); for (int i = 0; i < n; i++) _commands.Add(CommandEnvelope.Read(r)); _commands.Sort(Compare); }
+    public void Deserialize(BinaryReader r, bool includeBuildFields = true) { _commands.Clear(); int n = r.ReadInt32(); if (n < 0 || n > 100000) throw new InvalidDataException("Invalid command buffer."); for (int i = 0; i < n; i++) _commands.Add(CommandEnvelope.Read(r, includeBuildFields)); _commands.Sort(Compare); }
     private static int Compare(CommandEnvelope a, CommandEnvelope b)
     {
         int c = a.ExecutionTick.Value.CompareTo(b.ExecutionTick.Value); if (c != 0) return c;

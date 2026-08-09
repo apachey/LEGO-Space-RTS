@@ -79,7 +79,7 @@ public sealed class M3WorkerHarvestingTests
         Assert.That(world.Entities.Worker.Get(workerId).TaskState, Is.EqualTo(WorkerTaskState.Idle));
         EntityId receiverId = FirstOwnedReceiver(world, 0);
         Assert.That(world.Entities.ResourceReceiver.Get(receiverId).PendingHauledAmount, Is.Zero);
-        Assert.That(world.Entities.ResourceBank.Get(receiverId).ProcessedAmount, Is.EqualTo(3));
+        Assert.That(world.Entities.ResourceBank.Get(receiverId).ProcessedAmount, Is.EqualTo(503));
     }
 
     [Test]
