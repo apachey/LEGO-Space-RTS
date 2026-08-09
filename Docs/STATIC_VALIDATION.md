@@ -17,7 +17,8 @@ It checks source-level invariants that do not require Godot or the .NET runtime,
 - 20 Hz tick constant;
 - 160×160 / 320×320 map constants;
 - HPA cluster size 10;
-- 12-tick reservation horizon;
+- no universal normal-locomotion reservation planner;
+- bounded deterministic local-separation lookahead;
 - 16-order queue capacity;
 - 128 selection foundation;
 - Godot InputMap and M2 command bindings;

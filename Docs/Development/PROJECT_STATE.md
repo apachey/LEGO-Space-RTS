@@ -38,11 +38,17 @@ narrow placement cases allowed by Phase 09B.
 
 - PR #2 correctness salvage is merged: commands execute on their declared tick,
   Stop clears movement and queued orders correctly, Stable IDs normalize case,
-  and reservation determinism uses a dedicated conflict fixture.
+  and deterministic movement conflicts have regression coverage.
 - PR #3 Phase 09B governance sync and canon-index entry are merged.
 - Persistent route-corridor foundation is implemented: corridors persist in
   authoritative SimCore state, constrain bounded local deviation, participate
   in snapshot/state hashing, and selectively invalidate on topology changes.
+- Deterministic local separation/yield is implemented for normal locomotion:
+  bounded neighbor evaluation uses footprint priority and Entity ID tie-breaks,
+  Heavy movers hold priority, friendly compression is limited to 15% for 30
+  ticks, and enemy units never use friendly compression.
+- The obsolete universal 12-tick normal-locomotion reservation planner and its
+  movement-speed gate are removed from the authoritative pipeline.
 - The current full verification blocking gate is green, including builds,
   NUnit, compiled-content validation, HeadlessSim, replay/snapshot determinism,
   Godot headless smoke and macOS export smoke.
@@ -52,11 +58,12 @@ narrow placement cases allowed by Phase 09B.
 - Representative 24-mover Movement Architecture v2 scenario:
   `BLOCKING_NOW` for M2; not yet implemented.
 - Legacy 60-mover stress: `DIAGNOSTIC` during M2–M5 and `BLOCKING_LATER`
-  before M6.
+  before M6. The latest full run remains diagnostic-failing at 20% completion
+  with elevated oscillation; it does not block the current M2 task.
 
 ## Known unresolved work
 
-- deterministic local separation/yield and formation/cohort reflow integration;
+- formation/cohort reflow integration;
 - representative 24-mover gate implementation;
 - final M2 playable macOS build and human movement-feel acceptance.
 - pre-existing HPA cluster-size discrepancy: Phase 09 specifies 10 build cells
@@ -75,10 +82,9 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Deterministic local separation/yield integration.
-2. Formation/cohort reflow integration.
-3. Representative 24-mover M2 scenario.
-4. Automated M2 verification.
-5. macOS playable build.
-6. Human playtest.
-7. Only after M2 acceptance: M3.
+1. Formation/cohort reflow integration.
+2. Representative 24-mover M2 scenario.
+3. Automated M2 verification.
+4. macOS playable build.
+5. Human playtest.
+6. Only after M2 acceptance: M3.

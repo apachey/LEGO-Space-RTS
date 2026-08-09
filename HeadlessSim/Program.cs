@@ -99,9 +99,8 @@ for (int run = 0; run < repeat; run++)
     List<long>? tickSamples = benchmark ? new List<long>(ticks) : null;
     List<long>? commandSamples = benchmark ? new List<long>(ticks) : null;
     List<long>? navSamples = benchmark ? new List<long>(ticks) : null;
-    List<long>? reservationSamples = benchmark ? new List<long>(ticks) : null;
     List<long>? movementSamples = benchmark ? new List<long>(ticks) : null;
-    List<long>? avoidanceSamples = benchmark ? new List<long>(ticks) : null;
+    List<long>? separationSamples = benchmark ? new List<long>(ticks) : null;
     List<long>? transformSamples = benchmark ? new List<long>(ticks) : null;
     List<long>? spatialSamples = benchmark ? new List<long>(ticks) : null;
     List<long>? visionSamples = benchmark ? new List<long>(ticks) : null;
@@ -114,7 +113,7 @@ for (int run = 0; run < repeat; run++)
         {
             TickProfile profile = runner.StepOneTickProfiled();
             tickSamples!.Add(profile.TotalTimestampTicks);commandSamples!.Add(profile.CommandTimestampTicks);navSamples!.Add(profile.NavigationTimestampTicks);
-            reservationSamples!.Add(profile.ReservationTimestampTicks);movementSamples!.Add(profile.MovementIntentTimestampTicks);avoidanceSamples!.Add(profile.AvoidanceTimestampTicks);
+            movementSamples!.Add(profile.MovementIntentTimestampTicks); separationSamples!.Add(profile.LocalSeparationTimestampTicks);
             transformSamples!.Add(profile.TransformTimestampTicks);spatialSamples!.Add(profile.SpatialTimestampTicks);visionSamples!.Add(profile.VisionTimestampTicks);
         }
         else runner.StepOneTick();
@@ -156,7 +155,7 @@ for (int run = 0; run < repeat; run++)
         Console.WriteLine($"elapsedMs={sw.Elapsed.TotalMilliseconds:F3} ticksPerSecond={tps:F2} realtimeMultiplier={realtime:F2}x");
         Console.WriteLine($"tickMeanMs={tickMean:F4} tickP95Ms={tickP95:F4} tickP99Ms={tickP99:F4} tickMaxMs={tickMax:F4}");
         Console.WriteLine($"pathMeanMs={pathMean:F4} pathP95Ms={pathP95:F4} pathP99Ms={pathP99:F4} pathMaxMs={pathMax:F4} pathRequests={runner.World.PathRequestsProcessed}");
-        PrintSystemMean("command",commandSamples!);PrintSystemMean("reservation",reservationSamples!);PrintSystemMean("movementIntent",movementSamples!);PrintSystemMean("avoidance",avoidanceSamples!);PrintSystemMean("transform",transformSamples!);PrintSystemMean("spatial",spatialSamples!);PrintSystemMean("fogLoS",visionSamples!);
+        PrintSystemMean("command",commandSamples!);PrintSystemMean("movementIntent",movementSamples!);PrintSystemMean("localSeparation",separationSamples!);PrintSystemMean("transform",transformSamples!);PrintSystemMean("spatial",spatialSamples!);PrintSystemMean("fogLoS",visionSamples!);
         if (pathBenchmark)
         {
             int completed = 0, movers = 0;

@@ -30,7 +30,7 @@ public partial class DebugHud : CanvasLayer
         AddToggle(toggles, "HPA", () => _debug.DrawClusters, v => _debug.DrawClusters = v);
         AddToggle(toggles, "Portals", () => _debug.DrawPortals, v => _debug.DrawPortals = v);
         AddToggle(toggles, "Paths", () => _debug.DrawPaths, v => _debug.DrawPaths = v);
-        AddToggle(toggles, "Reservations", () => _debug.DrawReservations, v => _debug.DrawReservations = v);
+        AddToggle(toggles, "Separation", () => _debug.DrawLocalSeparation, v => _debug.DrawLocalSeparation = v);
         AddToggle(toggles, "Buckets", () => _debug.DrawSpatialBuckets, v => _debug.DrawSpatialBuckets = v);
         AddToggle(toggles, "Vision", () => _debug.DrawVision, v => _debug.DrawVision = v);
         AddToggle(toggles, "Excavatable", () => _debug.DrawExcavatable, v => _debug.DrawExcavatable = v);
@@ -60,7 +60,7 @@ public partial class DebugHud : CanvasLayer
                 RouteCorridor? corridor = _bridge.World.GetCorridor(first);
                 VisibilityState fog = _bridge.World.Fog.Get(0, t.Position.X.FloorToInt(), t.Position.Y.FloorToInt());
                 _builder.Append("\nFirst: footprint=").Append(n.Footprint).Append(" pathIndex=").Append(m.PathIndex).Append('/').Append(corridor?.Cells.Count ?? 0)
-                    .Append(" reservation=").Append(_bridge.World.HasReservationPermit(first) ? "yes" : "no").Append(" fog=").Append(fog).Append(" compressTicks=").Append(m.CompressionTicks);
+                    .Append(" local=").Append(m.CompressionTicks > 0 ? "compressed" : "clear").Append(" fog=").Append(fog).Append(" compressTicks=").Append(m.CompressionTicks);
             }
         }
         if (_selection.LastFilteredWorkerCount > 0)
