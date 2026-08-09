@@ -100,6 +100,10 @@ narrow placement cases allowed by Phase 09B.
   Tick-by-tick regression coverage verifies that the playable extraction and
   delivery loop neither creates nor loses Ore. Snapshot v5 / simulation
   protocol v3 preserve local bank state; readers retain v2-v4 compatibility.
+- Human T032 playtest acceptance is complete as of 2026-08-10: the game
+  director confirmed that Ore is successfully harvested and reaches the
+  authoritative processed reserve. No blocking economy-loop defect was
+  reported.
 
 ## Current gates
 
@@ -139,6 +143,6 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Merge the accepted stacked T030 resource-node and T031 Ore-loop branches.
-2. Accept and merge the stacked T032 resource-banking branch.
-3. Begin T033 construction placement after T032 acceptance.
+1. Merge the accepted stacked T030-T032 M3 economy branches.
+2. Begin T033 construction placement.
+3. T034 construction jobs after T033 acceptance.
