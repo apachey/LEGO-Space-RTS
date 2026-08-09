@@ -46,6 +46,7 @@ public static class StableId
         {
             char c=key[i];
             if (c > 127) throw new ArgumentException("Stable keys are ASCII only.", nameof(key));
+            if (c >= 'A' && c <= 'Z') c = (char)(c + ('a' - 'A'));
             hash = unchecked((hash ^ (byte)c) * 16777619u);
         }
         if (hash == 0) hash = 1;
@@ -61,7 +62,7 @@ public sealed class StableIdRegistry
         ContentId id=StableId.FromKey(key);
         if (_keys.TryGetValue(id.Value,out string existing))
         {
-            if (!string.Equals(existing,key,StringComparison.Ordinal)) throw new InvalidOperationException($"Stable ID collision: '{key}' and '{existing}' -> {id}.");
+            if (!string.Equals(existing,key,StringComparison.OrdinalIgnoreCase)) throw new InvalidOperationException($"Stable ID collision: '{key}' and '{existing}' -> {id}.");
             throw new InvalidOperationException($"Duplicate stable key '{key}'.");
         }
         _keys.Add(id.Value,key); return id;
