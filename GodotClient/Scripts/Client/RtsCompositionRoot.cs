@@ -29,7 +29,13 @@ public partial class RtsCompositionRoot : Node3D
         DirectionalLight3D sun = new() { Name = "Sun", RotationDegrees = new Vector3(-58f, -35f, 0f), LightEnergy = 1.2f, ShadowEnabled = true }; AddChild(sun);
         WorldEnvironment environment = new() { Name = "WorldEnvironment", Environment = new Godot.Environment { BackgroundMode = Godot.Environment.BGMode.Color, BackgroundColor = new Color(0.035f, 0.04f, 0.05f), AmbientLightSource = Godot.Environment.AmbientSource.Color, AmbientLightColor = new Color(0.64f, 0.64f, 0.68f), AmbientLightEnergy = 0.72f } }; AddChild(environment);
 
-        if (OS.GetCmdlineUserArgs().Contains("--smoke")) { GodotSmokeRunner smoke = new() { Name = "GodotSmokeRunner" }; AddChild(smoke); smoke.Configure(bridge); }
+        string[] commandLineArgs = OS.GetCmdlineUserArgs();
+        if (commandLineArgs.Contains("--smoke") || commandLineArgs.Contains("--capture-smoke"))
+        {
+            GodotSmokeRunner smoke = new() { Name = "GodotSmokeRunner" };
+            AddChild(smoke);
+            smoke.Configure(bridge, commandLineArgs);
+        }
     }
     private static Vector3 ComputeInitialPlayerFocus(SimulationWorld world, byte playerSlot)
     {

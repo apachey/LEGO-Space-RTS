@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+if [[ "${LEGO_RTS_ALLOW_CANON_COMMIT:-0}" == "1" ]]; then exit 0; fi
+if git diff --cached --name-only --diff-filter=ACMR | grep -q '^Docs/Canon/'; then
+  printf 'BLOCKED: Docs/Canon is read-only for normal implementation commits.\n' >&2
+  printf 'A human-authorized canon change may explicitly set LEGO_RTS_ALLOW_CANON_COMMIT=1 for that commit.\n' >&2
+  exit 1
+fi

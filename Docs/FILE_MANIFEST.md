@@ -111,6 +111,18 @@
 | `SimCore.Tests/StableIdTests.cs` | Pure NUnit test for deterministic simulation/navigation/serialization behavior. |
 | `SimCore.Tests/StressTests.cs` | Pure NUnit test for deterministic simulation/navigation/serialization behavior. |
 | `Tests/Golden/README.md` | Trusted golden determinism baseline policy/location. |
-| `Tools/ContentCompiler/ContentCompiler.csproj` | Validated JSON-to-deterministic-runtime-content compiler. |
-| `Tools/ContentCompiler/Program.cs` | Validated JSON-to-deterministic-runtime-content compiler. |
-| `Tools/Validation/validate_phase10.py` | Static architectural invariant validator. |
+| `tools/ContentCompiler/ContentCompiler.csproj` | Validated JSON-to-deterministic-runtime-content compiler. |
+| `tools/ContentCompiler/Program.cs` | Validated JSON-to-deterministic-runtime-content compiler. |
+| `tools/Validation/validate_phase10.py` | Static architectural invariant validator. |
+| `tools/doctor.sh` | Local Git/.NET/Godot/repository readiness audit. |
+| `tools/verify.sh` | Fast and full executable verification harness. |
+| `tools/run-game.sh` | Auto-discovered Godot PrototypeRTS launcher. |
+| `tools/build-mac.sh` | Debug macOS application export harness. |
+| `tools/capture-visual-smoke.sh` | Deterministic in-engine default-camera capture command. |
+| `tools/setup-git-hooks.sh` | Explicit local repository hook setup. |
+| `.githooks/pre-commit` | Canon commit guard. |
+| `.githooks/pre-push` | Direct-main push guard. |
+| `.github/workflows/simcore-pr.yml` | Lightweight engine-independent Pull Request verification. |
+| `global.json` | Compatible .NET SDK minimum and roll-forward policy. |
+| `Docs/Development/AGENT_WORKFLOW.md` | Product-first task-to-user-merge workflow. |
+| `GodotClient/LEGO.SpaceRTS.Godot.sln` | Godot-local .NET solution required by the export pipeline. |

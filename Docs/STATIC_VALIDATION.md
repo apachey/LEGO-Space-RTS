@@ -3,7 +3,7 @@
 The repository includes:
 
 ```bash
-python Tools/Validation/validate_phase10.py
+python3 tools/Validation/validate_phase10.py
 ```
 
 It checks source-level invariants that do not require Godot or the .NET runtime, including:

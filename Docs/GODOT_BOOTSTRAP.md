@@ -22,7 +22,7 @@ Core runtime dependencies are instantiated/wired by `RtsCompositionRoot`; no `Fi
 Regenerate deterministic runtime data after editing source JSON:
 
 ```powershell
-dotnet run --project Tools/ContentCompiler -- Content/PrototypeEntities.json Content/Maps/DEV_FirstControllableRTS.map.json GodotClient/Compiled
+dotnet run --project tools/ContentCompiler -- Content/PrototypeEntities.json Content/Maps/DEV_FirstControllableRTS.map.json GodotClient/Compiled
 ```
 
 The client validates/loads the same `PrototypeContentCodec` and `CompiledMapCodec` binary formats as the pure C# tooling.

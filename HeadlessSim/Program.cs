@@ -71,6 +71,7 @@ if (goldenManifestIn is not null)
 int[] defaultGoldenCheckpoints={250,500,1000,1500,2000,3000};
 ulong? reference = null;
 string? referenceDump = null;
+Dictionary<int, ulong>? referenceCheckpoints = null;
 for (int run = 0; run < repeat; run++)
 {
     SimulationRunner runner;
@@ -105,7 +106,7 @@ for (int run = 0; run < repeat; run++)
     List<long>? spatialSamples = benchmark ? new List<long>(ticks) : null;
     List<long>? visionSamples = benchmark ? new List<long>(ticks) : null;
 
-    Dictionary<int,ulong>? observedGolden = goldenManifestOut is not null || expectedGolden is not null ? new Dictionary<int,ulong>() : null;
+    Dictionary<int,ulong>? observedGolden = goldenManifestOut is not null || expectedGolden is not null || repeat > 1 ? new Dictionary<int,ulong>() : null;
     Stopwatch sw = Stopwatch.StartNew();
     for (int i = 0; i < ticks; i++)
     {
@@ -183,6 +184,26 @@ for (int run = 0; run < repeat; run++)
         Console.Error.WriteLine($"DETERMINISM FAILURE: expected={reference.Value:X16} actual={finalHash:X16}");
         Console.Error.WriteLine(AuthoritativeStateDumper.FirstDifference(referenceDump ?? string.Empty,currentDump));
         Environment.ExitCode = 3; break;
+    }
+
+    if (repeat > 1 && observedGolden is not null)
+    {
+        if (referenceCheckpoints is null) referenceCheckpoints = new Dictionary<int, ulong>(observedGolden);
+        else
+        {
+            bool checkpointMismatch = false;
+            foreach (KeyValuePair<int, ulong> pair in referenceCheckpoints)
+            {
+                if (!observedGolden.TryGetValue(pair.Key, out ulong actual) || actual != pair.Value)
+                {
+                    Console.Error.WriteLine($"DETERMINISM CHECKPOINT FAILURE: tick={pair.Key} expected={pair.Value:X16} actual={(observedGolden.TryGetValue(pair.Key, out actual) ? actual.ToString("X16") : "MISSING")}");
+                    Environment.ExitCode = 3;
+                    checkpointMismatch = true;
+                    break;
+                }
+            }
+            if (checkpointMismatch) break;
+        }
     }
 
     if (goldenManifestOut is not null && run == repeat - 1 && observedGolden is not null)

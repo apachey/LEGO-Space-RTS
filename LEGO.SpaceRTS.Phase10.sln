@@ -8,7 +8,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeadlessSim", "HeadlessSim\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimCore.Tests", "SimCore.Tests\SimCore.Tests.csproj", "{2B6F3634-9D1B-4881-AB30-0E2B711D33C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentCompiler", "Tools\ContentCompiler\ContentCompiler.csproj", "{6FC8D5A9-5E97-49A7-90DF-E5E5AC6A6E85}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentCompiler", "tools\ContentCompiler\ContentCompiler.csproj", "{6FC8D5A9-5E97-49A7-90DF-E5E5AC6A6E85}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LEGO.SpaceRTS.Godot", "GodotClient\LEGO.SpaceRTS.Godot.csproj", "{A4A7F134-0B77-4B32-8FD3-2FE1669D39DE}"
 EndProject
