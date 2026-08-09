@@ -314,26 +314,66 @@ Do not call a workaround a root-cause fix.
 
 ---
 
-## 13. STOP RULE
+## 13. COMPLEXITY, GATE, AND ARCHITECTURE STOP RULES
 
-If the same objective remains unresolved after THREE materially different
-implementation attempts:
+### Two-attempt rule
+
+If the same blocker remains unresolved after TWO materially different
+implementation approaches:
 
 STOP.
 
-Do not continue stacking patches.
-
-Report:
+Do not continue stacking patches or begin a third approach. Report:
 
 1. what is still failing;
 2. reproduction evidence;
-3. the three approaches attempted;
+3. the two approaches attempted;
 4. what each attempt demonstrated;
 5. likely root causes;
 6. architectural or gameplay choices, if any, requiring user input;
 7. your recommended next step.
 
-Wait for user direction.
+Request architecture review and wait for user direction.
+
+### New-subsystem and scope-growth rules
+
+If a bounded task unexpectedly requires a new persistent coordinator,
+scheduler, planner, manager, solver, graph layer, traffic system or equivalent
+subsystem, STOP before implementing it.
+
+If a bugfix or feature grows into a new engine subsystem, stop the original
+task. Treat the larger work as a separately reviewed architecture task rather
+than silently expanding scope.
+
+### Research before custom algorithmic subsystems
+
+Before inventing a custom algorithmic subsystem for a standard game problem,
+research mature established approaches using primary technical sources,
+compare them with project constraints, and explain why custom work is required.
+Research does not authorize a new dependency or architecture change.
+
+### Gate classification and prototype value
+
+Every nontrivial acceptance, benchmark or stress gate must be classified as
+one of:
+
+- `BLOCKING_NOW`;
+- `BLOCKING_LATER`;
+- `DIAGNOSTIC`.
+
+Production-scale edge cases do not automatically block the nearest playable
+milestone. A single torture benchmark may not silently dictate a major
+architecture rewrite. If satisfying a benchmark would require such a rewrite,
+review both the benchmark's milestone classification and the architecture.
+
+### Architecture escalation
+
+Once architecture review is required, report:
+
+`ARCHITECTURE REVIEW REQUIRED`
+
+Stop coding in that direction until the user explicitly approves the reviewed
+architecture and task scope.
 
 ---
 

@@ -19,6 +19,7 @@ SUMMARY_FILE="${ARTIFACT_DIR}/${RUN_ID}-summary.txt"
 STAGE_LABELS=()
 STAGE_RESULTS=()
 FAILURES=0
+DIAGNOSTIC_FAILURES=0
 
 record_stage() {
   STAGE_LABELS+=("$1")
@@ -45,6 +46,29 @@ run_stage() {
     printf 'FAIL: %s (exit %d; see %s)\n' "${label}" "${status}" "${log#"${ROOT}/"}"
     record_stage "${label}" "FAIL"
     FAILURES=$((FAILURES + 1))
+  fi
+}
+
+run_diagnostic_stage() {
+  local label="$1"
+  local slug="$2"
+  shift 2
+  local log="${ARTIFACT_DIR}/${RUN_ID}-${slug}.log"
+  local status
+
+  printf '\n== %s ==\n' "${label}"
+  "$@" 2>&1 | tee "${log}"
+  status=${PIPESTATUS[0]}
+  if (( status == 0 )); then
+    printf 'DIAGNOSTIC PASS: %s\n' "${label}"
+    record_stage "${label}" "DIAGNOSTIC_PASS"
+  elif (( status == 77 )); then
+    printf 'DIAGNOSTIC SKIPPED: %s (see %s)\n' "${label}" "${log#"${ROOT}/"}"
+    record_stage "${label}" "DIAGNOSTIC_SKIPPED"
+  else
+    printf 'DIAGNOSTIC FAIL: %s (exit %d; see %s)\n' "${label}" "${status}" "${log#"${ROOT}/"}"
+    record_stage "${label}" "DIAGNOSTIC_FAIL"
+    DIAGNOSTIC_FAILURES=$((DIAGNOSTIC_FAILURES + 1))
   fi
 }
 
@@ -120,29 +144,30 @@ godot_smoke() {
   fi
 }
 
-run_stage "Static/source validation" "static" python3 "${ROOT}/tools/Validation/validate_phase10.py"
-run_stage ".NET restore" "restore" dotnet restore "${ROOT}/LEGO.SpaceRTS.Phase10.sln"
-run_stage ".NET solution build (warnings as errors)" "build" dotnet build "${ROOT}/LEGO.SpaceRTS.Phase10.sln" -c Release --no-restore --disable-build-servers -m:1
-run_stage "Godot C# Debug host build" "godot-build" dotnet build "${ROOT}/GodotClient/LEGO.SpaceRTS.Godot.csproj" -c Debug --no-restore --disable-build-servers -m:1
-run_stage "NUnit deterministic/snapshot/replay/stress suite" "tests" dotnet test "${ROOT}/SimCore.Tests/SimCore.Tests.csproj" -c Release --no-build --no-restore --disable-build-servers --verbosity minimal
-run_stage "Content compilation and tracked-binary validation" "content" compile_and_compare_content
-run_stage "HeadlessSim compiled-content smoke" "headless" dotnet "$(headless_dll)" --scenario first --compiled-dir "${ROOT}/GodotClient/Compiled" --ticks 1200 --hash-every 200
-run_stage "Godot C# PrototypeRTS headless smoke" "godot" godot_smoke
+run_stage "[BLOCKING_NOW] Static/source validation" "static" python3 "${ROOT}/tools/Validation/validate_phase10.py"
+run_stage "[BLOCKING_NOW] .NET restore" "restore" dotnet restore "${ROOT}/LEGO.SpaceRTS.Phase10.sln"
+run_stage "[BLOCKING_NOW] .NET solution build (warnings as errors)" "build" dotnet build "${ROOT}/LEGO.SpaceRTS.Phase10.sln" -c Release --no-restore --disable-build-servers -m:1
+run_stage "[BLOCKING_NOW] Godot C# Debug host build" "godot-build" dotnet build "${ROOT}/GodotClient/LEGO.SpaceRTS.Godot.csproj" -c Debug --no-restore --disable-build-servers -m:1
+run_stage "[BLOCKING_NOW] NUnit deterministic/snapshot/replay/stress suite" "tests" dotnet test "${ROOT}/SimCore.Tests/SimCore.Tests.csproj" -c Release --no-build --no-restore --disable-build-servers --verbosity minimal
+run_stage "[BLOCKING_NOW] Content compilation and tracked-binary validation" "content" compile_and_compare_content
+run_stage "[BLOCKING_NOW] HeadlessSim compiled-content smoke" "headless" dotnet "$(headless_dll)" --scenario first --compiled-dir "${ROOT}/GodotClient/Compiled" --ticks 1200 --hash-every 200
+run_stage "[BLOCKING_NOW] Godot C# PrototypeRTS headless smoke" "godot" godot_smoke
 
 if [[ "${MODE}" == "full" ]]; then
-  run_stage "100-repeat deterministic golden run" "golden100" dotnet "$(headless_dll)" --scenario golden --ticks 3200 --repeat 100
-  run_stage "Replay record/final-hash verification" "replay" verify_replay_hash
-  run_stage "Snapshot restore/continuation verification" "snapshot" verify_snapshot_continuation
-  run_stage "60-mover navigation/performance gate" "stress60" dotnet "$(headless_dll)" --scenario stress60 --ticks 3000 --benchmark --path-benchmark --enforce-performance-gates
-  run_stage "Compiled-content regeneration" "content-regenerate" regenerate_tracked_content
-  run_stage "macOS debug export smoke" "macos-export" "${ROOT}/tools/build-mac.sh" --verify
+  run_stage "[BLOCKING_NOW] 100-repeat deterministic golden run" "golden100" dotnet "$(headless_dll)" --scenario golden --ticks 3200 --repeat 100
+  run_stage "[BLOCKING_NOW] Replay record/final-hash verification" "replay" verify_replay_hash
+  run_stage "[BLOCKING_NOW] Snapshot restore/continuation verification" "snapshot" verify_snapshot_continuation
+  run_diagnostic_stage "[DIAGNOSTIC M2-M5; BLOCKING_LATER PRE-M6] 60-mover navigation/performance stress" "stress60" dotnet "$(headless_dll)" --scenario stress60 --ticks 3000 --benchmark --path-benchmark --enforce-performance-gates
+  run_stage "[BLOCKING_NOW] Compiled-content regeneration" "content-regenerate" regenerate_tracked_content
+  run_stage "[BLOCKING_NOW] macOS debug export smoke" "macos-export" "${ROOT}/tools/build-mac.sh" --verify
 fi
 
 {
   printf 'LEGO Space RTS verification summary (%s)\n' "${MODE}"
   printf 'Run: %s\n' "${RUN_ID}"
-  for ((i=0; i<${#STAGE_LABELS[@]}; i++)); do printf '%-9s %s\n' "${STAGE_RESULTS[$i]}" "${STAGE_LABELS[$i]}"; done
-  printf 'Failures: %d\n' "${FAILURES}"
+  for ((i=0; i<${#STAGE_LABELS[@]}; i++)); do printf '%-18s %s\n' "${STAGE_RESULTS[$i]}" "${STAGE_LABELS[$i]}"; done
+  printf 'Blocking failures: %d\n' "${FAILURES}"
+  printf 'Diagnostic failures: %d\n' "${DIAGNOSTIC_FAILURES}"
 } | tee "${SUMMARY_FILE}"
 
 if (( FAILURES > 0 )); then
