@@ -99,6 +99,25 @@ public class LocalSeparationTests
         }
     }
 
+    [Test]
+    public void ExpiredFriendlyCompressionNeverMovesThePairCloser()
+    {
+        SimulationWorld world=new(new MapGrid("map.test.local-separation.recovery"),2);
+        EntityId a=SpawnMover(world,0,FootprintClass.Small,FixVec2.FromInts(40,40));
+        EntityId b=SpawnMover(world,0,FootprintClass.Small,new FixVec2(Fix32.FromRatio(4099,100),Fix32.FromInt(40)));
+        world.Entities.Movement.Get(a).CompressionTicks=30;world.Entities.Movement.Get(b).CompressionTicks=30;
+        world.Spatial.Rebuild(world.Entities);QueueMove(world,a,1,FixVec2.FromInts(60,40));QueueMove(world,b,2,FixVec2.FromInts(20,40));
+        SimulationRunner runner=new(world);Fix32 nominal=CollisionRadiusSum(world,a,b);
+        Fix32 previous=FixVec2.Distance(world.Entities.Transform.Get(a).Position,world.Entities.Transform.Get(b).Position);
+
+        for(int tick=0;tick<40&&previous<nominal;tick++)
+        {
+            runner.StepOneTick();Fix32 current=FixVec2.Distance(world.Entities.Transform.Get(a).Position,world.Entities.Transform.Get(b).Position);
+            Assert.That(current.Raw,Is.GreaterThanOrEqualTo(previous.Raw),$"Compressed pair moved closer at tick {tick+1}.");
+            previous=current;
+        }
+    }
+
     private static SimulationRunner CreateHeadOnPair(FootprintClass firstFootprint, FootprintClass secondFootprint, byte firstPlayer, byte secondPlayer)
     {
         SimulationWorld world = new(new MapGrid("map.test.local-separation.head-on"), 2);

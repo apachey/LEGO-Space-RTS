@@ -15,6 +15,7 @@ public sealed class SimulationWorld
     public int StuckRecoveryDiagnostics { get; internal set; }
     public int OscillationDiagnostics { get; internal set; }
     public int PathRequestsProcessed { get; internal set; }
+    public int FormationReflowDiagnostics { get; internal set; }
 
     internal readonly Dictionary<uint, RouteCorridor> Corridors = new();
     internal readonly Dictionary<uint, UnitCommandQueue> Queues = new();

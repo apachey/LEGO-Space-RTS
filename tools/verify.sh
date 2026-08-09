@@ -149,6 +149,7 @@ run_stage "[BLOCKING_NOW] .NET restore" "restore" dotnet restore "${ROOT}/LEGO.S
 run_stage "[BLOCKING_NOW] .NET solution build (warnings as errors)" "build" dotnet build "${ROOT}/LEGO.SpaceRTS.Phase10.sln" -c Release --no-restore --disable-build-servers -m:1
 run_stage "[BLOCKING_NOW] Godot C# Debug host build" "godot-build" dotnet build "${ROOT}/GodotClient/LEGO.SpaceRTS.Godot.csproj" -c Debug --no-restore --disable-build-servers -m:1
 run_stage "[BLOCKING_NOW] NUnit deterministic/snapshot/replay/stress suite" "tests" dotnet test "${ROOT}/SimCore.Tests/SimCore.Tests.csproj" -c Release --no-build --no-restore --disable-build-servers --verbosity minimal
+run_stage "[BLOCKING_NOW] Representative 24-mover Movement Architecture v2 acceptance" "m2-movement" dotnet test "${ROOT}/SimCore.Tests/SimCore.Tests.csproj" -c Release --no-build --no-restore --disable-build-servers --verbosity minimal --filter "FullyQualifiedName~M2MovementAcceptanceTests"
 run_stage "[BLOCKING_NOW] Content compilation and tracked-binary validation" "content" compile_and_compare_content
 run_stage "[BLOCKING_NOW] HeadlessSim compiled-content smoke" "headless" dotnet "$(headless_dll)" --scenario first --compiled-dir "${ROOT}/GodotClient/Compiled" --ticks 1200 --hash-every 200
 run_stage "[BLOCKING_NOW] Godot C# PrototypeRTS headless smoke" "godot" godot_smoke

@@ -61,7 +61,8 @@ public readonly struct UnitOrder
 {
     public readonly UnitOrderType Type;
     public readonly FixVec2 Position;
-    public UnitOrder(UnitOrderType type, FixVec2 position) { Type = type; Position = position; }
+    public readonly FormationIntent Formation;
+    public UnitOrder(UnitOrderType type, FixVec2 position, FormationIntent formation = default) { Type = type; Position = position; Formation = formation; }
 }
 
 public sealed class UnitCommandQueue
@@ -83,8 +84,46 @@ public sealed class UnitCommandQueue
         for (int i = 1; i < Count; i++) _orders[i - 1] = _orders[i];
         Count--;
     }
-    public void Serialize(BinaryWriter w) { w.Write(Count); for (int i = 0; i < Count; i++) { w.Write((byte)_orders[i].Type); w.Write(_orders[i].Position.X.Raw); w.Write(_orders[i].Position.Y.Raw); } }
-    public void Deserialize(BinaryReader r) { Clear(); int count = r.ReadInt32(); if (count < 0 || count > Capacity) throw new InvalidDataException("Invalid order queue."); for (int i = 0; i < count; i++) Enqueue(new UnitOrder((UnitOrderType)r.ReadByte(), new FixVec2(Fix32.FromRaw(r.ReadInt32()), Fix32.FromRaw(r.ReadInt32())))); }
+    public void Serialize(BinaryWriter w)
+    {
+        w.Write(Count);
+        for (int i = 0; i < Count; i++)
+        {
+            UnitOrder order=_orders[i];w.Write((byte)order.Type);w.Write(order.Position.X.Raw);w.Write(order.Position.Y.Raw);
+            FormationIntentCodec.Write(w,order.Formation);
+        }
+    }
+    public void Deserialize(BinaryReader r)
+    {
+        Clear();int count=r.ReadInt32();if(count<0||count>Capacity)throw new InvalidDataException("Invalid order queue.");
+        for(int i=0;i<count;i++)Enqueue(new UnitOrder((UnitOrderType)r.ReadByte(),new FixVec2(Fix32.FromRaw(r.ReadInt32()),Fix32.FromRaw(r.ReadInt32())),FormationIntentCodec.Read(r)));
+    }
+}
+
+internal static class FormationIntentCodec
+{
+    public static void Write(BinaryWriter w,FormationIntent intent)
+    {
+        w.Write(intent.CohortId);w.Write(intent.Anchor.X.Raw);w.Write(intent.Anchor.Y.Raw);w.Write(intent.Heading.X.Raw);w.Write(intent.Heading.Y.Raw);
+        w.Write(intent.SlotIndex);w.Write(intent.MemberCount);w.Write(intent.Columns);w.Write((byte)intent.SpacingFootprint);w.Write(intent.LastReflowTick);
+    }
+    public static FormationIntent Read(BinaryReader r)
+    {
+        FormationIntent intent=new FormationIntent
+        {
+            CohortId=r.ReadUInt32(),Anchor=new FixVec2(Fix32.FromRaw(r.ReadInt32()),Fix32.FromRaw(r.ReadInt32())),Heading=new FixVec2(Fix32.FromRaw(r.ReadInt32()),Fix32.FromRaw(r.ReadInt32())),
+            SlotIndex=r.ReadInt32(),MemberCount=r.ReadInt32(),Columns=r.ReadInt32(),SpacingFootprint=(FootprintClass)r.ReadByte(),LastReflowTick=r.ReadInt32()
+        };
+        if(intent.MemberCount==0)
+        {
+            if(intent.SlotIndex!=0||intent.Columns!=0)throw new InvalidDataException("Invalid empty formation intent.");
+            return intent;
+        }
+        if(intent.MemberCount<2||intent.MemberCount>128||intent.SlotIndex<0||intent.SlotIndex>=intent.MemberCount||intent.Columns<1||intent.Columns>intent.MemberCount||
+            intent.SpacingFootprint<FootprintClass.Tiny||intent.SpacingFootprint>FootprintClass.Huge||intent.LastReflowTick< -1)
+            throw new InvalidDataException("Invalid formation intent.");
+        return intent;
+    }
 }
 
 public sealed class CommandBuffer

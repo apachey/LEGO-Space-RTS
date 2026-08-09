@@ -49,27 +49,42 @@ narrow placement cases allowed by Phase 09B.
   ticks, and enemy units never use friendly compression.
 - The obsolete universal 12-tick normal-locomotion reservation planner and its
   movement-speed gate are removed from the authoritative pipeline.
-- Human playtest arrival jitter caused by underspaced Medium/Large/Huge final
-  formation slots is corrected: settled slots now retain at least the canonical
-  collision-diameter + 0.35-build-cell margin, so local separation does not
-  keep fighting an already completed Move.
-- The current full verification blocking gate is green, including builds,
-  NUnit, compiled-content validation, HeadlessSim, replay/snapshot determinism,
-  Godot headless smoke and macOS export smoke.
+- Persistent per-unit command-cohort/formation intent is implemented and
+  included in snapshot/state hashing (snapshot format v2). Cohorts perform at
+  most one deterministic reflow per three seconds of non-progress, narrow their
+  columns, and release an impractical exact slot when the mover is already
+  legally inside the formation's settling envelope.
+- Local locomotion resolves choices in Heavy-first footprint/Entity-ID order.
+  Lower-priority movers can keep a legal sidestep/turn-around escape while the
+  right-of-way mover briefly waits; a final deterministic safety pass prevents
+  a compressed pair from moving closer or entering illegal overlap.
+- Meaningful-progress recovery is measured toward the active route waypoint
+  over accumulated movement rather than reset by arbitrary per-tick motion, so
+  arrival micro-movement cannot indefinitely suppress reflow/repath.
+- The current full verification acceptance candidate is green across every
+  `BLOCKING_NOW` stage: builds, 68 NUnit tests, the explicit representative
+  24-mover gate, compiled content, HeadlessSim, Godot headless smoke, 100-repeat
+  determinism, replay, snapshot-v2 continuation, regeneration and macOS export.
+- A launchable debug build was produced at
+  `Builds/macOS/LEGO Space RTS.app` and passed the export smoke launch.
 
 ## Current gates
 
 - Representative 24-mover Movement Architecture v2 scenario:
-  `BLOCKING_NOW` for M2; not yet implemented.
+  `BLOCKING_NOW` for M2; implemented and green in its focused local run. It
+  covers all footprint families, two constrained-route cohorts, the authored
+  medium and Heavy passages, controlled opposing-friendly Heavy/Small traffic,
+  formation reflow, Excavatable topology refresh, legal starts, completion,
+  deterministic recovery diagnostics and repeated final hashes.
 - Legacy 60-mover stress: `DIAGNOSTIC` during M2–M5 and `BLOCKING_LATER`
-  before M6. The latest full run remains diagnostic-failing at 20% completion
-  with elevated oscillation; it does not block the current M2 task.
+  before M6. The latest full run remains diagnostic-failing at 51.67%
+  completion (31/60), 8,483 oscillation incidents and elevated tail latency;
+  it does not block the current M2 task.
 
 ## Known unresolved work
 
-- formation/cohort reflow integration;
-- representative 24-mover gate implementation;
-- final M2 playable macOS build and human movement-feel acceptance.
+- human movement-feel acceptance, especially confirmation that completed units
+  no longer visibly jitter/dance and that Heavy/Small yielding reads naturally;
 - pre-existing HPA cluster-size discrepancy: Phase 09 specifies 10 build cells
   / 20 navigation nodes, while the imported runtime/static validator currently
   use 10 navigation nodes / 5 build cells; resolve in a separate canon-alignment
@@ -86,9 +101,6 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Formation/cohort reflow integration.
-2. Representative 24-mover M2 scenario.
-3. Automated M2 verification.
-4. macOS playable build.
-5. Human playtest.
-6. Only after M2 acceptance: M3.
+1. Human movement-feel playtest of the exported macOS build.
+2. Merge and close M2 only after human acceptance.
+3. Only after M2 acceptance: M3.

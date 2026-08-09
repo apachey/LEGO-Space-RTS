@@ -35,6 +35,19 @@ public struct Movement
     public FixVec2 LastPosition;
 }
 
+public struct FormationIntent
+{
+    public uint CohortId;
+    public FixVec2 Anchor;
+    public FixVec2 Heading;
+    public int SlotIndex;
+    public int MemberCount;
+    public int Columns;
+    public FootprintClass SpacingFootprint;
+    public int LastReflowTick;
+    public bool IsActive => MemberCount > 1;
+}
+
 public struct NavigationAgent
 {
     public FootprintClass Footprint;
@@ -44,6 +57,7 @@ public struct NavigationAgent
     public bool PathDirty;
     public int PathTopologyVersion;
     public int RequestAge;
+    public FormationIntent Formation;
 }
 
 public struct Selectable

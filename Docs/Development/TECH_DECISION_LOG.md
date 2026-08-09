@@ -32,3 +32,30 @@ engine-integration layer.
 - The imported `Tools/` directory is normalized to lowercase `tools/` so the documented commands work identically on macOS and case-sensitive CI filesystems.
 
 These are implementation workflow decisions only. They do not change game canon or authoritative simulation rules.
+
+---
+
+## 2026-08-09 — M2 bounded cohort reflow and Heavy-first local resolution
+
+- Multi-unit Move commands carry a minimal per-unit `FormationIntent`: command
+  cohort ID, shared anchor/heading, deterministic slot, footprint spacing,
+  current column count and last reflow tick. No persistent traffic manager,
+  passage coordinator or future movement scheduler is introduced.
+- Authoritative snapshot format advances from v1 to v2 so active and queued
+  formation intent survives save/restore and participates in state hashing.
+- A cohort may reflow at most once per canonical three-second non-progress
+  interval. Reflow narrows columns; an impractical exact slot may settle at the
+  mover's current legal position only after it has reached the calculated
+  formation envelope around the command anchor.
+- Local candidate selection is deterministic Heavy-first by footprint, then
+  Entity ID. A lower-priority mover evaluates sidestep/turn-around escape
+  against a briefly waiting right-of-way mover; a bounded final safety pass
+  cancels unsafe steps after all local choices are known.
+- The M2 blocking fixture uses 24 mixed movers: two ten-unit constrained-route
+  cohorts plus dedicated Small/Huge pairs for controlled opposing-friendly
+  traffic and Excavatable route refresh. This preserves every Phase 09B gate
+  requirement without turning the fixture into a general 12-vs-12 traffic
+  scheduling benchmark.
+
+These are implementation decisions within Movement Architecture v2 and do not
+change gameplay canon.
