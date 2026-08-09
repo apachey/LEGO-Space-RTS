@@ -49,6 +49,10 @@ narrow placement cases allowed by Phase 09B.
   ticks, and enemy units never use friendly compression.
 - The obsolete universal 12-tick normal-locomotion reservation planner and its
   movement-speed gate are removed from the authoritative pipeline.
+- Human playtest arrival jitter caused by underspaced Medium/Large/Huge final
+  formation slots is corrected: settled slots now retain at least the canonical
+  collision-diameter + 0.35-build-cell margin, so local separation does not
+  keep fighting an already completed Move.
 - The current full verification blocking gate is green, including builds,
   NUnit, compiled-content validation, HeadlessSim, replay/snapshot determinism,
   Godot headless smoke and macOS export smoke.
