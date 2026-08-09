@@ -122,10 +122,10 @@ public partial class DebugRenderer : MeshInstance3D
         IReadOnlyList<EntityId> alive = _bridge!.World.Entities.Alive;
         for (int i = 0; i < alive.Count; i++)
         {
-            NavPath? path = _bridge.World.GetPath(alive[i]);
-            if (path is null || path.Cells.Count < 2) continue;
-            for (int n = 1; n < path.Cells.Count; n++)
-                Line(MapGrid.NavCellCenterToBuild(path.Cells[n - 1]).ToWorld(0.12f), MapGrid.NavCellCenterToBuild(path.Cells[n]).ToWorld(0.12f), c);
+            RouteCorridor? corridor = _bridge.World.GetCorridor(alive[i]);
+            if (corridor is null || corridor.Cells.Count < 2) continue;
+            for (int n = 1; n < corridor.Cells.Count; n++)
+                Line(MapGrid.NavCellCenterToBuild(corridor.Cells[n - 1]).ToWorld(0.12f), MapGrid.NavCellCenterToBuild(corridor.Cells[n]).ToWorld(0.12f), c);
         }
     }
 

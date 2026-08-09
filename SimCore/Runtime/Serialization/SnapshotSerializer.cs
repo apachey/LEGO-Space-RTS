@@ -54,7 +54,7 @@ public static class SnapshotSerializer
         Selectable s = world.Entities.Selectable.Get(id); w.Write(s.IsSelectable); w.Write(s.ContentType.Value); w.Write((byte)s.Kind);
         Vision v = world.Entities.Vision.Get(id); w.Write(v.RadiusBuildCells); w.Write(v.IsAirVision); w.Write(v.LastFogX); w.Write(v.LastFogY);
         world.GetQueue(id).Serialize(w);
-        if (world.Paths.TryGetValue(id.Value, out NavPath path))
+        if (world.Corridors.TryGetValue(id.Value, out RouteCorridor path))
         {
             w.Write(true); w.Write(path.TopologyVersion); w.Write(path.Cells.Count);
             for (int p = 0; p < path.Cells.Count; p++) { w.Write(path.Cells[p].X); w.Write(path.Cells[p].Y); }
@@ -79,8 +79,8 @@ public static class SnapshotSerializer
         world.GetQueue(id).Deserialize(r);
         if (r.ReadBoolean())
         {
-            NavPath path = new() { TopologyVersion = r.ReadInt32() }; int count = r.ReadInt32(); if (count < 0 || count > 20000) throw new InvalidDataException("Invalid path count.");
-            for (int i = 0; i < count; i++) path.Cells.Add(new NavCell(r.ReadInt16(), r.ReadInt16())); world.Paths[id.Value] = path;
+            RouteCorridor path = new() { TopologyVersion = r.ReadInt32() }; int count = r.ReadInt32(); if (count < 0 || count > 20000) throw new InvalidDataException("Invalid path count.");
+            for (int i = 0; i < count; i++) path.Cells.Add(new NavCell(r.ReadInt16(), r.ReadInt16())); world.Corridors[id.Value] = path;
         }
     }
 }

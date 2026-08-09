@@ -16,7 +16,7 @@ public sealed class SimulationWorld
     public int OscillationDiagnostics { get; internal set; }
     public int PathRequestsProcessed { get; internal set; }
 
-    internal readonly Dictionary<uint, NavPath> Paths = new();
+    internal readonly Dictionary<uint, RouteCorridor> Corridors = new();
     internal readonly Dictionary<uint, UnitCommandQueue> Queues = new();
     internal readonly Dictionary<uint, FixVec2> PendingVelocity = new();
     internal readonly Dictionary<uint, bool> ReservationPermit = new();
@@ -54,7 +54,7 @@ public sealed class SimulationWorld
         return queue;
     }
 
-    public NavPath? GetPath(EntityId id) => Paths.TryGetValue(id.Value, out NavPath path) ? path : null;
+    public RouteCorridor? GetCorridor(EntityId id) => Corridors.TryGetValue(id.Value, out RouteCorridor corridor) ? corridor : null;
     public bool HasReservationPermit(EntityId id) => ReservationPermit.TryGetValue(id.Value, out bool permit) && permit;
 
     public void OpenExcavatable(ushort featureId)
@@ -67,7 +67,14 @@ public sealed class SimulationWorld
             EntityId id = alive[i];
             if (!Entities.Navigation.Has(id)) continue;
             ref NavigationAgent nav = ref Entities.Navigation.Get(id);
-            if (nav.HasTarget) nav.PathDirty = true;
+            if (!nav.HasTarget) continue;
+            if (!Corridors.TryGetValue(id.Value, out RouteCorridor corridor) || corridor.IsAffectedBy(rect))
+            {
+                nav.PathDirty = true;
+                continue;
+            }
+            corridor.TopologyVersion = Map.TopologyVersion;
+            nav.PathTopologyVersion = Map.TopologyVersion;
         }
     }
 
