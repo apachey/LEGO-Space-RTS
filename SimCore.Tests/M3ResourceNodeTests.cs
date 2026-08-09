@@ -61,6 +61,9 @@ public sealed class M3ResourceNodeTests
             Assert.That(receiver.AcceptedType, Is.EqualTo(ResourceType.Ore));
             Assert.That(receiver.IsHqEmergencyReceiver, Is.True);
             Assert.That(receiver.PendingHauledAmount, Is.Zero);
+            ResourceBank bank = world.Entities.ResourceBank.Get(id);
+            Assert.That(bank.Type, Is.EqualTo(ResourceType.Ore));
+            Assert.That(bank.ProcessedAmount, Is.Zero);
         }
         Assert.That(receivers, Is.EqualTo(new[] { 1, 1 }));
     }

@@ -176,6 +176,7 @@ public static class ScenarioFactory
         world.Entities.Transform.Set(id, new SimTransform { Position = spawn.Position, Orientation = Angle16.Zero });
         world.Entities.Selectable.Set(id, new Selectable { IsSelectable = false, ContentType = definition.Id, Kind = SelectableKind.Building });
         world.Entities.ResourceReceiver.Set(id, new ResourceReceiver { AcceptedType = ResourceType.Ore, PendingHauledAmount = 0, IsHqEmergencyReceiver = true });
+        world.Entities.ResourceBank.Set(id, new ResourceBank { Type = ResourceType.Ore, ProcessedAmount = 0 });
     }
 }
 }

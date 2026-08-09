@@ -19,6 +19,7 @@ public sealed class EntityStore
     public readonly ComponentStore<Worker> Worker = new();
     public readonly ComponentStore<ResourceCarrier> ResourceCarrier = new();
     public readonly ComponentStore<ResourceReceiver> ResourceReceiver = new();
+    public readonly ComponentStore<ResourceBank> ResourceBank = new();
 
     public IReadOnlyList<EntityId> Alive => _alive;
 
@@ -67,6 +68,7 @@ public sealed class EntityStore
         Worker.Remove(id);
         ResourceCarrier.Remove(id);
         ResourceReceiver.Remove(id);
+        ResourceBank.Remove(id);
         return true;
     }
 

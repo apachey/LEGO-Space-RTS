@@ -132,4 +132,10 @@ public struct ResourceReceiver
     public int PendingHauledAmount;
     public bool IsHqEmergencyReceiver;
 }
+
+public struct ResourceBank
+{
+    public ResourceType Type;
+    public int ProcessedAmount;
+}
 }

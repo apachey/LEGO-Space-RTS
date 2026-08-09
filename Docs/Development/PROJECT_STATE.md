@@ -63,8 +63,8 @@ narrow placement cases allowed by Phase 09B.
 - Meaningful-progress recovery is measured toward the active route waypoint
   over accumulated movement rather than reset by arbitrary per-tick motion, so
   arrival micro-movement cannot indefinitely suppress reflow/repath.
-- The current M3 T031 full verification is green across every
-  `BLOCKING_NOW` stage: builds, 79 NUnit tests, the explicit representative
+- The current M3 T032 full verification is green across every
+  `BLOCKING_NOW` stage: builds, 83 NUnit tests, the explicit representative
   24-mover gate, compiled content, HeadlessSim, Godot headless smoke, 100-repeat
   determinism, replay, snapshot continuation, regeneration and macOS export.
 - A launchable debug build was produced at
@@ -91,6 +91,15 @@ narrow placement cases allowed by Phase 09B.
 - Human T031 playtest acceptance is complete as of 2026-08-10: the game
   director confirmed the playable harvesting, carrying and HQ-delivery loop
   works. No blocking interaction or readability defect was reported.
+- M3 T032 resource banking is implemented on the current task branch. Each HQ
+  receiver owns a local authoritative processed-Ore reserve; hauled Ore remains
+  staged for one tick before deterministic banking, and the debug HUD reports
+  the player's processed and waiting-at-HQ totals.
+- Conservation measurement covers the complete finite-resource path — raw
+  deposits, Crew cargo, hauled receiver inventory and processed local reserves.
+  Tick-by-tick regression coverage verifies that the playable extraction and
+  delivery loop neither creates nor loses Ore. Snapshot v5 / simulation
+  protocol v3 preserve local bank state; readers retain v2-v4 compatibility.
 
 ## Current gates
 
@@ -115,9 +124,9 @@ narrow placement cases allowed by Phase 09B.
   / 20 navigation nodes, while the imported runtime/static validator currently
   use 10 navigation nodes / 5 build cells; resolve in a separate canon-alignment
   task before changing cluster geometry;
-- T032 resource banking and conservation coverage have not begun. Hauled Ore is
-  deliberately staged at its receiver and is not yet spendable or shown in a
-  production economy HUD.
+- Processed Ore is not yet consumed or reserved by construction; T033 owns that
+  boundary together with construction placement. The full production economy
+  HUD remains a later M3 task; T032 exposes totals in the development HUD only.
 
 ## Explicitly rejected / do not resurrect
 
@@ -131,5 +140,5 @@ narrow placement cases allowed by Phase 09B.
 ## Next approved development sequence
 
 1. Merge the accepted stacked T030 resource-node and T031 Ore-loop branches.
-2. Begin T032 resource banking and conservation coverage.
-3. T033 construction placement after T032 acceptance.
+2. Accept and merge the stacked T032 resource-banking branch.
+3. Begin T033 construction placement after T032 acceptance.

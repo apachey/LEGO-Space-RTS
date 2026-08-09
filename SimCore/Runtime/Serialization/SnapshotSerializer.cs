@@ -7,8 +7,8 @@ namespace LegoSpaceRTS.SimCore
 public static class SnapshotSerializer
 {
     public const uint Magic = 0x53525453; // STRS
-    public const ushort FormatVersion = 4;
-    public const ushort SimulationProtocolVersion = 2;
+    public const ushort FormatVersion = 5;
+    public const ushort SimulationProtocolVersion = 3;
 
     [Flags]
     private enum EntityComponents : ushort
@@ -26,7 +26,8 @@ public static class SnapshotSerializer
         Worker = 1 << 9,
         ResourceCarrier = 1 << 10,
         ResourceReceiver = 1 << 11,
-        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver
+        ResourceBank = 1 << 12,
+        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver | ResourceBank
     }
 
     public static byte[] Serialize(SimulationWorld world)
@@ -47,8 +48,8 @@ public static class SnapshotSerializer
         using MemoryStream ms = new(bytes, false); using BinaryReader r = new(ms);
         if (r.ReadUInt32() != Magic) throw new InvalidDataException("Snapshot magic mismatch.");
         ushort format = r.ReadUInt16(), protocol = r.ReadUInt16();
-        bool legacy = (format == 2 || format == 3) && protocol == 1;
-        if (!legacy && (format != FormatVersion || protocol != SimulationProtocolVersion)) throw new InvalidDataException($"Unsupported snapshot {format}/{protocol}.");
+        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2);
+        if (!supportedLegacy && (format != FormatVersion || protocol != SimulationProtocolVersion)) throw new InvalidDataException($"Unsupported snapshot {format}/{protocol}.");
         SimTick tick = new(r.ReadInt32()); MapGrid map = MapGrid.Deserialize(r); uint nextEntity = r.ReadUInt32();
         EntityStore entities = new(); int entityCount = r.ReadInt32(); if (entityCount < 0 || entityCount > 10000) throw new InvalidDataException("Invalid entity count.");
         SimulationWorld temp = new(map, entities, new FogState(2), tick);
@@ -57,6 +58,7 @@ public static class SnapshotSerializer
             if (format == 2) ReadEntityV2(r, temp);
             else ReadEntity(r, temp, format);
         }
+        if (format < 5) AddLegacyResourceBanks(entities);
         entities.RestoreNextEntityValue(nextEntity);
         temp.Commands.Deserialize(r);
         temp.Fog = FogState.Deserialize(r);
@@ -79,6 +81,7 @@ public static class SnapshotSerializer
         if (world.Entities.Worker.Has(id)) components |= EntityComponents.Worker;
         if (world.Entities.ResourceCarrier.Has(id)) components |= EntityComponents.ResourceCarrier;
         if (world.Entities.ResourceReceiver.Has(id)) components |= EntityComponents.ResourceReceiver;
+        if (world.Entities.ResourceBank.Has(id)) components |= EntityComponents.ResourceBank;
         if (world.TryGetQueue(id, out _)) components |= EntityComponents.CommandQueue;
         if (world.Corridors.ContainsKey(id.Value)) components |= EntityComponents.RouteCorridor;
         w.Write((ushort)components);
@@ -99,6 +102,7 @@ public static class SnapshotSerializer
         if ((components & EntityComponents.Worker) != 0) WriteWorker(w, world.Entities.Worker.Get(id));
         if ((components & EntityComponents.ResourceCarrier) != 0) WriteResourceCarrier(w, world.Entities.ResourceCarrier.Get(id));
         if ((components & EntityComponents.ResourceReceiver) != 0) WriteResourceReceiver(w, world.Entities.ResourceReceiver.Get(id));
+        if ((components & EntityComponents.ResourceBank) != 0) WriteResourceBank(w, world.Entities.ResourceBank.Get(id));
         if ((components & EntityComponents.CommandQueue) != 0) world.GetQueue(id).Serialize(w, includeTargetEntity: true);
         if ((components & EntityComponents.RouteCorridor) != 0) WriteCorridor(w, world.Corridors[id.Value]);
     }
@@ -141,6 +145,11 @@ public static class SnapshotSerializer
         w.Write((byte)receiver.AcceptedType); w.Write(receiver.PendingHauledAmount); w.Write(receiver.IsHqEmergencyReceiver);
     }
 
+    private static void WriteResourceBank(BinaryWriter w, ResourceBank bank)
+    {
+        w.Write((byte)bank.Type); w.Write(bank.ProcessedAmount);
+    }
+
     private static void WriteCorridor(BinaryWriter w, RouteCorridor path)
     {
         w.Write(path.TopologyVersion); w.Write(path.Cells.Count);
@@ -162,6 +171,7 @@ public static class SnapshotSerializer
         if ((components & EntityComponents.Worker) != 0) world.Entities.Worker.Set(id, ReadWorker(r));
         if ((components & EntityComponents.ResourceCarrier) != 0) world.Entities.ResourceCarrier.Set(id, ReadResourceCarrier(r));
         if ((components & EntityComponents.ResourceReceiver) != 0) world.Entities.ResourceReceiver.Set(id, ReadResourceReceiver(r));
+        if ((components & EntityComponents.ResourceBank) != 0) world.Entities.ResourceBank.Set(id, ReadResourceBank(r));
         if ((components & EntityComponents.CommandQueue) != 0) world.GetQueue(id).Deserialize(r, includeTargetEntity: format >= 4);
         if ((components & EntityComponents.RouteCorridor) != 0) world.Corridors[id.Value] = ReadCorridor(r);
     }
@@ -195,6 +205,20 @@ public static class SnapshotSerializer
 
     private static ResourceReceiver ReadResourceReceiver(BinaryReader r)
         => new() { AcceptedType = (ResourceType)r.ReadByte(), PendingHauledAmount = r.ReadInt32(), IsHqEmergencyReceiver = r.ReadBoolean() };
+
+    private static ResourceBank ReadResourceBank(BinaryReader r)
+        => new() { Type = (ResourceType)r.ReadByte(), ProcessedAmount = r.ReadInt32() };
+
+    private static void AddLegacyResourceBanks(EntityStore entities)
+    {
+        IReadOnlyList<EntityId> alive = entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (!entities.ResourceReceiver.TryGet(id, out ResourceReceiver receiver)) continue;
+            entities.ResourceBank.Set(id, new ResourceBank { Type = receiver.AcceptedType, ProcessedAmount = 0 });
+        }
+    }
 
     private static RouteCorridor ReadCorridor(BinaryReader r)
     {

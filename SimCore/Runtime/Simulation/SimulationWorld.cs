@@ -69,6 +69,34 @@ public sealed class SimulationWorld
         return true;
     }
 
+    public int GetProcessedResourceTotal(byte playerSlot, ResourceType type)
+    {
+        int total = 0;
+        IReadOnlyList<EntityId> alive = Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (!Entities.Ownership.TryGet(id, out Ownership ownership) || ownership.PlayerSlot != playerSlot ||
+                !Entities.ResourceBank.TryGet(id, out ResourceBank bank) || bank.Type != type) continue;
+            total = checked(total + bank.ProcessedAmount);
+        }
+        return total;
+    }
+
+    public int GetPendingHauledResourceTotal(byte playerSlot, ResourceType type)
+    {
+        int total = 0;
+        IReadOnlyList<EntityId> alive = Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (!Entities.Ownership.TryGet(id, out Ownership ownership) || ownership.PlayerSlot != playerSlot ||
+                !Entities.ResourceReceiver.TryGet(id, out ResourceReceiver receiver) || receiver.AcceptedType != type) continue;
+            total = checked(total + receiver.PendingHauledAmount);
+        }
+        return total;
+    }
+
     public void OpenExcavatable(ushort featureId)
     {
         IntRect rect = Map.OpenFeature(featureId);

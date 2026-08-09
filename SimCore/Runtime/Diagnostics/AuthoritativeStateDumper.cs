@@ -24,6 +24,7 @@ public static class AuthoritativeStateDumper
             if(world.Entities.Worker.TryGet(id,out Worker worker))b.Append(" workerState=").Append((byte)worker.TaskState).Append(" resourceTarget=").Append(worker.ResourceTarget.Value).Append(" receiverTarget=").Append(worker.ReceiverTarget.Value).Append(" extractionTicks=").Append(worker.ExtractionTicks).Append('/').Append(worker.TicksPerOre);
             if(world.Entities.ResourceCarrier.TryGet(id,out ResourceCarrier carrier))b.Append(" cargoType=").Append((byte)carrier.Type).Append(" cargo=").Append(carrier.Amount).Append('/').Append(carrier.Capacity);
             if(world.Entities.ResourceReceiver.TryGet(id,out ResourceReceiver receiver))b.Append(" receiverType=").Append((byte)receiver.AcceptedType).Append(" pendingHauled=").Append(receiver.PendingHauledAmount).Append(" hqEmergency=").Append(receiver.IsHqEmergencyReceiver);
+            if(world.Entities.ResourceBank.TryGet(id,out ResourceBank bank))b.Append(" bankType=").Append((byte)bank.Type).Append(" processed=").Append(bank.ProcessedAmount);
             if(world.TryGetQueue(id,out UnitCommandQueue q))b.Append(" queue=").Append(q.Count);
             RouteCorridor? corridor=world.GetCorridor(id);if(corridor!=null)b.Append(" corridorCells=").Append(corridor.Cells.Count).Append(" corridorTopo=").Append(corridor.TopologyVersion);
             b.AppendLine();

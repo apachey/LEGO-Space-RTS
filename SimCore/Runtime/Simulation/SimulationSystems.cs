@@ -211,6 +211,26 @@ public sealed class CommandExecutionSystem : ISimSystem
     }
 }
 
+public sealed class ResourceBankingSystem : ISimSystem
+{
+    public void Step(SimulationWorld world)
+    {
+        IReadOnlyList<EntityId> alive = world.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (!world.Entities.ResourceReceiver.Has(id) || !world.Entities.ResourceBank.Has(id)) continue;
+            ref ResourceReceiver receiver = ref world.Entities.ResourceReceiver.Get(id);
+            ref ResourceBank bank = ref world.Entities.ResourceBank.Get(id);
+            if (receiver.PendingHauledAmount < 0 || bank.ProcessedAmount < 0)
+                throw new InvalidOperationException($"Resource inventory cannot be negative on entity {id.Value}.");
+            if (receiver.AcceptedType != bank.Type || receiver.PendingHauledAmount == 0) continue;
+            bank.ProcessedAmount = checked(bank.ProcessedAmount + receiver.PendingHauledAmount);
+            receiver.PendingHauledAmount = 0;
+        }
+    }
+}
+
 public sealed class HarvestSystem : ISimSystem
 {
     public static readonly Fix32 InteractionRange = Fix32.FromInt(2);

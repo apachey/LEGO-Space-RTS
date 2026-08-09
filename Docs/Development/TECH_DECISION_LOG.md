@@ -111,3 +111,29 @@ not change gameplay canon.
 
 These are implementation decisions within the approved M3 economy and Rock
 Raider resource-flow canon. They do not change gameplay canon.
+
+---
+
+## 2026-08-10 — M3 local resource banking and conservation boundary
+
+- T032 models processed Ore as an authoritative local `ResourceBank` component
+  on each receiver rather than a universal player wallet. This preserves the
+  later Worksite connectivity and pool-split rules without implementing the
+  T049 Worksite graph early.
+- Banking executes in stable Entity ID order before harvesting. Material
+  delivered during a tick therefore remains explicitly hauled at the receiver
+  until the next tick, when the complete waiting amount moves into that local
+  processed reserve.
+- Canon specifies HQ emergency receiving but no separate numerical HQ
+  processing cadence. T032 therefore does not invent an Ore-per-second rate;
+  mature Ore Processing Plant throughput remains later approved work.
+- Conservation diagnostics measure raw deposit remainder, carried payload,
+  hauled receiver inventory and processed reserves as one closed quantity.
+  Construction spending and reservation are excluded until T033 introduces
+  their authoritative transaction boundary.
+- Snapshot format v5 / simulation protocol v3 add resource-bank state.
+  Snapshot v2-v4 reads remain supported; legacy receivers are upgraded with an
+  empty local bank during load so they continue under current simulation rules.
+
+These are implementation decisions within approved M3 resource-flow canon.
+They do not change gameplay canon.

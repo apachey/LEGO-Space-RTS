@@ -48,6 +48,8 @@ public partial class DebugHud : CanvasLayer
         _builder.Append("LEGO Space RTS — M3 Economy Prototype\nTick: ").Append(_bridge.World.Tick.Value).Append("   Hash: ").Append(_cachedHash)
             .Append("   Content: ").Append(_bridge.GameplayContentHash.ToString("X16")).Append('\n')
             .Append("Sim: ").Append(_bridge.LastSimulationMs.ToString("F3")).Append(" ms   Path: ").Append(_bridge.LastPathfindingMs.ToString("F3")).Append(" ms   Entities: ").Append(_bridge.World.Entities.Alive.Count).Append('\n')
+            .Append("Ore: ").Append(_bridge.World.GetProcessedResourceTotal(0, ResourceType.Ore)).Append(" processed   ")
+            .Append(_bridge.World.GetPendingHauledResourceTotal(0, ResourceType.Ore)).Append(" hauled at HQ\n")
             .Append("Selected: ").Append(_selection.Selected.Count).Append(" / 128");
         if (_selection.Selected.Count > 0)
         {
