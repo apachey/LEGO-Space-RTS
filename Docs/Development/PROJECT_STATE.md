@@ -88,6 +88,9 @@ narrow placement cases allowed by Phase 09B.
   Snapshot v4 / simulation protocol v2 preserve worker task progress, carrier
   payloads, receiver targets, queued Harvest targets and hauled receiver state;
   legacy snapshot v2/v3 readers remain supported.
+- Human T031 playtest acceptance is complete as of 2026-08-10: the game
+  director confirmed the playable harvesting, carrying and HQ-delivery loop
+  works. No blocking interaction or readability defect was reported.
 
 ## Current gates
 
@@ -127,6 +130,6 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Merge the stacked T030 resource-node branch, then this T031 Ore-loop branch.
-2. T032 resource banking and conservation coverage.
+1. Merge the accepted stacked T030 resource-node and T031 Ore-loop branches.
+2. Begin T032 resource banking and conservation coverage.
 3. T033 construction placement after T032 acceptance.
