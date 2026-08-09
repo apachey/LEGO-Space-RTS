@@ -58,7 +58,7 @@ public static class ConstructionPlacement
     }
 
     public static bool TryPlace(SimulationWorld world, byte playerSlot, IReadOnlyList<EntityId> builders, ContentId buildingType,
-        short anchorX, short anchorY, byte orientation, out EntityId site, out PlacementFailure failure)
+        short anchorX, short anchorY, byte orientation, out EntityId site, out PlacementFailure failure, bool queueBuilder = false)
     {
         PlacementValidation validation = Validate(world, playerSlot, builders, buildingType, anchorX, anchorY, orientation);
         failure = validation.Failure; site = EntityId.None;
@@ -78,21 +78,31 @@ public static class ConstructionPlacement
         world.Entities.Building.Set(site, building);
         world.Entities.ConstructionSite.Set(site, new ConstructionSite
         {
-            AssignedBuilder = validation.Builder, FundingBank = validation.FundingBank, ReservedOre = definition.OreCost,
+            AssignedBuilder = EntityId.None, FundingBank = validation.FundingBank, ReservedOre = definition.OreCost, ConsumedOre = 0,
             RequiredEnergy = definition.EnergyCost, RequiredTicks = definition.BuildTicks, ProgressTicks = 0
         });
         world.SetConstructionOccupied(building, true);
+        ConstructionSystem.AssignBuilder(world, validation.Builder, site, queueBuilder);
         return true;
     }
 
     public static bool TryCancelUnstarted(SimulationWorld world, byte playerSlot, EntityId site)
     {
-        if (!world.Entities.ConstructionSite.TryGet(site, out ConstructionSite construction) || construction.ProgressTicks != 0 ||
+        if (!world.Entities.ConstructionSite.TryGet(site, out ConstructionSite construction) || construction.ProgressTicks != 0) return false;
+        return TryCancel(world, playerSlot, site);
+    }
+
+    public static bool TryCancel(SimulationWorld world, byte playerSlot, EntityId site)
+    {
+        if (!world.Entities.ConstructionSite.TryGet(site, out ConstructionSite construction) ||
             !world.Entities.Building.TryGet(site, out Building building) ||
             !world.Entities.Ownership.TryGet(site, out Ownership ownership) || ownership.PlayerSlot != playerSlot ||
             !world.Entities.ResourceBank.Has(construction.FundingBank)) return false;
         ref ResourceBank bank = ref world.Entities.ResourceBank.Get(construction.FundingBank);
-        bank.ProcessedAmount = checked(bank.ProcessedAmount + construction.ReservedOre);
+        int consumedRefund = construction.ProgressTicks == 0 ? construction.ConsumedOre : construction.ConsumedOre / 2;
+        bank.ProcessedAmount = checked(bank.ProcessedAmount + checked(construction.ReservedOre + consumedRefund));
+        world.Entities.ConstructionSite.Remove(site);
+        ConstructionSystem.ReleaseSiteAssignments(world, site);
         world.SetConstructionOccupied(building, false);
         return world.Entities.Destroy(site);
     }
@@ -119,7 +129,7 @@ public static class ConstructionPlacement
         for (int i = 0; i < builders.Count; i++)
         {
             EntityId id = builders[i];
-            if (!world.Entities.Exists(id) || !world.Entities.Worker.Has(id) ||
+            if (!world.Entities.Exists(id) || !world.Entities.Builder.Has(id) ||
                 !world.Entities.Ownership.TryGet(id, out Ownership ownership) || ownership.PlayerSlot != playerSlot) continue;
             if (best == EntityId.None || id.Value < best.Value) best = id;
         }

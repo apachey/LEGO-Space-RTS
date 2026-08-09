@@ -63,8 +63,8 @@ narrow placement cases allowed by Phase 09B.
 - Meaningful-progress recovery is measured toward the active route waypoint
   over accumulated movement rather than reset by arbitrary per-tick motion, so
   arrival micro-movement cannot indefinitely suppress reflow/repath.
-- The current M3 T033 full verification is green across every
-  `BLOCKING_NOW` stage: builds, 91 NUnit tests, the explicit representative
+- The current M3 T034 full verification is green across every
+  `BLOCKING_NOW` stage: builds, 97 NUnit tests, the explicit representative
   24-mover gate, compiled content, HeadlessSim, Godot headless smoke, 100-repeat
   determinism, replay, snapshot continuation, regeneration and macOS export.
 - A launchable debug build was produced at
@@ -124,6 +124,26 @@ narrow placement cases allowed by Phase 09B.
   director confirmed that construction placement, Ore reservation and the
   unstarted cancellation/refund loop all work. No blocking placement or
   readability defect was reported.
+- M3 T034 construction jobs are implemented on the current task branch. The
+  assigned Crew physically travels to the reserved footprint edge before work
+  begins; Shift-placement queues multiple sites and right-clicking a site lets
+  other selected Crew assist.
+- The first work tick commits 20% of reserved Ore and the remaining 80% is
+  consumed progressively. Started-site cancellation returns all unspent Ore
+  plus 50% of consumed Ore. Each contributing Crew supplies one deterministic
+  work tick, so one Crew matches the canonical build time while assistance
+  accelerates completion.
+- Completion transitions the existing Construction Site entity to a completed
+  Building without changing its identity or reserved footprint. The prototype
+  presentation grows the amber site with authoritative progress and displays a
+  percentage before switching to the completed-building presentation.
+- Snapshot v7 / simulation protocol v5 preserve Builder jobs, construction
+  targets, progressive commitment and queued site visits. Replay v3 supports
+  the new assist command while retaining current v1-v2 read compatibility.
+- Human T034 playtest acceptance is complete as of 2026-08-10: the game
+  director confirmed that Crew travel, visible construction progress and
+  completed-building transition all work. No blocking construction-job or
+  readability defect was reported.
 
 ## Current gates
 
@@ -148,11 +168,10 @@ narrow placement cases allowed by Phase 09B.
   / 20 navigation nodes, while the imported runtime/static validator currently
   use 10 navigation nodes / 5 build cells; resolve in a separate canon-alignment
   task before changing cluster geometry;
-- Construction Sites do not progress yet; T034 owns Crew travel, physical
-  construction start, progressive commitment and completion. Canonical Energy
-  costs are compiled and retained on sites, but authoritative Energy-domain
-  availability begins with T037 as scheduled. The full production economy HUD
-  remains a later M3 task.
+- Completed prototype buildings do not produce units yet; T035 owns production
+  queues and spawn exits. Canonical Energy costs remain retained on sites, but
+  authoritative Energy-domain availability begins with T037 as scheduled. The
+  full production economy HUD remains a later M3 task.
 
 ## Explicitly rejected / do not resurrect
 
@@ -165,6 +184,6 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Merge the accepted stacked T030-T033 M3 economy/base-building branches.
-2. Begin T034 construction jobs.
-3. T035 production queues after T034 acceptance.
+1. Merge the accepted stacked T030-T034 M3 economy/base-building branches.
+2. Begin T035 production queues.
+3. T036 Operations Capacity after T035 acceptance.

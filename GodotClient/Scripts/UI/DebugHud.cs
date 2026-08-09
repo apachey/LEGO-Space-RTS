@@ -68,11 +68,13 @@ public partial class DebugHud : CanvasLayer
             if (_bridge.World.Entities.Worker.TryGet(first, out Worker worker) && _bridge.World.Entities.ResourceCarrier.TryGet(first, out ResourceCarrier carrier))
                 _builder.Append("\nWorker: ").Append(worker.TaskState).Append(" cargo=").Append(carrier.Amount).Append('/').Append(carrier.Capacity)
                     .Append(" resource=").Append(worker.ResourceTarget.Value).Append(" receiver=").Append(worker.ReceiverTarget.Value);
+            if (_bridge.World.Entities.Builder.TryGet(first, out Builder construction))
+                _builder.Append("\nBuilder: ").Append(construction.JobState).Append(" site=").Append(construction.ConstructionTarget.Value);
         }
         if (_selection.LastFilteredWorkerCount > 0)
             _builder.Append("\nBox-select priority filtered ").Append(_selection.LastFilteredWorkerCount).Append(" worker(s); Ctrl+drag includes workers.");
         if (_input?.BuildModeActive == true) _builder.Append("\nBUILD: ").Append(_input.BuildStatus);
-        _builder.Append("\nRMB Move / Harvest Ore | Shift+RMB Queue | S Stop | H Hold");
+        _builder.Append("\nRMB Move / Harvest / Assist Site | Shift+RMB Queue | S Stop | H Hold");
         _builder.Append("\nB Build Mode | Tab building | R rotate | LMB place | Esc/RMB cancel | Ctrl+Z refund latest unstarted site");
         _builder.Append("\nM2 note: Hold and Stop both halt movement now; Hold differs once combat exists (fires without chasing).");
         _builder.Append("\nCtrl+0–9 assign | 0–9 recall | F9 topology-open | ,/. rotate | wheel zoom");

@@ -164,6 +164,7 @@ public static class ScenarioFactory
         if (definition.SelectableKind != SelectableKind.Worker) return;
         if (definition.OreTicksPerUnit == 0 || definition.OreCarryCapacity == 0) throw new InvalidOperationException($"Worker content {definition.StableKey} has no Ore harvesting metadata.");
         world.Entities.Worker.Set(id, new Worker { ResourceTarget = EntityId.None, ReceiverTarget = EntityId.None, TaskState = WorkerTaskState.Idle, TicksPerOre = definition.OreTicksPerUnit });
+        world.Entities.Builder.Set(id, new Builder { ConstructionTarget = EntityId.None, JobState = BuilderJobState.Idle });
         world.Entities.ResourceCarrier.Set(id, new ResourceCarrier { Type = ResourceType.Ore, Amount = 0, Capacity = definition.OreCarryCapacity });
     }
 

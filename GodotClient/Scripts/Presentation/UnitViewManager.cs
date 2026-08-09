@@ -42,6 +42,7 @@ public partial class UnitViewManager : Node3D
             float renderedYaw = c.Snap ? yawB : Mathf.RadToDeg(Mathf.LerpAngle(Mathf.DegToRad(yawA), Mathf.DegToRad(yawB), alpha));
             view.RotationDegrees = new Vector3(0f, renderedYaw, 0f);
             bool selected = ContainsSelection(c.EntityId), hovered = _selection.Hovered == c.EntityId;
+            if (c.SelectableKind == SelectableKind.Building) UpdateBuildingView(view, c);
             if (c.SelectableKind == SelectableKind.ResourceNode)
             {
                 view.MaterialOverride = c.ResourceState == ResourceVisualState.Exhausted ? _resourceExhausted : _resource;
@@ -85,7 +86,7 @@ public partial class UnitViewManager : Node3D
         if (entity.SelectableKind == SelectableKind.Building && entity.BuildingWidth > 0 && entity.BuildingHeight > 0)
         {
             mesh = new BoxMesh { Size = new Vector3(1f, 1f, 1f) };
-            visualScale = new Vector3(entity.BuildingWidth * GodotConversions.WorldUnitsPerBuildCell, entity.IsConstructionSite ? 0.45f : 2.4f, entity.BuildingHeight * GodotConversions.WorldUnitsPerBuildCell);
+            visualScale = BuildingScale(entity);
             ringRadiusWorld = Mathf.Max(entity.BuildingWidth, entity.BuildingHeight) * GodotConversions.WorldUnitsPerBuildCell * 0.55f;
             labelHeightWorld = entity.IsConstructionSite ? 0.8f : 2.8f;
         }
@@ -175,7 +176,48 @@ public partial class UnitViewManager : Node3D
             Scale = new Vector3(1f / visualScale.X, 1f / visualScale.Y, 1f / visualScale.Z)
         };
         view.AddChild(groupLabel);
+        Label3D constructionLabel = new()
+        {
+            Name = "ConstructionProgressLabel",
+            Text = string.Empty,
+            Visible = false,
+            FontSize = 38,
+            OutlineSize = 12,
+            Modulate = new Color(1f, 0.86f, 0.30f),
+            OutlineModulate = new Color(0.02f, 0.02f, 0.02f, 0.95f),
+            Billboard = BaseMaterial3D.BillboardModeEnum.Enabled,
+            FixedSize = true,
+            NoDepthTest = true
+        };
+        view.AddChild(constructionLabel);
         return view;
+    }
+
+    private static Vector3 BuildingScale(PresentationEntity entity)
+    {
+        float progress = Mathf.Clamp(entity.ConstructionProgressBasisPoints / 10000f, 0f, 1f);
+        float height = entity.IsConstructionSite ? Mathf.Lerp(0.35f, 2.4f, progress) : 2.4f;
+        return new Vector3(entity.BuildingWidth * GodotConversions.WorldUnitsPerBuildCell, height, entity.BuildingHeight * GodotConversions.WorldUnitsPerBuildCell);
+    }
+
+    private static void UpdateBuildingView(MeshInstance3D view, PresentationEntity entity)
+    {
+        Vector3 scale = BuildingScale(entity);
+        view.Scale = scale;
+        Node3D? ring = view.GetNodeOrNull<Node3D>("SelectionRing");
+        if (ring is not null)
+        {
+            ring.Position = new Vector3(0f, -0.42f / scale.Y, 0f);
+            ring.Scale = new Vector3(1f / scale.X, 1f / scale.Y, 1f / scale.Z);
+        }
+        Label3D? progressLabel = view.GetNodeOrNull<Label3D>("ConstructionProgressLabel");
+        if (progressLabel is not null)
+        {
+            progressLabel.Visible = entity.IsConstructionSite;
+            progressLabel.Text = entity.IsConstructionSite ? $"{entity.ConstructionProgressBasisPoints / 100}%" : string.Empty;
+            progressLabel.Position = new Vector3(0f, (scale.Y + 0.65f) / scale.Y, 0f);
+            progressLabel.Scale = new Vector3(1f / scale.X, 1f / scale.Y, 1f / scale.Z);
+        }
     }
 
     private static Vector3 ResourceScale(FootprintClass size, ResourceVisualState state)

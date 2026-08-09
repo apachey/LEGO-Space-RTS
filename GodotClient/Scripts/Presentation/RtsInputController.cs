@@ -94,11 +94,29 @@ public partial class RtsInputController : Node
         }
         if (@event is InputEventMouseButton mouse && mouse.Pressed && mouse.ButtonIndex == MouseButton.Right && _selection.Selected.Count > 0)
         {
+            EntityId constructionSite = _selection.FindConstructionSiteAtScreen(mouse.Position);
             EntityId resource = _selection.FindResourceAtScreen(mouse.Position);
-            if (resource != EntityId.None) IssueHarvest(resource);
+            if (constructionSite != EntityId.None) IssueAssistConstruction(constructionSite);
+            else if (resource != EntityId.None) IssueHarvest(resource);
             else if (_camera.TryProjectToGround(mouse.Position, out Vector3 point)) IssueMove(point);
             GetViewport().SetInputAsHandled();
         }
+    }
+
+    private void IssueAssistConstruction(EntityId site)
+    {
+        if (_bridge is null || _selection is null) return;
+        List<EntityId> builders = new(_selection.Selected.Count);
+        for (int i = 0; i < _selection.Selected.Count; i++)
+        {
+            EntityId id = _selection.Selected[i];
+            if (_bridge.World.Entities.Builder.Has(id)) builders.Add(id);
+        }
+        if (builders.Count == 0) return;
+        CommandModifiers modifiers = Input.IsKeyPressed(Key.Shift) ? CommandModifiers.Queue : CommandModifiers.None;
+        _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, _sequence++, SimCommandType.AssistConstruction,
+            builders.ToArray(), FixVec2.Zero, modifiers, site));
+        if (modifiers == CommandModifiers.None) ClearMovePreviews();
     }
 
     private void IssueHarvest(EntityId resource)
@@ -219,8 +237,9 @@ public partial class RtsInputController : Node
         EntityId[] builders = SelectionArray();
         PlacementValidation validation = ConstructionPlacement.Validate(_bridge.World, 0, builders, definition.Id, anchorX, anchorY, _buildOrientation);
         if (!validation.IsValid) { _buildStatus = $"{DisplayName(definition.StableKey)} — {PlacementFailureText(validation.Failure)}"; return; }
+        CommandModifiers modifiers = Input.IsKeyPressed(Key.Shift) ? CommandModifiers.Queue : CommandModifiers.None;
         _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, _sequence++, SimCommandType.Build, builders,
-            FixVec2.FromInts(anchorX, anchorY), contentType: definition.Id, orientation: _buildOrientation));
+            FixVec2.FromInts(anchorX, anchorY), modifiers, contentType: definition.Id, orientation: _buildOrientation));
         if (!Input.IsKeyPressed(Key.Shift)) ExitBuildMode();
     }
 
@@ -231,7 +250,8 @@ public partial class RtsInputController : Node
         for (int i = alive.Count - 1; i >= 0; i--)
         {
             EntityId id = alive[i];
-            if (!_bridge.World.Entities.ConstructionSite.Has(id) || !_bridge.World.Entities.Ownership.TryGet(id, out Ownership ownership) || ownership.PlayerSlot != 0) continue;
+            if (!_bridge.World.Entities.ConstructionSite.TryGet(id, out ConstructionSite site) || site.ProgressTicks != 0 ||
+                !_bridge.World.Entities.Ownership.TryGet(id, out Ownership ownership) || ownership.PlayerSlot != 0) continue;
             _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, _sequence++, SimCommandType.CancelConstruction, Array.Empty<EntityId>(), FixVec2.Zero, targetEntity: id));
             return;
         }

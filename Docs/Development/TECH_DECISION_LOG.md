@@ -174,3 +174,31 @@ They do not change gameplay canon.
 
 These are implementation decisions within approved M3 construction canon.
 They do not change gameplay canon.
+
+---
+
+## 2026-08-10 — M3 deterministic construction jobs and commitment
+
+- T034 adds the canon-listed Builder component rather than extending Worker
+  harvesting state into a second responsibility. A Builder owns one active
+  Construction Site target and may queue additional Construct orders in the
+  existing per-unit deterministic command queue.
+- Construction begins only when an assigned Crew reaches the accessible edge
+  of the site's already-reserved footprint. One Crew contributes one work tick
+  per simulation tick, matching the compiled canonical build time; additional
+  eligible Crew contribute in stable Entity ID order.
+- The first physical work tick commits exactly 20% of Ore (integer costs round
+  upward to avoid under-commitment). The remaining 80% is consumed by an
+  integer cumulative-progress formula, eliminating fractional accumulation and
+  guaranteeing the full cost is consumed on the final tick.
+- Started cancellation refunds all still-reserved Ore plus integer 50% of
+  consumed Ore. Unstarted cancellation retains the T033 full-refund behavior.
+- Completion removes ConstructionSite state and changes Building state to
+  Completed on the same Entity ID. No replacement entity or presentation-only
+  completion timer is introduced.
+- Snapshot format v7 / simulation protocol v5 add Builder state and consumed
+  construction Ore. Replay v3 recognizes contextual AssistConstruction while
+  retaining v1-v2 reads; snapshot readers retain v2-v6 compatibility.
+
+These are implementation decisions within approved M3 construction canon.
+They do not change gameplay canon.

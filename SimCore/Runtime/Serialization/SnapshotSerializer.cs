@@ -7,8 +7,8 @@ namespace LegoSpaceRTS.SimCore
 public static class SnapshotSerializer
 {
     public const uint Magic = 0x53525453; // STRS
-    public const ushort FormatVersion = 6;
-    public const ushort SimulationProtocolVersion = 4;
+    public const ushort FormatVersion = 7;
+    public const ushort SimulationProtocolVersion = 5;
 
     [Flags]
     private enum EntityComponents : ushort
@@ -29,7 +29,8 @@ public static class SnapshotSerializer
         ResourceBank = 1 << 12,
         Building = 1 << 13,
         ConstructionSite = 1 << 14,
-        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver | ResourceBank | Building | ConstructionSite
+        Builder = 1 << 15,
+        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver | ResourceBank | Building | ConstructionSite | Builder
     }
 
     public static byte[] Serialize(SimulationWorld world)
@@ -50,7 +51,7 @@ public static class SnapshotSerializer
         using MemoryStream ms = new(bytes, false); using BinaryReader r = new(ms);
         if (r.ReadUInt32() != Magic) throw new InvalidDataException("Snapshot magic mismatch.");
         ushort format = r.ReadUInt16(), protocol = r.ReadUInt16();
-        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3);
+        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4);
         if (!supportedLegacy && (format != FormatVersion || protocol != SimulationProtocolVersion)) throw new InvalidDataException($"Unsupported snapshot {format}/{protocol}.");
         SimTick tick = new(r.ReadInt32()); MapGrid map = MapGrid.Deserialize(r); uint nextEntity = r.ReadUInt32();
         EntityStore entities = new(); int entityCount = r.ReadInt32(); if (entityCount < 0 || entityCount > 10000) throw new InvalidDataException("Invalid entity count.");
@@ -62,6 +63,7 @@ public static class SnapshotSerializer
         }
         if (format < 5) AddLegacyResourceBanks(entities);
         if (format < 6) AddLegacyBuildings(temp);
+        if (format < 7) AddLegacyBuilders(temp);
         entities.RestoreNextEntityValue(nextEntity);
         temp.Commands.Deserialize(r, includeBuildFields: format >= 6);
         temp.Fog = FogState.Deserialize(r);
@@ -82,6 +84,7 @@ public static class SnapshotSerializer
         if (world.Entities.Vision.Has(id)) components |= EntityComponents.Vision;
         if (world.Entities.ResourceNode.Has(id)) components |= EntityComponents.ResourceNode;
         if (world.Entities.Worker.Has(id)) components |= EntityComponents.Worker;
+        if (world.Entities.Builder.Has(id)) components |= EntityComponents.Builder;
         if (world.Entities.ResourceCarrier.Has(id)) components |= EntityComponents.ResourceCarrier;
         if (world.Entities.ResourceReceiver.Has(id)) components |= EntityComponents.ResourceReceiver;
         if (world.Entities.ResourceBank.Has(id)) components |= EntityComponents.ResourceBank;
@@ -105,6 +108,7 @@ public static class SnapshotSerializer
         }
         if ((components & EntityComponents.ResourceNode) != 0) WriteResourceNode(w, world.Entities.ResourceNode.Get(id));
         if ((components & EntityComponents.Worker) != 0) WriteWorker(w, world.Entities.Worker.Get(id));
+        if ((components & EntityComponents.Builder) != 0) WriteBuilder(w, world.Entities.Builder.Get(id));
         if ((components & EntityComponents.ResourceCarrier) != 0) WriteResourceCarrier(w, world.Entities.ResourceCarrier.Get(id));
         if ((components & EntityComponents.ResourceReceiver) != 0) WriteResourceReceiver(w, world.Entities.ResourceReceiver.Get(id));
         if ((components & EntityComponents.ResourceBank) != 0) WriteResourceBank(w, world.Entities.ResourceBank.Get(id));
@@ -142,6 +146,11 @@ public static class SnapshotSerializer
         w.Write(worker.ResourceTarget.Value); w.Write(worker.ReceiverTarget.Value); w.Write((byte)worker.TaskState); w.Write(worker.ExtractionTicks); w.Write(worker.TicksPerOre);
     }
 
+    private static void WriteBuilder(BinaryWriter w, Builder builder)
+    {
+        w.Write(builder.ConstructionTarget.Value); w.Write((byte)builder.JobState);
+    }
+
     private static void WriteResourceCarrier(BinaryWriter w, ResourceCarrier carrier)
     {
         w.Write((byte)carrier.Type); w.Write(carrier.Amount); w.Write(carrier.Capacity);
@@ -165,7 +174,7 @@ public static class SnapshotSerializer
 
     private static void WriteConstructionSite(BinaryWriter w, ConstructionSite site)
     {
-        w.Write(site.AssignedBuilder.Value); w.Write(site.FundingBank.Value); w.Write(site.ReservedOre); w.Write(site.RequiredEnergy);
+        w.Write(site.AssignedBuilder.Value); w.Write(site.FundingBank.Value); w.Write(site.ReservedOre); w.Write(site.ConsumedOre); w.Write(site.RequiredEnergy);
         w.Write(site.RequiredTicks); w.Write(site.ProgressTicks);
     }
 
@@ -188,11 +197,12 @@ public static class SnapshotSerializer
         if ((components & EntityComponents.Vision) != 0) world.Entities.Vision.Set(id, new Vision { RadiusBuildCells = r.ReadByte(), IsAirVision = r.ReadBoolean(), LastFogX = r.ReadInt32(), LastFogY = r.ReadInt32() });
         if ((components & EntityComponents.ResourceNode) != 0) world.Entities.ResourceNode.Set(id, ReadResourceNode(r));
         if ((components & EntityComponents.Worker) != 0) world.Entities.Worker.Set(id, ReadWorker(r));
+        if ((components & EntityComponents.Builder) != 0) world.Entities.Builder.Set(id, ReadBuilder(r));
         if ((components & EntityComponents.ResourceCarrier) != 0) world.Entities.ResourceCarrier.Set(id, ReadResourceCarrier(r));
         if ((components & EntityComponents.ResourceReceiver) != 0) world.Entities.ResourceReceiver.Set(id, ReadResourceReceiver(r));
         if ((components & EntityComponents.ResourceBank) != 0) world.Entities.ResourceBank.Set(id, ReadResourceBank(r));
         if ((components & EntityComponents.Building) != 0) world.Entities.Building.Set(id, ReadBuilding(r));
-        if ((components & EntityComponents.ConstructionSite) != 0) world.Entities.ConstructionSite.Set(id, ReadConstructionSite(r));
+        if ((components & EntityComponents.ConstructionSite) != 0) world.Entities.ConstructionSite.Set(id, ReadConstructionSite(r, format));
         if ((components & EntityComponents.CommandQueue) != 0) world.GetQueue(id).Deserialize(r, includeTargetEntity: format >= 4);
         if ((components & EntityComponents.RouteCorridor) != 0) world.Corridors[id.Value] = ReadCorridor(r);
     }
@@ -221,6 +231,13 @@ public static class SnapshotSerializer
     private static Worker ReadWorker(BinaryReader r)
         => new() { ResourceTarget = new EntityId(r.ReadUInt32()), ReceiverTarget = new EntityId(r.ReadUInt32()), TaskState = (WorkerTaskState)r.ReadByte(), ExtractionTicks = r.ReadUInt16(), TicksPerOre = r.ReadUInt16() };
 
+    private static Builder ReadBuilder(BinaryReader r)
+    {
+        Builder builder = new() { ConstructionTarget = new EntityId(r.ReadUInt32()), JobState = (BuilderJobState)r.ReadByte() };
+        if (builder.JobState < BuilderJobState.Idle || builder.JobState > BuilderJobState.Constructing) throw new InvalidDataException("Invalid builder job state.");
+        return builder;
+    }
+
     private static ResourceCarrier ReadResourceCarrier(BinaryReader r)
         => new() { Type = (ResourceType)r.ReadByte(), Amount = r.ReadByte(), Capacity = r.ReadByte() };
 
@@ -233,8 +250,24 @@ public static class SnapshotSerializer
     private static Building ReadBuilding(BinaryReader r)
         => new() { Type = new ContentId(r.ReadUInt32()), AnchorX = r.ReadInt16(), AnchorY = r.ReadInt16(), Orientation = r.ReadByte(), FootprintWidth = r.ReadByte(), FootprintHeight = r.ReadByte(), State = (BuildingState)r.ReadByte() };
 
-    private static ConstructionSite ReadConstructionSite(BinaryReader r)
-        => new() { AssignedBuilder = new EntityId(r.ReadUInt32()), FundingBank = new EntityId(r.ReadUInt32()), ReservedOre = r.ReadInt32(), RequiredEnergy = r.ReadInt32(), RequiredTicks = r.ReadUInt16(), ProgressTicks = r.ReadUInt16() };
+    private static ConstructionSite ReadConstructionSite(BinaryReader r, ushort format)
+        => new() { AssignedBuilder = new EntityId(r.ReadUInt32()), FundingBank = new EntityId(r.ReadUInt32()), ReservedOre = r.ReadInt32(), ConsumedOre = format >= 7 ? r.ReadInt32() : 0, RequiredEnergy = r.ReadInt32(), RequiredTicks = r.ReadUInt16(), ProgressTicks = r.ReadUInt16() };
+
+    private static void AddLegacyBuilders(SimulationWorld world)
+    {
+        IReadOnlyList<EntityId> alive = world.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (world.Entities.Worker.Has(id)) world.Entities.Builder.Set(id, new Builder { ConstructionTarget = EntityId.None, JobState = BuilderJobState.Idle });
+        }
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId siteId = alive[i];
+            if (!world.Entities.ConstructionSite.TryGet(siteId, out ConstructionSite site) || !world.Entities.Builder.Has(site.AssignedBuilder)) continue;
+            ConstructionSystem.StartBuilder(world, site.AssignedBuilder, siteId);
+        }
+    }
 
     private static void AddLegacyResourceBanks(EntityStore entities)
     {

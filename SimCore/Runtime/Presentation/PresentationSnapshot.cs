@@ -13,9 +13,10 @@ public readonly struct PresentationEntity
     public readonly byte BuildingWidth;
     public readonly byte BuildingHeight;
     public readonly bool IsConstructionSite;
+    public readonly ushort ConstructionProgressBasisPoints;
     public readonly bool Snap;
-    public PresentationEntity(EntityId entityId, ContentId contentType, byte owner, FixVec2 position, Angle16 orientation, MovementState movement, VisibilityState visibility, FootprintClass footprint, SelectableKind selectableKind, bool snap = false, ResourceVisualState resourceState = ResourceVisualState.Full, byte buildingWidth = 0, byte buildingHeight = 0, bool isConstructionSite = false)
-    { EntityId = entityId; ContentType = contentType; Owner = owner; Position = position; Orientation = orientation; Movement = movement; Visibility = visibility; Footprint = footprint; SelectableKind=selectableKind; ResourceState=resourceState; BuildingWidth=buildingWidth; BuildingHeight=buildingHeight; IsConstructionSite=isConstructionSite; Snap = snap; }
+    public PresentationEntity(EntityId entityId, ContentId contentType, byte owner, FixVec2 position, Angle16 orientation, MovementState movement, VisibilityState visibility, FootprintClass footprint, SelectableKind selectableKind, bool snap = false, ResourceVisualState resourceState = ResourceVisualState.Full, byte buildingWidth = 0, byte buildingHeight = 0, bool isConstructionSite = false, ushort constructionProgressBasisPoints = 0)
+    { EntityId = entityId; ContentType = contentType; Owner = owner; Position = position; Orientation = orientation; Movement = movement; Visibility = visibility; Footprint = footprint; SelectableKind=selectableKind; ResourceState=resourceState; BuildingWidth=buildingWidth; BuildingHeight=buildingHeight; IsConstructionSite=isConstructionSite; ConstructionProgressBasisPoints=constructionProgressBasisPoints; Snap = snap; }
 }
 
 public sealed class PresentationSnapshot
@@ -52,8 +53,10 @@ public sealed class PresentationSnapshot
             {
                 VisibilityState buildingVisibility = buildingOwner.PlayerSlot == viewerPlayer ? VisibilityState.Visible : world.Fog.Get(viewerPlayer, buildingTransform.Position.X.FloorToInt(), buildingTransform.Position.Y.FloorToInt());
                 if (buildingOwner.PlayerSlot != viewerPlayer && buildingVisibility != VisibilityState.Visible) continue;
+                bool isSite = world.Entities.ConstructionSite.TryGet(id, out ConstructionSite site);
+                ushort progress = isSite && site.RequiredTicks > 0 ? checked((ushort)((long)site.ProgressTicks * 10_000 / site.RequiredTicks)) : (ushort)10_000;
                 list.Add(new PresentationEntity(id, buildingSelectable.ContentType, buildingOwner.PlayerSlot, buildingTransform.Position, buildingTransform.Orientation,
-                    MovementState.Idle, buildingVisibility, FootprintClass.Huge, SelectableKind.Building, buildingWidth: building.FootprintWidth, buildingHeight: building.FootprintHeight, isConstructionSite: building.State == BuildingState.ConstructionSite));
+                    MovementState.Idle, buildingVisibility, FootprintClass.Huge, SelectableKind.Building, buildingWidth: building.FootprintWidth, buildingHeight: building.FootprintHeight, isConstructionSite: isSite, constructionProgressBasisPoints: progress));
                 continue;
             }
             if (!world.Entities.Transform.TryGet(id, out SimTransform t) || !world.Entities.Ownership.TryGet(id, out Ownership o) || !world.Entities.Selectable.TryGet(id, out Selectable s) || !world.Entities.Movement.TryGet(id, out Movement m) || !world.Entities.Navigation.TryGet(id, out NavigationAgent n)) continue;
