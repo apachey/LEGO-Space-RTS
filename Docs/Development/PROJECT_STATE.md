@@ -120,6 +120,10 @@ narrow placement cases allowed by Phase 09B.
   preserve placed sites and pending Build commands. Prototype content v5 adds
   the canonical 8x8 HQ, 6x6 Processing Plant, 5x5 Power Station and rotatable
   8x6 Vehicle Service Bay definitions.
+- Human T033 playtest acceptance is complete as of 2026-08-10: the game
+  director confirmed that construction placement, Ore reservation and the
+  unstarted cancellation/refund loop all work. No blocking placement or
+  readability defect was reported.
 
 ## Current gates
 
@@ -161,6 +165,6 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Merge the accepted stacked T030-T032 M3 economy branches.
-2. Accept and merge the stacked T033 construction-placement branch.
-3. Begin T034 construction jobs after T033 acceptance.
+1. Merge the accepted stacked T030-T033 M3 economy/base-building branches.
+2. Begin T034 construction jobs.
+3. T035 production queues after T034 acceptance.
