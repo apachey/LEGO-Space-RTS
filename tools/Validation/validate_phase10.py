@@ -19,13 +19,16 @@ required = [
     'SimCore/Runtime/Serialization/SnapshotSerializer.cs','SimCore/Runtime/Replay/ReplayLog.cs',
     'SimCore/Runtime/Navigation/HierarchicalPathfinder.cs','SimCore/Runtime/Simulation/SimulationRunner.cs',
     'HeadlessSim/Program.cs','Content/PrototypeEntities.json','Content/Maps/DEV_FirstControllableRTS.map.json',
-    'GodotClient/project.godot','GodotClient/LEGO.SpaceRTS.Godot.csproj',
+    'GodotClient/project.godot','GodotClient/LEGO.SpaceRTS.Godot.csproj','GodotClient/LEGO.SpaceRTS.Godot.sln',
     'GodotClient/Scenes/Bootstrap.tscn','GodotClient/Scenes/PrototypeRTS.tscn',
     'GodotClient/Scripts/Client/RtsCompositionRoot.cs','GodotClient/Scripts/Client/RuntimeScenarioLoader.cs',
     'GodotClient/Scripts/Presentation/GodotSimBridge.cs','GodotClient/Scripts/Presentation/RtsCameraController.cs',
     'GodotClient/Scripts/Presentation/SelectionController.cs','GodotClient/Scripts/Presentation/RtsInputController.cs',
     'GodotClient/Scripts/Presentation/FogPresenter.cs','GodotClient/Scripts/Presentation/DebugRenderer.cs',
-    'GodotClient/Scripts/UI/DebugHud.cs','Docs/IMPLEMENTATION_REPORT.md'
+    'GodotClient/Scripts/UI/DebugHud.cs','Docs/IMPLEMENTATION_REPORT.md',
+    'tools/doctor.sh','tools/verify.sh','tools/run-game.sh','tools/build-mac.sh','tools/capture-visual-smoke.sh',
+    'tools/setup-git-hooks.sh','.githooks/pre-commit','.githooks/pre-push',
+    '.github/workflows/simcore-pr.yml','global.json','Docs/Development/AGENT_WORKFLOW.md'
 ]
 for r in required: require(r)
 
@@ -60,6 +63,20 @@ project_godot = (ROOT/'GodotClient/project.godot').read_text()
 check('config/features=PackedStringArray("4.7", "C#", "Forward Plus")' in project_godot, 'Godot project features are not pinned to 4.7/C#/Forward Plus')
 check('run/main_scene="res://Scenes/Bootstrap.tscn"' in project_godot, 'Godot main scene is not Bootstrap')
 check('physics_ticks_per_second=60' in project_godot, 'Godot presentation physics cadence is not explicitly non-authoritative 60 Hz')
+check('textures/vram_compression/import_etc2_astc=true' in project_godot, 'Godot macOS universal texture import support is not enabled')
+
+export_presets = (ROOT/'GodotClient/export_presets.cfg').read_text()
+check('name="macOS"' in export_presets, 'macOS export preset missing')
+check('export_path="../Builds/macOS/LEGO Space RTS.app"' in export_presets, 'macOS export path mismatch')
+check(export_presets.count('include_filter="Compiled/*.contentbin,Compiled/*.mapbin"') == 2, 'compiled runtime data is not included in desktop exports')
+global_json = json.loads((ROOT/'global.json').read_text())
+check(global_json.get('sdk',{}).get('version') == '8.0.100', '.NET minimum SDK policy is not 8.0.100')
+check(global_json.get('sdk',{}).get('rollForward') == 'latestMajor', '.NET SDK roll-forward policy mismatch')
+
+ci_workflow = (ROOT/'.github/workflows/simcore-pr.yml').read_text()
+check('Tools/' not in ci_workflow, 'CI workflow contains a case-sensitive legacy Tools/ path')
+check('python3 tools/Validation/validate_phase10.py' in ci_workflow, 'CI workflow does not run lowercase static validation path')
+check('tools/ContentCompiler/ContentCompiler.csproj' in ci_workflow, 'CI workflow does not use lowercase ContentCompiler path')
 
 bridge = (ROOT/'GodotClient/Scripts/Presentation/GodotSimBridge.cs').read_text()
 check('TickSeconds = 0.05' in bridge, 'Godot bridge does not feed 20 Hz/50ms simulation ticks')
@@ -121,6 +138,7 @@ check(all(k in set(entity_keys) for k in map_keys), 'map source contains unknown
 headless = (ROOT/'HeadlessSim/Program.cs').read_text()
 for token in ['--snapshot-in','--snapshot-out','--replay','--record-replay','--benchmark','--path-benchmark','--hash-every','--repeat','--golden-manifest-out','--golden-manifest-in','--dump-state','--compiled-dir']:
     check(token in headless, f'HeadlessSim switch missing: {token}')
+check('DETERMINISM CHECKPOINT FAILURE' in headless, 'HeadlessSim repeated-run checkpoint comparison missing')
 
 # Very lightweight lexical delimiter audit after stripping strings/comments approximately.
 def strip_strings_comments(s):

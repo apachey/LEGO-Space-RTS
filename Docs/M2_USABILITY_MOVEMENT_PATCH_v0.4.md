@@ -94,7 +94,7 @@ The debug HUD now explains this explicitly.
 
 ## Verification performed in artifact environment
 
-`python Tools/Validation/validate_phase10.py`
+`python3 tools/Validation/validate_phase10.py`
 
 Result:
 

@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+if [[ "${LEGO_RTS_ALLOW_MAIN_PUSH:-0}" == "1" ]]; then exit 0; fi
+while read -r local_ref local_sha remote_ref remote_sha; do
+  if [[ "${remote_ref}" == "refs/heads/main" ]]; then
+    printf 'BLOCKED: direct pushes to main are protected by the repository hook.\n' >&2
+    printf 'Use a task branch and Pull Request. A deliberate human override must set LEGO_RTS_ALLOW_MAIN_PUSH=1.\n' >&2
+    exit 1
+  fi
+done

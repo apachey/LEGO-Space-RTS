@@ -13,7 +13,7 @@ public static class RuntimeScenarioLoader
     {
         if (!GodotFileAccess.FileExists(ContentPath) || !GodotFileAccess.FileExists(MapPath))
         {
-            GD.PushWarning("Compiled M2 content is absent. Falling back to deterministic built-in DEV factories. Run Tools/ContentCompiler before release/export validation.");
+            GD.PushWarning("Compiled M2 content is absent. Falling back to deterministic built-in DEV factories. Run tools/ContentCompiler before release/export validation.");
             PrototypeContentCatalog fallbackCatalog = PrototypeContentFactory.CreateM2Catalog();
             MapDefinition fallbackMap = DevMapFactory.CreateDefinition();
             return new LoadedScenario(ScenarioFactory.CreateFirstControllable(fallbackMap, fallbackCatalog, count), fallbackCatalog.ContentHash, false);

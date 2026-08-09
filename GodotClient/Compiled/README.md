@@ -3,7 +3,7 @@
 Canonical regeneration command:
 
 ```bash
-dotnet run --project Tools/ContentCompiler -- Content/PrototypeEntities.json Content/Maps/DEV_FirstControllableRTS.map.json GodotClient/Compiled
+dotnet run --project tools/ContentCompiler -- Content/PrototypeEntities.json Content/Maps/DEV_FirstControllableRTS.map.json GodotClient/Compiled
 ```
 
 `*.contentbin` and `*.mapbin` are deterministic build products and are never hand-edited. Source JSON remains authoritative.

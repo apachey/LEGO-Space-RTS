@@ -47,8 +47,8 @@ The first macOS playtest exposed presentation and movement issues that static va
 - `GodotClient/` — native Godot 4.7.1 .NET project and M2 presentation/input host.
 - `Content/` — human-editable source content/map JSON.
 - `GodotClient/Compiled/` — deterministic compiled runtime content consumed by the Godot host.
-- `Tools/ContentCompiler/` — source JSON → validated binary compiler.
-- `Tools/Validation/` — source-level invariant validator.
+- `tools/ContentCompiler/` — source JSON → validated binary compiler.
+- `tools/Validation/` — source-level invariant validator.
 - `Tests/Golden/` — trusted golden-manifest location.
 - `Docs/` — architecture, bootstrap, tests, gates and engine-amendment record.
 
@@ -67,7 +67,7 @@ From repository root:
 dotnet restore LEGO.SpaceRTS.Phase10.sln
 dotnet build LEGO.SpaceRTS.Phase10.sln -c Debug
 dotnet test SimCore.Tests/SimCore.Tests.csproj -c Debug
-dotnet run --project Tools/ContentCompiler/ContentCompiler.csproj -- Content/PrototypeEntities.json Content/Maps/DEV_FirstControllableRTS.map.json GodotClient/Compiled
+dotnet run --project tools/ContentCompiler/ContentCompiler.csproj -- Content/PrototypeEntities.json Content/Maps/DEV_FirstControllableRTS.map.json GodotClient/Compiled
 ```
 
 Then open `GodotClient/project.godot` in the **4.7.1-stable .NET** editor and run the project. `Bootstrap.tscn` transitions into `PrototypeRTS.tscn`.
@@ -123,7 +123,7 @@ This package was statically audited in the artifact environment. That environmen
 Run:
 
 ```bash
-python Tools/Validation/validate_phase10.py
+python3 tools/Validation/validate_phase10.py
 ```
 
 then complete the executable gates in `Docs/ACCEPTANCE_GATES.md` before beginning M3.

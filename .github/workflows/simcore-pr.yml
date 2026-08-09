@@ -1,0 +1,39 @@
+name: SimCore PR verification
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  simcore:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Static source validation
+        run: python3 tools/Validation/validate_phase10.py
+      - name: Restore engine-independent projects
+        run: |
+          dotnet restore SimCore.Tests/SimCore.Tests.csproj
+          dotnet restore HeadlessSim/HeadlessSim.csproj
+          dotnet restore tools/ContentCompiler/ContentCompiler.csproj
+      - name: Build engine-independent projects
+        run: |
+          dotnet build SimCore.Tests/SimCore.Tests.csproj -c Release --no-restore --disable-build-servers
+          dotnet build HeadlessSim/HeadlessSim.csproj -c Release --no-restore --disable-build-servers
+          dotnet build tools/ContentCompiler/ContentCompiler.csproj -c Release --no-restore --disable-build-servers
+      - name: SimCore deterministic tests
+        run: dotnet test SimCore.Tests/SimCore.Tests.csproj -c Release --no-build --no-restore --disable-build-servers
+      - name: Compile and compare runtime content
+        run: |
+          output_dir="$(mktemp -d)"
+          dotnet run --project tools/ContentCompiler/ContentCompiler.csproj -c Release --no-build --no-restore -- Content/PrototypeEntities.json Content/Maps/DEV_FirstControllableRTS.map.json "$output_dir"
+          cmp "$output_dir/PrototypeEntities.contentbin" GodotClient/Compiled/PrototypeEntities.contentbin
+          cmp "$output_dir/DEV_FirstControllableRTS.mapbin" GodotClient/Compiled/DEV_FirstControllableRTS.mapbin
+      - name: HeadlessSim compiled-content smoke
+        run: dotnet run --project HeadlessSim/HeadlessSim.csproj -c Release --no-build --no-restore -- --scenario first --compiled-dir GodotClient/Compiled --ticks 1200 --hash-every 200
