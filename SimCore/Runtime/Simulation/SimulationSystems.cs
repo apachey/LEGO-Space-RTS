@@ -257,142 +257,8 @@ public sealed class NavigationRequestSystem : ISimSystem
             bool aStuck = ma.StuckTicks >= 20, bStuck = mb.StuckTicks >= 20;
             if (aStuck != bStuck) return aStuck ? -1 : 1;
             int c = nb.RequestAge.CompareTo(na.RequestAge); if (c != 0) return c;
-            c = FootprintRules.ReservationPriority(nb.Footprint).CompareTo(FootprintRules.ReservationPriority(na.Footprint)); if (c != 0) return c;
+            c = FootprintRules.MovementPriority(nb.Footprint).CompareTo(FootprintRules.MovementPriority(na.Footprint)); if (c != 0) return c;
             return a.Value.CompareTo(b.Value);
-        }
-    }
-}
-
-public sealed class ReservationPlanningSystem : ISimSystem
-{
-    public const int HorizonTicks = 12;
-    private readonly Dictionary<int, uint> _reserved = new Dictionary<int, uint>(2048);
-    private readonly ReservationComparer _comparer = new ReservationComparer();
-    private readonly List<NavCell> _horizonCells = new List<NavCell>(16);
-
-    public void Step(SimulationWorld world)
-    {
-        _reserved.Clear(); world.ReservationPermit.Clear(); world.ScratchEntities.Clear();
-        IReadOnlyList<EntityId> alive = world.Entities.Alive;
-        for (int i = 0; i < alive.Count; i++) if (world.Entities.Navigation.Has(alive[i]) && world.Entities.Transform.Has(alive[i])) world.ScratchEntities.Add(alive[i]);
-        _comparer.World = world;
-        world.ScratchEntities.Sort(_comparer);
-
-        // Reserve current occupied footprints first. Future reservations may never drive through
-        // an entity that is already physically there. Heavy-first ordering resolves rare overlaps deterministically.
-        for (int i = 0; i < world.ScratchEntities.Count; i++)
-        {
-            EntityId id = world.ScratchEntities[i];
-            NavigationAgent nav = world.Entities.Navigation.Get(id);
-            if (nav.Layer == MovementLayer.TrueAir) continue;
-            NavCell occupied = MapGrid.BuildToNav(world.Entities.Transform.Get(id).Position);
-            ReserveCurrentFootprint(occupied, nav.Footprint, id.Value);
-        }
-
-        Fix32 horizonFactor = Fix32.FromRatio(HorizonTicks * MapGrid.NavPerBuild, SimClock.TicksPerSecond); // speed(build/s) -> nav cells in 0.6 s.
-        for (int i = 0; i < world.ScratchEntities.Count; i++)
-        {
-            EntityId id = world.ScratchEntities[i];
-            NavigationAgent nav = world.Entities.Navigation.Get(id);
-            Movement movement = world.Entities.Movement.Get(id);
-            if (!nav.HasTarget) { world.ReservationPermit[id.Value] = false; continue; }
-            if (nav.Layer == MovementLayer.TrueAir) { world.ReservationPermit[id.Value] = true; continue; }
-            if (!world.Corridors.TryGetValue(id.Value, out RouteCorridor path) || movement.PathIndex >= path.Cells.Count)
-            { world.ReservationPermit[id.Value] = false; continue; }
-
-            int horizonNavCells = Fix32.Max(Fix32.One, movement.MaxSpeed * horizonFactor).CeilToInt();
-            CollectHorizonCells(world, id, path, movement.PathIndex, horizonNavCells);
-            bool permit = true;
-            for (int p = 0; p < _horizonCells.Count && permit; p++) permit = FootprintAvailable(_horizonCells[p], nav.Footprint, id.Value);
-            if (permit)
-                for (int p = 0; p < _horizonCells.Count; p++) ReserveFootprint(_horizonCells[p], nav.Footprint, id.Value);
-            world.ReservationPermit[id.Value] = permit;
-        }
-    }
-
-    private void CollectHorizonCells(SimulationWorld world, EntityId id, RouteCorridor path, int pathIndex, int maxSteps)
-    {
-        _horizonCells.Clear();
-        NavCell current = MapGrid.BuildToNav(world.Entities.Transform.Get(id).Position);
-        int remaining = Math.Max(1, maxSteps);
-        int index = pathIndex;
-        while (remaining > 0 && index < path.Cells.Count)
-        {
-            NavCell goal = path.Cells[index];
-            bool reached = AppendLineSteps(current, goal, ref remaining);
-            if (_horizonCells.Count > 0) current = _horizonCells[_horizonCells.Count - 1];
-            if (!reached) break;
-            index++;
-        }
-        if (_horizonCells.Count == 0) _horizonCells.Add(current);
-    }
-
-    private bool AppendLineSteps(NavCell start, NavCell goal, ref int remaining)
-    {
-        int x = start.X, y = start.Y;
-        int dx = Math.Abs(goal.X - x), sx = x < goal.X ? 1 : -1;
-        int dy = -Math.Abs(goal.Y - y), sy = y < goal.Y ? 1 : -1;
-        int err = dx + dy;
-        if (x == goal.X && y == goal.Y) return true;
-        while ((x != goal.X || y != goal.Y) && remaining > 0)
-        {
-            int e2 = err << 1;
-            if (e2 >= dy) { err += dy; x += sx; }
-            if (e2 <= dx) { err += dx; y += sy; }
-            _horizonCells.Add(new NavCell(checked((short)x), checked((short)y)));
-            remaining--;
-        }
-        return x == goal.X && y == goal.Y;
-    }
-
-    private bool FootprintAvailable(NavCell cell, FootprintClass footprint, uint owner)
-    {
-        int radius = FootprintRules.ClearanceNavCells(footprint), rr = radius * radius;
-        for (int y = cell.Y - radius; y <= cell.Y + radius; y++)
-            for (int x = cell.X - radius; x <= cell.X + radius; x++)
-            {
-                int dx=x-cell.X,dy=y-cell.Y;if(dx*dx+dy*dy>rr)continue;
-                if ((uint)x >= MapGrid.NavWidth || (uint)y >= MapGrid.NavHeight) return false;
-                int key=y*MapGrid.NavWidth+x;
-                if(_reserved.TryGetValue(key,out uint existing)&&existing!=owner)return false;
-            }
-        return true;
-    }
-
-    private void ReserveCurrentFootprint(NavCell cell, FootprintClass footprint, uint owner)
-    {
-        int radius = FootprintRules.ClearanceNavCells(footprint), rr = radius * radius;
-        for (int y = cell.Y - radius; y <= cell.Y + radius; y++)
-            for (int x = cell.X - radius; x <= cell.X + radius; x++)
-            {
-                int dx=x-cell.X,dy=y-cell.Y;if(dx*dx+dy*dy>rr)continue;
-                if ((uint)x >= MapGrid.NavWidth || (uint)y >= MapGrid.NavHeight) continue;
-                int key=y*MapGrid.NavWidth+x;
-                if(!_reserved.ContainsKey(key))_reserved[key]=owner;
-            }
-    }
-
-    private void ReserveFootprint(NavCell cell, FootprintClass footprint, uint owner)
-    {
-        int radius = FootprintRules.ClearanceNavCells(footprint), rr = radius * radius;
-        for (int y = cell.Y - radius; y <= cell.Y + radius; y++)
-            for (int x = cell.X - radius; x <= cell.X + radius; x++)
-            {
-                int dx=x-cell.X,dy=y-cell.Y;if(dx*dx+dy*dy>rr)continue;
-                if ((uint)x >= MapGrid.NavWidth || (uint)y >= MapGrid.NavHeight) continue;
-                _reserved[y*MapGrid.NavWidth+x]=owner;
-            }
-    }
-
-    private sealed class ReservationComparer : IComparer<EntityId>
-    {
-        public SimulationWorld World = null!;
-        public int Compare(EntityId a, EntityId b)
-        {
-            int pa = FootprintRules.ReservationPriority(World.Entities.Navigation.Get(a).Footprint);
-            int pb = FootprintRules.ReservationPriority(World.Entities.Navigation.Get(b).Footprint);
-            int c = pb.CompareTo(pa);
-            return c != 0 ? c : a.Value.CompareTo(b.Value);
         }
     }
 }
@@ -413,7 +279,6 @@ public sealed class MovementIntentSystem : ISimSystem
             if (!nav.HasTarget || move.State == MovementState.Holding || !world.Corridors.TryGetValue(id.Value, out RouteCorridor path) || move.PathIndex >= path.Cells.Count)
             { world.PendingVelocity[id.Value] = FixVec2.Zero; continue; }
 
-            bool permit = world.ReservationPermit.TryGetValue(id.Value, out bool reservationPermit) && reservationPermit;
             FixVec2 waypoint = MapGrid.NavCellCenterToBuild(path.Cells[move.PathIndex]);
             FixVec2 delta = waypoint - transform.Position;
             Fix32 distance = delta.Length();
@@ -422,18 +287,17 @@ public sealed class MovementIntentSystem : ISimSystem
             // 0.5-cell A* node, producing visibly jerky movement and queue delays.
             bool finalWaypoint = move.PathIndex >= path.Cells.Count - 1 && world.GetQueue(id).Count == 0;
             Fix32 brakingSpeed = finalWaypoint ? Fix32.Sqrt(Two * move.Deceleration * FixVec2.Distance(transform.Position, nav.Target)) : move.MaxSpeed;
-            // A denied reservation means yield, not freeze. Local avoidance still owns the final collision-safe step.
-            Fix32 reservationSpeedCap = permit ? move.MaxSpeed : move.MaxSpeed * Fix32.FromRatio(35, 100);
-            Fix32 desiredSpeed = Fix32.Min(reservationSpeedCap, brakingSpeed);
+            Fix32 desiredSpeed = Fix32.Min(move.MaxSpeed, brakingSpeed);
             move.DesiredMovement = delta.NormalizeSafe() * desiredSpeed;
             world.PendingVelocity[id.Value] = move.DesiredMovement * SimClock.TickSeconds;
         }
     }
 }
 
-public sealed class LocalAvoidanceSystem : ISimSystem
+public sealed class LocalSeparationSystem : ISimSystem
 {
     public const int NeighborCap = 24;
+    public const int LookaheadTicks = 6;
     private readonly List<EntityId> _neighbors = new List<EntityId>(64);
     private readonly NeighborDistanceComparer _neighborComparer = new NeighborDistanceComparer();
     // Q16.16 checked-in deterministic rotation constants.
@@ -464,8 +328,8 @@ public sealed class LocalAvoidanceSystem : ISimSystem
                 if(score<bestScore){bestScore=score;best=candidate;}
             }
             world.PendingVelocity[id.Value]=best;
-            world.CompressionUsed[id.Value]=UsesFriendlyCompression(world,id,self,selfNav,selfMove,best);
         }
+        UpdateFriendlyCompression(world);
     }
 
     private long ScoreCandidate(SimulationWorld world,EntityId selfId,SimTransform self,NavigationAgent selfNav,Movement selfMove,FixVec2 candidate,FixVec2 desired,int candidateIndex)
@@ -481,7 +345,7 @@ public sealed class LocalAvoidanceSystem : ISimSystem
         score += (long)candidateIndex*headingWeight*Fix32.OneRaw;
         if(candidate.Equals(FixVec2.Zero))score += selfMove.StuckTicks>=20?Fix32.OneRaw:Fix32.OneRaw*20L;
 
-        FixVec2 selfFuture=self.Position+candidate*Fix32.FromInt(ReservationPlanningSystem.HorizonTicks);
+        FixVec2 selfFuture=self.Position+candidate*Fix32.FromInt(LookaheadTicks);
         int neighborCount=Math.Min(_neighbors.Count,NeighborCap);
         for(int n=0;n<neighborCount;n++)
         {
@@ -490,7 +354,9 @@ public sealed class LocalAvoidanceSystem : ISimSystem
             FixVec2 otherStep=world.PendingVelocity.TryGetValue(otherId.Value,out FixVec2 ov)?ov:FixVec2.Zero;
             Fix32 min=FootprintRules.CollisionRadiusBuild(selfNav.Footprint)+FootprintRules.CollisionRadiusBuild(otherNav.Footprint);
             bool friendly=world.Entities.Ownership.TryGet(selfId,out Ownership a)&&world.Entities.Ownership.TryGet(otherId,out Ownership b)&&a.PlayerSlot==b.PlayerSlot;
-            Fix32 allowed=friendly && selfMove.CompressionTicks < 30 ? min*Fix32.FromRatio(85,100) : min;
+            Movement otherMove=world.Entities.Movement.TryGet(otherId,out Movement om)?om:default;
+            bool compressionAvailable=friendly&&selfMove.CompressionTicks<30&&otherMove.CompressionTicks<30;
+            Fix32 allowed=compressionAvailable?min*Fix32.FromRatio(85,100):min;
 
             // Immediate one-tick collision safety. v0.3 only evaluated the 12-tick horizon,
             // which allowed two units to overlap before the future penalty became useful.
@@ -505,33 +371,53 @@ public sealed class LocalAvoidanceSystem : ISimSystem
                 if(nextDistance<=currentDistance && !candidate.Equals(FixVec2.Zero)) score += Fix32.OneRaw*200L;
             }
 
-            FixVec2 otherFuture=other.Position+otherStep*Fix32.FromInt(ReservationPlanningSystem.HorizonTicks);
+            FixVec2 otherFuture=other.Position+otherStep*Fix32.FromInt(LookaheadTicks);
             Fix32 futureDistance=FixVec2.Distance(selfFuture,otherFuture);
             if(futureDistance<allowed)
             {
                 Fix32 overlap=allowed-futureDistance;
-                score += (long)overlap.Raw*overlap.Raw*24L;
+                int priority=friendly?CompareMovementPriority(selfId,selfNav,otherId,otherNav):0;
+                long yieldWeight=!friendly?64L:priority>0?6L:selfMove.StuckTicks>=20?96L:64L;
+                score += (long)overlap.Raw*overlap.Raw*yieldWeight;
             }
         }
         return score;
     }
 
-    private bool UsesFriendlyCompression(SimulationWorld world,EntityId selfId,SimTransform self,NavigationAgent selfNav,Movement selfMove,FixVec2 candidate)
+    private void UpdateFriendlyCompression(SimulationWorld world)
     {
-        if (candidate.Equals(FixVec2.Zero) || selfMove.CompressionTicks >= 30) return false;
-        FixVec2 selfNext=self.Position+candidate;
-        int neighborCount=Math.Min(_neighbors.Count,NeighborCap);
-        for(int n=0;n<neighborCount;n++)
+        IReadOnlyList<EntityId> alive=world.Entities.Alive;
+        for(int i=0;i<alive.Count;i++)
         {
-            EntityId otherId=_neighbors[n]; if(otherId==selfId||!world.Entities.Transform.TryGet(otherId,out SimTransform other)||!world.Entities.Navigation.TryGet(otherId,out NavigationAgent otherNav))continue;
-            if(otherNav.Layer==MovementLayer.TrueAir)continue;
-            if(!world.Entities.Ownership.TryGet(selfId,out Ownership a)||!world.Entities.Ownership.TryGet(otherId,out Ownership b)||a.PlayerSlot!=b.PlayerSlot)continue;
-            FixVec2 otherStep=world.PendingVelocity.TryGetValue(otherId.Value,out FixVec2 ov)?ov:FixVec2.Zero;
-            Fix32 distance=FixVec2.Distance(selfNext,other.Position+otherStep);
-            Fix32 nominal=FootprintRules.CollisionRadiusBuild(selfNav.Footprint)+FootprintRules.CollisionRadiusBuild(otherNav.Footprint);
-            if(distance<nominal && distance>=nominal*Fix32.FromRatio(85,100))return true;
+            EntityId selfId=alive[i];
+            if(!world.Entities.Transform.TryGet(selfId,out SimTransform self)||!world.Entities.Navigation.TryGet(selfId,out NavigationAgent selfNav)||selfNav.Layer==MovementLayer.TrueAir)continue;
+            if(!world.Entities.Ownership.TryGet(selfId,out Ownership selfOwner))continue;
+            FixVec2 selfStep=world.PendingVelocity.TryGetValue(selfId.Value,out FixVec2 candidate)?candidate:FixVec2.Zero;
+            world.Spatial.Query(self.Position,4,_neighbors);
+            _neighborComparer.World=world;_neighborComparer.Center=self.Position;_neighbors.Sort(_neighborComparer);
+            int neighborCount=Math.Min(_neighbors.Count,NeighborCap);
+            for(int n=0;n<neighborCount;n++)
+            {
+                EntityId otherId=_neighbors[n];
+                if(otherId==selfId||!world.Entities.Transform.TryGet(otherId,out SimTransform other)||!world.Entities.Navigation.TryGet(otherId,out NavigationAgent otherNav)||otherNav.Layer==MovementLayer.TrueAir)continue;
+                if(!world.Entities.Ownership.TryGet(otherId,out Ownership otherOwner)||selfOwner.PlayerSlot!=otherOwner.PlayerSlot)continue;
+                FixVec2 otherStep=world.PendingVelocity.TryGetValue(otherId.Value,out FixVec2 ov)?ov:FixVec2.Zero;
+                Fix32 nominal=FootprintRules.CollisionRadiusBuild(selfNav.Footprint)+FootprintRules.CollisionRadiusBuild(otherNav.Footprint);
+                Fix32 currentDistance=FixVec2.Distance(self.Position,other.Position);
+                Fix32 projectedDistance=FixVec2.Distance(self.Position+selfStep,other.Position+otherStep);
+                if(currentDistance<nominal||projectedDistance<nominal)
+                {
+                    world.CompressionUsed[selfId.Value]=true;
+                    break;
+                }
+            }
         }
-        return false;
+    }
+
+    private static int CompareMovementPriority(EntityId selfId,NavigationAgent selfNav,EntityId otherId,NavigationAgent otherNav)
+    {
+        int c=FootprintRules.MovementPriority(selfNav.Footprint).CompareTo(FootprintRules.MovementPriority(otherNav.Footprint));
+        return c!=0?c:otherId.Value.CompareTo(selfId.Value);
     }
 
     private sealed class NeighborDistanceComparer : IComparer<EntityId>

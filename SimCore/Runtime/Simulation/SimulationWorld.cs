@@ -19,7 +19,6 @@ public sealed class SimulationWorld
     internal readonly Dictionary<uint, RouteCorridor> Corridors = new();
     internal readonly Dictionary<uint, UnitCommandQueue> Queues = new();
     internal readonly Dictionary<uint, FixVec2> PendingVelocity = new();
-    internal readonly Dictionary<uint, bool> ReservationPermit = new();
     internal readonly Dictionary<uint, bool> CompressionUsed = new();
     internal readonly List<EntityId> ScratchEntities = new(128);
     internal readonly List<CommandEnvelope> ScratchCommands = new(32);
@@ -55,7 +54,6 @@ public sealed class SimulationWorld
     }
 
     public RouteCorridor? GetCorridor(EntityId id) => Corridors.TryGetValue(id.Value, out RouteCorridor corridor) ? corridor : null;
-    public bool HasReservationPermit(EntityId id) => ReservationPermit.TryGetValue(id.Value, out bool permit) && permit;
 
     public void OpenExcavatable(ushort featureId)
     {

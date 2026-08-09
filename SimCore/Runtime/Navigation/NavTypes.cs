@@ -100,7 +100,7 @@ public static class FootprintRules
         FootprintClass.Huge => 4,
         _ => 1
     };
-    public static int ReservationPriority(FootprintClass footprint) => (int)footprint;
+    public static int MovementPriority(FootprintClass footprint) => (int)footprint;
 
     public static Fix32 CollisionRadiusBuild(FootprintClass footprint) => footprint switch
     {

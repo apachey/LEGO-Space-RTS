@@ -21,7 +21,7 @@ public partial class DebugRenderer : MeshInstance3D
     public bool DrawClusters { get; set; } = true;
     public bool DrawPortals { get; set; }
     public bool DrawPaths { get; set; } = true;
-    public bool DrawReservations { get; set; }
+    public bool DrawLocalSeparation { get; set; }
     public bool DrawSpatialBuckets { get; set; }
     public bool DrawVision { get; set; }
     public bool DrawExcavatable { get; set; } = true;
@@ -54,7 +54,7 @@ public partial class DebugRenderer : MeshInstance3D
         if (DrawClusters) DrawClusterOverlay();
         if (DrawPortals) DrawPortalOverlay();
         if (DrawPaths) DrawPathOverlay();
-        if (DrawReservations) DrawReservationOverlay();
+        if (DrawLocalSeparation) DrawLocalSeparationOverlay();
         if (DrawSpatialBuckets) DrawSpatialOverlay();
         if (DrawVision) DrawVisionOverlay();
         if (DrawExcavatable) DrawExcavatableOverlay();
@@ -129,11 +129,13 @@ public partial class DebugRenderer : MeshInstance3D
         }
     }
 
-    private void DrawReservationOverlay()
+    private void DrawLocalSeparationOverlay()
     {
         Color c = new(0.7f, 0.2f, 1f, 0.8f);
         IReadOnlyList<EntityId> alive = _bridge!.World.Entities.Alive;
-        for (int i = 0; i < alive.Count; i++) if (_bridge.World.HasReservationPermit(alive[i]) && _bridge.World.Entities.Transform.TryGet(alive[i], out SimTransform t)) WireCircle(t.Position.ToWorld(0.2f), 0.35f, c, 12);
+        for (int i = 0; i < alive.Count; i++)
+            if (_bridge.World.Entities.Movement.TryGet(alive[i], out Movement movement) && movement.CompressionTicks > 0 && _bridge.World.Entities.Transform.TryGet(alive[i], out SimTransform t))
+                WireCircle(t.Position.ToWorld(0.2f), 0.35f, c, 12);
     }
 
     private void DrawSpatialOverlay()
