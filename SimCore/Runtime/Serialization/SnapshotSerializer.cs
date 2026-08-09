@@ -7,11 +7,11 @@ namespace LegoSpaceRTS.SimCore
 public static class SnapshotSerializer
 {
     public const uint Magic = 0x53525453; // STRS
-    public const ushort FormatVersion = 7;
-    public const ushort SimulationProtocolVersion = 5;
+    public const ushort FormatVersion = 8;
+    public const ushort SimulationProtocolVersion = 6;
 
     [Flags]
-    private enum EntityComponents : ushort
+    private enum EntityComponents : uint
     {
         None = 0,
         Ownership = 1 << 0,
@@ -30,7 +30,8 @@ public static class SnapshotSerializer
         Building = 1 << 13,
         ConstructionSite = 1 << 14,
         Builder = 1 << 15,
-        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver | ResourceBank | Building | ConstructionSite | Builder
+        Production = 1 << 16,
+        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver | ResourceBank | Building | ConstructionSite | Builder | Production
     }
 
     public static byte[] Serialize(SimulationWorld world)
@@ -51,7 +52,7 @@ public static class SnapshotSerializer
         using MemoryStream ms = new(bytes, false); using BinaryReader r = new(ms);
         if (r.ReadUInt32() != Magic) throw new InvalidDataException("Snapshot magic mismatch.");
         ushort format = r.ReadUInt16(), protocol = r.ReadUInt16();
-        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4);
+        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5);
         if (!supportedLegacy && (format != FormatVersion || protocol != SimulationProtocolVersion)) throw new InvalidDataException($"Unsupported snapshot {format}/{protocol}.");
         SimTick tick = new(r.ReadInt32()); MapGrid map = MapGrid.Deserialize(r); uint nextEntity = r.ReadUInt32();
         EntityStore entities = new(); int entityCount = r.ReadInt32(); if (entityCount < 0 || entityCount > 10000) throw new InvalidDataException("Invalid entity count.");
@@ -64,6 +65,7 @@ public static class SnapshotSerializer
         if (format < 5) AddLegacyResourceBanks(entities);
         if (format < 6) AddLegacyBuildings(temp);
         if (format < 7) AddLegacyBuilders(temp);
+        if (format < 8) AddLegacyProduction(temp);
         entities.RestoreNextEntityValue(nextEntity);
         temp.Commands.Deserialize(r, includeBuildFields: format >= 6);
         temp.Fog = FogState.Deserialize(r);
@@ -90,9 +92,10 @@ public static class SnapshotSerializer
         if (world.Entities.ResourceBank.Has(id)) components |= EntityComponents.ResourceBank;
         if (world.Entities.Building.Has(id)) components |= EntityComponents.Building;
         if (world.Entities.ConstructionSite.Has(id)) components |= EntityComponents.ConstructionSite;
+        if (world.Entities.Production.Has(id)) components |= EntityComponents.Production;
         if (world.TryGetQueue(id, out _)) components |= EntityComponents.CommandQueue;
         if (world.Corridors.ContainsKey(id.Value)) components |= EntityComponents.RouteCorridor;
-        w.Write((ushort)components);
+        w.Write((uint)components);
 
         if ((components & EntityComponents.Ownership) != 0) w.Write(world.Entities.Ownership.Get(id).PlayerSlot);
         if ((components & EntityComponents.Transform) != 0) WriteTransform(w, world.Entities.Transform.Get(id));
@@ -114,6 +117,7 @@ public static class SnapshotSerializer
         if ((components & EntityComponents.ResourceBank) != 0) WriteResourceBank(w, world.Entities.ResourceBank.Get(id));
         if ((components & EntityComponents.Building) != 0) WriteBuilding(w, world.Entities.Building.Get(id));
         if ((components & EntityComponents.ConstructionSite) != 0) WriteConstructionSite(w, world.Entities.ConstructionSite.Get(id));
+        if ((components & EntityComponents.Production) != 0) WriteProduction(w, world.Entities.Production.Get(id));
         if ((components & EntityComponents.CommandQueue) != 0) world.GetQueue(id).Serialize(w, includeTargetEntity: true);
         if ((components & EntityComponents.RouteCorridor) != 0) WriteCorridor(w, world.Corridors[id.Value]);
     }
@@ -178,6 +182,18 @@ public static class SnapshotSerializer
         w.Write(site.RequiredTicks); w.Write(site.ProgressTicks);
     }
 
+    private static void WriteProduction(BinaryWriter w, Production production)
+    {
+        w.Write(production.Count); w.Write(production.SpawnBlocked); w.Write(production.HasRallyPoint);
+        w.Write(production.RallyPoint.X.Raw); w.Write(production.RallyPoint.Y.Raw); w.Write(production.RallyTargetEntity.Value);
+        for (int i = 0; i < production.Count; i++)
+        {
+            ProductionQueueItem item = production.Get(i);
+            w.Write(item.UnitType.Value); w.Write(item.FundingBank.Value); w.Write(item.ReservedOre); w.Write(item.RequiredEnergy);
+            w.Write(item.RequiredCrystals); w.Write(item.ReservedOperationsCapacity); w.Write(item.TotalTicks); w.Write(item.RemainingTicks);
+        }
+    }
+
     private static void WriteCorridor(BinaryWriter w, RouteCorridor path)
     {
         w.Write(path.TopologyVersion); w.Write(path.Cells.Count);
@@ -187,7 +203,7 @@ public static class SnapshotSerializer
     private static void ReadEntity(BinaryReader r, SimulationWorld world, ushort format)
     {
         EntityId id = world.Entities.CreateRestored(r.ReadUInt32());
-        EntityComponents components = (EntityComponents)r.ReadUInt16();
+        EntityComponents components = (EntityComponents)(format >= 8 ? r.ReadUInt32() : r.ReadUInt16());
         if ((components & ~EntityComponents.All) != 0) throw new InvalidDataException("Snapshot entity has unknown component bits.");
         if ((components & EntityComponents.Ownership) != 0) world.Entities.Ownership.Set(id, new Ownership { PlayerSlot = r.ReadByte() });
         if ((components & EntityComponents.Transform) != 0) world.Entities.Transform.Set(id, ReadTransform(r));
@@ -203,6 +219,7 @@ public static class SnapshotSerializer
         if ((components & EntityComponents.ResourceBank) != 0) world.Entities.ResourceBank.Set(id, ReadResourceBank(r));
         if ((components & EntityComponents.Building) != 0) world.Entities.Building.Set(id, ReadBuilding(r));
         if ((components & EntityComponents.ConstructionSite) != 0) world.Entities.ConstructionSite.Set(id, ReadConstructionSite(r, format));
+        if ((components & EntityComponents.Production) != 0) world.Entities.Production.Set(id, ReadProduction(r));
         if ((components & EntityComponents.CommandQueue) != 0) world.GetQueue(id).Deserialize(r, includeTargetEntity: format >= 4);
         if ((components & EntityComponents.RouteCorridor) != 0) world.Corridors[id.Value] = ReadCorridor(r);
     }
@@ -252,6 +269,38 @@ public static class SnapshotSerializer
 
     private static ConstructionSite ReadConstructionSite(BinaryReader r, ushort format)
         => new() { AssignedBuilder = new EntityId(r.ReadUInt32()), FundingBank = new EntityId(r.ReadUInt32()), ReservedOre = r.ReadInt32(), ConsumedOre = format >= 7 ? r.ReadInt32() : 0, RequiredEnergy = r.ReadInt32(), RequiredTicks = r.ReadUInt16(), ProgressTicks = r.ReadUInt16() };
+
+    private static Production ReadProduction(BinaryReader r)
+    {
+        Production production = new()
+        {
+            Count = r.ReadByte(), SpawnBlocked = r.ReadBoolean(), HasRallyPoint = r.ReadBoolean(),
+            RallyPoint = new FixVec2(Fix32.FromRaw(r.ReadInt32()), Fix32.FromRaw(r.ReadInt32())), RallyTargetEntity = new EntityId(r.ReadUInt32())
+        };
+        if (production.Count > Production.Capacity) throw new InvalidDataException("Invalid production queue count.");
+        byte count = production.Count; production.Count = 0;
+        for (int i = 0; i < count; i++)
+        {
+            ProductionQueueItem item = new()
+            {
+                UnitType = new ContentId(r.ReadUInt32()), FundingBank = new EntityId(r.ReadUInt32()), ReservedOre = r.ReadUInt16(), RequiredEnergy = r.ReadUInt16(),
+                RequiredCrystals = r.ReadByte(), ReservedOperationsCapacity = r.ReadByte(), TotalTicks = r.ReadUInt16(), RemainingTicks = r.ReadUInt16()
+            };
+            if (item.UnitType.Value == 0 || item.TotalTicks == 0 || item.RemainingTicks > item.TotalTicks || !production.TryEnqueue(item)) throw new InvalidDataException("Invalid production queue item.");
+        }
+        return production;
+    }
+
+    private static void AddLegacyProduction(SimulationWorld world)
+    {
+        IReadOnlyList<EntityId> alive = world.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (world.Entities.Building.TryGet(id, out Building building) && building.State == BuildingState.Completed && world.Content.IsProducer(building.Type))
+                world.Entities.Production.Set(id, new Production());
+        }
+    }
 
     private static void AddLegacyBuilders(SimulationWorld world)
     {

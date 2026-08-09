@@ -168,4 +168,74 @@ public struct ConstructionSite
     public ushort RequiredTicks;
     public ushort ProgressTicks;
 }
+
+public struct ProductionQueueItem
+{
+    public ContentId UnitType;
+    public EntityId FundingBank;
+    public ushort ReservedOre;
+    public ushort RequiredEnergy;
+    public byte RequiredCrystals;
+    public byte ReservedOperationsCapacity;
+    public ushort TotalTicks;
+    public ushort RemainingTicks;
+}
+
+public struct Production
+{
+    public const int Capacity = 8;
+    public byte Count;
+    public bool SpawnBlocked;
+    public bool HasRallyPoint;
+    public FixVec2 RallyPoint;
+    public EntityId RallyTargetEntity;
+    public ProductionQueueItem Item0;
+    public ProductionQueueItem Item1;
+    public ProductionQueueItem Item2;
+    public ProductionQueueItem Item3;
+    public ProductionQueueItem Item4;
+    public ProductionQueueItem Item5;
+    public ProductionQueueItem Item6;
+    public ProductionQueueItem Item7;
+
+    public ProductionQueueItem Get(int index) => index switch
+    {
+        0 => Item0, 1 => Item1, 2 => Item2, 3 => Item3,
+        4 => Item4, 5 => Item5, 6 => Item6, 7 => Item7,
+        _ => throw new System.ArgumentOutOfRangeException(nameof(index))
+    };
+
+    public void Set(int index, ProductionQueueItem item)
+    {
+        switch (index)
+        {
+            case 0: Item0 = item; break; case 1: Item1 = item; break; case 2: Item2 = item; break; case 3: Item3 = item; break;
+            case 4: Item4 = item; break; case 5: Item5 = item; break; case 6: Item6 = item; break; case 7: Item7 = item; break;
+            default: throw new System.ArgumentOutOfRangeException(nameof(index));
+        }
+    }
+
+    public bool TryEnqueue(ProductionQueueItem item)
+    {
+        if (Count >= Capacity) return false;
+        Set(Count, item); Count++; return true;
+    }
+
+    public void RemoveFirst()
+    {
+        if (Count == 0) return;
+        for (int i = 1; i < Count; i++) Set(i - 1, Get(i));
+        Count--; Set(Count, default); SpawnBlocked = false;
+    }
+
+    public int ProjectedTicks
+    {
+        get
+        {
+            int result = 0;
+            for (int i = 0; i < Count; i++) result = checked(result + Get(i).RemainingTicks);
+            return result;
+        }
+    }
+}
 }

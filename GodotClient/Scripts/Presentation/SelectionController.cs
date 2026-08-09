@@ -118,11 +118,11 @@ public partial class SelectionController : Node
         for (int i = 0; i < _bridge.Current.Entities.Count; i++)
         {
             PresentationEntity e = _bridge.Current.Entities[i];
-            if (e.Owner != 0 || e.SelectableKind == SelectableKind.Building) continue;
+            if (e.Owner != 0) continue;
             Vector3 world = e.Position.ToWorld(0.5f);
             if (_camera.IsPositionBehind(world)) continue;
             Vector2 sp = _camera.UnprojectPosition(world);
-            float radius = ScreenPickRadius(e.Footprint);
+            float radius = EntityPickRadius(e);
             float normalized = (sp - screen).LengthSquared() / (radius * radius);
             if (normalized < bestNormalized) { bestNormalized = normalized; best = e.EntityId; }
         }
@@ -197,6 +197,11 @@ public partial class SelectionController : Node
         FootprintClass.Huge => 36f,
         _ => 22f
     };
+
+    private static float EntityPickRadius(PresentationEntity entity)
+        => entity.SelectableKind == SelectableKind.Building
+            ? Mathf.Max(28f, Mathf.Max(entity.BuildingWidth, entity.BuildingHeight) * 4f)
+            : ScreenPickRadius(entity.Footprint);
 
     private void Apply(EntityId id, bool subtract, bool toggle)
     {

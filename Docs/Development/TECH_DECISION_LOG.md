@@ -177,6 +177,35 @@ They do not change gameplay canon.
 
 ---
 
+## 2026-08-10 — M3 deterministic production queues and spawn boundary
+
+- T035 adds one fixed-capacity authoritative `Production` component per
+  completed producer. Its eight queue slots retain Stable Unit ID, local
+  funding reserve, Ore commitment, Energy/Crystal requirements, reserved OC
+  metadata and tick progress without introducing an unordered collection.
+- Queue acceptance withdraws the full Ore cost from the nearest eligible owned
+  local reserve in deterministic distance/Entity-ID order. Operations Capacity
+  and Energy requirements are retained but not enforced before their scheduled
+  T036 and T037 systems.
+- Only the active first item advances. Completion validates the producer's
+  compiled exit footprint, checks deterministic candidate positions and
+  creates a short-lived reservation within the production-system tick before
+  spawning the entity. A blocked completion remains at zero ticks in the
+  facility and retries without speculative entity creation.
+- Produced entities use compiled movement, footprint, selection, vision and
+  Worker/Builder metadata. A legal rally becomes a normal authoritative Move
+  command; a produced Crew rallied directly to an Ore node enters the existing
+  authoritative harvesting flow.
+- Snapshot format v8 widens the component mask to 32 bits and adds Production
+  state. Snapshot v2-v7 readers remain supported and attach empty queues to
+  legacy completed producers. Simulation protocol v6, replay v4 and prototype
+  content v6 carry the corresponding command and production-definition data.
+
+These are implementation decisions within approved M3 production canon. They
+do not change gameplay canon.
+
+---
+
 ## 2026-08-10 — M3 deterministic construction jobs and commitment
 
 - T034 adds the canon-listed Builder component rather than extending Worker

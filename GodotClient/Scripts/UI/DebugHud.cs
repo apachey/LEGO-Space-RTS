@@ -16,6 +16,11 @@ public partial class DebugHud : CanvasLayer
     private double _nextHashUpdate;
     private string _cachedHash = "-";
     private readonly StringBuilder _builder = new(1024);
+    private readonly Dictionary<string, Button> _productionButtons = new();
+    private static readonly string[] ProductionKeys =
+    {
+        "unit.rock_raiders.crew", "unit.rock_raiders.hover_scout", "unit.rock_raiders.rapid_rider", "unit.rock_raiders.loader_dozer"
+    };
 
     public void Configure(GodotSimBridge bridge, SelectionController selection, RtsInputController input, DebugRenderer debug, FogPresenter fog)
     {
@@ -36,6 +41,8 @@ public partial class DebugHud : CanvasLayer
         AddToggle(toggles, "Vision", () => _debug.DrawVision, v => _debug.DrawVision = v);
         AddToggle(toggles, "Excavatable", () => _debug.DrawExcavatable, v => _debug.DrawExcavatable = v);
         AddToggle(toggles, "Fog", () => _fog.FogVisible, _fog.SetFogVisible);
+        HFlowContainer production = new() { Name = "ProductionButtons" }; box.AddChild(production);
+        for (int i = 0; i < ProductionKeys.Length; i++) AddProductionButton(production, ProductionKeys[i]);
         AddChild(panel);
         ProcessPriority = 200;
     }
@@ -74,12 +81,63 @@ public partial class DebugHud : CanvasLayer
         if (_selection.LastFilteredWorkerCount > 0)
             _builder.Append("\nBox-select priority filtered ").Append(_selection.LastFilteredWorkerCount).Append(" worker(s); Ctrl+drag includes workers.");
         if (_input?.BuildModeActive == true) _builder.Append("\nBUILD: ").Append(_input.BuildStatus);
+        UpdateProductionButtons();
+        AppendProductionStatus();
         _builder.Append("\nRMB Move / Harvest / Assist Site | Shift+RMB Queue | S Stop | H Hold");
         _builder.Append("\nB Build Mode | Tab building | R rotate | LMB place | Esc/RMB cancel | Ctrl+Z refund latest unstarted site");
         _builder.Append("\nM2 note: Hold and Stop both halt movement now; Hold differs once combat exists (fires without chasing).");
         _builder.Append("\nCtrl+0–9 assign | 0–9 recall | F9 topology-open | ,/. rotate | wheel zoom");
         _label.Text = _builder.ToString();
     }
+
+    private void AddProductionButton(Container parent, string unitKey)
+    {
+        Button button = new() { Text = ProductionButtonText(unitKey), Disabled = true, CustomMinimumSize = new Vector2(0f, 34f) };
+        button.AddThemeFontSizeOverride("font_size", 15);
+        button.Pressed += () => _input?.QueueProduction(unitKey, Input.IsKeyPressed(Key.Shift));
+        parent.AddChild(button); _productionButtons.Add(unitKey, button);
+    }
+
+    private void UpdateProductionButtons()
+    {
+        if (_input is null) return;
+        foreach ((string key, Button button) in _productionButtons) button.Disabled = !_input.CanQueueProduction(key);
+    }
+
+    private void AppendProductionStatus()
+    {
+        if (_bridge is null || _selection is null) return;
+        for (int i = 0; i < _selection.Selected.Count; i++)
+        {
+            EntityId id = _selection.Selected[i];
+            if (!_bridge.World.Entities.Production.TryGet(id, out Production production)) continue;
+            _builder.Append("\nProduction: ").Append(production.Count).Append('/').Append(Production.Capacity);
+            if (production.SpawnBlocked) _builder.Append(" — EXIT BLOCKED");
+            if (production.HasRallyPoint) _builder.Append(" — rally set");
+            for (int q = 0; q < production.Count; q++)
+            {
+                ProductionQueueItem item = production.Get(q);
+                int percent = item.TotalTicks == 0 ? 0 : (item.TotalTicks - item.RemainingTicks) * 100 / item.TotalTicks;
+                _builder.Append(" | ").Append(q + 1).Append(':').Append(UnitName(item.UnitType)).Append(' ').Append(percent).Append('%');
+            }
+            return;
+        }
+    }
+
+    private static string UnitName(ContentId id)
+    {
+        for (int i = 0; i < ProductionKeys.Length; i++) if (StableId.FromKey(ProductionKeys[i]) == id) return ProductionButtonText(ProductionKeys[i]).Split(' ')[0];
+        return id.Value.ToString();
+    }
+
+    private static string ProductionButtonText(string key) => key switch
+    {
+        "unit.rock_raiders.crew" => "Crew 50O 16s",
+        "unit.rock_raiders.hover_scout" => "Scout 75O 20s",
+        "unit.rock_raiders.rapid_rider" => "Rider 90O 28s",
+        "unit.rock_raiders.loader_dozer" => "Dozer 125O 36s",
+        _ => key
+    };
 
     private static void AddToggle(Container parent, string name, Func<bool> getter, Action<bool> setter)
     {

@@ -136,6 +136,30 @@ public readonly struct BuildingDefinition
     }
 }
 
+public readonly struct UnitProductionDefinition
+{
+    public readonly ContentId UnitType;
+    public readonly string UnitStableKey;
+    public readonly ContentId ProducerType;
+    public readonly string ProducerStableKey;
+    public readonly ushort OreCost;
+    public readonly ushort EnergyCost;
+    public readonly byte CrystalCost;
+    public readonly byte OperationsCapacity;
+    public readonly ushort BuildTicks;
+
+    public UnitProductionDefinition(string unitStableKey, string producerStableKey, ushort oreCost, ushort energyCost,
+        byte crystalCost, byte operationsCapacity, ushort buildTicks)
+    {
+        if (string.IsNullOrWhiteSpace(unitStableKey)) throw new ArgumentNullException(nameof(unitStableKey));
+        if (string.IsNullOrWhiteSpace(producerStableKey)) throw new ArgumentNullException(nameof(producerStableKey));
+        if (buildTicks == 0 || operationsCapacity == 0) throw new ArgumentOutOfRangeException(nameof(buildTicks));
+        UnitStableKey = unitStableKey; UnitType = StableId.FromKey(unitStableKey);
+        ProducerStableKey = producerStableKey; ProducerType = StableId.FromKey(producerStableKey);
+        OreCost = oreCost; EnergyCost = energyCost; CrystalCost = crystalCost; OperationsCapacity = operationsCapacity; BuildTicks = buildTicks;
+    }
+}
+
 /// <summary>Immutable prototype gameplay metadata compiled from Content/PrototypeEntities.json.</summary>
 public sealed class PrototypeContentCatalog
 {
@@ -143,19 +167,26 @@ public sealed class PrototypeContentCatalog
     public PrototypeEntityDefinition[] Entities { get; }
     public ResourceNodeDefinition[] ResourceNodes { get; }
     public BuildingDefinition[] Buildings { get; }
+    public UnitProductionDefinition[] Production { get; }
     public ulong ContentHash { get; internal set; }
-    public PrototypeContentCatalog(PrototypeMovementProfile[] movementProfiles, PrototypeEntityDefinition[] entities, ResourceNodeDefinition[]? resourceNodes = null, BuildingDefinition[]? buildings = null)
+    public PrototypeContentCatalog(PrototypeMovementProfile[] movementProfiles, PrototypeEntityDefinition[] entities, ResourceNodeDefinition[]? resourceNodes = null, BuildingDefinition[]? buildings = null, UnitProductionDefinition[]? production = null)
     {
         MovementProfiles = movementProfiles ?? Array.Empty<PrototypeMovementProfile>();
         Entities = entities ?? Array.Empty<PrototypeEntityDefinition>();
         ResourceNodes = resourceNodes ?? Array.Empty<ResourceNodeDefinition>();
         Buildings = buildings ?? Array.Empty<BuildingDefinition>();
+        Production = production ?? Array.Empty<UnitProductionDefinition>();
     }
 
     public bool ContainsEntityKey(string stableKey) => TryGetEntity(stableKey, out _);
     public bool TryGetEntity(string stableKey, out PrototypeEntityDefinition definition)
     {
         for (int i = 0; i < Entities.Length; i++) if (string.Equals(Entities[i].StableKey, stableKey, StringComparison.Ordinal)) { definition = Entities[i]; return true; }
+        definition = default; return false;
+    }
+    public bool TryGetEntity(ContentId id, out PrototypeEntityDefinition definition)
+    {
+        for (int i = 0; i < Entities.Length; i++) if (Entities[i].Id == id) { definition = Entities[i]; return true; }
         definition = default; return false;
     }
     public bool TryGetMovement(string stableKey, out PrototypeMovementProfile profile)
@@ -175,6 +206,16 @@ public sealed class PrototypeContentCatalog
         for (int i = 0; i < Buildings.Length; i++) if (Buildings[i].Id == id) { definition = Buildings[i]; return true; }
         definition = default; return false;
     }
+    public bool TryGetProduction(ContentId unitType, out UnitProductionDefinition definition)
+    {
+        for (int i = 0; i < Production.Length; i++) if (Production[i].UnitType == unitType) { definition = Production[i]; return true; }
+        definition = default; return false;
+    }
+    public bool IsProducer(ContentId buildingType)
+    {
+        for (int i = 0; i < Production.Length; i++) if (Production[i].ProducerType == buildingType) return true;
+        return false;
+    }
 }
 
 public static class PrototypeContentFactory
@@ -188,6 +229,7 @@ public static class PrototypeContentFactory
             new PrototypeMovementProfile("movement.prototype.crew", Fix32.FromRatio(135,100), Fix32.FromInt(4), Fix32.FromInt(5), 1638, ReversePolicy.Full, MovementLayer.Ground),
             new PrototypeMovementProfile("movement.prototype.hover_scout", Fix32.FromRatio(225,100), Fix32.FromInt(6), Fix32.FromRatio(15,2), 1638, ReversePolicy.Full, MovementLayer.GroundHover),
             new PrototypeMovementProfile("movement.prototype.loader_dozer", Fix32.FromRatio(130,100), Fix32.FromRatio(3,2), Fix32.FromRatio(15,8), 865, ReversePolicy.Reduced, MovementLayer.Ground),
+            new PrototypeMovementProfile("movement.prototype.rapid_rider", Fix32.FromRatio(210,100), Fix32.FromInt(4), Fix32.FromInt(5), 1638, ReversePolicy.Full, MovementLayer.GroundHover),
             new PrototypeMovementProfile("movement.prototype.nav_huge", Fix32.FromRatio(9,10), Fix32.FromRatio(9,10), Fix32.FromRatio(9,8), 410, ReversePolicy.Reduced, MovementLayer.Ground),
             new PrototypeMovementProfile("movement.prototype.static", Fix32.Zero, Fix32.Zero, Fix32.Zero, 0, ReversePolicy.None, MovementLayer.Ground)
         };
@@ -201,7 +243,8 @@ public static class PrototypeContentFactory
             new PrototypeEntityDefinition("unit.rock_raiders.chrome_crusher", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.chrome_crusher", FootprintClass.Large, SelectableKind.CombatSupport, 8, "view.placeholder.rock_raiders.chrome_crusher"),
             new PrototypeEntityDefinition("unit.rock_raiders.crew", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.crew", FootprintClass.Tiny, SelectableKind.Worker, 7, "view.placeholder.rock_raiders.crew", 30, 8),
             new PrototypeEntityDefinition("unit.rock_raiders.hover_scout", "RockRaiders", "OFFICIAL_DIRECT", "movement.prototype.hover_scout", FootprintClass.Small, SelectableKind.CombatSupport, 9, "view.placeholder.rock_raiders.hover_scout"),
-            new PrototypeEntityDefinition("unit.rock_raiders.loader_dozer", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.loader_dozer", FootprintClass.Medium, SelectableKind.CombatSupport, 7, "view.placeholder.rock_raiders.loader_dozer")
+            new PrototypeEntityDefinition("unit.rock_raiders.loader_dozer", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.loader_dozer", FootprintClass.Medium, SelectableKind.CombatSupport, 7, "view.placeholder.rock_raiders.loader_dozer"),
+            new PrototypeEntityDefinition("unit.rock_raiders.rapid_rider", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.rapid_rider", FootprintClass.Small, SelectableKind.CombatSupport, 9, "view.placeholder.rock_raiders.rapid_rider")
         };
         ResourceNodeDefinition[] resources =
         {
@@ -217,7 +260,14 @@ public static class PrototypeContentFactory
             new BuildingDefinition("building.rock_raiders.power_station", 5, 5, (1UL << 25) - 1UL, false, 150, 20, 700),
             new BuildingDefinition("building.rock_raiders.vehicle_service_bay", 8, 6, (1UL << 48) - 1UL, true, 160, 20, 800, 3, 3, FootprintClass.Medium)
         };
-        PrototypeContentCatalog catalog = new PrototypeContentCatalog(profiles, entities, resources, buildings);
+        UnitProductionDefinition[] production =
+        {
+            new UnitProductionDefinition("unit.rock_raiders.crew", "building.rock_raiders.hq", 50, 0, 0, 1, 320),
+            new UnitProductionDefinition("unit.rock_raiders.hover_scout", "building.rock_raiders.vehicle_service_bay", 75, 10, 0, 1, 400),
+            new UnitProductionDefinition("unit.rock_raiders.loader_dozer", "building.rock_raiders.vehicle_service_bay", 125, 15, 0, 3, 720),
+            new UnitProductionDefinition("unit.rock_raiders.rapid_rider", "building.rock_raiders.vehicle_service_bay", 90, 10, 0, 2, 560)
+        };
+        PrototypeContentCatalog catalog = new PrototypeContentCatalog(profiles, entities, resources, buildings, production);
         PrototypeContentCodec.Write(catalog);
         return catalog;
     }
@@ -227,7 +277,7 @@ public static class PrototypeContentFactory
 public static class PrototypeContentCodec
 {
     private const int Magic = 0x4350534C; // LSPC little-endian bytes.
-    public const int FormatVersion = 5;
+    public const int FormatVersion = 6;
 
     public static byte[] Write(PrototypeContentCatalog catalog)
     {
@@ -264,6 +314,13 @@ public static class PrototypeContentCodec
             writer.Write(b.StableKey); writer.Write(b.Id.Value); writer.Write(b.FootprintWidth); writer.Write(b.FootprintHeight); writer.Write(b.FootprintMask); writer.Write(b.Rotatable);
             writer.Write(b.OreCost); writer.Write(b.EnergyCost); writer.Write(b.BuildTicks); writer.Write(b.ProductionExitWidth); writer.Write(b.ProductionExitDepth); writer.Write((byte)b.ProductionExitFootprint);
         }
+        writer.Write(catalog.Production.Length);
+        for (int i = 0; i < catalog.Production.Length; i++)
+        {
+            UnitProductionDefinition p = catalog.Production[i];
+            writer.Write(p.UnitStableKey); writer.Write(p.UnitType.Value); writer.Write(p.ProducerStableKey); writer.Write(p.ProducerType.Value);
+            writer.Write(p.OreCost); writer.Write(p.EnergyCost); writer.Write(p.CrystalCost); writer.Write(p.OperationsCapacity); writer.Write(p.BuildTicks);
+        }
         writer.Flush();
         byte[] bytes = stream.ToArray(); catalog.ContentHash = DeterministicHash.Fnv1A64(bytes); return bytes;
     }
@@ -274,7 +331,7 @@ public static class PrototypeContentCodec
         using BinaryReader reader = new BinaryReader(stream);
         if (reader.ReadInt32() != Magic) throw new InvalidDataException("Prototype content magic mismatch.");
         int formatVersion = reader.ReadInt32();
-        if (formatVersion != 2 && formatVersion != 3 && formatVersion != 4 && formatVersion != FormatVersion) throw new InvalidDataException("Prototype content format version mismatch.");
+        if (formatVersion < 2 || formatVersion > FormatVersion) throw new InvalidDataException("Prototype content format version mismatch.");
         int profileCount = reader.ReadInt32(); if (profileCount < 0 || profileCount > 1024) throw new InvalidDataException("Invalid movement profile count.");
         PrototypeMovementProfile[] profiles = new PrototypeMovementProfile[profileCount];
         for (int i = 0; i < profileCount; i++)
@@ -321,8 +378,20 @@ public static class PrototypeContentCodec
                 if (buildings[i].Id.Value != id) throw new InvalidDataException("Stable building ID mismatch.");
             }
         }
+        UnitProductionDefinition[] production = Array.Empty<UnitProductionDefinition>();
+        if (formatVersion >= 6)
+        {
+            int productionCount = reader.ReadInt32(); if (productionCount < 0 || productionCount > 4096) throw new InvalidDataException("Invalid production definition count.");
+            production = new UnitProductionDefinition[productionCount];
+            for (int i = 0; i < productionCount; i++)
+            {
+                string unitKey = reader.ReadString(); uint unitId = reader.ReadUInt32(); string producerKey = reader.ReadString(); uint producerId = reader.ReadUInt32();
+                production[i] = new UnitProductionDefinition(unitKey, producerKey, reader.ReadUInt16(), reader.ReadUInt16(), reader.ReadByte(), reader.ReadByte(), reader.ReadUInt16());
+                if (production[i].UnitType.Value != unitId || production[i].ProducerType.Value != producerId) throw new InvalidDataException("Stable production ID mismatch.");
+            }
+        }
         if (stream.Position != stream.Length) throw new InvalidDataException("Trailing prototype content bytes.");
-        PrototypeContentCatalog result = new PrototypeContentCatalog(profiles, entities, resourceNodes, buildings) { ContentHash = DeterministicHash.Fnv1A64(bytes) };
+        PrototypeContentCatalog result = new PrototypeContentCatalog(profiles, entities, resourceNodes, buildings, production) { ContentHash = DeterministicHash.Fnv1A64(bytes) };
         return result;
     }
 }

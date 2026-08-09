@@ -1,7 +1,7 @@
 {
-  "schemaVersion": 5,
+  "schemaVersion": 6,
   "contentKind": "prototype_entities",
-  "policy": "M2 movement metadata plus canonical M3 Ore flow and first-playable Rock Raiders building placement; no unapproved combat/economy values are invented here.",
+  "policy": "M2 movement metadata plus canonical M3 Ore flow, building placement, construction and first-playable production; no unapproved combat/economy values are invented here.",
   "movementProfiles": [
     {
       "stableId": "movement.prototype.crew",
@@ -56,6 +56,15 @@
       "turnRatePerTick": 865,
       "reversePolicy": "Reduced",
       "layer": "Ground"
+    },
+    {
+      "stableId": "movement.prototype.rapid_rider",
+      "speedRatio": [210, 100],
+      "accelerationRatio": [4, 1],
+      "decelerationRatio": [5, 1],
+      "turnRatePerTick": 1638,
+      "reversePolicy": "Full",
+      "layer": "GroundHover"
     },
     {
       "stableId": "movement.prototype.chrome_crusher",
@@ -177,6 +186,36 @@
       "productionExit": { "width": 3, "depth": 3, "largestFootprint": "Medium" }
     }
   ],
+  "productionDefinitions": [
+    {
+      "unit": "unit.rock_raiders.crew",
+      "producer": "building.rock_raiders.hq",
+      "cost": { "ore": 50, "energy": 0, "crystals": 0 },
+      "operationsCapacity": 1,
+      "buildTicks": 320
+    },
+    {
+      "unit": "unit.rock_raiders.hover_scout",
+      "producer": "building.rock_raiders.vehicle_service_bay",
+      "cost": { "ore": 75, "energy": 10, "crystals": 0 },
+      "operationsCapacity": 1,
+      "buildTicks": 400
+    },
+    {
+      "unit": "unit.rock_raiders.rapid_rider",
+      "producer": "building.rock_raiders.vehicle_service_bay",
+      "cost": { "ore": 90, "energy": 10, "crystals": 0 },
+      "operationsCapacity": 2,
+      "buildTicks": 560
+    },
+    {
+      "unit": "unit.rock_raiders.loader_dozer",
+      "producer": "building.rock_raiders.vehicle_service_bay",
+      "cost": { "ore": 125, "energy": 15, "crystals": 0 },
+      "operationsCapacity": 3,
+      "buildTicks": 720
+    }
+  ],
   "entities": [
     {
       "stableId": "building.rock_raiders.hq",
@@ -251,6 +290,16 @@
       "selectableKind": "CombatSupport",
       "visionRadius": 7,
       "viewProfile": "view.placeholder.rock_raiders.loader_dozer"
+    },
+    {
+      "stableId": "unit.rock_raiders.rapid_rider",
+      "faction": "RockRaiders",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.prototype.rapid_rider",
+      "footprint": "Small",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 9,
+      "viewProfile": "view.placeholder.rock_raiders.rapid_rider"
     },
     {
       "stableId": "unit.rock_raiders.chrome_crusher",

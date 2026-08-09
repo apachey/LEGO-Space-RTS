@@ -34,6 +34,17 @@ public sealed class CommandExecutionSystem : ISimSystem
             ConstructionPlacement.TryCancel(world, command.PlayerSlot, command.TargetEntity);
             return;
         }
+        if (command.Type == SimCommandType.QueueProduction)
+        {
+            ProductionSystem.TryQueue(world, command.PlayerSlot, command.TargetEntity, command.ContentType);
+            return;
+        }
+        if (command.Type == SimCommandType.SetRallyPoint)
+        {
+            for (int i = 0; i < command.Entities.Length; i++)
+                ProductionSystem.TrySetRally(world, command.PlayerSlot, command.Entities[i], command.TargetPosition, command.TargetEntity);
+            return;
+        }
 
         world.ScratchEntities.Clear();
         for (int i = 0; i < command.Entities.Length; i++)

@@ -63,8 +63,8 @@ narrow placement cases allowed by Phase 09B.
 - Meaningful-progress recovery is measured toward the active route waypoint
   over accumulated movement rather than reset by arbitrary per-tick motion, so
   arrival micro-movement cannot indefinitely suppress reflow/repath.
-- The current M3 T034 full verification is green across every
-  `BLOCKING_NOW` stage: builds, 97 NUnit tests, the explicit representative
+- The current M3 T035 full verification is green across every
+  `BLOCKING_NOW` stage: builds, 105 NUnit tests, the explicit representative
   24-mover gate, compiled content, HeadlessSim, Godot headless smoke, 100-repeat
   determinism, replay, snapshot continuation, regeneration and macOS export.
 - A launchable debug build was produced at
@@ -144,6 +144,26 @@ narrow placement cases allowed by Phase 09B.
   director confirmed that Crew travel, visible construction progress and
   completed-building transition all work. No blocking construction-job or
   readability defect was reported.
+- M3 T035 production queues are implemented on the current task branch. Each
+  completed HQ or Vehicle Service Bay owns an authoritative ordered queue of
+  at most eight units. Queueing reserves the full Ore cost from the nearest
+  owned local reserve; Energy, Crystal and Operations Capacity requirements
+  are retained on the job for their scheduled systems rather than silently
+  enforced by a temporary global wallet.
+- Production advances at 20 Hz using the canonical Crew, Hover Scout, Rapid
+  Rider and Loader Dozer costs and build times. A completed unit validates the
+  building's authored exit, receives a deterministic short-term spawn
+  reservation and waits inside the facility when every legal exit position is
+  blocked. No speculative entity is repeatedly created and deleted.
+- Completed production buildings can be selected directly. The prototype HUD
+  exposes the four relevant production actions, Shift queues five copies using
+  shortest projected completion and deterministic round-robin ties, and queue
+  progress reports a blocked exit. Right-click assigns a rally point; a Crew
+  rallied onto a visible Ore deposit immediately enters the harvesting loop.
+- Snapshot v8 / simulation protocol v6 preserve queues, reservations, blocked
+  completion and rally state. Replay v4 accepts the production and rally
+  commands while retaining current v1-v3 read compatibility. Prototype content
+  v6 compiles four production definitions and the canonical Rapid Rider mover.
 
 ## Current gates
 
@@ -168,10 +188,11 @@ narrow placement cases allowed by Phase 09B.
   / 20 navigation nodes, while the imported runtime/static validator currently
   use 10 navigation nodes / 5 build cells; resolve in a separate canon-alignment
   task before changing cluster geometry;
-- Completed prototype buildings do not produce units yet; T035 owns production
-  queues and spawn exits. Canonical Energy costs remain retained on sites, but
-  authoritative Energy-domain availability begins with T037 as scheduled. The
-  full production economy HUD remains a later M3 task.
+- T035 retains but does not yet enforce Operations Capacity and Energy costs:
+  T036 owns OC reservation/cap transitions and T037 owns Energy Domains as
+  scheduled. The full production overview, waiting-item drag reordering and
+  cancellation/refund presentation remain later interface/economy work beyond
+  the T035 unit-spawn acceptance gate.
 
 ## Explicitly rejected / do not resurrect
 
@@ -184,6 +205,6 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Merge the accepted stacked T030-T034 M3 economy/base-building branches.
-2. Begin T035 production queues.
-3. T036 Operations Capacity after T035 acceptance.
+1. Complete T035 human unit-production playtest acceptance.
+2. Merge the accepted stacked T030-T035 M3 economy/base-building branches.
+3. Begin T036 Operations Capacity after T035 acceptance.

@@ -46,6 +46,8 @@ public static class ResourceConservation
                 reserved = checked(reserved + site.ReservedOre);
                 consumed = checked(consumed + site.ConsumedOre);
             }
+            if (type == ResourceType.Ore && world.Entities.Production.TryGet(id, out Production production))
+                for (int q = 0; q < production.Count; q++) reserved = checked(reserved + production.Get(q).ReservedOre);
         }
         return new ResourceConservationTotals(raw, carried, hauled, processed, reserved, consumed);
     }

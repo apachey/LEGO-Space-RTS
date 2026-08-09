@@ -17,7 +17,7 @@ byte[] contentBytes = PrototypeContentCodec.Write(catalog);
 string contentOutput = Path.Combine(outputDirectory, "PrototypeEntities.contentbin");
 File.WriteAllBytes(contentOutput, contentBytes);
 PrototypeContentCatalog contentRoundTrip = PrototypeContentCodec.Read(contentBytes);
-if (contentRoundTrip.ContentHash != catalog.ContentHash || contentRoundTrip.Entities.Length != catalog.Entities.Length || contentRoundTrip.ResourceNodes.Length != catalog.ResourceNodes.Length || contentRoundTrip.Buildings.Length != catalog.Buildings.Length)
+if (contentRoundTrip.ContentHash != catalog.ContentHash || contentRoundTrip.Entities.Length != catalog.Entities.Length || contentRoundTrip.ResourceNodes.Length != catalog.ResourceNodes.Length || contentRoundTrip.Buildings.Length != catalog.Buildings.Length || contentRoundTrip.Production.Length != catalog.Production.Length)
     throw new InvalidDataException("Prototype content round-trip validation failed.");
 
 MapDefinition definition = CompileMap(mapSource, catalog);
@@ -28,7 +28,7 @@ MapDefinition mapRoundTrip = CompiledMapCodec.ReadDefinition(mapBytes);
 if (mapRoundTrip.Grid.Id.Value != definition.Grid.Id.Value || mapRoundTrip.InitialEntities.Length != definition.InitialEntities.Length || mapRoundTrip.InitialResourceNodes.Length != definition.InitialResourceNodes.Length || mapRoundTrip.InitialResourceReceivers.Length != definition.InitialResourceReceivers.Length)
     throw new InvalidDataException("Compiled map round-trip validation failed.");
 
-Console.WriteLine($"Prototype content: {contentOutput} ({contentBytes.Length} bytes), hash={catalog.ContentHash:X16}, entities={catalog.Entities.Length}, resourceDefinitions={catalog.ResourceNodes.Length}, buildingDefinitions={catalog.Buildings.Length}");
+Console.WriteLine($"Prototype content: {contentOutput} ({contentBytes.Length} bytes), hash={catalog.ContentHash:X16}, entities={catalog.Entities.Length}, resourceDefinitions={catalog.ResourceNodes.Length}, buildingDefinitions={catalog.Buildings.Length}, productionDefinitions={catalog.Production.Length}");
 Console.WriteLine($"Map: {mapOutput} ({mapBytes.Length} bytes), starts={definition.Starts.Length}, spawns={definition.InitialEntities.Length}, resourceNodes={definition.InitialResourceNodes.Length}, resourceReceivers={definition.InitialResourceReceivers.Length}, features={definition.Grid.Features.Count}");
 return 0;
 
@@ -36,7 +36,7 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
 {
     using JsonDocument document = JsonDocument.Parse(File.ReadAllText(path));
     JsonElement root = document.RootElement;
-    if (root.GetProperty("schemaVersion").GetInt32() != 5) throw new InvalidDataException("Unsupported prototype content schema.");
+    if (root.GetProperty("schemaVersion").GetInt32() != 6) throw new InvalidDataException("Unsupported prototype content schema.");
     if (!string.Equals(root.GetProperty("contentKind").GetString(), "prototype_entities", StringComparison.Ordinal)) throw new InvalidDataException("Unexpected contentKind.");
 
     List<PrototypeMovementProfile> profiles = new();
@@ -136,7 +136,22 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
             checked((ushort)item.GetProperty("buildTicks").GetInt32()), exitWidth, exitDepth, exitFootprint));
     }
     buildings.Sort((a, b) => string.CompareOrdinal(a.StableKey, b.StableKey));
-    return new PrototypeContentCatalog(profiles.ToArray(), entities.ToArray(), resourceNodes.ToArray(), buildings.ToArray());
+    List<UnitProductionDefinition> production = new();
+    HashSet<string> producedUnits = new(StringComparer.Ordinal);
+    foreach (JsonElement item in root.GetProperty("productionDefinitions").EnumerateArray())
+    {
+        string unit = RequiredString(item, "unit"), producer = RequiredString(item, "producer");
+        if (!entityKeys.Contains(unit)) throw new InvalidDataException($"Production references unknown unit {unit}.");
+        if (!buildingKeys.Contains(producer)) throw new InvalidDataException($"Production references unknown producer {producer}.");
+        if (!producedUnits.Add(unit)) throw new InvalidDataException($"Duplicate production definition for {unit}.");
+        JsonElement cost = item.GetProperty("cost");
+        production.Add(new UnitProductionDefinition(unit, producer,
+            checked((ushort)cost.GetProperty("ore").GetInt32()), checked((ushort)cost.GetProperty("energy").GetInt32()),
+            checked((byte)cost.GetProperty("crystals").GetInt32()), checked((byte)item.GetProperty("operationsCapacity").GetInt32()),
+            checked((ushort)item.GetProperty("buildTicks").GetInt32())));
+    }
+    production.Sort((a, b) => string.CompareOrdinal(a.UnitStableKey, b.UnitStableKey));
+    return new PrototypeContentCatalog(profiles.ToArray(), entities.ToArray(), resourceNodes.ToArray(), buildings.ToArray(), production.ToArray());
 }
 
 static MapDefinition CompileMap(string path, PrototypeContentCatalog catalog)

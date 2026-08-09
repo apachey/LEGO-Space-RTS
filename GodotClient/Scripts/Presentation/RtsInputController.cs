@@ -26,6 +26,7 @@ public partial class RtsInputController : Node
     private StandardMaterial3D? _buildGhostMaterial;
     private string _buildStatus = "Off";
     private uint _sequence = 1;
+    private readonly Dictionary<uint, uint> _productionRoundRobin = new();
 
     public ControlGroups Groups => _groups;
     public bool BuildModeActive => _buildMode;
@@ -96,11 +97,90 @@ public partial class RtsInputController : Node
         {
             EntityId constructionSite = _selection.FindConstructionSiteAtScreen(mouse.Position);
             EntityId resource = _selection.FindResourceAtScreen(mouse.Position);
-            if (constructionSite != EntityId.None) IssueAssistConstruction(constructionSite);
+            if (HasSelectedProduction() && _camera.TryProjectToGround(mouse.Position, out Vector3 rallyPoint)) IssueRally(rallyPoint, resource);
+            else if (constructionSite != EntityId.None) IssueAssistConstruction(constructionSite);
             else if (resource != EntityId.None) IssueHarvest(resource);
             else if (_camera.TryProjectToGround(mouse.Position, out Vector3 point)) IssueMove(point);
             GetViewport().SetInputAsHandled();
         }
+    }
+
+    public bool CanQueueProduction(string unitKey)
+    {
+        if (_bridge is null || _selection is null || !_bridge.World.Content.TryGetEntity(unitKey, out PrototypeEntityDefinition unit) ||
+            !_bridge.World.Content.TryGetProduction(unit.Id, out UnitProductionDefinition definition)) return false;
+        for (int i = 0; i < _selection.Selected.Count; i++)
+        {
+            EntityId id = _selection.Selected[i];
+            if (_bridge.World.Entities.Production.TryGet(id, out Production production) && production.Count < Production.Capacity &&
+                _bridge.World.Entities.Building.TryGet(id, out Building building) && building.State == BuildingState.Completed && building.Type == definition.ProducerType) return true;
+        }
+        return false;
+    }
+
+    public void QueueProduction(string unitKey, bool fiveCopies = false)
+    {
+        if (_bridge is null || _selection is null || !_bridge.World.Content.TryGetEntity(unitKey, out PrototypeEntityDefinition unit) ||
+            !_bridge.World.Content.TryGetProduction(unit.Id, out UnitProductionDefinition definition)) return;
+        Dictionary<uint, int> projected = new();
+        Dictionary<uint, int> queuedNow = new();
+        List<EntityId> candidates = new();
+        for (int i = 0; i < _selection.Selected.Count; i++)
+        {
+            EntityId id = _selection.Selected[i];
+            if (!_bridge.World.Entities.Production.TryGet(id, out Production production) || production.Count >= Production.Capacity ||
+                !_bridge.World.Entities.Building.TryGet(id, out Building building) || building.State != BuildingState.Completed || building.Type != definition.ProducerType) continue;
+            candidates.Add(id); projected[id.Value] = production.ProjectedTicks; queuedNow[id.Value] = 0;
+        }
+        candidates.Sort(static (a, b) => a.Value.CompareTo(b.Value));
+        int copies = fiveCopies ? 5 : 1;
+        for (int copy = 0; copy < copies; copy++)
+        {
+            EntityId chosen = EntityId.None; int bestTicks = int.MaxValue;
+            for (int i = 0; i < candidates.Count; i++)
+            {
+                EntityId candidate = candidates[i];
+                Production production = _bridge.World.Entities.Production.Get(candidate);
+                if (production.Count + queuedNow[candidate.Value] >= Production.Capacity) continue;
+                int ticks = projected[candidate.Value];
+                if (ticks < bestTicks) { bestTicks = ticks; chosen = candidate; }
+                else if (ticks == bestTicks && PreferRoundRobin(unit.Id, candidate, chosen)) chosen = candidate;
+            }
+            if (chosen == EntityId.None) break;
+            _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, _sequence++, SimCommandType.QueueProduction,
+                Array.Empty<EntityId>(), FixVec2.Zero, targetEntity: chosen, contentType: unit.Id));
+            projected[chosen.Value] = checked(projected[chosen.Value] + definition.BuildTicks);
+            queuedNow[chosen.Value]++;
+            _productionRoundRobin[unit.Id.Value] = chosen.Value;
+        }
+    }
+
+    private bool PreferRoundRobin(ContentId unitType, EntityId candidate, EntityId current)
+    {
+        if (current == EntityId.None) return true;
+        if (!_productionRoundRobin.TryGetValue(unitType.Value, out uint last)) return candidate.Value < current.Value;
+        bool candidateAfter = candidate.Value > last, currentAfter = current.Value > last;
+        return candidateAfter != currentAfter ? candidateAfter : candidate.Value < current.Value;
+    }
+
+    private bool HasSelectedProduction()
+    {
+        if (_bridge is null || _selection is null) return false;
+        for (int i = 0; i < _selection.Selected.Count; i++) if (_bridge.World.Entities.Production.Has(_selection.Selected[i])) return true;
+        return false;
+    }
+
+    private void IssueRally(Vector3 worldPoint, EntityId resource)
+    {
+        if (_bridge is null || _selection is null) return;
+        List<EntityId> facilities = new();
+        for (int i = 0; i < _selection.Selected.Count; i++) if (_bridge.World.Entities.Production.Has(_selection.Selected[i])) facilities.Add(_selection.Selected[i]);
+        if (facilities.Count == 0) return;
+        FixVec2 target = resource != EntityId.None && _bridge.World.Entities.Transform.TryGet(resource, out SimTransform resourceTransform)
+            ? resourceTransform.Position : worldPoint.ToFixedBuild();
+        _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, _sequence++, SimCommandType.SetRallyPoint,
+            facilities.ToArray(), target, targetEntity: resource));
+        ClearMovePreviews();
     }
 
     private void IssueAssistConstruction(EntityId site)

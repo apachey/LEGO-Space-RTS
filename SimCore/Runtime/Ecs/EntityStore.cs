@@ -23,6 +23,7 @@ public sealed class EntityStore
     public readonly ComponentStore<ResourceBank> ResourceBank = new();
     public readonly ComponentStore<Building> Building = new();
     public readonly ComponentStore<ConstructionSite> ConstructionSite = new();
+    public readonly ComponentStore<Production> Production = new();
 
     public IReadOnlyList<EntityId> Alive => _alive;
 
@@ -75,6 +76,7 @@ public sealed class EntityStore
         ResourceBank.Remove(id);
         Building.Remove(id);
         ConstructionSite.Remove(id);
+        Production.Remove(id);
         return true;
     }
 

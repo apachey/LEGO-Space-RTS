@@ -13,15 +13,16 @@ public readonly struct TickProfile
     public readonly long BankingTimestampTicks;
     public readonly long HarvestTimestampTicks;
     public readonly long ConstructionTimestampTicks;
+    public readonly long ProductionTimestampTicks;
     public readonly long SpatialTimestampTicks;
     public readonly long VisionTimestampTicks;
 
     public TickProfile(long totalTimestampTicks,long commandTimestampTicks,long navigationTimestampTicks,
-        long movementIntentTimestampTicks,long localSeparationTimestampTicks,long transformTimestampTicks,long bankingTimestampTicks,long harvestTimestampTicks,long constructionTimestampTicks,long spatialTimestampTicks,long visionTimestampTicks)
+        long movementIntentTimestampTicks,long localSeparationTimestampTicks,long transformTimestampTicks,long bankingTimestampTicks,long harvestTimestampTicks,long constructionTimestampTicks,long productionTimestampTicks,long spatialTimestampTicks,long visionTimestampTicks)
     {
         TotalTimestampTicks=totalTimestampTicks;CommandTimestampTicks=commandTimestampTicks;NavigationTimestampTicks=navigationTimestampTicks;
         MovementIntentTimestampTicks=movementIntentTimestampTicks;LocalSeparationTimestampTicks=localSeparationTimestampTicks;
-        TransformTimestampTicks=transformTimestampTicks;BankingTimestampTicks=bankingTimestampTicks;HarvestTimestampTicks=harvestTimestampTicks;ConstructionTimestampTicks=constructionTimestampTicks;SpatialTimestampTicks=spatialTimestampTicks;VisionTimestampTicks=visionTimestampTicks;
+        TransformTimestampTicks=transformTimestampTicks;BankingTimestampTicks=bankingTimestampTicks;HarvestTimestampTicks=harvestTimestampTicks;ConstructionTimestampTicks=constructionTimestampTicks;ProductionTimestampTicks=productionTimestampTicks;SpatialTimestampTicks=spatialTimestampTicks;VisionTimestampTicks=visionTimestampTicks;
     }
 
     public long PathfindingTimestampTicks => NavigationTimestampTicks;
@@ -45,6 +46,7 @@ public sealed class SimulationRunner
             new ResourceBankingSystem(),
             new HarvestSystem(),
             new ConstructionSystem(),
+            new ProductionSystem(),
             new SpatialIndexSystem(),
             new VisionSystem()
         };
@@ -61,14 +63,14 @@ public sealed class SimulationRunner
     public TickProfile StepOneTickProfiled()
     {
         long totalStart=Stopwatch.GetTimestamp();
-        long c=0,n=0,m=0,l=0,t=0,b=0,h=0,j=0,s=0,v=0;
+        long c=0,n=0,m=0,l=0,t=0,b=0,h=0,j=0,p=0,s=0,v=0;
         World.Tick=World.Tick.Next();
         for(int i=0;i<_systems.Length;i++)
         {
             long start=Stopwatch.GetTimestamp();_systems[i].Step(World);long elapsed=Stopwatch.GetTimestamp()-start;
-            switch(i){case 0:c=elapsed;break;case 1:n=elapsed;break;case 2:m=elapsed;break;case 3:l=elapsed;break;case 4:t=elapsed;break;case 5:b=elapsed;break;case 6:h=elapsed;break;case 7:j=elapsed;break;case 8:s=elapsed;break;case 9:v=elapsed;break;}
+            switch(i){case 0:c=elapsed;break;case 1:n=elapsed;break;case 2:m=elapsed;break;case 3:l=elapsed;break;case 4:t=elapsed;break;case 5:b=elapsed;break;case 6:h=elapsed;break;case 7:j=elapsed;break;case 8:p=elapsed;break;case 9:s=elapsed;break;case 10:v=elapsed;break;}
         }
-        return new TickProfile(Stopwatch.GetTimestamp()-totalStart,c,n,m,l,t,b,h,j,s,v);
+        return new TickProfile(Stopwatch.GetTimestamp()-totalStart,c,n,m,l,t,b,h,j,p,s,v);
     }
 
     public void StepTicks(int count) { for (int i = 0; i < count; i++) StepOneTick(); }

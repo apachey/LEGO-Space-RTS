@@ -121,10 +121,10 @@ check(len(source.get('resourceReceivers',[])) == 2, 'M3 starting HQ resource rec
 check(len(source.get('visionTestGeometry',[])) >= 4, 'vision test geometry missing')
 
 content_source = json.loads((ROOT/'Content/PrototypeEntities.json').read_text())
-check(content_source.get('schemaVersion') == 5 and content_source.get('contentKind') == 'prototype_entities', 'prototype content schema mismatch')
+check(content_source.get('schemaVersion') == 6 and content_source.get('contentKind') == 'prototype_entities', 'prototype content schema mismatch')
 entity_keys = [e.get('stableId') for e in content_source.get('entities',[])]
 check(len(entity_keys) >= 5 and len(entity_keys) == len(set(entity_keys)), 'prototype content entries missing/duplicated')
-for required_key in ['building.rock_raiders.hq','building.rock_raiders.ore_processing_plant','building.rock_raiders.power_station','building.rock_raiders.vehicle_service_bay','unit.rock_raiders.crew','unit.rock_raiders.hover_scout','unit.rock_raiders.loader_dozer','unit.rock_raiders.chrome_crusher','prototype.nav.huge']:
+for required_key in ['building.rock_raiders.hq','building.rock_raiders.ore_processing_plant','building.rock_raiders.power_station','building.rock_raiders.vehicle_service_bay','unit.rock_raiders.crew','unit.rock_raiders.hover_scout','unit.rock_raiders.rapid_rider','unit.rock_raiders.loader_dozer','unit.rock_raiders.chrome_crusher','prototype.nav.huge']:
     check(required_key in entity_keys, f'prototype content key missing: {required_key}')
 by_key={e.get('stableId'):e for e in content_source.get('entities',[])}
 check(by_key.get('unit.rock_raiders.loader_dozer',{}).get('footprint')=='Medium','Loader Dozer M2 footprint must match Phase 06 Medium')
@@ -135,6 +135,7 @@ profile_by_key={p.get('stableId'):p for p in content_source.get('movementProfile
 check(profile_by_key.get('movement.prototype.crew',{}).get('speedRatio')==[135,100],'Crew M2 speed must match Phase 06 1.35')
 check(profile_by_key.get('movement.prototype.hover_scout',{}).get('speedRatio')==[225,100],'Hover Scout M2 speed must match Phase 06 2.25')
 check(profile_by_key.get('movement.prototype.loader_dozer',{}).get('speedRatio')==[130,100],'Loader Dozer M2 speed must match Phase 06 1.30')
+check(profile_by_key.get('movement.prototype.rapid_rider',{}).get('speedRatio')==[210,100],'Rapid Rider speed must match Phase 06 2.10')
 check(profile_by_key.get('movement.prototype.chrome_crusher',{}).get('speedRatio')==[92,100],'Chrome Crusher M2 speed must match Phase 06 0.92')
 map_keys = [e.get('contentKey') for e in source.get('initialEntities',[])]
 check(all(k in set(entity_keys) for k in map_keys), 'map source contains unknown prototype entity reference')
@@ -147,6 +148,17 @@ check(all(k in resource_by_key for k in resource_map_keys), 'map source contains
 check(resource_map_keys.count('resource.ore.standard') == 4, 'prototype map must provide two Standard Ore deposits per start')
 receiver_map_keys=[e.get('contentKey') for e in source.get('resourceReceivers',[])]
 check(receiver_map_keys == ['building.rock_raiders.hq','building.rock_raiders.hq'], 'prototype map must provide one HQ receiver per start')
+production_by_unit={p.get('unit'):p for p in content_source.get('productionDefinitions',[])}
+expected_production={
+    'unit.rock_raiders.crew':('building.rock_raiders.hq',50,0,1,320),
+    'unit.rock_raiders.hover_scout':('building.rock_raiders.vehicle_service_bay',75,10,1,400),
+    'unit.rock_raiders.rapid_rider':('building.rock_raiders.vehicle_service_bay',90,10,2,560),
+    'unit.rock_raiders.loader_dozer':('building.rock_raiders.vehicle_service_bay',125,15,3,720),
+}
+check(len(production_by_unit)==4,'first-playable production definitions missing or duplicated')
+for unit,(producer,ore,energy,oc,ticks) in expected_production.items():
+    production=production_by_unit.get(unit,{})
+    check(production.get('producer')==producer and production.get('cost')=={'ore':ore,'energy':energy,'crystals':0} and production.get('operationsCapacity')==oc and production.get('buildTicks')==ticks, f'canonical production definition mismatch: {unit}')
 building_by_key={b.get('stableId'):b for b in content_source.get('buildingDefinitions',[])}
 expected_buildings={
     'building.rock_raiders.hq':([8,8],320,40,1200),

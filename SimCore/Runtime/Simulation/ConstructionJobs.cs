@@ -139,6 +139,7 @@ public sealed class ConstructionSystem : ISimSystem
         ref Building building = ref world.Entities.Building.Get(siteId);
         building.State = BuildingState.Completed;
         world.Entities.ConstructionSite.Remove(siteId);
+        if (world.Content.IsProducer(building.Type)) world.Entities.Production.Set(siteId, new Production());
         ReleaseSiteAssignments(world, siteId);
     }
 

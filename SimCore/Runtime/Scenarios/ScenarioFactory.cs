@@ -175,7 +175,7 @@ public static class ScenarioFactory
         EntityId id = world.Entities.Create();
         world.Entities.Ownership.Set(id, new Ownership { PlayerSlot = spawn.PlayerSlot });
         world.Entities.Transform.Set(id, new SimTransform { Position = spawn.Position, Orientation = Angle16.Zero });
-        world.Entities.Selectable.Set(id, new Selectable { IsSelectable = false, ContentType = definition.Id, Kind = SelectableKind.Building });
+        world.Entities.Selectable.Set(id, new Selectable { IsSelectable = true, ContentType = definition.Id, Kind = SelectableKind.Building });
         world.Entities.ResourceReceiver.Set(id, new ResourceReceiver { AcceptedType = ResourceType.Ore, PendingHauledAmount = 0, IsHqEmergencyReceiver = true });
         world.Entities.ResourceBank.Set(id, new ResourceBank { Type = ResourceType.Ore, ProcessedAmount = 500 });
         if (!content.TryGetBuilding(definition.Id, out BuildingDefinition buildingDefinition)) throw new InvalidOperationException($"Missing building definition {spawn.ContentKey}.");
@@ -191,7 +191,26 @@ public static class ScenarioFactory
             State = BuildingState.Completed
         };
         world.Entities.Building.Set(id, building);
+        if (content.IsProducer(definition.Id)) world.Entities.Production.Set(id, new Production());
         world.SetConstructionOccupied(building, true);
+    }
+
+    internal static EntityId SpawnProducedUnit(SimulationWorld world, byte playerSlot, ContentId unitType, FixVec2 position)
+    {
+        if (!world.Content.TryGetEntity(unitType, out PrototypeEntityDefinition definition) || definition.SelectableKind == SelectableKind.Building)
+            throw new InvalidOperationException($"Missing produced unit content {unitType}.");
+        if (!world.Content.TryGetMovement(definition.MovementProfileKey, out PrototypeMovementProfile profile))
+            throw new InvalidOperationException($"Missing produced movement profile {definition.MovementProfileKey}.");
+        EntityId id = world.Entities.Create();
+        world.Entities.Ownership.Set(id, new Ownership { PlayerSlot = playerSlot });
+        world.Entities.Transform.Set(id, new SimTransform { Position = position, Orientation = Angle16.Zero });
+        world.Entities.Movement.Set(id, CreateMovement(profile, position));
+        world.Entities.Navigation.Set(id, new NavigationAgent { Footprint = definition.Footprint, Layer = profile.Layer, Target = position, PathTopologyVersion = world.Map.TopologyVersion });
+        world.Entities.Selectable.Set(id, new Selectable { IsSelectable = true, ContentType = definition.Id, Kind = definition.SelectableKind });
+        world.Entities.Vision.Set(id, new Vision { RadiusBuildCells = definition.VisionRadius, LastFogX = -1, LastFogY = -1 });
+        AddWorkerComponents(world, id, definition);
+        world.GetQueue(id);
+        return id;
     }
 }
 }

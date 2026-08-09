@@ -45,5 +45,19 @@ public sealed class PrototypeContentTests
         Assert.That(building.EnergyCost, Is.EqualTo(15));
         Assert.That(building.ProductionExitFootprint, Is.EqualTo(FootprintClass.Medium));
     }
+
+    [Test]
+    public void ProductionDefinitionsRoundTripCanonicalQueueMetadata()
+    {
+        UnitProductionDefinition sourceProduction = new("unit.test", "building.test", 90, 10, 0, 2, 560);
+        PrototypeContentCatalog source = new(System.Array.Empty<PrototypeMovementProfile>(), System.Array.Empty<PrototypeEntityDefinition>(), production: new[] { sourceProduction });
+        UnitProductionDefinition restored = PrototypeContentCodec.Read(PrototypeContentCodec.Write(source)).Production[0];
+        Assert.Multiple(() =>
+        {
+            Assert.That(restored.UnitType, Is.EqualTo(StableId.FromKey("unit.test")));
+            Assert.That(restored.ProducerType, Is.EqualTo(StableId.FromKey("building.test")));
+            Assert.That(restored.OreCost, Is.EqualTo(90)); Assert.That(restored.OperationsCapacity, Is.EqualTo(2)); Assert.That(restored.BuildTicks, Is.EqualTo(560));
+        });
+    }
 }
 }
