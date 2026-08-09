@@ -45,15 +45,20 @@ public sealed class CommandExecutionSystem : ISimSystem
                 FixVec2 desiredSlot = FormationPlanner.GetSlot(command.TargetPosition, i, world.ScratchEntities.Count, spacingClass, heading, columns);
                 NavigationAgent slotNav = world.Entities.Navigation.Get(id);
                 FixVec2 slotTarget = FormationPlanner.ResolvePassableSlot(world, desiredSlot, slotNav.Footprint);
+                FormationIntent formation = world.ScratchEntities.Count > 1 ? new FormationIntent
+                {
+                    CohortId=command.Sequence,Anchor=command.TargetPosition,Heading=heading,SlotIndex=i,MemberCount=world.ScratchEntities.Count,
+                    Columns=columns,SpacingFootprint=spacingClass,LastReflowTick=-1
+                } : default;
                 bool queued = (command.Modifiers & CommandModifiers.Queue) != 0;
                 if (queued && world.Entities.Navigation.Get(id).HasTarget)
                 {
-                    world.GetQueue(id).Enqueue(new UnitOrder(UnitOrderType.Move, slotTarget));
+                    world.GetQueue(id).Enqueue(new UnitOrder(UnitOrderType.Move, slotTarget, formation));
                 }
                 else
                 {
                     if (!queued) world.GetQueue(id).Clear();
-                    SetMove(world, id, slotTarget);
+                    SetMove(world, id, slotTarget, formation);
                 }
             }
             return;
@@ -65,18 +70,18 @@ public sealed class CommandExecutionSystem : ISimSystem
             ref NavigationAgent nav = ref world.Entities.Navigation.Get(id);
             ref Movement move = ref world.Entities.Movement.Get(id);
             world.GetQueue(id).Clear();
-            nav.HasTarget = false; nav.PathDirty = false; move.PathIndex = 0;
+            nav.HasTarget = false; nav.PathDirty = false; nav.Formation=default; move.PathIndex = 0;
             world.Corridors.Remove(id.Value);
             move.CurrentSpeed = Fix32.Zero; move.CurrentVelocity = FixVec2.Zero; move.DesiredMovement = FixVec2.Zero;
             move.State = command.Type == SimCommandType.HoldPosition ? MovementState.Holding : MovementState.Idle;
         }
     }
 
-    internal static void SetMove(SimulationWorld world, EntityId id, FixVec2 target)
+    internal static void SetMove(SimulationWorld world, EntityId id, FixVec2 target, FormationIntent formation = default)
     {
         ref NavigationAgent nav = ref world.Entities.Navigation.Get(id);
         ref Movement move = ref world.Entities.Movement.Get(id);
-        nav.Target = target; nav.HasTarget = true; nav.PathDirty = true; move.PathIndex = 0; nav.RequestAge = 0;
+        nav.Target = target; nav.HasTarget = true; nav.PathDirty = true; nav.Formation=formation; move.PathIndex = 0; nav.RequestAge = 0;
         move.DesiredMovement = FixVec2.Zero; move.State = MovementState.WaitingForPath;
     }
 }
@@ -170,6 +175,15 @@ for (int y = center.Y + 1; y < MapGrid.NavHeight && world.Pathfinder.IsPassable(
         return center + right * lateral + forward * longitudinal;
     }
 
+    public static Fix32 SettlingRadius(int memberCount,FootprintClass footprint)
+    {
+        if(memberCount<=1)return FootprintRules.CollisionRadiusBuild(footprint)+Fix32.FromRatio(35,100);
+        Fix32 legacySpacing=Fix32.FromRatio(11+(int)footprint*4,10);
+        Fix32 collisionSpacing=FootprintRules.CollisionRadiusBuild(footprint)*Fix32.FromInt(2)+Fix32.FromRatio(35,100);
+        Fix32 spacing=Fix32.Max(legacySpacing,collisionSpacing);
+        return spacing*Fix32.FromRatio(memberCount-1,2)+FootprintRules.CollisionRadiusBuild(footprint)+Fix32.FromRatio(35,100);
+    }
+
     public static FixVec2 ResolvePassableSlot(SimulationWorld world, FixVec2 desired, FootprintClass footprint)
     {
         NavCell origin = MapGrid.BuildToNav(desired);
@@ -195,6 +209,47 @@ for (int y = center.Y + 1; y < MapGrid.NavHeight && world.Pathfinder.IsPassable(
             }
         }
         return desired;
+    }
+
+    public static bool ReflowCohort(SimulationWorld world, EntityId trigger)
+    {
+        if(!world.Entities.Navigation.TryGet(trigger,out NavigationAgent triggerNav)||!triggerNav.Formation.IsActive)return false;
+        if(triggerNav.Formation.LastReflowTick>=0&&world.Tick.Value-triggerNav.Formation.LastReflowTick<SimClock.TicksPerSecond*3)return false;
+        if(!world.Entities.Ownership.TryGet(trigger,out Ownership triggerOwner))return false;
+        FormationIntent triggerIntent=triggerNav.Formation;
+        world.ScratchEntities.Clear();
+        IReadOnlyList<EntityId> alive=world.Entities.Alive;
+        for(int i=0;i<alive.Count;i++)
+        {
+            EntityId id=alive[i];
+            if(!world.Entities.Ownership.TryGet(id,out Ownership owner)||owner.PlayerSlot!=triggerOwner.PlayerSlot)continue;
+            if(!world.Entities.Navigation.TryGet(id,out NavigationAgent nav)||!nav.HasTarget||!nav.Formation.IsActive||nav.Formation.CohortId!=triggerIntent.CohortId)continue;
+            world.ScratchEntities.Add(id);
+        }
+        world.ScratchEntities.Sort(EntityIdComparer.Instance);
+        if(world.ScratchEntities.Count==0)return false;
+        int nextColumns=Math.Max(1,triggerIntent.Columns-1);
+        bool release=triggerIntent.Columns<=1;
+        for(int i=0;i<world.ScratchEntities.Count;i++)
+        {
+            EntityId id=world.ScratchEntities[i];ref NavigationAgent nav=ref world.Entities.Navigation.Get(id);ref Movement move=ref world.Entities.Movement.Get(id);
+            FormationIntent intent=nav.Formation;intent.LastReflowTick=world.Tick.Value;
+            if(release)
+            {
+                nav.Formation=default;
+                SimTransform transform=world.Entities.Transform.Get(id);
+                if(FixVec2.Distance(transform.Position,intent.Anchor)<=SettlingRadius(intent.MemberCount,intent.SpacingFootprint))nav.Target=transform.Position;
+            }
+            else
+            {
+                intent.Columns=nextColumns;
+                FixVec2 desired=GetSlot(intent.Anchor,intent.SlotIndex,intent.MemberCount,intent.SpacingFootprint,intent.Heading,nextColumns);
+                nav.Target=ResolvePassableSlot(world,desired,nav.Footprint);nav.Formation=intent;
+            }
+            nav.PathDirty=true;nav.RequestAge=Math.Max(nav.RequestAge,20);move.PathIndex=0;move.State=MovementState.StuckRecovery;
+        }
+        world.FormationReflowDiagnostics++;
+        return true;
     }
 
     private static bool TryPassable(SimulationWorld world, int x, int y, FootprintClass footprint, out FixVec2 buildPosition)
@@ -304,20 +359,27 @@ public sealed class LocalSeparationSystem : ISimSystem
     public const int LookaheadTicks = 6;
     private readonly List<EntityId> _neighbors = new List<EntityId>(64);
     private readonly NeighborDistanceComparer _neighborComparer = new NeighborDistanceComparer();
+    private readonly MovementPriorityComparer _movementPriorityComparer = new MovementPriorityComparer();
     // Q16.16 checked-in deterministic rotation constants.
-    private static readonly int[] Cos = { 65536, 63303, 63303, 56756, 56756, 46341, 46341, 32768, 32768, 0, 0, 32768, 0 };
-    private static readonly int[] Sin = { 0, 16962, -16962, 32768, -32768, 46341, -46341, 56756, -56756, 65536, -65536, 0, 0 };
+    private static readonly int[] Cos = { 65536, 63303, 63303, 56756, 56756, 46341, 46341, 32768, 32768, 0, 0, 32768, 0, -65536 };
+    private static readonly int[] Sin = { 0, 16962, -16962, 32768, -32768, 46341, -46341, 56756, -56756, 65536, -65536, 0, 0, 0 };
 
     public void Step(SimulationWorld world)
     {
         world.CompressionUsed.Clear();
         IReadOnlyList<EntityId> alive = world.Entities.Alive;
+        world.ScratchEntities.Clear();
         for (int i = 0; i < alive.Count; i++)
         {
             EntityId id = alive[i];
-            if (!world.PendingVelocity.TryGetValue(id.Value, out FixVec2 desired) || desired.Equals(FixVec2.Zero)) continue;
-            SimTransform self = world.Entities.Transform.Get(id); NavigationAgent selfNav = world.Entities.Navigation.Get(id); Movement selfMove=world.Entities.Movement.Get(id);
-            if(selfNav.Layer==MovementLayer.TrueAir)continue;
+            if(!world.PendingVelocity.TryGetValue(id.Value,out FixVec2 desired)||desired.Equals(FixVec2.Zero)||!world.Entities.Navigation.TryGet(id,out NavigationAgent nav)||nav.Layer==MovementLayer.TrueAir)continue;
+            world.ScratchEntities.Add(id);
+        }
+        _movementPriorityComparer.World=world;world.ScratchEntities.Sort(_movementPriorityComparer);
+        for(int i=0;i<world.ScratchEntities.Count;i++)
+        {
+            EntityId id=world.ScratchEntities[i];FixVec2 desired=world.PendingVelocity[id.Value];
+            SimTransform self=world.Entities.Transform.Get(id);NavigationAgent selfNav=world.Entities.Navigation.Get(id);Movement selfMove=world.Entities.Movement.Get(id);
             world.Spatial.Query(self.Position, 4, _neighbors);
             _neighborComparer.World=world;_neighborComparer.Center=self.Position;_neighbors.Sort(_neighborComparer);
 
@@ -327,52 +389,130 @@ public sealed class LocalSeparationSystem : ISimSystem
                 FixVec2 candidate;
                 if(candidateIndex==11) candidate=desired*Fix32.Half; // slow
                 else if(candidateIndex==12) candidate=FixVec2.Zero; // stop
+                // The final candidate is a deterministic turn-around escape for
+                // an expired compression contact that cannot clear sideways.
                 else candidate=Rotate(desired,Cos[candidateIndex],Sin[candidateIndex]);
                 long score = ScoreCandidate(world,id,self,selfNav,selfMove,candidate,desired,candidateIndex);
                 if(score<bestScore){bestScore=score;best=candidate;}
             }
             world.PendingVelocity[id.Value]=best;
         }
+        EnforceFinalSafety(world);
         UpdateFriendlyCompression(world);
+    }
+
+    private static void EnforceFinalSafety(SimulationWorld world)
+    {
+        IReadOnlyList<EntityId> alive=world.Entities.Alive;
+        // Cancelling a step can invalidate an earlier prediction that expected
+        // that mover to clear the way. Cancellations are monotonic, so at most
+        // one per mover plus a final stable pass is required.
+        for(int pass=0;pass<=alive.Count;pass++)
+        {
+            bool changed=false;
+            for(int i=0;i<alive.Count;i++)
+            {
+                EntityId firstId=alive[i];
+                if(!world.Entities.Transform.TryGet(firstId,out SimTransform first)||!world.Entities.Navigation.TryGet(firstId,out NavigationAgent firstNav)||firstNav.Layer==MovementLayer.TrueAir||!world.Entities.Movement.TryGet(firstId,out Movement firstMove))continue;
+                for(int j=i+1;j<alive.Count;j++)
+                {
+                    EntityId secondId=alive[j];
+                    if(!world.Entities.Transform.TryGet(secondId,out SimTransform second)||!world.Entities.Navigation.TryGet(secondId,out NavigationAgent secondNav)||secondNav.Layer==MovementLayer.TrueAir||!world.Entities.Movement.TryGet(secondId,out Movement secondMove))continue;
+                    FixVec2 firstDesired=world.PendingVelocity.TryGetValue(firstId.Value,out FixVec2 fd)?fd:FixVec2.Zero;
+                    FixVec2 secondDesired=world.PendingVelocity.TryGetValue(secondId.Value,out FixVec2 sd)?sd:FixVec2.Zero;
+                    if(firstDesired.Equals(FixVec2.Zero)&&secondDesired.Equals(FixVec2.Zero))continue;
+
+                    Fix32 nominal=FootprintRules.CollisionRadiusBuild(firstNav.Footprint)+FootprintRules.CollisionRadiusBuild(secondNav.Footprint);
+                    bool friendly=world.Entities.Ownership.TryGet(firstId,out Ownership firstOwner)&&world.Entities.Ownership.TryGet(secondId,out Ownership secondOwner)&&firstOwner.PlayerSlot==secondOwner.PlayerSlot;
+                    bool compressionAvailable=friendly&&firstMove.CompressionTicks<30&&secondMove.CompressionTicks<30;
+                    Fix32 allowed=compressionAvailable?nominal*Fix32.FromRatio(85,100):nominal;
+                    Fix32 currentDistance=FixVec2.Distance(first.Position,second.Position);
+                    FixVec2 firstStep=MovementKinematics.ExecutableStep(firstMove,firstDesired);
+                    FixVec2 secondStep=MovementKinematics.ExecutableStep(secondMove,secondDesired);
+                    Fix32 projectedDistance=FixVec2.Distance(first.Position+firstStep,second.Position+secondStep);
+                    bool unsafeStep=currentDistance>=allowed?projectedDistance<allowed:projectedDistance<currentDistance;
+                    if(!unsafeStep)continue;
+
+                    int priority=CompareMovementPriority(firstId,firstNav,secondId,secondNav);
+                    EntityId yieldingId=priority>0?secondId:firstId;
+                    EntityId otherId=priority>0?firstId:secondId;
+                    FixVec2 yieldingDesired=world.PendingVelocity.TryGetValue(yieldingId.Value,out FixVec2 yd)?yd:FixVec2.Zero;
+                    FixVec2 otherDesired=world.PendingVelocity.TryGetValue(otherId.Value,out FixVec2 od)?od:FixVec2.Zero;
+                    Fix32 yieldingEscapeDistance=yieldingId==firstId
+                        ?FixVec2.Distance(first.Position+firstStep,second.Position)
+                        :FixVec2.Distance(first.Position,second.Position+secondStep);
+                    if(!yieldingDesired.Equals(FixVec2.Zero)&&yieldingEscapeDistance>currentDistance&&!otherDesired.Equals(FixVec2.Zero))
+                    {
+                        world.PendingVelocity[otherId.Value]=FixVec2.Zero;
+                        changed=true;
+                    }
+                    else if(!yieldingDesired.Equals(FixVec2.Zero))
+                    {
+                        world.PendingVelocity[yieldingId.Value]=FixVec2.Zero;
+                        changed=true;
+                    }
+                    else if(!otherDesired.Equals(FixVec2.Zero))
+                    {
+                        world.PendingVelocity[otherId.Value]=FixVec2.Zero;
+                        changed=true;
+                    }
+                }
+            }
+            if(!changed)return;
+        }
     }
 
     private long ScoreCandidate(SimulationWorld world,EntityId selfId,SimTransform self,NavigationAgent selfNav,Movement selfMove,FixVec2 candidate,FixVec2 desired,int candidateIndex)
     {
         // Prefer route progress and small heading changes; stuck units progressively care less about heading change.
-        FixVec2 immediate=self.Position+candidate;
+        FixVec2 executableCandidate=MovementKinematics.ExecutableStep(selfMove,candidate);
+        FixVec2 immediate=self.Position+executableCandidate;
         NavCell immediateCell=MapGrid.BuildToNav(immediate);
-        if(selfNav.Layer!=MovementLayer.TrueAir&&!world.Pathfinder.IsPassable(immediateCell,selfNav.Footprint))return long.MaxValue/4;
-        if(world.Corridors.TryGetValue(selfId.Value,out RouteCorridor corridor)&&!corridor.Contains(immediateCell,selfMove.PathIndex))return long.MaxValue/4;
+        if(selfNav.Layer!=MovementLayer.TrueAir&&!world.Pathfinder.IsPassable(immediateCell,selfNav.Footprint))return long.MaxValue;
+        if(world.Corridors.TryGetValue(selfId.Value,out RouteCorridor corridor)&&!corridor.Contains(immediateCell,selfMove.PathIndex))return long.MaxValue;
         long dotRaw = ((long)candidate.X.Raw*desired.X.Raw + (long)candidate.Y.Raw*desired.Y.Raw) >> Fix32.FractionalBits;
         long score = -dotRaw * 8L;
         int headingWeight=selfMove.StuckTicks>=20?2:12;
         score += (long)candidateIndex*headingWeight*Fix32.OneRaw;
         if(candidate.Equals(FixVec2.Zero))score += selfMove.StuckTicks>=20?Fix32.OneRaw:Fix32.OneRaw*20L;
 
-        FixVec2 selfFuture=self.Position+candidate*Fix32.FromInt(LookaheadTicks);
+        FixVec2 selfFuture=self.Position+executableCandidate*Fix32.FromInt(LookaheadTicks);
         int neighborCount=Math.Min(_neighbors.Count,NeighborCap);
         for(int n=0;n<neighborCount;n++)
         {
             EntityId otherId=_neighbors[n];if(otherId==selfId||!world.Entities.Transform.TryGet(otherId,out SimTransform other)||!world.Entities.Navigation.TryGet(otherId,out NavigationAgent otherNav))continue;
             if(otherNav.Layer==MovementLayer.TrueAir)continue;
-            FixVec2 otherStep=world.PendingVelocity.TryGetValue(otherId.Value,out FixVec2 ov)?ov:FixVec2.Zero;
+            Movement otherMove=world.Entities.Movement.TryGet(otherId,out Movement om)?om:default;
+            FixVec2 otherDesired=world.PendingVelocity.TryGetValue(otherId.Value,out FixVec2 ov)?ov:FixVec2.Zero;
+            FixVec2 otherStep=MovementKinematics.ExecutableStep(otherMove,otherDesired);
             Fix32 min=FootprintRules.CollisionRadiusBuild(selfNav.Footprint)+FootprintRules.CollisionRadiusBuild(otherNav.Footprint);
             bool friendly=world.Entities.Ownership.TryGet(selfId,out Ownership a)&&world.Entities.Ownership.TryGet(otherId,out Ownership b)&&a.PlayerSlot==b.PlayerSlot;
-            Movement otherMove=world.Entities.Movement.TryGet(otherId,out Movement om)?om:default;
             bool compressionAvailable=friendly&&selfMove.CompressionTicks<30&&otherMove.CompressionTicks<30;
             Fix32 allowed=compressionAvailable?min*Fix32.FromRatio(85,100):min;
+            int priority=friendly?CompareMovementPriority(selfId,selfNav,otherId,otherNav):0;
+            bool ownsRightOfWay=friendly&&priority>0;
+            if(ownsRightOfWay)continue;
 
             // Immediate one-tick collision safety. v0.3 only evaluated the 12-tick horizon,
             // which allowed two units to overlap before the future penalty became useful.
             Fix32 currentDistance=FixVec2.Distance(self.Position,other.Position);
             Fix32 nextDistance=FixVec2.Distance(immediate,other.Position+otherStep);
-            if(currentDistance>=allowed && nextDistance<allowed) return long.MaxValue/8 + candidateIndex;
+            Fix32 yieldEscapeDistance=FixVec2.Distance(immediate,other.Position);
+            bool yieldingEscape=friendly&&priority<0&&yieldEscapeDistance>currentDistance;
+            if(currentDistance>=allowed&&nextDistance<allowed)
+            {
+                if(!yieldingEscape)return long.MaxValue;
+                Fix32 overlap=allowed-nextDistance;score+=(long)overlap.Raw*overlap.Raw*4L;
+            }
             if(currentDistance<allowed)
             {
-                Fix32 overlap=allowed-nextDistance;
-                if(overlap.Raw>0) score += (long)overlap.Raw*overlap.Raw*512L;
-                // When already interpenetrating, strongly prefer a step that increases separation.
-                if(nextDistance<=currentDistance && !candidate.Equals(FixVec2.Zero)) score += Fix32.OneRaw*200L;
+                // Once a pair is compressed, never allow a step that makes the
+                // overlap worse. The lower-priority mover must increase separation;
+                // stopping remains the deterministic fallback when terrain blocks it.
+                if(nextDistance<currentDistance&&!yieldingEscape)return long.MaxValue;
+                if(priority<=0&&yieldEscapeDistance<=currentDistance&&!candidate.Equals(FixVec2.Zero))return long.MaxValue;
+                Fix32 overlap=allowed-(yieldingEscape?yieldEscapeDistance:nextDistance);
+                if(overlap.Raw>0)score+=(long)overlap.Raw*overlap.Raw*512L;
             }
 
             FixVec2 otherFuture=other.Position+otherStep*Fix32.FromInt(LookaheadTicks);
@@ -380,8 +520,7 @@ public sealed class LocalSeparationSystem : ISimSystem
             if(futureDistance<allowed)
             {
                 Fix32 overlap=allowed-futureDistance;
-                int priority=friendly?CompareMovementPriority(selfId,selfNav,otherId,otherNav):0;
-                long yieldWeight=!friendly?64L:priority>0?6L:selfMove.StuckTicks>=20?96L:64L;
+                long yieldWeight=!friendly?64L:selfMove.StuckTicks>=20?96L:64L;
                 score += (long)overlap.Raw*overlap.Raw*yieldWeight;
             }
         }
@@ -396,7 +535,9 @@ public sealed class LocalSeparationSystem : ISimSystem
             EntityId selfId=alive[i];
             if(!world.Entities.Transform.TryGet(selfId,out SimTransform self)||!world.Entities.Navigation.TryGet(selfId,out NavigationAgent selfNav)||selfNav.Layer==MovementLayer.TrueAir)continue;
             if(!world.Entities.Ownership.TryGet(selfId,out Ownership selfOwner))continue;
-            FixVec2 selfStep=world.PendingVelocity.TryGetValue(selfId.Value,out FixVec2 candidate)?candidate:FixVec2.Zero;
+            Movement selfMove=world.Entities.Movement.TryGet(selfId,out Movement sm)?sm:default;
+            FixVec2 selfDesired=world.PendingVelocity.TryGetValue(selfId.Value,out FixVec2 candidate)?candidate:FixVec2.Zero;
+            FixVec2 selfStep=MovementKinematics.ExecutableStep(selfMove,selfDesired);
             world.Spatial.Query(self.Position,4,_neighbors);
             _neighborComparer.World=world;_neighborComparer.Center=self.Position;_neighbors.Sort(_neighborComparer);
             int neighborCount=Math.Min(_neighbors.Count,NeighborCap);
@@ -405,7 +546,9 @@ public sealed class LocalSeparationSystem : ISimSystem
                 EntityId otherId=_neighbors[n];
                 if(otherId==selfId||!world.Entities.Transform.TryGet(otherId,out SimTransform other)||!world.Entities.Navigation.TryGet(otherId,out NavigationAgent otherNav)||otherNav.Layer==MovementLayer.TrueAir)continue;
                 if(!world.Entities.Ownership.TryGet(otherId,out Ownership otherOwner)||selfOwner.PlayerSlot!=otherOwner.PlayerSlot)continue;
-                FixVec2 otherStep=world.PendingVelocity.TryGetValue(otherId.Value,out FixVec2 ov)?ov:FixVec2.Zero;
+                Movement otherMove=world.Entities.Movement.TryGet(otherId,out Movement om)?om:default;
+                FixVec2 otherDesired=world.PendingVelocity.TryGetValue(otherId.Value,out FixVec2 ov)?ov:FixVec2.Zero;
+                FixVec2 otherStep=MovementKinematics.ExecutableStep(otherMove,otherDesired);
                 Fix32 nominal=FootprintRules.CollisionRadiusBuild(selfNav.Footprint)+FootprintRules.CollisionRadiusBuild(otherNav.Footprint);
                 Fix32 currentDistance=FixVec2.Distance(self.Position,other.Position);
                 Fix32 projectedDistance=FixVec2.Distance(self.Position+selfStep,other.Position+otherStep);
@@ -437,6 +580,18 @@ public sealed class LocalSeparationSystem : ISimSystem
         }
     }
 
+    private sealed class MovementPriorityComparer : IComparer<EntityId>
+    {
+        public SimulationWorld? World;
+        public int Compare(EntityId a,EntityId b)
+        {
+            SimulationWorld world=World??throw new InvalidOperationException("Movement-priority comparer is not bound to a world.");
+            NavigationAgent an=world.Entities.Navigation.Get(a),bn=world.Entities.Navigation.Get(b);
+            int c=FootprintRules.MovementPriority(bn.Footprint).CompareTo(FootprintRules.MovementPriority(an.Footprint));
+            return c!=0?c:a.Value.CompareTo(b.Value);
+        }
+    }
+
     private static FixVec2 Rotate(FixVec2 v,int cosRaw,int sinRaw)
     {
         long x=((long)v.X.Raw*cosRaw-(long)v.Y.Raw*sinRaw)>>Fix32.FractionalBits;
@@ -446,10 +601,29 @@ public sealed class LocalSeparationSystem : ISimSystem
 
 }
 
+public static class MovementKinematics
+{
+    public static Fix32 NextSpeed(Movement move,FixVec2 desiredStep)
+    {
+        if(desiredStep.Equals(FixVec2.Zero))return Fix32.Max(Fix32.Zero,move.CurrentSpeed-move.Deceleration*SimClock.TickSeconds);
+        Fix32 targetSpeed=desiredStep.Length()/SimClock.TickSeconds;Fix32 speedDelta=targetSpeed-move.CurrentSpeed;
+        if(speedDelta.Raw>0)return Fix32.Min(targetSpeed,move.CurrentSpeed+move.Acceleration*SimClock.TickSeconds);
+        if(speedDelta.Raw<0)return Fix32.Max(targetSpeed,move.CurrentSpeed-move.Deceleration*SimClock.TickSeconds);
+        return move.CurrentSpeed;
+    }
+
+    public static FixVec2 ExecutableStep(Movement move,FixVec2 desiredStep)
+    {
+        if(desiredStep.Equals(FixVec2.Zero))return FixVec2.Zero;
+        FixVec2 delta=desiredStep.NormalizeSafe()*NextSpeed(move,desiredStep)*SimClock.TickSeconds;
+        return delta.LengthSquared()>desiredStep.LengthSquared()?desiredStep:delta;
+    }
+}
+
 public sealed class TransformMovementSystem : ISimSystem
 {
     private static readonly Fix32 ArriveDistance = Fix32.FromRatio(3, 10);
-    private static readonly Fix32 ProgressEpsilonSquared = Fix32.FromRatio(1, 1000) * Fix32.FromRatio(1, 1000);
+    private static readonly Fix32 MeaningfulProgressDistance = Fix32.FromRatio(1, 4);
 
     public void Step(SimulationWorld world)
     {
@@ -458,13 +632,11 @@ public sealed class TransformMovementSystem : ISimSystem
         {
             EntityId id = alive[i]; if (!world.Entities.Transform.Has(id) || !world.Entities.Movement.Has(id) || !world.Entities.Navigation.Has(id)) continue;
             ref SimTransform transform = ref world.Entities.Transform.Get(id); ref Movement move = ref world.Entities.Movement.Get(id); ref NavigationAgent nav = ref world.Entities.Navigation.Get(id);
-            FixVec2 before = transform.Position;
+            int pathIndexBefore=move.PathIndex;FixVec2 progressTarget=nav.Target;
+            if(world.Corridors.TryGetValue(id.Value,out RouteCorridor progressPath)&&move.PathIndex<progressPath.Cells.Count)progressTarget=MapGrid.NavCellCenterToBuild(progressPath.Cells[move.PathIndex]);
             FixVec2 desiredStep = world.PendingVelocity.TryGetValue(id.Value, out FixVec2 pending) ? pending : FixVec2.Zero;
             bool mayAdvance = !desiredStep.Equals(FixVec2.Zero);
-            Fix32 targetSpeed = mayAdvance ? desiredStep.Length() / SimClock.TickSeconds : Fix32.Zero;
-            Fix32 speedDelta = targetSpeed - move.CurrentSpeed;
-            if (speedDelta.Raw > 0) move.CurrentSpeed = Fix32.Min(targetSpeed, move.CurrentSpeed + move.Acceleration * SimClock.TickSeconds);
-            else if (speedDelta.Raw < 0) move.CurrentSpeed = Fix32.Max(targetSpeed, move.CurrentSpeed - move.Deceleration * SimClock.TickSeconds);
+            move.CurrentSpeed=MovementKinematics.NextSpeed(move,desiredStep);
 
             FixVec2 direction = mayAdvance ? desiredStep.NormalizeSafe() : move.CurrentVelocity.NormalizeSafe();
             if (!direction.Equals(FixVec2.Zero))
@@ -500,15 +672,20 @@ public sealed class TransformMovementSystem : ISimSystem
             bool compressed = world.CompressionUsed.TryGetValue(id.Value, out bool used) && used;
             move.CompressionTicks = compressed ? Math.Min(30, move.CompressionTicks + 1) : 0;
 
-            if (FixVec2.DistanceSquared(before, transform.Position) <= ProgressEpsilonSquared && nav.HasTarget) move.StuckTicks++;
-            else move.StuckTicks = 0;
-            move.LastPosition = transform.Position;
-
             if (world.Corridors.TryGetValue(id.Value, out RouteCorridor path) && move.PathIndex < path.Cells.Count)
             {
                 FixVec2 waypoint = MapGrid.NavCellCenterToBuild(path.Cells[move.PathIndex]);
                 if (FixVec2.Distance(transform.Position, waypoint) <= ArriveDistance) move.PathIndex++;
             }
+            Fix32 accumulatedProgress=FixVec2.Distance(move.LastPosition,progressTarget)-FixVec2.Distance(transform.Position,progressTarget);
+            bool meaningfulProgress=move.PathIndex>pathIndexBefore||accumulatedProgress>=MeaningfulProgressDistance;
+            if(nav.HasTarget&&!meaningfulProgress)move.StuckTicks++;
+            else
+            {
+                move.StuckTicks=0;
+                move.LastPosition=transform.Position;
+            }
+
             if (nav.HasTarget && FixVec2.Distance(transform.Position, nav.Target) <= Fix32.FromRatio(2, 5)) CompleteOrder(world, id, ref nav, ref move);
             else if (move.StuckTicks == 20)
             {
@@ -518,9 +695,12 @@ public sealed class TransformMovementSystem : ISimSystem
             {
                 nav.PathDirty = true; move.State = MovementState.StuckRecovery;
             }
-            else if (move.StuckTicks == 60)
+            else if (move.StuckTicks >= 60 && move.StuckTicks % (SimClock.TicksPerSecond * 3) == 0)
             {
-                nav.PathDirty = true; nav.RequestAge = Math.Max(nav.RequestAge, 20); move.State = MovementState.StuckRecovery;
+                if(!FormationPlanner.ReflowCohort(world,id))
+                {
+                    nav.PathDirty = true; nav.RequestAge = Math.Max(nav.RequestAge, 20); move.State = MovementState.StuckRecovery;
+                }
             }
             else if (move.StuckTicks == 100)
             {
@@ -534,11 +714,11 @@ public sealed class TransformMovementSystem : ISimSystem
         UnitCommandQueue queue = world.GetQueue(id);
         if (queue.TryPeek(out UnitOrder next))
         {
-            queue.Dequeue(); CommandExecutionSystem.SetMove(world, id, next.Position);
+            queue.Dequeue(); CommandExecutionSystem.SetMove(world, id, next.Position, next.Formation);
         }
         else
         {
-            nav.HasTarget = false; nav.PathDirty = false; move.PathIndex = 0; world.Corridors.Remove(id.Value); move.State = MovementState.Idle; move.CurrentSpeed = Fix32.Zero; move.CurrentVelocity = FixVec2.Zero; move.DesiredMovement = FixVec2.Zero;
+            nav.HasTarget = false; nav.PathDirty = false; nav.Formation=default; move.PathIndex = 0; world.Corridors.Remove(id.Value); move.State = MovementState.Idle; move.CurrentSpeed = Fix32.Zero; move.CurrentVelocity = FixVec2.Zero; move.DesiredMovement = FixVec2.Zero;
         }
     }
 }

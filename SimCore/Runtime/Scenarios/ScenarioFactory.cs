@@ -42,6 +42,19 @@ public static class ScenarioFactory
         return world;
     }
 
+    public static SimulationWorld CreateRepresentative24()
+    {
+        SimulationWorld world=new(DevMapFactory.Create(),2);PrototypeContentCatalog content=PrototypeContentFactory.CreateM2Catalog();
+        SpawnRepresentativeCohort(world,content,0,10,18,64,4,4);
+        SpawnRepresentativeCohort(world,content,0,10,138,99,4,4);
+        SpawnPrototypeMover(world,content,0,FootprintClass.Small,FixVec2.FromInts(65,90));
+        SpawnPrototypeMover(world,content,0,FootprintClass.Huge,FixVec2.FromInts(69,90));
+        SpawnPrototypeMover(world,content,0,FootprintClass.Small,FixVec2.FromInts(91,90));
+        SpawnPrototypeMover(world,content,0,FootprintClass.Huge,FixVec2.FromInts(95,90));
+        world.Spatial.Rebuild(world.Entities);new VisionSystem().Step(world);
+        return world;
+    }
+
     public static ReplayLog CreateGoldenReplay()
     {
         SimulationWorld initial = CreateFirstControllable(12); ReplayLog replay = new(SnapshotSerializer.Serialize(initial)); EntityId[] ids = OwnedIds(initial, 0);
@@ -92,25 +105,32 @@ public static class ScenarioFactory
         for (int i = 0; i < count; i++)
         {
             int x = originX + (i % columns) * 2; int y = originY + (i / columns) * 2;
-            FootprintClass fp = (FootprintClass)(i % 5); EntityId id = world.Entities.Create(); FixVec2 pos = FixVec2.FromInts(x, y);
-            string contentKey = fp switch
-            {
-                FootprintClass.Tiny => "unit.rock_raiders.crew",
-                FootprintClass.Small => "unit.rock_raiders.hover_scout",
-                FootprintClass.Medium => "unit.rock_raiders.loader_dozer",
-                FootprintClass.Large => "unit.rock_raiders.chrome_crusher",
-                FootprintClass.Huge => "prototype.nav.huge",
-                _ => "prototype.nav.huge"
-            };
-            if(!content.TryGetEntity(contentKey,out PrototypeEntityDefinition definition)||!content.TryGetMovement(definition.MovementProfileKey,out PrototypeMovementProfile profile)) throw new InvalidOperationException($"Stress content missing {contentKey}.");
-            world.Entities.Ownership.Set(id, new Ownership { PlayerSlot = player });
-            world.Entities.Transform.Set(id, new SimTransform { Position = pos, Orientation = Angle16.Zero });
-            world.Entities.Movement.Set(id, CreateMovement(profile, pos));
-            world.Entities.Navigation.Set(id, new NavigationAgent { Footprint = definition.Footprint, Layer = profile.Layer, Target = pos, PathTopologyVersion = world.Map.TopologyVersion });
-            world.Entities.Selectable.Set(id, new Selectable { IsSelectable = true, ContentType = definition.Id, Kind = definition.SelectableKind });
-            world.Entities.Vision.Set(id, new Vision { RadiusBuildCells = definition.VisionRadius, LastFogX = -1, LastFogY = -1 });
-            world.GetQueue(id);
+            SpawnPrototypeMover(world,content,player,(FootprintClass)(i%5),FixVec2.FromInts(x,y));
         }
+    }
+
+    private static void SpawnRepresentativeCohort(SimulationWorld world,PrototypeContentCatalog content,byte player,int count,int originX,int originY,int columns,int spacing)
+    {
+        for(int i=0;i<count;i++)
+        {
+            FixVec2 position=FixVec2.FromInts(originX+(i%columns)*spacing,originY+(i/columns)*spacing);
+            SpawnPrototypeMover(world,content,player,(FootprintClass)(i%5),position);
+        }
+    }
+
+    private static void SpawnPrototypeMover(SimulationWorld world,PrototypeContentCatalog content,byte player,FootprintClass footprint,FixVec2 position)
+    {
+        string contentKey=footprint switch
+        {
+            FootprintClass.Tiny=>"unit.rock_raiders.crew",FootprintClass.Small=>"unit.rock_raiders.hover_scout",FootprintClass.Medium=>"unit.rock_raiders.loader_dozer",
+            FootprintClass.Large=>"unit.rock_raiders.chrome_crusher",FootprintClass.Huge=>"prototype.nav.huge",_=>"prototype.nav.huge"
+        };
+        if(!content.TryGetEntity(contentKey,out PrototypeEntityDefinition definition)||!content.TryGetMovement(definition.MovementProfileKey,out PrototypeMovementProfile profile))throw new InvalidOperationException($"Prototype mover content missing {contentKey}.");
+        EntityId id=world.Entities.Create();
+        world.Entities.Ownership.Set(id,new Ownership{PlayerSlot=player});world.Entities.Transform.Set(id,new SimTransform{Position=position,Orientation=Angle16.Zero});
+        world.Entities.Movement.Set(id,CreateMovement(profile,position));world.Entities.Navigation.Set(id,new NavigationAgent{Footprint=definition.Footprint,Layer=profile.Layer,Target=position,PathTopologyVersion=world.Map.TopologyVersion});
+        world.Entities.Selectable.Set(id,new Selectable{IsSelectable=true,ContentType=definition.Id,Kind=definition.SelectableKind});
+        world.Entities.Vision.Set(id,new Vision{RadiusBuildCells=definition.VisionRadius,LastFogX=-1,LastFogY=-1});world.GetQueue(id);
     }
 }
 }
