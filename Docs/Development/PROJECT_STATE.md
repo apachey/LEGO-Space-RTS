@@ -164,6 +164,10 @@ narrow placement cases allowed by Phase 09B.
   completion and rally state. Replay v4 accepts the production and rally
   commands while retaining current v1-v3 read compatibility. Prototype content
   v6 compiles four production definitions and the canonical Rapid Rider mover.
+- Human T035 playtest acceptance is complete as of 2026-08-10: the game
+  director confirmed that producer selection, queue progress, unit spawning and
+  rally behavior work. No blocking production interaction or readability defect
+  was reported.
 
 ## Current gates
 
@@ -205,6 +209,6 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Complete T035 human unit-production playtest acceptance.
-2. Merge the accepted stacked T030-T035 M3 economy/base-building branches.
-3. Begin T036 Operations Capacity after T035 acceptance.
+1. Merge the accepted stacked T030-T035 M3 economy/base-building branches.
+2. Begin T036 Operations Capacity.
+3. T037 Energy Domains after T036 acceptance.
