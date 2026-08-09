@@ -108,7 +108,8 @@ Implemented:
 - immediate move acknowledgement marker;
 - map/unit placeholder rendering without gameplay physics;
 - debug overlays for navigation, HPA, portals, paths, reservations, spatial buckets, vision and Excavatable topology;
-- 60-mover stress scenario.
+- legacy 60-mover stress scenario (preserved; `DIAGNOSTIC` during M2–M5 and
+  `BLOCKING_LATER` before M6 under Phase 09B).
 
 ## Content/data status
 
@@ -161,14 +162,19 @@ The environment does not expose a usable `dotnet`, C# compiler or Godot 4.7.1 .N
 - Godot headless smoke;
 - 100-run golden determinism;
 - runtime snapshot/replay continuation;
-- performance/60-mover gates;
+- representative 24-mover Movement Architecture v2 M2 gate (not yet
+  implemented by this governance sync);
+- legacy performance/60-mover diagnostic results;
 - Windows export.
 
 Those are explicit local/CI acceptance requirements, not deferred implementation placeholders.
 
 ## Phase boundary
 
-M3 economy/base-building work should begin only after the amended M0–M2 executable gates pass in the pinned Godot/.NET environment.
+M3 economy/base-building work should begin only after the amended M0–M2
+`BLOCKING_NOW` executable gates and the Phase 09B human M2 playtest pass in the
+pinned Godot/.NET environment. The legacy 60-mover result remains diagnostic
+during M2–M5 and becomes blocking again before M6.
 
 ## Canon changes
 
@@ -183,8 +189,15 @@ Unchanged:
 - all game-design canon;
 - engine-independent simulation architecture;
 - authoritative numeric/time/entity/navigation/data/replay/fog principles;
-- performance targets;
-- M0–M2 gameplay acceptance criteria except their engine-specific host wording.
+- performance targets.
+
+Amended by Phase 09B:
+
+- Movement Architecture v2 replaces the former reservation-centered movement
+  direction;
+- the representative 24-mover scenario is the `BLOCKING_NOW` M2 movement gate;
+- the preserved 60-mover stress scenario is `DIAGNOSTIC` during M2–M5 and
+  `BLOCKING_LATER` before M6.
 
 
 ## v0.4 runtime-feedback amendment
