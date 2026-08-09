@@ -1,0 +1,79 @@
+using System;
+using System.Collections.Generic;
+
+namespace LegoSpaceRTS.SimCore
+{
+public sealed class EntityStore
+{
+    private readonly List<EntityId> _alive = new();
+    private bool[] _exists = new bool[128];
+    public uint NextEntityValue { get; private set; } = 1;
+
+    public readonly ComponentStore<Ownership> Ownership = new();
+    public readonly ComponentStore<SimTransform> Transform = new();
+    public readonly ComponentStore<Movement> Movement = new();
+    public readonly ComponentStore<NavigationAgent> Navigation = new();
+    public readonly ComponentStore<Selectable> Selectable = new();
+    public readonly ComponentStore<Vision> Vision = new();
+
+    public IReadOnlyList<EntityId> Alive => _alive;
+
+    public EntityId Create()
+    {
+        EntityId id = new(NextEntityValue++);
+        Ensure(id.Value);
+        _exists[id.Value] = true;
+        _alive.Add(id);
+        return id;
+    }
+
+    internal EntityId CreateRestored(uint value)
+    {
+        if (value == 0) throw new ArgumentOutOfRangeException(nameof(value));
+        Ensure(value);
+        if (_exists[value]) throw new InvalidOperationException($"Entity {value} already exists.");
+        EntityId id = new(value);
+        _exists[value] = true;
+        _alive.Add(id);
+        if (value >= NextEntityValue) NextEntityValue = checked(value + 1);
+        return id;
+    }
+
+    internal void RestoreNextEntityValue(uint value)
+    {
+        if (value == 0) throw new ArgumentOutOfRangeException(nameof(value));
+        NextEntityValue = value;
+    }
+
+    public bool Exists(EntityId id) => id.Value < _exists.Length && _exists[id.Value];
+
+    public bool Destroy(EntityId id)
+    {
+        if (!Exists(id)) return false;
+        _exists[id.Value] = false;
+        int index = _alive.BinarySearch(id, EntityIdComparer.Instance);
+        if (index >= 0) _alive.RemoveAt(index);
+        Ownership.Remove(id);
+        Transform.Remove(id);
+        Movement.Remove(id);
+        Navigation.Remove(id);
+        Selectable.Remove(id);
+        Vision.Remove(id);
+        return true;
+    }
+
+    private void Ensure(uint index)
+    {
+        if (index < _exists.Length) return;
+        int size = _exists.Length;
+        while (index >= size) size = checked(size * 2);
+        Array.Resize(ref _exists, size);
+    }
+
+    private sealed class EntityIdComparer : IComparer<EntityId>
+    {
+        public static readonly EntityIdComparer Instance = new();
+        public int Compare(EntityId x, EntityId y) => x.Value.CompareTo(y.Value);
+    }
+}
+}

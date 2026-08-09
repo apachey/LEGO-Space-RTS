@@ -1,0 +1,39 @@
+using System.Text;
+
+namespace LegoSpaceRTS.SimCore
+{
+/// <summary>Development-only ordered state text used to localize deterministic hash divergence.</summary>
+public static class AuthoritativeStateDumper
+{
+    public static string Dump(SimulationWorld world)
+    {
+        StringBuilder b=new StringBuilder(8192);
+        b.Append("tick=").Append(world.Tick.Value).Append(" nextEntity=").Append(world.Entities.NextEntityValue)
+            .Append(" map=").Append(world.Map.Id.Value).Append(" topology=").Append(world.Map.TopologyVersion).AppendLine();
+        var alive=world.Entities.Alive;
+        for(int i=0;i<alive.Count;i++)
+        {
+            EntityId id=alive[i]; b.Append("entity ").Append(id.Value);
+            if(world.Entities.Ownership.TryGet(id,out Ownership o))b.Append(" owner=").Append(o.PlayerSlot);
+            if(world.Entities.Transform.TryGet(id,out SimTransform t))b.Append(" pos=").Append(t.Position.X.Raw).Append(',').Append(t.Position.Y.Raw).Append(" angle=").Append(t.Orientation.Raw);
+            if(world.Entities.Movement.TryGet(id,out Movement m))b.Append(" speed=").Append(m.CurrentSpeed.Raw).Append(" vel=").Append(m.CurrentVelocity.X.Raw).Append(',').Append(m.CurrentVelocity.Y.Raw).Append(" desired=").Append(m.DesiredMovement.X.Raw).Append(',').Append(m.DesiredMovement.Y.Raw).Append(" pathIndex=").Append(m.PathIndex).Append(" state=").Append((byte)m.State).Append(" stuck=").Append(m.StuckTicks).Append(" compress=").Append(m.CompressionTicks);
+            if(world.Entities.Navigation.TryGet(id,out NavigationAgent n))b.Append(" fp=").Append((byte)n.Footprint).Append(" layer=").Append((byte)n.Layer).Append(" target=").Append(n.Target.X.Raw).Append(',').Append(n.Target.Y.Raw).Append(" hasTarget=").Append(n.HasTarget?1:0).Append(" dirty=").Append(n.PathDirty?1:0).Append(" topo=").Append(n.PathTopologyVersion).Append(" age=").Append(n.RequestAge);
+            if(world.Entities.Selectable.TryGet(id,out Selectable s))b.Append(" content=").Append(s.ContentType.Value).Append(" kind=").Append((byte)s.Kind);
+            if(world.Entities.Vision.TryGet(id,out Vision v))b.Append(" vision=").Append(v.RadiusBuildCells);
+            UnitCommandQueue q=world.GetQueue(id);b.Append(" queue=").Append(q.Count);
+            NavPath? path=world.GetPath(id);if(path!=null)b.Append(" pathCells=").Append(path.Cells.Count).Append(" pathTopo=").Append(path.TopologyVersion);
+            b.AppendLine();
+        }
+        b.Append("pendingCommands=").Append(world.Commands.Count).Append(" stateHash=").Append(StateHasher.HashHex(world)).AppendLine();
+        return b.ToString();
+    }
+
+    public static string FirstDifference(string expected,string actual)
+    {
+        string[] a=expected.Replace("\r",string.Empty).Split('\n');string[] b=actual.Replace("\r",string.Empty).Split('\n');
+        int n=a.Length<b.Length?a.Length:b.Length;
+        for(int i=0;i<n;i++)if(!string.Equals(a[i],b[i],System.StringComparison.Ordinal))return "line="+(i+1)+" expected=["+a[i]+"] actual=["+b[i]+"]";
+        return a.Length==b.Length?"no textual state difference":"line-count expected="+a.Length+" actual="+b.Length;
+    }
+}
+}

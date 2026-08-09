@@ -1,0 +1,665 @@
+{
+  "schemaVersion": 1,
+  "stableId": "map.dev_first_controllable_rts",
+  "buildSize": [
+    160,
+    160
+  ],
+  "navScale": 2,
+  "starts": [
+    {
+      "playerSlot": 0,
+      "position": [
+        24,
+        74
+      ]
+    },
+    {
+      "playerSlot": 1,
+      "position": [
+        132,
+        74
+      ]
+    }
+  ],
+  "flagRects": [
+    {
+      "rect": [
+        0,
+        0,
+        320,
+        2
+      ],
+      "add": [
+        "Impassable",
+        "GroundOccluder"
+      ],
+      "remove": [
+        "Buildable"
+      ]
+    },
+    {
+      "rect": [
+        0,
+        318,
+        320,
+        2
+      ],
+      "add": [
+        "Impassable",
+        "GroundOccluder"
+      ],
+      "remove": [
+        "Buildable"
+      ]
+    },
+    {
+      "rect": [
+        0,
+        0,
+        2,
+        320
+      ],
+      "add": [
+        "Impassable",
+        "GroundOccluder"
+      ],
+      "remove": [
+        "Buildable"
+      ]
+    },
+    {
+      "rect": [
+        318,
+        0,
+        2,
+        320
+      ],
+      "add": [
+        "Impassable",
+        "GroundOccluder"
+      ],
+      "remove": [
+        "Buildable"
+      ]
+    },
+    {
+      "rect": [
+        152,
+        8,
+        16,
+        28
+      ],
+      "add": [
+        "Impassable",
+        "GroundOccluder"
+      ],
+      "remove": [
+        "Buildable"
+      ]
+    },
+    {
+      "rect": [
+        152,
+        80,
+        16,
+        44
+      ],
+      "add": [
+        "Impassable",
+        "GroundOccluder"
+      ],
+      "remove": [
+        "Buildable"
+      ]
+    },
+    {
+      "rect": [
+        152,
+        150,
+        16,
+        46
+      ],
+      "add": [
+        "Impassable",
+        "GroundOccluder"
+      ],
+      "remove": [
+        "Buildable"
+      ]
+    },
+    {
+      "rect": [
+        152,
+        232,
+        16,
+        32
+      ],
+      "add": [
+        "Impassable",
+        "GroundOccluder"
+      ],
+      "remove": [
+        "Buildable"
+      ]
+    },
+    {
+      "rect": [
+        152,
+        278,
+        16,
+        34
+      ],
+      "add": [
+        "Impassable",
+        "GroundOccluder"
+      ],
+      "remove": [
+        "Buildable"
+      ]
+    },
+    {
+      "rect": [
+        46,
+        44,
+        36,
+        18
+      ],
+      "add": [
+        "Impassable",
+        "GroundOccluder"
+      ],
+      "remove": [
+        "Buildable"
+      ]
+    },
+    {
+      "rect": [
+        238,
+        54,
+        34,
+        22
+      ],
+      "add": [
+        "Impassable",
+        "GroundOccluder"
+      ],
+      "remove": [
+        "Buildable"
+      ]
+    },
+    {
+      "rect": [
+        54,
+        222,
+        44,
+        20
+      ],
+      "add": [
+        "Impassable",
+        "GroundOccluder"
+      ],
+      "remove": [
+        "Buildable"
+      ]
+    },
+    {
+      "rect": [
+        224,
+        214,
+        42,
+        24
+      ],
+      "add": [
+        "Impassable",
+        "GroundOccluder"
+      ],
+      "remove": [
+        "Buildable"
+      ]
+    },
+    {
+      "rect": [
+        36,
+        136,
+        58,
+        40
+      ],
+      "add": [
+        "Rough"
+      ],
+      "remove": []
+    },
+    {
+      "rect": [
+        226,
+        126,
+        46,
+        44
+      ],
+      "add": [
+        "Rough"
+      ],
+      "remove": []
+    },
+    {
+      "rect": [
+        90,
+        44,
+        8,
+        46
+      ],
+      "add": [
+        "GroundOccluder"
+      ],
+      "remove": [
+        "Buildable"
+      ]
+    },
+    {
+      "rect": [
+        212,
+        238,
+        8,
+        42
+      ],
+      "add": [
+        "GroundOccluder"
+      ],
+      "remove": [
+        "Buildable"
+      ]
+    }
+  ],
+  "elevationRects": [
+    {
+      "rect": [
+        26,
+        26,
+        62,
+        52
+      ],
+      "band": 1
+    },
+    {
+      "rect": [
+        230,
+        232,
+        58,
+        48
+      ],
+      "band": 2
+    }
+  ],
+  "excavatableFeatures": [
+    {
+      "featureId": 1,
+      "navRect": [
+        152,
+        264,
+        16,
+        14
+      ],
+      "initialState": "Closed"
+    }
+  ],
+  "initialEntities": [
+    {
+      "playerSlot": 0,
+      "contentKey": "unit.rock_raiders.crew",
+      "position": [
+        24,
+        74
+      ],
+      "footprint": "Tiny",
+      "movementLayer": "Ground",
+      "selectableKind": "Worker",
+      "visionRadius": 7
+    },
+    {
+      "playerSlot": 0,
+      "contentKey": "unit.rock_raiders.hover_scout",
+      "position": [
+        26,
+        74
+      ],
+      "footprint": "Small",
+      "movementLayer": "GroundHover",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 9
+    },
+    {
+      "playerSlot": 0,
+      "contentKey": "unit.rock_raiders.loader_dozer",
+      "position": [
+        28,
+        74
+      ],
+      "footprint": "Medium",
+      "movementLayer": "Ground",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 7
+    },
+    {
+      "playerSlot": 0,
+      "contentKey": "unit.rock_raiders.chrome_crusher",
+      "position": [
+        30,
+        74
+      ],
+      "footprint": "Large",
+      "movementLayer": "Ground",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 8
+    },
+    {
+      "playerSlot": 0,
+      "contentKey": "unit.rock_raiders.crew",
+      "position": [
+        32,
+        74
+      ],
+      "footprint": "Tiny",
+      "movementLayer": "Ground",
+      "selectableKind": "Worker",
+      "visionRadius": 7
+    },
+    {
+      "playerSlot": 0,
+      "contentKey": "unit.rock_raiders.hover_scout",
+      "position": [
+        34,
+        74
+      ],
+      "footprint": "Small",
+      "movementLayer": "GroundHover",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 9
+    },
+    {
+      "playerSlot": 0,
+      "contentKey": "unit.rock_raiders.loader_dozer",
+      "position": [
+        24,
+        76
+      ],
+      "footprint": "Medium",
+      "movementLayer": "Ground",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 7
+    },
+    {
+      "playerSlot": 0,
+      "contentKey": "unit.rock_raiders.chrome_crusher",
+      "position": [
+        26,
+        76
+      ],
+      "footprint": "Large",
+      "movementLayer": "Ground",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 8
+    },
+    {
+      "playerSlot": 0,
+      "contentKey": "unit.rock_raiders.crew",
+      "position": [
+        28,
+        76
+      ],
+      "footprint": "Tiny",
+      "movementLayer": "Ground",
+      "selectableKind": "Worker",
+      "visionRadius": 7
+    },
+    {
+      "playerSlot": 0,
+      "contentKey": "unit.rock_raiders.hover_scout",
+      "position": [
+        30,
+        76
+      ],
+      "footprint": "Small",
+      "movementLayer": "GroundHover",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 9
+    },
+    {
+      "playerSlot": 0,
+      "contentKey": "unit.rock_raiders.loader_dozer",
+      "position": [
+        32,
+        76
+      ],
+      "footprint": "Medium",
+      "movementLayer": "Ground",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 7
+    },
+    {
+      "playerSlot": 0,
+      "contentKey": "unit.rock_raiders.chrome_crusher",
+      "position": [
+        34,
+        76
+      ],
+      "footprint": "Large",
+      "movementLayer": "Ground",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 8
+    },
+    {
+      "playerSlot": 0,
+      "contentKey": "unit.rock_raiders.crew",
+      "position": [
+        24,
+        78
+      ],
+      "footprint": "Tiny",
+      "movementLayer": "Ground",
+      "selectableKind": "Worker",
+      "visionRadius": 7
+    },
+    {
+      "playerSlot": 0,
+      "contentKey": "unit.rock_raiders.hover_scout",
+      "position": [
+        26,
+        78
+      ],
+      "footprint": "Small",
+      "movementLayer": "GroundHover",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 9
+    },
+    {
+      "playerSlot": 0,
+      "contentKey": "unit.rock_raiders.loader_dozer",
+      "position": [
+        28,
+        78
+      ],
+      "footprint": "Medium",
+      "movementLayer": "Ground",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 7
+    },
+    {
+      "playerSlot": 0,
+      "contentKey": "unit.rock_raiders.chrome_crusher",
+      "position": [
+        30,
+        78
+      ],
+      "footprint": "Large",
+      "movementLayer": "Ground",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 8
+    },
+    {
+      "playerSlot": 0,
+      "contentKey": "unit.rock_raiders.crew",
+      "position": [
+        32,
+        78
+      ],
+      "footprint": "Tiny",
+      "movementLayer": "Ground",
+      "selectableKind": "Worker",
+      "visionRadius": 7
+    },
+    {
+      "playerSlot": 0,
+      "contentKey": "unit.rock_raiders.hover_scout",
+      "position": [
+        34,
+        78
+      ],
+      "footprint": "Small",
+      "movementLayer": "GroundHover",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 9
+    },
+    {
+      "playerSlot": 1,
+      "contentKey": "unit.rock_raiders.crew",
+      "position": [
+        132,
+        74
+      ],
+      "footprint": "Tiny",
+      "movementLayer": "Ground",
+      "selectableKind": "Worker",
+      "visionRadius": 7
+    },
+    {
+      "playerSlot": 1,
+      "contentKey": "unit.rock_raiders.hover_scout",
+      "position": [
+        134,
+        74
+      ],
+      "footprint": "Small",
+      "movementLayer": "GroundHover",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 9
+    },
+    {
+      "playerSlot": 1,
+      "contentKey": "unit.rock_raiders.loader_dozer",
+      "position": [
+        136,
+        74
+      ],
+      "footprint": "Medium",
+      "movementLayer": "Ground",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 7
+    },
+    {
+      "playerSlot": 1,
+      "contentKey": "unit.rock_raiders.chrome_crusher",
+      "position": [
+        138,
+        74
+      ],
+      "footprint": "Large",
+      "movementLayer": "Ground",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 8
+    },
+    {
+      "playerSlot": 1,
+      "contentKey": "unit.rock_raiders.crew",
+      "position": [
+        132,
+        76
+      ],
+      "footprint": "Tiny",
+      "movementLayer": "Ground",
+      "selectableKind": "Worker",
+      "visionRadius": 7
+    },
+    {
+      "playerSlot": 1,
+      "contentKey": "unit.rock_raiders.hover_scout",
+      "position": [
+        134,
+        76
+      ],
+      "footprint": "Small",
+      "movementLayer": "GroundHover",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 9
+    },
+    {
+      "playerSlot": 1,
+      "contentKey": "unit.rock_raiders.loader_dozer",
+      "position": [
+        136,
+        76
+      ],
+      "footprint": "Medium",
+      "movementLayer": "Ground",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 7
+    },
+    {
+      "playerSlot": 1,
+      "contentKey": "unit.rock_raiders.chrome_crusher",
+      "position": [
+        138,
+        76
+      ],
+      "footprint": "Large",
+      "movementLayer": "Ground",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 8
+    }
+  ],
+  "visionTestGeometry": [
+    {
+      "name": "left_elevation_shelf",
+      "navRect": [
+        26,
+        26,
+        62,
+        52
+      ]
+    },
+    {
+      "name": "left_occluder_wall",
+      "navRect": [
+        90,
+        44,
+        8,
+        46
+      ]
+    },
+    {
+      "name": "right_elevation_shelf",
+      "navRect": [
+        230,
+        232,
+        58,
+        48
+      ]
+    },
+    {
+      "name": "right_occluder_wall",
+      "navRect": [
+        212,
+        238,
+        8,
+        42
+      ]
+    }
+  ],
+  "engineeringIntent": {
+    "broadLaneBuildCells": 22,
+    "mediumPassageBuildCells": 13,
+    "heavyRouteBuildCells": 18,
+    "excavatableShortcutBuildCells": 7,
+    "stressMoverCapacity": 60
+  }
+}

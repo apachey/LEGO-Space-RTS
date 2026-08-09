@@ -1,0 +1,184 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+
+namespace LegoSpaceRTS.SimCore
+{
+[Flags]
+public enum MapCellFlags : ushort
+{
+    None = 0,
+    Ground = 1 << 0,
+    Rough = 1 << 1,
+    Impassable = 1 << 2,
+    Buildable = 1 << 3,
+    GroundOccluder = 1 << 4,
+    AirBlocked = 1 << 5,
+    Excavatable = 1 << 6
+}
+
+public readonly struct NavCell : IComparable<NavCell>, IEquatable<NavCell>
+{
+    public readonly short X; public readonly short Y;
+    public NavCell(short x, short y) { X=x; Y=y; }
+    public int CompareTo(NavCell other) { int c=Y.CompareTo(other.Y); return c!=0?c:X.CompareTo(other.X); }
+    public bool Equals(NavCell other) => X==other.X && Y==other.Y;
+    public override bool Equals(object? obj) => obj is NavCell other && Equals(other);
+    public override int GetHashCode() => (X*397)^Y;
+    public static bool operator ==(NavCell a,NavCell b)=>a.Equals(b);
+    public static bool operator !=(NavCell a,NavCell b)=>!a.Equals(b);
+}
+
+public readonly struct IntRect
+{
+    public readonly short X; public readonly short Y; public readonly short Width; public readonly short Height;
+    public IntRect(short x,short y,short width,short height){X=x;Y=y;Width=width;Height=height;}
+    public bool Contains(int x,int y)=>x>=X&&y>=Y&&x<X+Width&&y<Y+Height;
+}
+
+public sealed class ExcavatableFeature
+{
+    public ushort FeatureId { get; }
+    public IntRect NavRect { get; }
+    public bool Open { get; internal set; }
+    public ExcavatableFeature(ushort featureId, IntRect navRect, bool open = false)
+    {
+        FeatureId = featureId;
+        NavRect = navRect;
+        Open = open;
+    }
+}
+
+public sealed class MapGrid
+{
+    public const int BuildWidth = 160;
+    public const int BuildHeight = 160;
+    public const int NavPerBuild = 2;
+    public const int NavWidth = BuildWidth * NavPerBuild;
+    public const int NavHeight = BuildHeight * NavPerBuild;
+
+    private readonly MapCellFlags[] _flags = new MapCellFlags[NavWidth * NavHeight];
+    private readonly sbyte[] _elevation = new sbyte[NavWidth * NavHeight];
+    private readonly ushort[] _feature = new ushort[NavWidth * NavHeight];
+    private readonly List<ExcavatableFeature> _features = new();
+
+    public MapId Id { get; }
+    public string StableKey { get; }
+    public int TopologyVersion { get; private set; }
+    public IReadOnlyList<ExcavatableFeature> Features => _features;
+
+    public MapGrid(string stableKey)
+    {
+        StableKey = stableKey;
+        Id = new MapId(StableId.FromKey(stableKey).Value);
+        for (int i = 0; i < _flags.Length; i++) _flags[i] = MapCellFlags.Ground | MapCellFlags.Buildable;
+    }
+
+    public bool InBounds(int x, int y) => x >= 0 && y >= 0 && x < NavWidth && y < NavHeight;
+    public int Index(int x, int y) => y * NavWidth + x;
+    public MapCellFlags GetFlags(int x, int y) => _flags[Index(x, y)];
+    public sbyte GetElevation(int x, int y) => _elevation[Index(x, y)];
+    public ushort GetFeatureId(int x, int y) => _feature[Index(x, y)];
+
+    public void SetFlagsRect(IntRect rect, MapCellFlags add, MapCellFlags remove = MapCellFlags.None)
+    {
+        for (int y = rect.Y; y < rect.Y + rect.Height; y++)
+            for (int x = rect.X; x < rect.X + rect.Width; x++)
+                if (InBounds(x, y)) _flags[Index(x, y)] = (_flags[Index(x, y)] | add) & ~remove;
+    }
+
+    public void SetElevationRect(IntRect rect, sbyte elevation)
+    {
+        for (int y = rect.Y; y < rect.Y + rect.Height; y++)
+            for (int x = rect.X; x < rect.X + rect.Width; x++)
+                if (InBounds(x, y)) _elevation[Index(x, y)] = elevation;
+    }
+
+    public void AddExcavatable(ExcavatableFeature feature)
+    {
+        _features.Add(feature);
+        for (int y = feature.NavRect.Y; y < feature.NavRect.Y + feature.NavRect.Height; y++)
+            for (int x = feature.NavRect.X; x < feature.NavRect.X + feature.NavRect.Width; x++)
+            {
+                int i = Index(x, y);
+                _feature[i] = feature.FeatureId;
+                _flags[i] |= MapCellFlags.Excavatable;
+                if (!feature.Open) _flags[i] |= MapCellFlags.Impassable | MapCellFlags.GroundOccluder;
+            }
+    }
+
+    public IntRect OpenFeature(ushort featureId)
+    {
+        for (int i = 0; i < _features.Count; i++)
+        {
+            ExcavatableFeature feature = _features[i];
+            if (feature.FeatureId != featureId) continue;
+            if (feature.Open) return feature.NavRect;
+            feature.Open = true;
+            SetFlagsRect(feature.NavRect, MapCellFlags.Ground | MapCellFlags.Buildable, MapCellFlags.Impassable | MapCellFlags.GroundOccluder);
+            TopologyVersion++;
+            return feature.NavRect;
+        }
+        throw new InvalidOperationException($"Unknown Excavatable Feature {featureId}.");
+    }
+
+    public static FixVec2 NavCellCenterToBuild(NavCell cell) => new(
+        Fix32.FromRatio(cell.X * 2 + 1, 4),
+        Fix32.FromRatio(cell.Y * 2 + 1, 4));
+
+    public static NavCell BuildToNav(FixVec2 position)
+    {
+        int x = (position.X.Raw * NavPerBuild) >> Fix32.FractionalBits;
+        int y = (position.Y.Raw * NavPerBuild) >> Fix32.FractionalBits;
+        if (x < 0) x = 0; else if (x >= NavWidth) x = NavWidth - 1;
+        if (y < 0) y = 0; else if (y >= NavHeight) y = NavHeight - 1;
+        return new NavCell((short)x, (short)y);
+    }
+
+    public void Serialize(BinaryWriter writer)
+    {
+        writer.Write(StableKey);
+        writer.Write(TopologyVersion);
+        writer.Write(_flags.Length);
+        for (int i = 0; i < _flags.Length; i++) writer.Write((ushort)_flags[i]);
+        writer.Write(_elevation.Length);
+        for (int i = 0; i < _elevation.Length; i++) writer.Write(_elevation[i]);
+        writer.Write(_feature.Length);
+        for (int i = 0; i < _feature.Length; i++) writer.Write(_feature[i]);
+        writer.Write(_features.Count);
+        for (int i = 0; i < _features.Count; i++)
+        {
+            ExcavatableFeature f = _features[i];
+            writer.Write(f.FeatureId);
+            writer.Write(f.NavRect.X); writer.Write(f.NavRect.Y); writer.Write(f.NavRect.Width); writer.Write(f.NavRect.Height);
+            writer.Write(f.Open);
+        }
+    }
+
+    public static MapGrid Deserialize(BinaryReader reader)
+    {
+        string key = reader.ReadString();
+        int topology = reader.ReadInt32();
+        MapGrid map = new(key);
+        int count = reader.ReadInt32();
+        if (count != map._flags.Length) throw new InvalidDataException("Map flag size mismatch.");
+        for (int i = 0; i < count; i++) map._flags[i] = (MapCellFlags)reader.ReadUInt16();
+        count = reader.ReadInt32();
+        if (count != map._elevation.Length) throw new InvalidDataException("Map elevation size mismatch.");
+        for (int i = 0; i < count; i++) map._elevation[i] = reader.ReadSByte();
+        count = reader.ReadInt32();
+        if (count != map._feature.Length) throw new InvalidDataException("Map feature size mismatch.");
+        for (int i = 0; i < count; i++) map._feature[i] = reader.ReadUInt16();
+        int featureCount = reader.ReadInt32();
+        for (int i = 0; i < featureCount; i++)
+        {
+            ushort id = reader.ReadUInt16();
+            IntRect rect = new(reader.ReadInt16(), reader.ReadInt16(), reader.ReadInt16(), reader.ReadInt16());
+            bool open = reader.ReadBoolean();
+            map._features.Add(new ExcavatableFeature(id, rect, open));
+        }
+        map.TopologyVersion = topology;
+        return map;
+    }
+}
+}

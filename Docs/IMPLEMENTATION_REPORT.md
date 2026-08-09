@@ -1,0 +1,192 @@
+# LEGO SPACE RTS — FIRST PLAYABLE PROTOTYPE IMPLEMENTATION v0.4
+
+**Phase:** 10 — M0–M2  
+**Engine:** Godot 4.7.1-stable .NET  
+**Primary platform:** Windows 11 x86-64  
+**Status:** native Godot C# implementation package; runtime gates require local pinned toolchain execution
+
+## Amendment outcome
+
+The Unity-specific Phase 10 host has been removed and replaced rather than layered over.
+
+Portable implementation was retained where valid:
+
+- all 27 authoritative `SimCore/Runtime` C# source files;
+- pure NUnit deterministic test suite, with engine-boundary test amended to reject Godot as well as Unity;
+- HeadlessSim CLI;
+- ContentCompiler;
+- JSON source schemas;
+- deterministic binary codecs;
+- map/content definitions;
+- deterministic benchmark/golden architecture.
+
+Engine-specific code was rebuilt as native Godot C#:
+
+- `project.godot` / native `.tscn` scenes;
+- explicit `Node3D` composition root;
+- render-time fixed-tick bridge;
+- `Camera3D` strategic camera;
+- InputMap/default action bootstrap;
+- selection and control groups;
+- Move/queued Move/Stop/Hold command adapter;
+- primitive unit/map presentation;
+- CPU fog presentation;
+- dynamic topology visualization;
+- `ImmediateMesh` navigation/path/reservation/vision debug overlays;
+- Godot `Control` technical HUD;
+- Godot `--headless` integration smoke runner;
+- Windows x86-64 export preset.
+
+No Unity `Game/` directory, asmdef, package manifest, URP, UI Toolkit, Unity Transport or Unity project-setting dependency remains in the runtime host.
+
+## M0 implementation
+
+Implemented:
+
+- pure engine-independent SimCore project;
+- Godot 4.7.1 .NET project host;
+- explicit composition root;
+- two native scenes: Bootstrap and PrototypeRTS;
+- project-owned 20 Hz simulation accumulator with max four catch-up ticks;
+- previous/current presentation snapshots and interpolation alpha;
+- headless Godot smoke entry;
+- static assembly-boundary test plus source validator;
+- Windows x86-64 export baseline.
+
+Godot's own physics tick is configured separately at 60 Hz and is not simulation authority.
+
+## M1 implementation
+
+Implemented portable deterministic foundation:
+
+- `Fix32` Q16.16;
+- `FixVec2`;
+- `Angle16`;
+- `SimTick` / tick conversion;
+- Stable IDs;
+- monotonic `EntityId`;
+- component stores / deterministic entity iteration;
+- deterministic system runner;
+- command envelope and command buffer;
+- fixed per-entity order queue;
+- FNV-1a deterministic state hashing;
+- explicit binary snapshot serialization/versioning;
+- replay serialization/execution/final-hash validation;
+- pure .NET HeadlessSim;
+- periodic hash output;
+- snapshot load/save;
+- replay load/record;
+- state dump;
+- golden checkpoint input/output;
+- repeat runs;
+- simulation/path profiling and performance gates.
+
+## M2 implementation
+
+Implemented:
+
+- canonical 160×160 build / 320×320 nav map representation;
+- packed map flags, elevation bands and feature IDs;
+- human-editable JSON source → binary runtime pipeline;
+- compiled runtime data consumed by the Godot client;
+- `DEV_FirstControllableRTS` authored engineering map;
+- five footprint/clearance classes;
+- 10-nav-cell HPA cluster topology;
+- deterministic portals and local A*;
+- deterministic tie-breaking;
+- dynamic Excavatable feature open operation with affected topology refresh;
+- group movement/formation-slot foundation;
+- authoritative movement state including max speed, acceleration, deceleration, turn rate, current velocity, desired movement and path index;
+- 12-tick reservation horizon with heavy priority;
+- bounded friendly compression;
+- deterministic local avoidance;
+- stuck recovery diagnostics;
+- spatial index;
+- CPU-authoritative fog/LoS;
+- Godot camera, selection and 0–9 group controls;
+- Move, queued Move, Stop and Hold Position;
+- immediate move acknowledgement marker;
+- map/unit placeholder rendering without gameplay physics;
+- debug overlays for navigation, HPA, portals, paths, reservations, spatial buckets, vision and Excavatable topology;
+- 60-mover stress scenario.
+
+## Content/data status
+
+The M2 prototype data uses real Phase 03/06 stable unit identities where applicable:
+
+- `unit.rock_raiders.crew` — Tiny, speed 1.35 build cells/s;
+- `unit.rock_raiders.hover_scout` — Small, speed 2.25;
+- `unit.rock_raiders.loader_dozer` — Medium, speed 1.30;
+- `unit.rock_raiders.chrome_crusher` — Large, speed 0.92;
+- `prototype.nav.huge` — Huge, explicitly `ENGINEERING_ONLY` for clearance/stress coverage.
+
+The technical Huge profile is not a new canonical gameplay unit.
+
+The package includes pre-generated baseline runtime binaries matching the documented codec layout. Because the artifact environment lacks a C# runtime, these files are convenience baselines rather than certified `ContentCompiler` output; acceptance requires regeneration with the C# compiler. Their current package-level content binary FNV-1a64 hash is:
+
+`B326B9EFD80CD90D`
+
+They must be regenerated by the C# ContentCompiler after source changes and revalidated locally.
+
+## Future M6 networking compatibility
+
+The engine switch changes the carrier, not the network architecture.
+
+Still preserved:
+
+- server-authoritative deterministic simulation;
+- project-owned command format;
+- project-owned snapshot format;
+- stable IDs;
+- explicit protocol versions;
+- replay-compatible command semantics.
+
+Godot ENet/packet networking is the default transport candidate for M6 because it exposes packet peer/channel/reliability primitives. No M6 networking is implemented in Phase 10.
+
+## What was actually verified in this artifact environment
+
+Executed successfully:
+
+```text
+PHASE10 GODOT STATIC VALIDATION: PASS (27 authoritative C# files checked)
+```
+
+The source-level audit verifies the amended engine boundary and major locked constants/data.
+
+The environment does not expose a usable `dotnet`, C# compiler or Godot 4.7.1 .NET executable. Therefore the following are **not claimed as passed here**:
+
+- `dotnet build`;
+- NUnit execution;
+- Godot C# compilation;
+- Godot headless smoke;
+- 100-run golden determinism;
+- runtime snapshot/replay continuation;
+- performance/60-mover gates;
+- Windows export.
+
+Those are explicit local/CI acceptance requirements, not deferred implementation placeholders.
+
+## Phase boundary
+
+M3 economy/base-building work should begin only after the amended M0–M2 executable gates pass in the pinned Godot/.NET environment.
+
+## Canon changes
+
+Changed:
+
+- Phase 09 engine host: Unity 6.3 LTS → Godot 4.7.x .NET;
+- Phase 10 concrete pin: Godot 4.7.1-stable .NET;
+- renderer/UI/input/network-carrier implementation choices that were Unity-specific.
+
+Unchanged:
+
+- all game-design canon;
+- engine-independent simulation architecture;
+- authoritative numeric/time/entity/navigation/data/replay/fog principles;
+- performance targets;
+- M0–M2 gameplay acceptance criteria except their engine-specific host wording.
+
+
+## v0.4 runtime-feedback amendment
+
+The first real macOS M2 interaction pass demonstrated that compile/startup success was insufficient for M2 acceptance. The package now includes the movement/selection corrections documented in `M2_USABILITY_MOVEMENT_PATCH_v0.4.md`: visible marquee/rings, more forgiving selection hit testing, control-group labels, numbered queued-move previews, passable formation-slot resolution, deterministic path smoothing, non-freezing reservation yielding and immediate overlap prevention. These remain Phase 10 M2 corrections rather than new gameplay canon.

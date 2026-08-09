@@ -1,0 +1,24 @@
+.DS_Store
+
+# Godot generated files
+**/.godot/
+**/.mono/
+
+# .NET generated files
+**/bin/
+**/obj/
+
+# Local IDE/user files
+*.user
+*.suo
+.vscode/
+.idea/
+
+# Generated builds and test artifacts
+Builds/
+Artifacts/
+Logs/
+
+# Temporary files
+*.tmp
+*.log

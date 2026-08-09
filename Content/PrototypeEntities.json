@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 2,
+  "contentKind": "prototype_entities",
+  "policy": "M2 technical fields only; no combat/economy fields are invented here.",
+  "movementProfiles": [
+    {
+      "stableId": "movement.prototype.crew",
+      "speedRatio": [
+        135,
+        100
+      ],
+      "accelerationRatio": [
+        4,
+        1
+      ],
+      "decelerationRatio": [
+        5,
+        1
+      ],
+      "turnRatePerTick": 1638,
+      "reversePolicy": "Full",
+      "layer": "Ground"
+    },
+    {
+      "stableId": "movement.prototype.hover_scout",
+      "speedRatio": [
+        225,
+        100
+      ],
+      "accelerationRatio": [
+        6,
+        1
+      ],
+      "decelerationRatio": [
+        15,
+        2
+      ],
+      "turnRatePerTick": 1638,
+      "reversePolicy": "Full",
+      "layer": "GroundHover"
+    },
+    {
+      "stableId": "movement.prototype.loader_dozer",
+      "speedRatio": [
+        130,
+        100
+      ],
+      "accelerationRatio": [
+        3,
+        2
+      ],
+      "decelerationRatio": [
+        15,
+        8
+      ],
+      "turnRatePerTick": 865,
+      "reversePolicy": "Reduced",
+      "layer": "Ground"
+    },
+    {
+      "stableId": "movement.prototype.chrome_crusher",
+      "speedRatio": [
+        92,
+        100
+      ],
+      "accelerationRatio": [
+        9,
+        10
+      ],
+      "decelerationRatio": [
+        9,
+        8
+      ],
+      "turnRatePerTick": 592,
+      "reversePolicy": "Reduced",
+      "layer": "Ground"
+    },
+    {
+      "stableId": "movement.prototype.nav_huge",
+      "speedRatio": [
+        9,
+        10
+      ],
+      "accelerationRatio": [
+        9,
+        10
+      ],
+      "decelerationRatio": [
+        9,
+        8
+      ],
+      "turnRatePerTick": 410,
+      "reversePolicy": "Reduced",
+      "layer": "Ground"
+    }
+  ],
+  "entities": [
+    {
+      "stableId": "unit.rock_raiders.crew",
+      "faction": "RockRaiders",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.prototype.crew",
+      "footprint": "Tiny",
+      "selectableKind": "Worker",
+      "visionRadius": 7,
+      "viewProfile": "view.placeholder.rock_raiders.crew"
+    },
+    {
+      "stableId": "unit.rock_raiders.hover_scout",
+      "faction": "RockRaiders",
+      "sourceClassification": "OFFICIAL_DIRECT",
+      "movementProfile": "movement.prototype.hover_scout",
+      "footprint": "Small",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 9,
+      "viewProfile": "view.placeholder.rock_raiders.hover_scout"
+    },
+    {
+      "stableId": "unit.rock_raiders.loader_dozer",
+      "faction": "RockRaiders",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.prototype.loader_dozer",
+      "footprint": "Medium",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 7,
+      "viewProfile": "view.placeholder.rock_raiders.loader_dozer"
+    },
+    {
+      "stableId": "unit.rock_raiders.chrome_crusher",
+      "faction": "RockRaiders",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.prototype.chrome_crusher",
+      "footprint": "Large",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 8,
+      "viewProfile": "view.placeholder.rock_raiders.chrome_crusher"
+    },
+    {
+      "stableId": "prototype.nav.huge",
+      "faction": "Technical",
+      "sourceClassification": "ENGINEERING_ONLY",
+      "movementProfile": "movement.prototype.nav_huge",
+      "footprint": "Huge",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 8,
+      "viewProfile": "view.placeholder.navigation.huge"
+    }
+  ]
+}
