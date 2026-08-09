@@ -155,7 +155,11 @@ for (int y = center.Y + 1; y < MapGrid.NavHeight && world.Pathfinder.IsPassable(
         int row = index / columns;
         int col = index % columns;
         int rows = (count + columns - 1) / columns;
-        Fix32 spacing = Fix32.FromRatio(11 + (int)footprint * 4, 10); // 1.1 .. 2.7 build cells.
+        Fix32 legacySpacing = Fix32.FromRatio(11 + (int)footprint * 4, 10);
+        Fix32 collisionSpacing = FootprintRules.CollisionRadiusBuild(footprint) * Fix32.FromInt(2) + Fix32.FromRatio(35, 100);
+        // Preserve any roomier legacy spacing while guaranteeing the canonical
+        // collision diameter + 0.35 build-cell settling margin.
+        Fix32 spacing = Fix32.Max(legacySpacing, collisionSpacing);
         if (spread) spacing *= Fix32.FromRatio(14,10); // Phase 06 +40% separation foundation.
         Fix32 lateral = Fix32.FromRatio((col * 2 - (columns - 1)), 2) * spacing;
         // First row is the front row; final row is the rear/support row.
