@@ -50,7 +50,7 @@ set +e
 "${APP_EXECUTABLE}" --headless --quit-after 600 -- --smoke 2>&1 | tee "${SMOKE_LOG}"
 SMOKE_STATUS=${PIPESTATUS[0]}
 set -e
-if (( SMOKE_STATUS != 0 )) || ! grep -q 'M2 content source: compiled runtime data' "${SMOKE_LOG}" || ! grep -q 'PHASE10 GODOT HEADLESS SMOKE: PASS' "${SMOKE_LOG}"; then
+if (( SMOKE_STATUS != 0 )) || ! grep -q 'Prototype content source: compiled runtime data' "${SMOKE_LOG}" || ! grep -q 'PHASE10 GODOT HEADLESS SMOKE: PASS' "${SMOKE_LOG}"; then
   rm -f "${SMOKE_LOG}"
   printf 'FAIL: exported app did not pass the compiled-content PrototypeRTS smoke.\n' >&2
   exit 1

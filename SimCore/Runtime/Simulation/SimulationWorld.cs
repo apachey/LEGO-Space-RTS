@@ -6,6 +6,7 @@ public sealed class SimulationWorld
 {
     public SimTick Tick { get; internal set; }
     public EntityStore Entities { get; }
+    public PrototypeContentCatalog Content { get; }
     public MapGrid Map { get; private set; }
     public HierarchicalPathfinder Pathfinder { get; private set; }
     public SpatialGrid Spatial { get; } = new();
@@ -16,6 +17,9 @@ public sealed class SimulationWorld
     public int OscillationDiagnostics { get; internal set; }
     public int PathRequestsProcessed { get; internal set; }
     public int FormationReflowDiagnostics { get; internal set; }
+    private readonly OperationsCapacityState[] _operationsCapacity;
+
+    public int PlayerCount => Fog.PlayerCount;
 
     internal readonly Dictionary<uint, RouteCorridor> Corridors = new();
     internal readonly Dictionary<uint, UnitCommandQueue> Queues = new();
@@ -26,21 +30,25 @@ public sealed class SimulationWorld
     internal readonly Dictionary<uint, FixVec2> DiagnosticLastDelta = new();
     internal readonly Dictionary<uint, int> DiagnosticLastReversalTick = new();
 
-    public SimulationWorld(MapGrid map, int playerCount = 2)
+    public SimulationWorld(MapGrid map, int playerCount = 2, PrototypeContentCatalog? content = null)
     {
         Map = map;
         Pathfinder = new HierarchicalPathfinder(map);
         Entities = new EntityStore();
+        Content = content ?? PrototypeContentFactory.CreateM2Catalog();
         Fog = new FogState(playerCount);
+        _operationsCapacity = new OperationsCapacityState[playerCount];
         Tick = new SimTick(0);
     }
 
-    internal SimulationWorld(MapGrid map, EntityStore entities, FogState fog, SimTick tick)
+    internal SimulationWorld(MapGrid map, EntityStore entities, FogState fog, SimTick tick, PrototypeContentCatalog? content = null)
     {
         Map = map;
         Pathfinder = new HierarchicalPathfinder(map);
         Entities = entities;
+        Content = content ?? PrototypeContentFactory.CreateM2Catalog();
         Fog = fog;
+        _operationsCapacity = new OperationsCapacityState[fog.PlayerCount];
         Tick = tick;
     }
 
@@ -54,11 +62,74 @@ public sealed class SimulationWorld
         return queue;
     }
 
+    internal bool TryGetQueue(EntityId id, out UnitCommandQueue queue) => Queues.TryGetValue(id.Value, out queue!);
+
     public RouteCorridor? GetCorridor(EntityId id) => Corridors.TryGetValue(id.Value, out RouteCorridor corridor) ? corridor : null;
+
+    public OperationsCapacityState GetOperationsCapacity(byte playerSlot)
+    {
+        if (playerSlot >= _operationsCapacity.Length) throw new System.ArgumentOutOfRangeException(nameof(playerSlot));
+        return _operationsCapacity[playerSlot];
+    }
+
+    internal void SetOperationsCapacity(byte playerSlot, OperationsCapacityState state) => _operationsCapacity[playerSlot] = state;
+
+    internal void ClearOperationsCapacity() => System.Array.Clear(_operationsCapacity, 0, _operationsCapacity.Length);
+
+    public bool TryExtractResource(EntityId id, int requestedAmount, out int extractedAmount)
+    {
+        if (requestedAmount <= 0) throw new System.ArgumentOutOfRangeException(nameof(requestedAmount));
+        if (!Entities.ResourceNode.Has(id)) { extractedAmount = 0; return false; }
+        ref ResourceNode node = ref Entities.ResourceNode.Get(id);
+        if (node.Remaining <= 0) { extractedAmount = 0; return false; }
+        extractedAmount = System.Math.Min(requestedAmount, node.Remaining);
+        node.Remaining -= extractedAmount;
+        return true;
+    }
+
+    public int GetProcessedResourceTotal(byte playerSlot, ResourceType type)
+    {
+        int total = 0;
+        IReadOnlyList<EntityId> alive = Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (!Entities.Ownership.TryGet(id, out Ownership ownership) || ownership.PlayerSlot != playerSlot ||
+                !Entities.ResourceBank.TryGet(id, out ResourceBank bank) || bank.Type != type) continue;
+            total = checked(total + bank.ProcessedAmount);
+        }
+        return total;
+    }
+
+    public int GetPendingHauledResourceTotal(byte playerSlot, ResourceType type)
+    {
+        int total = 0;
+        IReadOnlyList<EntityId> alive = Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (!Entities.Ownership.TryGet(id, out Ownership ownership) || ownership.PlayerSlot != playerSlot ||
+                !Entities.ResourceReceiver.TryGet(id, out ResourceReceiver receiver) || receiver.AcceptedType != type) continue;
+            total = checked(total + receiver.PendingHauledAmount);
+        }
+        return total;
+    }
 
     public void OpenExcavatable(ushort featureId)
     {
         IntRect rect = Map.OpenFeature(featureId);
+        ApplyTopologyChange(rect);
+    }
+
+    internal void SetConstructionOccupied(Building building, bool occupied)
+    {
+        if (!Content.TryGetBuilding(building.Type, out BuildingDefinition definition)) throw new System.InvalidOperationException($"Unknown building definition {building.Type}.");
+        IntRect rect = Map.SetConstructionOccupied(building.AnchorX, building.AnchorY, definition, building.Orientation, occupied);
+        ApplyTopologyChange(rect);
+    }
+
+    private void ApplyTopologyChange(IntRect rect)
+    {
         Pathfinder.RebuildAffected(rect);
         IReadOnlyList<EntityId> alive = Entities.Alive;
         for (int i = 0; i < alive.Count; i++)

@@ -17,14 +17,14 @@ public partial class DebugRenderer : MeshInstance3D
     private SimTick _lastTick = new(-1);
     private int _lastTopology = -1;
 
-    public bool DrawNavigation { get; set; } = true;
-    public bool DrawClusters { get; set; } = true;
+    public bool DrawNavigation { get; set; }
+    public bool DrawClusters { get; set; }
     public bool DrawPortals { get; set; }
-    public bool DrawPaths { get; set; } = true;
+    public bool DrawPaths { get; set; }
     public bool DrawLocalSeparation { get; set; }
     public bool DrawSpatialBuckets { get; set; }
     public bool DrawVision { get; set; }
-    public bool DrawExcavatable { get; set; } = true;
+    public bool DrawExcavatable { get; set; }
 
     public void Configure(GodotSimBridge bridge)
     {
@@ -49,6 +49,13 @@ public partial class DebugRenderer : MeshInstance3D
     {
         if (_bridge is null) return;
         _mesh.ClearSurfaces();
+        bool hasVisibleOverlay = DrawNavigation || DrawClusters || DrawPortals || DrawPaths || DrawLocalSeparation || DrawSpatialBuckets || DrawVision || DrawExcavatable;
+        if (!hasVisibleOverlay)
+        {
+            _lastTick = _bridge.World.Tick;
+            _lastTopology = _bridge.World.Map.TopologyVersion;
+            return;
+        }
         _mesh.SurfaceBegin(Mesh.PrimitiveType.Lines);
         if (DrawNavigation) DrawNavigationOverlay();
         if (DrawClusters) DrawClusterOverlay();

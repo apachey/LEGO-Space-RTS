@@ -15,6 +15,18 @@ public sealed class EntityStore
     public readonly ComponentStore<NavigationAgent> Navigation = new();
     public readonly ComponentStore<Selectable> Selectable = new();
     public readonly ComponentStore<Vision> Vision = new();
+    public readonly ComponentStore<ResourceNode> ResourceNode = new();
+    public readonly ComponentStore<Worker> Worker = new();
+    public readonly ComponentStore<Builder> Builder = new();
+    public readonly ComponentStore<ResourceCarrier> ResourceCarrier = new();
+    public readonly ComponentStore<ResourceReceiver> ResourceReceiver = new();
+    public readonly ComponentStore<ResourceBank> ResourceBank = new();
+    public readonly ComponentStore<Building> Building = new();
+    public readonly ComponentStore<EnergyDomain> EnergyDomain = new();
+    public readonly ComponentStore<EnergyDomainMember> EnergyDomainMember = new();
+    public readonly ComponentStore<PowerState> PowerState = new();
+    public readonly ComponentStore<ConstructionSite> ConstructionSite = new();
+    public readonly ComponentStore<Production> Production = new();
 
     public IReadOnlyList<EntityId> Alive => _alive;
 
@@ -59,6 +71,18 @@ public sealed class EntityStore
         Navigation.Remove(id);
         Selectable.Remove(id);
         Vision.Remove(id);
+        ResourceNode.Remove(id);
+        Worker.Remove(id);
+        Builder.Remove(id);
+        ResourceCarrier.Remove(id);
+        ResourceReceiver.Remove(id);
+        ResourceBank.Remove(id);
+        Building.Remove(id);
+        EnergyDomain.Remove(id);
+        EnergyDomainMember.Remove(id);
+        PowerState.Remove(id);
+        ConstructionSite.Remove(id);
+        Production.Remove(id);
         return true;
     }
 

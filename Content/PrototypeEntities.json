@@ -1,7 +1,7 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 9,
   "contentKind": "prototype_entities",
-  "policy": "M2 technical fields only; no combat/economy fields are invented here.",
+  "policy": "M2 movement metadata plus canonical M3 Ore, construction, production, Operations Capacity and Energy Domain values; no unapproved combat/economy values are invented here.",
   "movementProfiles": [
     {
       "stableId": "movement.prototype.crew",
@@ -58,6 +58,15 @@
       "layer": "Ground"
     },
     {
+      "stableId": "movement.prototype.rapid_rider",
+      "speedRatio": [210, 100],
+      "accelerationRatio": [4, 1],
+      "decelerationRatio": [5, 1],
+      "turnRatePerTick": 1638,
+      "reversePolicy": "Full",
+      "layer": "GroundHover"
+    },
+    {
       "stableId": "movement.prototype.chrome_crusher",
       "speedRatio": [
         92,
@@ -92,9 +101,186 @@
       "turnRatePerTick": 410,
       "reversePolicy": "Reduced",
       "layer": "Ground"
+    },
+    {
+      "stableId": "movement.prototype.static",
+      "speedRatio": [0, 1],
+      "accelerationRatio": [0, 1],
+      "decelerationRatio": [0, 1],
+      "turnRatePerTick": 0,
+      "reversePolicy": "None",
+      "layer": "Ground"
+    }
+  ],
+  "resourceNodeDefinitions": [
+    {
+      "stableId": "resource.ore.small",
+      "type": "Ore",
+      "depositSize": "Small",
+      "capacity": 600,
+      "harvestInteraction": "Mine",
+      "depletionProfile": "Finite",
+      "modelStateThresholdBasisPoints": [7500, 5000, 2500],
+      "viewProfile": "view.placeholder.resource.ore.small"
+    },
+    {
+      "stableId": "resource.ore.standard",
+      "type": "Ore",
+      "depositSize": "Standard",
+      "capacity": 900,
+      "harvestInteraction": "Mine",
+      "depletionProfile": "Finite",
+      "modelStateThresholdBasisPoints": [7500, 5000, 2500],
+      "viewProfile": "view.placeholder.resource.ore.standard"
+    },
+    {
+      "stableId": "resource.ore.rich",
+      "type": "Ore",
+      "depositSize": "Rich",
+      "capacity": 1350,
+      "harvestInteraction": "Mine",
+      "depletionProfile": "Finite",
+      "modelStateThresholdBasisPoints": [7500, 5000, 2500],
+      "viewProfile": "view.placeholder.resource.ore.rich"
+    },
+    {
+      "stableId": "resource.ore.deep_contested_seam",
+      "type": "Ore",
+      "depositSize": "DeepContestedSeam",
+      "capacity": 2400,
+      "harvestInteraction": "Mine",
+      "depletionProfile": "Finite",
+      "modelStateThresholdBasisPoints": [7500, 5000, 2500],
+      "viewProfile": "view.placeholder.resource.ore.deep_contested_seam"
+    }
+  ],
+  "buildingDefinitions": [
+    {
+      "stableId": "building.rock_raiders.hq",
+      "footprintMask": ["11111111", "11111111", "11111111", "11111111", "11111111", "11111111", "11111111", "11111111"],
+      "rotatable": false,
+      "cost": { "ore": 320, "energy": 40 },
+      "buildTicks": 1200,
+      "operationsCapacityProvided": 16,
+      "energyGenerationPerSecond": 2,
+      "energyReserveCapacity": 150,
+      "continuousEnergyDemandPerSecond": 0,
+      "energyFunctionalClass": "CommandAndBasicEconomy",
+      "productionExit": { "width": 2, "depth": 2, "largestFootprint": "Tiny" }
+    },
+    {
+      "stableId": "building.rock_raiders.ore_processing_plant",
+      "footprintMask": ["111111", "111111", "111111", "111111", "111111", "111111"],
+      "rotatable": false,
+      "cost": { "ore": 140, "energy": 15 },
+      "buildTicks": 600,
+      "operationsCapacityProvided": 0,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 1,
+      "energyFunctionalClass": "ResourceProcessing"
+    },
+    {
+      "stableId": "building.rock_raiders.power_station",
+      "footprintMask": ["11111", "11111", "11111", "11111", "11111"],
+      "rotatable": false,
+      "cost": { "ore": 150, "energy": 20 },
+      "buildTicks": 700,
+      "operationsCapacityProvided": 0,
+      "energyGenerationPerSecond": 10,
+      "energyReserveCapacity": 120,
+      "continuousEnergyDemandPerSecond": 0,
+      "energyFunctionalClass": "StaticDefenseAndNonessential"
+    },
+    {
+      "stableId": "building.rock_raiders.vehicle_service_bay",
+      "footprintMask": ["11111111", "11111111", "11111111", "11111111", "11111111", "11111111"],
+      "rotatable": true,
+      "cost": { "ore": 160, "energy": 20 },
+      "buildTicks": 800,
+      "operationsCapacityProvided": 4,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 1,
+      "energyFunctionalClass": "ProductionAndResearch",
+      "productionExit": { "width": 3, "depth": 3, "largestFootprint": "Medium" }
+    }
+  ],
+  "productionDefinitions": [
+    {
+      "unit": "unit.rock_raiders.crew",
+      "producer": "building.rock_raiders.hq",
+      "cost": { "ore": 50, "energy": 0, "crystals": 0 },
+      "operationsCapacity": 1,
+      "buildTicks": 320
+    },
+    {
+      "unit": "unit.rock_raiders.hover_scout",
+      "producer": "building.rock_raiders.vehicle_service_bay",
+      "cost": { "ore": 75, "energy": 10, "crystals": 0 },
+      "operationsCapacity": 1,
+      "buildTicks": 400
+    },
+    {
+      "unit": "unit.rock_raiders.rapid_rider",
+      "producer": "building.rock_raiders.vehicle_service_bay",
+      "cost": { "ore": 90, "energy": 10, "crystals": 0 },
+      "operationsCapacity": 2,
+      "buildTicks": 560
+    },
+    {
+      "unit": "unit.rock_raiders.loader_dozer",
+      "producer": "building.rock_raiders.vehicle_service_bay",
+      "cost": { "ore": 125, "energy": 15, "crystals": 0 },
+      "operationsCapacity": 3,
+      "buildTicks": 720
     }
   ],
   "entities": [
+    {
+      "stableId": "building.rock_raiders.hq",
+      "faction": "RockRaiders",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Huge",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "viewProfile": "view.placeholder.rock_raiders.hq"
+    },
+    {
+      "stableId": "building.rock_raiders.ore_processing_plant",
+      "faction": "RockRaiders",
+      "sourceClassification": "COMPOSITE_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Large",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "viewProfile": "view.placeholder.rock_raiders.ore_processing_plant"
+    },
+    {
+      "stableId": "building.rock_raiders.power_station",
+      "faction": "RockRaiders",
+      "sourceClassification": "COMPOSITE_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Large",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "viewProfile": "view.placeholder.rock_raiders.power_station"
+    },
+    {
+      "stableId": "building.rock_raiders.vehicle_service_bay",
+      "faction": "RockRaiders",
+      "sourceClassification": "COMPOSITE_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Huge",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "viewProfile": "view.placeholder.rock_raiders.vehicle_service_bay"
+    },
     {
       "stableId": "unit.rock_raiders.crew",
       "faction": "RockRaiders",
@@ -103,6 +289,11 @@
       "footprint": "Tiny",
       "selectableKind": "Worker",
       "visionRadius": 7,
+      "operationsCapacity": 1,
+      "workerHarvest": {
+        "oreTicksPerUnit": 30,
+        "oreCarryCapacity": 8
+      },
       "viewProfile": "view.placeholder.rock_raiders.crew"
     },
     {
@@ -113,6 +304,7 @@
       "footprint": "Small",
       "selectableKind": "CombatSupport",
       "visionRadius": 9,
+      "operationsCapacity": 1,
       "viewProfile": "view.placeholder.rock_raiders.hover_scout"
     },
     {
@@ -123,7 +315,19 @@
       "footprint": "Medium",
       "selectableKind": "CombatSupport",
       "visionRadius": 7,
+      "operationsCapacity": 3,
       "viewProfile": "view.placeholder.rock_raiders.loader_dozer"
+    },
+    {
+      "stableId": "unit.rock_raiders.rapid_rider",
+      "faction": "RockRaiders",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.prototype.rapid_rider",
+      "footprint": "Small",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 9,
+      "operationsCapacity": 2,
+      "viewProfile": "view.placeholder.rock_raiders.rapid_rider"
     },
     {
       "stableId": "unit.rock_raiders.chrome_crusher",
@@ -133,6 +337,7 @@
       "footprint": "Large",
       "selectableKind": "CombatSupport",
       "visionRadius": 8,
+      "operationsCapacity": 6,
       "viewProfile": "view.placeholder.rock_raiders.chrome_crusher"
     },
     {
@@ -143,6 +348,7 @@
       "footprint": "Huge",
       "selectableKind": "CombatSupport",
       "visionRadius": 8,
+      "operationsCapacity": 0,
       "viewProfile": "view.placeholder.navigation.huge"
     }
   ]

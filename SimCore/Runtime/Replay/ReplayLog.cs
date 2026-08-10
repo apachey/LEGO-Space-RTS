@@ -7,7 +7,7 @@ namespace LegoSpaceRTS.SimCore
 public sealed class ReplayLog
 {
     public const uint Magic = 0x52545253; // RTRS
-    public const ushort Version = 1;
+    public const ushort Version = 5;
     public byte[] InitialSnapshot { get; }
     public List<CommandEnvelope> Commands { get; } = new();
     public ulong ExpectedFinalHash { get; set; }
@@ -25,10 +25,11 @@ public sealed class ReplayLog
     public static ReplayLog Deserialize(byte[] bytes)
     {
         using MemoryStream ms = new(bytes, false); using BinaryReader r = new(ms);
-        if (r.ReadUInt32() != Magic || r.ReadUInt16() != Version) throw new InvalidDataException("Replay version mismatch.");
+        if (r.ReadUInt32() != Magic) throw new InvalidDataException("Replay magic mismatch.");
+        ushort version = r.ReadUInt16(); if (version < 1 || version > Version) throw new InvalidDataException("Replay version mismatch.");
         int len = r.ReadInt32(); if (len < 0 || len > 64 * 1024 * 1024) throw new InvalidDataException("Invalid replay snapshot size.");
         ReplayLog log = new(r.ReadBytes(len)); int count = r.ReadInt32(); if (count < 0 || count > 1_000_000) throw new InvalidDataException("Invalid replay command count.");
-        for (int i = 0; i < count; i++) log.Commands.Add(CommandEnvelope.Read(r)); log.ExpectedFinalHash = r.ReadUInt64(); return log;
+        for (int i = 0; i < count; i++) log.Commands.Add(CommandEnvelope.Read(r, includeBuildFields: version >= 2, includeEnergyPriority: version >= 5)); log.ExpectedFinalHash = r.ReadUInt64(); return log;
     }
 
     public SimulationRunner CreateRunner()

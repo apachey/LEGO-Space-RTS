@@ -1,4 +1,3 @@
-using System.Text;
 using Godot;
 using LegoSpaceRTS.Presentation;
 using LegoSpaceRTS.SimCore;
@@ -8,74 +7,46 @@ namespace LegoSpaceRTS.UI;
 public partial class DebugHud : CanvasLayer
 {
     private GodotSimBridge? _bridge;
-    private SelectionController? _selection;
-    private DebugRenderer? _debug;
-    private FogPresenter? _fog;
+    private PanelContainer? _panel;
     private Label? _label;
-    private double _nextHashUpdate;
-    private string _cachedHash = "-";
-    private readonly StringBuilder _builder = new(1024);
+    private double _nextUpdate;
 
-    public void Configure(GodotSimBridge bridge, SelectionController selection, DebugRenderer debug, FogPresenter fog)
+    public void Configure(GodotSimBridge bridge, RtsInputController input, DebugRenderer debug, FogPresenter fog)
     {
-        _bridge = bridge; _selection = selection; _debug = debug; _fog = fog;
-        Layer = 10;
-        PanelContainer panel = new() { Name = "DebugPanel", Position = new Vector2(12, 12), CustomMinimumSize = new Vector2(760, 0) };
-        VBoxContainer box = new(); panel.AddChild(box);
-        _label = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart };
-        _label.AddThemeFontSizeOverride("font_size", 18);
-        box.AddChild(_label);
+        _bridge = bridge; Name = "DeveloperHUD"; Layer = 20; ProcessPriority = 210;
+        _panel = new PanelContainer { Name = "DeveloperPanel", Position = new Vector2(12, 90), CustomMinimumSize = new Vector2(680, 0), Visible = false };
+        VBoxContainer box = new(); _panel.AddChild(box);
+        HBoxContainer header = new(); box.AddChild(header);
+        Label title = new() { Text = "DEVELOPER TOOLS — F8", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill }; title.AddThemeFontSizeOverride("font_size", 16); header.AddChild(title);
+        Button drain = new() { Text = "Drain Energy" }; drain.Pressed += input.DebugDrainEnergy; header.AddChild(drain);
+        _label = new Label(); _label.AddThemeFontSizeOverride("font_size", 14); box.AddChild(_label);
         HFlowContainer toggles = new(); box.AddChild(toggles);
-        AddToggle(toggles, "Nav", () => _debug.DrawNavigation, v => _debug.DrawNavigation = v);
-        AddToggle(toggles, "HPA", () => _debug.DrawClusters, v => _debug.DrawClusters = v);
-        AddToggle(toggles, "Portals", () => _debug.DrawPortals, v => _debug.DrawPortals = v);
-        AddToggle(toggles, "Paths", () => _debug.DrawPaths, v => _debug.DrawPaths = v);
-        AddToggle(toggles, "Separation", () => _debug.DrawLocalSeparation, v => _debug.DrawLocalSeparation = v);
-        AddToggle(toggles, "Buckets", () => _debug.DrawSpatialBuckets, v => _debug.DrawSpatialBuckets = v);
-        AddToggle(toggles, "Vision", () => _debug.DrawVision, v => _debug.DrawVision = v);
-        AddToggle(toggles, "Excavatable", () => _debug.DrawExcavatable, v => _debug.DrawExcavatable = v);
-        AddToggle(toggles, "Fog", () => _fog.FogVisible, _fog.SetFogVisible);
-        AddChild(panel);
-        ProcessPriority = 200;
+        AddToggle(toggles, "Nav", () => debug.DrawNavigation, v => debug.DrawNavigation = v);
+        AddToggle(toggles, "HPA", () => debug.DrawClusters, v => debug.DrawClusters = v);
+        AddToggle(toggles, "Portals", () => debug.DrawPortals, v => debug.DrawPortals = v);
+        AddToggle(toggles, "Paths", () => debug.DrawPaths, v => debug.DrawPaths = v);
+        AddToggle(toggles, "Separation", () => debug.DrawLocalSeparation, v => debug.DrawLocalSeparation = v);
+        AddToggle(toggles, "Buckets", () => debug.DrawSpatialBuckets, v => debug.DrawSpatialBuckets = v);
+        AddToggle(toggles, "Vision", () => debug.DrawVision, v => debug.DrawVision = v);
+        AddToggle(toggles, "Excavatable", () => debug.DrawExcavatable, v => debug.DrawExcavatable = v);
+        AddToggle(toggles, "Fog", () => fog.FogVisible, fog.SetFogVisible);
+        AddChild(_panel);
     }
 
     public override void _Process(double delta)
     {
-        if (_bridge is null || _selection is null || _label is null) return;
+        if (_panel is null || _bridge is null || _label is null) return;
+        if (Input.IsActionJustPressed("debug_hud_toggle")) _panel.Visible = !_panel.Visible;
+        if (!_panel.Visible) return;
         double now = Time.GetTicksMsec() / 1000.0;
-        if (now >= _nextHashUpdate) { _cachedHash = _bridge.StateHashHex(); _nextHashUpdate = now + 0.25; }
-        _builder.Clear();
-        _builder.Append("LEGO Space RTS — Godot M2 Technical Prototype\nTick: ").Append(_bridge.World.Tick.Value).Append("   Hash: ").Append(_cachedHash)
-            .Append("   Content: ").Append(_bridge.GameplayContentHash.ToString("X16")).Append('\n')
-            .Append("Sim: ").Append(_bridge.LastSimulationMs.ToString("F3")).Append(" ms   Path: ").Append(_bridge.LastPathfindingMs.ToString("F3")).Append(" ms   Entities: ").Append(_bridge.World.Entities.Alive.Count).Append('\n')
-            .Append("Selected: ").Append(_selection.Selected.Count).Append(" / 128");
-        if (_selection.Selected.Count > 0)
-        {
-            EntityId first = _selection.Selected[0];
-            _builder.Append("   IDs:");
-            for (int i = 0; i < _selection.Selected.Count && i < 12; i++) _builder.Append(' ').Append(_selection.Selected[i].Value);
-            if (_selection.Selected.Count > 12) _builder.Append(" …");
-            if (_bridge.World.Entities.Navigation.TryGet(first, out NavigationAgent n) && _bridge.World.Entities.Movement.TryGet(first, out Movement m) && _bridge.World.Entities.Transform.TryGet(first, out SimTransform t))
-            {
-                RouteCorridor? corridor = _bridge.World.GetCorridor(first);
-                VisibilityState fog = _bridge.World.Fog.Get(0, t.Position.X.FloorToInt(), t.Position.Y.FloorToInt());
-                _builder.Append("\nFirst: footprint=").Append(n.Footprint).Append(" pathIndex=").Append(m.PathIndex).Append('/').Append(corridor?.Cells.Count ?? 0)
-                    .Append(" local=").Append(m.CompressionTicks > 0 ? "compressed" : "clear").Append(" fog=").Append(fog).Append(" compressTicks=").Append(m.CompressionTicks);
-            }
-        }
-        if (_selection.LastFilteredWorkerCount > 0)
-            _builder.Append("\nBox-select priority filtered ").Append(_selection.LastFilteredWorkerCount).Append(" worker(s); Ctrl+drag includes workers.");
-        _builder.Append("\nRMB Move | Shift+RMB Queue (numbered markers) | S Stop | H Hold");
-        _builder.Append("\nM2 note: Hold and Stop both halt movement now; Hold differs once combat exists (fires without chasing).");
-        _builder.Append("\nCtrl+0–9 assign | 0–9 recall | F9 topology-open | ,/. rotate | wheel zoom");
-        _label.Text = _builder.ToString();
+        if (now < _nextUpdate) return;
+        _nextUpdate = now + 0.25;
+        _label.Text = $"Tick {_bridge.World.Tick.Value}   Hash {_bridge.StateHashHex()}   Content {_bridge.GameplayContentHash:X16}\nSim {_bridge.LastSimulationMs:F3} ms   Path {_bridge.LastPathfindingMs:F3} ms   Entities {_bridge.World.Entities.Alive.Count}";
     }
 
     private static void AddToggle(Container parent, string name, Func<bool> getter, Action<bool> setter)
     {
-        Button button = new() { Text = name, ToggleMode = true, ButtonPressed = getter(), CustomMinimumSize = new Vector2(0f, 32f) };
-        button.AddThemeFontSizeOverride("font_size", 16);
-        button.Pressed += () => setter(button.ButtonPressed);
-        parent.AddChild(button);
+        Button button = new() { Text = name, ToggleMode = true, ButtonPressed = getter(), CustomMinimumSize = new Vector2(0, 30) };
+        button.Pressed += () => setter(button.ButtonPressed); parent.AddChild(button);
     }
 }

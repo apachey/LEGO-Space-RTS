@@ -79,9 +79,8 @@ illegal overlap remains, no enemy phasing occurs, lower-priority traffic is not
 permanently starved, topology refresh is deterministic and legal, repeated
 hashes match, and normal Phase 09 performance budgets are met.
 
-The scenario/fixture is intentionally **not implemented by the Phase 09B
-governance sync**. Implementing Movement Architecture v2 and this executable
-fixture belongs to the next separately approved implementation task.
+The scenario/fixture is implemented by `M2MovementAcceptanceTests` and remains
+mandatory regression coverage after M2 acceptance.
 
 M2 also requires the Phase 09B human movement pass covering responsiveness,
 group readability, formation reflow, Heavy movement character, chokepoints,
@@ -111,6 +110,6 @@ major architecture rewrite.
 - Godot logs `compiled runtime data`, not fallback, for release validation;
 - changing source JSON without regenerating binaries must be caught by the build/review process.
 
-M3 must not begin until all revised Phase 09B M2 `BLOCKING_NOW` automated gates
-and the required human M2 playtest pass. The legacy 60-mover diagnostic does not
+All revised Phase 09B M2 `BLOCKING_NOW` automated gates and the required human
+M2 playtest passed before M3 began. The legacy 60-mover diagnostic did not
 replace or waive those gates.

@@ -5,7 +5,7 @@ namespace LegoSpaceRTS.SimCore
 public static class CompiledMapCodec
 {
     public const uint Magic = 0x4D525453; // MRTS
-    public const ushort Version = 1;
+    public const ushort Version = 3;
 
     public static byte[] Write(MapDefinition definition)
     {
@@ -21,8 +21,12 @@ public static class CompiledMapCodec
     {
         using MemoryStream ms = new(bytes, false);
         using BinaryReader reader = new(ms);
-        if (reader.ReadUInt32() != Magic || reader.ReadUInt16() != Version) throw new InvalidDataException("Compiled map version mismatch.");
-        return MapDefinition.Deserialize(reader);
+        if (reader.ReadUInt32() != Magic) throw new InvalidDataException("Compiled map magic mismatch.");
+        ushort version = reader.ReadUInt16();
+        if (version != 1 && version != 2 && version != Version) throw new InvalidDataException("Compiled map version mismatch.");
+        MapDefinition definition = MapDefinition.Deserialize(reader, version);
+        if (ms.Position != ms.Length) throw new InvalidDataException("Trailing compiled map bytes.");
+        return definition;
     }
 
     public static MapGrid Read(byte[] bytes) => ReadDefinition(bytes).Grid;

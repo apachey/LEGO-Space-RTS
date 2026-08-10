@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="LEGO Space RTS — Phase 10 M0-M2"
+config/name="LEGO Space RTS — M3 Economy Prototype"
 run/main_scene="res://Scenes/Bootstrap.tscn"
 config/features=PackedStringArray("4.7", "C#", "Forward Plus")
 

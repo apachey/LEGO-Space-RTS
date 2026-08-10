@@ -5,14 +5,39 @@ namespace LegoSpaceRTS.SimCore
 {
 public static class ScenarioFactory
 {
+    private const int CanonicalStartingCrewPerPlayer = 6;
+
     public static SimulationWorld CreateFirstControllable(int count = 18)
         => CreateFirstControllable(DevMapFactory.CreateDefinition(), PrototypeContentFactory.CreateM2Catalog(), count);
+
+    public static SimulationWorld CreateCanonicalOpening()
+        => CreateCanonicalOpening(DevMapFactory.CreateDefinition(), PrototypeContentFactory.CreateM2Catalog());
+
+    public static SimulationWorld CreateCanonicalOpening(MapDefinition definition, PrototypeContentCatalog content)
+    {
+        if (definition == null) throw new ArgumentNullException(nameof(definition));
+        if (content == null) throw new ArgumentNullException(nameof(content));
+        SimulationWorld world = new(definition.Grid, 2, content);
+        int[] crewCounts = new int[world.PlayerCount];
+        for (int i = 0; i < definition.InitialEntities.Length; i++)
+        {
+            InitialEntitySpawn authored = definition.InitialEntities[i];
+            if (authored.PlayerSlot >= crewCounts.Length || crewCounts[authored.PlayerSlot] >= CanonicalStartingCrewPerPlayer) continue;
+            SpawnCanonicalCrew(world, authored.PlayerSlot, authored.Position, content);
+            crewCounts[authored.PlayerSlot]++;
+        }
+        for (int player = 0; player < crewCounts.Length; player++)
+            if (crewCounts[player] != CanonicalStartingCrewPerPlayer) throw new InvalidOperationException($"Canonical opening requires six Crew spawn positions for player {player}.");
+        SpawnScenarioResourcesAndReceivers(world, definition, content);
+        FinalizeScenario(world);
+        return world;
+    }
 
     public static SimulationWorld CreateFirstControllable(MapDefinition definition, PrototypeContentCatalog content, int count = 18)
     {
         if (definition == null) throw new ArgumentNullException(nameof(definition));
         if (content == null) throw new ArgumentNullException(nameof(content));
-        SimulationWorld world = new(definition.Grid, 2);
+        SimulationWorld world = new(definition.Grid, 2, content);
         int player0Remaining = count;
         int player1Remaining = Math.Min(8, count);
         for (int i = 0; i < definition.InitialEntities.Length; i++)
@@ -23,8 +48,8 @@ public static class ScenarioFactory
             SpawnAuthored(world, spawn, content);
             if (spawn.PlayerSlot == 0) player0Remaining--; else if (spawn.PlayerSlot == 1) player1Remaining--;
         }
-        world.Spatial.Rebuild(world.Entities);
-        new VisionSystem().Step(world);
+        SpawnScenarioResourcesAndReceivers(world, definition, content);
+        FinalizeScenario(world);
         return world;
     }
 
@@ -33,7 +58,7 @@ public static class ScenarioFactory
         SimulationWorld world = new(DevMapFactory.Create(), 2);
         PrototypeContentCatalog content = PrototypeContentFactory.CreateM2Catalog();
         SpawnGrid(world, content, 0, 60, 20, 58, 10);
-        world.Spatial.Rebuild(world.Entities); new VisionSystem().Step(world);
+        FinalizeScenario(world);
         EntityId[] ids = OwnedIds(world, 0);
         world.Commands.Enqueue(new CommandEnvelope(new SimTick(1), 0, 1, SimCommandType.Move, ids, FixVec2.FromInts(138, 80)));
         world.Commands.Enqueue(new CommandEnvelope(new SimTick(700), 0, 2, SimCommandType.Move, ids, FixVec2.FromInts(20, 112)));
@@ -51,7 +76,7 @@ public static class ScenarioFactory
         SpawnPrototypeMover(world,content,0,FootprintClass.Huge,FixVec2.FromInts(69,90));
         SpawnPrototypeMover(world,content,0,FootprintClass.Small,FixVec2.FromInts(91,90));
         SpawnPrototypeMover(world,content,0,FootprintClass.Huge,FixVec2.FromInts(95,90));
-        world.Spatial.Rebuild(world.Entities);new VisionSystem().Step(world);
+        FinalizeScenario(world);
         return world;
     }
 
@@ -71,7 +96,8 @@ public static class ScenarioFactory
     public static EntityId[] OwnedIds(SimulationWorld world, byte player)
     {
         List<EntityId> ids = new(); IReadOnlyList<EntityId> alive = world.Entities.Alive;
-        for (int i = 0; i < alive.Count; i++) if (world.Entities.Ownership.TryGet(alive[i], out Ownership o) && o.PlayerSlot == player) ids.Add(alive[i]);
+        for (int i = 0; i < alive.Count; i++)
+            if (world.Entities.Navigation.Has(alive[i]) && world.Entities.Ownership.TryGet(alive[i], out Ownership o) && o.PlayerSlot == player) ids.Add(alive[i]);
         return ids.ToArray();
     }
 
@@ -88,7 +114,30 @@ public static class ScenarioFactory
         world.Entities.Navigation.Set(id, new NavigationAgent { Footprint = spawn.Footprint, Layer = spawn.Layer, Target = spawn.Position, PathTopologyVersion = world.Map.TopologyVersion });
         world.Entities.Selectable.Set(id, new Selectable { IsSelectable = true, ContentType = StableId.FromKey(spawn.ContentKey), Kind = spawn.SelectableKind });
         world.Entities.Vision.Set(id, new Vision { RadiusBuildCells = spawn.VisionRadius, LastFogX = -1, LastFogY = -1 });
+        AddWorkerComponents(world, id, definition);
         world.GetQueue(id);
+    }
+
+    private static void SpawnCanonicalCrew(SimulationWorld world, byte playerSlot, FixVec2 position, PrototypeContentCatalog content)
+    {
+        const string crewKey = "unit.rock_raiders.crew";
+        if (!content.TryGetEntity(crewKey, out PrototypeEntityDefinition crew) || !content.TryGetMovement(crew.MovementProfileKey, out PrototypeMovementProfile movement))
+            throw new InvalidOperationException("Canonical Crew content is missing.");
+        SpawnAuthored(world, new InitialEntitySpawn(playerSlot, crewKey, position, crew.Footprint, movement.Layer, crew.SelectableKind, crew.VisionRadius), content);
+    }
+
+    private static void SpawnScenarioResourcesAndReceivers(SimulationWorld world, MapDefinition definition, PrototypeContentCatalog content)
+    {
+        for (int i = 0; i < definition.InitialResourceNodes.Length; i++) SpawnResourceNode(world, definition.InitialResourceNodes[i], content);
+        for (int i = 0; i < definition.InitialResourceReceivers.Length; i++) SpawnResourceReceiver(world, definition.InitialResourceReceivers[i], content);
+    }
+
+    private static void FinalizeScenario(SimulationWorld world)
+    {
+        EnergyDomainSystem.InitializeOpeningDomains(world);
+        OperationsCapacitySystem.Recalculate(world);
+        world.Spatial.Rebuild(world.Entities);
+        new VisionSystem().Step(world);
     }
 
     private static Movement CreateMovement(PrototypeMovementProfile profile, FixVec2 position)
@@ -98,6 +147,27 @@ public static class ScenarioFactory
             MaxSpeed=profile.MaxSpeed, Acceleration=profile.Acceleration, Deceleration=profile.Deceleration, TurnRatePerTick=profile.TurnRatePerTick, ReversePolicy=profile.ReversePolicy,
             CurrentSpeed=Fix32.Zero, CurrentVelocity=FixVec2.Zero, DesiredMovement=FixVec2.Zero, PathIndex=0, State=MovementState.Idle, StuckTicks=0, CompressionTicks=0, LastPosition=position
         };
+    }
+
+    private static void SpawnResourceNode(SimulationWorld world, InitialResourceNodeSpawn spawn, PrototypeContentCatalog content)
+    {
+        if (!content.TryGetResourceNode(spawn.ContentKey, out ResourceNodeDefinition definition))
+            throw new InvalidOperationException($"Missing resource node content {spawn.ContentKey}.");
+        EntityId id = world.Entities.Create();
+        world.Entities.Transform.Set(id, new SimTransform { Position = spawn.Position, Orientation = Angle16.Zero });
+        world.Entities.Selectable.Set(id, new Selectable { IsSelectable = true, ContentType = definition.Id, Kind = SelectableKind.ResourceNode });
+        world.Entities.ResourceNode.Set(id, new ResourceNode
+        {
+            Type = definition.Type,
+            DepositSize = definition.DepositSize,
+            HarvestInteraction = definition.HarvestInteraction,
+            DepletionProfile = definition.DepletionProfile,
+            Capacity = definition.Capacity,
+            Remaining = definition.Capacity,
+            ReducedThresholdBasisPoints = definition.ReducedThresholdBasisPoints,
+            LowThresholdBasisPoints = definition.LowThresholdBasisPoints,
+            CriticalThresholdBasisPoints = definition.CriticalThresholdBasisPoints
+        });
     }
 
     private static void SpawnGrid(SimulationWorld world, PrototypeContentCatalog content, byte player, int count, int originX, int originY, int columns)
@@ -131,6 +201,61 @@ public static class ScenarioFactory
         world.Entities.Movement.Set(id,CreateMovement(profile,position));world.Entities.Navigation.Set(id,new NavigationAgent{Footprint=definition.Footprint,Layer=profile.Layer,Target=position,PathTopologyVersion=world.Map.TopologyVersion});
         world.Entities.Selectable.Set(id,new Selectable{IsSelectable=true,ContentType=definition.Id,Kind=definition.SelectableKind});
         world.Entities.Vision.Set(id,new Vision{RadiusBuildCells=definition.VisionRadius,LastFogX=-1,LastFogY=-1});world.GetQueue(id);
+        AddWorkerComponents(world,id,definition);
+    }
+
+    private static void AddWorkerComponents(SimulationWorld world, EntityId id, PrototypeEntityDefinition definition)
+    {
+        if (definition.SelectableKind != SelectableKind.Worker) return;
+        if (definition.OreTicksPerUnit == 0 || definition.OreCarryCapacity == 0) throw new InvalidOperationException($"Worker content {definition.StableKey} has no Ore harvesting metadata.");
+        world.Entities.Worker.Set(id, new Worker { ResourceTarget = EntityId.None, ReceiverTarget = EntityId.None, TaskState = WorkerTaskState.Idle, TicksPerOre = definition.OreTicksPerUnit });
+        world.Entities.Builder.Set(id, new Builder { ConstructionTarget = EntityId.None, JobState = BuilderJobState.Idle });
+        world.Entities.ResourceCarrier.Set(id, new ResourceCarrier { Type = ResourceType.Ore, Amount = 0, Capacity = definition.OreCarryCapacity });
+    }
+
+    private static void SpawnResourceReceiver(SimulationWorld world, InitialResourceReceiverSpawn spawn, PrototypeContentCatalog content)
+    {
+        if (!content.TryGetEntity(spawn.ContentKey, out PrototypeEntityDefinition definition) || definition.SelectableKind != SelectableKind.Building)
+            throw new InvalidOperationException($"Missing resource receiver content {spawn.ContentKey}.");
+        EntityId id = world.Entities.Create();
+        world.Entities.Ownership.Set(id, new Ownership { PlayerSlot = spawn.PlayerSlot });
+        world.Entities.Transform.Set(id, new SimTransform { Position = spawn.Position, Orientation = Angle16.Zero });
+        world.Entities.Selectable.Set(id, new Selectable { IsSelectable = true, ContentType = definition.Id, Kind = SelectableKind.Building });
+        world.Entities.ResourceReceiver.Set(id, new ResourceReceiver { AcceptedType = ResourceType.Ore, PendingHauledAmount = 0, IsHqEmergencyReceiver = true });
+        world.Entities.ResourceBank.Set(id, new ResourceBank { Type = ResourceType.Ore, ProcessedAmount = 500 });
+        if (!content.TryGetBuilding(definition.Id, out BuildingDefinition buildingDefinition)) throw new InvalidOperationException($"Missing building definition {spawn.ContentKey}.");
+        byte width = buildingDefinition.RotatedWidth(0), height = buildingDefinition.RotatedHeight(0);
+        Building building = new()
+        {
+            Type = definition.Id,
+            AnchorX = checked((short)(spawn.Position.X.FloorToInt() - width / 2)),
+            AnchorY = checked((short)(spawn.Position.Y.FloorToInt() - height / 2)),
+            Orientation = 0,
+            FootprintWidth = width,
+            FootprintHeight = height,
+            State = BuildingState.Completed
+        };
+        world.Entities.Building.Set(id, building);
+        if (content.IsProducer(definition.Id)) world.Entities.Production.Set(id, new Production());
+        world.SetConstructionOccupied(building, true);
+    }
+
+    internal static EntityId SpawnProducedUnit(SimulationWorld world, byte playerSlot, ContentId unitType, FixVec2 position)
+    {
+        if (!world.Content.TryGetEntity(unitType, out PrototypeEntityDefinition definition) || definition.SelectableKind == SelectableKind.Building)
+            throw new InvalidOperationException($"Missing produced unit content {unitType}.");
+        if (!world.Content.TryGetMovement(definition.MovementProfileKey, out PrototypeMovementProfile profile))
+            throw new InvalidOperationException($"Missing produced movement profile {definition.MovementProfileKey}.");
+        EntityId id = world.Entities.Create();
+        world.Entities.Ownership.Set(id, new Ownership { PlayerSlot = playerSlot });
+        world.Entities.Transform.Set(id, new SimTransform { Position = position, Orientation = Angle16.Zero });
+        world.Entities.Movement.Set(id, CreateMovement(profile, position));
+        world.Entities.Navigation.Set(id, new NavigationAgent { Footprint = definition.Footprint, Layer = profile.Layer, Target = position, PathTopologyVersion = world.Map.TopologyVersion });
+        world.Entities.Selectable.Set(id, new Selectable { IsSelectable = true, ContentType = definition.Id, Kind = definition.SelectableKind });
+        world.Entities.Vision.Set(id, new Vision { RadiusBuildCells = definition.VisionRadius, LastFogX = -1, LastFogY = -1 });
+        AddWorkerComponents(world, id, definition);
+        world.GetQueue(id);
+        return id;
     }
 }
 }

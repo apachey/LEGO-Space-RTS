@@ -122,6 +122,23 @@ public sealed class MapGrid
         throw new InvalidOperationException($"Unknown Excavatable Feature {featureId}.");
     }
 
+    public IntRect SetConstructionOccupied(short anchorX, short anchorY, BuildingDefinition definition, byte orientation, bool occupied)
+    {
+        byte width = definition.RotatedWidth(orientation), height = definition.RotatedHeight(orientation);
+        if (anchorX < 0 || anchorY < 0 || anchorX + width > BuildWidth || anchorY + height > BuildHeight)
+            throw new ArgumentOutOfRangeException(nameof(anchorX), "Construction footprint is outside the build grid.");
+        for (byte y = 0; y < height; y++)
+        for (byte x = 0; x < width; x++)
+        {
+            if (!definition.Occupies(x, y, orientation)) continue;
+            IntRect navCell = new((short)((anchorX + x) * NavPerBuild), (short)((anchorY + y) * NavPerBuild), NavPerBuild, NavPerBuild);
+            if (occupied) SetFlagsRect(navCell, MapCellFlags.Impassable | MapCellFlags.GroundOccluder, MapCellFlags.Buildable);
+            else SetFlagsRect(navCell, MapCellFlags.Ground | MapCellFlags.Buildable, MapCellFlags.Impassable | MapCellFlags.GroundOccluder);
+        }
+        TopologyVersion++;
+        return new IntRect((short)(anchorX * NavPerBuild), (short)(anchorY * NavPerBuild), (short)(width * NavPerBuild), (short)(height * NavPerBuild));
+    }
+
     public static FixVec2 NavCellCenterToBuild(NavCell cell) => new(
         Fix32.FromRatio(cell.X * 2 + 1, 4),
         Fix32.FromRatio(cell.Y * 2 + 1, 4));

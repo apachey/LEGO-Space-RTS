@@ -34,27 +34,162 @@ public readonly struct PrototypeEntityDefinition
     public readonly SelectableKind SelectableKind;
     public readonly byte VisionRadius;
     public readonly string ViewProfileKey;
+    public readonly ushort OreTicksPerUnit;
+    public readonly byte OreCarryCapacity;
+    public readonly byte OperationsCapacity;
 
     public PrototypeEntityDefinition(string stableKey, string factionKey, string sourceClassification, string movementProfileKey,
-        FootprintClass footprint, SelectableKind selectableKind, byte visionRadius, string viewProfileKey)
+        FootprintClass footprint, SelectableKind selectableKind, byte visionRadius, string viewProfileKey, ushort oreTicksPerUnit = 0,
+        byte oreCarryCapacity = 0, byte operationsCapacity = 0)
     {
+        if ((oreTicksPerUnit == 0) != (oreCarryCapacity == 0)) throw new ArgumentException("Worker extraction cadence and carry capacity must both be present or absent.");
+        if (oreCarryCapacity > 0 && selectableKind != SelectableKind.Worker) throw new ArgumentException("Only Worker definitions may carry worker harvesting metadata.");
         StableKey = stableKey ?? throw new ArgumentNullException(nameof(stableKey)); Id = StableId.FromKey(stableKey);
         FactionKey = factionKey ?? throw new ArgumentNullException(nameof(factionKey));
         SourceClassification = sourceClassification ?? throw new ArgumentNullException(nameof(sourceClassification));
         MovementProfileKey = movementProfileKey ?? throw new ArgumentNullException(nameof(movementProfileKey));
         Footprint = footprint; SelectableKind = selectableKind; VisionRadius = visionRadius;
         ViewProfileKey = viewProfileKey ?? throw new ArgumentNullException(nameof(viewProfileKey));
+        OreTicksPerUnit = oreTicksPerUnit; OreCarryCapacity = oreCarryCapacity; OperationsCapacity = operationsCapacity;
     }
 }
 
-/// <summary>M2-only immutable gameplay metadata compiled from Content/PrototypeEntities.json.</summary>
+public readonly struct ResourceNodeDefinition
+{
+    public readonly string StableKey;
+    public readonly ContentId Id;
+    public readonly ResourceType Type;
+    public readonly ResourceDepositSize DepositSize;
+    public readonly int Capacity;
+    public readonly HarvestInteraction HarvestInteraction;
+    public readonly ResourceDepletionProfile DepletionProfile;
+    public readonly ushort ReducedThresholdBasisPoints;
+    public readonly ushort LowThresholdBasisPoints;
+    public readonly ushort CriticalThresholdBasisPoints;
+    public readonly string ViewProfileKey;
+
+    public ResourceNodeDefinition(string stableKey, ResourceType type, ResourceDepositSize depositSize, int capacity,
+        HarvestInteraction harvestInteraction, ResourceDepletionProfile depletionProfile,
+        ushort reducedThresholdBasisPoints, ushort lowThresholdBasisPoints, ushort criticalThresholdBasisPoints,
+        string viewProfileKey)
+    {
+        if (capacity <= 0) throw new ArgumentOutOfRangeException(nameof(capacity));
+        if (reducedThresholdBasisPoints > 10_000 || lowThresholdBasisPoints > reducedThresholdBasisPoints || criticalThresholdBasisPoints > lowThresholdBasisPoints)
+            throw new ArgumentOutOfRangeException(nameof(reducedThresholdBasisPoints), "Resource model-state thresholds must descend within 0..10000 basis points.");
+        StableKey = stableKey ?? throw new ArgumentNullException(nameof(stableKey));
+        Id = StableId.FromKey(stableKey);
+        Type = type;
+        DepositSize = depositSize;
+        Capacity = capacity;
+        HarvestInteraction = harvestInteraction;
+        DepletionProfile = depletionProfile;
+        ReducedThresholdBasisPoints = reducedThresholdBasisPoints;
+        LowThresholdBasisPoints = lowThresholdBasisPoints;
+        CriticalThresholdBasisPoints = criticalThresholdBasisPoints;
+        ViewProfileKey = viewProfileKey ?? throw new ArgumentNullException(nameof(viewProfileKey));
+    }
+}
+
+public readonly struct BuildingDefinition
+{
+    public readonly string StableKey;
+    public readonly ContentId Id;
+    public readonly byte FootprintWidth;
+    public readonly byte FootprintHeight;
+    public readonly ulong FootprintMask;
+    public readonly bool Rotatable;
+    public readonly ushort OreCost;
+    public readonly ushort EnergyCost;
+    public readonly ushort BuildTicks;
+    public readonly byte ProductionExitWidth;
+    public readonly byte ProductionExitDepth;
+    public readonly FootprintClass ProductionExitFootprint;
+    public readonly byte OperationsCapacityProvided;
+    public readonly ushort EnergyGenerationPerSecond;
+    public readonly ushort EnergyReserveCapacity;
+    public readonly ushort ContinuousEnergyDemandPerSecond;
+    public readonly EnergyFunctionalClass EnergyFunctionalClass;
+
+    public BuildingDefinition(string stableKey, byte footprintWidth, byte footprintHeight, ulong footprintMask, bool rotatable,
+        ushort oreCost, ushort energyCost, ushort buildTicks, byte productionExitWidth = 0, byte productionExitDepth = 0,
+        FootprintClass productionExitFootprint = FootprintClass.Tiny, byte operationsCapacityProvided = 0,
+        ushort energyGenerationPerSecond = 0, ushort energyReserveCapacity = 0, ushort continuousEnergyDemandPerSecond = 0,
+        EnergyFunctionalClass energyFunctionalClass = EnergyFunctionalClass.StaticDefenseAndNonessential)
+    {
+        if (footprintWidth == 0 || footprintHeight == 0 || footprintWidth > 8 || footprintHeight > 8) throw new ArgumentOutOfRangeException(nameof(footprintWidth));
+        int cells = footprintWidth * footprintHeight;
+        ulong allowedMask = cells == 64 ? ulong.MaxValue : (1UL << cells) - 1UL;
+        if (footprintMask == 0 || (footprintMask & ~allowedMask) != 0) throw new ArgumentOutOfRangeException(nameof(footprintMask));
+        if ((productionExitWidth == 0) != (productionExitDepth == 0)) throw new ArgumentException("Production exit width and depth must both be present or absent.");
+        StableKey = stableKey ?? throw new ArgumentNullException(nameof(stableKey));
+        Id = StableId.FromKey(stableKey);
+        FootprintWidth = footprintWidth; FootprintHeight = footprintHeight; FootprintMask = footprintMask; Rotatable = rotatable;
+        OreCost = oreCost; EnergyCost = energyCost; BuildTicks = buildTicks;
+        ProductionExitWidth = productionExitWidth; ProductionExitDepth = productionExitDepth; ProductionExitFootprint = productionExitFootprint;
+        OperationsCapacityProvided = operationsCapacityProvided;
+        EnergyGenerationPerSecond = energyGenerationPerSecond; EnergyReserveCapacity = energyReserveCapacity;
+        ContinuousEnergyDemandPerSecond = continuousEnergyDemandPerSecond;
+        EnergyFunctionalClass = energyFunctionalClass;
+    }
+
+    public byte RotatedWidth(byte orientation) => (orientation & 1) == 0 ? FootprintWidth : FootprintHeight;
+    public byte RotatedHeight(byte orientation) => (orientation & 1) == 0 ? FootprintHeight : FootprintWidth;
+
+    public bool Occupies(byte x, byte y, byte orientation)
+    {
+        int sourceX, sourceY;
+        switch (orientation & 3)
+        {
+            case 0: sourceX = x; sourceY = y; break;
+            case 1: sourceX = y; sourceY = FootprintHeight - 1 - x; break;
+            case 2: sourceX = FootprintWidth - 1 - x; sourceY = FootprintHeight - 1 - y; break;
+            default: sourceX = FootprintWidth - 1 - y; sourceY = x; break;
+        }
+        return (FootprintMask & (1UL << (sourceY * FootprintWidth + sourceX))) != 0;
+    }
+}
+
+public readonly struct UnitProductionDefinition
+{
+    public readonly ContentId UnitType;
+    public readonly string UnitStableKey;
+    public readonly ContentId ProducerType;
+    public readonly string ProducerStableKey;
+    public readonly ushort OreCost;
+    public readonly ushort EnergyCost;
+    public readonly byte CrystalCost;
+    public readonly byte OperationsCapacity;
+    public readonly ushort BuildTicks;
+
+    public UnitProductionDefinition(string unitStableKey, string producerStableKey, ushort oreCost, ushort energyCost,
+        byte crystalCost, byte operationsCapacity, ushort buildTicks)
+    {
+        if (string.IsNullOrWhiteSpace(unitStableKey)) throw new ArgumentNullException(nameof(unitStableKey));
+        if (string.IsNullOrWhiteSpace(producerStableKey)) throw new ArgumentNullException(nameof(producerStableKey));
+        if (buildTicks == 0 || operationsCapacity == 0) throw new ArgumentOutOfRangeException(nameof(buildTicks));
+        UnitStableKey = unitStableKey; UnitType = StableId.FromKey(unitStableKey);
+        ProducerStableKey = producerStableKey; ProducerType = StableId.FromKey(producerStableKey);
+        OreCost = oreCost; EnergyCost = energyCost; CrystalCost = crystalCost; OperationsCapacity = operationsCapacity; BuildTicks = buildTicks;
+    }
+}
+
+/// <summary>Immutable prototype gameplay metadata compiled from Content/PrototypeEntities.json.</summary>
 public sealed class PrototypeContentCatalog
 {
     public PrototypeMovementProfile[] MovementProfiles { get; }
     public PrototypeEntityDefinition[] Entities { get; }
+    public ResourceNodeDefinition[] ResourceNodes { get; }
+    public BuildingDefinition[] Buildings { get; }
+    public UnitProductionDefinition[] Production { get; }
     public ulong ContentHash { get; internal set; }
-    public PrototypeContentCatalog(PrototypeMovementProfile[] movementProfiles, PrototypeEntityDefinition[] entities)
-    { MovementProfiles = movementProfiles ?? Array.Empty<PrototypeMovementProfile>(); Entities = entities ?? Array.Empty<PrototypeEntityDefinition>(); }
+    public PrototypeContentCatalog(PrototypeMovementProfile[] movementProfiles, PrototypeEntityDefinition[] entities, ResourceNodeDefinition[]? resourceNodes = null, BuildingDefinition[]? buildings = null, UnitProductionDefinition[]? production = null)
+    {
+        MovementProfiles = movementProfiles ?? Array.Empty<PrototypeMovementProfile>();
+        Entities = entities ?? Array.Empty<PrototypeEntityDefinition>();
+        ResourceNodes = resourceNodes ?? Array.Empty<ResourceNodeDefinition>();
+        Buildings = buildings ?? Array.Empty<BuildingDefinition>();
+        Production = production ?? Array.Empty<UnitProductionDefinition>();
+    }
 
     public bool ContainsEntityKey(string stableKey) => TryGetEntity(stableKey, out _);
     public bool TryGetEntity(string stableKey, out PrototypeEntityDefinition definition)
@@ -62,16 +197,43 @@ public sealed class PrototypeContentCatalog
         for (int i = 0; i < Entities.Length; i++) if (string.Equals(Entities[i].StableKey, stableKey, StringComparison.Ordinal)) { definition = Entities[i]; return true; }
         definition = default; return false;
     }
+    public bool TryGetEntity(ContentId id, out PrototypeEntityDefinition definition)
+    {
+        for (int i = 0; i < Entities.Length; i++) if (Entities[i].Id == id) { definition = Entities[i]; return true; }
+        definition = default; return false;
+    }
     public bool TryGetMovement(string stableKey, out PrototypeMovementProfile profile)
     {
         for (int i = 0; i < MovementProfiles.Length; i++) if (string.Equals(MovementProfiles[i].StableKey, stableKey, StringComparison.Ordinal)) { profile = MovementProfiles[i]; return true; }
         profile = default; return false;
     }
+    public bool ContainsResourceNodeKey(string stableKey) => TryGetResourceNode(stableKey, out _);
+    public bool TryGetResourceNode(string stableKey, out ResourceNodeDefinition definition)
+    {
+        for (int i = 0; i < ResourceNodes.Length; i++) if (string.Equals(ResourceNodes[i].StableKey, stableKey, StringComparison.Ordinal)) { definition = ResourceNodes[i]; return true; }
+        definition = default; return false;
+    }
+    public bool TryGetBuilding(string stableKey, out BuildingDefinition definition) => TryGetBuilding(StableId.FromKey(stableKey), out definition);
+    public bool TryGetBuilding(ContentId id, out BuildingDefinition definition)
+    {
+        for (int i = 0; i < Buildings.Length; i++) if (Buildings[i].Id == id) { definition = Buildings[i]; return true; }
+        definition = default; return false;
+    }
+    public bool TryGetProduction(ContentId unitType, out UnitProductionDefinition definition)
+    {
+        for (int i = 0; i < Production.Length; i++) if (Production[i].UnitType == unitType) { definition = Production[i]; return true; }
+        definition = default; return false;
+    }
+    public bool IsProducer(ContentId buildingType)
+    {
+        for (int i = 0; i < Production.Length; i++) if (Production[i].ProducerType == buildingType) return true;
+        return false;
+    }
 }
 
 public static class PrototypeContentFactory
 {
-    /// <summary>Built-in mirror of the checked-in M2 source data; used by headless/debug startup before generated files are present.</summary>
+    /// <summary>Built-in mirror of the checked-in prototype source data; used by headless/debug startup before generated files are present.</summary>
     public static PrototypeContentCatalog CreateM2Catalog()
     {
         PrototypeMovementProfile[] profiles =
@@ -80,17 +242,45 @@ public static class PrototypeContentFactory
             new PrototypeMovementProfile("movement.prototype.crew", Fix32.FromRatio(135,100), Fix32.FromInt(4), Fix32.FromInt(5), 1638, ReversePolicy.Full, MovementLayer.Ground),
             new PrototypeMovementProfile("movement.prototype.hover_scout", Fix32.FromRatio(225,100), Fix32.FromInt(6), Fix32.FromRatio(15,2), 1638, ReversePolicy.Full, MovementLayer.GroundHover),
             new PrototypeMovementProfile("movement.prototype.loader_dozer", Fix32.FromRatio(130,100), Fix32.FromRatio(3,2), Fix32.FromRatio(15,8), 865, ReversePolicy.Reduced, MovementLayer.Ground),
-            new PrototypeMovementProfile("movement.prototype.nav_huge", Fix32.FromRatio(9,10), Fix32.FromRatio(9,10), Fix32.FromRatio(9,8), 410, ReversePolicy.Reduced, MovementLayer.Ground)
+            new PrototypeMovementProfile("movement.prototype.rapid_rider", Fix32.FromRatio(210,100), Fix32.FromInt(4), Fix32.FromInt(5), 1638, ReversePolicy.Full, MovementLayer.GroundHover),
+            new PrototypeMovementProfile("movement.prototype.nav_huge", Fix32.FromRatio(9,10), Fix32.FromRatio(9,10), Fix32.FromRatio(9,8), 410, ReversePolicy.Reduced, MovementLayer.Ground),
+            new PrototypeMovementProfile("movement.prototype.static", Fix32.Zero, Fix32.Zero, Fix32.Zero, 0, ReversePolicy.None, MovementLayer.Ground)
         };
         PrototypeEntityDefinition[] entities =
         {
+            new PrototypeEntityDefinition("building.rock_raiders.hq", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.static", FootprintClass.Huge, SelectableKind.Building, 0, "view.placeholder.rock_raiders.hq"),
+            new PrototypeEntityDefinition("building.rock_raiders.ore_processing_plant", "RockRaiders", "COMPOSITE_ADAPTED", "movement.prototype.static", FootprintClass.Large, SelectableKind.Building, 0, "view.placeholder.rock_raiders.ore_processing_plant"),
+            new PrototypeEntityDefinition("building.rock_raiders.power_station", "RockRaiders", "COMPOSITE_ADAPTED", "movement.prototype.static", FootprintClass.Large, SelectableKind.Building, 0, "view.placeholder.rock_raiders.power_station"),
+            new PrototypeEntityDefinition("building.rock_raiders.vehicle_service_bay", "RockRaiders", "COMPOSITE_ADAPTED", "movement.prototype.static", FootprintClass.Huge, SelectableKind.Building, 0, "view.placeholder.rock_raiders.vehicle_service_bay"),
             new PrototypeEntityDefinition("prototype.nav.huge", "Technical", "ENGINEERING_ONLY", "movement.prototype.nav_huge", FootprintClass.Huge, SelectableKind.CombatSupport, 8, "view.placeholder.navigation.huge"),
-            new PrototypeEntityDefinition("unit.rock_raiders.chrome_crusher", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.chrome_crusher", FootprintClass.Large, SelectableKind.CombatSupport, 8, "view.placeholder.rock_raiders.chrome_crusher"),
-            new PrototypeEntityDefinition("unit.rock_raiders.crew", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.crew", FootprintClass.Tiny, SelectableKind.Worker, 7, "view.placeholder.rock_raiders.crew"),
-            new PrototypeEntityDefinition("unit.rock_raiders.hover_scout", "RockRaiders", "OFFICIAL_DIRECT", "movement.prototype.hover_scout", FootprintClass.Small, SelectableKind.CombatSupport, 9, "view.placeholder.rock_raiders.hover_scout"),
-            new PrototypeEntityDefinition("unit.rock_raiders.loader_dozer", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.loader_dozer", FootprintClass.Medium, SelectableKind.CombatSupport, 7, "view.placeholder.rock_raiders.loader_dozer")
+            new PrototypeEntityDefinition("unit.rock_raiders.chrome_crusher", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.chrome_crusher", FootprintClass.Large, SelectableKind.CombatSupport, 8, "view.placeholder.rock_raiders.chrome_crusher", operationsCapacity: 6),
+            new PrototypeEntityDefinition("unit.rock_raiders.crew", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.crew", FootprintClass.Tiny, SelectableKind.Worker, 7, "view.placeholder.rock_raiders.crew", 30, 8, 1),
+            new PrototypeEntityDefinition("unit.rock_raiders.hover_scout", "RockRaiders", "OFFICIAL_DIRECT", "movement.prototype.hover_scout", FootprintClass.Small, SelectableKind.CombatSupport, 9, "view.placeholder.rock_raiders.hover_scout", operationsCapacity: 1),
+            new PrototypeEntityDefinition("unit.rock_raiders.loader_dozer", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.loader_dozer", FootprintClass.Medium, SelectableKind.CombatSupport, 7, "view.placeholder.rock_raiders.loader_dozer", operationsCapacity: 3),
+            new PrototypeEntityDefinition("unit.rock_raiders.rapid_rider", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.rapid_rider", FootprintClass.Small, SelectableKind.CombatSupport, 9, "view.placeholder.rock_raiders.rapid_rider", operationsCapacity: 2)
         };
-        PrototypeContentCatalog catalog = new PrototypeContentCatalog(profiles, entities);
+        ResourceNodeDefinition[] resources =
+        {
+            new ResourceNodeDefinition("resource.ore.deep_contested_seam", ResourceType.Ore, ResourceDepositSize.DeepContestedSeam, 2400, HarvestInteraction.Mine, ResourceDepletionProfile.Finite, 7500, 5000, 2500, "view.placeholder.resource.ore.deep_contested_seam"),
+            new ResourceNodeDefinition("resource.ore.rich", ResourceType.Ore, ResourceDepositSize.Rich, 1350, HarvestInteraction.Mine, ResourceDepletionProfile.Finite, 7500, 5000, 2500, "view.placeholder.resource.ore.rich"),
+            new ResourceNodeDefinition("resource.ore.small", ResourceType.Ore, ResourceDepositSize.Small, 600, HarvestInteraction.Mine, ResourceDepletionProfile.Finite, 7500, 5000, 2500, "view.placeholder.resource.ore.small"),
+            new ResourceNodeDefinition("resource.ore.standard", ResourceType.Ore, ResourceDepositSize.Standard, 900, HarvestInteraction.Mine, ResourceDepletionProfile.Finite, 7500, 5000, 2500, "view.placeholder.resource.ore.standard")
+        };
+        BuildingDefinition[] buildings =
+        {
+            new BuildingDefinition("building.rock_raiders.hq", 8, 8, ulong.MaxValue, false, 320, 40, 1200, 2, 2, FootprintClass.Tiny, 16, 2, 150, energyFunctionalClass: EnergyFunctionalClass.CommandAndBasicEconomy),
+            new BuildingDefinition("building.rock_raiders.ore_processing_plant", 6, 6, (1UL << 36) - 1UL, false, 140, 15, 600, continuousEnergyDemandPerSecond: 1, energyFunctionalClass: EnergyFunctionalClass.ResourceProcessing),
+            new BuildingDefinition("building.rock_raiders.power_station", 5, 5, (1UL << 25) - 1UL, false, 150, 20, 700, energyGenerationPerSecond: 10, energyReserveCapacity: 120),
+            new BuildingDefinition("building.rock_raiders.vehicle_service_bay", 8, 6, (1UL << 48) - 1UL, true, 160, 20, 800, 3, 3, FootprintClass.Medium, 4, continuousEnergyDemandPerSecond: 1, energyFunctionalClass: EnergyFunctionalClass.ProductionAndResearch)
+        };
+        UnitProductionDefinition[] production =
+        {
+            new UnitProductionDefinition("unit.rock_raiders.crew", "building.rock_raiders.hq", 50, 0, 0, 1, 320),
+            new UnitProductionDefinition("unit.rock_raiders.hover_scout", "building.rock_raiders.vehicle_service_bay", 75, 10, 0, 1, 400),
+            new UnitProductionDefinition("unit.rock_raiders.loader_dozer", "building.rock_raiders.vehicle_service_bay", 125, 15, 0, 3, 720),
+            new UnitProductionDefinition("unit.rock_raiders.rapid_rider", "building.rock_raiders.vehicle_service_bay", 90, 10, 0, 2, 560)
+        };
+        PrototypeContentCatalog catalog = new PrototypeContentCatalog(profiles, entities, resources, buildings, production);
         PrototypeContentCodec.Write(catalog);
         return catalog;
     }
@@ -100,7 +290,7 @@ public static class PrototypeContentFactory
 public static class PrototypeContentCodec
 {
     private const int Magic = 0x4350534C; // LSPC little-endian bytes.
-    public const int FormatVersion = 2;
+    public const int FormatVersion = 9;
 
     public static byte[] Write(PrototypeContentCatalog catalog)
     {
@@ -120,6 +310,32 @@ public static class PrototypeContentCodec
             PrototypeEntityDefinition e = catalog.Entities[i];
             writer.Write(e.StableKey); writer.Write(e.Id.Value); writer.Write(e.FactionKey); writer.Write(e.SourceClassification);
             writer.Write(e.MovementProfileKey); writer.Write((byte)e.Footprint); writer.Write((byte)e.SelectableKind); writer.Write(e.VisionRadius); writer.Write(e.ViewProfileKey);
+            writer.Write(e.OreTicksPerUnit); writer.Write(e.OreCarryCapacity); writer.Write(e.OperationsCapacity);
+        }
+        writer.Write(catalog.ResourceNodes.Length);
+        for (int i = 0; i < catalog.ResourceNodes.Length; i++)
+        {
+            ResourceNodeDefinition n = catalog.ResourceNodes[i];
+            writer.Write(n.StableKey); writer.Write(n.Id.Value); writer.Write((byte)n.Type); writer.Write((byte)n.DepositSize); writer.Write(n.Capacity);
+            writer.Write((byte)n.HarvestInteraction); writer.Write((byte)n.DepletionProfile);
+            writer.Write(n.ReducedThresholdBasisPoints); writer.Write(n.LowThresholdBasisPoints); writer.Write(n.CriticalThresholdBasisPoints); writer.Write(n.ViewProfileKey);
+        }
+        writer.Write(catalog.Buildings.Length);
+        for (int i = 0; i < catalog.Buildings.Length; i++)
+        {
+            BuildingDefinition b = catalog.Buildings[i];
+            writer.Write(b.StableKey); writer.Write(b.Id.Value); writer.Write(b.FootprintWidth); writer.Write(b.FootprintHeight); writer.Write(b.FootprintMask); writer.Write(b.Rotatable);
+            writer.Write(b.OreCost); writer.Write(b.EnergyCost); writer.Write(b.BuildTicks); writer.Write(b.ProductionExitWidth); writer.Write(b.ProductionExitDepth); writer.Write((byte)b.ProductionExitFootprint);
+            writer.Write(b.OperationsCapacityProvided);
+            writer.Write(b.EnergyGenerationPerSecond); writer.Write(b.EnergyReserveCapacity); writer.Write(b.ContinuousEnergyDemandPerSecond);
+            writer.Write((byte)b.EnergyFunctionalClass);
+        }
+        writer.Write(catalog.Production.Length);
+        for (int i = 0; i < catalog.Production.Length; i++)
+        {
+            UnitProductionDefinition p = catalog.Production[i];
+            writer.Write(p.UnitStableKey); writer.Write(p.UnitType.Value); writer.Write(p.ProducerStableKey); writer.Write(p.ProducerType.Value);
+            writer.Write(p.OreCost); writer.Write(p.EnergyCost); writer.Write(p.CrystalCost); writer.Write(p.OperationsCapacity); writer.Write(p.BuildTicks);
         }
         writer.Flush();
         byte[] bytes = stream.ToArray(); catalog.ContentHash = DeterministicHash.Fnv1A64(bytes); return bytes;
@@ -130,7 +346,8 @@ public static class PrototypeContentCodec
         using MemoryStream stream = new MemoryStream(bytes, false);
         using BinaryReader reader = new BinaryReader(stream);
         if (reader.ReadInt32() != Magic) throw new InvalidDataException("Prototype content magic mismatch.");
-        if (reader.ReadInt32() != FormatVersion) throw new InvalidDataException("Prototype content format version mismatch.");
+        int formatVersion = reader.ReadInt32();
+        if (formatVersion < 2 || formatVersion > FormatVersion) throw new InvalidDataException("Prototype content format version mismatch.");
         int profileCount = reader.ReadInt32(); if (profileCount < 0 || profileCount > 1024) throw new InvalidDataException("Invalid movement profile count.");
         PrototypeMovementProfile[] profiles = new PrototypeMovementProfile[profileCount];
         for (int i = 0; i < profileCount; i++)
@@ -146,11 +363,91 @@ public static class PrototypeContentCodec
         {
             string key = reader.ReadString(); uint id = reader.ReadUInt32(); string faction = reader.ReadString(); string source = reader.ReadString(); string movement = reader.ReadString();
             FootprintClass fp = (FootprintClass)reader.ReadByte(); SelectableKind kind = (SelectableKind)reader.ReadByte(); byte vision = reader.ReadByte(); string view = reader.ReadString();
-            entities[i] = new PrototypeEntityDefinition(key, faction, source, movement, fp, kind, vision, view); if (entities[i].Id.Value != id) throw new InvalidDataException("Stable entity ID mismatch.");
+            ushort oreTicks = formatVersion >= 4 ? reader.ReadUInt16() : kind == SelectableKind.Worker ? (ushort)30 : (ushort)0;
+            byte oreCapacity = formatVersion >= 4 ? reader.ReadByte() : kind == SelectableKind.Worker ? (byte)8 : (byte)0;
+            byte operationsCapacity = formatVersion >= 7 ? reader.ReadByte() : LegacyOperationsCapacity(key);
+            entities[i] = new PrototypeEntityDefinition(key, faction, source, movement, fp, kind, vision, view, oreTicks, oreCapacity, operationsCapacity); if (entities[i].Id.Value != id) throw new InvalidDataException("Stable entity ID mismatch.");
+        }
+        ResourceNodeDefinition[] resourceNodes = Array.Empty<ResourceNodeDefinition>();
+        if (formatVersion >= 3)
+        {
+            int resourceCount = reader.ReadInt32(); if (resourceCount < 0 || resourceCount > 1024) throw new InvalidDataException("Invalid resource node definition count.");
+            resourceNodes = new ResourceNodeDefinition[resourceCount];
+            for (int i = 0; i < resourceCount; i++)
+            {
+                string key = reader.ReadString(); uint id = reader.ReadUInt32(); ResourceType type = (ResourceType)reader.ReadByte(); ResourceDepositSize size = (ResourceDepositSize)reader.ReadByte(); int capacity = reader.ReadInt32();
+                HarvestInteraction interaction = (HarvestInteraction)reader.ReadByte(); ResourceDepletionProfile depletion = (ResourceDepletionProfile)reader.ReadByte();
+                ushort reduced = reader.ReadUInt16(); ushort low = reader.ReadUInt16(); ushort critical = reader.ReadUInt16(); string view = reader.ReadString();
+                resourceNodes[i] = new ResourceNodeDefinition(key, type, size, capacity, interaction, depletion, reduced, low, critical, view);
+                if (resourceNodes[i].Id.Value != id) throw new InvalidDataException("Stable resource node ID mismatch.");
+            }
+        }
+        BuildingDefinition[] buildings = Array.Empty<BuildingDefinition>();
+        if (formatVersion >= 5)
+        {
+            int buildingCount = reader.ReadInt32(); if (buildingCount < 0 || buildingCount > 1024) throw new InvalidDataException("Invalid building definition count.");
+            buildings = new BuildingDefinition[buildingCount];
+            for (int i = 0; i < buildingCount; i++)
+            {
+                string key = reader.ReadString(); uint id = reader.ReadUInt32();
+                byte width = reader.ReadByte(), height = reader.ReadByte(); ulong mask = reader.ReadUInt64(); bool rotatable = reader.ReadBoolean();
+                ushort oreCost = reader.ReadUInt16(), energyCost = reader.ReadUInt16(), buildTicks = reader.ReadUInt16();
+                byte exitWidth = reader.ReadByte(), exitDepth = reader.ReadByte(); FootprintClass exitFootprint = (FootprintClass)reader.ReadByte();
+                byte capacityProvided = formatVersion >= 7 ? reader.ReadByte() : LegacyOperationsCapacityProvided(key);
+                LegacyEnergyDefinition(key, out ushort generation, out ushort reserveCapacity, out ushort demand);
+                if (formatVersion >= 8) { generation = reader.ReadUInt16(); reserveCapacity = reader.ReadUInt16(); demand = reader.ReadUInt16(); }
+                EnergyFunctionalClass functionalClass = formatVersion >= 9 ? (EnergyFunctionalClass)reader.ReadByte() : LegacyEnergyFunctionalClass(key);
+                buildings[i] = new BuildingDefinition(key, width, height, mask, rotatable, oreCost, energyCost, buildTicks, exitWidth, exitDepth, exitFootprint, capacityProvided, generation, reserveCapacity, demand, functionalClass);
+                if (buildings[i].Id.Value != id) throw new InvalidDataException("Stable building ID mismatch.");
+            }
+        }
+        UnitProductionDefinition[] production = Array.Empty<UnitProductionDefinition>();
+        if (formatVersion >= 6)
+        {
+            int productionCount = reader.ReadInt32(); if (productionCount < 0 || productionCount > 4096) throw new InvalidDataException("Invalid production definition count.");
+            production = new UnitProductionDefinition[productionCount];
+            for (int i = 0; i < productionCount; i++)
+            {
+                string unitKey = reader.ReadString(); uint unitId = reader.ReadUInt32(); string producerKey = reader.ReadString(); uint producerId = reader.ReadUInt32();
+                production[i] = new UnitProductionDefinition(unitKey, producerKey, reader.ReadUInt16(), reader.ReadUInt16(), reader.ReadByte(), reader.ReadByte(), reader.ReadUInt16());
+                if (production[i].UnitType.Value != unitId || production[i].ProducerType.Value != producerId) throw new InvalidDataException("Stable production ID mismatch.");
+            }
         }
         if (stream.Position != stream.Length) throw new InvalidDataException("Trailing prototype content bytes.");
-        PrototypeContentCatalog result = new PrototypeContentCatalog(profiles, entities) { ContentHash = DeterministicHash.Fnv1A64(bytes) };
+        PrototypeContentCatalog result = new PrototypeContentCatalog(profiles, entities, resourceNodes, buildings, production) { ContentHash = DeterministicHash.Fnv1A64(bytes) };
         return result;
     }
+
+    private static byte LegacyOperationsCapacity(string stableKey) => stableKey switch
+    {
+        "unit.rock_raiders.crew" => 1,
+        "unit.rock_raiders.hover_scout" => 1,
+        "unit.rock_raiders.rapid_rider" => 2,
+        "unit.rock_raiders.loader_dozer" => 3,
+        "unit.rock_raiders.chrome_crusher" => 6,
+        _ => 0
+    };
+
+    private static byte LegacyOperationsCapacityProvided(string stableKey) => stableKey switch
+    {
+        "building.rock_raiders.hq" => 16,
+        "building.rock_raiders.vehicle_service_bay" => 4,
+        _ => 0
+    };
+
+    private static void LegacyEnergyDefinition(string stableKey, out ushort generation, out ushort reserveCapacity, out ushort demand)
+    {
+        generation = stableKey switch { "building.rock_raiders.hq" => 2, "building.rock_raiders.power_station" => 10, _ => 0 };
+        reserveCapacity = stableKey switch { "building.rock_raiders.hq" => 150, "building.rock_raiders.power_station" => 120, _ => 0 };
+        demand = stableKey switch { "building.rock_raiders.ore_processing_plant" => 1, "building.rock_raiders.vehicle_service_bay" => 1, _ => 0 };
+    }
+
+    private static EnergyFunctionalClass LegacyEnergyFunctionalClass(string stableKey) => stableKey switch
+    {
+        "building.rock_raiders.hq" => EnergyFunctionalClass.CommandAndBasicEconomy,
+        "building.rock_raiders.ore_processing_plant" => EnergyFunctionalClass.ResourceProcessing,
+        "building.rock_raiders.vehicle_service_bay" => EnergyFunctionalClass.ProductionAndResearch,
+        _ => EnergyFunctionalClass.StaticDefenseAndNonessential
+    };
 }
 }
