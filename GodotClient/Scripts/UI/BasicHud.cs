@@ -121,8 +121,10 @@ public partial class BasicHud : CanvasLayer
         box.AddChild(_priorityRow);
         Label help = HudLabel("RMB context command  •  Shift queues  •  B build  •  F8 developer tools", 13, TextMuted); box.AddChild(help);
 
-        _contextualActions = new VBoxContainer { Name = "ContextualActions", CustomMinimumSize = new Vector2(340, 0), Visible = false };
-        _contextualActions.AddThemeConstantOverride("separation", 7); layout.AddChild(_contextualActions);
+        MarginContainer contextualSlot = new() { Name = "ContextualSlot", CustomMinimumSize = new Vector2(340, 0), SizeFlagsVertical = Control.SizeFlags.ExpandFill };
+        layout.AddChild(contextualSlot);
+        _contextualActions = new VBoxContainer { Name = "ContextualActions", Visible = false };
+        _contextualActions.AddThemeConstantOverride("separation", 7); contextualSlot.AddChild(_contextualActions);
         _contextualActions.AddChild(HudLabel("AVAILABLE UNITS", 16, RaiderAccent));
         Label instruction = HudLabel("Selected facility queue — maximum 8", 13, TextMuted); instruction.Name = "ProductionHint"; _contextualActions.AddChild(instruction);
         GridContainer grid = new() { Name = "ProductionGrid", Columns = 2 }; grid.AddThemeConstantOverride("h_separation", 6); grid.AddThemeConstantOverride("v_separation", 6);

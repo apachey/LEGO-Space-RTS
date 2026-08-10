@@ -269,11 +269,14 @@ narrow placement cases allowed by Phase 09B.
   Energy-drain trigger moved to a separate hidden F8 developer panel. Navigation
   grids, HPA clusters, persistent path lines and excavatable outlines are all
   off during normal play. Move feedback is now a small unnumbered translucent
-  ring with a short canonical lifetime, and construction progress uses a much
-  smaller low-outline world label. Runtime Godot smoke verifies the resource,
-  selection, portrait and contextual-action anchors and seeds an HQ selection
-  for visual capture coverage. No authoritative SimCore or protocol state
-  changed in this T039 refinement.
+  ring with a short canonical lifetime. The unusably large blurred fixed-size
+  construction percentage billboard is removed: world-space progress is a thin
+  bar and the exact percentage remains in the selected-site panel. The
+  contextual-action column now reserves stable width so selecting an HQ no
+  longer shifts the portrait and status layout. Runtime Godot smoke verifies
+  the resource, selection, portrait and contextual-action anchors; a dedicated
+  construction capture seeds and verifies the progress bar. No authoritative
+  SimCore or protocol state changed in this T039 refinement.
 
 ## Current gates
 
@@ -306,7 +309,15 @@ narrow placement cases allowed by Phase 09B.
   minimap to M7 T069, so it is intentionally not pulled into T039. Building
   prototype records currently specify zero vision radius; adding local building
   vision requires an explicit gameplay/balance value rather than a presentation
-  guess and remains the only unresolved item from the latest T039 playtest.
+  guess.
+- Fog currently persists explored terrain cells but the presentation snapshot
+  intentionally omits Ore and enemy objects once they leave current vision. The
+  canonical result is a per-player last-known record: Ore must retain its last
+  observed depletion state and enemy structures their last observed state,
+  without publishing live hidden changes. Do not "fix" this by rendering the
+  current SimCore entity in explored fog; that would become an information leak
+  in multiplayer. Add serialized/per-viewer knowledge through a separately
+  reviewed fog-information task no later than M6 T061 fog filtering.
 
 ## Explicitly rejected / do not resurrect
 

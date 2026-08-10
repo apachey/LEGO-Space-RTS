@@ -345,7 +345,18 @@ not change gameplay canon.
   A portrait/view slot is reserved inside the unified selection area, while
   production actions and the facility queue appear contextually only when the
   relevant building is selected. This retains the implemented M3 interaction
-  without implying that production deserves permanent global screen space.
+  without implying that production deserves permanent global screen space. The
+  contextual column retains its width while hidden so selecting an HQ does not
+  reflow the portrait and selected-entity status.
+- The fixed-size Label3D construction percentage is rejected: Godot scales that
+  mode as if the camera were one world unit away, producing a giant blurred
+  billboard in the strategic camera. World presentation uses a compact bar;
+  exact progress remains in the selection panel. Dedicated construction visual
+  smoke protects this boundary.
+- Explored fog must eventually render per-player last-known resource/structure
+  records, not current hidden SimCore state. The present stateless presentation
+  snapshot continues to omit those entities until a separately reviewed,
+  serialized knowledge model is implemented with multiplayer fog filtering.
 - T039 does not pre-implement the later minimap, complete 3×4 command grid, F3
   production drawer, full queue editing or final faction art. Runtime smoke and
   static validation instead protect the Basic HUD anchors and hidden developer

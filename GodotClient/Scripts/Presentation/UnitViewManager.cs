@@ -167,36 +167,24 @@ public partial class UnitViewManager : Node3D
             Name = "ControlGroupLabel",
             Text = string.Empty,
             Visible = false,
-            FontSize = 34,
-            OutlineSize = 12,
+            FontSize = 22,
+            OutlineSize = 3,
+            PixelSize = 0.03f,
             Modulate = new Color(1f, 0.94f, 0.25f),
             OutlineModulate = new Color(0.02f, 0.02f, 0.02f, 0.95f),
             Billboard = BaseMaterial3D.BillboardModeEnum.Enabled,
-            FixedSize = true,
+            FixedSize = false,
             NoDepthTest = true,
             Position = new Vector3(0f, labelHeightWorld / visualScale.Y, 0f),
             Scale = new Vector3(1f / visualScale.X, 1f / visualScale.Y, 1f / visualScale.Z)
         };
         view.AddChild(groupLabel);
-        Label3D constructionLabel = new()
-        {
-            Name = "ConstructionProgressLabel",
-            Text = string.Empty,
-            Visible = false,
-            FontSize = 18,
-            OutlineSize = 3,
-            Modulate = new Color(1f, 0.82f, 0.28f, 0.90f),
-            OutlineModulate = new Color(0.03f, 0.04f, 0.05f, 0.82f),
-            Billboard = BaseMaterial3D.BillboardModeEnum.Enabled,
-            FixedSize = true,
-            NoDepthTest = true
-        };
-        view.AddChild(constructionLabel);
+        view.AddChild(CreateConstructionProgressBar());
         Label3D brownoutLabel = new()
         {
-            Name = "BrownoutLabel", Text = "⚡ BROWNOUT", Visible = false, FontSize = 22, OutlineSize = 4,
+            Name = "BrownoutLabel", Text = "⚡ BROWNOUT", Visible = false, FontSize = 22, OutlineSize = 3, PixelSize = 0.03f,
             Modulate = new Color(1f, 0.42f, 0.12f), OutlineModulate = new Color(0.02f, 0.02f, 0.02f, 0.95f),
-            Billboard = BaseMaterial3D.BillboardModeEnum.Enabled, FixedSize = true, NoDepthTest = true
+            Billboard = BaseMaterial3D.BillboardModeEnum.Enabled, FixedSize = false, NoDepthTest = true
         };
         view.AddChild(brownoutLabel);
         return view;
@@ -219,13 +207,20 @@ public partial class UnitViewManager : Node3D
             ring.Position = new Vector3(0f, -0.42f / scale.Y, 0f);
             ring.Scale = new Vector3(1f / scale.X, 1f / scale.Y, 1f / scale.Z);
         }
-        Label3D? progressLabel = view.GetNodeOrNull<Label3D>("ConstructionProgressLabel");
-        if (progressLabel is not null)
+        Node3D? progressBar = view.GetNodeOrNull<Node3D>("ConstructionProgressBar");
+        if (progressBar is not null)
         {
-            progressLabel.Visible = entity.IsConstructionSite;
-            progressLabel.Text = entity.IsConstructionSite ? $"{entity.ConstructionProgressBasisPoints / 100}%" : string.Empty;
-            progressLabel.Position = new Vector3(0f, (scale.Y + 0.65f) / scale.Y, 0f);
-            progressLabel.Scale = new Vector3(1f / scale.X, 1f / scale.Y, 1f / scale.Z);
+            progressBar.Visible = entity.IsConstructionSite;
+            progressBar.Position = new Vector3(0f, (scale.Y + 0.55f) / scale.Y, 0f);
+            progressBar.Scale = new Vector3(1f / scale.X, 1f / scale.Y, 1f / scale.Z);
+            MeshInstance3D? fill = progressBar.GetNodeOrNull<MeshInstance3D>("Fill");
+            if (fill is not null)
+            {
+                float progress = Mathf.Clamp(entity.ConstructionProgressBasisPoints / 10000f, 0f, 1f);
+                float width = 2.32f * progress;
+                fill.Scale = new Vector3(Mathf.Max(width, 0.01f), 0.08f, 0.24f);
+                fill.Position = new Vector3(-1.16f + width * 0.5f, 0.06f, 0f);
+            }
         }
         Label3D? brownoutLabel = view.GetNodeOrNull<Label3D>("BrownoutLabel");
         if (brownoutLabel is not null)
@@ -256,7 +251,24 @@ public partial class UnitViewManager : Node3D
         return baseline * multiplier;
     }
 
+    private static Node3D CreateConstructionProgressBar()
+    {
+        Node3D bar = new() { Name = "ConstructionProgressBar", Visible = false };
+        BoxMesh backgroundMesh = new() { Size = Vector3.One, Material = MakeOverlayMaterial(new Color(0.04f, 0.06f, 0.07f, 0.88f)) };
+        bar.AddChild(new MeshInstance3D { Name = "Background", Mesh = backgroundMesh, Scale = new Vector3(2.5f, 0.06f, 0.36f) });
+        BoxMesh fillMesh = new() { Size = Vector3.One, Material = MakeOverlayMaterial(new Color(0.96f, 0.66f, 0.10f, 0.94f)) };
+        bar.AddChild(new MeshInstance3D { Name = "Fill", Mesh = fillMesh, Scale = new Vector3(0.01f, 0.08f, 0.24f), Position = new Vector3(-1.155f, 0.06f, 0f) });
+        return bar;
+    }
+
     private static StandardMaterial3D MakeMaterial(Color color) => new() { AlbedoColor = color, Roughness = 0.45f };
+    private static StandardMaterial3D MakeOverlayMaterial(Color color) => new()
+    {
+        AlbedoColor = color,
+        ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
+        Transparency = BaseMaterial3D.TransparencyEnum.Alpha,
+        NoDepthTest = true
+    };
     private static StandardMaterial3D MakeConstructionMaterial() => new()
     {
         AlbedoColor = new Color(1.0f, 0.72f, 0.12f, 0.78f),

@@ -88,7 +88,7 @@ check('FindChild' not in composition and 'GetNode<' not in composition, 'composi
 loader = (ROOT/'GodotClient/Scripts/Client/RuntimeScenarioLoader.cs').read_text()
 check('PrototypeContentCodec.Read' in loader and 'CompiledMapCodec.ReadDefinition' in loader, 'Godot runtime does not consume compiled content/map when present')
 basic_hud = (ROOT/'GodotClient/Scripts/UI/BasicHud.cs').read_text()
-for token in ['ResourceStrip','SelectionPanel','PortraitSlot','ContextualActions','ContextualEnergyPriority','EnergyDomainPopover','OPERATIONS','CRYSTALS']:
+for token in ['ResourceStrip','SelectionPanel','PortraitSlot','ContextualSlot','ContextualActions','ContextualEnergyPriority','EnergyDomainPopover','OPERATIONS','CRYSTALS']:
     check(token in basic_hud, f'T039 Basic HUD element missing: {token}')
 check('CommandPanel' not in basic_hud, 'production must be contextual to selected facilities rather than a permanent separate panel')
 debug_hud = (ROOT/'GodotClient/Scripts/UI/DebugHud.cs').read_text()
@@ -98,6 +98,8 @@ for token in ['DrawNavigation { get; set; } = true','DrawClusters { get; set; } 
     check(token not in debug_renderer, f'developer visualization leaks into normal play: {token}')
 input_controller = (ROOT/'GodotClient/Scripts/Presentation/RtsInputController.cs').read_text()
 check('OrderNumber' not in input_controller and 'DestinationRing' in input_controller, 'move feedback must use an unnumbered restrained destination marker')
+unit_view = (ROOT/'GodotClient/Scripts/Presentation/UnitViewManager.cs').read_text()
+check('ConstructionProgressLabel' not in unit_view and 'ConstructionProgressBar' in unit_view, 'construction progress must use a restrained world bar rather than a fixed-size billboard label')
 
 clock = (ROOT/'SimCore/Runtime/Core/SimTime.cs').read_text()
 check('TicksPerSecond = 20' in clock, 'SimClock is not 20 Hz')
