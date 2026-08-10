@@ -7,8 +7,8 @@ namespace LegoSpaceRTS.SimCore
 public static class SnapshotSerializer
 {
     public const uint Magic = 0x53525453; // STRS
-    public const ushort FormatVersion = 11;
-    public const ushort SimulationProtocolVersion = 9;
+    public const ushort FormatVersion = 12;
+    public const ushort SimulationProtocolVersion = 10;
 
     [Flags]
     private enum EntityComponents : uint
@@ -36,7 +36,8 @@ public static class SnapshotSerializer
         PowerState = 1 << 19,
         Targetable = 1 << 20,
         Targeting = 1 << 21,
-        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver | ResourceBank | Building | ConstructionSite | Builder | Production | EnergyDomain | EnergyDomainMember | PowerState | Targetable | Targeting
+        Weapon = 1 << 22,
+        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver | ResourceBank | Building | ConstructionSite | Builder | Production | EnergyDomain | EnergyDomainMember | PowerState | Targetable | Targeting | Weapon
     }
 
     public static byte[] Serialize(SimulationWorld world)
@@ -57,7 +58,7 @@ public static class SnapshotSerializer
         using MemoryStream ms = new(bytes, false); using BinaryReader r = new(ms);
         if (r.ReadUInt32() != Magic) throw new InvalidDataException("Snapshot magic mismatch.");
         ushort format = r.ReadUInt16(), protocol = r.ReadUInt16();
-        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8);
+        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8) || (format == 11 && protocol == 9);
         if (!supportedLegacy && (format != FormatVersion || protocol != SimulationProtocolVersion)) throw new InvalidDataException($"Unsupported snapshot {format}/{protocol}.");
         SimTick tick = new(r.ReadInt32()); MapGrid map = MapGrid.Deserialize(r); uint nextEntity = r.ReadUInt32();
         EntityStore entities = new(); int entityCount = r.ReadInt32(); if (entityCount < 0 || entityCount > 10000) throw new InvalidDataException("Invalid entity count.");
@@ -72,6 +73,7 @@ public static class SnapshotSerializer
         if (format < 7) AddLegacyBuilders(temp);
         if (format < 8) AddLegacyProduction(temp);
         if (format < 11) AddLegacyCombatComponents(temp);
+        else if (format < 12) AddLegacyWeaponComponents(temp);
         entities.RestoreNextEntityValue(nextEntity);
         temp.Commands.Deserialize(r, includeBuildFields: format >= 6, includeEnergyPriority: format >= 10);
         temp.Fog = FogState.Deserialize(r);
@@ -107,6 +109,7 @@ public static class SnapshotSerializer
         if (world.Entities.Production.Has(id)) components |= EntityComponents.Production;
         if (world.Entities.Targetable.Has(id)) components |= EntityComponents.Targetable;
         if (world.Entities.Targeting.Has(id)) components |= EntityComponents.Targeting;
+        if (world.Entities.Weapon.Has(id)) components |= EntityComponents.Weapon;
         if (world.TryGetQueue(id, out _)) components |= EntityComponents.CommandQueue;
         if (world.Corridors.ContainsKey(id.Value)) components |= EntityComponents.RouteCorridor;
         w.Write((uint)components);
@@ -137,6 +140,7 @@ public static class SnapshotSerializer
         if ((components & EntityComponents.Production) != 0) WriteProduction(w, world.Entities.Production.Get(id));
         if ((components & EntityComponents.Targetable) != 0) WriteTargetable(w, world.Entities.Targetable.Get(id));
         if ((components & EntityComponents.Targeting) != 0) WriteTargeting(w, world.Entities.Targeting.Get(id));
+        if ((components & EntityComponents.Weapon) != 0) WriteWeapon(w, world.Entities.Weapon.Get(id));
         if ((components & EntityComponents.CommandQueue) != 0) world.GetQueue(id).Serialize(w, includeTargetEntity: true);
         if ((components & EntityComponents.RouteCorridor) != 0) WriteCorridor(w, world.Corridors[id.Value]);
     }
@@ -232,6 +236,12 @@ public static class SnapshotSerializer
         w.Write((byte)targeting.LegalClasses); w.Write((byte)targeting.PriorityProfile); w.Write((byte)targeting.SelectionKind);
     }
 
+    private static void WriteWeapon(BinaryWriter w, WeaponState weapon)
+    {
+        w.Write(weapon.WeaponProfile.Value); w.Write(weapon.CooldownRemainingTicks); w.Write(weapon.FireSequence);
+        w.Write(weapon.LastFiredTarget.Value); w.Write(weapon.LastFiredTick);
+    }
+
     private static void WriteCorridor(BinaryWriter w, RouteCorridor path)
     {
         w.Write(path.TopologyVersion); w.Write(path.Cells.Count);
@@ -268,6 +278,13 @@ public static class SnapshotSerializer
         if ((components & EntityComponents.Production) != 0) world.Entities.Production.Set(id, ReadProduction(r));
         if ((components & EntityComponents.Targetable) != 0) world.Entities.Targetable.Set(id, ReadTargetable(r));
         if ((components & EntityComponents.Targeting) != 0) world.Entities.Targeting.Set(id, ReadTargeting(r));
+        if ((components & EntityComponents.Weapon) != 0)
+        {
+            WeaponState weapon = ReadWeapon(r);
+            if (!world.Content.TryGetWeapon(weapon.WeaponProfile, out WeaponDefinition definition) || weapon.CooldownRemainingTicks > definition.CooldownTicks)
+                throw new InvalidDataException("Invalid weapon state.");
+            world.Entities.Weapon.Set(id, weapon);
+        }
         if ((components & EntityComponents.CommandQueue) != 0) world.GetQueue(id).Deserialize(r, includeTargetEntity: format >= 4);
         if ((components & EntityComponents.RouteCorridor) != 0) world.Corridors[id.Value] = ReadCorridor(r);
     }
@@ -392,6 +409,20 @@ public static class SnapshotSerializer
         return targeting;
     }
 
+    private static WeaponState ReadWeapon(BinaryReader r)
+    {
+        WeaponState weapon = new()
+        {
+            WeaponProfile = new ContentId(r.ReadUInt32()), CooldownRemainingTicks = r.ReadUInt16(), FireSequence = r.ReadUInt32(),
+            LastFiredTarget = new EntityId(r.ReadUInt32()), LastFiredTick = r.ReadInt32()
+        };
+        if (weapon.WeaponProfile.Value == 0 || weapon.LastFiredTick < -1 ||
+            (weapon.FireSequence == 0 && (weapon.LastFiredTarget != EntityId.None || weapon.LastFiredTick != -1)) ||
+            (weapon.FireSequence > 0 && (weapon.LastFiredTarget == EntityId.None || weapon.LastFiredTick < 0)))
+            throw new InvalidDataException("Invalid weapon firing record.");
+        return weapon;
+    }
+
     private static void AddLegacyProduction(SimulationWorld world)
     {
         IReadOnlyList<EntityId> alive = world.Entities.Alive;
@@ -412,6 +443,18 @@ public static class SnapshotSerializer
             if (!world.Entities.Selectable.TryGet(id, out Selectable selectable) ||
                 !world.Content.TryGetEntity(selectable.ContentType, out PrototypeEntityDefinition definition)) continue;
             ScenarioFactory.AddCombatComponents(world, id, definition);
+        }
+    }
+
+    private static void AddLegacyWeaponComponents(SimulationWorld world)
+    {
+        IReadOnlyList<EntityId> alive = world.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (!world.Entities.Selectable.TryGet(id, out Selectable selectable) ||
+                !world.Content.TryGetEntity(selectable.ContentType, out PrototypeEntityDefinition definition)) continue;
+            ScenarioFactory.AddWeaponComponent(world, id, definition);
         }
     }
 

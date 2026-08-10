@@ -391,3 +391,35 @@ do not change gameplay canon.
 
 These are implementation decisions within approved M4 targeting and combat UX
 canon. They do not change gameplay canon.
+
+---
+
+## 2026-08-10 — M4 authoritative weapon readiness and firing events
+
+- T041 adds compiled `WeaponDefinition` records and per-entity authoritative
+  `WeaponState`. The state records the stable weapon profile, remaining cooldown,
+  monotonic firing sequence and last fired target/tick. Godot consumes the
+  sequence for a short muzzle flash but never authorizes firing.
+- Weapons execute after T040 targeting in stable Entity ID order. Each 20 Hz
+  step advances an active cooldown, then a ready weapon revalidates target
+  legality, shared visibility, exact fixed-point range, minimum range and combat
+  LoS before emitting a firing event and starting the full canonical cooldown.
+  Readiness is retained while no eligible in-range target exists.
+- Prototype content v11 defines the canonical first-playable weapon profiles:
+  Crew 24 ticks, Hover Scout 30, Loader Dozer 27 and Chrome Crusher 32. Damage,
+  type and delivery metadata are compiled now for later common resolvers, but
+  T041 applies no HP change. The built-in catalog uses the compiler's canonical
+  stable-key ordering so identical built-in and compiled definitions produce
+  the same compatibility hash.
+- Snapshot format v12 / simulation protocol v10 persist weapon readiness and
+  firing history while retaining supported v2-v11 readers. Replay remains v6
+  because no command representation changed.
+- T041 does not create projectile records, resolve damage/armor, implement
+  contact approach slots/facing/moving-contact rules or add combat chase. Those
+  remain T042-T044 and cannot be inferred from the presentation flash.
+- The game director explicitly deferred rather than accepted the human T040
+  interaction gate so automated T041 work could proceed on a stacked branch.
+  Both human gates remain pending before T042 begins.
+
+These are implementation decisions within approved M4 weapon and combat-system
+canon. They do not change gameplay canon.

@@ -3,10 +3,10 @@ using NUnit.Framework;
 
 public class SnapshotReplayTests
 {
-    [Test] public void SnapshotFormatSupportsM3EnergyDomains() => Assert.Multiple(() =>
+    [Test] public void SnapshotFormatSupportsM4WeaponState() => Assert.Multiple(() =>
     {
-        Assert.That(SnapshotSerializer.FormatVersion,Is.EqualTo(11));
-        Assert.That(SnapshotSerializer.SimulationProtocolVersion,Is.EqualTo(9));
+        Assert.That(SnapshotSerializer.FormatVersion,Is.EqualTo(12));
+        Assert.That(SnapshotSerializer.SimulationProtocolVersion,Is.EqualTo(10));
         Assert.That(ReplayLog.Version,Is.EqualTo(6));
     });
     [Test] public void SnapshotRoundTripPreservesHash()

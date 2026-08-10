@@ -17,9 +17,11 @@ public readonly struct PresentationEntity
     public readonly bool IsEnergyConsumer;
     public readonly bool IsPowered;
     public readonly EnergyPriority EnergyPriority;
+    public readonly uint WeaponFireSequence;
+    public readonly EntityId WeaponFireTarget;
     public readonly bool Snap;
-    public PresentationEntity(EntityId entityId, ContentId contentType, byte owner, FixVec2 position, Angle16 orientation, MovementState movement, VisibilityState visibility, FootprintClass footprint, SelectableKind selectableKind, bool snap = false, ResourceVisualState resourceState = ResourceVisualState.Full, byte buildingWidth = 0, byte buildingHeight = 0, bool isConstructionSite = false, ushort constructionProgressBasisPoints = 0, bool isEnergyConsumer = false, bool isPowered = true, EnergyPriority energyPriority = EnergyPriority.Normal)
-    { EntityId = entityId; ContentType = contentType; Owner = owner; Position = position; Orientation = orientation; Movement = movement; Visibility = visibility; Footprint = footprint; SelectableKind=selectableKind; ResourceState=resourceState; BuildingWidth=buildingWidth; BuildingHeight=buildingHeight; IsConstructionSite=isConstructionSite; ConstructionProgressBasisPoints=constructionProgressBasisPoints; IsEnergyConsumer=isEnergyConsumer; IsPowered=isPowered; EnergyPriority=energyPriority; Snap = snap; }
+    public PresentationEntity(EntityId entityId, ContentId contentType, byte owner, FixVec2 position, Angle16 orientation, MovementState movement, VisibilityState visibility, FootprintClass footprint, SelectableKind selectableKind, bool snap = false, ResourceVisualState resourceState = ResourceVisualState.Full, byte buildingWidth = 0, byte buildingHeight = 0, bool isConstructionSite = false, ushort constructionProgressBasisPoints = 0, bool isEnergyConsumer = false, bool isPowered = true, EnergyPriority energyPriority = EnergyPriority.Normal, uint weaponFireSequence = 0, EntityId weaponFireTarget = default)
+    { EntityId = entityId; ContentType = contentType; Owner = owner; Position = position; Orientation = orientation; Movement = movement; Visibility = visibility; Footprint = footprint; SelectableKind=selectableKind; ResourceState=resourceState; BuildingWidth=buildingWidth; BuildingHeight=buildingHeight; IsConstructionSite=isConstructionSite; ConstructionProgressBasisPoints=constructionProgressBasisPoints; IsEnergyConsumer=isEnergyConsumer; IsPowered=isPowered; EnergyPriority=energyPriority; WeaponFireSequence=weaponFireSequence; WeaponFireTarget=weaponFireTarget; Snap = snap; }
 }
 
 public sealed class PresentationSnapshot
@@ -69,7 +71,10 @@ public sealed class PresentationSnapshot
             VisibilityState v = o.PlayerSlot == viewerPlayer ? VisibilityState.Visible : world.Fog.Get(viewerPlayer, fx, fy);
             // M2 has no last-known enemy record yet. Never publish current hidden-enemy truth as an "Explored" entity.
             if (o.PlayerSlot != viewerPlayer && v != VisibilityState.Visible) continue;
-            list.Add(new PresentationEntity(id, s.ContentType, o.PlayerSlot, t.Position, t.Orientation, m.State, v, n.Footprint, s.Kind));
+            uint fireSequence = 0; EntityId fireTarget = EntityId.None;
+            if (world.Entities.Weapon.TryGet(id, out WeaponState weapon)) { fireSequence = weapon.FireSequence; fireTarget = weapon.LastFiredTarget; }
+            list.Add(new PresentationEntity(id, s.ContentType, o.PlayerSlot, t.Position, t.Orientation, m.State, v, n.Footprint, s.Kind,
+                weaponFireSequence: fireSequence, weaponFireTarget: fireTarget));
         }
         return new PresentationSnapshot(world.Tick, list);
     }

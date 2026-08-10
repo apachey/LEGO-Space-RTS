@@ -6,6 +6,18 @@ namespace LegoSpaceRTS.SimCore.Tests
 public sealed class PrototypeContentTests
 {
     [Test]
+    public void BuiltInCatalogUsesCanonicalCompilerOrdering()
+    {
+        PrototypeContentCatalog catalog = PrototypeContentFactory.CreateM2Catalog();
+        AssertOrdered(catalog.MovementProfiles.Select(p => p.StableKey).ToArray());
+        AssertOrdered(catalog.Entities.Select(e => e.StableKey).ToArray());
+        AssertOrdered(catalog.ResourceNodes.Select(r => r.StableKey).ToArray());
+        AssertOrdered(catalog.Buildings.Select(b => b.StableKey).ToArray());
+        AssertOrdered(catalog.Production.Select(p => p.UnitStableKey).ToArray());
+        AssertOrdered(catalog.Weapons.Select(w => w.StableKey).ToArray());
+    }
+
+    [Test]
     public void PrototypeContentBinaryRoundTripsAndHashesIdentically()
     {
         PrototypeContentCatalog source = new PrototypeContentCatalog(
@@ -67,6 +79,30 @@ public sealed class PrototypeContentTests
             Assert.That(restored.ProducerType, Is.EqualTo(StableId.FromKey("building.test")));
             Assert.That(restored.OreCost, Is.EqualTo(90)); Assert.That(restored.OperationsCapacity, Is.EqualTo(2)); Assert.That(restored.BuildTicks, Is.EqualTo(560));
         });
+    }
+
+    [Test]
+    public void WeaponDefinitionsRoundTripAuthoritativeFiringMetadata()
+    {
+        WeaponDefinition sourceWeapon = new("weapon.test", TargetLayerMask.Ground, TargetClassMask.All, TargetPriorityProfile.Generalist,
+            12, DamageType.General, 25, Fix32.FromRatio(7, 2), Fix32.Zero, WeaponDeliveryKind.Projectile, true);
+        PrototypeContentCatalog source = new(System.Array.Empty<PrototypeMovementProfile>(), System.Array.Empty<PrototypeEntityDefinition>(), weapons: new[] { sourceWeapon });
+        WeaponDefinition restored = PrototypeContentCodec.Read(PrototypeContentCodec.Write(source)).Weapons[0];
+        Assert.Multiple(() =>
+        {
+            Assert.That(restored.Id, Is.EqualTo(StableId.FromKey("weapon.test")));
+            Assert.That(restored.BaseDamage, Is.EqualTo(12));
+            Assert.That(restored.CooldownTicks, Is.EqualTo(25));
+            Assert.That(restored.Range, Is.EqualTo(Fix32.FromRatio(7, 2)));
+            Assert.That(restored.DeliveryKind, Is.EqualTo(WeaponDeliveryKind.Projectile));
+            Assert.That(restored.RequiresLineOfSight, Is.True);
+        });
+    }
+
+    private static void AssertOrdered(string[] keys)
+    {
+        string[] expected = keys.OrderBy(key => key, System.StringComparer.Ordinal).ToArray();
+        Assert.That(keys, Is.EqualTo(expected));
     }
 }
 }

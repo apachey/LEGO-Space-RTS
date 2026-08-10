@@ -19,13 +19,14 @@ public readonly struct TickProfile
     public readonly long SpatialTimestampTicks;
     public readonly long VisionTimestampTicks;
     public readonly long TargetingTimestampTicks;
+    public readonly long WeaponTimestampTicks;
 
     public TickProfile(long totalTimestampTicks,long commandTimestampTicks,long navigationTimestampTicks,
-        long movementIntentTimestampTicks,long localSeparationTimestampTicks,long transformTimestampTicks,long bankingTimestampTicks,long harvestTimestampTicks,long constructionTimestampTicks,long productionTimestampTicks,long energyTimestampTicks,long operationsCapacityTimestampTicks,long spatialTimestampTicks,long visionTimestampTicks,long targetingTimestampTicks)
+        long movementIntentTimestampTicks,long localSeparationTimestampTicks,long transformTimestampTicks,long bankingTimestampTicks,long harvestTimestampTicks,long constructionTimestampTicks,long productionTimestampTicks,long energyTimestampTicks,long operationsCapacityTimestampTicks,long spatialTimestampTicks,long visionTimestampTicks,long targetingTimestampTicks,long weaponTimestampTicks)
     {
         TotalTimestampTicks=totalTimestampTicks;CommandTimestampTicks=commandTimestampTicks;NavigationTimestampTicks=navigationTimestampTicks;
         MovementIntentTimestampTicks=movementIntentTimestampTicks;LocalSeparationTimestampTicks=localSeparationTimestampTicks;
-        TransformTimestampTicks=transformTimestampTicks;BankingTimestampTicks=bankingTimestampTicks;HarvestTimestampTicks=harvestTimestampTicks;ConstructionTimestampTicks=constructionTimestampTicks;ProductionTimestampTicks=productionTimestampTicks;EnergyTimestampTicks=energyTimestampTicks;OperationsCapacityTimestampTicks=operationsCapacityTimestampTicks;SpatialTimestampTicks=spatialTimestampTicks;VisionTimestampTicks=visionTimestampTicks;TargetingTimestampTicks=targetingTimestampTicks;
+        TransformTimestampTicks=transformTimestampTicks;BankingTimestampTicks=bankingTimestampTicks;HarvestTimestampTicks=harvestTimestampTicks;ConstructionTimestampTicks=constructionTimestampTicks;ProductionTimestampTicks=productionTimestampTicks;EnergyTimestampTicks=energyTimestampTicks;OperationsCapacityTimestampTicks=operationsCapacityTimestampTicks;SpatialTimestampTicks=spatialTimestampTicks;VisionTimestampTicks=visionTimestampTicks;TargetingTimestampTicks=targetingTimestampTicks;WeaponTimestampTicks=weaponTimestampTicks;
     }
 
     public long PathfindingTimestampTicks => NavigationTimestampTicks;
@@ -54,7 +55,8 @@ public sealed class SimulationRunner
             new OperationsCapacitySystem(),
             new SpatialIndexSystem(),
             new VisionSystem(),
-            new TargetingSystem()
+            new TargetingSystem(),
+            new WeaponSystem()
         };
         EnergyDomainSystem.RecalculateAll(World);
         OperationsCapacitySystem.Recalculate(World);
@@ -71,14 +73,14 @@ public sealed class SimulationRunner
     public TickProfile StepOneTickProfiled()
     {
         long totalStart=Stopwatch.GetTimestamp();
-        long c=0,n=0,m=0,l=0,t=0,b=0,h=0,j=0,p=0,e=0,o=0,s=0,v=0,g=0;
+        long c=0,n=0,m=0,l=0,t=0,b=0,h=0,j=0,p=0,e=0,o=0,s=0,v=0,g=0,w=0;
         World.Tick=World.Tick.Next();
         for(int i=0;i<_systems.Length;i++)
         {
             long start=Stopwatch.GetTimestamp();_systems[i].Step(World);long elapsed=Stopwatch.GetTimestamp()-start;
-            switch(i){case 0:c=elapsed;break;case 1:n=elapsed;break;case 2:m=elapsed;break;case 3:l=elapsed;break;case 4:t=elapsed;break;case 5:b=elapsed;break;case 6:h=elapsed;break;case 7:j=elapsed;break;case 8:p=elapsed;break;case 9:e=elapsed;break;case 10:o=elapsed;break;case 11:s=elapsed;break;case 12:v=elapsed;break;case 13:g=elapsed;break;}
+            switch(i){case 0:c=elapsed;break;case 1:n=elapsed;break;case 2:m=elapsed;break;case 3:l=elapsed;break;case 4:t=elapsed;break;case 5:b=elapsed;break;case 6:h=elapsed;break;case 7:j=elapsed;break;case 8:p=elapsed;break;case 9:e=elapsed;break;case 10:o=elapsed;break;case 11:s=elapsed;break;case 12:v=elapsed;break;case 13:g=elapsed;break;case 14:w=elapsed;break;}
         }
-        return new TickProfile(Stopwatch.GetTimestamp()-totalStart,c,n,m,l,t,b,h,j,p,e,o,s,v,g);
+        return new TickProfile(Stopwatch.GetTimestamp()-totalStart,c,n,m,l,t,b,h,j,p,e,o,s,v,g,w);
     }
 
     public void StepTicks(int count) { for (int i = 0; i < count; i++) StepOneTick(); }

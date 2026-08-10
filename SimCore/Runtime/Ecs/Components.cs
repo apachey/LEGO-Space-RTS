@@ -28,6 +28,8 @@ public enum CombatTargetLayer : byte { Ground = 0, TrueAir = 1 }
 }
 public enum TargetPriorityProfile : byte { AntiLight = 0, AntiHeavy = 1, AntiAir = 2, Siege = 3, Harassment = 4, Generalist = 5, Scout = 6, Support = 7, Control = 8 }
 public enum TargetSelectionKind : byte { None = 0, Automatic = 1, DirectOrder = 2 }
+public enum DamageType : byte { Light = 0, General = 1, Breach = 2, Siege = 3, AntiAir = 4, Control = 5 }
+public enum WeaponDeliveryKind : byte { Projectile = 0, Contact = 1 }
 
 public struct Ownership
 {
@@ -213,6 +215,15 @@ public struct Targeting
     public TargetClassMask LegalClasses;
     public TargetPriorityProfile PriorityProfile;
     public TargetSelectionKind SelectionKind;
+}
+
+public struct WeaponState
+{
+    public ContentId WeaponProfile;
+    public ushort CooldownRemainingTicks;
+    public uint FireSequence;
+    public EntityId LastFiredTarget;
+    public int LastFiredTick;
 }
 
 public struct ConstructionSite

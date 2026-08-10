@@ -29,6 +29,7 @@ public sealed class EntityStore
     public readonly ComponentStore<Production> Production = new();
     public readonly ComponentStore<Targetable> Targetable = new();
     public readonly ComponentStore<Targeting> Targeting = new();
+    public readonly ComponentStore<WeaponState> Weapon = new();
 
     public IReadOnlyList<EntityId> Alive => _alive;
 
@@ -87,6 +88,7 @@ public sealed class EntityStore
         Production.Remove(id);
         Targetable.Remove(id);
         Targeting.Remove(id);
+        Weapon.Remove(id);
         return true;
     }
 

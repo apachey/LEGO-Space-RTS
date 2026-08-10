@@ -1,7 +1,7 @@
 {
-  "schemaVersion": 10,
+  "schemaVersion": 11,
   "contentKind": "prototype_entities",
-  "policy": "M2 movement and canonical M3 economy metadata plus the canonical M4 target classes, layers and Rock Raider target-priority inputs; weapon execution remains outside this schema version.",
+  "policy": "M2 movement, canonical M3 economy metadata and the canonical M4 Rock Raider targeting plus T041 weapon readiness, firing-event and cooldown inputs; projectile, damage and contact resolution remain scheduled later systems.",
   "movementProfiles": [
     {
       "stableId": "movement.prototype.crew",
@@ -110,6 +110,60 @@
       "turnRatePerTick": 0,
       "reversePolicy": "None",
       "layer": "Ground"
+    }
+  ],
+  "weaponDefinitions": [
+    {
+      "stableId": "weapon.rr.crew.portable_mining_tool",
+      "legalLayers": ["Ground"],
+      "legalClasses": ["Personnel", "LightMachine", "MediumMachine", "HeavyMachine", "MassiveMachine", "Structure", "FortifiedStructure"],
+      "priorityProfile": "Support",
+      "damage": 6,
+      "damageType": "General",
+      "cooldownTicks": 24,
+      "rangeRatio": [4, 5],
+      "minimumRangeRatio": [0, 1],
+      "delivery": "Contact",
+      "requiresLineOfSight": true
+    },
+    {
+      "stableId": "weapon.rr.hover_scout.survey_pulse",
+      "legalLayers": ["Ground"],
+      "legalClasses": ["Personnel", "LightMachine", "MediumMachine", "HeavyMachine", "MassiveMachine", "Structure", "FortifiedStructure"],
+      "priorityProfile": "Scout",
+      "damage": 6,
+      "damageType": "General",
+      "cooldownTicks": 30,
+      "rangeRatio": [3, 1],
+      "minimumRangeRatio": [0, 1],
+      "delivery": "Projectile",
+      "requiresLineOfSight": true
+    },
+    {
+      "stableId": "weapon.rr.loader_dozer.scoop_ram",
+      "legalLayers": ["Ground"],
+      "legalClasses": ["Personnel", "LightMachine", "MediumMachine", "HeavyMachine", "MassiveMachine", "Structure", "FortifiedStructure"],
+      "priorityProfile": "AntiLight",
+      "damage": 18,
+      "damageType": "General",
+      "cooldownTicks": 27,
+      "rangeRatio": [9, 10],
+      "minimumRangeRatio": [0, 1],
+      "delivery": "Contact",
+      "requiresLineOfSight": true
+    },
+    {
+      "stableId": "weapon.rr.chrome_crusher.chrome_drill",
+      "legalLayers": ["Ground"],
+      "legalClasses": ["Personnel", "LightMachine", "MediumMachine", "HeavyMachine", "MassiveMachine", "Structure", "FortifiedStructure"],
+      "priorityProfile": "Siege",
+      "damage": 55,
+      "damageType": "Siege",
+      "cooldownTicks": 32,
+      "rangeRatio": [21, 20],
+      "minimumRangeRatio": [0, 1],
+      "delivery": "Contact",
+      "requiresLineOfSight": true
     }
   ],
   "resourceNodeDefinitions": [
@@ -299,12 +353,7 @@
         "oreCarryCapacity": 8
       },
       "combatTarget": { "class": "Personnel", "layer": "Ground", "flags": ["CombatThreat", "Worker", "Support"] },
-      "targeting": {
-        "weaponRangeRatio": [4, 5],
-        "priorityProfile": "Support",
-        "legalLayers": ["Ground"],
-        "legalClasses": ["Personnel", "LightMachine", "MediumMachine", "HeavyMachine", "MassiveMachine", "Structure", "FortifiedStructure"]
-      },
+      "weaponProfile": "weapon.rr.crew.portable_mining_tool",
       "viewProfile": "view.placeholder.rock_raiders.crew"
     },
     {
@@ -317,12 +366,7 @@
       "visionRadius": 9,
       "operationsCapacity": 1,
       "combatTarget": { "class": "LightMachine", "layer": "Ground", "flags": ["CombatThreat", "Support"] },
-      "targeting": {
-        "weaponRangeRatio": [3, 1],
-        "priorityProfile": "Scout",
-        "legalLayers": ["Ground"],
-        "legalClasses": ["Personnel", "LightMachine", "MediumMachine", "HeavyMachine", "MassiveMachine", "Structure", "FortifiedStructure"]
-      },
+      "weaponProfile": "weapon.rr.hover_scout.survey_pulse",
       "viewProfile": "view.placeholder.rock_raiders.hover_scout"
     },
     {
@@ -335,12 +379,7 @@
       "visionRadius": 7,
       "operationsCapacity": 3,
       "combatTarget": { "class": "MediumMachine", "layer": "Ground", "flags": ["CombatThreat"] },
-      "targeting": {
-        "weaponRangeRatio": [9, 10],
-        "priorityProfile": "AntiLight",
-        "legalLayers": ["Ground"],
-        "legalClasses": ["Personnel", "LightMachine", "MediumMachine", "HeavyMachine", "MassiveMachine", "Structure", "FortifiedStructure"]
-      },
+      "weaponProfile": "weapon.rr.loader_dozer.scoop_ram",
       "viewProfile": "view.placeholder.rock_raiders.loader_dozer"
     },
     {
@@ -365,12 +404,7 @@
       "visionRadius": 8,
       "operationsCapacity": 6,
       "combatTarget": { "class": "MassiveMachine", "layer": "Ground", "flags": ["CombatThreat"] },
-      "targeting": {
-        "weaponRangeRatio": [21, 20],
-        "priorityProfile": "Siege",
-        "legalLayers": ["Ground"],
-        "legalClasses": ["Personnel", "LightMachine", "MediumMachine", "HeavyMachine", "MassiveMachine", "Structure", "FortifiedStructure"]
-      },
+      "weaponProfile": "weapon.rr.chrome_crusher.chrome_drill",
       "viewProfile": "view.placeholder.rock_raiders.chrome_crusher"
     },
     {

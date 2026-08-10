@@ -134,7 +134,7 @@ check(len(source.get('resourceReceivers',[])) == 2, 'M3 starting HQ resource rec
 check(len(source.get('visionTestGeometry',[])) >= 4, 'vision test geometry missing')
 
 content_source = json.loads((ROOT/'Content/PrototypeEntities.json').read_text())
-check(content_source.get('schemaVersion') == 10 and content_source.get('contentKind') == 'prototype_entities', 'prototype content schema mismatch')
+check(content_source.get('schemaVersion') == 11 and content_source.get('contentKind') == 'prototype_entities', 'prototype content schema mismatch')
 entity_keys = [e.get('stableId') for e in content_source.get('entities',[])]
 check(len(entity_keys) >= 5 and len(entity_keys) == len(set(entity_keys)), 'prototype content entries missing/duplicated')
 for required_key in ['building.rock_raiders.hq','building.rock_raiders.ore_processing_plant','building.rock_raiders.power_station','building.rock_raiders.vehicle_service_bay','unit.rock_raiders.crew','unit.rock_raiders.hover_scout','unit.rock_raiders.rapid_rider','unit.rock_raiders.loader_dozer','unit.rock_raiders.chrome_crusher','prototype.nav.huge']:
@@ -158,14 +158,22 @@ expected_combat_targets={
     'building.rock_raiders.vehicle_service_bay':('Structure','Ground',['Production']),
 }
 check({key:(by_key.get(key,{}).get('combatTarget',{}).get('class'),by_key.get(key,{}).get('combatTarget',{}).get('layer'),by_key.get(key,{}).get('combatTarget',{}).get('flags')) for key in expected_combat_targets} == expected_combat_targets, 'canonical M4 target classes, layers or role flags missing')
-expected_targeting={
-    'unit.rock_raiders.crew':([4,5],'Support'),
-    'unit.rock_raiders.hover_scout':([3,1],'Scout'),
-    'unit.rock_raiders.loader_dozer':([9,10],'AntiLight'),
-    'unit.rock_raiders.chrome_crusher':([21,20],'Siege'),
+expected_weapon_profiles={
+    'unit.rock_raiders.crew':'weapon.rr.crew.portable_mining_tool',
+    'unit.rock_raiders.hover_scout':'weapon.rr.hover_scout.survey_pulse',
+    'unit.rock_raiders.loader_dozer':'weapon.rr.loader_dozer.scoop_ram',
+    'unit.rock_raiders.chrome_crusher':'weapon.rr.chrome_crusher.chrome_drill',
 }
-check({key:(by_key.get(key,{}).get('targeting',{}).get('weaponRangeRatio'),by_key.get(key,{}).get('targeting',{}).get('priorityProfile')) for key in expected_targeting} == expected_targeting, 'canonical M4 Rock Raider targeting profiles or weapon-range inputs missing')
-check('targeting' not in by_key.get('unit.rock_raiders.rapid_rider',{}), 'Rapid Rider is an unarmed transport and must not acquire attack targets')
+check({key:by_key.get(key,{}).get('weaponProfile') for key in expected_weapon_profiles} == expected_weapon_profiles, 'canonical M4 Rock Raider weapon-profile references missing')
+check('weaponProfile' not in by_key.get('unit.rock_raiders.rapid_rider',{}), 'Rapid Rider is an unarmed transport and must not acquire attack targets')
+weapon_by_key={w.get('stableId'):w for w in content_source.get('weaponDefinitions',[])}
+expected_weapons={
+    'weapon.rr.crew.portable_mining_tool':(6,'General',24,[4,5],'Contact','Support'),
+    'weapon.rr.hover_scout.survey_pulse':(6,'General',30,[3,1],'Projectile','Scout'),
+    'weapon.rr.loader_dozer.scoop_ram':(18,'General',27,[9,10],'Contact','AntiLight'),
+    'weapon.rr.chrome_crusher.chrome_drill':(55,'Siege',32,[21,20],'Contact','Siege'),
+}
+check({key:(weapon_by_key.get(key,{}).get('damage'),weapon_by_key.get(key,{}).get('damageType'),weapon_by_key.get(key,{}).get('cooldownTicks'),weapon_by_key.get(key,{}).get('rangeRatio'),weapon_by_key.get(key,{}).get('delivery'),weapon_by_key.get(key,{}).get('priorityProfile')) for key in expected_weapons} == expected_weapons, 'canonical T041 Rock Raider weapon definitions missing or incorrect')
 profile_by_key={p.get('stableId'):p for p in content_source.get('movementProfiles',[])}
 check(profile_by_key.get('movement.prototype.crew',{}).get('speedRatio')==[135,100],'Crew M2 speed must match Phase 06 1.35')
 check(profile_by_key.get('movement.prototype.hover_scout',{}).get('speedRatio')==[225,100],'Hover Scout M2 speed must match Phase 06 2.25')

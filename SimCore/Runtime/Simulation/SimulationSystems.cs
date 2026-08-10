@@ -1105,7 +1105,7 @@ public sealed class VisionSystem : ISimSystem
         }
     }
 
-    private static bool HasLineOfSight(MapGrid map, int x0, int y0, int x1, int y1)
+    internal static bool HasLineOfSight(MapGrid map, int x0, int y0, int x1, int y1)
     {
         int e0=BuildElevation(map,x0,y0),e1=BuildElevation(map,x1,y1);
         int totalSteps=Math.Max(Math.Abs(x1-x0),Math.Abs(y1-y0));if(totalSteps==0)return true;

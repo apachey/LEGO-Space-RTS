@@ -17,7 +17,7 @@ byte[] contentBytes = PrototypeContentCodec.Write(catalog);
 string contentOutput = Path.Combine(outputDirectory, "PrototypeEntities.contentbin");
 File.WriteAllBytes(contentOutput, contentBytes);
 PrototypeContentCatalog contentRoundTrip = PrototypeContentCodec.Read(contentBytes);
-if (contentRoundTrip.ContentHash != catalog.ContentHash || contentRoundTrip.Entities.Length != catalog.Entities.Length || contentRoundTrip.ResourceNodes.Length != catalog.ResourceNodes.Length || contentRoundTrip.Buildings.Length != catalog.Buildings.Length || contentRoundTrip.Production.Length != catalog.Production.Length)
+if (contentRoundTrip.ContentHash != catalog.ContentHash || contentRoundTrip.Entities.Length != catalog.Entities.Length || contentRoundTrip.ResourceNodes.Length != catalog.ResourceNodes.Length || contentRoundTrip.Buildings.Length != catalog.Buildings.Length || contentRoundTrip.Production.Length != catalog.Production.Length || contentRoundTrip.Weapons.Length != catalog.Weapons.Length)
     throw new InvalidDataException("Prototype content round-trip validation failed.");
 
 MapDefinition definition = CompileMap(mapSource, catalog);
@@ -28,7 +28,7 @@ MapDefinition mapRoundTrip = CompiledMapCodec.ReadDefinition(mapBytes);
 if (mapRoundTrip.Grid.Id.Value != definition.Grid.Id.Value || mapRoundTrip.InitialEntities.Length != definition.InitialEntities.Length || mapRoundTrip.InitialResourceNodes.Length != definition.InitialResourceNodes.Length || mapRoundTrip.InitialResourceReceivers.Length != definition.InitialResourceReceivers.Length)
     throw new InvalidDataException("Compiled map round-trip validation failed.");
 
-Console.WriteLine($"Prototype content: {contentOutput} ({contentBytes.Length} bytes), hash={catalog.ContentHash:X16}, entities={catalog.Entities.Length}, resourceDefinitions={catalog.ResourceNodes.Length}, buildingDefinitions={catalog.Buildings.Length}, productionDefinitions={catalog.Production.Length}");
+Console.WriteLine($"Prototype content: {contentOutput} ({contentBytes.Length} bytes), hash={catalog.ContentHash:X16}, entities={catalog.Entities.Length}, resourceDefinitions={catalog.ResourceNodes.Length}, buildingDefinitions={catalog.Buildings.Length}, productionDefinitions={catalog.Production.Length}, weaponDefinitions={catalog.Weapons.Length}");
 Console.WriteLine($"Map: {mapOutput} ({mapBytes.Length} bytes), starts={definition.Starts.Length}, spawns={definition.InitialEntities.Length}, resourceNodes={definition.InitialResourceNodes.Length}, resourceReceivers={definition.InitialResourceReceivers.Length}, features={definition.Grid.Features.Count}");
 return 0;
 
@@ -36,7 +36,7 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
 {
     using JsonDocument document = JsonDocument.Parse(File.ReadAllText(path));
     JsonElement root = document.RootElement;
-    if (root.GetProperty("schemaVersion").GetInt32() != 10) throw new InvalidDataException("Unsupported prototype content schema.");
+    if (root.GetProperty("schemaVersion").GetInt32() != 11) throw new InvalidDataException("Unsupported prototype content schema.");
     if (!string.Equals(root.GetProperty("contentKind").GetString(), "prototype_entities", StringComparison.Ordinal)) throw new InvalidDataException("Unexpected contentKind.");
 
     List<PrototypeMovementProfile> profiles = new();
@@ -77,6 +77,22 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
     }
     resourceNodes.Sort((a, b) => string.CompareOrdinal(a.StableKey, b.StableKey));
 
+    List<WeaponDefinition> weapons = new();
+    Dictionary<string, WeaponDefinition> weaponByKey = new(StringComparer.Ordinal);
+    foreach (JsonElement item in root.GetProperty("weaponDefinitions").EnumerateArray())
+    {
+        string key = RequiredString(item, "stableId");
+        uint id = StableId.FromKey(key).Value; if (!stableIds.Add(id)) throw new InvalidDataException($"Stable ID collision at weapon {key}.");
+        WeaponDefinition weapon = new(key, ReadTargetLayerMask(item.GetProperty("legalLayers")), ReadTargetClassMask(item.GetProperty("legalClasses")),
+            Enum.Parse<TargetPriorityProfile>(RequiredString(item, "priorityProfile"), false),
+            checked((ushort)item.GetProperty("damage").GetInt32()), Enum.Parse<DamageType>(RequiredString(item, "damageType"), false),
+            checked((ushort)item.GetProperty("cooldownTicks").GetInt32()), ReadRatio(item, key, "rangeRatio"), ReadRatio(item, key, "minimumRangeRatio"),
+            Enum.Parse<WeaponDeliveryKind>(RequiredString(item, "delivery"), false), item.GetProperty("requiresLineOfSight").GetBoolean());
+        if (!weaponByKey.TryAdd(key, weapon)) throw new InvalidDataException($"Duplicate weapon key {key}.");
+        weapons.Add(weapon);
+    }
+    weapons.Sort((a, b) => string.CompareOrdinal(a.StableKey, b.StableKey));
+
     List<PrototypeEntityDefinition> entities = new();
     HashSet<string> entityKeys = new(StringComparer.Ordinal);
     foreach (JsonElement item in root.GetProperty("entities").EnumerateArray())
@@ -101,15 +117,15 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
         CombatTargetLayer targetLayer = Enum.Parse<CombatTargetLayer>(RequiredString(combatTarget, "layer"), false);
         CombatTargetFlags targetFlags = ReadCombatTargetFlags(combatTarget.GetProperty("flags"));
         PrototypeCombatProfile combat;
-        if (item.TryGetProperty("targeting", out JsonElement targeting))
+        if (item.TryGetProperty("weaponProfile", out JsonElement weaponProfileElement))
         {
-            Fix32 weaponRange = ReadRatio(targeting, key, "weaponRangeRatio");
-            Fix32 acquisitionRadius = weaponRange + Fix32.FromInt(4);
+            string weaponKey = weaponProfileElement.GetString() ?? throw new InvalidDataException($"{key}: weaponProfile must be a string.");
+            if (!weaponByKey.TryGetValue(weaponKey, out WeaponDefinition weapon)) throw new InvalidDataException($"{key}: unknown weaponProfile {weaponKey}.");
+            Fix32 acquisitionRadius = weapon.Range + Fix32.FromInt(4);
             Fix32 sightRadius = Fix32.FromInt(visionRadius);
             if (acquisitionRadius > sightRadius) acquisitionRadius = sightRadius;
             combat = new PrototypeCombatProfile(targetClass, targetLayer, targetFlags,
-                Enum.Parse<TargetPriorityProfile>(RequiredString(targeting, "priorityProfile"), false),
-                ReadTargetLayerMask(targeting.GetProperty("legalLayers")), ReadTargetClassMask(targeting.GetProperty("legalClasses")), acquisitionRadius);
+                weapon.PriorityProfile, weapon.LegalTargetLayers, weapon.LegalTargetClasses, acquisitionRadius, weapon.Id);
         }
         else combat = new PrototypeCombatProfile(targetClass, targetLayer, targetFlags);
         entities.Add(new PrototypeEntityDefinition(key, RequiredString(item, "faction"), RequiredString(item, "sourceClassification"), movement,
@@ -178,7 +194,7 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
             checked((ushort)item.GetProperty("buildTicks").GetInt32())));
     }
     production.Sort((a, b) => string.CompareOrdinal(a.UnitStableKey, b.UnitStableKey));
-    return new PrototypeContentCatalog(profiles.ToArray(), entities.ToArray(), resourceNodes.ToArray(), buildings.ToArray(), production.ToArray());
+    return new PrototypeContentCatalog(profiles.ToArray(), entities.ToArray(), resourceNodes.ToArray(), buildings.ToArray(), production.ToArray(), weapons.ToArray());
 }
 
 static MapDefinition CompileMap(string path, PrototypeContentCatalog catalog)

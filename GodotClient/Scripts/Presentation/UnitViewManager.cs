@@ -11,6 +11,8 @@ public partial class UnitViewManager : Node3D
     private readonly Dictionary<uint, MeshInstance3D> _views = new();
     private readonly HashSet<uint> _live = new();
     private readonly List<uint> _remove = new();
+    private readonly Dictionary<uint, uint> _seenFireSequence = new();
+    private readonly Dictionary<uint, float> _fireFlashRemaining = new();
 
     private readonly StandardMaterial3D _friendly = MakeMaterial(new Color(0.10f, 0.82f, 0.66f));
     private readonly StandardMaterial3D _other = MakeMaterial(new Color(0.92f, 0.30f, 0.18f));
@@ -56,6 +58,7 @@ public partial class UnitViewManager : Node3D
             if (ring is not null) ring.Visible = selected || hovered;
             Node3D? targetRing = view.GetNodeOrNull<Node3D>("TargetRing");
             if (targetRing is not null) targetRing.Visible = IsCurrentTarget(c.EntityId);
+            UpdateWeaponFlash(view, c, (float)delta);
             Label3D? groupLabel = view.GetNodeOrNull<Label3D>("ControlGroupLabel");
             if (groupLabel is not null)
             {
@@ -66,7 +69,7 @@ public partial class UnitViewManager : Node3D
         }
         _remove.Clear();
         foreach ((uint id, MeshInstance3D view) in _views) if (!_live.Contains(id)) { view.QueueFree(); _remove.Add(id); }
-        for (int i = 0; i < _remove.Count; i++) _views.Remove(_remove[i]);
+        for (int i = 0; i < _remove.Count; i++) { uint id = _remove[i]; _views.Remove(id); _seenFireSequence.Remove(id); _fireFlashRemaining.Remove(id); }
     }
 
     private static PresentationEntity FindPrevious(PresentationSnapshot previous, PresentationEntity current)
@@ -86,6 +89,20 @@ public partial class UnitViewManager : Node3D
         for (int i = 0; i < _selection.Selected.Count; i++)
             if (_bridge.World.Entities.Targeting.TryGet(_selection.Selected[i], out Targeting targeting) && targeting.CurrentTarget == id) return true;
         return false;
+    }
+
+    private void UpdateWeaponFlash(MeshInstance3D view, PresentationEntity entity, float delta)
+    {
+        if (!_seenFireSequence.TryGetValue(entity.EntityId.Value, out uint seen)) _seenFireSequence[entity.EntityId.Value] = entity.WeaponFireSequence;
+        else if (seen != entity.WeaponFireSequence)
+        {
+            _seenFireSequence[entity.EntityId.Value] = entity.WeaponFireSequence;
+            _fireFlashRemaining[entity.EntityId.Value] = 0.14f;
+        }
+        float remaining = _fireFlashRemaining.TryGetValue(entity.EntityId.Value, out float value) ? value : 0f;
+        Node3D? flash = view.GetNodeOrNull<Node3D>("WeaponFlash");
+        if (flash is not null) flash.Visible = remaining > 0f;
+        if (remaining > 0f) _fireFlashRemaining[entity.EntityId.Value] = Mathf.Max(0f, remaining - delta);
     }
 
     private MeshInstance3D CreateView(PresentationEntity entity)
@@ -191,6 +208,17 @@ public partial class UnitViewManager : Node3D
             Scale = new Vector3(1f / visualScale.X, 1f / visualScale.Y, 1f / visualScale.Z)
         };
         view.AddChild(targetRing);
+
+        SphereMesh flashMesh = new() { Radius = 0.22f, Height = 0.44f, RadialSegments = 10, Rings = 5 };
+        StandardMaterial3D flashMaterial = MakeMaterial(new Color(1f, 0.72f, 0.16f));
+        flashMaterial.ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded;
+        flashMesh.Material = flashMaterial;
+        view.AddChild(new MeshInstance3D
+        {
+            Name = "WeaponFlash", Mesh = flashMesh, Visible = false,
+            Position = new Vector3(0f, 0.75f / visualScale.Y, 0f),
+            Scale = new Vector3(1f / visualScale.X, 1f / visualScale.Y, 1f / visualScale.Z)
+        });
 
         Label3D groupLabel = new()
         {

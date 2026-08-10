@@ -5,11 +5,13 @@ remain authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M4 — Combat / T040 deterministic Targeting acceptance candidate.**
+**M4 — Combat / T041 deterministic Weapons acceptance candidate.**
 
 The accepted M3 T030-T039 economy/base-building stack is merged through PR #10.
-M4 has begun with T040 Targeting; weapons, projectiles, damage, destruction and
-repair remain their separately scheduled T041-T046 tasks.
+M4 T040 Targeting is an automated acceptance candidate whose human interaction
+check is explicitly deferred. With game-director approval, T041 Weapons is
+stacked on that branch; projectiles, damage, contact resolution, destruction and
+repair remain their separately scheduled T042-T046 tasks.
 
 ## Engine / architecture
 
@@ -298,13 +300,41 @@ narrow placement cases allowed by Phase 09B.
   selected group; a wholly unarmed selection is not converted into a charge.
 - Snapshot v11 / simulation protocol v9, replay v6 and prototype content v10
   preserve targeting state, queued Attack intent and canonical target metadata
-  while retaining existing legacy readers. T041 remains responsible for weapon
-  cooldown/firing and later combat tasks for projectiles, damage and destruction.
+  while retaining existing legacy readers. T041 builds weapon cooldown/firing
+  on that target authority; later combat tasks own projectiles, damage and
+  destruction.
 - The T040 full verification acceptance candidate is green across every
   `BLOCKING_NOW` stage: builds, 131 NUnit tests, the representative 24-mover
   movement gate, compiled content, HeadlessSim, Godot smoke, 100-repeat
   determinism, replay, snapshot continuation, regeneration and macOS export.
 - A launchable T040 debug build was produced at
+  `Builds/macOS/LEGO Space RTS.app` and passed the export smoke launch.
+- M4 T041 Weapons is implemented on the current stacked task branch. Four
+  canonical Rock Raider weapon definitions cover Crew Portable Mining Tool,
+  Hover Scout Survey Pulse, Loader Dozer Scoop Ram and Chrome Crusher Chrome
+  Drill. Rapid Rider remains an unarmed transport.
+- Weapon readiness executes immediately after targeting in the authoritative
+  20 Hz pipeline. A ready weapon fires only at a visible legal target inside its
+  exact range with clear combat LoS, records a monotonic firing revision and
+  begins its exact canonical 24 / 30 / 27 / 32-tick cooldown. Cooldown advances
+  without a target; a ready weapon waits without losing readiness when range or
+  LoS is invalid.
+- Godot receives only the authoritative firing revision/target and presents a
+  short amber muzzle flash. Presentation timing cannot authorize a shot or
+  alter cooldown. Projectile creation, HP damage, armor resolution and contact
+  approach/facing rules remain intentionally absent until T042-T044.
+- Snapshot v12 / simulation protocol v10 and prototype content v11 preserve
+  weapon profile, readiness, firing sequence and last firing event while
+  retaining supported legacy readers. Replay remains v6 because T041 adds no
+  command encoding.
+- The built-in headless content mirror now uses the compiler's canonical stable
+  key ordering, so built-in and tracked compiled startup report the same
+  gameplay-content hash for identical definitions.
+- The T041 full verification acceptance candidate is green across every
+  `BLOCKING_NOW` stage: builds, 138 NUnit tests, the representative 24-mover
+  movement gate, compiled content, HeadlessSim, Godot smoke, 100-repeat
+  determinism, replay, snapshot continuation, regeneration and macOS export.
+- A launchable T041 debug build was produced at
   `Builds/macOS/LEGO Space RTS.app` and passed the export smoke launch.
 
 ## Current gates
@@ -351,10 +381,14 @@ narrow placement cases allowed by Phase 09B.
   current SimCore entity in explored fog; that would become an information leak
   in multiplayer. Add serialized/per-viewer knowledge through a separately
   reviewed fog-information task no later than M6 T061 fog filtering.
-- T040 deliberately does not fire weapons or move into chase range. The
-  canonical 12-cell direct-pursuit leash and attack-move route leash join
-  weapon-range execution in the scheduled M4 combat work; no temporary
-  presentation-owned chase or damage behavior is introduced.
+- T040 human interaction/readability acceptance remains deferred by explicit
+  game-director approval; its automated candidate is not reclassified as human
+  accepted.
+- T041 deliberately emits firing events and starts cooldowns without creating
+  projectiles, applying damage/armor, resolving contact approach slots/facing,
+  or moving into chase range. Those remain T042-T044 scope. The canonical
+  12-cell direct-pursuit leash and attack-move route leash also remain pending;
+  no temporary presentation-owned chase or damage behavior is introduced.
 
 ## Explicitly rejected / do not resurrect
 
@@ -367,5 +401,9 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Human T040 check of right-click target selection and target-ring readability.
-2. After T040 acceptance: M4 T041 Weapons / deterministic cooldown and firing.
+1. Human T040 check of right-click target selection and target-ring readability
+   remains pending.
+2. Human T041 check of close-range firing-flash readability and cadence remains
+   pending after automated acceptance.
+3. After T040/T041 acceptance: M4 T042 Projectiles / deterministic travel and
+   overkill.

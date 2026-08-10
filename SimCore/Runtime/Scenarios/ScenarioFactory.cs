@@ -272,6 +272,21 @@ public static class ScenarioFactory
             CurrentTarget = EntityId.None, AcquisitionRadius = combat.AcquisitionRadius, LegalLayers = combat.LegalTargetLayers,
             LegalClasses = combat.LegalTargetClasses, PriorityProfile = combat.PriorityProfile, SelectionKind = TargetSelectionKind.None
         });
+        AddWeaponComponent(world, id, definition);
+    }
+
+    internal static void AddWeaponComponent(SimulationWorld world, EntityId id, PrototypeEntityDefinition definition)
+    {
+        if (definition.Combat.WeaponProfile.Value == 0) return;
+        if (!world.Content.TryGetWeapon(definition.Combat.WeaponProfile, out _)) throw new InvalidOperationException($"Missing weapon profile for {definition.StableKey}.");
+        world.Entities.Weapon.Set(id, new WeaponState
+        {
+            WeaponProfile = definition.Combat.WeaponProfile,
+            CooldownRemainingTicks = 0,
+            FireSequence = 0,
+            LastFiredTarget = EntityId.None,
+            LastFiredTick = -1
+        });
     }
 }
 }
