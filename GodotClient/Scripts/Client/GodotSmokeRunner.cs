@@ -1,17 +1,19 @@
 using Godot;
 using LegoSpaceRTS.Presentation;
+using LegoSpaceRTS.SimCore;
 
 namespace LegoSpaceRTS.Client;
 
 public partial class GodotSmokeRunner : Node
 {
     private GodotSimBridge? _bridge;
+    private SelectionController? _selection;
     private string? _capturePath;
     private bool _finished;
     private int _frames;
-    public void Configure(GodotSimBridge bridge, string[] commandLineArgs)
+    public void Configure(GodotSimBridge bridge, SelectionController selection, string[] commandLineArgs)
     {
-        _bridge = bridge;
+        _bridge = bridge; _selection = selection;
         ProcessPriority = 1000;
         for (int i = 0; i + 1 < commandLineArgs.Length; i++)
         {
@@ -22,8 +24,20 @@ public partial class GodotSmokeRunner : Node
     {
         if (_bridge is null || _finished) return;
         _frames++;
+        if (_frames == 2 && _selection is not null)
+        {
+            IReadOnlyList<EntityId> alive = _bridge.World.Entities.Alive;
+            for (int i = 0; i < alive.Count; i++)
+            {
+                EntityId id = alive[i];
+                if (_bridge.World.Entities.Production.Has(id) && _bridge.World.Entities.Ownership.TryGet(id, out Ownership ownership) && ownership.PlayerSlot == 0)
+                { _selection.SetSelection(new[] { id }); break; }
+            }
+        }
         if (_bridge.World.Tick.Value < 40 || _frames < 60) return;
-        bool ok = _bridge.Current is not null && _bridge.World.Entities.Alive.Count >= 18 && _bridge.GameplayContentHash != 0;
+        Node? hud = GetTree().Root.FindChild("BasicHUD", true, false);
+        bool hudOk = hud is not null && hud.FindChild("ResourceStrip", true, false) is not null && hud.FindChild("SelectionPanel", true, false) is not null && hud.FindChild("CommandPanel", true, false) is not null;
+        bool ok = _bridge.Current is not null && _bridge.World.Entities.Alive.Count >= 18 && _bridge.GameplayContentHash != 0 && hudOk;
         if (ok && _capturePath is not null)
         {
             _finished = true;

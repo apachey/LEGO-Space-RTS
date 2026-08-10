@@ -317,3 +317,32 @@ not change gameplay canon.
 
 These are implementation decisions within approved M3 Brownout canon. They do
 not change gameplay canon.
+
+---
+
+## 2026-08-10 — M3 Basic HUD hierarchy and developer-tool separation
+
+- T039 introduces the first player-facing Phase 07/08 HUD skeleton in the
+  Godot presentation layer: top resources/OC, bottom-center selection state and
+  bottom-right production interaction. It does not move gameplay authority out
+  of SimCore or add a second source of economic truth.
+- The compact Energy display uses aggregate reserve, capacity, generation,
+  demand and net rate. Its popover exposes the current prototype domain without
+  turning permanent HUD space into a domain spreadsheet. Domain-count and
+  segmentation presentation remains dependent on the later T049 topology.
+- Energy priority is deliberately contextual. Its controls are instantiated in
+  the selected-building status panel and hidden unless the selection contains
+  an owned Energy consumer. Brownout alerts describe the domain-level cause;
+  individual building state remains local. This preserves the canon requirement
+  that normal priority adjustment is rare rather than routine macro labor.
+- Existing engineering metrics, navigation overlays and destructive Brownout
+  trigger remain available through a hidden F8 developer panel. They no longer
+  compete visually with the economy display or represent intended player
+  interaction frequency.
+- T039 does not pre-implement the later minimap, complete 3×4 command grid, F3
+  production drawer, full queue editing or final faction art. Runtime smoke and
+  static validation instead protect the Basic HUD anchors and hidden developer
+  boundary appropriate to this milestone.
+
+These are implementation decisions within approved M3 HUD and UX canon. They
+do not change gameplay canon.

@@ -23,7 +23,8 @@ public partial class RtsCompositionRoot : Node3D
         UnitViewManager views = new() { Name = "UnitViews" }; AddChild(views); views.Configure(bridge, selection, input.Groups);
         FogPresenter fog = new() { Name = "FogPresentation" }; AddChild(fog); fog.Configure(bridge);
         DebugRenderer debug = new() { Name = "DebugVisualization" }; AddChild(debug); debug.Configure(bridge);
-        DebugHud hud = new() { Name = "PrototypeHUD" }; AddChild(hud); hud.Configure(bridge, selection, input, debug, fog);
+        BasicHud hud = new(); AddChild(hud); hud.Configure(bridge, selection, input);
+        DebugHud developerHud = new(); AddChild(developerHud); developerHud.Configure(bridge, input, debug, fog);
         GD.Print($"Prototype content source: {(scenario.LoadedFromCompiledData ? "compiled runtime data" : "built-in deterministic fallback")}, content hash={scenario.GameplayContentHash:X16}");
 
         DirectionalLight3D sun = new() { Name = "Sun", RotationDegrees = new Vector3(-58f, -35f, 0f), LightEnergy = 1.2f, ShadowEnabled = true }; AddChild(sun);
@@ -34,7 +35,7 @@ public partial class RtsCompositionRoot : Node3D
         {
             GodotSmokeRunner smoke = new() { Name = "GodotSmokeRunner" };
             AddChild(smoke);
-            smoke.Configure(bridge, commandLineArgs);
+            smoke.Configure(bridge, selection, commandLineArgs);
         }
     }
     private static Vector3 ComputeInitialPlayerFocus(SimulationWorld world, byte playerSlot)

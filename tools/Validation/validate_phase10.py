@@ -25,7 +25,7 @@ required = [
     'GodotClient/Scripts/Presentation/GodotSimBridge.cs','GodotClient/Scripts/Presentation/RtsCameraController.cs',
     'GodotClient/Scripts/Presentation/SelectionController.cs','GodotClient/Scripts/Presentation/RtsInputController.cs',
     'GodotClient/Scripts/Presentation/FogPresenter.cs','GodotClient/Scripts/Presentation/DebugRenderer.cs',
-    'GodotClient/Scripts/UI/DebugHud.cs','Docs/IMPLEMENTATION_REPORT.md',
+    'GodotClient/Scripts/UI/BasicHud.cs','GodotClient/Scripts/UI/DebugHud.cs','Docs/IMPLEMENTATION_REPORT.md',
     'tools/doctor.sh','tools/verify.sh','tools/run-game.sh','tools/build-mac.sh','tools/capture-visual-smoke.sh',
     'tools/setup-git-hooks.sh','.githooks/pre-commit','.githooks/pre-push',
     '.github/workflows/simcore-pr.yml','global.json','Docs/Development/AGENT_WORKFLOW.md'
@@ -87,6 +87,11 @@ check('RuntimeScenarioLoader.LoadCanonicalOpening' in composition, 'Godot compos
 check('FindChild' not in composition and 'GetNode<' not in composition, 'composition root uses runtime dependency discovery')
 loader = (ROOT/'GodotClient/Scripts/Client/RuntimeScenarioLoader.cs').read_text()
 check('PrototypeContentCodec.Read' in loader and 'CompiledMapCodec.ReadDefinition' in loader, 'Godot runtime does not consume compiled content/map when present')
+basic_hud = (ROOT/'GodotClient/Scripts/UI/BasicHud.cs').read_text()
+for token in ['ResourceStrip','SelectionPanel','CommandPanel','ContextualEnergyPriority','EnergyDomainPopover','OPERATIONS','CRYSTALS']:
+    check(token in basic_hud, f'T039 Basic HUD element missing: {token}')
+debug_hud = (ROOT/'GodotClient/Scripts/UI/DebugHud.cs').read_text()
+check('Visible = false' in debug_hud and 'Drain Energy' in debug_hud, 'developer tools must remain available but hidden by default')
 
 clock = (ROOT/'SimCore/Runtime/Core/SimTime.cs').read_text()
 check('TicksPerSecond = 20' in clock, 'SimClock is not 20 Hz')
@@ -103,6 +108,7 @@ selection = (ROOT/'GodotClient/Scripts/Presentation/SelectionController.cs').rea
 check('128' in selection, 'selection 128-entity foundation missing')
 input_bindings = (ROOT/'GodotClient/Scripts/Client/InputBindings.cs').read_text()
 check('InputMap' in input_bindings and 'debug_open_excavatable' in input_bindings, 'Godot InputMap action foundation missing')
+check('debug_hud_toggle' in input_bindings, 'developer HUD does not have a dedicated hidden-panel toggle')
 input_controller = (ROOT/'GodotClient/Scripts/Presentation/RtsInputController.cs').read_text()
 for token in ['SimCommandType.Move','SimCommandType.Stop','SimCommandType.HoldPosition','SimCommandType.DebugOpenExcavatable']:
     check(token in input_controller, f'Godot M2 command missing: {token}')

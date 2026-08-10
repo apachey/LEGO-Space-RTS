@@ -63,7 +63,7 @@ narrow placement cases allowed by Phase 09B.
 - Meaningful-progress recovery is measured toward the active route waypoint
   over accumulated movement rather than reset by arbitrary per-tick motion, so
   arrival micro-movement cannot indefinitely suppress reflow/repath.
-- The current M3 T038 full verification is green across every
+- The current M3 T039 full verification is green across every
   `BLOCKING_NOW` stage: builds, 125 NUnit tests, the explicit representative
   24-mover gate, compiled content, HeadlessSim, Godot headless smoke, 100-repeat
   determinism, replay, snapshot continuation, regeneration and macOS export.
@@ -244,6 +244,31 @@ narrow placement cases allowed by Phase 09B.
   broader concern that several individually reasonable systems could create
   unfun aggregate complexity remains a design-review consideration for later
   milestone playtests, not a T038 implementation failure.
+- M3 T039 Basic HUD is implemented on the current task branch. The permanent
+  player-facing debug text wall has been replaced by the shared Phase 07/08
+  skeleton: a compact top economy strip, bottom-center selection/state panel
+  and bottom-right production interaction panel. The normal battlefield center
+  remains unobstructed.
+- The top strip now presents processed Ore, the canonical compact Energy
+  reserve/capacity/generation/demand/net expression, spendable Crystals and
+  used/maximum Operations Capacity. Queued OC, the 85% warning, over-cap state,
+  pending received Ore and Energy deficit/Brownout treatments remain visible
+  without exposing simulation diagnostics.
+- Clicking Energy opens a compact single-domain diagnostic popover. Brownout
+  produces one domain-level banner and selected disabled buildings state the
+  exact cause. High/Normal/Low controls exist only in the selected-building
+  status area and disappear entirely during ordinary play when no compatible
+  consumer is selected.
+- Selection now gives readable entity names and contextual Worker,
+  construction, power and production status. The production panel exposes
+  canonical costs and tooltips, keeps unavailable products visibly disabled,
+  supports existing click/Shift-click queue behavior and shows retained queue
+  progress or Brownout pause state.
+- Navigation/performance metrics, visualization toggles and the development
+  Energy-drain trigger moved to a separate hidden F8 developer panel. Runtime
+  Godot smoke now verifies all three Basic HUD anchors and seeds an HQ selection
+  for visual capture coverage. No authoritative SimCore or protocol state
+  changed in T039.
 
 ## Current gates
 
@@ -269,8 +294,8 @@ narrow placement cases allowed by Phase 09B.
   use 10 navigation nodes / 5 build cells; resolve in a separate canon-alignment
   task before changing cluster geometry;
 - T049 later adds full Rock Raider Worksite-zone connectivity, overlap, merge
-  and split. The full production overview, waiting-item drag reordering and
-  cancellation/refund presentation
+  and split. The minimap, full 3×4 command grid, F3 production overview,
+  waiting-item drag reordering and cancellation/refund presentation
   remain later interface/economy work beyond the current prototype gates.
 
 ## Explicitly rejected / do not resurrect
@@ -284,7 +309,6 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Merge the accepted stacked T030-T038 M3 economy/base-building branches.
-2. Begin T039 Basic HUD.
-3. Keep Brownout priority controls contextual and visually secondary, as
-   required by Phase 07, while improving the economy display.
+1. Complete T039 human HUD readability and mental-load acceptance.
+2. Merge the accepted stacked T030-T039 M3 economy/base-building branches.
+3. Begin M4 T040 Targeting only after the M3 executable baseline is accepted.

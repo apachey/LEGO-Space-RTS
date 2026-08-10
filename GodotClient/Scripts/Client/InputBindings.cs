@@ -21,6 +21,7 @@ public static class InputBindings
         BindKey("build_rotate", Key.R);
         BindKey("build_cancel_recent", Key.Z);
         BindKey("debug_open_excavatable", Key.F9);
+        BindKey("debug_hud_toggle", Key.F8);
         Key[] digits = { Key.Key0, Key.Key1, Key.Key2, Key.Key3, Key.Key4, Key.Key5, Key.Key6, Key.Key7, Key.Key8, Key.Key9 };
         for (int i = 0; i < digits.Length; i++) BindKey($"group_{i}", digits[i]);
     }
