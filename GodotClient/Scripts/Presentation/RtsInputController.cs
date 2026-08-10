@@ -256,7 +256,7 @@ public partial class RtsInputController : Node
             // Queueing onto a pre-existing order that predates the visual preview still gets a clear first marker.
             _previewEntities = ids;
         }
-        AddMovePreview(target, _movePreviewMarkers.Count + 1, queued);
+        AddMovePreview(target, queued);
     }
 
     private EntityId[] SelectionArray()
@@ -388,12 +388,21 @@ public partial class RtsInputController : Node
         _ => "Invalid placement"
     };
 
-    private void AddMovePreview(FixVec2 target, int number, bool queued)
+    private void AddMovePreview(FixVec2 target, bool queued)
     {
-        Node3D marker = CreateMoveMarker(number, queued);
+        Node3D marker = CreateMoveMarker(queued);
         marker.GlobalPosition = target.ToWorld(0.09f);
         AddChild(marker);
         _movePreviewMarkers.Add(marker);
+        SceneTreeTimer lifetime = GetTree().CreateTimer(queued ? 0.9 : 0.65);
+        lifetime.Timeout += () => RemoveMovePreview(marker);
+    }
+
+    private void RemoveMovePreview(Node3D marker)
+    {
+        _movePreviewMarkers.Remove(marker);
+        if (GodotObject.IsInstanceValid(marker)) marker.QueueFree();
+        if (_movePreviewMarkers.Count == 0) _previewEntities = Array.Empty<EntityId>();
     }
 
     private void ClearMovePreviews()
@@ -416,33 +425,19 @@ public partial class RtsInputController : Node
         return true;
     }
 
-    private static Node3D CreateMoveMarker(int number, bool queued)
+    private static Node3D CreateMoveMarker(bool queued)
     {
-        Node3D root = new() { Name = $"MoveOrderPreview_{number}" };
-        CylinderMesh mesh = new() { TopRadius = 1.15f, BottomRadius = 1.15f, Height = 0.045f, RadialSegments = 32 };
+        Node3D root = new() { Name = "MoveOrderPreview" };
+        TorusMesh mesh = new() { InnerRadius = 0.38f, OuterRadius = 0.52f, Rings = 12, RingSegments = 24 };
         StandardMaterial3D material = new()
         {
-            AlbedoColor = queued ? new Color(0.30f, 0.72f, 1f, 0.88f) : new Color(0.20f, 1f, 0.80f, 0.92f),
+            AlbedoColor = queued ? new Color(0.35f, 0.68f, 0.92f, 0.62f) : new Color(0.45f, 0.82f, 0.68f, 0.58f),
             ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
+            Transparency = BaseMaterial3D.TransparencyEnum.Alpha,
             NoDepthTest = true
         };
         mesh.Material = material;
-        root.AddChild(new MeshInstance3D { Name = "MarkerDisc", Mesh = mesh });
-
-        Label3D label = new()
-        {
-            Name = "OrderNumber",
-            Text = number.ToString(),
-            FontSize = 36,
-            OutlineSize = 12,
-            Modulate = new Color(1f, 1f, 1f),
-            OutlineModulate = new Color(0.02f, 0.02f, 0.02f, 0.95f),
-            Billboard = BaseMaterial3D.BillboardModeEnum.Enabled,
-            FixedSize = true,
-            NoDepthTest = true,
-            Position = new Vector3(0f, 0.25f, 0f)
-        };
-        root.AddChild(label);
+        root.AddChild(new MeshInstance3D { Name = "DestinationRing", Mesh = mesh });
         return root;
     }
 }

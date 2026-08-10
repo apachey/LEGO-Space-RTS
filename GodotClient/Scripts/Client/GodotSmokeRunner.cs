@@ -36,7 +36,9 @@ public partial class GodotSmokeRunner : Node
         }
         if (_bridge.World.Tick.Value < 40 || _frames < 60) return;
         Node? hud = GetTree().Root.FindChild("BasicHUD", true, false);
-        bool hudOk = hud is not null && hud.FindChild("ResourceStrip", true, false) is not null && hud.FindChild("SelectionPanel", true, false) is not null && hud.FindChild("CommandPanel", true, false) is not null;
+        bool hudOk = hud is not null && hud.FindChild("ResourceStrip", true, false) is not null &&
+            hud.FindChild("SelectionPanel", true, false) is not null && hud.FindChild("PortraitSlot", true, false) is not null &&
+            hud.FindChild("ContextualActions", true, false) is not null;
         bool ok = _bridge.Current is not null && _bridge.World.Entities.Alive.Count >= 18 && _bridge.GameplayContentHash != 0 && hudOk;
         if (ok && _capturePath is not null)
         {

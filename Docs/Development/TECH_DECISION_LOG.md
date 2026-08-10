@@ -323,9 +323,9 @@ not change gameplay canon.
 ## 2026-08-10 — M3 Basic HUD hierarchy and developer-tool separation
 
 - T039 introduces the first player-facing Phase 07/08 HUD skeleton in the
-  Godot presentation layer: top resources/OC, bottom-center selection state and
-  bottom-right production interaction. It does not move gameplay authority out
-  of SimCore or add a second source of economic truth.
+  Godot presentation layer: top resources/OC and one bottom selection/state
+  area. It does not move gameplay authority out of SimCore or add a second
+  source of economic truth.
 - The compact Energy display uses aggregate reserve, capacity, generation,
   demand and net rate. Its popover exposes the current prototype domain without
   turning permanent HUD space into a domain spreadsheet. Domain-count and
@@ -336,9 +336,16 @@ not change gameplay canon.
   individual building state remains local. This preserves the canon requirement
   that normal priority adjustment is rare rather than routine macro labor.
 - Existing engineering metrics, navigation overlays and destructive Brownout
-  trigger remain available through a hidden F8 developer panel. They no longer
-  compete visually with the economy display or represent intended player
-  interaction frequency.
+  trigger remain available through a hidden F8 developer panel. All developer
+  overlays default off. Normal Move feedback is a small unnumbered translucent
+  ring with a bounded lifetime rather than a numbered marker or permanent path.
+  They no longer compete visually with the economy display or represent
+  intended player interaction frequency.
+- The separate permanent Production panel was removed after human HUD review.
+  A portrait/view slot is reserved inside the unified selection area, while
+  production actions and the facility queue appear contextually only when the
+  relevant building is selected. This retains the implemented M3 interaction
+  without implying that production deserves permanent global screen space.
 - T039 does not pre-implement the later minimap, complete 3×4 command grid, F3
   production drawer, full queue editing or final faction art. Runtime smoke and
   static validation instead protect the Basic HUD anchors and hidden developer

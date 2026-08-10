@@ -183,10 +183,10 @@ public partial class UnitViewManager : Node3D
             Name = "ConstructionProgressLabel",
             Text = string.Empty,
             Visible = false,
-            FontSize = 38,
-            OutlineSize = 12,
-            Modulate = new Color(1f, 0.86f, 0.30f),
-            OutlineModulate = new Color(0.02f, 0.02f, 0.02f, 0.95f),
+            FontSize = 18,
+            OutlineSize = 3,
+            Modulate = new Color(1f, 0.82f, 0.28f, 0.90f),
+            OutlineModulate = new Color(0.03f, 0.04f, 0.05f, 0.82f),
             Billboard = BaseMaterial3D.BillboardModeEnum.Enabled,
             FixedSize = true,
             NoDepthTest = true
@@ -194,7 +194,7 @@ public partial class UnitViewManager : Node3D
         view.AddChild(constructionLabel);
         Label3D brownoutLabel = new()
         {
-            Name = "BrownoutLabel", Text = "⚡ BROWNOUT", Visible = false, FontSize = 38, OutlineSize = 12,
+            Name = "BrownoutLabel", Text = "⚡ BROWNOUT", Visible = false, FontSize = 22, OutlineSize = 4,
             Modulate = new Color(1f, 0.42f, 0.12f), OutlineModulate = new Color(0.02f, 0.02f, 0.02f, 0.95f),
             Billboard = BaseMaterial3D.BillboardModeEnum.Enabled, FixedSize = true, NoDepthTest = true
         };

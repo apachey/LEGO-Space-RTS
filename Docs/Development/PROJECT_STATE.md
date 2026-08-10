@@ -244,11 +244,11 @@ narrow placement cases allowed by Phase 09B.
   broader concern that several individually reasonable systems could create
   unfun aggregate complexity remains a design-review consideration for later
   milestone playtests, not a T038 implementation failure.
-- M3 T039 Basic HUD is implemented on the current task branch. The permanent
-  player-facing debug text wall has been replaced by the shared Phase 07/08
-  skeleton: a compact top economy strip, bottom-center selection/state panel
-  and bottom-right production interaction panel. The normal battlefield center
-  remains unobstructed.
+- M3 T039 Basic HUD is implemented on the current task branch and is undergoing
+  final human readability refinement. The permanent player-facing debug text
+  wall has been replaced by the shared Phase 07/08 skeleton: a compact top
+  economy strip and one bottom selection/state area. The normal battlefield
+  center remains unobstructed.
 - The top strip now presents processed Ore, the canonical compact Energy
   reserve/capacity/generation/demand/net expression, spendable Crystals and
   used/maximum Operations Capacity. Queued OC, the 85% warning, over-cap state,
@@ -260,15 +260,20 @@ narrow placement cases allowed by Phase 09B.
   status area and disappear entirely during ordinary play when no compatible
   consumer is selected.
 - Selection now gives readable entity names and contextual Worker,
-  construction, power and production status. The production panel exposes
-  canonical costs and tooltips, keeps unavailable products visibly disabled,
-  supports existing click/Shift-click queue behavior and shows retained queue
-  progress or Brownout pause state.
+  construction, power and production status, with layout space reserved for a
+  future unit/structure portrait. There is no permanent separate Production
+  panel: facility actions appear inside the selection area only while a valid
+  producer is selected. Canonical costs, tooltips, click/Shift-click behavior,
+  retained queue progress and Brownout pause state remain available.
 - Navigation/performance metrics, visualization toggles and the development
-  Energy-drain trigger moved to a separate hidden F8 developer panel. Runtime
-  Godot smoke now verifies all three Basic HUD anchors and seeds an HQ selection
+  Energy-drain trigger moved to a separate hidden F8 developer panel. Navigation
+  grids, HPA clusters, persistent path lines and excavatable outlines are all
+  off during normal play. Move feedback is now a small unnumbered translucent
+  ring with a short canonical lifetime, and construction progress uses a much
+  smaller low-outline world label. Runtime Godot smoke verifies the resource,
+  selection, portrait and contextual-action anchors and seeds an HQ selection
   for visual capture coverage. No authoritative SimCore or protocol state
-  changed in T039.
+  changed in this T039 refinement.
 
 ## Current gates
 
@@ -297,6 +302,11 @@ narrow placement cases allowed by Phase 09B.
   and split. The minimap, full 3×4 command grid, F3 production overview,
   waiting-item drag reordering and cancellation/refund presentation
   remain later interface/economy work beyond the current prototype gates.
+- The canonical implementation schedule assigns the functional fog-correct
+  minimap to M7 T069, so it is intentionally not pulled into T039. Building
+  prototype records currently specify zero vision radius; adding local building
+  vision requires an explicit gameplay/balance value rather than a presentation
+  guess and remains the only unresolved item from the latest T039 playtest.
 
 ## Explicitly rejected / do not resurrect
 

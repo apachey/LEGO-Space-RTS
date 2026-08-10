@@ -29,8 +29,9 @@ public partial class BasicHud : CanvasLayer
     private Label? _energyPopoverLabel;
     private Label? _selectionTitle;
     private Label? _selectionDetails;
+    private Label? _portraitLabel;
     private HBoxContainer? _priorityRow;
-    private VBoxContainer? _productionActions;
+    private VBoxContainer? _contextualActions;
     private readonly Dictionary<EnergyPriority, Button> _priorityButtons = new();
     private readonly Dictionary<string, Button> _productionButtons = new();
     private readonly StringBuilder _builder = new(512);
@@ -50,7 +51,6 @@ public partial class BasicHud : CanvasLayer
         BuildResourceStrip(root);
         BuildAlert(root);
         BuildSelectionPanel(root);
-        BuildCommandPanel(root);
     }
 
     public override void _Process(double delta)
@@ -101,9 +101,17 @@ public partial class BasicHud : CanvasLayer
 
     private void BuildSelectionPanel(Control root)
     {
-        PanelContainer panel = AnchoredPanel("SelectionPanel", 0.22f, 0.62f, 1f, 1f, -228f, -16f);
+        PanelContainer panel = AnchoredPanel("SelectionPanel", 0.10f, 0.90f, 1f, 1f, -218f, -16f);
         panel.AddThemeStyleboxOverride("panel", PanelStyle(Graphite, new Color(0.30f, 0.38f, 0.42f), 1));
-        VBoxContainer box = new(); box.AddThemeConstantOverride("separation", 7); panel.AddChild(box);
+        HBoxContainer layout = new(); layout.AddThemeConstantOverride("separation", 14); panel.AddChild(layout);
+
+        PanelContainer portrait = new() { Name = "PortraitSlot", CustomMinimumSize = new Vector2(150, 0), SizeFlagsVertical = Control.SizeFlags.ExpandFill };
+        portrait.AddThemeStyleboxOverride("panel", PanelStyle(GraphiteRaised, new Color(0.28f, 0.35f, 0.38f), 1));
+        _portraitLabel = HudLabel("PORTRAIT\nRESERVED", 14, TextMuted);
+        _portraitLabel.HorizontalAlignment = HorizontalAlignment.Center; _portraitLabel.VerticalAlignment = VerticalAlignment.Center;
+        portrait.AddChild(_portraitLabel); layout.AddChild(portrait);
+
+        VBoxContainer box = new() { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill }; box.AddThemeConstantOverride("separation", 7); layout.AddChild(box);
         _selectionTitle = HudLabel("NO SELECTION", 19, RaiderAccent); box.AddChild(_selectionTitle);
         _selectionDetails = HudLabel("Select Crew, a structure, or an Ore deposit.", 15, TextMuted);
         _selectionDetails.AutowrapMode = TextServer.AutowrapMode.WordSmart; _selectionDetails.SizeFlagsVertical = Control.SizeFlags.ExpandFill; box.AddChild(_selectionDetails);
@@ -112,20 +120,15 @@ public partial class BasicHud : CanvasLayer
         AddPriorityButton(EnergyPriority.High); AddPriorityButton(EnergyPriority.Normal); AddPriorityButton(EnergyPriority.Low);
         box.AddChild(_priorityRow);
         Label help = HudLabel("RMB context command  •  Shift queues  •  B build  •  F8 developer tools", 13, TextMuted); box.AddChild(help);
-        root.AddChild(panel);
-    }
 
-    private void BuildCommandPanel(Control root)
-    {
-        PanelContainer panel = AnchoredPanel("CommandPanel", 0.63f, 0.99f, 1f, 1f, -228f, -16f);
-        panel.AddThemeStyleboxOverride("panel", PanelStyle(Graphite, new Color(0.30f, 0.38f, 0.42f), 1));
-        _productionActions = new VBoxContainer { Name = "ProductionActions" }; _productionActions.AddThemeConstantOverride("separation", 7); panel.AddChild(_productionActions);
-        _productionActions.AddChild(HudLabel("PRODUCTION", 19, RaiderAccent));
-        Label instruction = HudLabel("Select an HQ or Vehicle Service Bay", 14, TextMuted); instruction.Name = "ProductionHint"; _productionActions.AddChild(instruction);
+        _contextualActions = new VBoxContainer { Name = "ContextualActions", CustomMinimumSize = new Vector2(340, 0), Visible = false };
+        _contextualActions.AddThemeConstantOverride("separation", 7); layout.AddChild(_contextualActions);
+        _contextualActions.AddChild(HudLabel("AVAILABLE UNITS", 16, RaiderAccent));
+        Label instruction = HudLabel("Selected facility queue — maximum 8", 13, TextMuted); instruction.Name = "ProductionHint"; _contextualActions.AddChild(instruction);
         GridContainer grid = new() { Name = "ProductionGrid", Columns = 2 }; grid.AddThemeConstantOverride("h_separation", 6); grid.AddThemeConstantOverride("v_separation", 6);
-        _productionActions.AddChild(grid);
+        _contextualActions.AddChild(grid);
         for (int i = 0; i < ProductionKeys.Length; i++) AddProductionButton(grid, ProductionKeys[i]);
-        Label queueHint = HudLabel("Click: +1  •  Shift-click: +5 distributed", 13, TextMuted); _productionActions.AddChild(queueHint);
+        Label queueHint = HudLabel("Click +1  •  Shift-click +5", 12, TextMuted); _contextualActions.AddChild(queueHint);
         root.AddChild(panel);
     }
 
@@ -168,14 +171,16 @@ public partial class BasicHud : CanvasLayer
 
     private void UpdateSelection()
     {
-        if (_bridge is null || _selection is null || _selectionTitle is null || _selectionDetails is null || _priorityRow is null) return;
+        if (_bridge is null || _selection is null || _selectionTitle is null || _selectionDetails is null || _portraitLabel is null || _priorityRow is null) return;
         if (_selection.Selected.Count == 0)
         {
             _selectionTitle.Text = "NO SELECTION"; _selectionDetails.Text = _input?.BuildModeActive == true ? $"BUILD MODE\n{_input.BuildStatus}" : "Select Crew, a structure, or an Ore deposit.";
+            _portraitLabel.Text = "PORTRAIT\nRESERVED";
             _priorityRow.Visible = false; return;
         }
         EntityId first = _selection.Selected[0];
         _selectionTitle.Text = _selection.Selected.Count == 1 ? EntityName(first) : $"{_selection.Selected.Count} OBJECTS SELECTED";
+        _portraitLabel.Text = PortraitPlaceholder(first, _selection.Selected.Count);
         _builder.Clear();
         if (_selection.Selected.Count > 1) _builder.Append("Primary: ").Append(EntityName(first)).Append('\n');
         if (_bridge.World.Entities.Worker.TryGet(first, out Worker worker) && _bridge.World.Entities.ResourceCarrier.TryGet(first, out ResourceCarrier carrier))
@@ -204,11 +209,10 @@ public partial class BasicHud : CanvasLayer
 
     private void UpdateProduction()
     {
-        if (_input is null || _selection is null || _productionActions is null) return;
+        if (_bridge is null || _input is null || _selection is null || _contextualActions is null) return;
         bool hasProducer = false;
-        for (int i = 0; i < _selection.Selected.Count; i++) if (_bridge!.World.Entities.Production.Has(_selection.Selected[i])) { hasProducer = true; break; }
-        Label? hint = _productionActions.GetNodeOrNull<Label>("ProductionHint");
-        if (hint is not null) hint.Text = hasProducer ? "Selected facility queue — maximum 8" : "Select an HQ or Vehicle Service Bay";
+        for (int i = 0; i < _selection.Selected.Count; i++) if (_bridge.World.Entities.Production.Has(_selection.Selected[i])) { hasProducer = true; break; }
+        _contextualActions.Visible = hasProducer;
         foreach ((string key, Button button) in _productionButtons) button.Disabled = !hasProducer || !_input.CanQueueProduction(key);
     }
 
@@ -237,6 +241,14 @@ public partial class BasicHud : CanvasLayer
                 if (_bridge.World.Content.ResourceNodes[i].Id == selectable.ContentType) return DisplayName(_bridge.World.Content.ResourceNodes[i].StableKey);
         }
         return $"Object #{id.Value}";
+    }
+
+    private string PortraitPlaceholder(EntityId id, int selectionCount)
+    {
+        if (selectionCount > 1) return $"GROUP\n{selectionCount} SELECTED";
+        if (_bridge is not null && _bridge.World.Entities.Selectable.TryGet(id, out Selectable selectable))
+            return selectable.Kind == SelectableKind.Building ? "STRUCTURE VIEW\nART PENDING" : selectable.Kind == SelectableKind.ResourceNode ? "RESOURCE VIEW\nART PENDING" : "UNIT PORTRAIT\nART PENDING";
+        return "PORTRAIT\nART PENDING";
     }
 
     private void AddPriorityButton(EnergyPriority priority)

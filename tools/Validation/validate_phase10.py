@@ -88,10 +88,16 @@ check('FindChild' not in composition and 'GetNode<' not in composition, 'composi
 loader = (ROOT/'GodotClient/Scripts/Client/RuntimeScenarioLoader.cs').read_text()
 check('PrototypeContentCodec.Read' in loader and 'CompiledMapCodec.ReadDefinition' in loader, 'Godot runtime does not consume compiled content/map when present')
 basic_hud = (ROOT/'GodotClient/Scripts/UI/BasicHud.cs').read_text()
-for token in ['ResourceStrip','SelectionPanel','CommandPanel','ContextualEnergyPriority','EnergyDomainPopover','OPERATIONS','CRYSTALS']:
+for token in ['ResourceStrip','SelectionPanel','PortraitSlot','ContextualActions','ContextualEnergyPriority','EnergyDomainPopover','OPERATIONS','CRYSTALS']:
     check(token in basic_hud, f'T039 Basic HUD element missing: {token}')
+check('CommandPanel' not in basic_hud, 'production must be contextual to selected facilities rather than a permanent separate panel')
 debug_hud = (ROOT/'GodotClient/Scripts/UI/DebugHud.cs').read_text()
 check('Visible = false' in debug_hud and 'Drain Energy' in debug_hud, 'developer tools must remain available but hidden by default')
+debug_renderer = (ROOT/'GodotClient/Scripts/Presentation/DebugRenderer.cs').read_text()
+for token in ['DrawNavigation { get; set; } = true','DrawClusters { get; set; } = true','DrawPaths { get; set; } = true','DrawExcavatable { get; set; } = true']:
+    check(token not in debug_renderer, f'developer visualization leaks into normal play: {token}')
+input_controller = (ROOT/'GodotClient/Scripts/Presentation/RtsInputController.cs').read_text()
+check('OrderNumber' not in input_controller and 'DestinationRing' in input_controller, 'move feedback must use an unnumbered restrained destination marker')
 
 clock = (ROOT/'SimCore/Runtime/Core/SimTime.cs').read_text()
 check('TicksPerSecond = 20' in clock, 'SimClock is not 20 Hz')
@@ -109,7 +115,6 @@ check('128' in selection, 'selection 128-entity foundation missing')
 input_bindings = (ROOT/'GodotClient/Scripts/Client/InputBindings.cs').read_text()
 check('InputMap' in input_bindings and 'debug_open_excavatable' in input_bindings, 'Godot InputMap action foundation missing')
 check('debug_hud_toggle' in input_bindings, 'developer HUD does not have a dedicated hidden-panel toggle')
-input_controller = (ROOT/'GodotClient/Scripts/Presentation/RtsInputController.cs').read_text()
 for token in ['SimCommandType.Move','SimCommandType.Stop','SimCommandType.HoldPosition','SimCommandType.DebugOpenExcavatable']:
     check(token in input_controller, f'Godot M2 command missing: {token}')
 
