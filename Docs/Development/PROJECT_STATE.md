@@ -5,13 +5,13 @@ remain authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M4 — Combat / T041 deterministic Weapons acceptance candidate.**
+**M4 — Combat / T042 deterministic Projectiles acceptance candidate.**
 
 The accepted M3 T030-T039 economy/base-building stack is merged through PR #10.
-M4 T040 Targeting is an automated acceptance candidate whose human interaction
-check is explicitly deferred. With game-director approval, T041 Weapons is
-stacked on that branch; projectiles, damage, contact resolution, destruction and
-repair remain their separately scheduled T042-T046 tasks.
+M4 T040 Targeting and T041 Weapons are automated acceptance candidates whose
+human interaction checks are explicitly deferred. With game-director approval,
+T042 Projectiles is stacked on that branch; damage, contact resolution,
+destruction and repair remain their separately scheduled T043-T046 tasks.
 
 ## Engine / architecture
 
@@ -321,8 +321,8 @@ narrow placement cases allowed by Phase 09B.
   LoS is invalid.
 - Godot receives only the authoritative firing revision/target and presents a
   short amber muzzle flash. Presentation timing cannot authorize a shot or
-  alter cooldown. Projectile creation, HP damage, armor resolution and contact
-  approach/facing rules remain intentionally absent until T042-T044.
+  alter cooldown. HP damage, armor resolution and contact approach/facing rules
+  remain intentionally absent until T043-T044.
 - Snapshot v12 / simulation protocol v10 and prototype content v11 preserve
   weapon profile, readiness, firing sequence and last firing event while
   retaining supported legacy readers. Replay remains v6 because T041 adds no
@@ -335,6 +335,30 @@ narrow placement cases allowed by Phase 09B.
   movement gate, compiled content, HeadlessSim, Godot smoke, 100-repeat
   determinism, replay, snapshot continuation, regeneration and macOS export.
 - A launchable T041 debug build was produced at
+  `Builds/macOS/LEGO Space RTS.app` and passed the export smoke launch.
+- M4 T042 Projectiles is implemented on the current stacked task branch. The
+  canonical Hover Scout Survey Pulse launches an authoritative compact
+  projectile record at 12 cells/s; Contact weapons do not create projectile
+  records and remain T044 scope.
+- Projectile creation and movement execute after weapon firing in stable
+  Projectile-ID order at authoritative 20 Hz. Ordinary shots commit the impact
+  position at launch, ignore unrelated units and continue to that position if
+  the original target is destroyed. They never retarget.
+- Every launched shot remains independent. Simultaneous arrivals emit ordered
+  impact records without an attacker cap, preserving genuine overkill for the
+  T043 damage/armor resolver. T042 does not reduce HP or destroy entities.
+- Snapshot v13 / simulation protocol v11 and prototype content v12 preserve
+  projectile speed metadata, monotonic IDs, in-flight state and same-tick impact
+  output while retaining supported legacy readers. Replay remains v6 because
+  T042 adds no command encoding.
+- Godot presents visible authoritative projectiles as small interpolated amber
+  pulses. Visual objects are presentation-only and cannot collide, redirect or
+  authorize impact.
+- The T042 full verification acceptance candidate is green across every
+  `BLOCKING_NOW` stage: builds, 143 NUnit tests, the representative 24-mover
+  movement gate, compiled content, HeadlessSim, Godot smoke, 100-repeat
+  determinism, replay, snapshot continuation, regeneration and macOS export.
+- A launchable T042 debug build was produced at
   `Builds/macOS/LEGO Space RTS.app` and passed the export smoke launch.
 
 ## Current gates
@@ -384,9 +408,9 @@ narrow placement cases allowed by Phase 09B.
 - T040 human interaction/readability acceptance remains deferred by explicit
   game-director approval; its automated candidate is not reclassified as human
   accepted.
-- T041 deliberately emits firing events and starts cooldowns without creating
-  projectiles, applying damage/armor, resolving contact approach slots/facing,
-  or moving into chase range. Those remain T042-T044 scope. The canonical
+- T042 deliberately emits ordered projectile impacts without applying
+  damage/armor, resolving contact approach slots/facing, or moving into chase
+  range. Those remain T043-T044 scope. The canonical
   12-cell direct-pursuit leash and attack-move route leash also remain pending;
   no temporary presentation-owned chase or damage behavior is introduced.
 
@@ -405,5 +429,7 @@ narrow placement cases allowed by Phase 09B.
    remains pending.
 2. Human T041 check of close-range firing-flash readability and cadence remains
    pending after automated acceptance.
-3. After T040/T041 acceptance: M4 T042 Projectiles / deterministic travel and
-   overkill.
+3. Human T042 check of Survey Pulse travel readability remains pending after
+   automated acceptance.
+4. After T040-T042 acceptance or an explicit further deferral: M4 T043 Damage /
+   armor using the canonical Phase 06 formula.

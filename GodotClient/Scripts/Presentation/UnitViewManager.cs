@@ -13,6 +13,9 @@ public partial class UnitViewManager : Node3D
     private readonly List<uint> _remove = new();
     private readonly Dictionary<uint, uint> _seenFireSequence = new();
     private readonly Dictionary<uint, float> _fireFlashRemaining = new();
+    private readonly Dictionary<uint, MeshInstance3D> _projectileViews = new();
+    private readonly HashSet<uint> _liveProjectiles = new();
+    private readonly List<uint> _removeProjectiles = new();
 
     private readonly StandardMaterial3D _friendly = MakeMaterial(new Color(0.10f, 0.82f, 0.66f));
     private readonly StandardMaterial3D _other = MakeMaterial(new Color(0.92f, 0.30f, 0.18f));
@@ -21,6 +24,7 @@ public partial class UnitViewManager : Node3D
     private readonly StandardMaterial3D _resourceExhausted = MakeMaterial(new Color(0.28f, 0.25f, 0.22f));
     private readonly StandardMaterial3D _construction = MakeConstructionMaterial();
     private readonly StandardMaterial3D _brownout = MakeMaterial(new Color(0.20f, 0.22f, 0.25f));
+    private readonly StandardMaterial3D _projectile = MakeProjectileMaterial();
 
     public void Configure(GodotSimBridge bridge, SelectionController selection, ControlGroups groups)
     {
@@ -70,6 +74,38 @@ public partial class UnitViewManager : Node3D
         _remove.Clear();
         foreach ((uint id, MeshInstance3D view) in _views) if (!_live.Contains(id)) { view.QueueFree(); _remove.Add(id); }
         for (int i = 0; i < _remove.Count; i++) { uint id = _remove[i]; _views.Remove(id); _seenFireSequence.Remove(id); _fireFlashRemaining.Remove(id); }
+        UpdateProjectileViews(previous, current, alpha);
+    }
+
+    private void UpdateProjectileViews(PresentationSnapshot previous, PresentationSnapshot current, float alpha)
+    {
+        _liveProjectiles.Clear();
+        for (int i = 0; i < current.Projectiles.Count; i++)
+        {
+            PresentationProjectile projectile = current.Projectiles[i];
+            uint id = projectile.ProjectileId.Value;
+            _liveProjectiles.Add(id);
+            if (!_projectileViews.TryGetValue(id, out MeshInstance3D? view))
+            {
+                view = new MeshInstance3D
+                {
+                    Name = $"SimProjectile_{id}",
+                    Mesh = new SphereMesh { Radius = 0.16f, Height = 0.32f, RadialSegments = 10, Rings = 5 },
+                    MaterialOverride = _projectile
+                };
+                _projectileViews.Add(id, view);
+                AddChild(view);
+            }
+            FixVec2 previousPosition = projectile.Position;
+            for (int p = 0; p < previous.Projectiles.Count; p++)
+                if (previous.Projectiles[p].ProjectileId == projectile.ProjectileId) { previousPosition = previous.Projectiles[p].Position; break; }
+            view.GlobalPosition = previousPosition.ToWorld(1.05f).Lerp(projectile.Position.ToWorld(1.05f), alpha);
+        }
+
+        _removeProjectiles.Clear();
+        foreach ((uint id, MeshInstance3D view) in _projectileViews)
+            if (!_liveProjectiles.Contains(id)) { view.QueueFree(); _removeProjectiles.Add(id); }
+        for (int i = 0; i < _removeProjectiles.Count; i++) _projectileViews.Remove(_removeProjectiles[i]);
     }
 
     private static PresentationEntity FindPrevious(PresentationSnapshot previous, PresentationEntity current)
@@ -326,6 +362,14 @@ public partial class UnitViewManager : Node3D
     }
 
     private static StandardMaterial3D MakeMaterial(Color color) => new() { AlbedoColor = color, Roughness = 0.45f };
+    private static StandardMaterial3D MakeProjectileMaterial() => new()
+    {
+        AlbedoColor = new Color(1f, 0.68f, 0.10f),
+        EmissionEnabled = true,
+        Emission = new Color(1f, 0.36f, 0.04f),
+        EmissionEnergyMultiplier = 2.4f,
+        ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded
+    };
     private static StandardMaterial3D MakeOverlayMaterial(Color color) => new()
     {
         AlbedoColor = color,

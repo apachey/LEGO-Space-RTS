@@ -68,11 +68,12 @@ public readonly struct WeaponDefinition
     public readonly Fix32 Range;
     public readonly Fix32 MinimumRange;
     public readonly WeaponDeliveryKind DeliveryKind;
+    public readonly Fix32 ProjectileSpeed;
     public readonly bool RequiresLineOfSight;
 
     public WeaponDefinition(string stableKey, TargetLayerMask legalTargetLayers, TargetClassMask legalTargetClasses,
         TargetPriorityProfile priorityProfile, ushort baseDamage, DamageType damageType, ushort cooldownTicks,
-        Fix32 range, Fix32 minimumRange, WeaponDeliveryKind deliveryKind, bool requiresLineOfSight)
+        Fix32 range, Fix32 minimumRange, WeaponDeliveryKind deliveryKind, Fix32 projectileSpeed, bool requiresLineOfSight)
     {
         if (string.IsNullOrWhiteSpace(stableKey)) throw new ArgumentNullException(nameof(stableKey));
         if (legalTargetLayers == TargetLayerMask.None || (legalTargetLayers & ~TargetLayerMask.All) != 0) throw new ArgumentOutOfRangeException(nameof(legalTargetLayers));
@@ -81,9 +82,11 @@ public readonly struct WeaponDefinition
         if (damageType < DamageType.Light || damageType > DamageType.Control) throw new ArgumentOutOfRangeException(nameof(damageType));
         if (deliveryKind < WeaponDeliveryKind.Projectile || deliveryKind > WeaponDeliveryKind.Contact) throw new ArgumentOutOfRangeException(nameof(deliveryKind));
         if (baseDamage == 0 || cooldownTicks == 0 || range <= Fix32.Zero || minimumRange < Fix32.Zero || minimumRange >= range) throw new ArgumentOutOfRangeException(nameof(range));
+        if ((deliveryKind == WeaponDeliveryKind.Projectile && projectileSpeed <= Fix32.Zero) ||
+            (deliveryKind != WeaponDeliveryKind.Projectile && projectileSpeed != Fix32.Zero)) throw new ArgumentOutOfRangeException(nameof(projectileSpeed));
         StableKey = stableKey; Id = StableId.FromKey(stableKey); LegalTargetLayers = legalTargetLayers; LegalTargetClasses = legalTargetClasses;
         PriorityProfile = priorityProfile; BaseDamage = baseDamage; DamageType = damageType; CooldownTicks = cooldownTicks;
-        Range = range; MinimumRange = minimumRange; DeliveryKind = deliveryKind; RequiresLineOfSight = requiresLineOfSight;
+        Range = range; MinimumRange = minimumRange; DeliveryKind = deliveryKind; ProjectileSpeed = projectileSpeed; RequiresLineOfSight = requiresLineOfSight;
     }
 }
 
@@ -330,10 +333,10 @@ public static class PrototypeContentFactory
         };
         WeaponDefinition[] weapons =
         {
-            new WeaponDefinition("weapon.rr.chrome_crusher.chrome_drill", TargetLayerMask.Ground, TargetClassMask.All, TargetPriorityProfile.Siege, 55, DamageType.Siege, 32, Fix32.FromRatio(21,20), Fix32.Zero, WeaponDeliveryKind.Contact, true),
-            new WeaponDefinition("weapon.rr.crew.portable_mining_tool", TargetLayerMask.Ground, TargetClassMask.All, TargetPriorityProfile.Support, 6, DamageType.General, 24, Fix32.FromRatio(4,5), Fix32.Zero, WeaponDeliveryKind.Contact, true),
-            new WeaponDefinition("weapon.rr.hover_scout.survey_pulse", TargetLayerMask.Ground, TargetClassMask.All, TargetPriorityProfile.Scout, 6, DamageType.General, 30, Fix32.FromInt(3), Fix32.Zero, WeaponDeliveryKind.Projectile, true),
-            new WeaponDefinition("weapon.rr.loader_dozer.scoop_ram", TargetLayerMask.Ground, TargetClassMask.All, TargetPriorityProfile.AntiLight, 18, DamageType.General, 27, Fix32.FromRatio(9,10), Fix32.Zero, WeaponDeliveryKind.Contact, true)
+            new WeaponDefinition("weapon.rr.chrome_crusher.chrome_drill", TargetLayerMask.Ground, TargetClassMask.All, TargetPriorityProfile.Siege, 55, DamageType.Siege, 32, Fix32.FromRatio(21,20), Fix32.Zero, WeaponDeliveryKind.Contact, Fix32.Zero, true),
+            new WeaponDefinition("weapon.rr.crew.portable_mining_tool", TargetLayerMask.Ground, TargetClassMask.All, TargetPriorityProfile.Support, 6, DamageType.General, 24, Fix32.FromRatio(4,5), Fix32.Zero, WeaponDeliveryKind.Contact, Fix32.Zero, true),
+            new WeaponDefinition("weapon.rr.hover_scout.survey_pulse", TargetLayerMask.Ground, TargetClassMask.All, TargetPriorityProfile.Scout, 6, DamageType.General, 30, Fix32.FromInt(3), Fix32.Zero, WeaponDeliveryKind.Projectile, Fix32.FromInt(12), true),
+            new WeaponDefinition("weapon.rr.loader_dozer.scoop_ram", TargetLayerMask.Ground, TargetClassMask.All, TargetPriorityProfile.AntiLight, 18, DamageType.General, 27, Fix32.FromRatio(9,10), Fix32.Zero, WeaponDeliveryKind.Contact, Fix32.Zero, true)
         };
         PrototypeEntityDefinition[] entities =
         {
@@ -379,7 +382,7 @@ public static class PrototypeContentFactory
 public static class PrototypeContentCodec
 {
     private const int Magic = 0x4350534C; // LSPC little-endian bytes.
-    public const int FormatVersion = 11;
+    public const int FormatVersion = 12;
 
     public static byte[] Write(PrototypeContentCatalog catalog)
     {
@@ -439,7 +442,7 @@ public static class PrototypeContentCodec
             WeaponDefinition weapon = catalog.Weapons[i];
             writer.Write(weapon.StableKey); writer.Write(weapon.Id.Value); writer.Write((byte)weapon.LegalTargetLayers); writer.Write((byte)weapon.LegalTargetClasses);
             writer.Write((byte)weapon.PriorityProfile); writer.Write(weapon.BaseDamage); writer.Write((byte)weapon.DamageType); writer.Write(weapon.CooldownTicks);
-            writer.Write(weapon.Range.Raw); writer.Write(weapon.MinimumRange.Raw); writer.Write((byte)weapon.DeliveryKind); writer.Write(weapon.RequiresLineOfSight);
+            writer.Write(weapon.Range.Raw); writer.Write(weapon.MinimumRange.Raw); writer.Write((byte)weapon.DeliveryKind); writer.Write(weapon.ProjectileSpeed.Raw); writer.Write(weapon.RequiresLineOfSight);
         }
         writer.Flush();
         byte[] bytes = stream.ToArray(); catalog.ContentHash = DeterministicHash.Fnv1A64(bytes); return bytes;
@@ -519,7 +522,7 @@ public static class PrototypeContentCodec
                 if (production[i].UnitType.Value != unitId || production[i].ProducerType.Value != producerId) throw new InvalidDataException("Stable production ID mismatch.");
             }
         }
-        WeaponDefinition[] weapons = formatVersion >= 11 ? ReadWeapons(reader) : LegacyWeapons();
+        WeaponDefinition[] weapons = formatVersion >= 11 ? ReadWeapons(reader, formatVersion >= 12) : LegacyWeapons();
         if (stream.Position != stream.Length) throw new InvalidDataException("Trailing prototype content bytes.");
         PrototypeContentCatalog result = new PrototypeContentCatalog(profiles, entities, resourceNodes, buildings, production, weapons) { ContentHash = DeterministicHash.Fnv1A64(bytes) };
         return result;
@@ -565,7 +568,7 @@ public static class PrototypeContentCodec
             includeWeaponProfile ? new ContentId(reader.ReadUInt32()) : default);
     }
 
-    private static WeaponDefinition[] ReadWeapons(BinaryReader reader)
+    private static WeaponDefinition[] ReadWeapons(BinaryReader reader, bool includeProjectileSpeed)
     {
         int count = reader.ReadInt32();
         if (count < 0 || count > 4096) throw new InvalidDataException("Invalid weapon definition count.");
@@ -573,9 +576,11 @@ public static class PrototypeContentCodec
         for (int i = 0; i < count; i++)
         {
             string key = reader.ReadString(); uint id = reader.ReadUInt32();
-            weapons[i] = new WeaponDefinition(key, (TargetLayerMask)reader.ReadByte(), (TargetClassMask)reader.ReadByte(),
-                (TargetPriorityProfile)reader.ReadByte(), reader.ReadUInt16(), (DamageType)reader.ReadByte(), reader.ReadUInt16(),
-                Fix32.FromRaw(reader.ReadInt32()), Fix32.FromRaw(reader.ReadInt32()), (WeaponDeliveryKind)reader.ReadByte(), reader.ReadBoolean());
+            TargetLayerMask layers = (TargetLayerMask)reader.ReadByte(); TargetClassMask classes = (TargetClassMask)reader.ReadByte();
+            TargetPriorityProfile priority = (TargetPriorityProfile)reader.ReadByte(); ushort damage = reader.ReadUInt16(); DamageType damageType = (DamageType)reader.ReadByte(); ushort cooldown = reader.ReadUInt16();
+            Fix32 range = Fix32.FromRaw(reader.ReadInt32()); Fix32 minimumRange = Fix32.FromRaw(reader.ReadInt32()); WeaponDeliveryKind delivery = (WeaponDeliveryKind)reader.ReadByte();
+            Fix32 projectileSpeed = includeProjectileSpeed ? Fix32.FromRaw(reader.ReadInt32()) : delivery == WeaponDeliveryKind.Projectile ? Fix32.FromInt(12) : Fix32.Zero;
+            weapons[i] = new WeaponDefinition(key, layers, classes, priority, damage, damageType, cooldown, range, minimumRange, delivery, projectileSpeed, reader.ReadBoolean());
             if (weapons[i].Id.Value != id) throw new InvalidDataException("Stable weapon ID mismatch.");
         }
         return weapons;
@@ -599,10 +604,10 @@ public static class PrototypeContentCodec
 
     private static WeaponDefinition[] LegacyWeapons() => new[]
     {
-        new WeaponDefinition("weapon.rr.chrome_crusher.chrome_drill", TargetLayerMask.Ground, TargetClassMask.All, TargetPriorityProfile.Siege, 55, DamageType.Siege, 32, Fix32.FromRatio(21,20), Fix32.Zero, WeaponDeliveryKind.Contact, true),
-        new WeaponDefinition("weapon.rr.crew.portable_mining_tool", TargetLayerMask.Ground, TargetClassMask.All, TargetPriorityProfile.Support, 6, DamageType.General, 24, Fix32.FromRatio(4,5), Fix32.Zero, WeaponDeliveryKind.Contact, true),
-        new WeaponDefinition("weapon.rr.hover_scout.survey_pulse", TargetLayerMask.Ground, TargetClassMask.All, TargetPriorityProfile.Scout, 6, DamageType.General, 30, Fix32.FromInt(3), Fix32.Zero, WeaponDeliveryKind.Projectile, true),
-        new WeaponDefinition("weapon.rr.loader_dozer.scoop_ram", TargetLayerMask.Ground, TargetClassMask.All, TargetPriorityProfile.AntiLight, 18, DamageType.General, 27, Fix32.FromRatio(9,10), Fix32.Zero, WeaponDeliveryKind.Contact, true)
+        new WeaponDefinition("weapon.rr.chrome_crusher.chrome_drill", TargetLayerMask.Ground, TargetClassMask.All, TargetPriorityProfile.Siege, 55, DamageType.Siege, 32, Fix32.FromRatio(21,20), Fix32.Zero, WeaponDeliveryKind.Contact, Fix32.Zero, true),
+        new WeaponDefinition("weapon.rr.crew.portable_mining_tool", TargetLayerMask.Ground, TargetClassMask.All, TargetPriorityProfile.Support, 6, DamageType.General, 24, Fix32.FromRatio(4,5), Fix32.Zero, WeaponDeliveryKind.Contact, Fix32.Zero, true),
+        new WeaponDefinition("weapon.rr.hover_scout.survey_pulse", TargetLayerMask.Ground, TargetClassMask.All, TargetPriorityProfile.Scout, 6, DamageType.General, 30, Fix32.FromInt(3), Fix32.Zero, WeaponDeliveryKind.Projectile, Fix32.FromInt(12), true),
+        new WeaponDefinition("weapon.rr.loader_dozer.scoop_ram", TargetLayerMask.Ground, TargetClassMask.All, TargetPriorityProfile.AntiLight, 18, DamageType.General, 27, Fix32.FromRatio(9,10), Fix32.Zero, WeaponDeliveryKind.Contact, Fix32.Zero, true)
     };
 
     private static PrototypeCombatProfile LegacyCombatProfile(string stableKey) => stableKey switch

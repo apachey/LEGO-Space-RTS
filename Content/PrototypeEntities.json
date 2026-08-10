@@ -1,7 +1,7 @@
 {
-  "schemaVersion": 11,
+  "schemaVersion": 12,
   "contentKind": "prototype_entities",
-  "policy": "M2 movement, canonical M3 economy metadata and the canonical M4 Rock Raider targeting plus T041 weapon readiness, firing-event and cooldown inputs; projectile, damage and contact resolution remain scheduled later systems.",
+  "policy": "M2 movement, canonical M3 economy metadata and the canonical M4 Rock Raider targeting, weapons and T042 projectile travel inputs; damage and contact resolution remain scheduled later systems.",
   "movementProfiles": [
     {
       "stableId": "movement.prototype.crew",
@@ -124,6 +124,7 @@
       "rangeRatio": [4, 5],
       "minimumRangeRatio": [0, 1],
       "delivery": "Contact",
+      "projectileSpeedRatio": [0, 1],
       "requiresLineOfSight": true
     },
     {
@@ -137,6 +138,7 @@
       "rangeRatio": [3, 1],
       "minimumRangeRatio": [0, 1],
       "delivery": "Projectile",
+      "projectileSpeedRatio": [12, 1],
       "requiresLineOfSight": true
     },
     {
@@ -150,6 +152,7 @@
       "rangeRatio": [9, 10],
       "minimumRangeRatio": [0, 1],
       "delivery": "Contact",
+      "projectileSpeedRatio": [0, 1],
       "requiresLineOfSight": true
     },
     {
@@ -163,6 +166,7 @@
       "rangeRatio": [21, 20],
       "minimumRangeRatio": [0, 1],
       "delivery": "Contact",
+      "projectileSpeedRatio": [0, 1],
       "requiresLineOfSight": true
     }
   ],

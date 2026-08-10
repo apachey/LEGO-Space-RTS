@@ -36,7 +36,7 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
 {
     using JsonDocument document = JsonDocument.Parse(File.ReadAllText(path));
     JsonElement root = document.RootElement;
-    if (root.GetProperty("schemaVersion").GetInt32() != 11) throw new InvalidDataException("Unsupported prototype content schema.");
+    if (root.GetProperty("schemaVersion").GetInt32() != 12) throw new InvalidDataException("Unsupported prototype content schema.");
     if (!string.Equals(root.GetProperty("contentKind").GetString(), "prototype_entities", StringComparison.Ordinal)) throw new InvalidDataException("Unexpected contentKind.");
 
     List<PrototypeMovementProfile> profiles = new();
@@ -87,7 +87,7 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
             Enum.Parse<TargetPriorityProfile>(RequiredString(item, "priorityProfile"), false),
             checked((ushort)item.GetProperty("damage").GetInt32()), Enum.Parse<DamageType>(RequiredString(item, "damageType"), false),
             checked((ushort)item.GetProperty("cooldownTicks").GetInt32()), ReadRatio(item, key, "rangeRatio"), ReadRatio(item, key, "minimumRangeRatio"),
-            Enum.Parse<WeaponDeliveryKind>(RequiredString(item, "delivery"), false), item.GetProperty("requiresLineOfSight").GetBoolean());
+            Enum.Parse<WeaponDeliveryKind>(RequiredString(item, "delivery"), false), ReadRatio(item, key, "projectileSpeedRatio"), item.GetProperty("requiresLineOfSight").GetBoolean());
         if (!weaponByKey.TryAdd(key, weapon)) throw new InvalidDataException($"Duplicate weapon key {key}.");
         weapons.Add(weapon);
     }

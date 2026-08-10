@@ -24,11 +24,21 @@ public readonly struct PresentationEntity
     { EntityId = entityId; ContentType = contentType; Owner = owner; Position = position; Orientation = orientation; Movement = movement; Visibility = visibility; Footprint = footprint; SelectableKind=selectableKind; ResourceState=resourceState; BuildingWidth=buildingWidth; BuildingHeight=buildingHeight; IsConstructionSite=isConstructionSite; ConstructionProgressBasisPoints=constructionProgressBasisPoints; IsEnergyConsumer=isEnergyConsumer; IsPowered=isPowered; EnergyPriority=energyPriority; WeaponFireSequence=weaponFireSequence; WeaponFireTarget=weaponFireTarget; Snap = snap; }
 }
 
+public readonly struct PresentationProjectile
+{
+    public readonly ProjectileId ProjectileId;
+    public readonly byte Owner;
+    public readonly FixVec2 Position;
+    public PresentationProjectile(ProjectileId projectileId, byte owner, FixVec2 position)
+    { ProjectileId = projectileId; Owner = owner; Position = position; }
+}
+
 public sealed class PresentationSnapshot
 {
     public SimTick Tick { get; }
     public IReadOnlyList<PresentationEntity> Entities { get; }
-    public PresentationSnapshot(SimTick tick, List<PresentationEntity> entities) { Tick = tick; Entities = entities; }
+    public IReadOnlyList<PresentationProjectile> Projectiles { get; }
+    public PresentationSnapshot(SimTick tick, List<PresentationEntity> entities, List<PresentationProjectile> projectiles) { Tick = tick; Entities = entities; Projectiles = projectiles; }
 
     public static PresentationSnapshot Capture(SimulationWorld world, byte viewerPlayer)
     {
@@ -76,7 +86,14 @@ public sealed class PresentationSnapshot
             list.Add(new PresentationEntity(id, s.ContentType, o.PlayerSlot, t.Position, t.Orientation, m.State, v, n.Footprint, s.Kind,
                 weaponFireSequence: fireSequence, weaponFireTarget: fireTarget));
         }
-        return new PresentationSnapshot(world.Tick, list);
+        List<PresentationProjectile> projectiles = new(world.Projectiles.Count);
+        for (int i = 0; i < world.Projectiles.Count; i++)
+        {
+            ProjectileRecord projectile = world.Projectiles[i];
+            if (projectile.Owner != viewerPlayer && !world.Fog.IsVisible(viewerPlayer, projectile.Position.X.FloorToInt(), projectile.Position.Y.FloorToInt())) continue;
+            projectiles.Add(new PresentationProjectile(projectile.Id, projectile.Owner, projectile.Position));
+        }
+        return new PresentationSnapshot(world.Tick, list, projectiles);
     }
 }
 }

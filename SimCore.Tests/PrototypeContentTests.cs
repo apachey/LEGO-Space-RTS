@@ -85,7 +85,7 @@ public sealed class PrototypeContentTests
     public void WeaponDefinitionsRoundTripAuthoritativeFiringMetadata()
     {
         WeaponDefinition sourceWeapon = new("weapon.test", TargetLayerMask.Ground, TargetClassMask.All, TargetPriorityProfile.Generalist,
-            12, DamageType.General, 25, Fix32.FromRatio(7, 2), Fix32.Zero, WeaponDeliveryKind.Projectile, true);
+            12, DamageType.General, 25, Fix32.FromRatio(7, 2), Fix32.Zero, WeaponDeliveryKind.Projectile, Fix32.FromInt(10), true);
         PrototypeContentCatalog source = new(System.Array.Empty<PrototypeMovementProfile>(), System.Array.Empty<PrototypeEntityDefinition>(), weapons: new[] { sourceWeapon });
         WeaponDefinition restored = PrototypeContentCodec.Read(PrototypeContentCodec.Write(source)).Weapons[0];
         Assert.Multiple(() =>
@@ -95,6 +95,7 @@ public sealed class PrototypeContentTests
             Assert.That(restored.CooldownTicks, Is.EqualTo(25));
             Assert.That(restored.Range, Is.EqualTo(Fix32.FromRatio(7, 2)));
             Assert.That(restored.DeliveryKind, Is.EqualTo(WeaponDeliveryKind.Projectile));
+            Assert.That(restored.ProjectileSpeed, Is.EqualTo(Fix32.FromInt(10)));
             Assert.That(restored.RequiresLineOfSight, Is.True);
         });
     }

@@ -7,8 +7,8 @@ namespace LegoSpaceRTS.SimCore
 public static class SnapshotSerializer
 {
     public const uint Magic = 0x53525453; // STRS
-    public const ushort FormatVersion = 12;
-    public const ushort SimulationProtocolVersion = 10;
+    public const ushort FormatVersion = 13;
+    public const ushort SimulationProtocolVersion = 11;
 
     [Flags]
     private enum EntityComponents : uint
@@ -50,6 +50,7 @@ public static class SnapshotSerializer
         for (int i = 0; i < alive.Count; i++) WriteEntity(w, world, alive[i]);
         world.Commands.Serialize(w);
         world.Fog.Serialize(w);
+        WriteProjectileState(w, world);
         w.Flush(); return ms.ToArray();
     }
 
@@ -58,7 +59,7 @@ public static class SnapshotSerializer
         using MemoryStream ms = new(bytes, false); using BinaryReader r = new(ms);
         if (r.ReadUInt32() != Magic) throw new InvalidDataException("Snapshot magic mismatch.");
         ushort format = r.ReadUInt16(), protocol = r.ReadUInt16();
-        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8) || (format == 11 && protocol == 9);
+        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8) || (format == 11 && protocol == 9) || (format == 12 && protocol == 10);
         if (!supportedLegacy && (format != FormatVersion || protocol != SimulationProtocolVersion)) throw new InvalidDataException($"Unsupported snapshot {format}/{protocol}.");
         SimTick tick = new(r.ReadInt32()); MapGrid map = MapGrid.Deserialize(r); uint nextEntity = r.ReadUInt32();
         EntityStore entities = new(); int entityCount = r.ReadInt32(); if (entityCount < 0 || entityCount > 10000) throw new InvalidDataException("Invalid entity count.");
@@ -77,12 +78,70 @@ public static class SnapshotSerializer
         entities.RestoreNextEntityValue(nextEntity);
         temp.Commands.Deserialize(r, includeBuildFields: format >= 6, includeEnergyPriority: format >= 10);
         temp.Fog = FogState.Deserialize(r);
+        if (format >= 13) ReadProjectileState(r, temp);
         if (ms.Position != ms.Length) throw new InvalidDataException("Trailing snapshot bytes.");
         if (format < 9) InitializeLegacyEnergy(temp);
         else EnergyDomainSystem.RecalculateAll(temp);
         OperationsCapacitySystem.Recalculate(temp);
         temp.Spatial.Rebuild(temp.Entities);
         return temp;
+    }
+
+    private static void WriteProjectileState(BinaryWriter w, SimulationWorld world)
+    {
+        w.Write(world.NextProjectileValue);
+        w.Write(world.Projectiles.Count);
+        for (int i = 0; i < world.Projectiles.Count; i++)
+        {
+            ProjectileRecord projectile = world.Projectiles[i];
+            w.Write(projectile.Id.Value); w.Write(projectile.Owner); w.Write(projectile.Source.Value); w.Write(projectile.Target.Value); w.Write(projectile.WeaponProfile.Value);
+            w.Write(projectile.Position.X.Raw); w.Write(projectile.Position.Y.Raw); w.Write(projectile.Velocity.X.Raw); w.Write(projectile.Velocity.Y.Raw);
+            w.Write(projectile.CommittedImpactPosition.X.Raw); w.Write(projectile.CommittedImpactPosition.Y.Raw);
+            w.Write(projectile.BaseDamage); w.Write((byte)projectile.DamageType); w.Write(projectile.LifetimeRemainingTicks); w.Write((byte)projectile.Guidance);
+        }
+        w.Write(world.ProjectileImpacts.Count);
+        for (int i = 0; i < world.ProjectileImpacts.Count; i++)
+        {
+            ProjectileImpactRecord impact = world.ProjectileImpacts[i];
+            w.Write(impact.ProjectileId.Value); w.Write(impact.Owner); w.Write(impact.Source.Value); w.Write(impact.Target.Value); w.Write(impact.WeaponProfile.Value);
+            w.Write(impact.Position.X.Raw); w.Write(impact.Position.Y.Raw); w.Write(impact.BaseDamage); w.Write((byte)impact.DamageType); w.Write(impact.ImpactTick);
+        }
+    }
+
+    private static void ReadProjectileState(BinaryReader r, SimulationWorld world)
+    {
+        uint nextProjectile = r.ReadUInt32();
+        int projectileCount = r.ReadInt32();
+        if (nextProjectile == 0 || projectileCount < 0 || projectileCount > ProjectileSystem.MaximumProjectileRecords) throw new InvalidDataException("Invalid projectile state header.");
+        for (int i = 0; i < projectileCount; i++)
+        {
+            ProjectileRecord projectile = new()
+            {
+                Id = new ProjectileId(r.ReadUInt32()), Owner = r.ReadByte(), Source = new EntityId(r.ReadUInt32()), Target = new EntityId(r.ReadUInt32()), WeaponProfile = new ContentId(r.ReadUInt32()),
+                Position = new FixVec2(Fix32.FromRaw(r.ReadInt32()), Fix32.FromRaw(r.ReadInt32())), Velocity = new FixVec2(Fix32.FromRaw(r.ReadInt32()), Fix32.FromRaw(r.ReadInt32())),
+                CommittedImpactPosition = new FixVec2(Fix32.FromRaw(r.ReadInt32()), Fix32.FromRaw(r.ReadInt32())), BaseDamage = r.ReadUInt16(), DamageType = (DamageType)r.ReadByte(),
+                LifetimeRemainingTicks = r.ReadUInt16(), Guidance = (ProjectileGuidance)r.ReadByte()
+            };
+            if (projectile.Id.Value >= nextProjectile || projectile.Owner >= world.PlayerCount || projectile.Source == EntityId.None || projectile.Target == EntityId.None ||
+                projectile.WeaponProfile.Value == 0 || projectile.BaseDamage == 0 || projectile.LifetimeRemainingTicks == 0 || projectile.Guidance != ProjectileGuidance.Ordinary ||
+                projectile.DamageType < DamageType.Light || projectile.DamageType > DamageType.Control || projectile.Velocity.Equals(FixVec2.Zero))
+                throw new InvalidDataException("Invalid projectile record.");
+            world.AddRestoredProjectile(projectile);
+        }
+        world.NextProjectileValue = nextProjectile;
+
+        int impactCount = r.ReadInt32();
+        if (impactCount < 0 || impactCount > ProjectileSystem.MaximumProjectileRecords) throw new InvalidDataException("Invalid projectile impact count.");
+        uint previousImpact = 0;
+        for (int i = 0; i < impactCount; i++)
+        {
+            ProjectileId id = new(r.ReadUInt32()); byte owner = r.ReadByte(); EntityId source = new(r.ReadUInt32()); EntityId target = new(r.ReadUInt32()); ContentId weapon = new(r.ReadUInt32());
+            FixVec2 position = new(Fix32.FromRaw(r.ReadInt32()), Fix32.FromRaw(r.ReadInt32())); ushort damage = r.ReadUInt16(); DamageType type = (DamageType)r.ReadByte(); int tick = r.ReadInt32();
+            if (id.Value == 0 || id.Value >= nextProjectile || id.Value <= previousImpact || owner >= world.PlayerCount || source == EntityId.None || target == EntityId.None ||
+                weapon.Value == 0 || damage == 0 || type < DamageType.Light || type > DamageType.Control || tick != world.Tick.Value) throw new InvalidDataException("Invalid projectile impact record.");
+            world.ProjectileImpactsInternal.Add(new ProjectileImpactRecord(id, owner, source, target, weapon, position, damage, type, tick));
+            previousImpact = id.Value;
+        }
     }
 
     private static void WriteEntity(BinaryWriter w, SimulationWorld world, EntityId id)

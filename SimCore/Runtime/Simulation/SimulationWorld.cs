@@ -17,6 +17,9 @@ public sealed class SimulationWorld
     public int OscillationDiagnostics { get; internal set; }
     public int PathRequestsProcessed { get; internal set; }
     public int FormationReflowDiagnostics { get; internal set; }
+    public IReadOnlyList<ProjectileRecord> Projectiles => ProjectilesInternal;
+    public IReadOnlyList<ProjectileImpactRecord> ProjectileImpacts => ProjectileImpactsInternal;
+    public uint NextProjectileValue { get; internal set; } = 1;
     private readonly OperationsCapacityState[] _operationsCapacity;
 
     public int PlayerCount => Fog.PlayerCount;
@@ -29,6 +32,8 @@ public sealed class SimulationWorld
     internal readonly List<CommandEnvelope> ScratchCommands = new(32);
     internal readonly Dictionary<uint, FixVec2> DiagnosticLastDelta = new();
     internal readonly Dictionary<uint, int> DiagnosticLastReversalTick = new();
+    internal readonly List<ProjectileRecord> ProjectilesInternal = new(64);
+    internal readonly List<ProjectileImpactRecord> ProjectileImpactsInternal = new(16);
 
     public SimulationWorld(MapGrid map, int playerCount = 2, PrototypeContentCatalog? content = null)
     {
@@ -75,6 +80,21 @@ public sealed class SimulationWorld
     internal void SetOperationsCapacity(byte playerSlot, OperationsCapacityState state) => _operationsCapacity[playerSlot] = state;
 
     internal void ClearOperationsCapacity() => System.Array.Clear(_operationsCapacity, 0, _operationsCapacity.Length);
+
+    internal void AddProjectile(ProjectileRecord projectile)
+    {
+        if (ProjectilesInternal.Count >= ProjectileSystem.MaximumProjectileRecords) throw new System.InvalidOperationException("Authoritative projectile capacity exceeded.");
+        projectile.Id = new ProjectileId(NextProjectileValue);
+        NextProjectileValue = checked(NextProjectileValue + 1);
+        ProjectilesInternal.Add(projectile);
+    }
+
+    internal void AddRestoredProjectile(ProjectileRecord projectile)
+    {
+        if (projectile.Id.Value == 0 || ProjectilesInternal.Count >= ProjectileSystem.MaximumProjectileRecords) throw new System.IO.InvalidDataException("Invalid restored projectile record.");
+        if (ProjectilesInternal.Count > 0 && ProjectilesInternal[^1].Id.Value >= projectile.Id.Value) throw new System.IO.InvalidDataException("Projectile records are not in stable ID order.");
+        ProjectilesInternal.Add(projectile);
+    }
 
     public bool TryExtractResource(EntityId id, int requestedAmount, out int extractedAmount)
     {

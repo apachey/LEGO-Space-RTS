@@ -15,6 +15,8 @@ public sealed class M4WeaponTests
             AssertWeapon(content, "weapon.rr.chrome_crusher.chrome_drill", 55, DamageType.Siege, 32, Fix32.FromRatio(21, 20), WeaponDeliveryKind.Contact);
             Assert.That(content.TryGetEntity("unit.rock_raiders.rapid_rider", out PrototypeEntityDefinition rider), Is.True);
             Assert.That(rider.Combat.WeaponProfile.Value, Is.Zero);
+            Assert.That(content.TryGetWeapon("weapon.rr.hover_scout.survey_pulse", out WeaponDefinition pulse), Is.True);
+            Assert.That(pulse.ProjectileSpeed, Is.EqualTo(Fix32.FromInt(12)));
         });
     }
 
