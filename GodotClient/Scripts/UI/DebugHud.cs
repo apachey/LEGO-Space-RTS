@@ -54,6 +54,8 @@ public partial class DebugHud : CanvasLayer
         if (now >= _nextHashUpdate) { _cachedHash = _bridge.StateHashHex(); _nextHashUpdate = now + 0.25; }
         _builder.Clear();
         OperationsCapacityState operationsCapacity = _bridge.World.GetOperationsCapacity(0);
+        bool hasEnergy = EnergyDomainSystem.TryGetPlayerDomain(_bridge.World, 0, out EntityId energyRoot);
+        EnergyDomain energy = hasEnergy ? _bridge.World.Entities.EnergyDomain.Get(energyRoot) : default;
         _builder.Append("LEGO Space RTS — M3 Economy Prototype\nTick: ").Append(_bridge.World.Tick.Value).Append("   Hash: ").Append(_cachedHash)
             .Append("   Content: ").Append(_bridge.GameplayContentHash.ToString("X16")).Append('\n')
             .Append("Sim: ").Append(_bridge.LastSimulationMs.ToString("F3")).Append(" ms   Path: ").Append(_bridge.LastPathfindingMs.ToString("F3")).Append(" ms   Entities: ").Append(_bridge.World.Entities.Alive.Count).Append('\n')
@@ -63,6 +65,12 @@ public partial class DebugHud : CanvasLayer
         if (operationsCapacity.Reserved > 0) _builder.Append(" (").Append(operationsCapacity.Reserved).Append(" reserved)");
         if (operationsCapacity.IsOverCapacity) _builder.Append(" — OVER CAPACITY");
         else if (operationsCapacity.IsAdvanceWarning) _builder.Append(" — CAPACITY WARNING");
+        if (hasEnergy)
+        {
+            _builder.Append('\n').Append("Energy: ").Append(EnergyText(energy.Reserve)).Append(" / ").Append(EnergyText(energy.ReserveCapacity))
+                .Append("   Generation: +").Append(energy.GenerationPerSecond).Append(" E/s   Demand: -").Append(energy.ContinuousDemandPerSecond).Append(" E/s");
+            if (energy.IsDeficit) _builder.Append(" — RESERVE DRAINING");
+        }
         _builder.Append('\n')
             .Append("Selected: ").Append(_selection.Selected.Count).Append(" / 128");
         if (_selection.Selected.Count > 0)
@@ -139,11 +147,17 @@ public partial class DebugHud : CanvasLayer
     private static string ProductionButtonText(string key) => key switch
     {
         "unit.rock_raiders.crew" => "Crew 50O 1OC 16s",
-        "unit.rock_raiders.hover_scout" => "Scout 75O 1OC 20s",
-        "unit.rock_raiders.rapid_rider" => "Rider 90O 2OC 28s",
-        "unit.rock_raiders.loader_dozer" => "Dozer 125O 3OC 36s",
+        "unit.rock_raiders.hover_scout" => "Scout 75O 10E 1OC 20s",
+        "unit.rock_raiders.rapid_rider" => "Rider 90O 10E 2OC 28s",
+        "unit.rock_raiders.loader_dozer" => "Dozer 125O 15E 3OC 36s",
         _ => key
     };
+
+    private static string EnergyText(Fix32 value)
+    {
+        int tenths = (int)(((long)value.Raw * 10 + Fix32.OneRaw / 2) / Fix32.OneRaw);
+        return $"{tenths / 10}.{tenths % 10}";
+    }
 
     private static void AddToggle(Container parent, string name, Func<bool> getter, Action<bool> setter)
     {

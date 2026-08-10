@@ -5,6 +5,7 @@ namespace LegoSpaceRTS.SimCore
 public sealed class ConstructionSystem : ISimSystem
 {
     public static readonly Fix32 InteractionRange = Fix32.FromRatio(5, 4);
+    private static readonly ContentId HqType = StableId.FromKey("building.rock_raiders.hq");
 
     public void Step(SimulationWorld world)
     {
@@ -131,8 +132,16 @@ public sealed class ConstructionSystem : ISimSystem
         int targetConsumed = checked(initialCommit + (int)((long)progressiveOre * nextProgress / site.RequiredTicks));
         int newlyConsumed = targetConsumed - site.ConsumedOre;
         if (newlyConsumed < 0 || newlyConsumed > site.ReservedOre) throw new System.InvalidOperationException($"Invalid construction commitment on site {siteId.Value}.");
+        int totalEnergy = checked(site.ReservedEnergy + site.ConsumedEnergy);
+        int initialEnergyCommit = checked((totalEnergy + 4) / 5);
+        int progressiveEnergy = totalEnergy - initialEnergyCommit;
+        int targetEnergyConsumed = checked(initialEnergyCommit + (int)((long)progressiveEnergy * nextProgress / site.RequiredTicks));
+        int newlyConsumedEnergy = targetEnergyConsumed - site.ConsumedEnergy;
+        if (newlyConsumedEnergy < 0 || newlyConsumedEnergy > site.ReservedEnergy) throw new System.InvalidOperationException($"Invalid construction Energy commitment on site {siteId.Value}.");
         site.ReservedOre -= newlyConsumed;
         site.ConsumedOre += newlyConsumed;
+        site.ReservedEnergy -= newlyConsumedEnergy;
+        site.ConsumedEnergy += newlyConsumedEnergy;
         site.ProgressTicks = nextProgress;
         if (site.ProgressTicks < site.RequiredTicks) return;
 
@@ -140,6 +149,17 @@ public sealed class ConstructionSystem : ISimSystem
         building.State = BuildingState.Completed;
         world.Entities.ConstructionSite.Remove(siteId);
         if (world.Content.IsProducer(building.Type)) world.Entities.Production.Set(siteId, new Production());
+        if (world.Entities.EnergyDomainMember.TryGet(siteId, out EnergyDomainMember member))
+        {
+            if (building.Type == HqType && member.DomainRoot != siteId)
+            {
+                world.Entities.EnergyDomainMember.Set(siteId, new EnergyDomainMember { DomainRoot = siteId });
+                EnergyDomainSystem.Recalculate(world, member.DomainRoot);
+                world.Entities.EnergyDomain.Set(siteId, new EnergyDomain { Reserve = Fix32.Zero });
+                EnergyDomainSystem.Recalculate(world, siteId);
+            }
+            else EnergyDomainSystem.Recalculate(world, member.DomainRoot);
+        }
         ReleaseSiteAssignments(world, siteId);
     }
 

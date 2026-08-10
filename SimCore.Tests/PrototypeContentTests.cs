@@ -34,7 +34,7 @@ public sealed class PrototypeContentTests
     [Test]
     public void BuildingDefinitionsRoundTripExplicitFootprintsCostsAndExits()
     {
-        BuildingDefinition sourceBuilding = new("building.test", 3, 2, 0b11_1111UL, true, 140, 15, 600, 2, 1, FootprintClass.Medium, 4);
+        BuildingDefinition sourceBuilding = new("building.test", 3, 2, 0b11_1111UL, true, 140, 15, 600, 2, 1, FootprintClass.Medium, 4, 10, 120, 3);
         PrototypeContentCatalog source = new(System.Array.Empty<PrototypeMovementProfile>(), System.Array.Empty<PrototypeEntityDefinition>(), buildings: new[] { sourceBuilding });
         PrototypeContentCatalog restored = PrototypeContentCodec.Read(PrototypeContentCodec.Write(source));
         BuildingDefinition building = restored.Buildings[0];
@@ -46,6 +46,9 @@ public sealed class PrototypeContentTests
         Assert.That(building.EnergyCost, Is.EqualTo(15));
         Assert.That(building.ProductionExitFootprint, Is.EqualTo(FootprintClass.Medium));
         Assert.That(building.OperationsCapacityProvided, Is.EqualTo(4));
+        Assert.That(building.EnergyGenerationPerSecond, Is.EqualTo(10));
+        Assert.That(building.EnergyReserveCapacity, Is.EqualTo(120));
+        Assert.That(building.ContinuousEnergyDemandPerSecond, Is.EqualTo(3));
     }
 
     [Test]

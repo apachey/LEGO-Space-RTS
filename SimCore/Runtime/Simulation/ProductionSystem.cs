@@ -40,8 +40,11 @@ public sealed class ProductionSystem : ISimSystem
         ref Production production = ref world.Entities.Production.Get(facilityId);
         if (production.Count >= Production.Capacity) return false;
         if (!OperationsCapacitySystem.CanReserve(world, playerSlot, definition.OperationsCapacity)) return false;
+        if (!EnergyDomainSystem.TryResolveForEntity(world, facilityId, playerSlot, out EntityId energyDomain) ||
+            !EnergyDomainSystem.CanSpend(world, energyDomain, definition.EnergyCost)) return false;
         EntityId bankId = FindFundingBank(world, playerSlot, definition.OreCost, world.Entities.Transform.Get(facilityId).Position);
         if (bankId == EntityId.None) return false;
+        if (!EnergyDomainSystem.TrySpend(world, energyDomain, definition.EnergyCost)) return false;
         ref ResourceBank bank = ref world.Entities.ResourceBank.Get(bankId);
         bank.ProcessedAmount = checked(bank.ProcessedAmount - definition.OreCost);
         bool queued = production.TryEnqueue(new ProductionQueueItem
@@ -50,7 +53,11 @@ public sealed class ProductionSystem : ISimSystem
             RequiredEnergy = definition.EnergyCost, RequiredCrystals = definition.CrystalCost,
             ReservedOperationsCapacity = definition.OperationsCapacity, TotalTicks = definition.BuildTicks, RemainingTicks = definition.BuildTicks
         });
-        if (!queued) bank.ProcessedAmount = checked(bank.ProcessedAmount + definition.OreCost);
+        if (!queued)
+        {
+            bank.ProcessedAmount = checked(bank.ProcessedAmount + definition.OreCost);
+            EnergyDomainSystem.Refund(world, energyDomain, definition.EnergyCost);
+        }
         else OperationsCapacitySystem.Recalculate(world);
         return queued;
     }

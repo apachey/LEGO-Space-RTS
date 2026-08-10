@@ -158,6 +158,22 @@ public struct Building
     public BuildingState State;
 }
 
+public struct EnergyDomain
+{
+    public Fix32 Reserve;
+    public Fix32 ReserveCapacity;
+    public int GenerationPerSecond;
+    public int ContinuousDemandPerSecond;
+    public int FlowRemainderRaw;
+
+    public bool IsDeficit => ContinuousDemandPerSecond > GenerationPerSecond;
+}
+
+public struct EnergyDomainMember
+{
+    public EntityId DomainRoot;
+}
+
 public struct ConstructionSite
 {
     public EntityId AssignedBuilder;
@@ -165,6 +181,9 @@ public struct ConstructionSite
     public int ReservedOre;
     public int ConsumedOre;
     public int RequiredEnergy;
+    public int ReservedEnergy;
+    public int ConsumedEnergy;
+    public EntityId EnergyDomainRoot;
     public ushort RequiredTicks;
     public ushort ProgressTicks;
 }

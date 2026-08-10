@@ -115,7 +115,8 @@ public partial class RtsInputController : Node
         {
             EntityId id = _selection.Selected[i];
             if (_bridge.World.Entities.Production.TryGet(id, out Production production) && production.Count < Production.Capacity &&
-                _bridge.World.Entities.Building.TryGet(id, out Building building) && building.State == BuildingState.Completed && building.Type == definition.ProducerType) return true;
+                _bridge.World.Entities.Building.TryGet(id, out Building building) && building.State == BuildingState.Completed && building.Type == definition.ProducerType &&
+                EnergyDomainSystem.CanSpendForEntity(_bridge.World, id, 0, definition.EnergyCost)) return true;
         }
         return false;
     }
@@ -308,7 +309,7 @@ public partial class RtsInputController : Node
         _buildGhost.Scale = new Vector3(width * GodotConversions.WorldUnitsPerBuildCell, 0.35f, height * GodotConversions.WorldUnitsPerBuildCell);
         PlacementValidation validation = ConstructionPlacement.Validate(_bridge.World, 0, SelectionArray(), definition.Id, anchorX, anchorY, _buildOrientation);
         _buildGhostMaterial.AlbedoColor = validation.IsValid ? new Color(0.18f, 0.92f, 0.55f, 0.55f) : new Color(1f, 0.20f, 0.12f, 0.58f);
-        _buildStatus = $"{DisplayName(definition.StableKey)} — {definition.OreCost} Ore / {PlacementFailureText(validation.Failure)}";
+        _buildStatus = $"{DisplayName(definition.StableKey)} — {definition.OreCost} Ore + {definition.EnergyCost} Energy / {PlacementFailureText(validation.Failure)}";
     }
 
     private void ConfirmBuildPlacement(Vector2 mousePosition)
@@ -368,6 +369,8 @@ public partial class RtsInputController : Node
         PlacementFailure.TerrainFeature => "Terrain feature prevents construction",
         PlacementFailure.NoLegalProductionExit => "No legal production exit",
         PlacementFailure.InsufficientOre => "Insufficient processed Ore",
+        PlacementFailure.NoEnergyDomain => "No connected Energy Domain",
+        PlacementFailure.InsufficientEnergy => "Insufficient Energy reserve",
         _ => "Invalid placement"
     };
 

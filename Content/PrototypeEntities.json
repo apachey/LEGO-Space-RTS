@@ -1,7 +1,7 @@
 {
-  "schemaVersion": 7,
+  "schemaVersion": 8,
   "contentKind": "prototype_entities",
-  "policy": "M2 movement metadata plus canonical M3 Ore flow, building placement, construction and first-playable production; no unapproved combat/economy values are invented here.",
+  "policy": "M2 movement metadata plus canonical M3 Ore, construction, production, Operations Capacity and Energy Domain values; no unapproved combat/economy values are invented here.",
   "movementProfiles": [
     {
       "stableId": "movement.prototype.crew",
@@ -162,6 +162,9 @@
       "cost": { "ore": 320, "energy": 40 },
       "buildTicks": 1200,
       "operationsCapacityProvided": 16,
+      "energyGenerationPerSecond": 2,
+      "energyReserveCapacity": 150,
+      "continuousEnergyDemandPerSecond": 0,
       "productionExit": { "width": 2, "depth": 2, "largestFootprint": "Tiny" }
     },
     {
@@ -170,7 +173,10 @@
       "rotatable": false,
       "cost": { "ore": 140, "energy": 15 },
       "buildTicks": 600,
-      "operationsCapacityProvided": 0
+      "operationsCapacityProvided": 0,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 1
     },
     {
       "stableId": "building.rock_raiders.power_station",
@@ -178,7 +184,10 @@
       "rotatable": false,
       "cost": { "ore": 150, "energy": 20 },
       "buildTicks": 700,
-      "operationsCapacityProvided": 0
+      "operationsCapacityProvided": 0,
+      "energyGenerationPerSecond": 10,
+      "energyReserveCapacity": 120,
+      "continuousEnergyDemandPerSecond": 0
     },
     {
       "stableId": "building.rock_raiders.vehicle_service_bay",
@@ -187,6 +196,9 @@
       "cost": { "ore": 160, "energy": 20 },
       "buildTicks": 800,
       "operationsCapacityProvided": 4,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 1,
       "productionExit": { "width": 3, "depth": 3, "largestFootprint": "Medium" }
     }
   ],

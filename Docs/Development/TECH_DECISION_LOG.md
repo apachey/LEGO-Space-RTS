@@ -259,3 +259,34 @@ do not change gameplay canon.
 
 These are implementation decisions within approved M3 Operations Capacity and
 opening-roster canon. They do not change gameplay canon.
+
+---
+
+## 2026-08-10 — M3 deterministic Energy Domain foundation
+
+- T037 adds authoritative Energy Domain and domain-membership components.
+  Starting HQs root separate domains with the canonical 120 stored Energy,
+  150 reserve capacity and +2 E/s auxiliary generation. Construction Sites
+  inherit the funding HQ's domain; a completed expansion HQ becomes a new
+  independent domain. T049 remains responsible for later Worksite-zone graph
+  overlap, merge and split behavior.
+- Compiled building metadata supplies generation, reserve capacity and
+  continuous demand. Domain totals are recalculated only on topology/content
+  events such as initialization and building completion; the normal 20 Hz
+  system updates only cached domains. A deterministic raw fixed-point remainder
+  makes every 20 ticks equal the exact integer E/s rate.
+- Construction now reserves its full one-time Energy cost with Ore. Physical
+  work commits the same canonical 20% initial share and progressive 80%; cancel
+  refunds all unspent Energy plus half of consumed Energy. Production withdraws
+  its one-time Energy cost before accepting a queue item and leaves Ore untouched
+  when Energy is insufficient.
+- A deficit drains reserve to zero, but T037 does not disable structures.
+  Deterministic priority grouping and powered/unpowered effects remain the
+  separately scheduled T038 Brownout task.
+- Snapshot format v9 / simulation protocol v7 persist domain reserve,
+  membership, cached flow and construction Energy commitment while retaining
+  v2-v8 reads. Prototype content v8 adds canonical Rock Raider generation,
+  reserve-capacity and demand values.
+
+These are implementation decisions within approved M3 Energy canon. They do
+not change gameplay canon.

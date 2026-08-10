@@ -16,7 +16,9 @@ public enum PlacementFailure : byte
     NonBuildableTerrain = 8,
     TerrainFeature = 9,
     NoLegalProductionExit = 10,
-    InsufficientOre = 11
+    InsufficientOre = 11,
+    NoEnergyDomain = 12,
+    InsufficientEnergy = 13
 }
 
 public readonly struct PlacementValidation
@@ -24,9 +26,10 @@ public readonly struct PlacementValidation
     public readonly PlacementFailure Failure;
     public readonly EntityId Builder;
     public readonly EntityId FundingBank;
+    public readonly EntityId EnergyDomainRoot;
     public bool IsValid => Failure == PlacementFailure.None;
-    public PlacementValidation(PlacementFailure failure, EntityId builder = default, EntityId fundingBank = default)
-    { Failure = failure; Builder = builder; FundingBank = fundingBank; }
+    public PlacementValidation(PlacementFailure failure, EntityId builder = default, EntityId fundingBank = default, EntityId energyDomainRoot = default)
+    { Failure = failure; Builder = builder; FundingBank = fundingBank; EnergyDomainRoot = energyDomainRoot; }
 }
 
 public static class ConstructionPlacement
@@ -54,7 +57,9 @@ public static class ConstructionPlacement
 
         EntityId bank = FindFundingBank(world, playerSlot, definition.OreCost, SiteCenter(anchorX, anchorY, width, height));
         if (bank == EntityId.None) return new PlacementValidation(PlacementFailure.InsufficientOre);
-        return new PlacementValidation(PlacementFailure.None, builder, bank);
+        if (!EnergyDomainSystem.TryResolveForEntity(world, bank, playerSlot, out EntityId energyDomain)) return new PlacementValidation(PlacementFailure.NoEnergyDomain);
+        if (!EnergyDomainSystem.CanSpend(world, energyDomain, definition.EnergyCost)) return new PlacementValidation(PlacementFailure.InsufficientEnergy);
+        return new PlacementValidation(PlacementFailure.None, builder, bank, energyDomain);
     }
 
     public static bool TryPlace(SimulationWorld world, byte playerSlot, IReadOnlyList<EntityId> builders, ContentId buildingType,
@@ -63,6 +68,7 @@ public static class ConstructionPlacement
         PlacementValidation validation = Validate(world, playerSlot, builders, buildingType, anchorX, anchorY, orientation);
         failure = validation.Failure; site = EntityId.None;
         if (!validation.IsValid || !world.Content.TryGetBuilding(buildingType, out BuildingDefinition definition)) return false;
+        if (!EnergyDomainSystem.TrySpend(world, validation.EnergyDomainRoot, definition.EnergyCost)) { failure = PlacementFailure.InsufficientEnergy; return false; }
         ref ResourceBank bank = ref world.Entities.ResourceBank.Get(validation.FundingBank);
         bank.ProcessedAmount = checked(bank.ProcessedAmount - definition.OreCost);
         byte width = definition.RotatedWidth(orientation), height = definition.RotatedHeight(orientation);
@@ -76,10 +82,12 @@ public static class ConstructionPlacement
         world.Entities.Transform.Set(site, new SimTransform { Position = SiteCenter(anchorX, anchorY, width, height), Orientation = new Angle16((ushort)(orientation * 16384)) });
         world.Entities.Selectable.Set(site, new Selectable { IsSelectable = true, ContentType = buildingType, Kind = SelectableKind.Building });
         world.Entities.Building.Set(site, building);
+        world.Entities.EnergyDomainMember.Set(site, new EnergyDomainMember { DomainRoot = validation.EnergyDomainRoot });
         world.Entities.ConstructionSite.Set(site, new ConstructionSite
         {
             AssignedBuilder = EntityId.None, FundingBank = validation.FundingBank, ReservedOre = definition.OreCost, ConsumedOre = 0,
-            RequiredEnergy = definition.EnergyCost, RequiredTicks = definition.BuildTicks, ProgressTicks = 0
+            RequiredEnergy = definition.EnergyCost, ReservedEnergy = definition.EnergyCost, ConsumedEnergy = 0, EnergyDomainRoot = validation.EnergyDomainRoot,
+            RequiredTicks = definition.BuildTicks, ProgressTicks = 0
         });
         world.SetConstructionOccupied(building, true);
         ConstructionSystem.AssignBuilder(world, validation.Builder, site, queueBuilder);
@@ -101,6 +109,8 @@ public static class ConstructionPlacement
         ref ResourceBank bank = ref world.Entities.ResourceBank.Get(construction.FundingBank);
         int consumedRefund = construction.ProgressTicks == 0 ? construction.ConsumedOre : construction.ConsumedOre / 2;
         bank.ProcessedAmount = checked(bank.ProcessedAmount + checked(construction.ReservedOre + consumedRefund));
+        int consumedEnergyRefund = construction.ProgressTicks == 0 ? construction.ConsumedEnergy : construction.ConsumedEnergy / 2;
+        EnergyDomainSystem.Refund(world, construction.EnergyDomainRoot, checked(construction.ReservedEnergy + consumedEnergyRefund));
         world.Entities.ConstructionSite.Remove(site);
         ConstructionSystem.ReleaseSiteAssignments(world, site);
         world.SetConstructionOccupied(building, false);

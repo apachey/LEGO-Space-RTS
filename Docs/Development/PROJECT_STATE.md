@@ -63,8 +63,8 @@ narrow placement cases allowed by Phase 09B.
 - Meaningful-progress recovery is measured toward the active route waypoint
   over accumulated movement rather than reset by arbitrary per-tick motion, so
   arrival micro-movement cannot indefinitely suppress reflow/repath.
-- The current M3 T036 full verification is green across every
-  `BLOCKING_NOW` stage: builds, 113 NUnit tests, the explicit representative
+- The current M3 T037 full verification is green across every
+  `BLOCKING_NOW` stage: builds, 120 NUnit tests, the explicit representative
   24-mover gate, compiled content, HeadlessSim, Godot headless smoke, 100-repeat
   determinism, replay, snapshot continuation, regeneration and macOS export.
 - A launchable debug build was produced at
@@ -194,6 +194,30 @@ narrow placement cases allowed by Phase 09B.
   director confirmed that the canonical six-Crew opening, OC display,
   reservation warning and queued-to-active capacity transition work. No
   blocking Operations Capacity defect was reported.
+- M3 T037 Energy Domains are implemented on the current task branch. Each
+  starting HQ roots an authoritative domain with the canonical 120 / 150
+  Energy reserve and +2 E/s auxiliary generation. Cached domain generation,
+  reserve capacity and continuous demand update on building completion rather
+  than scanning the whole base every simulation tick.
+- Prototype content v8 adds the canonical first-playable Rock Raider values:
+  HQ +2 E/s and +150 reserve capacity, Power Station +10 E/s and +120 reserve
+  capacity, and 1 E/s continuous demand for both the Ore Processing Plant and
+  Vehicle Service Bay. New expansion HQs establish independent domains; the
+  later T049 Worksite graph remains responsible for zone-overlap merge/split.
+- Construction and production now validate and withdraw one-time Energy before
+  accepting an order. Construction tracks reserved/consumed Energy alongside
+  Ore and applies the same 20% commitment, progressive consumption and
+  cancellation refund rules. Insufficient Energy rejects an order without
+  spending Ore.
+- Surplus and deficit flow use exact deterministic 20 Hz fixed-point
+  accumulation. Deficit may drain reserve to zero, but structure shutdown is
+  intentionally deferred to T038 Brownout. Snapshot v9 / simulation protocol
+  v7 preserve domain reserve, membership and construction commitments while
+  retaining v2-v8 read compatibility.
+- The prototype HUD shows reserve/capacity, generation, demand and a visible
+  `RESERVE DRAINING` state. Build previews include Ore plus Energy cost;
+  production buttons expose Energy cost and disable when the selected domain
+  cannot pay it.
 
 ## Current gates
 
@@ -218,10 +242,11 @@ narrow placement cases allowed by Phase 09B.
   / 20 navigation nodes, while the imported runtime/static validator currently
   use 10 navigation nodes / 5 build cells; resolve in a separate canon-alignment
   task before changing cluster geometry;
-- Energy costs remain retained but unenforced until T037 Energy Domains as
-  scheduled. The full production overview, waiting-item drag reordering and
-  cancellation/refund presentation remain later interface/economy work beyond
-  the current unit-spawn and OC acceptance gates.
+- T038 Brownout still needs deterministic shutdown priorities and powered-state
+  effects after a deficit empties the reserve. T049 later adds full Rock Raider
+  Worksite-zone connectivity, overlap, merge and split. The full production
+  overview, waiting-item drag reordering and cancellation/refund presentation
+  remain later interface/economy work beyond the current prototype gates.
 
 ## Explicitly rejected / do not resurrect
 
@@ -234,6 +259,6 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Merge the accepted stacked T030-T036 M3 economy/base-building branches.
-2. Begin T037 Energy Domains.
+1. Complete T037 human Energy Domain playtest acceptance.
+2. Merge the accepted stacked T030-T037 M3 economy/base-building branches.
 3. Begin T038 Brownout after T037 acceptance.
