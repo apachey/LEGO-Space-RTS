@@ -5,13 +5,13 @@ remain authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M4 — Combat / T042 deterministic Projectiles acceptance candidate.**
+**M4 — Combat / T042 deterministic Projectiles human-accepted; T043 next.**
 
 The accepted M3 T030-T039 economy/base-building stack is merged through PR #10.
-M4 T040 Targeting and T041 Weapons are automated acceptance candidates whose
-human interaction checks are explicitly deferred. With game-director approval,
-T042 Projectiles is stacked on that branch; damage, contact resolution,
-destruction and repair remain their separately scheduled T043-T046 tasks.
+M4 T040 Targeting, T041 Weapons and T042 Projectiles are implemented, fully
+automated-verified and human-accepted on the current stacked branch. Damage,
+contact resolution, destruction and repair remain their separately scheduled
+T043-T046 tasks.
 
 ## Engine / architecture
 
@@ -360,6 +360,15 @@ narrow placement cases allowed by Phase 09B.
   determinism, replay, snapshot continuation, regeneration and macOS export.
 - A launchable T042 debug build was produced at
   `Builds/macOS/LEGO Space RTS.app` and passed the export smoke launch.
+- Human T040-T042 playtest acceptance is complete as of 2026-08-11. The game
+  director confirmed automatic target acquisition, direct right-click target
+  override, readable target-ring feedback, visible firing feedback and visible
+  Survey Pulse travel. The current muzzle flash and projectile are accepted as
+  prototype placeholders rather than final combat VFX.
+- The same playtest confirmed that Direct Attack currently locks an out-of-range
+  target without approaching it. This is an acknowledged missing combat-chase
+  behavior, not a T040-T042 regression; the canonical 12-cell pursuit leash must
+  be implemented in later M4 combat work before the loop is complete.
 
 ## Current gates
 
@@ -405,14 +414,14 @@ narrow placement cases allowed by Phase 09B.
   current SimCore entity in explored fog; that would become an information leak
   in multiplayer. Add serialized/per-viewer knowledge through a separately
   reviewed fog-information task no later than M6 T061 fog filtering.
-- T040 human interaction/readability acceptance remains deferred by explicit
-  game-director approval; its automated candidate is not reclassified as human
-  accepted.
 - T042 deliberately emits ordered projectile impacts without applying
   damage/armor, resolving contact approach slots/facing, or moving into chase
   range. Those remain T043-T044 scope. The canonical
   12-cell direct-pursuit leash and attack-move route leash also remain pending;
   no temporary presentation-owned chase or damage behavior is introduced.
+- Muzzle flash and Survey Pulse presentation currently use simple short-lived
+  amber spheres. Human acceptance classifies them as adequate prototype
+  feedback but not final differentiated combat VFX.
 
 ## Explicitly rejected / do not resurrect
 
@@ -425,11 +434,7 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Human T040 check of right-click target selection and target-ring readability
-   remains pending.
-2. Human T041 check of close-range firing-flash readability and cadence remains
-   pending after automated acceptance.
-3. Human T042 check of Survey Pulse travel readability remains pending after
-   automated acceptance.
-4. After T040-T042 acceptance or an explicit further deferral: M4 T043 Damage /
-   armor using the canonical Phase 06 formula.
+1. M4 T043 Damage / armor using the canonical Phase 06 formula.
+2. M4 T044 Contact weapons / deterministic approach slots and facing. The
+   remaining canonical ranged/direct pursuit behavior must receive an explicit
+   implementation home in the M4 combat sequence rather than being lost.
