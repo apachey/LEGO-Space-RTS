@@ -346,8 +346,10 @@ not change gameplay canon.
   production actions and the facility queue appear contextually only when the
   relevant building is selected. This retains the implemented M3 interaction
   without implying that production deserves permanent global screen space. The
-  contextual column retains its width while hidden so selecting an HQ does not
-  reflow the portrait and selected-entity status.
+  contextual column retains its width while hidden. Human review clarified
+  that the residual HQ-selection defect is vertical growth of the bottom panel
+  beyond its intended bounds rather than horizontal reflow; it remains accepted
+  non-blocking UI polish and is not considered fixed by the width reservation.
 - The fixed-size Label3D construction percentage is rejected: Godot scales that
   mode as if the camera were one world unit away, producing a giant blurred
   billboard in the strategic camera. World presentation uses a compact bar;

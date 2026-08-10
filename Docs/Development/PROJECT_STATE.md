@@ -244,8 +244,8 @@ narrow placement cases allowed by Phase 09B.
   broader concern that several individually reasonable systems could create
   unfun aggregate complexity remains a design-review consideration for later
   milestone playtests, not a T038 implementation failure.
-- M3 T039 Basic HUD is implemented on the current task branch and is undergoing
-  final human readability refinement. The permanent player-facing debug text
+- M3 T039 Basic HUD is implemented and human-accepted on the current task
+  branch. The permanent player-facing debug text
   wall has been replaced by the shared Phase 07/08 skeleton: a compact top
   economy strip and one bottom selection/state area. The normal battlefield
   center remains unobstructed.
@@ -272,11 +272,19 @@ narrow placement cases allowed by Phase 09B.
   ring with a short canonical lifetime. The unusably large blurred fixed-size
   construction percentage billboard is removed: world-space progress is a thin
   bar and the exact percentage remains in the selected-site panel. The
-  contextual-action column now reserves stable width so selecting an HQ no
-  longer shifts the portrait and status layout. Runtime Godot smoke verifies
+  contextual-action column now reserves stable width, but human review
+  clarified that the remaining HQ-selection defect is vertical growth of the
+  bottom panel beyond its intended bounds, not horizontal layout movement.
+  Runtime Godot smoke verifies
   the resource, selection, portrait and contextual-action anchors; a dedicated
   construction capture seeds and verifies the progress bar. No authoritative
   SimCore or protocol state changed in this T039 refinement.
+- Human T039 playtest acceptance is complete as of 2026-08-10: the game
+  director accepted the current Basic HUD baseline and requested moving on.
+  Selecting Rock Raiders HQ can still make the bottom HUD extend downward
+  beyond its intended bounds; the stable-width change did not fix that height
+  defect. It is explicitly accepted as non-blocking UI polish and must not be
+  reported as fixed.
 
 ## Current gates
 
@@ -297,6 +305,10 @@ narrow placement cases allowed by Phase 09B.
   jitter and some movement actions can read oddly. This is accepted as
   non-blocking for M2; address only from a concrete reproduction or a later
   milestone requirement rather than reopening broad movement architecture;
+- selecting Rock Raiders HQ can increase the bottom HUD's vertical extent
+  beyond its intended bounds. T039 human acceptance classifies this as
+  non-blocking UI polish; the existing stable-width contextual slot does not
+  resolve it;
 - pre-existing HPA cluster-size discrepancy: Phase 09 specifies 10 build cells
   / 20 navigation nodes, while the imported runtime/static validator currently
   use 10 navigation nodes / 5 build cells; resolve in a separate canon-alignment
@@ -330,6 +342,6 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Complete T039 human HUD readability and mental-load acceptance.
-2. Merge the accepted stacked T030-T039 M3 economy/base-building branches.
-3. Begin M4 T040 Targeting only after the M3 executable baseline is accepted.
+1. Merge the accepted stacked T030-T039 M3 economy/base-building branches.
+2. Begin M4 T040 Targeting only after the merged M3 executable baseline is
+   accepted.
