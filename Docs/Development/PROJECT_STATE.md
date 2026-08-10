@@ -190,6 +190,10 @@ narrow placement cases allowed by Phase 09B.
   next unit would exceed capacity. OC is re-derived after snapshot restore from
   already-serialized units, buildings and production queues, so snapshot v8 and
   simulation protocol v6 remain valid without duplicated cached state.
+- Human T036 playtest acceptance is complete as of 2026-08-10: the game
+  director confirmed that the canonical six-Crew opening, OC display,
+  reservation warning and queued-to-active capacity transition work. No
+  blocking Operations Capacity defect was reported.
 
 ## Current gates
 
@@ -230,6 +234,6 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Complete T036 human OC playtest acceptance.
-2. Merge the accepted stacked T030-T036 M3 economy/base-building branches.
-3. Begin T037 Energy Domains after T036 acceptance.
+1. Merge the accepted stacked T030-T036 M3 economy/base-building branches.
+2. Begin T037 Energy Domains.
+3. Begin T038 Brownout after T037 acceptance.
