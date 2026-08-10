@@ -108,8 +108,8 @@ narrow placement cases allowed by Phase 09B.
   Build Mode previews grid-snapped ghosts for the four first-playable Rock
   Raider structures and reports server-equivalent invalid-placement reasons.
 - Each standard player start now receives the canonical 500 processed Ore,
-  making the approved early buildings immediately placeable. The scheduled
-  T037 Energy implementation will add the separate canonical starting Energy.
+  making the approved early buildings immediately placeable. T037 now supplies
+  the separate canonical starting Energy through each HQ domain.
 - Authoritative placement validates an owned Crew builder, prerequisite HQ,
   compiled rotated footprint mask, terrain/elevation, entity and resource-node
   occupancy, authored production exit and a single local Ore reserve. A valid
@@ -218,6 +218,10 @@ narrow placement cases allowed by Phase 09B.
   `RESERVE DRAINING` state. Build previews include Ore plus Energy cost;
   production buttons expose Energy cost and disable when the selected domain
   cannot pay it.
+- Human T037 playtest acceptance is complete as of 2026-08-10: the game
+  director confirmed that the Energy HUD, reserve flow, generation/demand and
+  construction/production Energy spending work. No blocking Energy Domain
+  interaction or readability defect was reported.
 
 ## Current gates
 
@@ -259,6 +263,6 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Complete T037 human Energy Domain playtest acceptance.
-2. Merge the accepted stacked T030-T037 M3 economy/base-building branches.
-3. Begin T038 Brownout after T037 acceptance.
+1. Merge the accepted stacked T030-T037 M3 economy/base-building branches.
+2. Begin T038 Brownout.
+3. Complete T038 human Brownout readability acceptance.
