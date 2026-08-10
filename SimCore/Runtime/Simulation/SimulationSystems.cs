@@ -56,6 +56,39 @@ public sealed class CommandExecutionSystem : ISimSystem
             return;
         }
 
+        if (command.Type == SimCommandType.Attack)
+        {
+            world.ScratchEntities.Clear();
+            for (int i = 0; i < command.Entities.Length; i++)
+            {
+                EntityId id = command.Entities[i];
+                if (!world.Entities.Exists(id) || !world.Entities.Targeting.Has(id) ||
+                    !world.Entities.Ownership.TryGet(id, out Ownership owner) || owner.PlayerSlot != command.PlayerSlot) continue;
+                world.ScratchEntities.Add(id);
+            }
+            world.ScratchEntities.Sort(EntityIdComparer.Instance);
+            bool queued = (command.Modifiers & CommandModifiers.Queue) != 0;
+            for (int i = 0; i < world.ScratchEntities.Count; i++)
+            {
+                EntityId id = world.ScratchEntities[i];
+                if (!TargetingSystem.IsLegalTarget(world, id, command.TargetEntity, requireVisible: true)) continue;
+                if (queued && IsBusy(world, id))
+                {
+                    world.GetQueue(id).Enqueue(new UnitOrder(UnitOrderType.Attack, FixVec2.Zero, targetEntity: command.TargetEntity));
+                    continue;
+                }
+                if (!queued) { ConstructionSystem.ReleaseBuilderAssignment(world, id); CancelHarvest(world, id); world.GetQueue(id).Clear(); }
+                if (world.Entities.Navigation.Has(id) && world.Entities.Movement.Has(id))
+                {
+                    ref NavigationAgent nav = ref world.Entities.Navigation.Get(id);
+                    ref Movement movement = ref world.Entities.Movement.Get(id);
+                    StopMovement(world, id, ref nav, ref movement);
+                }
+                TargetingSystem.TryIssueDirectOrder(world, command.PlayerSlot, id, command.TargetEntity);
+            }
+            return;
+        }
+
         world.ScratchEntities.Clear();
         for (int i = 0; i < command.Entities.Length; i++)
         {
@@ -125,6 +158,7 @@ public sealed class CommandExecutionSystem : ISimSystem
                 {
                     if (!queued) { ConstructionSystem.ReleaseBuilderAssignment(world, id); world.GetQueue(id).Clear(); }
                     CancelHarvest(world, id);
+                    TargetingSystem.ClearTarget(world, id);
                     SetMove(world, id, slotTarget, formation);
                 }
             }
@@ -139,6 +173,7 @@ public sealed class CommandExecutionSystem : ISimSystem
             world.GetQueue(id).Clear();
             ConstructionSystem.ReleaseBuilderAssignment(world, id);
             CancelHarvest(world, id);
+            TargetingSystem.ClearTarget(world, id);
             StopMovement(world, id, ref nav, ref move);
             move.State = command.Type == SimCommandType.HoldPosition ? MovementState.Holding : MovementState.Idle;
         }
@@ -146,6 +181,7 @@ public sealed class CommandExecutionSystem : ISimSystem
 
     internal static bool IsBusy(SimulationWorld world, EntityId id)
     {
+        if (world.Entities.Targeting.TryGet(id, out Targeting targeting) && targeting.SelectionKind == TargetSelectionKind.DirectOrder) return true;
         if (world.Entities.Navigation.TryGet(id, out NavigationAgent nav) && nav.HasTarget) return true;
         if (world.Entities.Builder.TryGet(id, out Builder builder) && builder.JobState != BuilderJobState.Idle) return true;
         return world.Entities.Worker.TryGet(id, out Worker worker) && (worker.TaskState == WorkerTaskState.MovingToResource || worker.TaskState == WorkerTaskState.Mining || worker.TaskState == WorkerTaskState.ReturningToReceiver);
@@ -157,6 +193,7 @@ public sealed class CommandExecutionSystem : ISimSystem
             !world.Entities.ResourceNode.TryGet(resourceId, out ResourceNode node) || node.IsDepleted || carrier.Type != node.Type ||
             !world.Entities.Transform.TryGet(id, out SimTransform workerTransform) || !world.Entities.Transform.TryGet(resourceId, out SimTransform resourceTransform)) return false;
 
+        TargetingSystem.ClearTarget(world, id);
         ref Worker worker = ref world.Entities.Worker.Get(id);
         worker.ResourceTarget = resourceId;
         worker.ReceiverTarget = EntityId.None;
@@ -250,6 +287,12 @@ public sealed class CommandExecutionSystem : ISimSystem
             {
                 CancelHarvest(world, id);
                 if (ConstructionSystem.StartBuilder(world, id, next.TargetEntity)) return true;
+                continue;
+            }
+            if (next.Type == UnitOrderType.Attack)
+            {
+                if (!world.Entities.Ownership.TryGet(id, out Ownership owner)) continue;
+                if (TargetingSystem.TryIssueDirectOrder(world, owner.PlayerSlot, id, next.TargetEntity)) return true;
                 continue;
             }
             if (next.Type == UnitOrderType.Move)

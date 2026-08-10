@@ -36,7 +36,7 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
 {
     using JsonDocument document = JsonDocument.Parse(File.ReadAllText(path));
     JsonElement root = document.RootElement;
-    if (root.GetProperty("schemaVersion").GetInt32() != 9) throw new InvalidDataException("Unsupported prototype content schema.");
+    if (root.GetProperty("schemaVersion").GetInt32() != 10) throw new InvalidDataException("Unsupported prototype content schema.");
     if (!string.Equals(root.GetProperty("contentKind").GetString(), "prototype_entities", StringComparison.Ordinal)) throw new InvalidDataException("Unexpected contentKind.");
 
     List<PrototypeMovementProfile> profiles = new();
@@ -95,9 +95,26 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
         if (selectableKind == SelectableKind.Worker && (oreTicks == 0 || oreCapacity == 0)) throw new InvalidDataException($"{key}: Worker requires workerHarvest metadata.");
         byte operationsCapacity = checked((byte)item.GetProperty("operationsCapacity").GetInt32());
         if (selectableKind == SelectableKind.Building && operationsCapacity != 0) throw new InvalidDataException($"{key}: Buildings cannot consume Operations Capacity.");
+        byte visionRadius = checked((byte)item.GetProperty("visionRadius").GetInt32());
+        JsonElement combatTarget = item.GetProperty("combatTarget");
+        CombatTargetClass targetClass = Enum.Parse<CombatTargetClass>(RequiredString(combatTarget, "class"), false);
+        CombatTargetLayer targetLayer = Enum.Parse<CombatTargetLayer>(RequiredString(combatTarget, "layer"), false);
+        CombatTargetFlags targetFlags = ReadCombatTargetFlags(combatTarget.GetProperty("flags"));
+        PrototypeCombatProfile combat;
+        if (item.TryGetProperty("targeting", out JsonElement targeting))
+        {
+            Fix32 weaponRange = ReadRatio(targeting, key, "weaponRangeRatio");
+            Fix32 acquisitionRadius = weaponRange + Fix32.FromInt(4);
+            Fix32 sightRadius = Fix32.FromInt(visionRadius);
+            if (acquisitionRadius > sightRadius) acquisitionRadius = sightRadius;
+            combat = new PrototypeCombatProfile(targetClass, targetLayer, targetFlags,
+                Enum.Parse<TargetPriorityProfile>(RequiredString(targeting, "priorityProfile"), false),
+                ReadTargetLayerMask(targeting.GetProperty("legalLayers")), ReadTargetClassMask(targeting.GetProperty("legalClasses")), acquisitionRadius);
+        }
+        else combat = new PrototypeCombatProfile(targetClass, targetLayer, targetFlags);
         entities.Add(new PrototypeEntityDefinition(key, RequiredString(item, "faction"), RequiredString(item, "sourceClassification"), movement,
             Enum.Parse<FootprintClass>(RequiredString(item, "footprint"), false), selectableKind,
-            checked((byte)item.GetProperty("visionRadius").GetInt32()), RequiredString(item, "viewProfile"), oreTicks, oreCapacity, operationsCapacity));
+            visionRadius, RequiredString(item, "viewProfile"), oreTicks, oreCapacity, operationsCapacity, combat));
     }
     entities.Sort((a, b) => string.CompareOrdinal(a.StableKey, b.StableKey));
 
@@ -280,4 +297,30 @@ static MapCellFlags ReadFlags(JsonElement element)
     MapCellFlags flags = MapCellFlags.None;
     foreach (JsonElement flag in element.EnumerateArray()) flags |= Enum.Parse<MapCellFlags>(flag.GetString() ?? string.Empty, false);
     return flags;
+}
+
+static CombatTargetFlags ReadCombatTargetFlags(JsonElement element)
+{
+    CombatTargetFlags flags = CombatTargetFlags.None;
+    foreach (JsonElement flag in element.EnumerateArray()) flags |= Enum.Parse<CombatTargetFlags>(flag.GetString() ?? string.Empty, false);
+    return flags;
+}
+
+static TargetLayerMask ReadTargetLayerMask(JsonElement element)
+{
+    TargetLayerMask mask = TargetLayerMask.None;
+    foreach (JsonElement layer in element.EnumerateArray())
+        mask |= Enum.Parse<CombatTargetLayer>(layer.GetString() ?? string.Empty, false) == CombatTargetLayer.Ground ? TargetLayerMask.Ground : TargetLayerMask.TrueAir;
+    return mask;
+}
+
+static TargetClassMask ReadTargetClassMask(JsonElement element)
+{
+    TargetClassMask mask = TargetClassMask.None;
+    foreach (JsonElement item in element.EnumerateArray())
+    {
+        CombatTargetClass targetClass = Enum.Parse<CombatTargetClass>(item.GetString() ?? string.Empty, false);
+        mask |= (TargetClassMask)(1 << (int)targetClass);
+    }
+    return mask;
 }

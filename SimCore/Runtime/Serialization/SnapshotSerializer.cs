@@ -7,8 +7,8 @@ namespace LegoSpaceRTS.SimCore
 public static class SnapshotSerializer
 {
     public const uint Magic = 0x53525453; // STRS
-    public const ushort FormatVersion = 10;
-    public const ushort SimulationProtocolVersion = 8;
+    public const ushort FormatVersion = 11;
+    public const ushort SimulationProtocolVersion = 9;
 
     [Flags]
     private enum EntityComponents : uint
@@ -34,7 +34,9 @@ public static class SnapshotSerializer
         EnergyDomain = 1 << 17,
         EnergyDomainMember = 1 << 18,
         PowerState = 1 << 19,
-        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver | ResourceBank | Building | ConstructionSite | Builder | Production | EnergyDomain | EnergyDomainMember | PowerState
+        Targetable = 1 << 20,
+        Targeting = 1 << 21,
+        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver | ResourceBank | Building | ConstructionSite | Builder | Production | EnergyDomain | EnergyDomainMember | PowerState | Targetable | Targeting
     }
 
     public static byte[] Serialize(SimulationWorld world)
@@ -55,7 +57,7 @@ public static class SnapshotSerializer
         using MemoryStream ms = new(bytes, false); using BinaryReader r = new(ms);
         if (r.ReadUInt32() != Magic) throw new InvalidDataException("Snapshot magic mismatch.");
         ushort format = r.ReadUInt16(), protocol = r.ReadUInt16();
-        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7);
+        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8);
         if (!supportedLegacy && (format != FormatVersion || protocol != SimulationProtocolVersion)) throw new InvalidDataException($"Unsupported snapshot {format}/{protocol}.");
         SimTick tick = new(r.ReadInt32()); MapGrid map = MapGrid.Deserialize(r); uint nextEntity = r.ReadUInt32();
         EntityStore entities = new(); int entityCount = r.ReadInt32(); if (entityCount < 0 || entityCount > 10000) throw new InvalidDataException("Invalid entity count.");
@@ -69,6 +71,7 @@ public static class SnapshotSerializer
         if (format < 6) AddLegacyBuildings(temp);
         if (format < 7) AddLegacyBuilders(temp);
         if (format < 8) AddLegacyProduction(temp);
+        if (format < 11) AddLegacyCombatComponents(temp);
         entities.RestoreNextEntityValue(nextEntity);
         temp.Commands.Deserialize(r, includeBuildFields: format >= 6, includeEnergyPriority: format >= 10);
         temp.Fog = FogState.Deserialize(r);
@@ -102,6 +105,8 @@ public static class SnapshotSerializer
         if (world.Entities.PowerState.Has(id)) components |= EntityComponents.PowerState;
         if (world.Entities.ConstructionSite.Has(id)) components |= EntityComponents.ConstructionSite;
         if (world.Entities.Production.Has(id)) components |= EntityComponents.Production;
+        if (world.Entities.Targetable.Has(id)) components |= EntityComponents.Targetable;
+        if (world.Entities.Targeting.Has(id)) components |= EntityComponents.Targeting;
         if (world.TryGetQueue(id, out _)) components |= EntityComponents.CommandQueue;
         if (world.Corridors.ContainsKey(id.Value)) components |= EntityComponents.RouteCorridor;
         w.Write((uint)components);
@@ -130,6 +135,8 @@ public static class SnapshotSerializer
         if ((components & EntityComponents.PowerState) != 0) { PowerState state = world.Entities.PowerState.Get(id); w.Write((byte)state.Priority); w.Write(state.IsPowered); }
         if ((components & EntityComponents.ConstructionSite) != 0) WriteConstructionSite(w, world.Entities.ConstructionSite.Get(id));
         if ((components & EntityComponents.Production) != 0) WriteProduction(w, world.Entities.Production.Get(id));
+        if ((components & EntityComponents.Targetable) != 0) WriteTargetable(w, world.Entities.Targetable.Get(id));
+        if ((components & EntityComponents.Targeting) != 0) WriteTargeting(w, world.Entities.Targeting.Get(id));
         if ((components & EntityComponents.CommandQueue) != 0) world.GetQueue(id).Serialize(w, includeTargetEntity: true);
         if ((components & EntityComponents.RouteCorridor) != 0) WriteCorridor(w, world.Corridors[id.Value]);
     }
@@ -214,6 +221,17 @@ public static class SnapshotSerializer
         }
     }
 
+    private static void WriteTargetable(BinaryWriter w, Targetable targetable)
+    {
+        w.Write((byte)targetable.Class); w.Write((byte)targetable.Layer); w.Write((ushort)targetable.Flags);
+    }
+
+    private static void WriteTargeting(BinaryWriter w, Targeting targeting)
+    {
+        w.Write(targeting.CurrentTarget.Value); w.Write(targeting.AcquisitionRadius.Raw); w.Write((byte)targeting.LegalLayers);
+        w.Write((byte)targeting.LegalClasses); w.Write((byte)targeting.PriorityProfile); w.Write((byte)targeting.SelectionKind);
+    }
+
     private static void WriteCorridor(BinaryWriter w, RouteCorridor path)
     {
         w.Write(path.TopologyVersion); w.Write(path.Cells.Count);
@@ -248,6 +266,8 @@ public static class SnapshotSerializer
         }
         if ((components & EntityComponents.ConstructionSite) != 0) world.Entities.ConstructionSite.Set(id, ReadConstructionSite(r, format));
         if ((components & EntityComponents.Production) != 0) world.Entities.Production.Set(id, ReadProduction(r));
+        if ((components & EntityComponents.Targetable) != 0) world.Entities.Targetable.Set(id, ReadTargetable(r));
+        if ((components & EntityComponents.Targeting) != 0) world.Entities.Targeting.Set(id, ReadTargeting(r));
         if ((components & EntityComponents.CommandQueue) != 0) world.GetQueue(id).Deserialize(r, includeTargetEntity: format >= 4);
         if ((components & EntityComponents.RouteCorridor) != 0) world.Corridors[id.Value] = ReadCorridor(r);
     }
@@ -348,6 +368,30 @@ public static class SnapshotSerializer
         return production;
     }
 
+    private static Targetable ReadTargetable(BinaryReader r)
+    {
+        Targetable targetable = new() { Class = (CombatTargetClass)r.ReadByte(), Layer = (CombatTargetLayer)r.ReadByte(), Flags = (CombatTargetFlags)r.ReadUInt16() };
+        if (targetable.Class < CombatTargetClass.Personnel || targetable.Class > CombatTargetClass.FortifiedStructure ||
+            targetable.Layer < CombatTargetLayer.Ground || targetable.Layer > CombatTargetLayer.TrueAir) throw new InvalidDataException("Invalid combat target metadata.");
+        return targetable;
+    }
+
+    private static Targeting ReadTargeting(BinaryReader r)
+    {
+        Targeting targeting = new()
+        {
+            CurrentTarget = new EntityId(r.ReadUInt32()), AcquisitionRadius = Fix32.FromRaw(r.ReadInt32()), LegalLayers = (TargetLayerMask)r.ReadByte(),
+            LegalClasses = (TargetClassMask)r.ReadByte(), PriorityProfile = (TargetPriorityProfile)r.ReadByte(), SelectionKind = (TargetSelectionKind)r.ReadByte()
+        };
+        if (targeting.AcquisitionRadius <= Fix32.Zero || targeting.LegalLayers == TargetLayerMask.None || (targeting.LegalLayers & ~TargetLayerMask.All) != 0 ||
+            targeting.LegalClasses == TargetClassMask.None || (targeting.LegalClasses & ~TargetClassMask.All) != 0 ||
+            targeting.PriorityProfile < TargetPriorityProfile.AntiLight || targeting.PriorityProfile > TargetPriorityProfile.Control ||
+            targeting.SelectionKind < TargetSelectionKind.None || targeting.SelectionKind > TargetSelectionKind.DirectOrder ||
+            (targeting.SelectionKind == TargetSelectionKind.None && targeting.CurrentTarget != EntityId.None) ||
+            (targeting.SelectionKind != TargetSelectionKind.None && targeting.CurrentTarget == EntityId.None)) throw new InvalidDataException("Invalid targeting state.");
+        return targeting;
+    }
+
     private static void AddLegacyProduction(SimulationWorld world)
     {
         IReadOnlyList<EntityId> alive = world.Entities.Alive;
@@ -356,6 +400,18 @@ public static class SnapshotSerializer
             EntityId id = alive[i];
             if (world.Entities.Building.TryGet(id, out Building building) && building.State == BuildingState.Completed && world.Content.IsProducer(building.Type))
                 world.Entities.Production.Set(id, new Production());
+        }
+    }
+
+    private static void AddLegacyCombatComponents(SimulationWorld world)
+    {
+        IReadOnlyList<EntityId> alive = world.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (!world.Entities.Selectable.TryGet(id, out Selectable selectable) ||
+                !world.Content.TryGetEntity(selectable.ContentType, out PrototypeEntityDefinition definition)) continue;
+            ScenarioFactory.AddCombatComponents(world, id, definition);
         }
     }
 

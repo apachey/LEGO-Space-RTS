@@ -366,3 +366,28 @@ not change gameplay canon.
 
 These are implementation decisions within approved M3 HUD and UX canon. They
 do not change gameplay canon.
+
+---
+
+## 2026-08-10 — M4 deterministic targeting authority and priority order
+
+- T040 adds authoritative `Targetable` and `Targeting` components. Target class,
+  ground/true-air layer, semantic role flags, legal target masks, acquisition
+  radius and current target live in SimCore; Godot only performs visible-object
+  hit testing and presents the resulting target ring.
+- Acquisition runs after visibility/LoS in the locked 20 Hz system order and
+  queries the existing deterministic spatial buckets. Candidates must be alive,
+  visible, hostile and legal for the attacker's layer/class masks. Canonical
+  role priority is resolved before distance, with Entity ID as the final tie.
+- Direct Attack is a queueable versioned command. It overrides automatic
+  priority while legal and is cleared on target loss or loss of shared-player
+  visibility, preventing exact through-fog tracking. T040 does not invent
+  weapon firing, damage or a temporary chase authority; those remain scheduled
+  M4 systems.
+- Snapshot format v11 / simulation protocol v9 add the two combat components;
+  replay v6 admits Attack commands and queued Attack orders; prototype content
+  v10 carries canonical first-playable target metadata. Existing supported
+  snapshot and replay readers remain intact.
+
+These are implementation decisions within approved M4 targeting and combat UX
+canon. They do not change gameplay canon.

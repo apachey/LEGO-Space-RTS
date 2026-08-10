@@ -27,6 +27,8 @@ public sealed class EntityStore
     public readonly ComponentStore<PowerState> PowerState = new();
     public readonly ComponentStore<ConstructionSite> ConstructionSite = new();
     public readonly ComponentStore<Production> Production = new();
+    public readonly ComponentStore<Targetable> Targetable = new();
+    public readonly ComponentStore<Targeting> Targeting = new();
 
     public IReadOnlyList<EntityId> Alive => _alive;
 
@@ -83,6 +85,8 @@ public sealed class EntityStore
         PowerState.Remove(id);
         ConstructionSite.Remove(id);
         Production.Remove(id);
+        Targetable.Remove(id);
+        Targeting.Remove(id);
         return true;
     }
 

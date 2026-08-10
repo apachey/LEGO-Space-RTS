@@ -5,12 +5,11 @@ remain authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M3 — Economy & Base Building / deterministic Ore loop in progress.**
+**M4 — Combat / T040 deterministic Targeting acceptance candidate.**
 
-The revised M2 automated gates pass and PR #8 is merged. Human movement-feel
-acceptance is also complete: the remaining settling jitter is minimal and some
-movement actions can still read oddly, but the game director accepted both as
-non-blocking polish rather than further M2 work.
+The accepted M3 T030-T039 economy/base-building stack is merged through PR #10.
+M4 has begun with T040 Targeting; weapons, projectiles, damage, destruction and
+repair remain their separately scheduled T041-T046 tasks.
 
 ## Engine / architecture
 
@@ -285,6 +284,28 @@ narrow placement cases allowed by Phase 09B.
   beyond its intended bounds; the stable-width change did not fix that height
   defect. It is explicitly accepted as non-blocking UI polish and must not be
   reported as fixed.
+- M4 T040 Targeting is implemented on the current task branch. Canonical target
+  class, ground/true-air layer and role flags are compiled for the first-playable
+  Rock Raider roster and buildings. Armed entities select only visible hostile
+  legal targets through the existing deterministic spatial index, with
+  role-profile ranking followed by distance and Entity ID ties.
+- Direct Attack is an authoritative queueable command and overrides automatic
+  priority while legal. Hidden, friendly and wrong-layer targets are rejected;
+  loss of legal visibility clears the direct target without exact through-fog
+  tracking. Stop/Move ordinary intent clears the current combat target.
+- Player-facing right-click on a visible enemy issues Attack only to compatible
+  selected units. An orange-red world ring identifies the current target of the
+  selected group; a wholly unarmed selection is not converted into a charge.
+- Snapshot v11 / simulation protocol v9, replay v6 and prototype content v10
+  preserve targeting state, queued Attack intent and canonical target metadata
+  while retaining existing legacy readers. T041 remains responsible for weapon
+  cooldown/firing and later combat tasks for projectiles, damage and destruction.
+- The T040 full verification acceptance candidate is green across every
+  `BLOCKING_NOW` stage: builds, 131 NUnit tests, the representative 24-mover
+  movement gate, compiled content, HeadlessSim, Godot smoke, 100-repeat
+  determinism, replay, snapshot continuation, regeneration and macOS export.
+- A launchable T040 debug build was produced at
+  `Builds/macOS/LEGO Space RTS.app` and passed the export smoke launch.
 
 ## Current gates
 
@@ -297,7 +318,7 @@ narrow placement cases allowed by Phase 09B.
 - Legacy 60-mover stress: `DIAGNOSTIC` during M2–M5 and `BLOCKING_LATER`
   before M6. The latest full run remains diagnostic-failing at 51.67%
   completion (31/60), 8,483 oscillation incidents and elevated tail latency;
-  it does not block the current M3 task.
+  it does not block the current M4 task.
 
 ## Known unresolved work
 
@@ -330,6 +351,10 @@ narrow placement cases allowed by Phase 09B.
   current SimCore entity in explored fog; that would become an information leak
   in multiplayer. Add serialized/per-viewer knowledge through a separately
   reviewed fog-information task no later than M6 T061 fog filtering.
+- T040 deliberately does not fire weapons or move into chase range. The
+  canonical 12-cell direct-pursuit leash and attack-move route leash join
+  weapon-range execution in the scheduled M4 combat work; no temporary
+  presentation-owned chase or damage behavior is introduced.
 
 ## Explicitly rejected / do not resurrect
 
@@ -342,6 +367,5 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Merge the accepted stacked T030-T039 M3 economy/base-building branches.
-2. Begin M4 T040 Targeting only after the merged M3 executable baseline is
-   accepted.
+1. Human T040 check of right-click target selection and target-ring readability.
+2. After T040 acceptance: M4 T041 Weapons / deterministic cooldown and firing.

@@ -5,9 +5,9 @@ public class SnapshotReplayTests
 {
     [Test] public void SnapshotFormatSupportsM3EnergyDomains() => Assert.Multiple(() =>
     {
-        Assert.That(SnapshotSerializer.FormatVersion,Is.EqualTo(10));
-        Assert.That(SnapshotSerializer.SimulationProtocolVersion,Is.EqualTo(8));
-        Assert.That(ReplayLog.Version,Is.EqualTo(5));
+        Assert.That(SnapshotSerializer.FormatVersion,Is.EqualTo(11));
+        Assert.That(SnapshotSerializer.SimulationProtocolVersion,Is.EqualTo(9));
+        Assert.That(ReplayLog.Version,Is.EqualTo(6));
     });
     [Test] public void SnapshotRoundTripPreservesHash()
     {

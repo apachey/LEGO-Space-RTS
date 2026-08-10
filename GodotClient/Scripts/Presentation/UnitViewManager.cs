@@ -54,6 +54,8 @@ public partial class UnitViewManager : Node3D
             else view.MaterialOverride = hovered && !selected ? _hover : (c.Owner == 0 ? _friendly : _other);
             Node3D? ring = view.GetNodeOrNull<Node3D>("SelectionRing");
             if (ring is not null) ring.Visible = selected || hovered;
+            Node3D? targetRing = view.GetNodeOrNull<Node3D>("TargetRing");
+            if (targetRing is not null) targetRing.Visible = IsCurrentTarget(c.EntityId);
             Label3D? groupLabel = view.GetNodeOrNull<Label3D>("ControlGroupLabel");
             if (groupLabel is not null)
             {
@@ -76,6 +78,13 @@ public partial class UnitViewManager : Node3D
     {
         if (_selection is null) return false;
         for (int i = 0; i < _selection.Selected.Count; i++) if (_selection.Selected[i] == id) return true;
+        return false;
+    }
+    private bool IsCurrentTarget(EntityId id)
+    {
+        if (_selection is null || _bridge is null) return false;
+        for (int i = 0; i < _selection.Selected.Count; i++)
+            if (_bridge.World.Entities.Targeting.TryGet(_selection.Selected[i], out Targeting targeting) && targeting.CurrentTarget == id) return true;
         return false;
     }
 
@@ -162,6 +171,27 @@ public partial class UnitViewManager : Node3D
         // TorusMesh is already horizontal around the Y axis in Godot; rotating it made v0.3's ring edge-on.
         view.AddChild(ring);
 
+        TorusMesh targetRingMesh = new()
+        {
+            InnerRadius = ringRadiusWorld * 0.92f,
+            OuterRadius = ringRadiusWorld * 1.12f,
+            Rings = 20,
+            RingSegments = 40
+        };
+        StandardMaterial3D targetRingMaterial = MakeMaterial(new Color(1f, 0.20f, 0.08f));
+        targetRingMaterial.ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded;
+        targetRingMaterial.NoDepthTest = true;
+        targetRingMesh.Material = targetRingMaterial;
+        MeshInstance3D targetRing = new()
+        {
+            Name = "TargetRing",
+            Mesh = targetRingMesh,
+            Position = new Vector3(0f, -0.40f / visualScale.Y, 0f),
+            Visible = false,
+            Scale = new Vector3(1f / visualScale.X, 1f / visualScale.Y, 1f / visualScale.Z)
+        };
+        view.AddChild(targetRing);
+
         Label3D groupLabel = new()
         {
             Name = "ControlGroupLabel",
@@ -206,6 +236,12 @@ public partial class UnitViewManager : Node3D
         {
             ring.Position = new Vector3(0f, -0.42f / scale.Y, 0f);
             ring.Scale = new Vector3(1f / scale.X, 1f / scale.Y, 1f / scale.Z);
+        }
+        Node3D? targetRing = view.GetNodeOrNull<Node3D>("TargetRing");
+        if (targetRing is not null)
+        {
+            targetRing.Position = new Vector3(0f, -0.40f / scale.Y, 0f);
+            targetRing.Scale = new Vector3(1f / scale.X, 1f / scale.Y, 1f / scale.Z);
         }
         Node3D? progressBar = view.GetNodeOrNull<Node3D>("ConstructionProgressBar");
         if (progressBar is not null)

@@ -95,9 +95,11 @@ public partial class RtsInputController : Node
         }
         if (@event is InputEventMouseButton mouse && mouse.Pressed && mouse.ButtonIndex == MouseButton.Right && _selection.Selected.Count > 0)
         {
+            EntityId enemy = _selection.FindVisibleEnemyAtScreen(mouse.Position);
             EntityId constructionSite = _selection.FindConstructionSiteAtScreen(mouse.Position);
             EntityId resource = _selection.FindResourceAtScreen(mouse.Position);
-            if (HasSelectedProduction() && _camera.TryProjectToGround(mouse.Position, out Vector3 rallyPoint)) IssueRally(rallyPoint, resource);
+            if (enemy != EntityId.None) IssueAttack(enemy);
+            else if (HasSelectedProduction() && _camera.TryProjectToGround(mouse.Position, out Vector3 rallyPoint)) IssueRally(rallyPoint, resource);
             else if (constructionSite != EntityId.None) IssueAssistConstruction(constructionSite);
             else if (resource != EntityId.None) IssueHarvest(resource);
             else if (_camera.TryProjectToGround(mouse.Position, out Vector3 point)) IssueMove(point);
@@ -228,6 +230,22 @@ public partial class RtsInputController : Node
         if (workers.Count == 0) return;
         CommandModifiers modifiers = Input.IsKeyPressed(Key.Shift) ? CommandModifiers.Queue : CommandModifiers.None;
         _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, _sequence++, SimCommandType.Harvest, workers.ToArray(), FixVec2.Zero, modifiers, resource));
+        if (modifiers == CommandModifiers.None) ClearMovePreviews();
+    }
+
+    private void IssueAttack(EntityId target)
+    {
+        if (_bridge is null || _selection is null) return;
+        List<EntityId> attackers = new(_selection.Selected.Count);
+        for (int i = 0; i < _selection.Selected.Count; i++)
+        {
+            EntityId id = _selection.Selected[i];
+            if (TargetingSystem.IsLegalTarget(_bridge.World, id, target, requireVisible: true)) attackers.Add(id);
+        }
+        if (attackers.Count == 0) return;
+        CommandModifiers modifiers = Input.IsKeyPressed(Key.Shift) ? CommandModifiers.Queue : CommandModifiers.None;
+        _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, _sequence++, SimCommandType.Attack,
+            attackers.ToArray(), FixVec2.Zero, modifiers, target));
         if (modifiers == CommandModifiers.None) ClearMovePreviews();
     }
 

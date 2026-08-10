@@ -17,6 +17,17 @@ public enum BuildingState : byte { ConstructionSite = 0, Completed = 1 }
 public enum EnergyFunctionalClass : byte { CommandAndBasicEconomy = 1, ResourceProcessing = 2, ProductionAndResearch = 3, ServiceAndFactionSystems = 4, StaticDefenseAndNonessential = 5 }
 public enum EnergyPriority : byte { High = 0, Normal = 1, Low = 2 }
 public enum BrownoutEventKind : byte { None = 0, Entered = 1, Changed = 2, Recovered = 3 }
+public enum CombatTargetClass : byte { Personnel = 0, LightMachine = 1, MediumMachine = 2, HeavyMachine = 3, MassiveMachine = 4, Structure = 5, FortifiedStructure = 6 }
+public enum CombatTargetLayer : byte { Ground = 0, TrueAir = 1 }
+[System.Flags] public enum TargetLayerMask : byte { None = 0, Ground = 1, TrueAir = 2, All = Ground | TrueAir }
+[System.Flags] public enum TargetClassMask : byte { None = 0, Personnel = 1, LightMachine = 2, MediumMachine = 4, HeavyMachine = 8, MassiveMachine = 16, Structure = 32, FortifiedStructure = 64, All = 127 }
+[System.Flags] public enum CombatTargetFlags : ushort
+{
+    None = 0, CombatThreat = 1, Worker = 2, Transport = 4, Support = 8,
+    DefensiveStructure = 16, Production = 32, EconomicInfrastructure = 64, Command = 128
+}
+public enum TargetPriorityProfile : byte { AntiLight = 0, AntiHeavy = 1, AntiAir = 2, Siege = 3, Harassment = 4, Generalist = 5, Scout = 6, Support = 7, Control = 8 }
+public enum TargetSelectionKind : byte { None = 0, Automatic = 1, DirectOrder = 2 }
 
 public struct Ownership
 {
@@ -185,6 +196,23 @@ public struct PowerState
 {
     public EnergyPriority Priority;
     public bool IsPowered;
+}
+
+public struct Targetable
+{
+    public CombatTargetClass Class;
+    public CombatTargetLayer Layer;
+    public CombatTargetFlags Flags;
+}
+
+public struct Targeting
+{
+    public EntityId CurrentTarget;
+    public Fix32 AcquisitionRadius;
+    public TargetLayerMask LegalLayers;
+    public TargetClassMask LegalClasses;
+    public TargetPriorityProfile PriorityProfile;
+    public TargetSelectionKind SelectionKind;
 }
 
 public struct ConstructionSite

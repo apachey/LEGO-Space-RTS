@@ -1,7 +1,7 @@
 {
-  "schemaVersion": 9,
+  "schemaVersion": 10,
   "contentKind": "prototype_entities",
-  "policy": "M2 movement metadata plus canonical M3 Ore, construction, production, Operations Capacity and Energy Domain values; no unapproved combat/economy values are invented here.",
+  "policy": "M2 movement and canonical M3 economy metadata plus the canonical M4 target classes, layers and Rock Raider target-priority inputs; weapon execution remains outside this schema version.",
   "movementProfiles": [
     {
       "stableId": "movement.prototype.crew",
@@ -246,6 +246,7 @@
       "selectableKind": "Building",
       "visionRadius": 0,
       "operationsCapacity": 0,
+      "combatTarget": { "class": "FortifiedStructure", "layer": "Ground", "flags": ["Command"] },
       "viewProfile": "view.placeholder.rock_raiders.hq"
     },
     {
@@ -257,6 +258,7 @@
       "selectableKind": "Building",
       "visionRadius": 0,
       "operationsCapacity": 0,
+      "combatTarget": { "class": "Structure", "layer": "Ground", "flags": ["EconomicInfrastructure"] },
       "viewProfile": "view.placeholder.rock_raiders.ore_processing_plant"
     },
     {
@@ -268,6 +270,7 @@
       "selectableKind": "Building",
       "visionRadius": 0,
       "operationsCapacity": 0,
+      "combatTarget": { "class": "Structure", "layer": "Ground", "flags": ["EconomicInfrastructure"] },
       "viewProfile": "view.placeholder.rock_raiders.power_station"
     },
     {
@@ -279,6 +282,7 @@
       "selectableKind": "Building",
       "visionRadius": 0,
       "operationsCapacity": 0,
+      "combatTarget": { "class": "Structure", "layer": "Ground", "flags": ["Production"] },
       "viewProfile": "view.placeholder.rock_raiders.vehicle_service_bay"
     },
     {
@@ -294,6 +298,13 @@
         "oreTicksPerUnit": 30,
         "oreCarryCapacity": 8
       },
+      "combatTarget": { "class": "Personnel", "layer": "Ground", "flags": ["CombatThreat", "Worker", "Support"] },
+      "targeting": {
+        "weaponRangeRatio": [4, 5],
+        "priorityProfile": "Support",
+        "legalLayers": ["Ground"],
+        "legalClasses": ["Personnel", "LightMachine", "MediumMachine", "HeavyMachine", "MassiveMachine", "Structure", "FortifiedStructure"]
+      },
       "viewProfile": "view.placeholder.rock_raiders.crew"
     },
     {
@@ -305,6 +316,13 @@
       "selectableKind": "CombatSupport",
       "visionRadius": 9,
       "operationsCapacity": 1,
+      "combatTarget": { "class": "LightMachine", "layer": "Ground", "flags": ["CombatThreat", "Support"] },
+      "targeting": {
+        "weaponRangeRatio": [3, 1],
+        "priorityProfile": "Scout",
+        "legalLayers": ["Ground"],
+        "legalClasses": ["Personnel", "LightMachine", "MediumMachine", "HeavyMachine", "MassiveMachine", "Structure", "FortifiedStructure"]
+      },
       "viewProfile": "view.placeholder.rock_raiders.hover_scout"
     },
     {
@@ -316,6 +334,13 @@
       "selectableKind": "CombatSupport",
       "visionRadius": 7,
       "operationsCapacity": 3,
+      "combatTarget": { "class": "MediumMachine", "layer": "Ground", "flags": ["CombatThreat"] },
+      "targeting": {
+        "weaponRangeRatio": [9, 10],
+        "priorityProfile": "AntiLight",
+        "legalLayers": ["Ground"],
+        "legalClasses": ["Personnel", "LightMachine", "MediumMachine", "HeavyMachine", "MassiveMachine", "Structure", "FortifiedStructure"]
+      },
       "viewProfile": "view.placeholder.rock_raiders.loader_dozer"
     },
     {
@@ -327,6 +352,7 @@
       "selectableKind": "CombatSupport",
       "visionRadius": 9,
       "operationsCapacity": 2,
+      "combatTarget": { "class": "LightMachine", "layer": "Ground", "flags": ["Transport"] },
       "viewProfile": "view.placeholder.rock_raiders.rapid_rider"
     },
     {
@@ -338,6 +364,13 @@
       "selectableKind": "CombatSupport",
       "visionRadius": 8,
       "operationsCapacity": 6,
+      "combatTarget": { "class": "MassiveMachine", "layer": "Ground", "flags": ["CombatThreat"] },
+      "targeting": {
+        "weaponRangeRatio": [21, 20],
+        "priorityProfile": "Siege",
+        "legalLayers": ["Ground"],
+        "legalClasses": ["Personnel", "LightMachine", "MediumMachine", "HeavyMachine", "MassiveMachine", "Structure", "FortifiedStructure"]
+      },
       "viewProfile": "view.placeholder.rock_raiders.chrome_crusher"
     },
     {
@@ -349,6 +382,7 @@
       "selectableKind": "CombatSupport",
       "visionRadius": 8,
       "operationsCapacity": 0,
+      "combatTarget": { "class": "MassiveMachine", "layer": "Ground", "flags": [] },
       "viewProfile": "view.placeholder.navigation.huge"
     }
   ]

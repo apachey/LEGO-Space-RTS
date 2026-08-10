@@ -81,6 +81,7 @@ public static class ConstructionPlacement
         world.Entities.Ownership.Set(site, new Ownership { PlayerSlot = playerSlot });
         world.Entities.Transform.Set(site, new SimTransform { Position = SiteCenter(anchorX, anchorY, width, height), Orientation = new Angle16((ushort)(orientation * 16384)) });
         world.Entities.Selectable.Set(site, new Selectable { IsSelectable = true, ContentType = buildingType, Kind = SelectableKind.Building });
+        if (world.Content.TryGetEntity(buildingType, out PrototypeEntityDefinition entityDefinition)) ScenarioFactory.AddCombatComponents(world, site, entityDefinition);
         world.Entities.Building.Set(site, building);
         world.Entities.EnergyDomainMember.Set(site, new EnergyDomainMember { DomainRoot = validation.EnergyDomainRoot });
         world.Entities.ConstructionSite.Set(site, new ConstructionSite

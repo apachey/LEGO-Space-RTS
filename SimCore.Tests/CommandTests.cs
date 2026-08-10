@@ -20,6 +20,11 @@ public class CommandTests
         Assert.That(q.Enqueue(new UnitOrder(UnitOrderType.Move,FixVec2.Zero)),Is.False); Assert.That(q.Count,Is.EqualTo(UnitCommandQueue.Capacity));
     }
     [Test] public void UnknownCommandsFailLoudly() => Assert.Throws<ArgumentOutOfRangeException>(()=>new CommandEnvelope(new SimTick(1),0,1,(SimCommandType)999,Array.Empty<EntityId>(),FixVec2.Zero));
+    [Test] public void AttackRequiresTargetAndMayBeQueued()
+    {
+        Assert.Throws<ArgumentException>(()=>new CommandEnvelope(new SimTick(1),0,1,SimCommandType.Attack,new[]{new EntityId(1)},FixVec2.Zero));
+        Assert.DoesNotThrow(()=>new CommandEnvelope(new SimTick(1),0,1,SimCommandType.Attack,new[]{new EntityId(1)},FixVec2.Zero,CommandModifiers.Queue,targetEntity:new EntityId(2)));
+    }
     [Test] public void RunnerExecutesCommandsOnTheirDeclaredTick()
     {
         SimulationWorld world=ScenarioFactory.CreateFirstControllable(1); EntityId id=ScenarioFactory.OwnedIds(world,0)[0];
