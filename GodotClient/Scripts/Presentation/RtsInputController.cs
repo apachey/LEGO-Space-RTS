@@ -109,6 +109,8 @@ public partial class RtsInputController : Node
     {
         if (_bridge is null || _selection is null || !_bridge.World.Content.TryGetEntity(unitKey, out PrototypeEntityDefinition unit) ||
             !_bridge.World.Content.TryGetProduction(unit.Id, out UnitProductionDefinition definition)) return false;
+        OperationsCapacityState capacity = _bridge.World.GetOperationsCapacity(0);
+        if (capacity.Used + definition.OperationsCapacity > capacity.Maximum) return false;
         for (int i = 0; i < _selection.Selected.Count; i++)
         {
             EntityId id = _selection.Selected[i];

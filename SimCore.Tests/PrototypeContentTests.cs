@@ -10,11 +10,12 @@ public sealed class PrototypeContentTests
     {
         PrototypeContentCatalog source = new PrototypeContentCatalog(
             new[] { new PrototypeMovementProfile("movement.test", Fix32.FromRatio(3, 2), MovementLayer.GroundHover) },
-            new[] { new PrototypeEntityDefinition("unit.test", "Technical", "ENGINEERING_ONLY", "movement.test", FootprintClass.Small, SelectableKind.CombatSupport, 8, "view.test") });
+            new[] { new PrototypeEntityDefinition("unit.test", "Technical", "ENGINEERING_ONLY", "movement.test", FootprintClass.Small, SelectableKind.CombatSupport, 8, "view.test", operationsCapacity: 3) });
         byte[] bytes = PrototypeContentCodec.Write(source);
         PrototypeContentCatalog restored = PrototypeContentCodec.Read(bytes);
         Assert.That(restored.ContentHash, Is.EqualTo(source.ContentHash));
         Assert.That(restored.Entities[0].StableKey, Is.EqualTo("unit.test"));
+        Assert.That(restored.Entities[0].OperationsCapacity, Is.EqualTo(3));
         Assert.That(restored.MovementProfiles[0].MaxSpeed, Is.EqualTo(Fix32.FromRatio(3, 2)));
     }
 
@@ -33,7 +34,7 @@ public sealed class PrototypeContentTests
     [Test]
     public void BuildingDefinitionsRoundTripExplicitFootprintsCostsAndExits()
     {
-        BuildingDefinition sourceBuilding = new("building.test", 3, 2, 0b11_1111UL, true, 140, 15, 600, 2, 1, FootprintClass.Medium);
+        BuildingDefinition sourceBuilding = new("building.test", 3, 2, 0b11_1111UL, true, 140, 15, 600, 2, 1, FootprintClass.Medium, 4);
         PrototypeContentCatalog source = new(System.Array.Empty<PrototypeMovementProfile>(), System.Array.Empty<PrototypeEntityDefinition>(), buildings: new[] { sourceBuilding });
         PrototypeContentCatalog restored = PrototypeContentCodec.Read(PrototypeContentCodec.Write(source));
         BuildingDefinition building = restored.Buildings[0];
@@ -44,6 +45,7 @@ public sealed class PrototypeContentTests
         Assert.That(building.OreCost, Is.EqualTo(140));
         Assert.That(building.EnergyCost, Is.EqualTo(15));
         Assert.That(building.ProductionExitFootprint, Is.EqualTo(FootprintClass.Medium));
+        Assert.That(building.OperationsCapacityProvided, Is.EqualTo(4));
     }
 
     [Test]

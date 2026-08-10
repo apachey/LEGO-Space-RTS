@@ -70,6 +70,7 @@ public static class SnapshotSerializer
         temp.Commands.Deserialize(r, includeBuildFields: format >= 6);
         temp.Fog = FogState.Deserialize(r);
         if (ms.Position != ms.Length) throw new InvalidDataException("Trailing snapshot bytes.");
+        OperationsCapacitySystem.Recalculate(temp);
         temp.Spatial.Rebuild(temp.Entities);
         return temp;
     }

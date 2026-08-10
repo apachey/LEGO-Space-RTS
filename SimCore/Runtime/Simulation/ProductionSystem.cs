@@ -39,6 +39,7 @@ public sealed class ProductionSystem : ISimSystem
             !world.Content.TryGetProduction(unitType, out UnitProductionDefinition definition) || definition.ProducerType != building.Type) return false;
         ref Production production = ref world.Entities.Production.Get(facilityId);
         if (production.Count >= Production.Capacity) return false;
+        if (!OperationsCapacitySystem.CanReserve(world, playerSlot, definition.OperationsCapacity)) return false;
         EntityId bankId = FindFundingBank(world, playerSlot, definition.OreCost, world.Entities.Transform.Get(facilityId).Position);
         if (bankId == EntityId.None) return false;
         ref ResourceBank bank = ref world.Entities.ResourceBank.Get(bankId);
@@ -50,6 +51,7 @@ public sealed class ProductionSystem : ISimSystem
             ReservedOperationsCapacity = definition.OperationsCapacity, TotalTicks = definition.BuildTicks, RemainingTicks = definition.BuildTicks
         });
         if (!queued) bank.ProcessedAmount = checked(bank.ProcessedAmount + definition.OreCost);
+        else OperationsCapacitySystem.Recalculate(world);
         return queued;
     }
 

@@ -27,6 +27,24 @@ public static class RuntimeScenarioLoader
         return new LoadedScenario(world, catalog.ContentHash, true);
     }
 
+    public static LoadedScenario LoadCanonicalOpening()
+    {
+        if (!GodotFileAccess.FileExists(ContentPath) || !GodotFileAccess.FileExists(MapPath))
+        {
+            GD.PushWarning("Compiled M3 content is absent. Falling back to the deterministic built-in canonical opening.");
+            PrototypeContentCatalog fallbackCatalog = PrototypeContentFactory.CreateM2Catalog();
+            MapDefinition fallbackMap = DevMapFactory.CreateDefinition();
+            return new LoadedScenario(ScenarioFactory.CreateCanonicalOpening(fallbackMap, fallbackCatalog), fallbackCatalog.ContentHash, false);
+        }
+
+        byte[] contentBytes = ReadAll(ContentPath);
+        byte[] mapBytes = ReadAll(MapPath);
+        PrototypeContentCatalog catalog = PrototypeContentCodec.Read(contentBytes);
+        MapDefinition definition = CompiledMapCodec.ReadDefinition(mapBytes);
+        SimulationWorld world = ScenarioFactory.CreateCanonicalOpening(definition, catalog);
+        return new LoadedScenario(world, catalog.ContentHash, true);
+    }
+
     private static byte[] ReadAll(string path)
     {
         using GodotFileAccess file = GodotFileAccess.Open(path, GodotFileAccess.ModeFlags.Read);

@@ -5,8 +5,33 @@ namespace LegoSpaceRTS.SimCore
 {
 public static class ScenarioFactory
 {
+    private const int CanonicalStartingCrewPerPlayer = 6;
+
     public static SimulationWorld CreateFirstControllable(int count = 18)
         => CreateFirstControllable(DevMapFactory.CreateDefinition(), PrototypeContentFactory.CreateM2Catalog(), count);
+
+    public static SimulationWorld CreateCanonicalOpening()
+        => CreateCanonicalOpening(DevMapFactory.CreateDefinition(), PrototypeContentFactory.CreateM2Catalog());
+
+    public static SimulationWorld CreateCanonicalOpening(MapDefinition definition, PrototypeContentCatalog content)
+    {
+        if (definition == null) throw new ArgumentNullException(nameof(definition));
+        if (content == null) throw new ArgumentNullException(nameof(content));
+        SimulationWorld world = new(definition.Grid, 2, content);
+        int[] crewCounts = new int[world.PlayerCount];
+        for (int i = 0; i < definition.InitialEntities.Length; i++)
+        {
+            InitialEntitySpawn authored = definition.InitialEntities[i];
+            if (authored.PlayerSlot >= crewCounts.Length || crewCounts[authored.PlayerSlot] >= CanonicalStartingCrewPerPlayer) continue;
+            SpawnCanonicalCrew(world, authored.PlayerSlot, authored.Position, content);
+            crewCounts[authored.PlayerSlot]++;
+        }
+        for (int player = 0; player < crewCounts.Length; player++)
+            if (crewCounts[player] != CanonicalStartingCrewPerPlayer) throw new InvalidOperationException($"Canonical opening requires six Crew spawn positions for player {player}.");
+        SpawnScenarioResourcesAndReceivers(world, definition, content);
+        FinalizeScenario(world);
+        return world;
+    }
 
     public static SimulationWorld CreateFirstControllable(MapDefinition definition, PrototypeContentCatalog content, int count = 18)
     {
@@ -23,10 +48,8 @@ public static class ScenarioFactory
             SpawnAuthored(world, spawn, content);
             if (spawn.PlayerSlot == 0) player0Remaining--; else if (spawn.PlayerSlot == 1) player1Remaining--;
         }
-        for (int i = 0; i < definition.InitialResourceNodes.Length; i++) SpawnResourceNode(world, definition.InitialResourceNodes[i], content);
-        for (int i = 0; i < definition.InitialResourceReceivers.Length; i++) SpawnResourceReceiver(world, definition.InitialResourceReceivers[i], content);
-        world.Spatial.Rebuild(world.Entities);
-        new VisionSystem().Step(world);
+        SpawnScenarioResourcesAndReceivers(world, definition, content);
+        FinalizeScenario(world);
         return world;
     }
 
@@ -35,7 +58,7 @@ public static class ScenarioFactory
         SimulationWorld world = new(DevMapFactory.Create(), 2);
         PrototypeContentCatalog content = PrototypeContentFactory.CreateM2Catalog();
         SpawnGrid(world, content, 0, 60, 20, 58, 10);
-        world.Spatial.Rebuild(world.Entities); new VisionSystem().Step(world);
+        FinalizeScenario(world);
         EntityId[] ids = OwnedIds(world, 0);
         world.Commands.Enqueue(new CommandEnvelope(new SimTick(1), 0, 1, SimCommandType.Move, ids, FixVec2.FromInts(138, 80)));
         world.Commands.Enqueue(new CommandEnvelope(new SimTick(700), 0, 2, SimCommandType.Move, ids, FixVec2.FromInts(20, 112)));
@@ -53,7 +76,7 @@ public static class ScenarioFactory
         SpawnPrototypeMover(world,content,0,FootprintClass.Huge,FixVec2.FromInts(69,90));
         SpawnPrototypeMover(world,content,0,FootprintClass.Small,FixVec2.FromInts(91,90));
         SpawnPrototypeMover(world,content,0,FootprintClass.Huge,FixVec2.FromInts(95,90));
-        world.Spatial.Rebuild(world.Entities);new VisionSystem().Step(world);
+        FinalizeScenario(world);
         return world;
     }
 
@@ -93,6 +116,27 @@ public static class ScenarioFactory
         world.Entities.Vision.Set(id, new Vision { RadiusBuildCells = spawn.VisionRadius, LastFogX = -1, LastFogY = -1 });
         AddWorkerComponents(world, id, definition);
         world.GetQueue(id);
+    }
+
+    private static void SpawnCanonicalCrew(SimulationWorld world, byte playerSlot, FixVec2 position, PrototypeContentCatalog content)
+    {
+        const string crewKey = "unit.rock_raiders.crew";
+        if (!content.TryGetEntity(crewKey, out PrototypeEntityDefinition crew) || !content.TryGetMovement(crew.MovementProfileKey, out PrototypeMovementProfile movement))
+            throw new InvalidOperationException("Canonical Crew content is missing.");
+        SpawnAuthored(world, new InitialEntitySpawn(playerSlot, crewKey, position, crew.Footprint, movement.Layer, crew.SelectableKind, crew.VisionRadius), content);
+    }
+
+    private static void SpawnScenarioResourcesAndReceivers(SimulationWorld world, MapDefinition definition, PrototypeContentCatalog content)
+    {
+        for (int i = 0; i < definition.InitialResourceNodes.Length; i++) SpawnResourceNode(world, definition.InitialResourceNodes[i], content);
+        for (int i = 0; i < definition.InitialResourceReceivers.Length; i++) SpawnResourceReceiver(world, definition.InitialResourceReceivers[i], content);
+    }
+
+    private static void FinalizeScenario(SimulationWorld world)
+    {
+        OperationsCapacitySystem.Recalculate(world);
+        world.Spatial.Rebuild(world.Entities);
+        new VisionSystem().Step(world);
     }
 
     private static Movement CreateMovement(PrototypeMovementProfile profile, FixVec2 position)

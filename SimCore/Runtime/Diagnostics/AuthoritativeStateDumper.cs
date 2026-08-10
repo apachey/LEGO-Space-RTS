@@ -10,6 +10,7 @@ public static class AuthoritativeStateDumper
         StringBuilder b=new StringBuilder(8192);
         b.Append("tick=").Append(world.Tick.Value).Append(" nextEntity=").Append(world.Entities.NextEntityValue)
             .Append(" map=").Append(world.Map.Id.Value).Append(" topology=").Append(world.Map.TopologyVersion).AppendLine();
+        for(int player=0;player<world.PlayerCount;player++){OperationsCapacityState capacity=world.GetOperationsCapacity((byte)player);b.Append("player ").Append(player).Append(" oc=").Append(capacity.Active).Append('+').Append(capacity.Reserved).Append('/').Append(capacity.Maximum).AppendLine();}
         var alive=world.Entities.Alive;
         for(int i=0;i<alive.Count;i++)
         {

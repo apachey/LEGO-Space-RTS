@@ -53,11 +53,17 @@ public partial class DebugHud : CanvasLayer
         double now = Time.GetTicksMsec() / 1000.0;
         if (now >= _nextHashUpdate) { _cachedHash = _bridge.StateHashHex(); _nextHashUpdate = now + 0.25; }
         _builder.Clear();
+        OperationsCapacityState operationsCapacity = _bridge.World.GetOperationsCapacity(0);
         _builder.Append("LEGO Space RTS — M3 Economy Prototype\nTick: ").Append(_bridge.World.Tick.Value).Append("   Hash: ").Append(_cachedHash)
             .Append("   Content: ").Append(_bridge.GameplayContentHash.ToString("X16")).Append('\n')
             .Append("Sim: ").Append(_bridge.LastSimulationMs.ToString("F3")).Append(" ms   Path: ").Append(_bridge.LastPathfindingMs.ToString("F3")).Append(" ms   Entities: ").Append(_bridge.World.Entities.Alive.Count).Append('\n')
             .Append("Ore: ").Append(_bridge.World.GetProcessedResourceTotal(0, ResourceType.Ore)).Append(" processed   ")
-            .Append(_bridge.World.GetPendingHauledResourceTotal(0, ResourceType.Ore)).Append(" hauled at HQ\n")
+            .Append(_bridge.World.GetPendingHauledResourceTotal(0, ResourceType.Ore)).Append(" hauled at HQ   OC: ")
+            .Append(operationsCapacity.Used).Append(" / ").Append(operationsCapacity.Maximum);
+        if (operationsCapacity.Reserved > 0) _builder.Append(" (").Append(operationsCapacity.Reserved).Append(" reserved)");
+        if (operationsCapacity.IsOverCapacity) _builder.Append(" — OVER CAPACITY");
+        else if (operationsCapacity.IsAdvanceWarning) _builder.Append(" — CAPACITY WARNING");
+        _builder.Append('\n')
             .Append("Selected: ").Append(_selection.Selected.Count).Append(" / 128");
         if (_selection.Selected.Count > 0)
         {
@@ -132,10 +138,10 @@ public partial class DebugHud : CanvasLayer
 
     private static string ProductionButtonText(string key) => key switch
     {
-        "unit.rock_raiders.crew" => "Crew 50O 16s",
-        "unit.rock_raiders.hover_scout" => "Scout 75O 20s",
-        "unit.rock_raiders.rapid_rider" => "Rider 90O 28s",
-        "unit.rock_raiders.loader_dozer" => "Dozer 125O 36s",
+        "unit.rock_raiders.crew" => "Crew 50O 1OC 16s",
+        "unit.rock_raiders.hover_scout" => "Scout 75O 1OC 20s",
+        "unit.rock_raiders.rapid_rider" => "Rider 90O 2OC 28s",
+        "unit.rock_raiders.loader_dozer" => "Dozer 125O 3OC 36s",
         _ => key
     };
 

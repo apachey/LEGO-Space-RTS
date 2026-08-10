@@ -36,9 +36,11 @@ public readonly struct PrototypeEntityDefinition
     public readonly string ViewProfileKey;
     public readonly ushort OreTicksPerUnit;
     public readonly byte OreCarryCapacity;
+    public readonly byte OperationsCapacity;
 
     public PrototypeEntityDefinition(string stableKey, string factionKey, string sourceClassification, string movementProfileKey,
-        FootprintClass footprint, SelectableKind selectableKind, byte visionRadius, string viewProfileKey, ushort oreTicksPerUnit = 0, byte oreCarryCapacity = 0)
+        FootprintClass footprint, SelectableKind selectableKind, byte visionRadius, string viewProfileKey, ushort oreTicksPerUnit = 0,
+        byte oreCarryCapacity = 0, byte operationsCapacity = 0)
     {
         if ((oreTicksPerUnit == 0) != (oreCarryCapacity == 0)) throw new ArgumentException("Worker extraction cadence and carry capacity must both be present or absent.");
         if (oreCarryCapacity > 0 && selectableKind != SelectableKind.Worker) throw new ArgumentException("Only Worker definitions may carry worker harvesting metadata.");
@@ -48,7 +50,7 @@ public readonly struct PrototypeEntityDefinition
         MovementProfileKey = movementProfileKey ?? throw new ArgumentNullException(nameof(movementProfileKey));
         Footprint = footprint; SelectableKind = selectableKind; VisionRadius = visionRadius;
         ViewProfileKey = viewProfileKey ?? throw new ArgumentNullException(nameof(viewProfileKey));
-        OreTicksPerUnit = oreTicksPerUnit; OreCarryCapacity = oreCarryCapacity;
+        OreTicksPerUnit = oreTicksPerUnit; OreCarryCapacity = oreCarryCapacity; OperationsCapacity = operationsCapacity;
     }
 }
 
@@ -102,10 +104,11 @@ public readonly struct BuildingDefinition
     public readonly byte ProductionExitWidth;
     public readonly byte ProductionExitDepth;
     public readonly FootprintClass ProductionExitFootprint;
+    public readonly byte OperationsCapacityProvided;
 
     public BuildingDefinition(string stableKey, byte footprintWidth, byte footprintHeight, ulong footprintMask, bool rotatable,
         ushort oreCost, ushort energyCost, ushort buildTicks, byte productionExitWidth = 0, byte productionExitDepth = 0,
-        FootprintClass productionExitFootprint = FootprintClass.Tiny)
+        FootprintClass productionExitFootprint = FootprintClass.Tiny, byte operationsCapacityProvided = 0)
     {
         if (footprintWidth == 0 || footprintHeight == 0 || footprintWidth > 8 || footprintHeight > 8) throw new ArgumentOutOfRangeException(nameof(footprintWidth));
         int cells = footprintWidth * footprintHeight;
@@ -117,6 +120,7 @@ public readonly struct BuildingDefinition
         FootprintWidth = footprintWidth; FootprintHeight = footprintHeight; FootprintMask = footprintMask; Rotatable = rotatable;
         OreCost = oreCost; EnergyCost = energyCost; BuildTicks = buildTicks;
         ProductionExitWidth = productionExitWidth; ProductionExitDepth = productionExitDepth; ProductionExitFootprint = productionExitFootprint;
+        OperationsCapacityProvided = operationsCapacityProvided;
     }
 
     public byte RotatedWidth(byte orientation) => (orientation & 1) == 0 ? FootprintWidth : FootprintHeight;
@@ -240,11 +244,11 @@ public static class PrototypeContentFactory
             new PrototypeEntityDefinition("building.rock_raiders.power_station", "RockRaiders", "COMPOSITE_ADAPTED", "movement.prototype.static", FootprintClass.Large, SelectableKind.Building, 0, "view.placeholder.rock_raiders.power_station"),
             new PrototypeEntityDefinition("building.rock_raiders.vehicle_service_bay", "RockRaiders", "COMPOSITE_ADAPTED", "movement.prototype.static", FootprintClass.Huge, SelectableKind.Building, 0, "view.placeholder.rock_raiders.vehicle_service_bay"),
             new PrototypeEntityDefinition("prototype.nav.huge", "Technical", "ENGINEERING_ONLY", "movement.prototype.nav_huge", FootprintClass.Huge, SelectableKind.CombatSupport, 8, "view.placeholder.navigation.huge"),
-            new PrototypeEntityDefinition("unit.rock_raiders.chrome_crusher", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.chrome_crusher", FootprintClass.Large, SelectableKind.CombatSupport, 8, "view.placeholder.rock_raiders.chrome_crusher"),
-            new PrototypeEntityDefinition("unit.rock_raiders.crew", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.crew", FootprintClass.Tiny, SelectableKind.Worker, 7, "view.placeholder.rock_raiders.crew", 30, 8),
-            new PrototypeEntityDefinition("unit.rock_raiders.hover_scout", "RockRaiders", "OFFICIAL_DIRECT", "movement.prototype.hover_scout", FootprintClass.Small, SelectableKind.CombatSupport, 9, "view.placeholder.rock_raiders.hover_scout"),
-            new PrototypeEntityDefinition("unit.rock_raiders.loader_dozer", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.loader_dozer", FootprintClass.Medium, SelectableKind.CombatSupport, 7, "view.placeholder.rock_raiders.loader_dozer"),
-            new PrototypeEntityDefinition("unit.rock_raiders.rapid_rider", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.rapid_rider", FootprintClass.Small, SelectableKind.CombatSupport, 9, "view.placeholder.rock_raiders.rapid_rider")
+            new PrototypeEntityDefinition("unit.rock_raiders.chrome_crusher", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.chrome_crusher", FootprintClass.Large, SelectableKind.CombatSupport, 8, "view.placeholder.rock_raiders.chrome_crusher", operationsCapacity: 6),
+            new PrototypeEntityDefinition("unit.rock_raiders.crew", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.crew", FootprintClass.Tiny, SelectableKind.Worker, 7, "view.placeholder.rock_raiders.crew", 30, 8, 1),
+            new PrototypeEntityDefinition("unit.rock_raiders.hover_scout", "RockRaiders", "OFFICIAL_DIRECT", "movement.prototype.hover_scout", FootprintClass.Small, SelectableKind.CombatSupport, 9, "view.placeholder.rock_raiders.hover_scout", operationsCapacity: 1),
+            new PrototypeEntityDefinition("unit.rock_raiders.loader_dozer", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.loader_dozer", FootprintClass.Medium, SelectableKind.CombatSupport, 7, "view.placeholder.rock_raiders.loader_dozer", operationsCapacity: 3),
+            new PrototypeEntityDefinition("unit.rock_raiders.rapid_rider", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.rapid_rider", FootprintClass.Small, SelectableKind.CombatSupport, 9, "view.placeholder.rock_raiders.rapid_rider", operationsCapacity: 2)
         };
         ResourceNodeDefinition[] resources =
         {
@@ -255,10 +259,10 @@ public static class PrototypeContentFactory
         };
         BuildingDefinition[] buildings =
         {
-            new BuildingDefinition("building.rock_raiders.hq", 8, 8, ulong.MaxValue, false, 320, 40, 1200, 2, 2, FootprintClass.Tiny),
+            new BuildingDefinition("building.rock_raiders.hq", 8, 8, ulong.MaxValue, false, 320, 40, 1200, 2, 2, FootprintClass.Tiny, 16),
             new BuildingDefinition("building.rock_raiders.ore_processing_plant", 6, 6, (1UL << 36) - 1UL, false, 140, 15, 600),
             new BuildingDefinition("building.rock_raiders.power_station", 5, 5, (1UL << 25) - 1UL, false, 150, 20, 700),
-            new BuildingDefinition("building.rock_raiders.vehicle_service_bay", 8, 6, (1UL << 48) - 1UL, true, 160, 20, 800, 3, 3, FootprintClass.Medium)
+            new BuildingDefinition("building.rock_raiders.vehicle_service_bay", 8, 6, (1UL << 48) - 1UL, true, 160, 20, 800, 3, 3, FootprintClass.Medium, 4)
         };
         UnitProductionDefinition[] production =
         {
@@ -277,7 +281,7 @@ public static class PrototypeContentFactory
 public static class PrototypeContentCodec
 {
     private const int Magic = 0x4350534C; // LSPC little-endian bytes.
-    public const int FormatVersion = 6;
+    public const int FormatVersion = 7;
 
     public static byte[] Write(PrototypeContentCatalog catalog)
     {
@@ -297,7 +301,7 @@ public static class PrototypeContentCodec
             PrototypeEntityDefinition e = catalog.Entities[i];
             writer.Write(e.StableKey); writer.Write(e.Id.Value); writer.Write(e.FactionKey); writer.Write(e.SourceClassification);
             writer.Write(e.MovementProfileKey); writer.Write((byte)e.Footprint); writer.Write((byte)e.SelectableKind); writer.Write(e.VisionRadius); writer.Write(e.ViewProfileKey);
-            writer.Write(e.OreTicksPerUnit); writer.Write(e.OreCarryCapacity);
+            writer.Write(e.OreTicksPerUnit); writer.Write(e.OreCarryCapacity); writer.Write(e.OperationsCapacity);
         }
         writer.Write(catalog.ResourceNodes.Length);
         for (int i = 0; i < catalog.ResourceNodes.Length; i++)
@@ -313,6 +317,7 @@ public static class PrototypeContentCodec
             BuildingDefinition b = catalog.Buildings[i];
             writer.Write(b.StableKey); writer.Write(b.Id.Value); writer.Write(b.FootprintWidth); writer.Write(b.FootprintHeight); writer.Write(b.FootprintMask); writer.Write(b.Rotatable);
             writer.Write(b.OreCost); writer.Write(b.EnergyCost); writer.Write(b.BuildTicks); writer.Write(b.ProductionExitWidth); writer.Write(b.ProductionExitDepth); writer.Write((byte)b.ProductionExitFootprint);
+            writer.Write(b.OperationsCapacityProvided);
         }
         writer.Write(catalog.Production.Length);
         for (int i = 0; i < catalog.Production.Length; i++)
@@ -349,7 +354,8 @@ public static class PrototypeContentCodec
             FootprintClass fp = (FootprintClass)reader.ReadByte(); SelectableKind kind = (SelectableKind)reader.ReadByte(); byte vision = reader.ReadByte(); string view = reader.ReadString();
             ushort oreTicks = formatVersion >= 4 ? reader.ReadUInt16() : kind == SelectableKind.Worker ? (ushort)30 : (ushort)0;
             byte oreCapacity = formatVersion >= 4 ? reader.ReadByte() : kind == SelectableKind.Worker ? (byte)8 : (byte)0;
-            entities[i] = new PrototypeEntityDefinition(key, faction, source, movement, fp, kind, vision, view, oreTicks, oreCapacity); if (entities[i].Id.Value != id) throw new InvalidDataException("Stable entity ID mismatch.");
+            byte operationsCapacity = formatVersion >= 7 ? reader.ReadByte() : LegacyOperationsCapacity(key);
+            entities[i] = new PrototypeEntityDefinition(key, faction, source, movement, fp, kind, vision, view, oreTicks, oreCapacity, operationsCapacity); if (entities[i].Id.Value != id) throw new InvalidDataException("Stable entity ID mismatch.");
         }
         ResourceNodeDefinition[] resourceNodes = Array.Empty<ResourceNodeDefinition>();
         if (formatVersion >= 3)
@@ -373,8 +379,11 @@ public static class PrototypeContentCodec
             for (int i = 0; i < buildingCount; i++)
             {
                 string key = reader.ReadString(); uint id = reader.ReadUInt32();
-                buildings[i] = new BuildingDefinition(key, reader.ReadByte(), reader.ReadByte(), reader.ReadUInt64(), reader.ReadBoolean(),
-                    reader.ReadUInt16(), reader.ReadUInt16(), reader.ReadUInt16(), reader.ReadByte(), reader.ReadByte(), (FootprintClass)reader.ReadByte());
+                byte width = reader.ReadByte(), height = reader.ReadByte(); ulong mask = reader.ReadUInt64(); bool rotatable = reader.ReadBoolean();
+                ushort oreCost = reader.ReadUInt16(), energyCost = reader.ReadUInt16(), buildTicks = reader.ReadUInt16();
+                byte exitWidth = reader.ReadByte(), exitDepth = reader.ReadByte(); FootprintClass exitFootprint = (FootprintClass)reader.ReadByte();
+                byte capacityProvided = formatVersion >= 7 ? reader.ReadByte() : LegacyOperationsCapacityProvided(key);
+                buildings[i] = new BuildingDefinition(key, width, height, mask, rotatable, oreCost, energyCost, buildTicks, exitWidth, exitDepth, exitFootprint, capacityProvided);
                 if (buildings[i].Id.Value != id) throw new InvalidDataException("Stable building ID mismatch.");
             }
         }
@@ -394,5 +403,22 @@ public static class PrototypeContentCodec
         PrototypeContentCatalog result = new PrototypeContentCatalog(profiles, entities, resourceNodes, buildings, production) { ContentHash = DeterministicHash.Fnv1A64(bytes) };
         return result;
     }
+
+    private static byte LegacyOperationsCapacity(string stableKey) => stableKey switch
+    {
+        "unit.rock_raiders.crew" => 1,
+        "unit.rock_raiders.hover_scout" => 1,
+        "unit.rock_raiders.rapid_rider" => 2,
+        "unit.rock_raiders.loader_dozer" => 3,
+        "unit.rock_raiders.chrome_crusher" => 6,
+        _ => 0
+    };
+
+    private static byte LegacyOperationsCapacityProvided(string stableKey) => stableKey switch
+    {
+        "building.rock_raiders.hq" => 16,
+        "building.rock_raiders.vehicle_service_bay" => 4,
+        _ => 0
+    };
 }
 }

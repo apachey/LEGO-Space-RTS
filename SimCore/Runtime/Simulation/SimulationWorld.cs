@@ -17,6 +17,9 @@ public sealed class SimulationWorld
     public int OscillationDiagnostics { get; internal set; }
     public int PathRequestsProcessed { get; internal set; }
     public int FormationReflowDiagnostics { get; internal set; }
+    private readonly OperationsCapacityState[] _operationsCapacity;
+
+    public int PlayerCount => Fog.PlayerCount;
 
     internal readonly Dictionary<uint, RouteCorridor> Corridors = new();
     internal readonly Dictionary<uint, UnitCommandQueue> Queues = new();
@@ -34,6 +37,7 @@ public sealed class SimulationWorld
         Entities = new EntityStore();
         Content = content ?? PrototypeContentFactory.CreateM2Catalog();
         Fog = new FogState(playerCount);
+        _operationsCapacity = new OperationsCapacityState[playerCount];
         Tick = new SimTick(0);
     }
 
@@ -44,6 +48,7 @@ public sealed class SimulationWorld
         Entities = entities;
         Content = content ?? PrototypeContentFactory.CreateM2Catalog();
         Fog = fog;
+        _operationsCapacity = new OperationsCapacityState[fog.PlayerCount];
         Tick = tick;
     }
 
@@ -60,6 +65,16 @@ public sealed class SimulationWorld
     internal bool TryGetQueue(EntityId id, out UnitCommandQueue queue) => Queues.TryGetValue(id.Value, out queue!);
 
     public RouteCorridor? GetCorridor(EntityId id) => Corridors.TryGetValue(id.Value, out RouteCorridor corridor) ? corridor : null;
+
+    public OperationsCapacityState GetOperationsCapacity(byte playerSlot)
+    {
+        if (playerSlot >= _operationsCapacity.Length) throw new System.ArgumentOutOfRangeException(nameof(playerSlot));
+        return _operationsCapacity[playerSlot];
+    }
+
+    internal void SetOperationsCapacity(byte playerSlot, OperationsCapacityState state) => _operationsCapacity[playerSlot] = state;
+
+    internal void ClearOperationsCapacity() => System.Array.Clear(_operationsCapacity, 0, _operationsCapacity.Length);
 
     public bool TryExtractResource(EntityId id, int requestedAmount, out int extractedAmount)
     {

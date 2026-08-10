@@ -11,7 +11,7 @@ public partial class RtsCompositionRoot : Node3D
     {
         Engine.MaxFps = 60;
         InputBindings.ConfigureDefaults();
-        LoadedScenario scenario = RuntimeScenarioLoader.LoadFirstControllable(18);
+        LoadedScenario scenario = RuntimeScenarioLoader.LoadCanonicalOpening();
         SimulationWorld world = scenario.World;
 
         GodotSimBridge bridge = new() { Name = "SimulationBridge" }; AddChild(bridge); bridge.Configure(world, scenario.GameplayContentHash);

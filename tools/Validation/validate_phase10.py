@@ -83,7 +83,7 @@ check('TickSeconds = 0.05' in bridge, 'Godot bridge does not feed 20 Hz/50ms sim
 check('MaxCatchUpTicks = 4' in bridge, 'Godot bridge catch-up limit is not four ticks')
 check('Excess remainder stays queued' in bridge, 'Godot bridge does not document no authoritative tick skipping')
 composition = (ROOT/'GodotClient/Scripts/Client/RtsCompositionRoot.cs').read_text()
-check('RuntimeScenarioLoader.LoadFirstControllable' in composition, 'Godot composition root does not use runtime content loader')
+check('RuntimeScenarioLoader.LoadCanonicalOpening' in composition, 'Godot composition root does not use canonical runtime opening loader')
 check('FindChild' not in composition and 'GetNode<' not in composition, 'composition root uses runtime dependency discovery')
 loader = (ROOT/'GodotClient/Scripts/Client/RuntimeScenarioLoader.cs').read_text()
 check('PrototypeContentCodec.Read' in loader and 'CompiledMapCodec.ReadDefinition' in loader, 'Godot runtime does not consume compiled content/map when present')
@@ -121,7 +121,7 @@ check(len(source.get('resourceReceivers',[])) == 2, 'M3 starting HQ resource rec
 check(len(source.get('visionTestGeometry',[])) >= 4, 'vision test geometry missing')
 
 content_source = json.loads((ROOT/'Content/PrototypeEntities.json').read_text())
-check(content_source.get('schemaVersion') == 6 and content_source.get('contentKind') == 'prototype_entities', 'prototype content schema mismatch')
+check(content_source.get('schemaVersion') == 7 and content_source.get('contentKind') == 'prototype_entities', 'prototype content schema mismatch')
 entity_keys = [e.get('stableId') for e in content_source.get('entities',[])]
 check(len(entity_keys) >= 5 and len(entity_keys) == len(set(entity_keys)), 'prototype content entries missing/duplicated')
 for required_key in ['building.rock_raiders.hq','building.rock_raiders.ore_processing_plant','building.rock_raiders.power_station','building.rock_raiders.vehicle_service_bay','unit.rock_raiders.crew','unit.rock_raiders.hover_scout','unit.rock_raiders.rapid_rider','unit.rock_raiders.loader_dozer','unit.rock_raiders.chrome_crusher','prototype.nav.huge']:
@@ -131,6 +131,8 @@ check(by_key.get('unit.rock_raiders.loader_dozer',{}).get('footprint')=='Medium'
 check(by_key.get('unit.rock_raiders.chrome_crusher',{}).get('footprint')=='Large','Chrome Crusher M2 footprint must match Phase 06 Large')
 check(by_key.get('prototype.nav.huge',{}).get('sourceClassification')=='ENGINEERING_ONLY','Huge stress profile must remain engineering-only')
 check(by_key.get('unit.rock_raiders.crew',{}).get('workerHarvest') == {'oreTicksPerUnit':30,'oreCarryCapacity':8}, 'Crew canonical Ore harvesting metadata missing')
+expected_unit_oc={'unit.rock_raiders.crew':1,'unit.rock_raiders.hover_scout':1,'unit.rock_raiders.rapid_rider':2,'unit.rock_raiders.loader_dozer':3,'unit.rock_raiders.chrome_crusher':6}
+check({key:by_key.get(key,{}).get('operationsCapacity') for key in expected_unit_oc} == expected_unit_oc, 'canonical Rock Raider Operations Capacity metadata missing or incorrect')
 profile_by_key={p.get('stableId'):p for p in content_source.get('movementProfiles',[])}
 check(profile_by_key.get('movement.prototype.crew',{}).get('speedRatio')==[135,100],'Crew M2 speed must match Phase 06 1.35')
 check(profile_by_key.get('movement.prototype.hover_scout',{}).get('speedRatio')==[225,100],'Hover Scout M2 speed must match Phase 06 2.25')
@@ -171,6 +173,8 @@ for key,(size,ore,energy,ticks) in expected_buildings.items():
     mask=definition.get('footprintMask',[])
     actual_size=[len(mask[0]) if mask else 0,len(mask)]
     check(actual_size==size and definition.get('cost')=={'ore':ore,'energy':energy} and definition.get('buildTicks')==ticks, f'canonical M3 building definition mismatch: {key}')
+expected_capacity_providers={'building.rock_raiders.hq':16,'building.rock_raiders.ore_processing_plant':0,'building.rock_raiders.power_station':0,'building.rock_raiders.vehicle_service_bay':4}
+check({key:building_by_key.get(key,{}).get('operationsCapacityProvided') for key in expected_capacity_providers} == expected_capacity_providers, 'canonical Rock Raider Operations Capacity providers missing or incorrect')
 
 headless = (ROOT/'HeadlessSim/Program.cs').read_text()
 for token in ['--snapshot-in','--snapshot-out','--replay','--record-replay','--benchmark','--path-benchmark','--hash-every','--repeat','--golden-manifest-out','--golden-manifest-in','--dump-state','--compiled-dir']:

@@ -36,7 +36,7 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
 {
     using JsonDocument document = JsonDocument.Parse(File.ReadAllText(path));
     JsonElement root = document.RootElement;
-    if (root.GetProperty("schemaVersion").GetInt32() != 6) throw new InvalidDataException("Unsupported prototype content schema.");
+    if (root.GetProperty("schemaVersion").GetInt32() != 7) throw new InvalidDataException("Unsupported prototype content schema.");
     if (!string.Equals(root.GetProperty("contentKind").GetString(), "prototype_entities", StringComparison.Ordinal)) throw new InvalidDataException("Unexpected contentKind.");
 
     List<PrototypeMovementProfile> profiles = new();
@@ -93,9 +93,11 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
             oreCapacity = checked((byte)workerHarvest.GetProperty("oreCarryCapacity").GetInt32());
         }
         if (selectableKind == SelectableKind.Worker && (oreTicks == 0 || oreCapacity == 0)) throw new InvalidDataException($"{key}: Worker requires workerHarvest metadata.");
+        byte operationsCapacity = checked((byte)item.GetProperty("operationsCapacity").GetInt32());
+        if (selectableKind == SelectableKind.Building && operationsCapacity != 0) throw new InvalidDataException($"{key}: Buildings cannot consume Operations Capacity.");
         entities.Add(new PrototypeEntityDefinition(key, RequiredString(item, "faction"), RequiredString(item, "sourceClassification"), movement,
             Enum.Parse<FootprintClass>(RequiredString(item, "footprint"), false), selectableKind,
-            checked((byte)item.GetProperty("visionRadius").GetInt32()), RequiredString(item, "viewProfile"), oreTicks, oreCapacity));
+            checked((byte)item.GetProperty("visionRadius").GetInt32()), RequiredString(item, "viewProfile"), oreTicks, oreCapacity, operationsCapacity));
     }
     entities.Sort((a, b) => string.CompareOrdinal(a.StableKey, b.StableKey));
 
@@ -133,7 +135,8 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
         }
         buildings.Add(new BuildingDefinition(key, width, height, mask, item.GetProperty("rotatable").GetBoolean(),
             checked((ushort)cost.GetProperty("ore").GetInt32()), checked((ushort)cost.GetProperty("energy").GetInt32()),
-            checked((ushort)item.GetProperty("buildTicks").GetInt32()), exitWidth, exitDepth, exitFootprint));
+            checked((ushort)item.GetProperty("buildTicks").GetInt32()), exitWidth, exitDepth, exitFootprint,
+            checked((byte)item.GetProperty("operationsCapacityProvided").GetInt32())));
     }
     buildings.Sort((a, b) => string.CompareOrdinal(a.StableKey, b.StableKey));
     List<UnitProductionDefinition> production = new();
@@ -145,9 +148,12 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
         if (!buildingKeys.Contains(producer)) throw new InvalidDataException($"Production references unknown producer {producer}.");
         if (!producedUnits.Add(unit)) throw new InvalidDataException($"Duplicate production definition for {unit}.");
         JsonElement cost = item.GetProperty("cost");
+        byte operationsCapacity = checked((byte)item.GetProperty("operationsCapacity").GetInt32());
+        PrototypeEntityDefinition unitDefinition = entities.Find(e => string.Equals(e.StableKey, unit, StringComparison.Ordinal));
+        if (unitDefinition.OperationsCapacity != operationsCapacity) throw new InvalidDataException($"{unit}: production and unit Operations Capacity disagree.");
         production.Add(new UnitProductionDefinition(unit, producer,
             checked((ushort)cost.GetProperty("ore").GetInt32()), checked((ushort)cost.GetProperty("energy").GetInt32()),
-            checked((byte)cost.GetProperty("crystals").GetInt32()), checked((byte)item.GetProperty("operationsCapacity").GetInt32()),
+            checked((byte)cost.GetProperty("crystals").GetInt32()), operationsCapacity,
             checked((ushort)item.GetProperty("buildTicks").GetInt32())));
     }
     production.Sort((a, b) => string.CompareOrdinal(a.UnitStableKey, b.UnitStableKey));

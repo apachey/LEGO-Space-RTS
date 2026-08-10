@@ -63,8 +63,8 @@ narrow placement cases allowed by Phase 09B.
 - Meaningful-progress recovery is measured toward the active route waypoint
   over accumulated movement rather than reset by arbitrary per-tick motion, so
   arrival micro-movement cannot indefinitely suppress reflow/repath.
-- The current M3 T035 full verification is green across every
-  `BLOCKING_NOW` stage: builds, 105 NUnit tests, the explicit representative
+- The current M3 T036 full verification is green across every
+  `BLOCKING_NOW` stage: builds, 113 NUnit tests, the explicit representative
   24-mover gate, compiled content, HeadlessSim, Godot headless smoke, 100-repeat
   determinism, replay, snapshot continuation, regeneration and macOS export.
 - A launchable debug build was produced at
@@ -168,6 +168,28 @@ narrow placement cases allowed by Phase 09B.
   director confirmed that producer selection, queue progress, unit spawning and
   rally behavior work. No blocking production interaction or readability defect
   was reported.
+- M3 T036 Operations Capacity is implemented on the current task branch.
+  Authoritative OC is derived in stable Entity ID order from active mobile-unit
+  metadata, every queued production reservation and completed
+  capacity-providing buildings. The competitive maximum is clamped to 100.
+- Production now validates `active + reserved + product <= maximum` before Ore
+  is spent. Accepted items reserve their full OC immediately; completion moves
+  the amount from reserved to active. Removing a queue item releases its derived
+  reservation, and losing infrastructure may create an over-cap state without
+  deleting or penalizing existing units.
+- Prototype content v7 compiles the canonical Rock Raider unit costs — Crew 1,
+  Hover Scout 1, Rapid Rider 2, Loader Dozer 3 and Chrome Crusher 6 — plus HQ
+  +16 and Vehicle Service Bay +4 capacity sources. Production definitions are
+  compiler-validated against their unit metadata.
+- With game-director approval, the player-facing executable now uses the
+  canonical opening roster of one HQ and six Crew per player, displaying
+  `6 / 16 OC`. The original mixed 18-unit DEV scenario remains unchanged for
+  M2 movement and deterministic engineering coverage.
+- The prototype HUD shows used/maximum OC, queued reservations, the 85% warning
+  and `OVER CAPACITY`; production buttons include OC cost and disable when the
+  next unit would exceed capacity. OC is re-derived after snapshot restore from
+  already-serialized units, buildings and production queues, so snapshot v8 and
+  simulation protocol v6 remain valid without duplicated cached state.
 
 ## Current gates
 
@@ -192,11 +214,10 @@ narrow placement cases allowed by Phase 09B.
   / 20 navigation nodes, while the imported runtime/static validator currently
   use 10 navigation nodes / 5 build cells; resolve in a separate canon-alignment
   task before changing cluster geometry;
-- T035 retains but does not yet enforce Operations Capacity and Energy costs:
-  T036 owns OC reservation/cap transitions and T037 owns Energy Domains as
+- Energy costs remain retained but unenforced until T037 Energy Domains as
   scheduled. The full production overview, waiting-item drag reordering and
   cancellation/refund presentation remain later interface/economy work beyond
-  the T035 unit-spawn acceptance gate.
+  the current unit-spawn and OC acceptance gates.
 
 ## Explicitly rejected / do not resurrect
 
@@ -209,6 +230,6 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Merge the accepted stacked T030-T035 M3 economy/base-building branches.
-2. Begin T036 Operations Capacity.
-3. T037 Energy Domains after T036 acceptance.
+1. Complete T036 human OC playtest acceptance.
+2. Merge the accepted stacked T030-T036 M3 economy/base-building branches.
+3. Begin T037 Energy Domains after T036 acceptance.

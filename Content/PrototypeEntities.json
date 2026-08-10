@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 6,
+  "schemaVersion": 7,
   "contentKind": "prototype_entities",
   "policy": "M2 movement metadata plus canonical M3 Ore flow, building placement, construction and first-playable production; no unapproved combat/economy values are invented here.",
   "movementProfiles": [
@@ -161,6 +161,7 @@
       "rotatable": false,
       "cost": { "ore": 320, "energy": 40 },
       "buildTicks": 1200,
+      "operationsCapacityProvided": 16,
       "productionExit": { "width": 2, "depth": 2, "largestFootprint": "Tiny" }
     },
     {
@@ -168,14 +169,16 @@
       "footprintMask": ["111111", "111111", "111111", "111111", "111111", "111111"],
       "rotatable": false,
       "cost": { "ore": 140, "energy": 15 },
-      "buildTicks": 600
+      "buildTicks": 600,
+      "operationsCapacityProvided": 0
     },
     {
       "stableId": "building.rock_raiders.power_station",
       "footprintMask": ["11111", "11111", "11111", "11111", "11111"],
       "rotatable": false,
       "cost": { "ore": 150, "energy": 20 },
-      "buildTicks": 700
+      "buildTicks": 700,
+      "operationsCapacityProvided": 0
     },
     {
       "stableId": "building.rock_raiders.vehicle_service_bay",
@@ -183,6 +186,7 @@
       "rotatable": true,
       "cost": { "ore": 160, "energy": 20 },
       "buildTicks": 800,
+      "operationsCapacityProvided": 4,
       "productionExit": { "width": 3, "depth": 3, "largestFootprint": "Medium" }
     }
   ],
@@ -225,6 +229,7 @@
       "footprint": "Huge",
       "selectableKind": "Building",
       "visionRadius": 0,
+      "operationsCapacity": 0,
       "viewProfile": "view.placeholder.rock_raiders.hq"
     },
     {
@@ -235,6 +240,7 @@
       "footprint": "Large",
       "selectableKind": "Building",
       "visionRadius": 0,
+      "operationsCapacity": 0,
       "viewProfile": "view.placeholder.rock_raiders.ore_processing_plant"
     },
     {
@@ -245,6 +251,7 @@
       "footprint": "Large",
       "selectableKind": "Building",
       "visionRadius": 0,
+      "operationsCapacity": 0,
       "viewProfile": "view.placeholder.rock_raiders.power_station"
     },
     {
@@ -255,6 +262,7 @@
       "footprint": "Huge",
       "selectableKind": "Building",
       "visionRadius": 0,
+      "operationsCapacity": 0,
       "viewProfile": "view.placeholder.rock_raiders.vehicle_service_bay"
     },
     {
@@ -265,6 +273,7 @@
       "footprint": "Tiny",
       "selectableKind": "Worker",
       "visionRadius": 7,
+      "operationsCapacity": 1,
       "workerHarvest": {
         "oreTicksPerUnit": 30,
         "oreCarryCapacity": 8
@@ -279,6 +288,7 @@
       "footprint": "Small",
       "selectableKind": "CombatSupport",
       "visionRadius": 9,
+      "operationsCapacity": 1,
       "viewProfile": "view.placeholder.rock_raiders.hover_scout"
     },
     {
@@ -289,6 +299,7 @@
       "footprint": "Medium",
       "selectableKind": "CombatSupport",
       "visionRadius": 7,
+      "operationsCapacity": 3,
       "viewProfile": "view.placeholder.rock_raiders.loader_dozer"
     },
     {
@@ -299,6 +310,7 @@
       "footprint": "Small",
       "selectableKind": "CombatSupport",
       "visionRadius": 9,
+      "operationsCapacity": 2,
       "viewProfile": "view.placeholder.rock_raiders.rapid_rider"
     },
     {
@@ -309,6 +321,7 @@
       "footprint": "Large",
       "selectableKind": "CombatSupport",
       "visionRadius": 8,
+      "operationsCapacity": 6,
       "viewProfile": "view.placeholder.rock_raiders.chrome_crusher"
     },
     {
@@ -319,6 +332,7 @@
       "footprint": "Huge",
       "selectableKind": "CombatSupport",
       "visionRadius": 8,
+      "operationsCapacity": 0,
       "viewProfile": "view.placeholder.navigation.huge"
     }
   ]
