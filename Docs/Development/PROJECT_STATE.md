@@ -238,6 +238,12 @@ narrow placement cases allowed by Phase 09B.
   a retained-progress pause, and disabled buildings receive a distinct dark
   material plus `BROWNOUT` world label. A development-only drain command makes
   the human readability gate reproducible without waiting for reserve depletion.
+- Human T038 playtest acceptance is complete as of 2026-08-10: the game
+  director confirmed that Brownout entry, disabled-building feedback and manual
+  priority reassignment work. No blocking functional defect was reported. The
+  broader concern that several individually reasonable systems could create
+  unfun aggregate complexity remains a design-review consideration for later
+  milestone playtests, not a T038 implementation failure.
 
 ## Current gates
 
@@ -262,9 +268,8 @@ narrow placement cases allowed by Phase 09B.
   / 20 navigation nodes, while the imported runtime/static validator currently
   use 10 navigation nodes / 5 build cells; resolve in a separate canon-alignment
   task before changing cluster geometry;
-- T038 Brownout still needs game-director readability acceptance. T049 later
-  adds full Rock Raider Worksite-zone connectivity, overlap, merge and split.
-  The full production overview, waiting-item drag reordering and
+- T049 later adds full Rock Raider Worksite-zone connectivity, overlap, merge
+  and split. The full production overview, waiting-item drag reordering and
   cancellation/refund presentation
   remain later interface/economy work beyond the current prototype gates.
 
@@ -279,6 +284,7 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Complete T038 human Brownout readability acceptance.
-2. Merge the accepted stacked T030-T038 M3 economy/base-building branches.
-3. Begin T039 Basic HUD.
+1. Merge the accepted stacked T030-T038 M3 economy/base-building branches.
+2. Begin T039 Basic HUD.
+3. Keep Brownout priority controls contextual and visually secondary, as
+   required by Phase 07, while improving the economy display.
