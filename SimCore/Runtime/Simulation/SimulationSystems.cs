@@ -21,6 +21,16 @@ public sealed class CommandExecutionSystem : ISimSystem
             world.OpenExcavatable(command.DebugFeatureId);
             return;
         }
+        if (command.Type == SimCommandType.DebugDrainEnergy)
+        {
+            EnergyDomainSystem.DebugDrainPlayerDomains(world, command.PlayerSlot);
+            return;
+        }
+        if (command.Type == SimCommandType.SetEnergyPriority)
+        {
+            BrownoutSystem.TrySetPriority(world, command.PlayerSlot, command.Entities, command.EnergyPriority);
+            return;
+        }
         if (command.Type == SimCommandType.Build)
         {
             if ((command.TargetPosition.X.Raw & (Fix32.OneRaw - 1)) != 0 || (command.TargetPosition.Y.Raw & (Fix32.OneRaw - 1)) != 0) return;
@@ -277,6 +287,7 @@ public sealed class ResourceBankingSystem : ISimSystem
         {
             EntityId id = alive[i];
             if (!world.Entities.ResourceReceiver.Has(id) || !world.Entities.ResourceBank.Has(id)) continue;
+            if (!BrownoutSystem.IsOperational(world, id)) continue;
             ref ResourceReceiver receiver = ref world.Entities.ResourceReceiver.Get(id);
             ref ResourceBank bank = ref world.Entities.ResourceBank.Get(id);
             if (receiver.PendingHauledAmount < 0 || bank.ProcessedAmount < 0)

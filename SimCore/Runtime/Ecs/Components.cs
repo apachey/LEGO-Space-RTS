@@ -14,6 +14,9 @@ public enum ResourceVisualState : byte { Full = 0, Reduced = 1, Low = 2, Critica
 public enum WorkerTaskState : byte { Idle = 0, MovingToResource = 1, Mining = 2, ReturningToReceiver = 3, AwaitingDelivery = 4 }
 public enum BuilderJobState : byte { Idle = 0, MovingToSite = 1, Constructing = 2 }
 public enum BuildingState : byte { ConstructionSite = 0, Completed = 1 }
+public enum EnergyFunctionalClass : byte { CommandAndBasicEconomy = 1, ResourceProcessing = 2, ProductionAndResearch = 3, ServiceAndFactionSystems = 4, StaticDefenseAndNonessential = 5 }
+public enum EnergyPriority : byte { High = 0, Normal = 1, Low = 2 }
+public enum BrownoutEventKind : byte { None = 0, Entered = 1, Changed = 2, Recovered = 3 }
 
 public struct Ownership
 {
@@ -164,7 +167,11 @@ public struct EnergyDomain
     public Fix32 ReserveCapacity;
     public int GenerationPerSecond;
     public int ContinuousDemandPerSecond;
+    public int PoweredDemandPerSecond;
     public int FlowRemainderRaw;
+    public uint BrownoutRevision;
+    public BrownoutEventKind LastBrownoutEvent;
+    public bool IsBrownout;
 
     public bool IsDeficit => ContinuousDemandPerSecond > GenerationPerSecond;
 }
@@ -172,6 +179,12 @@ public struct EnergyDomain
 public struct EnergyDomainMember
 {
     public EntityId DomainRoot;
+}
+
+public struct PowerState
+{
+    public EnergyPriority Priority;
+    public bool IsPowered;
 }
 
 public struct ConstructionSite

@@ -95,7 +95,7 @@ public sealed class M3EnergyDomainTests
     }
 
     [Test]
-    public void DeficitDrainsReserveDeterministicallyWithoutImplementingBrownoutEarly()
+    public void DeficitDrainsReserveDeterministicallyIntoBrownout()
     {
         SimulationWorld world = ScenarioFactory.CreateCanonicalOpening();
         PlayerDomain(world, 0, out EntityId root);
@@ -114,6 +114,7 @@ public sealed class M3EnergyDomainTests
             Assert.That(domain.ContinuousDemandPerSecond, Is.EqualTo(3));
             Assert.That(domain.Reserve, Is.EqualTo(Fix32.Zero));
             Assert.That(domain.IsDeficit, Is.True);
+            Assert.That(domain.IsBrownout, Is.True);
         });
     }
 

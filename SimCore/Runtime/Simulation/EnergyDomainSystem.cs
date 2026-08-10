@@ -16,25 +16,31 @@ public sealed class EnergyDomainSystem : ISimSystem
             EntityId root = alive[i];
             if (!world.Entities.EnergyDomain.Has(root)) continue;
             ref EnergyDomain domain = ref world.Entities.EnergyDomain.Get(root);
-            int netPerSecond = checked(domain.GenerationPerSecond - domain.ContinuousDemandPerSecond);
+            bool wasBrownout = domain.IsBrownout;
+            int demand = domain.IsBrownout ? domain.PoweredDemandPerSecond : domain.ContinuousDemandPerSecond;
+            int netPerSecond = checked(domain.GenerationPerSecond - demand);
             long numerator = checked((long)netPerSecond * Fix32.OneRaw + domain.FlowRemainderRaw);
             int deltaRaw = checked((int)(numerator / TicksPerSecond));
             int remainder = checked((int)(numerator % TicksPerSecond));
             long nextRaw = checked((long)domain.Reserve.Raw + deltaRaw);
             if (nextRaw <= 0)
             {
+                bool crossedZero = domain.Reserve > Fix32.Zero;
                 domain.Reserve = Fix32.Zero;
                 domain.FlowRemainderRaw = 0;
+                if (crossedZero) BrownoutSystem.Recalculate(world, root);
             }
             else if (nextRaw >= domain.ReserveCapacity.Raw)
             {
                 domain.Reserve = domain.ReserveCapacity;
                 domain.FlowRemainderRaw = 0;
+                if (wasBrownout && domain.Reserve > Fix32.Zero) BrownoutSystem.Recalculate(world, root);
             }
             else
             {
                 domain.Reserve = Fix32.FromRaw(checked((int)nextRaw));
                 domain.FlowRemainderRaw = remainder;
+                if (wasBrownout) BrownoutSystem.Recalculate(world, root);
             }
         }
     }
@@ -87,6 +93,7 @@ public sealed class EnergyDomainSystem : ISimSystem
         if (!CanSpend(world, root, amount)) return false;
         ref EnergyDomain domain = ref world.Entities.EnergyDomain.Get(root);
         domain.Reserve -= Fix32.FromInt(amount);
+        if (domain.Reserve == Fix32.Zero) BrownoutSystem.Recalculate(world, root);
         return true;
     }
 
@@ -95,6 +102,7 @@ public sealed class EnergyDomainSystem : ISimSystem
         if (amount < 0 || !world.Entities.EnergyDomain.Has(root)) throw new System.ArgumentOutOfRangeException(nameof(amount));
         ref EnergyDomain domain = ref world.Entities.EnergyDomain.Get(root);
         domain.Reserve = Fix32.Min(domain.ReserveCapacity, domain.Reserve + Fix32.FromInt(amount));
+        BrownoutSystem.Recalculate(world, root);
     }
 
     public static void RecalculateAll(SimulationWorld world)
@@ -125,6 +133,20 @@ public sealed class EnergyDomainSystem : ISimSystem
         domain.ReserveCapacity = Fix32.FromInt(capacity);
         if (domain.Reserve > domain.ReserveCapacity) domain.Reserve = domain.ReserveCapacity;
         if (domain.Reserve < Fix32.Zero) domain.Reserve = Fix32.Zero;
+        BrownoutSystem.Recalculate(world, root);
+    }
+
+    public static void DebugDrainPlayerDomains(SimulationWorld world, byte playerSlot)
+    {
+        IReadOnlyList<EntityId> alive = world.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId root = alive[i];
+            if (!world.Entities.EnergyDomain.Has(root) || !IsOwnedBy(world, root, playerSlot)) continue;
+            ref EnergyDomain domain = ref world.Entities.EnergyDomain.Get(root);
+            domain.Reserve = Fix32.Zero; domain.FlowRemainderRaw = 0;
+            BrownoutSystem.Recalculate(world, root);
+        }
     }
 
     private static bool TryFindOwnedDomain(SimulationWorld world, byte playerSlot, out EntityId root)

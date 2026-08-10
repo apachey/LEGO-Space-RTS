@@ -290,3 +290,30 @@ opening-roster canon. They do not change gameplay canon.
 
 These are implementation decisions within approved M3 Energy canon. They do
 not change gameplay canon.
+
+---
+
+## 2026-08-10 — M3 deterministic Brownout ordering and state
+
+- T038 adds a per-consumer authoritative `PowerState` with persistent
+  High / Normal / Low priority. Completed consumers are ordered first by their
+  compiled canonical functional class, then player priority, then Entity ID.
+  Each consumer is either fully powered or disabled; no fractional allocation
+  or presentation-owned shutdown decision is permitted.
+- Recalculation is event-driven: domain topology/metrics, reserve crossing zero,
+  refunds and priority commands recalculate the powered set. The normal 20 Hz
+  Energy tick consumes only cached powered demand during Brownout. A transition
+  revision and event kind change once when the Brownout or powered set changes,
+  preventing repeated per-tick alert events.
+- An unpowered Vehicle Service Bay retains its production queue and exact tick
+  progress; an unpowered Ore Processing Plant retains delivered pending Ore
+  until processing resumes. Field units remain outside the building-power
+  component and therefore remain controllable as required by canon.
+- Snapshot format v10 / simulation protocol v8 add powered state and Brownout
+  domain fields. Replay v5 and command serialization add authoritative priority
+  changes plus a development-only reserve-drain command. Prototype content v9
+  carries the canonical functional classes. Existing snapshot v2-v9 and replay
+  v1-v4 reads remain supported.
+
+These are implementation decisions within approved M3 Brownout canon. They do
+not change gameplay canon.

@@ -7,8 +7,8 @@ namespace LegoSpaceRTS.SimCore
 public static class SnapshotSerializer
 {
     public const uint Magic = 0x53525453; // STRS
-    public const ushort FormatVersion = 9;
-    public const ushort SimulationProtocolVersion = 7;
+    public const ushort FormatVersion = 10;
+    public const ushort SimulationProtocolVersion = 8;
 
     [Flags]
     private enum EntityComponents : uint
@@ -33,7 +33,8 @@ public static class SnapshotSerializer
         Production = 1 << 16,
         EnergyDomain = 1 << 17,
         EnergyDomainMember = 1 << 18,
-        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver | ResourceBank | Building | ConstructionSite | Builder | Production | EnergyDomain | EnergyDomainMember
+        PowerState = 1 << 19,
+        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver | ResourceBank | Building | ConstructionSite | Builder | Production | EnergyDomain | EnergyDomainMember | PowerState
     }
 
     public static byte[] Serialize(SimulationWorld world)
@@ -54,7 +55,7 @@ public static class SnapshotSerializer
         using MemoryStream ms = new(bytes, false); using BinaryReader r = new(ms);
         if (r.ReadUInt32() != Magic) throw new InvalidDataException("Snapshot magic mismatch.");
         ushort format = r.ReadUInt16(), protocol = r.ReadUInt16();
-        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6);
+        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7);
         if (!supportedLegacy && (format != FormatVersion || protocol != SimulationProtocolVersion)) throw new InvalidDataException($"Unsupported snapshot {format}/{protocol}.");
         SimTick tick = new(r.ReadInt32()); MapGrid map = MapGrid.Deserialize(r); uint nextEntity = r.ReadUInt32();
         EntityStore entities = new(); int entityCount = r.ReadInt32(); if (entityCount < 0 || entityCount > 10000) throw new InvalidDataException("Invalid entity count.");
@@ -69,7 +70,7 @@ public static class SnapshotSerializer
         if (format < 7) AddLegacyBuilders(temp);
         if (format < 8) AddLegacyProduction(temp);
         entities.RestoreNextEntityValue(nextEntity);
-        temp.Commands.Deserialize(r, includeBuildFields: format >= 6);
+        temp.Commands.Deserialize(r, includeBuildFields: format >= 6, includeEnergyPriority: format >= 10);
         temp.Fog = FogState.Deserialize(r);
         if (ms.Position != ms.Length) throw new InvalidDataException("Trailing snapshot bytes.");
         if (format < 9) InitializeLegacyEnergy(temp);
@@ -98,6 +99,7 @@ public static class SnapshotSerializer
         if (world.Entities.Building.Has(id)) components |= EntityComponents.Building;
         if (world.Entities.EnergyDomain.Has(id)) components |= EntityComponents.EnergyDomain;
         if (world.Entities.EnergyDomainMember.Has(id)) components |= EntityComponents.EnergyDomainMember;
+        if (world.Entities.PowerState.Has(id)) components |= EntityComponents.PowerState;
         if (world.Entities.ConstructionSite.Has(id)) components |= EntityComponents.ConstructionSite;
         if (world.Entities.Production.Has(id)) components |= EntityComponents.Production;
         if (world.TryGetQueue(id, out _)) components |= EntityComponents.CommandQueue;
@@ -125,6 +127,7 @@ public static class SnapshotSerializer
         if ((components & EntityComponents.Building) != 0) WriteBuilding(w, world.Entities.Building.Get(id));
         if ((components & EntityComponents.EnergyDomain) != 0) WriteEnergyDomain(w, world.Entities.EnergyDomain.Get(id));
         if ((components & EntityComponents.EnergyDomainMember) != 0) w.Write(world.Entities.EnergyDomainMember.Get(id).DomainRoot.Value);
+        if ((components & EntityComponents.PowerState) != 0) { PowerState state = world.Entities.PowerState.Get(id); w.Write((byte)state.Priority); w.Write(state.IsPowered); }
         if ((components & EntityComponents.ConstructionSite) != 0) WriteConstructionSite(w, world.Entities.ConstructionSite.Get(id));
         if ((components & EntityComponents.Production) != 0) WriteProduction(w, world.Entities.Production.Get(id));
         if ((components & EntityComponents.CommandQueue) != 0) world.GetQueue(id).Serialize(w, includeTargetEntity: true);
@@ -195,7 +198,8 @@ public static class SnapshotSerializer
     private static void WriteEnergyDomain(BinaryWriter w, EnergyDomain domain)
     {
         w.Write(domain.Reserve.Raw); w.Write(domain.ReserveCapacity.Raw); w.Write(domain.GenerationPerSecond);
-        w.Write(domain.ContinuousDemandPerSecond); w.Write(domain.FlowRemainderRaw);
+        w.Write(domain.ContinuousDemandPerSecond); w.Write(domain.PoweredDemandPerSecond); w.Write(domain.FlowRemainderRaw);
+        w.Write(domain.BrownoutRevision); w.Write((byte)domain.LastBrownoutEvent); w.Write(domain.IsBrownout);
     }
 
     private static void WriteProduction(BinaryWriter w, Production production)
@@ -234,8 +238,14 @@ public static class SnapshotSerializer
         if ((components & EntityComponents.ResourceReceiver) != 0) world.Entities.ResourceReceiver.Set(id, ReadResourceReceiver(r));
         if ((components & EntityComponents.ResourceBank) != 0) world.Entities.ResourceBank.Set(id, ReadResourceBank(r));
         if ((components & EntityComponents.Building) != 0) world.Entities.Building.Set(id, ReadBuilding(r));
-        if ((components & EntityComponents.EnergyDomain) != 0) world.Entities.EnergyDomain.Set(id, ReadEnergyDomain(r));
+        if ((components & EntityComponents.EnergyDomain) != 0) world.Entities.EnergyDomain.Set(id, ReadEnergyDomain(r, format));
         if ((components & EntityComponents.EnergyDomainMember) != 0) world.Entities.EnergyDomainMember.Set(id, new EnergyDomainMember { DomainRoot = new EntityId(r.ReadUInt32()) });
+        if ((components & EntityComponents.PowerState) != 0)
+        {
+            EnergyPriority priority = (EnergyPriority)r.ReadByte(); bool powered = r.ReadBoolean();
+            if (priority < EnergyPriority.High || priority > EnergyPriority.Low) throw new InvalidDataException("Invalid Energy priority.");
+            world.Entities.PowerState.Set(id, new PowerState { Priority = priority, IsPowered = powered });
+        }
         if ((components & EntityComponents.ConstructionSite) != 0) world.Entities.ConstructionSite.Set(id, ReadConstructionSite(r, format));
         if ((components & EntityComponents.Production) != 0) world.Entities.Production.Set(id, ReadProduction(r));
         if ((components & EntityComponents.CommandQueue) != 0) world.GetQueue(id).Deserialize(r, includeTargetEntity: format >= 4);
@@ -300,12 +310,22 @@ public static class SnapshotSerializer
         return site;
     }
 
-    private static EnergyDomain ReadEnergyDomain(BinaryReader r)
-        => new()
+    private static EnergyDomain ReadEnergyDomain(BinaryReader r, ushort format)
+    {
+        EnergyDomain domain = new()
         {
             Reserve = Fix32.FromRaw(r.ReadInt32()), ReserveCapacity = Fix32.FromRaw(r.ReadInt32()), GenerationPerSecond = r.ReadInt32(),
-            ContinuousDemandPerSecond = r.ReadInt32(), FlowRemainderRaw = r.ReadInt32()
+            ContinuousDemandPerSecond = r.ReadInt32()
         };
+        if (format >= 10) domain.PoweredDemandPerSecond = r.ReadInt32();
+        domain.FlowRemainderRaw = r.ReadInt32();
+        if (format >= 10)
+        {
+            domain.BrownoutRevision = r.ReadUInt32(); domain.LastBrownoutEvent = (BrownoutEventKind)r.ReadByte(); domain.IsBrownout = r.ReadBoolean();
+            if (domain.LastBrownoutEvent < BrownoutEventKind.None || domain.LastBrownoutEvent > BrownoutEventKind.Recovered) throw new InvalidDataException("Invalid brownout event.");
+        }
+        return domain;
+    }
 
     private static Production ReadProduction(BinaryReader r)
     {

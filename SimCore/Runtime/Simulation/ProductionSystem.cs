@@ -14,6 +14,7 @@ public sealed class ProductionSystem : ISimSystem
         {
             EntityId facilityId = alive[i];
             if (!world.Entities.Production.TryGet(facilityId, out Production production) || production.Count == 0) continue;
+            if (!BrownoutSystem.IsOperational(world, facilityId)) continue;
             ref Production stored = ref world.Entities.Production.Get(facilityId);
             ProductionQueueItem item = stored.Get(0);
             if (item.RemainingTicks > 0)

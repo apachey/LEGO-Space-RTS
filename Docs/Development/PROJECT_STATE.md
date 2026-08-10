@@ -63,8 +63,8 @@ narrow placement cases allowed by Phase 09B.
 - Meaningful-progress recovery is measured toward the active route waypoint
   over accumulated movement rather than reset by arbitrary per-tick motion, so
   arrival micro-movement cannot indefinitely suppress reflow/repath.
-- The current M3 T037 full verification is green across every
-  `BLOCKING_NOW` stage: builds, 120 NUnit tests, the explicit representative
+- The current M3 T038 full verification is green across every
+  `BLOCKING_NOW` stage: builds, 125 NUnit tests, the explicit representative
   24-mover gate, compiled content, HeadlessSim, Godot headless smoke, 100-repeat
   determinism, replay, snapshot continuation, regeneration and macOS export.
 - A launchable debug build was produced at
@@ -222,6 +222,22 @@ narrow placement cases allowed by Phase 09B.
   director confirmed that the Energy HUD, reserve flow, generation/demand and
   construction/production Energy spending work. No blocking Energy Domain
   interaction or readability defect was reported.
+- M3 T038 Brownout is implemented on the current task branch. When a domain's
+  reserve reaches zero while demand exceeds generation, complete consumers are
+  powered whole or disabled in deterministic functional-class, user-priority
+  and Entity-ID order. High / Normal / Low is authoritative per-building state;
+  reactivation uses the same ordering and transition revisions change only
+  when the powered set changes.
+- Disabled resource processing and production stop their authoritative work;
+  queued production progress is retained and resumes after recovery. Mobile
+  units remain controllable. Snapshot v10 / simulation protocol v8 and replay
+  v5 preserve priority, powered state, Brownout transitions and pending priority
+  commands while retaining prior readers.
+- The prototype HUD reports domain Brownout and powered/total demand, selected
+  structures report the exact disable reason and priority, production reports
+  a retained-progress pause, and disabled buildings receive a distinct dark
+  material plus `BROWNOUT` world label. A development-only drain command makes
+  the human readability gate reproducible without waiting for reserve depletion.
 
 ## Current gates
 
@@ -246,10 +262,10 @@ narrow placement cases allowed by Phase 09B.
   / 20 navigation nodes, while the imported runtime/static validator currently
   use 10 navigation nodes / 5 build cells; resolve in a separate canon-alignment
   task before changing cluster geometry;
-- T038 Brownout still needs deterministic shutdown priorities and powered-state
-  effects after a deficit empties the reserve. T049 later adds full Rock Raider
-  Worksite-zone connectivity, overlap, merge and split. The full production
-  overview, waiting-item drag reordering and cancellation/refund presentation
+- T038 Brownout still needs game-director readability acceptance. T049 later
+  adds full Rock Raider Worksite-zone connectivity, overlap, merge and split.
+  The full production overview, waiting-item drag reordering and
+  cancellation/refund presentation
   remain later interface/economy work beyond the current prototype gates.
 
 ## Explicitly rejected / do not resurrect
@@ -263,6 +279,6 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Merge the accepted stacked T030-T037 M3 economy/base-building branches.
-2. Begin T038 Brownout.
-3. Complete T038 human Brownout readability acceptance.
+1. Complete T038 human Brownout readability acceptance.
+2. Merge the accepted stacked T030-T038 M3 economy/base-building branches.
+3. Begin T039 Basic HUD.

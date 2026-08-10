@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 8,
+  "schemaVersion": 9,
   "contentKind": "prototype_entities",
   "policy": "M2 movement metadata plus canonical M3 Ore, construction, production, Operations Capacity and Energy Domain values; no unapproved combat/economy values are invented here.",
   "movementProfiles": [
@@ -165,6 +165,7 @@
       "energyGenerationPerSecond": 2,
       "energyReserveCapacity": 150,
       "continuousEnergyDemandPerSecond": 0,
+      "energyFunctionalClass": "CommandAndBasicEconomy",
       "productionExit": { "width": 2, "depth": 2, "largestFootprint": "Tiny" }
     },
     {
@@ -176,7 +177,8 @@
       "operationsCapacityProvided": 0,
       "energyGenerationPerSecond": 0,
       "energyReserveCapacity": 0,
-      "continuousEnergyDemandPerSecond": 1
+      "continuousEnergyDemandPerSecond": 1,
+      "energyFunctionalClass": "ResourceProcessing"
     },
     {
       "stableId": "building.rock_raiders.power_station",
@@ -187,7 +189,8 @@
       "operationsCapacityProvided": 0,
       "energyGenerationPerSecond": 10,
       "energyReserveCapacity": 120,
-      "continuousEnergyDemandPerSecond": 0
+      "continuousEnergyDemandPerSecond": 0,
+      "energyFunctionalClass": "StaticDefenseAndNonessential"
     },
     {
       "stableId": "building.rock_raiders.vehicle_service_bay",
@@ -199,6 +202,7 @@
       "energyGenerationPerSecond": 0,
       "energyReserveCapacity": 0,
       "continuousEnergyDemandPerSecond": 1,
+      "energyFunctionalClass": "ProductionAndResearch",
       "productionExit": { "width": 3, "depth": 3, "largestFootprint": "Medium" }
     }
   ],

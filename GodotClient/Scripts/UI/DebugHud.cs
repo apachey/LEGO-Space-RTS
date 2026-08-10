@@ -17,6 +17,7 @@ public partial class DebugHud : CanvasLayer
     private string _cachedHash = "-";
     private readonly StringBuilder _builder = new(1024);
     private readonly Dictionary<string, Button> _productionButtons = new();
+    private readonly Dictionary<EnergyPriority, Button> _priorityButtons = new();
     private static readonly string[] ProductionKeys =
     {
         "unit.rock_raiders.crew", "unit.rock_raiders.hover_scout", "unit.rock_raiders.rapid_rider", "unit.rock_raiders.loader_dozer"
@@ -43,6 +44,10 @@ public partial class DebugHud : CanvasLayer
         AddToggle(toggles, "Fog", () => _fog.FogVisible, _fog.SetFogVisible);
         HFlowContainer production = new() { Name = "ProductionButtons" }; box.AddChild(production);
         for (int i = 0; i < ProductionKeys.Length; i++) AddProductionButton(production, ProductionKeys[i]);
+        HFlowContainer power = new() { Name = "EnergyPriorityButtons" }; box.AddChild(power);
+        AddPriorityButton(power, EnergyPriority.High); AddPriorityButton(power, EnergyPriority.Normal); AddPriorityButton(power, EnergyPriority.Low);
+        Button drain = new() { Text = "DEV: Drain Energy", CustomMinimumSize = new Vector2(0f, 34f) };
+        drain.Pressed += () => _input?.DebugDrainEnergy(); power.AddChild(drain);
         AddChild(panel);
         ProcessPriority = 200;
     }
@@ -69,7 +74,8 @@ public partial class DebugHud : CanvasLayer
         {
             _builder.Append('\n').Append("Energy: ").Append(EnergyText(energy.Reserve)).Append(" / ").Append(EnergyText(energy.ReserveCapacity))
                 .Append("   Generation: +").Append(energy.GenerationPerSecond).Append(" E/s   Demand: -").Append(energy.ContinuousDemandPerSecond).Append(" E/s");
-            if (energy.IsDeficit) _builder.Append(" — RESERVE DRAINING");
+            if (energy.IsBrownout) _builder.Append(" — BROWNOUT: ").Append(energy.PoweredDemandPerSecond).Append('/').Append(energy.ContinuousDemandPerSecond).Append(" E/s powered");
+            else if (energy.IsDeficit) _builder.Append(" — RESERVE DRAINING");
         }
         _builder.Append('\n')
             .Append("Selected: ").Append(_selection.Selected.Count).Append(" / 128");
@@ -91,11 +97,15 @@ public partial class DebugHud : CanvasLayer
                     .Append(" resource=").Append(worker.ResourceTarget.Value).Append(" receiver=").Append(worker.ReceiverTarget.Value);
             if (_bridge.World.Entities.Builder.TryGet(first, out Builder construction))
                 _builder.Append("\nBuilder: ").Append(construction.JobState).Append(" site=").Append(construction.ConstructionTarget.Value);
+            if (_bridge.World.Entities.PowerState.TryGet(first, out PowerState powerState))
+                _builder.Append("\nPower: ").Append(powerState.IsPowered ? "ONLINE" : "DISABLED — Energy Domain Brownout")
+                    .Append("   Priority: ").Append(powerState.Priority);
         }
         if (_selection.LastFilteredWorkerCount > 0)
             _builder.Append("\nBox-select priority filtered ").Append(_selection.LastFilteredWorkerCount).Append(" worker(s); Ctrl+drag includes workers.");
         if (_input?.BuildModeActive == true) _builder.Append("\nBUILD: ").Append(_input.BuildStatus);
         UpdateProductionButtons();
+        UpdatePriorityButtons();
         AppendProductionStatus();
         _builder.Append("\nRMB Move / Harvest / Assist Site | Shift+RMB Queue | S Stop | H Hold");
         _builder.Append("\nB Build Mode | Tab building | R rotate | LMB place | Esc/RMB cancel | Ctrl+Z refund latest unstarted site");
@@ -118,6 +128,21 @@ public partial class DebugHud : CanvasLayer
         foreach ((string key, Button button) in _productionButtons) button.Disabled = !_input.CanQueueProduction(key);
     }
 
+    private void AddPriorityButton(Container parent, EnergyPriority priority)
+    {
+        Button button = new() { Text = $"Power: {priority}", Disabled = true, CustomMinimumSize = new Vector2(0f, 34f) };
+        button.Pressed += () => _input?.SetSelectedEnergyPriority(priority);
+        parent.AddChild(button); _priorityButtons.Add(priority, button);
+    }
+
+    private void UpdatePriorityButtons()
+    {
+        if (_bridge is null || _selection is null) return;
+        bool compatible = false;
+        for (int i = 0; i < _selection.Selected.Count; i++) if (_bridge.World.Entities.PowerState.Has(_selection.Selected[i])) { compatible = true; break; }
+        foreach ((EnergyPriority _, Button button) in _priorityButtons) button.Disabled = !compatible;
+    }
+
     private void AppendProductionStatus()
     {
         if (_bridge is null || _selection is null) return;
@@ -126,6 +151,7 @@ public partial class DebugHud : CanvasLayer
             EntityId id = _selection.Selected[i];
             if (!_bridge.World.Entities.Production.TryGet(id, out Production production)) continue;
             _builder.Append("\nProduction: ").Append(production.Count).Append('/').Append(Production.Capacity);
+            if (!BrownoutSystem.IsOperational(_bridge.World, id)) _builder.Append(" — PAUSED: BROWNOUT");
             if (production.SpawnBlocked) _builder.Append(" — EXIT BLOCKED");
             if (production.HasRallyPoint) _builder.Append(" — rally set");
             for (int q = 0; q < production.Count; q++)

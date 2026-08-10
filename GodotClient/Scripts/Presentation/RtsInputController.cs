@@ -158,6 +158,20 @@ public partial class RtsInputController : Node
         }
     }
 
+    public void SetSelectedEnergyPriority(EnergyPriority priority)
+    {
+        if (_bridge is null || _selection is null) return;
+        _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, _sequence++, SimCommandType.SetEnergyPriority,
+            SelectionArray(), FixVec2.Zero, energyPriority: priority));
+    }
+
+    public void DebugDrainEnergy()
+    {
+        if (_bridge is null) return;
+        _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, _sequence++, SimCommandType.DebugDrainEnergy,
+            Array.Empty<EntityId>(), FixVec2.Zero));
+    }
+
     private bool PreferRoundRobin(ContentId unitType, EntityId candidate, EntityId current)
     {
         if (current == EntityId.None) return true;

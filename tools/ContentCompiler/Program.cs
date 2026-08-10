@@ -36,7 +36,7 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
 {
     using JsonDocument document = JsonDocument.Parse(File.ReadAllText(path));
     JsonElement root = document.RootElement;
-    if (root.GetProperty("schemaVersion").GetInt32() != 8) throw new InvalidDataException("Unsupported prototype content schema.");
+    if (root.GetProperty("schemaVersion").GetInt32() != 9) throw new InvalidDataException("Unsupported prototype content schema.");
     if (!string.Equals(root.GetProperty("contentKind").GetString(), "prototype_entities", StringComparison.Ordinal)) throw new InvalidDataException("Unexpected contentKind.");
 
     List<PrototypeMovementProfile> profiles = new();
@@ -139,7 +139,8 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
             checked((byte)item.GetProperty("operationsCapacityProvided").GetInt32()),
             checked((ushort)item.GetProperty("energyGenerationPerSecond").GetInt32()),
             checked((ushort)item.GetProperty("energyReserveCapacity").GetInt32()),
-            checked((ushort)item.GetProperty("continuousEnergyDemandPerSecond").GetInt32())));
+            checked((ushort)item.GetProperty("continuousEnergyDemandPerSecond").GetInt32()),
+            Enum.Parse<EnergyFunctionalClass>(RequiredString(item, "energyFunctionalClass"), false)));
     }
     buildings.Sort((a, b) => string.CompareOrdinal(a.StableKey, b.StableKey));
     List<UnitProductionDefinition> production = new();

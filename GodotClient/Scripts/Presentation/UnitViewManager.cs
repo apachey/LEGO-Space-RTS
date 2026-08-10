@@ -18,6 +18,7 @@ public partial class UnitViewManager : Node3D
     private readonly StandardMaterial3D _resource = MakeMaterial(new Color(0.72f, 0.48f, 0.20f));
     private readonly StandardMaterial3D _resourceExhausted = MakeMaterial(new Color(0.28f, 0.25f, 0.22f));
     private readonly StandardMaterial3D _construction = MakeConstructionMaterial();
+    private readonly StandardMaterial3D _brownout = MakeMaterial(new Color(0.20f, 0.22f, 0.25f));
 
     public void Configure(GodotSimBridge bridge, SelectionController selection, ControlGroups groups)
     {
@@ -49,6 +50,7 @@ public partial class UnitViewManager : Node3D
                 view.Scale = ResourceScale(c.Footprint, c.ResourceState);
             }
             else if (c.SelectableKind == SelectableKind.Building && c.IsConstructionSite) view.MaterialOverride = _construction;
+            else if (c.SelectableKind == SelectableKind.Building && c.IsEnergyConsumer && !c.IsPowered) view.MaterialOverride = _brownout;
             else view.MaterialOverride = hovered && !selected ? _hover : (c.Owner == 0 ? _friendly : _other);
             Node3D? ring = view.GetNodeOrNull<Node3D>("SelectionRing");
             if (ring is not null) ring.Visible = selected || hovered;
@@ -190,6 +192,13 @@ public partial class UnitViewManager : Node3D
             NoDepthTest = true
         };
         view.AddChild(constructionLabel);
+        Label3D brownoutLabel = new()
+        {
+            Name = "BrownoutLabel", Text = "⚡ BROWNOUT", Visible = false, FontSize = 38, OutlineSize = 12,
+            Modulate = new Color(1f, 0.42f, 0.12f), OutlineModulate = new Color(0.02f, 0.02f, 0.02f, 0.95f),
+            Billboard = BaseMaterial3D.BillboardModeEnum.Enabled, FixedSize = true, NoDepthTest = true
+        };
+        view.AddChild(brownoutLabel);
         return view;
     }
 
@@ -217,6 +226,13 @@ public partial class UnitViewManager : Node3D
             progressLabel.Text = entity.IsConstructionSite ? $"{entity.ConstructionProgressBasisPoints / 100}%" : string.Empty;
             progressLabel.Position = new Vector3(0f, (scale.Y + 0.65f) / scale.Y, 0f);
             progressLabel.Scale = new Vector3(1f / scale.X, 1f / scale.Y, 1f / scale.Z);
+        }
+        Label3D? brownoutLabel = view.GetNodeOrNull<Label3D>("BrownoutLabel");
+        if (brownoutLabel is not null)
+        {
+            brownoutLabel.Visible = entity.IsEnergyConsumer && !entity.IsPowered;
+            brownoutLabel.Position = new Vector3(0f, (scale.Y + 0.8f) / scale.Y, 0f);
+            brownoutLabel.Scale = new Vector3(1f / scale.X, 1f / scale.Y, 1f / scale.Z);
         }
     }
 
