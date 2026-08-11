@@ -23,6 +23,85 @@ public readonly struct PrototypeMovementProfile
         : this(stableKey,maxSpeed,Fix32.FromInt(2),Fix32.FromRatio(5,2),865,ReversePolicy.Reduced,layer) { }
 }
 
+public readonly struct PrototypeCombatProfile
+{
+    public readonly bool IsTargetable;
+    public readonly CombatTargetClass TargetClass;
+    public readonly CombatTargetLayer TargetLayer;
+    public readonly CombatTargetFlags TargetFlags;
+    public readonly ushort MaximumHitPoints;
+    public readonly byte ArmorRating;
+    public readonly TargetPriorityProfile PriorityProfile;
+    public readonly TargetLayerMask LegalTargetLayers;
+    public readonly TargetClassMask LegalTargetClasses;
+    public readonly Fix32 AcquisitionRadius;
+    public readonly ContentId WeaponProfile;
+    public bool CanAcquireTargets => LegalTargetLayers != TargetLayerMask.None && LegalTargetClasses != TargetClassMask.None && AcquisitionRadius > Fix32.Zero;
+
+    public PrototypeCombatProfile(CombatTargetClass targetClass, CombatTargetLayer targetLayer, CombatTargetFlags targetFlags,
+        ushort maximumHitPoints, byte armorRating)
+        : this(targetClass, targetLayer, targetFlags, maximumHitPoints, armorRating, TargetPriorityProfile.Support, TargetLayerMask.None, TargetClassMask.None, Fix32.Zero) { }
+
+    public PrototypeCombatProfile(CombatTargetClass targetClass, CombatTargetLayer targetLayer, CombatTargetFlags targetFlags, ushort maximumHitPoints, byte armorRating,
+        TargetPriorityProfile priorityProfile, TargetLayerMask legalTargetLayers, TargetClassMask legalTargetClasses, Fix32 acquisitionRadius,
+        ContentId weaponProfile = default)
+    {
+        if (targetClass < CombatTargetClass.Personnel || targetClass > CombatTargetClass.FortifiedStructure) throw new ArgumentOutOfRangeException(nameof(targetClass));
+        if (targetLayer < CombatTargetLayer.Ground || targetLayer > CombatTargetLayer.TrueAir) throw new ArgumentOutOfRangeException(nameof(targetLayer));
+        if ((targetFlags & ~(CombatTargetFlags.CombatThreat | CombatTargetFlags.Worker | CombatTargetFlags.Transport | CombatTargetFlags.Support | CombatTargetFlags.DefensiveStructure | CombatTargetFlags.Production | CombatTargetFlags.EconomicInfrastructure | CombatTargetFlags.Command)) != 0) throw new ArgumentOutOfRangeException(nameof(targetFlags));
+        if (maximumHitPoints == 0 || armorRating > 5) throw new ArgumentOutOfRangeException(nameof(maximumHitPoints));
+        if ((legalTargetLayers & ~TargetLayerMask.All) != 0 || (legalTargetClasses & ~TargetClassMask.All) != 0) throw new ArgumentOutOfRangeException(nameof(legalTargetLayers));
+        bool hasTargeting = legalTargetLayers != TargetLayerMask.None || legalTargetClasses != TargetClassMask.None || acquisitionRadius != Fix32.Zero;
+        if (hasTargeting && (legalTargetLayers == TargetLayerMask.None || legalTargetClasses == TargetClassMask.None || acquisitionRadius <= Fix32.Zero)) throw new ArgumentException("Targeting metadata must provide legal layers, legal classes and a positive acquisition radius together.");
+        IsTargetable = true; TargetClass = targetClass; TargetLayer = targetLayer; TargetFlags = targetFlags;
+        MaximumHitPoints = maximumHitPoints; ArmorRating = armorRating;
+        PriorityProfile = priorityProfile; LegalTargetLayers = legalTargetLayers; LegalTargetClasses = legalTargetClasses; AcquisitionRadius = acquisitionRadius;
+        WeaponProfile = weaponProfile;
+    }
+}
+
+public readonly struct WeaponDefinition
+{
+    public readonly string StableKey;
+    public readonly ContentId Id;
+    public readonly TargetLayerMask LegalTargetLayers;
+    public readonly TargetClassMask LegalTargetClasses;
+    public readonly TargetPriorityProfile PriorityProfile;
+    public readonly ushort BaseDamage;
+    public readonly DamageType DamageType;
+    public readonly ushort CooldownTicks;
+    public readonly Fix32 Range;
+    public readonly Fix32 MinimumRange;
+    public readonly WeaponDeliveryKind DeliveryKind;
+    public readonly Fix32 ProjectileSpeed;
+    public readonly bool RequiresLineOfSight;
+    public readonly ushort FacingToleranceAngle16;
+    public readonly ushort MaximumMovingFireSpeedBasisPoints;
+
+    public WeaponDefinition(string stableKey, TargetLayerMask legalTargetLayers, TargetClassMask legalTargetClasses,
+        TargetPriorityProfile priorityProfile, ushort baseDamage, DamageType damageType, ushort cooldownTicks,
+        Fix32 range, Fix32 minimumRange, WeaponDeliveryKind deliveryKind, Fix32 projectileSpeed, bool requiresLineOfSight,
+        ushort facingToleranceDegrees = 180, ushort maximumMovingFireSpeedBasisPoints = 10_000)
+    {
+        if (string.IsNullOrWhiteSpace(stableKey)) throw new ArgumentNullException(nameof(stableKey));
+        if (legalTargetLayers == TargetLayerMask.None || (legalTargetLayers & ~TargetLayerMask.All) != 0) throw new ArgumentOutOfRangeException(nameof(legalTargetLayers));
+        if (legalTargetClasses == TargetClassMask.None || (legalTargetClasses & ~TargetClassMask.All) != 0) throw new ArgumentOutOfRangeException(nameof(legalTargetClasses));
+        if (priorityProfile < TargetPriorityProfile.AntiLight || priorityProfile > TargetPriorityProfile.Control) throw new ArgumentOutOfRangeException(nameof(priorityProfile));
+        if (damageType < DamageType.Light || damageType > DamageType.Control) throw new ArgumentOutOfRangeException(nameof(damageType));
+        if (deliveryKind < WeaponDeliveryKind.Projectile || deliveryKind > WeaponDeliveryKind.Contact) throw new ArgumentOutOfRangeException(nameof(deliveryKind));
+        if (baseDamage == 0 || cooldownTicks == 0 || range <= Fix32.Zero || minimumRange < Fix32.Zero || minimumRange >= range) throw new ArgumentOutOfRangeException(nameof(range));
+        if ((deliveryKind == WeaponDeliveryKind.Projectile && projectileSpeed <= Fix32.Zero) ||
+            (deliveryKind != WeaponDeliveryKind.Projectile && projectileSpeed != Fix32.Zero)) throw new ArgumentOutOfRangeException(nameof(projectileSpeed));
+        if (facingToleranceDegrees == 0 || facingToleranceDegrees > 180) throw new ArgumentOutOfRangeException(nameof(facingToleranceDegrees));
+        if (maximumMovingFireSpeedBasisPoints > 10_000) throw new ArgumentOutOfRangeException(nameof(maximumMovingFireSpeedBasisPoints));
+        StableKey = stableKey; Id = StableId.FromKey(stableKey); LegalTargetLayers = legalTargetLayers; LegalTargetClasses = legalTargetClasses;
+        PriorityProfile = priorityProfile; BaseDamage = baseDamage; DamageType = damageType; CooldownTicks = cooldownTicks;
+        Range = range; MinimumRange = minimumRange; DeliveryKind = deliveryKind; ProjectileSpeed = projectileSpeed; RequiresLineOfSight = requiresLineOfSight;
+        FacingToleranceAngle16 = checked((ushort)((facingToleranceDegrees * 65_536L) / 360));
+        MaximumMovingFireSpeedBasisPoints = maximumMovingFireSpeedBasisPoints;
+    }
+}
+
 public readonly struct PrototypeEntityDefinition
 {
     public readonly string StableKey;
@@ -37,10 +116,11 @@ public readonly struct PrototypeEntityDefinition
     public readonly ushort OreTicksPerUnit;
     public readonly byte OreCarryCapacity;
     public readonly byte OperationsCapacity;
+    public readonly PrototypeCombatProfile Combat;
 
     public PrototypeEntityDefinition(string stableKey, string factionKey, string sourceClassification, string movementProfileKey,
         FootprintClass footprint, SelectableKind selectableKind, byte visionRadius, string viewProfileKey, ushort oreTicksPerUnit = 0,
-        byte oreCarryCapacity = 0, byte operationsCapacity = 0)
+        byte oreCarryCapacity = 0, byte operationsCapacity = 0, PrototypeCombatProfile combat = default)
     {
         if ((oreTicksPerUnit == 0) != (oreCarryCapacity == 0)) throw new ArgumentException("Worker extraction cadence and carry capacity must both be present or absent.");
         if (oreCarryCapacity > 0 && selectableKind != SelectableKind.Worker) throw new ArgumentException("Only Worker definitions may carry worker harvesting metadata.");
@@ -50,8 +130,68 @@ public readonly struct PrototypeEntityDefinition
         MovementProfileKey = movementProfileKey ?? throw new ArgumentNullException(nameof(movementProfileKey));
         Footprint = footprint; SelectableKind = selectableKind; VisionRadius = visionRadius;
         ViewProfileKey = viewProfileKey ?? throw new ArgumentNullException(nameof(viewProfileKey));
-        OreTicksPerUnit = oreTicksPerUnit; OreCarryCapacity = oreCarryCapacity; OperationsCapacity = operationsCapacity;
+        OreTicksPerUnit = oreTicksPerUnit; OreCarryCapacity = oreCarryCapacity; OperationsCapacity = operationsCapacity; Combat = combat;
     }
+}
+
+public readonly struct TransformationModeDefinition
+{
+    public readonly string StateKey;
+    public readonly ContentId StateId;
+    public readonly string DisplayName;
+    public readonly string MovementProfileKey;
+    public readonly FootprintClass Footprint;
+    public readonly byte VisionRadius;
+    public readonly string ViewProfileKey;
+    public readonly PrototypeCombatProfile Combat;
+
+    public TransformationModeDefinition(string stateKey, string displayName, string movementProfileKey, FootprintClass footprint,
+        byte visionRadius, string viewProfileKey, PrototypeCombatProfile combat)
+    {
+        if (string.IsNullOrWhiteSpace(stateKey) || string.IsNullOrWhiteSpace(displayName) || string.IsNullOrWhiteSpace(movementProfileKey) ||
+            string.IsNullOrWhiteSpace(viewProfileKey) || !combat.IsTargetable) throw new ArgumentException("Transformation modes require stable state, presentation, movement and combat data.");
+        StateKey = stateKey; StateId = StableId.FromKey(stateKey); DisplayName = displayName; MovementProfileKey = movementProfileKey;
+        Footprint = footprint; VisionRadius = visionRadius; ViewProfileKey = viewProfileKey; Combat = combat;
+    }
+}
+
+/// <summary>Canonical two-state tactical transformation definition. Mode A is the entity's authored spawn state.</summary>
+public readonly struct TransformationDefinition
+{
+    public readonly string StableKey;
+    public readonly ContentId Id;
+    public readonly string EntityStableKey;
+    public readonly ContentId EntityType;
+    public readonly TransformationModeDefinition ModeA;
+    public readonly TransformationModeDefinition ModeB;
+    public readonly ushort AToBDurationTicks;
+    public readonly ushort BToADurationTicks;
+    public readonly ushort CancellationThresholdBasisPoints;
+    public readonly ushort RollbackTicks;
+    public readonly ushort ReversalLockTicks;
+    public readonly bool MoveDuringTransition;
+    public readonly bool AttackDuringTransition;
+    public readonly TargetLayerMask TransitionTargetLayers;
+
+    public TransformationDefinition(string stableKey, string entityStableKey, TransformationModeDefinition modeA, TransformationModeDefinition modeB,
+        ushort aToBDurationTicks, ushort bToADurationTicks, ushort cancellationThresholdBasisPoints, ushort rollbackTicks, ushort reversalLockTicks,
+        bool moveDuringTransition, bool attackDuringTransition, TargetLayerMask transitionTargetLayers)
+    {
+        if (string.IsNullOrWhiteSpace(stableKey) || string.IsNullOrWhiteSpace(entityStableKey) || modeA.StateId == modeB.StateId ||
+            aToBDurationTicks == 0 || bToADurationTicks == 0 || cancellationThresholdBasisPoints == 0 || cancellationThresholdBasisPoints > 10_000 ||
+            rollbackTicks == 0 || reversalLockTicks == 0 || transitionTargetLayers == TargetLayerMask.None ||
+            (transitionTargetLayers & ~TargetLayerMask.All) != 0) throw new ArgumentException("Invalid transformation definition.");
+        if (modeA.Combat.MaximumHitPoints != modeB.Combat.MaximumHitPoints)
+            throw new ArgumentException("Tactical transformation modes must preserve maximum HP.");
+        StableKey = stableKey; Id = StableId.FromKey(stableKey); EntityStableKey = entityStableKey; EntityType = StableId.FromKey(entityStableKey);
+        ModeA = modeA; ModeB = modeB; AToBDurationTicks = aToBDurationTicks; BToADurationTicks = bToADurationTicks;
+        CancellationThresholdBasisPoints = cancellationThresholdBasisPoints; RollbackTicks = rollbackTicks; ReversalLockTicks = reversalLockTicks;
+        MoveDuringTransition = moveDuringTransition; AttackDuringTransition = attackDuringTransition; TransitionTargetLayers = transitionTargetLayers;
+    }
+
+    public TransformationModeDefinition GetMode(ContentId state) => state == ModeA.StateId ? ModeA : state == ModeB.StateId ? ModeB : default;
+    public TransformationModeDefinition GetDestination(ContentId source) => source == ModeA.StateId ? ModeB : source == ModeB.StateId ? ModeA : default;
+    public ushort GetDuration(ContentId source) => source == ModeA.StateId ? AToBDurationTicks : source == ModeB.StateId ? BToADurationTicks : (ushort)0;
 }
 
 public readonly struct ResourceNodeDefinition
@@ -181,14 +321,34 @@ public sealed class PrototypeContentCatalog
     public ResourceNodeDefinition[] ResourceNodes { get; }
     public BuildingDefinition[] Buildings { get; }
     public UnitProductionDefinition[] Production { get; }
+    public WeaponDefinition[] Weapons { get; }
+    public TransformationDefinition[] Transformations { get; }
     public ulong ContentHash { get; internal set; }
-    public PrototypeContentCatalog(PrototypeMovementProfile[] movementProfiles, PrototypeEntityDefinition[] entities, ResourceNodeDefinition[]? resourceNodes = null, BuildingDefinition[]? buildings = null, UnitProductionDefinition[]? production = null)
+    public PrototypeContentCatalog(PrototypeMovementProfile[] movementProfiles, PrototypeEntityDefinition[] entities, ResourceNodeDefinition[]? resourceNodes = null, BuildingDefinition[]? buildings = null, UnitProductionDefinition[]? production = null, WeaponDefinition[]? weapons = null, TransformationDefinition[]? transformations = null)
     {
         MovementProfiles = movementProfiles ?? Array.Empty<PrototypeMovementProfile>();
         Entities = entities ?? Array.Empty<PrototypeEntityDefinition>();
         ResourceNodes = resourceNodes ?? Array.Empty<ResourceNodeDefinition>();
         Buildings = buildings ?? Array.Empty<BuildingDefinition>();
         Production = production ?? Array.Empty<UnitProductionDefinition>();
+        Weapons = weapons ?? Array.Empty<WeaponDefinition>();
+        Transformations = transformations ?? Array.Empty<TransformationDefinition>();
+        for (int i = 0; i < Entities.Length; i++)
+        {
+            ContentId weaponProfile = Entities[i].Combat.WeaponProfile;
+            if (weaponProfile.Value == 0) continue;
+            if (!TryGetWeapon(weaponProfile, out WeaponDefinition weapon)) throw new ArgumentException($"Entity {Entities[i].StableKey} references an unknown weapon profile.");
+            if (!Entities[i].Combat.CanAcquireTargets || Entities[i].Combat.LegalTargetLayers != weapon.LegalTargetLayers ||
+                Entities[i].Combat.LegalTargetClasses != weapon.LegalTargetClasses || Entities[i].Combat.PriorityProfile != weapon.PriorityProfile)
+                throw new ArgumentException($"Entity {Entities[i].StableKey} targeting metadata disagrees with weapon {weapon.StableKey}.");
+        }
+        for (int i = 0; i < Transformations.Length; i++)
+        {
+            TransformationDefinition transformation = Transformations[i];
+            if (!TryGetEntity(transformation.EntityType, out PrototypeEntityDefinition entity)) throw new ArgumentException($"Transformation {transformation.StableKey} references an unknown entity.");
+            ValidateTransformationMode(transformation, entity, transformation.ModeA, authoredMode: true);
+            ValidateTransformationMode(transformation, entity, transformation.ModeB, authoredMode: false);
+        }
     }
 
     public bool ContainsEntityKey(string stableKey) => TryGetEntity(stableKey, out _);
@@ -229,6 +389,29 @@ public sealed class PrototypeContentCatalog
         for (int i = 0; i < Production.Length; i++) if (Production[i].ProducerType == buildingType) return true;
         return false;
     }
+    public bool TryGetWeapon(string stableKey, out WeaponDefinition definition) => TryGetWeapon(StableId.FromKey(stableKey), out definition);
+    public bool TryGetWeapon(ContentId id, out WeaponDefinition definition)
+    {
+        for (int i = 0; i < Weapons.Length; i++) if (Weapons[i].Id == id) { definition = Weapons[i]; return true; }
+        definition = default; return false;
+    }
+    public bool TryGetTransformation(ContentId entityType, out TransformationDefinition definition)
+    {
+        for (int i = 0; i < Transformations.Length; i++) if (Transformations[i].EntityType == entityType) { definition = Transformations[i]; return true; }
+        definition = default; return false;
+    }
+
+    private void ValidateTransformationMode(TransformationDefinition transformation, PrototypeEntityDefinition entity, TransformationModeDefinition mode, bool authoredMode)
+    {
+        if (!TryGetMovement(mode.MovementProfileKey, out _)) throw new ArgumentException($"Transformation {transformation.StableKey} references missing movement {mode.MovementProfileKey}.");
+        if (!TryGetWeapon(mode.Combat.WeaponProfile, out WeaponDefinition weapon)) throw new ArgumentException($"Transformation {transformation.StableKey} references a missing weapon.");
+        if (mode.Combat.LegalTargetLayers != weapon.LegalTargetLayers || mode.Combat.LegalTargetClasses != weapon.LegalTargetClasses || mode.Combat.PriorityProfile != weapon.PriorityProfile)
+            throw new ArgumentException($"Transformation {transformation.StableKey} mode targeting disagrees with its weapon.");
+        if (authoredMode && (entity.MovementProfileKey != mode.MovementProfileKey || entity.Footprint != mode.Footprint || entity.VisionRadius != mode.VisionRadius ||
+            entity.Combat.TargetClass != mode.Combat.TargetClass || entity.Combat.TargetLayer != mode.Combat.TargetLayer || entity.Combat.ArmorRating != mode.Combat.ArmorRating ||
+            entity.Combat.WeaponProfile != mode.Combat.WeaponProfile))
+            throw new ArgumentException($"Transformation {transformation.StableKey} mode A must match the authored entity spawn state.");
+    }
 }
 
 public static class PrototypeContentFactory
@@ -242,22 +425,34 @@ public static class PrototypeContentFactory
             new PrototypeMovementProfile("movement.prototype.crew", Fix32.FromRatio(135,100), Fix32.FromInt(4), Fix32.FromInt(5), 1638, ReversePolicy.Full, MovementLayer.Ground),
             new PrototypeMovementProfile("movement.prototype.hover_scout", Fix32.FromRatio(225,100), Fix32.FromInt(6), Fix32.FromRatio(15,2), 1638, ReversePolicy.Full, MovementLayer.GroundHover),
             new PrototypeMovementProfile("movement.prototype.loader_dozer", Fix32.FromRatio(130,100), Fix32.FromRatio(3,2), Fix32.FromRatio(15,8), 865, ReversePolicy.Reduced, MovementLayer.Ground),
-            new PrototypeMovementProfile("movement.prototype.rapid_rider", Fix32.FromRatio(210,100), Fix32.FromInt(4), Fix32.FromInt(5), 1638, ReversePolicy.Full, MovementLayer.GroundHover),
+            new PrototypeMovementProfile("movement.prototype.mx41_flight", Fix32.FromRatio(245,100), Fix32.FromInt(4), Fix32.FromInt(5), 1229, ReversePolicy.Full, MovementLayer.TrueAir),
+            new PrototypeMovementProfile("movement.prototype.mx41_ground", Fix32.FromRatio(175,100), Fix32.FromInt(4), Fix32.FromInt(5), 1229, ReversePolicy.Reduced, MovementLayer.Ground),
             new PrototypeMovementProfile("movement.prototype.nav_huge", Fix32.FromRatio(9,10), Fix32.FromRatio(9,10), Fix32.FromRatio(9,8), 410, ReversePolicy.Reduced, MovementLayer.Ground),
+            new PrototypeMovementProfile("movement.prototype.rapid_rider", Fix32.FromRatio(210,100), Fix32.FromInt(4), Fix32.FromInt(5), 1638, ReversePolicy.Full, MovementLayer.GroundHover),
             new PrototypeMovementProfile("movement.prototype.static", Fix32.Zero, Fix32.Zero, Fix32.Zero, 0, ReversePolicy.None, MovementLayer.Ground)
+        };
+        WeaponDefinition[] weapons =
+        {
+            new WeaponDefinition("weapon.ast.mx41.flight_pulse", TargetLayerMask.All, TargetClassMask.All, TargetPriorityProfile.Generalist, 16, DamageType.General, 23, Fix32.FromRatio(9,2), Fix32.Zero, WeaponDeliveryKind.Projectile, Fix32.FromInt(12), true),
+            new WeaponDefinition("weapon.ast.mx41.pursuit_projector", TargetLayerMask.Ground, TargetClassMask.All, TargetPriorityProfile.AntiLight, 20, DamageType.Light, 21, Fix32.FromRatio(9,2), Fix32.Zero, WeaponDeliveryKind.Projectile, Fix32.FromInt(12), true),
+            new WeaponDefinition("weapon.rr.chrome_crusher.chrome_drill", TargetLayerMask.Ground, TargetClassMask.All, TargetPriorityProfile.Siege, 55, DamageType.Siege, 32, Fix32.FromRatio(21,20), Fix32.Zero, WeaponDeliveryKind.Contact, Fix32.Zero, true, 30, 3_500),
+            new WeaponDefinition("weapon.rr.crew.portable_mining_tool", TargetLayerMask.Ground, TargetClassMask.All, TargetPriorityProfile.Support, 6, DamageType.General, 24, Fix32.FromRatio(4,5), Fix32.Zero, WeaponDeliveryKind.Contact, Fix32.Zero, true, 45, 3_500),
+            new WeaponDefinition("weapon.rr.hover_scout.survey_pulse", TargetLayerMask.Ground, TargetClassMask.All, TargetPriorityProfile.Scout, 6, DamageType.General, 30, Fix32.FromInt(3), Fix32.Zero, WeaponDeliveryKind.Projectile, Fix32.FromInt(12), true),
+            new WeaponDefinition("weapon.rr.loader_dozer.scoop_ram", TargetLayerMask.Ground, TargetClassMask.All, TargetPriorityProfile.AntiLight, 18, DamageType.General, 27, Fix32.FromRatio(9,10), Fix32.Zero, WeaponDeliveryKind.Contact, Fix32.Zero, true, 45, 3_500)
         };
         PrototypeEntityDefinition[] entities =
         {
-            new PrototypeEntityDefinition("building.rock_raiders.hq", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.static", FootprintClass.Huge, SelectableKind.Building, 0, "view.placeholder.rock_raiders.hq"),
-            new PrototypeEntityDefinition("building.rock_raiders.ore_processing_plant", "RockRaiders", "COMPOSITE_ADAPTED", "movement.prototype.static", FootprintClass.Large, SelectableKind.Building, 0, "view.placeholder.rock_raiders.ore_processing_plant"),
-            new PrototypeEntityDefinition("building.rock_raiders.power_station", "RockRaiders", "COMPOSITE_ADAPTED", "movement.prototype.static", FootprintClass.Large, SelectableKind.Building, 0, "view.placeholder.rock_raiders.power_station"),
-            new PrototypeEntityDefinition("building.rock_raiders.vehicle_service_bay", "RockRaiders", "COMPOSITE_ADAPTED", "movement.prototype.static", FootprintClass.Huge, SelectableKind.Building, 0, "view.placeholder.rock_raiders.vehicle_service_bay"),
-            new PrototypeEntityDefinition("prototype.nav.huge", "Technical", "ENGINEERING_ONLY", "movement.prototype.nav_huge", FootprintClass.Huge, SelectableKind.CombatSupport, 8, "view.placeholder.navigation.huge"),
-            new PrototypeEntityDefinition("unit.rock_raiders.chrome_crusher", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.chrome_crusher", FootprintClass.Large, SelectableKind.CombatSupport, 8, "view.placeholder.rock_raiders.chrome_crusher", operationsCapacity: 6),
-            new PrototypeEntityDefinition("unit.rock_raiders.crew", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.crew", FootprintClass.Tiny, SelectableKind.Worker, 7, "view.placeholder.rock_raiders.crew", 30, 8, 1),
-            new PrototypeEntityDefinition("unit.rock_raiders.hover_scout", "RockRaiders", "OFFICIAL_DIRECT", "movement.prototype.hover_scout", FootprintClass.Small, SelectableKind.CombatSupport, 9, "view.placeholder.rock_raiders.hover_scout", operationsCapacity: 1),
-            new PrototypeEntityDefinition("unit.rock_raiders.loader_dozer", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.loader_dozer", FootprintClass.Medium, SelectableKind.CombatSupport, 7, "view.placeholder.rock_raiders.loader_dozer", operationsCapacity: 3),
-            new PrototypeEntityDefinition("unit.rock_raiders.rapid_rider", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.rapid_rider", FootprintClass.Small, SelectableKind.CombatSupport, 9, "view.placeholder.rock_raiders.rapid_rider", operationsCapacity: 2)
+            new PrototypeEntityDefinition("building.rock_raiders.hq", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.static", FootprintClass.Huge, SelectableKind.Building, 0, "view.placeholder.rock_raiders.hq", combat: new PrototypeCombatProfile(CombatTargetClass.FortifiedStructure, CombatTargetLayer.Ground, CombatTargetFlags.Command, 3000, 5)),
+            new PrototypeEntityDefinition("building.rock_raiders.ore_processing_plant", "RockRaiders", "COMPOSITE_ADAPTED", "movement.prototype.static", FootprintClass.Large, SelectableKind.Building, 0, "view.placeholder.rock_raiders.ore_processing_plant", combat: new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.EconomicInfrastructure, 1350, 2)),
+            new PrototypeEntityDefinition("building.rock_raiders.power_station", "RockRaiders", "COMPOSITE_ADAPTED", "movement.prototype.static", FootprintClass.Large, SelectableKind.Building, 0, "view.placeholder.rock_raiders.power_station", combat: new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.EconomicInfrastructure, 1000, 1)),
+            new PrototypeEntityDefinition("building.rock_raiders.vehicle_service_bay", "RockRaiders", "COMPOSITE_ADAPTED", "movement.prototype.static", FootprintClass.Huge, SelectableKind.Building, 0, "view.placeholder.rock_raiders.vehicle_service_bay", combat: new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.Production, 1700, 3)),
+            new PrototypeEntityDefinition("prototype.nav.huge", "Technical", "ENGINEERING_ONLY", "movement.prototype.nav_huge", FootprintClass.Huge, SelectableKind.CombatSupport, 8, "view.placeholder.navigation.huge", combat: new PrototypeCombatProfile(CombatTargetClass.MassiveMachine, CombatTargetLayer.Ground, CombatTargetFlags.None, 880, 5)),
+            new PrototypeEntityDefinition("unit.astronauts.mx41_switch_fighter", "Astronauts", "OFFICIAL_ADAPTED", "movement.prototype.mx41_ground", FootprintClass.Medium, SelectableKind.CombatSupport, 10, "view.placeholder.astronauts.mx41_ground", operationsCapacity: 3, combat: new PrototypeCombatProfile(CombatTargetClass.MediumMachine, CombatTargetLayer.Ground, CombatTargetFlags.CombatThreat, 320, 2, TargetPriorityProfile.AntiLight, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromRatio(17,2), StableId.FromKey("weapon.ast.mx41.pursuit_projector"))),
+            new PrototypeEntityDefinition("unit.rock_raiders.chrome_crusher", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.chrome_crusher", FootprintClass.Large, SelectableKind.CombatSupport, 8, "view.placeholder.rock_raiders.chrome_crusher", operationsCapacity: 6, combat: new PrototypeCombatProfile(CombatTargetClass.MassiveMachine, CombatTargetLayer.Ground, CombatTargetFlags.CombatThreat, 880, 5, TargetPriorityProfile.Siege, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromRatio(101,20), StableId.FromKey("weapon.rr.chrome_crusher.chrome_drill"))),
+            new PrototypeEntityDefinition("unit.rock_raiders.crew", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.crew", FootprintClass.Tiny, SelectableKind.Worker, 7, "view.placeholder.rock_raiders.crew", 30, 8, 1, new PrototypeCombatProfile(CombatTargetClass.Personnel, CombatTargetLayer.Ground, CombatTargetFlags.Worker | CombatTargetFlags.Support | CombatTargetFlags.CombatThreat, 110, 0, TargetPriorityProfile.Support, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromRatio(24,5), StableId.FromKey("weapon.rr.crew.portable_mining_tool"))),
+            new PrototypeEntityDefinition("unit.rock_raiders.hover_scout", "RockRaiders", "OFFICIAL_DIRECT", "movement.prototype.hover_scout", FootprintClass.Small, SelectableKind.CombatSupport, 9, "view.placeholder.rock_raiders.hover_scout", operationsCapacity: 1, combat: new PrototypeCombatProfile(CombatTargetClass.LightMachine, CombatTargetLayer.Ground, CombatTargetFlags.Support | CombatTargetFlags.CombatThreat, 120, 0, TargetPriorityProfile.Scout, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromInt(7), StableId.FromKey("weapon.rr.hover_scout.survey_pulse"))),
+            new PrototypeEntityDefinition("unit.rock_raiders.loader_dozer", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.loader_dozer", FootprintClass.Medium, SelectableKind.CombatSupport, 7, "view.placeholder.rock_raiders.loader_dozer", operationsCapacity: 3, combat: new PrototypeCombatProfile(CombatTargetClass.MediumMachine, CombatTargetLayer.Ground, CombatTargetFlags.CombatThreat, 360, 2, TargetPriorityProfile.AntiLight, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromRatio(49,10), StableId.FromKey("weapon.rr.loader_dozer.scoop_ram"))),
+            new PrototypeEntityDefinition("unit.rock_raiders.rapid_rider", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.rapid_rider", FootprintClass.Small, SelectableKind.CombatSupport, 9, "view.placeholder.rock_raiders.rapid_rider", operationsCapacity: 2, combat: new PrototypeCombatProfile(CombatTargetClass.LightMachine, CombatTargetLayer.Ground, CombatTargetFlags.Transport, 170, 0))
         };
         ResourceNodeDefinition[] resources =
         {
@@ -280,7 +475,18 @@ public static class PrototypeContentFactory
             new UnitProductionDefinition("unit.rock_raiders.loader_dozer", "building.rock_raiders.vehicle_service_bay", 125, 15, 0, 3, 720),
             new UnitProductionDefinition("unit.rock_raiders.rapid_rider", "building.rock_raiders.vehicle_service_bay", 90, 10, 0, 2, 560)
         };
-        PrototypeContentCatalog catalog = new PrototypeContentCatalog(profiles, entities, resources, buildings, production);
+        PrototypeCombatProfile mx41GroundCombat = new(CombatTargetClass.MediumMachine, CombatTargetLayer.Ground, CombatTargetFlags.CombatThreat, 320, 2,
+            TargetPriorityProfile.AntiLight, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromRatio(17,2), StableId.FromKey("weapon.ast.mx41.pursuit_projector"));
+        PrototypeCombatProfile mx41FlightCombat = new(CombatTargetClass.MediumMachine, CombatTargetLayer.TrueAir, CombatTargetFlags.CombatThreat, 320, 2,
+            TargetPriorityProfile.Generalist, TargetLayerMask.All, TargetClassMask.All, Fix32.FromRatio(17,2), StableId.FromKey("weapon.ast.mx41.flight_pulse"));
+        TransformationDefinition[] transformations =
+        {
+            new TransformationDefinition("transformation.astronauts.mx41_switch", "unit.astronauts.mx41_switch_fighter",
+                new TransformationModeDefinition("state.astronauts.mx41.ground", "Ground", "movement.prototype.mx41_ground", FootprintClass.Medium, 10, "view.placeholder.astronauts.mx41_ground", mx41GroundCombat),
+                new TransformationModeDefinition("state.astronauts.mx41.flight", "Flight", "movement.prototype.mx41_flight", FootprintClass.Medium, 10, "view.placeholder.astronauts.mx41_flight", mx41FlightCombat),
+                45, 45, 4_000, 12, 160, false, false, TargetLayerMask.All)
+        };
+        PrototypeContentCatalog catalog = new PrototypeContentCatalog(profiles, entities, resources, buildings, production, weapons, transformations);
         PrototypeContentCodec.Write(catalog);
         return catalog;
     }
@@ -290,7 +496,7 @@ public static class PrototypeContentFactory
 public static class PrototypeContentCodec
 {
     private const int Magic = 0x4350534C; // LSPC little-endian bytes.
-    public const int FormatVersion = 9;
+    public const int FormatVersion = 15;
 
     public static byte[] Write(PrototypeContentCatalog catalog)
     {
@@ -311,6 +517,14 @@ public static class PrototypeContentCodec
             writer.Write(e.StableKey); writer.Write(e.Id.Value); writer.Write(e.FactionKey); writer.Write(e.SourceClassification);
             writer.Write(e.MovementProfileKey); writer.Write((byte)e.Footprint); writer.Write((byte)e.SelectableKind); writer.Write(e.VisionRadius); writer.Write(e.ViewProfileKey);
             writer.Write(e.OreTicksPerUnit); writer.Write(e.OreCarryCapacity); writer.Write(e.OperationsCapacity);
+            writer.Write(e.Combat.IsTargetable);
+            if (e.Combat.IsTargetable)
+            {
+                writer.Write((byte)e.Combat.TargetClass); writer.Write((byte)e.Combat.TargetLayer); writer.Write((ushort)e.Combat.TargetFlags);
+                writer.Write(e.Combat.MaximumHitPoints); writer.Write(e.Combat.ArmorRating);
+                writer.Write((byte)e.Combat.PriorityProfile); writer.Write((byte)e.Combat.LegalTargetLayers); writer.Write((byte)e.Combat.LegalTargetClasses); writer.Write(e.Combat.AcquisitionRadius.Raw);
+                writer.Write(e.Combat.WeaponProfile.Value);
+            }
         }
         writer.Write(catalog.ResourceNodes.Length);
         for (int i = 0; i < catalog.ResourceNodes.Length; i++)
@@ -337,6 +551,17 @@ public static class PrototypeContentCodec
             writer.Write(p.UnitStableKey); writer.Write(p.UnitType.Value); writer.Write(p.ProducerStableKey); writer.Write(p.ProducerType.Value);
             writer.Write(p.OreCost); writer.Write(p.EnergyCost); writer.Write(p.CrystalCost); writer.Write(p.OperationsCapacity); writer.Write(p.BuildTicks);
         }
+        writer.Write(catalog.Weapons.Length);
+        for (int i = 0; i < catalog.Weapons.Length; i++)
+        {
+            WeaponDefinition weapon = catalog.Weapons[i];
+            writer.Write(weapon.StableKey); writer.Write(weapon.Id.Value); writer.Write((byte)weapon.LegalTargetLayers); writer.Write((byte)weapon.LegalTargetClasses);
+            writer.Write((byte)weapon.PriorityProfile); writer.Write(weapon.BaseDamage); writer.Write((byte)weapon.DamageType); writer.Write(weapon.CooldownTicks);
+            writer.Write(weapon.Range.Raw); writer.Write(weapon.MinimumRange.Raw); writer.Write((byte)weapon.DeliveryKind); writer.Write(weapon.ProjectileSpeed.Raw); writer.Write(weapon.RequiresLineOfSight);
+            writer.Write(weapon.FacingToleranceAngle16); writer.Write(weapon.MaximumMovingFireSpeedBasisPoints);
+        }
+        writer.Write(catalog.Transformations.Length);
+        for (int i = 0; i < catalog.Transformations.Length; i++) WriteTransformation(writer, catalog.Transformations[i]);
         writer.Flush();
         byte[] bytes = stream.ToArray(); catalog.ContentHash = DeterministicHash.Fnv1A64(bytes); return bytes;
     }
@@ -366,7 +591,10 @@ public static class PrototypeContentCodec
             ushort oreTicks = formatVersion >= 4 ? reader.ReadUInt16() : kind == SelectableKind.Worker ? (ushort)30 : (ushort)0;
             byte oreCapacity = formatVersion >= 4 ? reader.ReadByte() : kind == SelectableKind.Worker ? (byte)8 : (byte)0;
             byte operationsCapacity = formatVersion >= 7 ? reader.ReadByte() : LegacyOperationsCapacity(key);
-            entities[i] = new PrototypeEntityDefinition(key, faction, source, movement, fp, kind, vision, view, oreTicks, oreCapacity, operationsCapacity); if (entities[i].Id.Value != id) throw new InvalidDataException("Stable entity ID mismatch.");
+            PrototypeCombatProfile combat = formatVersion >= 10 ? ReadCombatProfile(reader, formatVersion >= 11, formatVersion >= 13) : LegacyCombatProfile(key);
+            if (formatVersion == 10) combat = AddLegacyWeaponProfile(key, combat);
+            if (formatVersion < 13) combat = AddLegacyDurability(key, combat);
+            entities[i] = new PrototypeEntityDefinition(key, faction, source, movement, fp, kind, vision, view, oreTicks, oreCapacity, operationsCapacity, combat); if (entities[i].Id.Value != id) throw new InvalidDataException("Stable entity ID mismatch.");
         }
         ResourceNodeDefinition[] resourceNodes = Array.Empty<ResourceNodeDefinition>();
         if (formatVersion >= 3)
@@ -413,9 +641,58 @@ public static class PrototypeContentCodec
                 if (production[i].UnitType.Value != unitId || production[i].ProducerType.Value != producerId) throw new InvalidDataException("Stable production ID mismatch.");
             }
         }
+        WeaponDefinition[] weapons = formatVersion >= 11 ? ReadWeapons(reader, formatVersion >= 12, formatVersion >= 14) : LegacyWeapons();
+        TransformationDefinition[] transformations = formatVersion >= 15 ? ReadTransformations(reader) : Array.Empty<TransformationDefinition>();
         if (stream.Position != stream.Length) throw new InvalidDataException("Trailing prototype content bytes.");
-        PrototypeContentCatalog result = new PrototypeContentCatalog(profiles, entities, resourceNodes, buildings, production) { ContentHash = DeterministicHash.Fnv1A64(bytes) };
+        PrototypeContentCatalog result = new PrototypeContentCatalog(profiles, entities, resourceNodes, buildings, production, weapons, transformations) { ContentHash = DeterministicHash.Fnv1A64(bytes) };
         return result;
+    }
+
+    private static void WriteTransformation(BinaryWriter writer, TransformationDefinition definition)
+    {
+        writer.Write(definition.StableKey); writer.Write(definition.Id.Value); writer.Write(definition.EntityStableKey); writer.Write(definition.EntityType.Value);
+        WriteTransformationMode(writer, definition.ModeA); WriteTransformationMode(writer, definition.ModeB);
+        writer.Write(definition.AToBDurationTicks); writer.Write(definition.BToADurationTicks); writer.Write(definition.CancellationThresholdBasisPoints);
+        writer.Write(definition.RollbackTicks); writer.Write(definition.ReversalLockTicks); writer.Write(definition.MoveDuringTransition);
+        writer.Write(definition.AttackDuringTransition); writer.Write((byte)definition.TransitionTargetLayers);
+    }
+
+    private static void WriteTransformationMode(BinaryWriter writer, TransformationModeDefinition mode)
+    {
+        writer.Write(mode.StateKey); writer.Write(mode.StateId.Value); writer.Write(mode.DisplayName); writer.Write(mode.MovementProfileKey);
+        writer.Write((byte)mode.Footprint); writer.Write(mode.VisionRadius); writer.Write(mode.ViewProfileKey);
+        writer.Write((byte)mode.Combat.TargetClass); writer.Write((byte)mode.Combat.TargetLayer); writer.Write((ushort)mode.Combat.TargetFlags);
+        writer.Write(mode.Combat.MaximumHitPoints); writer.Write(mode.Combat.ArmorRating); writer.Write((byte)mode.Combat.PriorityProfile);
+        writer.Write((byte)mode.Combat.LegalTargetLayers); writer.Write((byte)mode.Combat.LegalTargetClasses); writer.Write(mode.Combat.AcquisitionRadius.Raw);
+        writer.Write(mode.Combat.WeaponProfile.Value);
+    }
+
+    private static TransformationDefinition[] ReadTransformations(BinaryReader reader)
+    {
+        int count = reader.ReadInt32();
+        if (count < 0 || count > 1024) throw new InvalidDataException("Invalid transformation definition count.");
+        TransformationDefinition[] definitions = new TransformationDefinition[count];
+        for (int i = 0; i < count; i++)
+        {
+            string key = reader.ReadString(); uint id = reader.ReadUInt32(); string entityKey = reader.ReadString(); uint entityId = reader.ReadUInt32();
+            TransformationModeDefinition modeA = ReadTransformationMode(reader), modeB = ReadTransformationMode(reader);
+            definitions[i] = new TransformationDefinition(key, entityKey, modeA, modeB, reader.ReadUInt16(), reader.ReadUInt16(), reader.ReadUInt16(), reader.ReadUInt16(), reader.ReadUInt16(),
+                reader.ReadBoolean(), reader.ReadBoolean(), (TargetLayerMask)reader.ReadByte());
+            if (definitions[i].Id.Value != id || definitions[i].EntityType.Value != entityId) throw new InvalidDataException("Stable transformation ID mismatch.");
+        }
+        return definitions;
+    }
+
+    private static TransformationModeDefinition ReadTransformationMode(BinaryReader reader)
+    {
+        string stateKey = reader.ReadString(); uint stateId = reader.ReadUInt32(); string display = reader.ReadString(); string movement = reader.ReadString();
+        FootprintClass footprint = (FootprintClass)reader.ReadByte(); byte vision = reader.ReadByte(); string view = reader.ReadString();
+        PrototypeCombatProfile combat = new((CombatTargetClass)reader.ReadByte(), (CombatTargetLayer)reader.ReadByte(), (CombatTargetFlags)reader.ReadUInt16(),
+            reader.ReadUInt16(), reader.ReadByte(), (TargetPriorityProfile)reader.ReadByte(), (TargetLayerMask)reader.ReadByte(), (TargetClassMask)reader.ReadByte(),
+            Fix32.FromRaw(reader.ReadInt32()), new ContentId(reader.ReadUInt32()));
+        TransformationModeDefinition mode = new(stateKey, display, movement, footprint, vision, view, combat);
+        if (mode.StateId.Value != stateId) throw new InvalidDataException("Stable transformation state ID mismatch.");
+        return mode;
     }
 
     private static byte LegacyOperationsCapacity(string stableKey) => stableKey switch
@@ -448,6 +725,109 @@ public static class PrototypeContentCodec
         "building.rock_raiders.ore_processing_plant" => EnergyFunctionalClass.ResourceProcessing,
         "building.rock_raiders.vehicle_service_bay" => EnergyFunctionalClass.ProductionAndResearch,
         _ => EnergyFunctionalClass.StaticDefenseAndNonessential
+    };
+
+    private static PrototypeCombatProfile ReadCombatProfile(BinaryReader reader, bool includeWeaponProfile, bool includeDurability)
+    {
+        if (!reader.ReadBoolean()) return default;
+        CombatTargetClass targetClass = (CombatTargetClass)reader.ReadByte();
+        CombatTargetLayer targetLayer = (CombatTargetLayer)reader.ReadByte();
+        CombatTargetFlags targetFlags = (CombatTargetFlags)reader.ReadUInt16();
+        ushort maximumHitPoints = includeDurability ? reader.ReadUInt16() : (ushort)1;
+        byte armorRating = includeDurability ? reader.ReadByte() : (byte)0;
+        return new PrototypeCombatProfile(targetClass, targetLayer, targetFlags, maximumHitPoints, armorRating,
+            (TargetPriorityProfile)reader.ReadByte(), (TargetLayerMask)reader.ReadByte(), (TargetClassMask)reader.ReadByte(), Fix32.FromRaw(reader.ReadInt32()),
+            includeWeaponProfile ? new ContentId(reader.ReadUInt32()) : default);
+    }
+
+    private static WeaponDefinition[] ReadWeapons(BinaryReader reader, bool includeProjectileSpeed, bool includeContactRules)
+    {
+        int count = reader.ReadInt32();
+        if (count < 0 || count > 4096) throw new InvalidDataException("Invalid weapon definition count.");
+        WeaponDefinition[] weapons = new WeaponDefinition[count];
+        for (int i = 0; i < count; i++)
+        {
+            string key = reader.ReadString(); uint id = reader.ReadUInt32();
+            TargetLayerMask layers = (TargetLayerMask)reader.ReadByte(); TargetClassMask classes = (TargetClassMask)reader.ReadByte();
+            TargetPriorityProfile priority = (TargetPriorityProfile)reader.ReadByte(); ushort damage = reader.ReadUInt16(); DamageType damageType = (DamageType)reader.ReadByte(); ushort cooldown = reader.ReadUInt16();
+            Fix32 range = Fix32.FromRaw(reader.ReadInt32()); Fix32 minimumRange = Fix32.FromRaw(reader.ReadInt32()); WeaponDeliveryKind delivery = (WeaponDeliveryKind)reader.ReadByte();
+            Fix32 projectileSpeed = includeProjectileSpeed ? Fix32.FromRaw(reader.ReadInt32()) : delivery == WeaponDeliveryKind.Projectile ? Fix32.FromInt(12) : Fix32.Zero;
+            bool requiresLineOfSight = reader.ReadBoolean();
+            ushort facingDegrees = includeContactRules ? checked((ushort)((reader.ReadUInt16() * 360L + 32_767) / 65_536)) : LegacyFacingToleranceDegrees(key, delivery);
+            ushort movingBasisPoints = includeContactRules ? reader.ReadUInt16() : delivery == WeaponDeliveryKind.Contact ? (ushort)3_500 : (ushort)10_000;
+            weapons[i] = new WeaponDefinition(key, layers, classes, priority, damage, damageType, cooldown, range, minimumRange, delivery, projectileSpeed, requiresLineOfSight, facingDegrees, movingBasisPoints);
+            if (weapons[i].Id.Value != id) throw new InvalidDataException("Stable weapon ID mismatch.");
+        }
+        return weapons;
+    }
+
+    private static ushort LegacyFacingToleranceDegrees(string stableKey, WeaponDeliveryKind delivery)
+        => delivery != WeaponDeliveryKind.Contact ? (ushort)180 : stableKey == "weapon.rr.chrome_crusher.chrome_drill" ? (ushort)30 : (ushort)45;
+
+    private static PrototypeCombatProfile AddLegacyWeaponProfile(string stableKey, PrototypeCombatProfile combat)
+    {
+        string? weaponKey = LegacyWeaponKey(stableKey);
+        return weaponKey is null ? combat : new PrototypeCombatProfile(combat.TargetClass, combat.TargetLayer, combat.TargetFlags,
+            combat.MaximumHitPoints, combat.ArmorRating,
+            combat.PriorityProfile, combat.LegalTargetLayers, combat.LegalTargetClasses, combat.AcquisitionRadius, StableId.FromKey(weaponKey));
+    }
+
+    private static PrototypeCombatProfile AddLegacyDurability(string stableKey, PrototypeCombatProfile combat)
+    {
+        if (!combat.IsTargetable) return combat;
+        LegacyDurability(stableKey, out ushort hitPoints, out byte armorRating);
+        return new PrototypeCombatProfile(combat.TargetClass, combat.TargetLayer, combat.TargetFlags, hitPoints, armorRating,
+            combat.PriorityProfile, combat.LegalTargetLayers, combat.LegalTargetClasses, combat.AcquisitionRadius, combat.WeaponProfile);
+    }
+
+    internal static void LegacyDurability(string stableKey, out ushort hitPoints, out byte armorRating)
+    {
+        (hitPoints, armorRating) = stableKey switch
+        {
+            "building.rock_raiders.hq" => ((ushort)3000, (byte)5),
+            "building.rock_raiders.ore_processing_plant" => ((ushort)1350, (byte)2),
+            "building.rock_raiders.power_station" => ((ushort)1000, (byte)1),
+            "building.rock_raiders.vehicle_service_bay" => ((ushort)1700, (byte)3),
+            "unit.rock_raiders.crew" => ((ushort)110, (byte)0),
+            "unit.rock_raiders.hover_scout" => ((ushort)120, (byte)0),
+            "unit.rock_raiders.loader_dozer" => ((ushort)360, (byte)2),
+            "unit.rock_raiders.chrome_crusher" => ((ushort)880, (byte)5),
+            "unit.rock_raiders.rapid_rider" => ((ushort)170, (byte)0),
+            "prototype.nav.huge" => ((ushort)880, (byte)5),
+            _ => ((ushort)1, (byte)0)
+        };
+    }
+
+    private static string? LegacyWeaponKey(string stableKey) => stableKey switch
+    {
+        "unit.rock_raiders.crew" => "weapon.rr.crew.portable_mining_tool",
+        "unit.rock_raiders.hover_scout" => "weapon.rr.hover_scout.survey_pulse",
+        "unit.rock_raiders.loader_dozer" => "weapon.rr.loader_dozer.scoop_ram",
+        "unit.rock_raiders.chrome_crusher" => "weapon.rr.chrome_crusher.chrome_drill",
+        _ => null
+    };
+
+    private static WeaponDefinition[] LegacyWeapons() => new[]
+    {
+        new WeaponDefinition("weapon.rr.chrome_crusher.chrome_drill", TargetLayerMask.Ground, TargetClassMask.All, TargetPriorityProfile.Siege, 55, DamageType.Siege, 32, Fix32.FromRatio(21,20), Fix32.Zero, WeaponDeliveryKind.Contact, Fix32.Zero, true, 30, 3_500),
+        new WeaponDefinition("weapon.rr.crew.portable_mining_tool", TargetLayerMask.Ground, TargetClassMask.All, TargetPriorityProfile.Support, 6, DamageType.General, 24, Fix32.FromRatio(4,5), Fix32.Zero, WeaponDeliveryKind.Contact, Fix32.Zero, true, 45, 3_500),
+        new WeaponDefinition("weapon.rr.hover_scout.survey_pulse", TargetLayerMask.Ground, TargetClassMask.All, TargetPriorityProfile.Scout, 6, DamageType.General, 30, Fix32.FromInt(3), Fix32.Zero, WeaponDeliveryKind.Projectile, Fix32.FromInt(12), true),
+        new WeaponDefinition("weapon.rr.loader_dozer.scoop_ram", TargetLayerMask.Ground, TargetClassMask.All, TargetPriorityProfile.AntiLight, 18, DamageType.General, 27, Fix32.FromRatio(9,10), Fix32.Zero, WeaponDeliveryKind.Contact, Fix32.Zero, true, 45, 3_500)
+    };
+
+    private static PrototypeCombatProfile LegacyCombatProfile(string stableKey) => stableKey switch
+    {
+        "building.rock_raiders.hq" => new PrototypeCombatProfile(CombatTargetClass.FortifiedStructure, CombatTargetLayer.Ground, CombatTargetFlags.Command, 3000, 5),
+        "building.rock_raiders.ore_processing_plant" => new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.EconomicInfrastructure, 1350, 2),
+        "building.rock_raiders.power_station" => new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.EconomicInfrastructure, 1000, 1),
+        "building.rock_raiders.vehicle_service_bay" => new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.Production, 1700, 3),
+        "unit.rock_raiders.crew" => new PrototypeCombatProfile(CombatTargetClass.Personnel, CombatTargetLayer.Ground, CombatTargetFlags.Worker | CombatTargetFlags.Support | CombatTargetFlags.CombatThreat, 110, 0, TargetPriorityProfile.Support, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromRatio(24,5), StableId.FromKey("weapon.rr.crew.portable_mining_tool")),
+        "unit.rock_raiders.hover_scout" => new PrototypeCombatProfile(CombatTargetClass.LightMachine, CombatTargetLayer.Ground, CombatTargetFlags.Support | CombatTargetFlags.CombatThreat, 120, 0, TargetPriorityProfile.Scout, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromInt(7), StableId.FromKey("weapon.rr.hover_scout.survey_pulse")),
+        "unit.rock_raiders.loader_dozer" => new PrototypeCombatProfile(CombatTargetClass.MediumMachine, CombatTargetLayer.Ground, CombatTargetFlags.CombatThreat, 360, 2, TargetPriorityProfile.AntiLight, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromRatio(49,10), StableId.FromKey("weapon.rr.loader_dozer.scoop_ram")),
+        "unit.rock_raiders.chrome_crusher" => new PrototypeCombatProfile(CombatTargetClass.MassiveMachine, CombatTargetLayer.Ground, CombatTargetFlags.CombatThreat, 880, 5, TargetPriorityProfile.Siege, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromRatio(101,20), StableId.FromKey("weapon.rr.chrome_crusher.chrome_drill")),
+        "unit.rock_raiders.rapid_rider" => new PrototypeCombatProfile(CombatTargetClass.LightMachine, CombatTargetLayer.Ground, CombatTargetFlags.Transport, 170, 0),
+        "prototype.nav.huge" => new PrototypeCombatProfile(CombatTargetClass.MassiveMachine, CombatTargetLayer.Ground, CombatTargetFlags.None, 880, 5),
+        _ => default
     };
 }
 }

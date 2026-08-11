@@ -138,7 +138,8 @@ At 0 HP:
 - unit commands cease;
 - weapon events not already committed are cancelled;
 - destruction animation begins;
-- short-lived wreck collision applies under Part XXXIX.
+- movement collision is removed in the same authoritative simulation tick;
+- the remaining wreck/debris is nonblocking under Part XXXIX.
 
 ## STRUCTURE DESTRUCTION
 
@@ -147,7 +148,8 @@ At 0 HP:
 - production/repair/research/defense immediately stops;
 - Energy or network function is removed;
 - collapse begins;
-- temporary rubble collision applies;
+- movement collision is removed in the same authoritative simulation tick;
+- rubble and remaining collapse visuals are nonblocking;
 - structure is then removed from active gameplay.
 
 There is no hidden random survival roll.
@@ -1671,24 +1673,20 @@ Destroying Resonance Core immediately updates Charge capacity and invokes Phase 
 
 Standard unit:
 
-- blocking collision: **1.25s**
+- blocking collision: **none after 0 HP; removed in the same authoritative simulation tick**
 - nonblocking debris: until **8s**
 - remaining purely visual pieces may continue beyond that.
 
 Huge/Massive unit:
 
-- blocking collision: **2.5s**
+- blocking collision: **none after 0 HP; removed in the same authoritative simulation tick**
 - nonblocking debris: until **12s**.
 
 ## STRUCTURE RUBBLE
 
-Destroyed structure remains blocking for:
-
-**4s**
-
-during primary collapse.
-
-It then becomes pathable nonblocking debris.
+Destroyed structures have **no blocking collision after 0 HP**. Their authored
+footprint becomes pathable in the same authoritative simulation tick. Collapse
+and rubble may remain visually, but are cosmetic and nonblocking.
 
 There is no permanent wreck-field pathing problem.
 

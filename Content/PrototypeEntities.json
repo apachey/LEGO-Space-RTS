@@ -1,7 +1,7 @@
 {
-  "schemaVersion": 9,
+  "schemaVersion": 14,
   "contentKind": "prototype_entities",
-  "policy": "M2 movement metadata plus canonical M3 Ore, construction, production, Operations Capacity and Energy Domain values; no unapproved combat/economy values are invented here.",
+  "policy": "M2 movement, canonical M3 economy metadata and canonical M4 combat, transport and data-driven tactical transformation metadata.",
   "movementProfiles": [
     {
       "stableId": "movement.prototype.crew",
@@ -58,6 +58,24 @@
       "layer": "Ground"
     },
     {
+      "stableId": "movement.prototype.mx41_ground",
+      "speedRatio": [175, 100],
+      "accelerationRatio": [4, 1],
+      "decelerationRatio": [5, 1],
+      "turnRatePerTick": 1229,
+      "reversePolicy": "Reduced",
+      "layer": "Ground"
+    },
+    {
+      "stableId": "movement.prototype.mx41_flight",
+      "speedRatio": [245, 100],
+      "accelerationRatio": [4, 1],
+      "decelerationRatio": [5, 1],
+      "turnRatePerTick": 1229,
+      "reversePolicy": "Full",
+      "layer": "TrueAir"
+    },
+    {
       "stableId": "movement.prototype.rapid_rider",
       "speedRatio": [210, 100],
       "accelerationRatio": [4, 1],
@@ -110,6 +128,104 @@
       "turnRatePerTick": 0,
       "reversePolicy": "None",
       "layer": "Ground"
+    }
+  ],
+  "weaponDefinitions": [
+    {
+      "stableId": "weapon.ast.mx41.pursuit_projector",
+      "legalLayers": ["Ground"],
+      "legalClasses": ["Personnel", "LightMachine", "MediumMachine", "HeavyMachine", "MassiveMachine", "Structure", "FortifiedStructure"],
+      "priorityProfile": "AntiLight",
+      "damage": 20,
+      "damageType": "Light",
+      "cooldownTicks": 21,
+      "rangeRatio": [9, 2],
+      "minimumRangeRatio": [0, 1],
+      "delivery": "Projectile",
+      "projectileSpeedRatio": [12, 1],
+      "facingToleranceDegrees": 180,
+      "maximumMovingFireSpeedBasisPoints": 10000,
+      "requiresLineOfSight": true
+    },
+    {
+      "stableId": "weapon.ast.mx41.flight_pulse",
+      "legalLayers": ["Ground", "TrueAir"],
+      "legalClasses": ["Personnel", "LightMachine", "MediumMachine", "HeavyMachine", "MassiveMachine", "Structure", "FortifiedStructure"],
+      "priorityProfile": "Generalist",
+      "damage": 16,
+      "damageType": "General",
+      "cooldownTicks": 23,
+      "rangeRatio": [9, 2],
+      "minimumRangeRatio": [0, 1],
+      "delivery": "Projectile",
+      "projectileSpeedRatio": [12, 1],
+      "facingToleranceDegrees": 180,
+      "maximumMovingFireSpeedBasisPoints": 10000,
+      "requiresLineOfSight": true
+    },
+    {
+      "stableId": "weapon.rr.crew.portable_mining_tool",
+      "legalLayers": ["Ground"],
+      "legalClasses": ["Personnel", "LightMachine", "MediumMachine", "HeavyMachine", "MassiveMachine", "Structure", "FortifiedStructure"],
+      "priorityProfile": "Support",
+      "damage": 6,
+      "damageType": "General",
+      "cooldownTicks": 24,
+      "rangeRatio": [4, 5],
+      "minimumRangeRatio": [0, 1],
+      "delivery": "Contact",
+      "projectileSpeedRatio": [0, 1],
+      "facingToleranceDegrees": 45,
+      "maximumMovingFireSpeedBasisPoints": 3500,
+      "requiresLineOfSight": true
+    },
+    {
+      "stableId": "weapon.rr.hover_scout.survey_pulse",
+      "legalLayers": ["Ground"],
+      "legalClasses": ["Personnel", "LightMachine", "MediumMachine", "HeavyMachine", "MassiveMachine", "Structure", "FortifiedStructure"],
+      "priorityProfile": "Scout",
+      "damage": 6,
+      "damageType": "General",
+      "cooldownTicks": 30,
+      "rangeRatio": [3, 1],
+      "minimumRangeRatio": [0, 1],
+      "delivery": "Projectile",
+      "projectileSpeedRatio": [12, 1],
+      "facingToleranceDegrees": 180,
+      "maximumMovingFireSpeedBasisPoints": 10000,
+      "requiresLineOfSight": true
+    },
+    {
+      "stableId": "weapon.rr.loader_dozer.scoop_ram",
+      "legalLayers": ["Ground"],
+      "legalClasses": ["Personnel", "LightMachine", "MediumMachine", "HeavyMachine", "MassiveMachine", "Structure", "FortifiedStructure"],
+      "priorityProfile": "AntiLight",
+      "damage": 18,
+      "damageType": "General",
+      "cooldownTicks": 27,
+      "rangeRatio": [9, 10],
+      "minimumRangeRatio": [0, 1],
+      "delivery": "Contact",
+      "projectileSpeedRatio": [0, 1],
+      "facingToleranceDegrees": 45,
+      "maximumMovingFireSpeedBasisPoints": 3500,
+      "requiresLineOfSight": true
+    },
+    {
+      "stableId": "weapon.rr.chrome_crusher.chrome_drill",
+      "legalLayers": ["Ground"],
+      "legalClasses": ["Personnel", "LightMachine", "MediumMachine", "HeavyMachine", "MassiveMachine", "Structure", "FortifiedStructure"],
+      "priorityProfile": "Siege",
+      "damage": 55,
+      "damageType": "Siege",
+      "cooldownTicks": 32,
+      "rangeRatio": [21, 20],
+      "minimumRangeRatio": [0, 1],
+      "delivery": "Contact",
+      "projectileSpeedRatio": [0, 1],
+      "facingToleranceDegrees": 30,
+      "maximumMovingFireSpeedBasisPoints": 3500,
+      "requiresLineOfSight": true
     }
   ],
   "resourceNodeDefinitions": [
@@ -246,6 +362,7 @@
       "selectableKind": "Building",
       "visionRadius": 0,
       "operationsCapacity": 0,
+      "combatTarget": { "class": "FortifiedStructure", "layer": "Ground", "flags": ["Command"], "hitPoints": 3000, "armorRating": 5 },
       "viewProfile": "view.placeholder.rock_raiders.hq"
     },
     {
@@ -257,6 +374,7 @@
       "selectableKind": "Building",
       "visionRadius": 0,
       "operationsCapacity": 0,
+      "combatTarget": { "class": "Structure", "layer": "Ground", "flags": ["EconomicInfrastructure"], "hitPoints": 1350, "armorRating": 2 },
       "viewProfile": "view.placeholder.rock_raiders.ore_processing_plant"
     },
     {
@@ -268,6 +386,7 @@
       "selectableKind": "Building",
       "visionRadius": 0,
       "operationsCapacity": 0,
+      "combatTarget": { "class": "Structure", "layer": "Ground", "flags": ["EconomicInfrastructure"], "hitPoints": 1000, "armorRating": 1 },
       "viewProfile": "view.placeholder.rock_raiders.power_station"
     },
     {
@@ -279,7 +398,21 @@
       "selectableKind": "Building",
       "visionRadius": 0,
       "operationsCapacity": 0,
+      "combatTarget": { "class": "Structure", "layer": "Ground", "flags": ["Production"], "hitPoints": 1700, "armorRating": 3 },
       "viewProfile": "view.placeholder.rock_raiders.vehicle_service_bay"
+    },
+    {
+      "stableId": "unit.astronauts.mx41_switch_fighter",
+      "faction": "Astronauts",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.prototype.mx41_ground",
+      "footprint": "Medium",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 10,
+      "operationsCapacity": 3,
+      "combatTarget": { "class": "MediumMachine", "layer": "Ground", "flags": ["CombatThreat"], "hitPoints": 320, "armorRating": 2 },
+      "weaponProfile": "weapon.ast.mx41.pursuit_projector",
+      "viewProfile": "view.placeholder.astronauts.mx41_ground"
     },
     {
       "stableId": "unit.rock_raiders.crew",
@@ -294,6 +427,8 @@
         "oreTicksPerUnit": 30,
         "oreCarryCapacity": 8
       },
+      "combatTarget": { "class": "Personnel", "layer": "Ground", "flags": ["CombatThreat", "Worker", "Support"], "hitPoints": 110, "armorRating": 0 },
+      "weaponProfile": "weapon.rr.crew.portable_mining_tool",
       "viewProfile": "view.placeholder.rock_raiders.crew"
     },
     {
@@ -305,6 +440,8 @@
       "selectableKind": "CombatSupport",
       "visionRadius": 9,
       "operationsCapacity": 1,
+      "combatTarget": { "class": "LightMachine", "layer": "Ground", "flags": ["CombatThreat", "Support"], "hitPoints": 120, "armorRating": 0 },
+      "weaponProfile": "weapon.rr.hover_scout.survey_pulse",
       "viewProfile": "view.placeholder.rock_raiders.hover_scout"
     },
     {
@@ -316,6 +453,8 @@
       "selectableKind": "CombatSupport",
       "visionRadius": 7,
       "operationsCapacity": 3,
+      "combatTarget": { "class": "MediumMachine", "layer": "Ground", "flags": ["CombatThreat"], "hitPoints": 360, "armorRating": 2 },
+      "weaponProfile": "weapon.rr.loader_dozer.scoop_ram",
       "viewProfile": "view.placeholder.rock_raiders.loader_dozer"
     },
     {
@@ -327,6 +466,7 @@
       "selectableKind": "CombatSupport",
       "visionRadius": 9,
       "operationsCapacity": 2,
+      "combatTarget": { "class": "LightMachine", "layer": "Ground", "flags": ["Transport"], "hitPoints": 170, "armorRating": 0 },
       "viewProfile": "view.placeholder.rock_raiders.rapid_rider"
     },
     {
@@ -338,6 +478,8 @@
       "selectableKind": "CombatSupport",
       "visionRadius": 8,
       "operationsCapacity": 6,
+      "combatTarget": { "class": "MassiveMachine", "layer": "Ground", "flags": ["CombatThreat"], "hitPoints": 880, "armorRating": 5 },
+      "weaponProfile": "weapon.rr.chrome_crusher.chrome_drill",
       "viewProfile": "view.placeholder.rock_raiders.chrome_crusher"
     },
     {
@@ -349,7 +491,46 @@
       "selectableKind": "CombatSupport",
       "visionRadius": 8,
       "operationsCapacity": 0,
+      "combatTarget": { "class": "MassiveMachine", "layer": "Ground", "flags": [], "hitPoints": 880, "armorRating": 5 },
       "viewProfile": "view.placeholder.navigation.huge"
+    }
+  ],
+  "transformationDefinitions": [
+    {
+      "stableId": "transformation.astronauts.mx41_switch",
+      "entity": "unit.astronauts.mx41_switch_fighter",
+      "modes": [
+        {
+          "stableId": "state.astronauts.mx41.ground",
+          "displayName": "Ground",
+          "movementProfile": "movement.prototype.mx41_ground",
+          "footprint": "Medium",
+          "visionRadius": 10,
+          "viewProfile": "view.placeholder.astronauts.mx41_ground",
+          "combatTarget": { "class": "MediumMachine", "layer": "Ground", "flags": ["CombatThreat"], "hitPoints": 320, "armorRating": 2 },
+          "weaponProfile": "weapon.ast.mx41.pursuit_projector",
+          "acquisitionRadiusRatio": [17, 2]
+        },
+        {
+          "stableId": "state.astronauts.mx41.flight",
+          "displayName": "Flight",
+          "movementProfile": "movement.prototype.mx41_flight",
+          "footprint": "Medium",
+          "visionRadius": 10,
+          "viewProfile": "view.placeholder.astronauts.mx41_flight",
+          "combatTarget": { "class": "MediumMachine", "layer": "TrueAir", "flags": ["CombatThreat"], "hitPoints": 320, "armorRating": 2 },
+          "weaponProfile": "weapon.ast.mx41.flight_pulse",
+          "acquisitionRadiusRatio": [17, 2]
+        }
+      ],
+      "aToBDurationTicks": 45,
+      "bToADurationTicks": 45,
+      "cancellationThresholdBasisPoints": 4000,
+      "rollbackTicks": 12,
+      "reversalLockTicks": 160,
+      "moveDuringTransition": false,
+      "attackDuringTransition": false,
+      "transitionTargetLayers": ["Ground", "TrueAir"]
     }
   ]
 }

@@ -12,11 +12,27 @@ public enum HarvestInteraction : byte { Mine = 0, Harvest = 1 }
 public enum ResourceDepletionProfile : byte { Finite = 0 }
 public enum ResourceVisualState : byte { Full = 0, Reduced = 1, Low = 2, Critical = 3, Exhausted = 4 }
 public enum WorkerTaskState : byte { Idle = 0, MovingToResource = 1, Mining = 2, ReturningToReceiver = 3, AwaitingDelivery = 4 }
-public enum BuilderJobState : byte { Idle = 0, MovingToSite = 1, Constructing = 2 }
+public enum BuilderJobState : byte { Idle = 0, MovingToSite = 1, Constructing = 2, MovingToRepair = 3, Repairing = 4 }
+public enum TransportJobState : byte { Idle = 0, LoadingDocking = 1, LoadingPassenger = 2, MovingToUnload = 3, UnloadSettling = 4, Unloading = 5, UnloadBlocked = 6 }
+public enum PassengerState : byte { Grounded = 0, MovingToLoad = 1, WaitingToLoad = 2, Loaded = 3 }
+public enum TransformationPhase : byte { Idle = 0, Transitioning = 1, RollingBack = 2 }
 public enum BuildingState : byte { ConstructionSite = 0, Completed = 1 }
 public enum EnergyFunctionalClass : byte { CommandAndBasicEconomy = 1, ResourceProcessing = 2, ProductionAndResearch = 3, ServiceAndFactionSystems = 4, StaticDefenseAndNonessential = 5 }
 public enum EnergyPriority : byte { High = 0, Normal = 1, Low = 2 }
 public enum BrownoutEventKind : byte { None = 0, Entered = 1, Changed = 2, Recovered = 3 }
+public enum CombatTargetClass : byte { Personnel = 0, LightMachine = 1, MediumMachine = 2, HeavyMachine = 3, MassiveMachine = 4, Structure = 5, FortifiedStructure = 6 }
+public enum CombatTargetLayer : byte { Ground = 0, TrueAir = 1 }
+[System.Flags] public enum TargetLayerMask : byte { None = 0, Ground = 1, TrueAir = 2, All = Ground | TrueAir }
+[System.Flags] public enum TargetClassMask : byte { None = 0, Personnel = 1, LightMachine = 2, MediumMachine = 4, HeavyMachine = 8, MassiveMachine = 16, Structure = 32, FortifiedStructure = 64, All = 127 }
+[System.Flags] public enum CombatTargetFlags : ushort
+{
+    None = 0, CombatThreat = 1, Worker = 2, Transport = 4, Support = 8,
+    DefensiveStructure = 16, Production = 32, EconomicInfrastructure = 64, Command = 128
+}
+public enum TargetPriorityProfile : byte { AntiLight = 0, AntiHeavy = 1, AntiAir = 2, Siege = 3, Harassment = 4, Generalist = 5, Scout = 6, Support = 7, Control = 8 }
+public enum TargetSelectionKind : byte { None = 0, Automatic = 1, DirectOrder = 2 }
+public enum DamageType : byte { Light = 0, General = 1, Breach = 2, Siege = 3, AntiAir = 4, Control = 5 }
+public enum WeaponDeliveryKind : byte { Projectile = 0, Contact = 1 }
 
 public struct Ownership
 {
@@ -126,7 +142,96 @@ public struct Worker
 public struct Builder
 {
     public EntityId ConstructionTarget;
+    public EntityId RepairTarget;
+    public Fix32 RepairOreRemainder;
     public BuilderJobState JobState;
+}
+
+public struct Passenger
+{
+    public EntityId Transport;
+    public PassengerState State;
+    public byte SizePoints;
+    public int AttackLockedUntilTick;
+    public int MovementPenaltyUntilTick;
+}
+
+public struct Transport
+{
+    public const int MaximumPassengerSlots = 10;
+    public byte CapacityPoints;
+    public byte OccupiedPoints;
+    public byte PassengerCount;
+    public TransportJobState JobState;
+    public EntityId ActivePassenger;
+    public ushort PhaseTicks;
+    public FixVec2 UnloadTarget;
+    public bool UnloadBlocked;
+    public bool LoadingSettled;
+    public EntityId Passenger0;
+    public EntityId Passenger1;
+    public EntityId Passenger2;
+    public EntityId Passenger3;
+    public EntityId Passenger4;
+    public EntityId Passenger5;
+    public EntityId Passenger6;
+    public EntityId Passenger7;
+    public EntityId Passenger8;
+    public EntityId Passenger9;
+
+    public EntityId GetPassenger(int index) => index switch
+    {
+        0 => Passenger0, 1 => Passenger1, 2 => Passenger2, 3 => Passenger3, 4 => Passenger4,
+        5 => Passenger5, 6 => Passenger6, 7 => Passenger7, 8 => Passenger8, 9 => Passenger9,
+        _ => throw new System.ArgumentOutOfRangeException(nameof(index))
+    };
+
+    public void SetPassenger(int index, EntityId passenger)
+    {
+        switch (index)
+        {
+            case 0: Passenger0 = passenger; break; case 1: Passenger1 = passenger; break;
+            case 2: Passenger2 = passenger; break; case 3: Passenger3 = passenger; break;
+            case 4: Passenger4 = passenger; break; case 5: Passenger5 = passenger; break;
+            case 6: Passenger6 = passenger; break; case 7: Passenger7 = passenger; break;
+            case 8: Passenger8 = passenger; break; case 9: Passenger9 = passenger; break;
+            default: throw new System.ArgumentOutOfRangeException(nameof(index));
+        }
+    }
+
+    public bool TryAddPassenger(EntityId passenger, byte sizePoints)
+    {
+        if (PassengerCount >= MaximumPassengerSlots || OccupiedPoints + sizePoints > CapacityPoints) return false;
+        SetPassenger(PassengerCount, passenger);
+        PassengerCount++;
+        OccupiedPoints = checked((byte)(OccupiedPoints + sizePoints));
+        return true;
+    }
+
+    public EntityId RemoveFirstPassenger(byte sizePoints)
+    {
+        if (PassengerCount == 0) return EntityId.None;
+        EntityId result = Passenger0;
+        for (int i = 1; i < PassengerCount; i++) SetPassenger(i - 1, GetPassenger(i));
+        PassengerCount--;
+        SetPassenger(PassengerCount, EntityId.None);
+        OccupiedPoints = checked((byte)(OccupiedPoints - sizePoints));
+        return result;
+    }
+}
+
+public struct Transformation
+{
+    public ContentId Definition;
+    public ContentId CurrentState;
+    public ContentId SourceState;
+    public ContentId DestinationState;
+    public TransformationPhase Phase;
+    public ushort ProgressTicks;
+    public ushort TotalTicks;
+    public ushort RollbackTicksRemaining;
+    public int ReversalLockedUntilTick;
+    public bool QueuedToggle;
 }
 
 public struct ResourceCarrier
@@ -185,6 +290,67 @@ public struct PowerState
 {
     public EnergyPriority Priority;
     public bool IsPowered;
+}
+
+public struct Targetable
+{
+    public CombatTargetClass Class;
+    public CombatTargetLayer Layer;
+    public CombatTargetFlags Flags;
+}
+
+public struct Health
+{
+    public Fix32 Maximum;
+    public Fix32 Current;
+    public byte ArmorRating;
+    public int LastDamageTick;
+
+    public bool IsDepleted => Current <= Fix32.Zero;
+}
+
+public enum DestructionKind : byte { Unit = 0, Structure = 1 }
+
+public struct DestructionState
+{
+    public DestructionKind Kind;
+    public int StartedTick;
+    public int BlockingUntilTick;
+    public int VisualUntilTick;
+    public byte Owner;
+    public ContentId ContentType;
+    public SelectableKind SelectableKind;
+    public FootprintClass Footprint;
+    public ContentId BuildingType;
+    public short BuildingAnchorX;
+    public short BuildingAnchorY;
+    public byte BuildingOrientation;
+    public byte BuildingWidth;
+    public byte BuildingHeight;
+}
+
+public struct Targeting
+{
+    public EntityId CurrentTarget;
+    public FixVec2 PursuitOrigin;
+    public Fix32 AcquisitionRadius;
+    public TargetLayerMask LegalLayers;
+    public TargetClassMask LegalClasses;
+    public TargetPriorityProfile PriorityProfile;
+    public TargetSelectionKind SelectionKind;
+    public byte ApproachSlotIndex;
+    public bool HasPursuitOrigin;
+    public bool HasApproachSlot;
+    public bool HasCombatMove;
+}
+
+public struct WeaponState
+{
+    public ContentId WeaponProfile;
+    public ushort CooldownRemainingTicks;
+    public uint FireSequence;
+    public EntityId LastFiredTarget;
+    public int LastFiredTick;
 }
 
 public struct ConstructionSite

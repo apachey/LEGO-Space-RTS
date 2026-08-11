@@ -134,7 +134,7 @@ check(len(source.get('resourceReceivers',[])) == 2, 'M3 starting HQ resource rec
 check(len(source.get('visionTestGeometry',[])) >= 4, 'vision test geometry missing')
 
 content_source = json.loads((ROOT/'Content/PrototypeEntities.json').read_text())
-check(content_source.get('schemaVersion') == 9 and content_source.get('contentKind') == 'prototype_entities', 'prototype content schema mismatch')
+check(content_source.get('schemaVersion') == 14 and content_source.get('contentKind') == 'prototype_entities', 'prototype content schema mismatch')
 entity_keys = [e.get('stableId') for e in content_source.get('entities',[])]
 check(len(entity_keys) >= 5 and len(entity_keys) == len(set(entity_keys)), 'prototype content entries missing/duplicated')
 for required_key in ['building.rock_raiders.hq','building.rock_raiders.ore_processing_plant','building.rock_raiders.power_station','building.rock_raiders.vehicle_service_bay','unit.rock_raiders.crew','unit.rock_raiders.hover_scout','unit.rock_raiders.rapid_rider','unit.rock_raiders.loader_dozer','unit.rock_raiders.chrome_crusher','prototype.nav.huge']:
@@ -146,6 +146,46 @@ check(by_key.get('prototype.nav.huge',{}).get('sourceClassification')=='ENGINEER
 check(by_key.get('unit.rock_raiders.crew',{}).get('workerHarvest') == {'oreTicksPerUnit':30,'oreCarryCapacity':8}, 'Crew canonical Ore harvesting metadata missing')
 expected_unit_oc={'unit.rock_raiders.crew':1,'unit.rock_raiders.hover_scout':1,'unit.rock_raiders.rapid_rider':2,'unit.rock_raiders.loader_dozer':3,'unit.rock_raiders.chrome_crusher':6}
 check({key:by_key.get(key,{}).get('operationsCapacity') for key in expected_unit_oc} == expected_unit_oc, 'canonical Rock Raider Operations Capacity metadata missing or incorrect')
+expected_combat_targets={
+    'unit.rock_raiders.crew':('Personnel','Ground',['CombatThreat','Worker','Support']),
+    'unit.rock_raiders.hover_scout':('LightMachine','Ground',['CombatThreat','Support']),
+    'unit.rock_raiders.loader_dozer':('MediumMachine','Ground',['CombatThreat']),
+    'unit.rock_raiders.rapid_rider':('LightMachine','Ground',['Transport']),
+    'unit.rock_raiders.chrome_crusher':('MassiveMachine','Ground',['CombatThreat']),
+    'building.rock_raiders.hq':('FortifiedStructure','Ground',['Command']),
+    'building.rock_raiders.ore_processing_plant':('Structure','Ground',['EconomicInfrastructure']),
+    'building.rock_raiders.power_station':('Structure','Ground',['EconomicInfrastructure']),
+    'building.rock_raiders.vehicle_service_bay':('Structure','Ground',['Production']),
+}
+check({key:(by_key.get(key,{}).get('combatTarget',{}).get('class'),by_key.get(key,{}).get('combatTarget',{}).get('layer'),by_key.get(key,{}).get('combatTarget',{}).get('flags')) for key in expected_combat_targets} == expected_combat_targets, 'canonical M4 target classes, layers or role flags missing')
+expected_durability={
+    'unit.rock_raiders.crew':(110,0),
+    'unit.rock_raiders.hover_scout':(120,0),
+    'unit.rock_raiders.rapid_rider':(170,0),
+    'unit.rock_raiders.loader_dozer':(360,2),
+    'unit.rock_raiders.chrome_crusher':(880,5),
+    'building.rock_raiders.hq':(3000,5),
+    'building.rock_raiders.ore_processing_plant':(1350,2),
+    'building.rock_raiders.power_station':(1000,1),
+    'building.rock_raiders.vehicle_service_bay':(1700,3),
+}
+check({key:(by_key.get(key,{}).get('combatTarget',{}).get('hitPoints'),by_key.get(key,{}).get('combatTarget',{}).get('armorRating')) for key in expected_durability} == expected_durability, 'canonical T043 hit points or Armor Ratings missing')
+expected_weapon_profiles={
+    'unit.rock_raiders.crew':'weapon.rr.crew.portable_mining_tool',
+    'unit.rock_raiders.hover_scout':'weapon.rr.hover_scout.survey_pulse',
+    'unit.rock_raiders.loader_dozer':'weapon.rr.loader_dozer.scoop_ram',
+    'unit.rock_raiders.chrome_crusher':'weapon.rr.chrome_crusher.chrome_drill',
+}
+check({key:by_key.get(key,{}).get('weaponProfile') for key in expected_weapon_profiles} == expected_weapon_profiles, 'canonical M4 Rock Raider weapon-profile references missing')
+check('weaponProfile' not in by_key.get('unit.rock_raiders.rapid_rider',{}), 'Rapid Rider is an unarmed transport and must not acquire attack targets')
+weapon_by_key={w.get('stableId'):w for w in content_source.get('weaponDefinitions',[])}
+expected_weapons={
+    'weapon.rr.crew.portable_mining_tool':(6,'General',24,[4,5],'Contact',[0,1],'Support',45,3500),
+    'weapon.rr.hover_scout.survey_pulse':(6,'General',30,[3,1],'Projectile',[12,1],'Scout',180,10000),
+    'weapon.rr.loader_dozer.scoop_ram':(18,'General',27,[9,10],'Contact',[0,1],'AntiLight',45,3500),
+    'weapon.rr.chrome_crusher.chrome_drill':(55,'Siege',32,[21,20],'Contact',[0,1],'Siege',30,3500),
+}
+check({key:(weapon_by_key.get(key,{}).get('damage'),weapon_by_key.get(key,{}).get('damageType'),weapon_by_key.get(key,{}).get('cooldownTicks'),weapon_by_key.get(key,{}).get('rangeRatio'),weapon_by_key.get(key,{}).get('delivery'),weapon_by_key.get(key,{}).get('projectileSpeedRatio'),weapon_by_key.get(key,{}).get('priorityProfile'),weapon_by_key.get(key,{}).get('facingToleranceDegrees'),weapon_by_key.get(key,{}).get('maximumMovingFireSpeedBasisPoints')) for key in expected_weapons} == expected_weapons, 'canonical T042/T044 Rock Raider weapon/contact definitions missing or incorrect')
 profile_by_key={p.get('stableId'):p for p in content_source.get('movementProfiles',[])}
 check(profile_by_key.get('movement.prototype.crew',{}).get('speedRatio')==[135,100],'Crew M2 speed must match Phase 06 1.35')
 check(profile_by_key.get('movement.prototype.hover_scout',{}).get('speedRatio')==[225,100],'Hover Scout M2 speed must match Phase 06 2.25')

@@ -27,10 +27,13 @@ public partial class RtsInputController : Node
     private string _buildStatus = "Off";
     private uint _sequence = 1;
     private readonly Dictionary<uint, uint> _productionRoundRobin = new();
+    private DebugFocusKind _pendingDebugFocus;
+    private int _pendingDebugTick;
 
     public ControlGroups Groups => _groups;
     public bool BuildModeActive => _buildMode;
     public string BuildStatus => _buildStatus;
+    public string DebugTestStatus { get; private set; } = "No prepared playtest scene.";
 
     public void Configure(GodotSimBridge bridge, SelectionController selection, RtsCameraController camera)
     {
@@ -41,6 +44,7 @@ public partial class RtsInputController : Node
     public override void _Process(double delta)
     {
         if (_bridge is null || _selection is null || _camera is null) return;
+        ResolvePendingDebugFocus();
         double now = Time.GetTicksMsec() / 1000.0;
         if (_movePreviewMarkers.Count > 0 && PreviewGroupFinished()) ClearMovePreviews();
 
@@ -53,6 +57,9 @@ public partial class RtsInputController : Node
         if (Input.IsActionJustPressed("command_move") && _selection.Selected.Count > 0 && _camera.TryProjectToGround(GetViewport().GetMousePosition(), out Vector3 movePoint)) IssueMove(movePoint);
         if (Input.IsActionJustPressed("command_stop") && _selection.Selected.Count > 0 && !Input.IsKeyPressed(Key.Ctrl)) { IssueSimple(SimCommandType.Stop); ClearMovePreviews(); }
         if (Input.IsActionJustPressed("command_hold") && _selection.Selected.Count > 0) { IssueSimple(SimCommandType.HoldPosition); ClearMovePreviews(); }
+        if (Input.IsActionJustPressed("command_load") && _selection.Selected.Count > 0) IssueLoadSelected();
+        if (Input.IsActionJustPressed("command_unload") && _selection.Selected.Count > 0 && _camera.TryProjectToGround(GetViewport().GetMousePosition(), out Vector3 unloadPoint)) IssueUnload(unloadPoint);
+        if (Input.IsActionJustPressed("command_state_change") && _selection.Selected.Count > 0) IssueSimple(SimCommandType.StateChange);
         if (Input.IsActionJustPressed("debug_open_excavatable"))
             _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, _sequence++, SimCommandType.DebugOpenExcavatable, Array.Empty<EntityId>(), FixVec2.Zero, debugFeatureId: DevMapFactory.ExcavatableFeatureId));
 
@@ -70,7 +77,7 @@ public partial class RtsInputController : Node
                 if (now - _lastGroupTap[i] <= 0.35 && recalled.Count > 0)
                 {
                     FixVec2 sum = FixVec2.Zero; int count = 0;
-                    for (int e = 0; e < recalled.Count; e++) if (_bridge.World.Entities.Transform.TryGet(recalled[e], out SimTransform t)) { sum += t.Position; count++; }
+                    for (int e = 0; e < recalled.Count; e++) if (TryGetCameraPosition(recalled[e], out FixVec2 position)) { sum += position; count++; }
                     if (count > 0) _camera.CenterOn((sum / Fix32.FromInt(count)).ToWorld());
                 }
                 _lastGroupTap[i] = now;
@@ -95,9 +102,15 @@ public partial class RtsInputController : Node
         }
         if (@event is InputEventMouseButton mouse && mouse.Pressed && mouse.ButtonIndex == MouseButton.Right && _selection.Selected.Count > 0)
         {
+            EntityId enemy = _selection.FindVisibleEnemyAtScreen(mouse.Position);
+            EntityId damagedFriendly = _selection.FindDamagedFriendlyAtScreen(mouse.Position);
+            EntityId friendlyTransport = _selection.FindFriendlyTransportAtScreen(mouse.Position);
             EntityId constructionSite = _selection.FindConstructionSiteAtScreen(mouse.Position);
             EntityId resource = _selection.FindResourceAtScreen(mouse.Position);
-            if (HasSelectedProduction() && _camera.TryProjectToGround(mouse.Position, out Vector3 rallyPoint)) IssueRally(rallyPoint, resource);
+            if (enemy != EntityId.None) IssueAttack(enemy);
+            else if (damagedFriendly != EntityId.None && HasSelectedRepairer()) IssueRepair(damagedFriendly);
+            else if (friendlyTransport != EntityId.None && HasSelectedLoadablePassenger()) IssueLoad(friendlyTransport);
+            else if (HasSelectedProduction() && _camera.TryProjectToGround(mouse.Position, out Vector3 rallyPoint)) IssueRally(rallyPoint, resource);
             else if (constructionSite != EntityId.None) IssueAssistConstruction(constructionSite);
             else if (resource != EntityId.None) IssueHarvest(resource);
             else if (_camera.TryProjectToGround(mouse.Position, out Vector3 point)) IssueMove(point);
@@ -172,12 +185,349 @@ public partial class RtsInputController : Node
             Array.Empty<EntityId>(), FixVec2.Zero));
     }
 
+    public void DebugPrepareConstructionPlaytest()
+    {
+        if (_bridge is null) return;
+        SimTick execution = _bridge.World.Tick.Next();
+        _bridge.Enqueue(new CommandEnvelope(execution, 0, _sequence++, SimCommandType.DebugPrepareConstructionTest,
+            Array.Empty<EntityId>(), FixVec2.Zero));
+        _pendingDebugFocus = DebugFocusKind.Construction;
+        _pendingDebugTick = execution.Value;
+        DebugTestStatus = "Preparing construction bar test…";
+    }
+
+    public void DebugPrepareDestructionPlaytest()
+    {
+        if (_bridge is null) return;
+        SimTick execution = _bridge.World.Tick.Next();
+        _bridge.Enqueue(new CommandEnvelope(execution, 0, _sequence++, SimCommandType.DebugPrepareDestructionTest,
+            Array.Empty<EntityId>(), FixVec2.Zero));
+        _pendingDebugFocus = DebugFocusKind.Destruction;
+        _pendingDebugTick = execution.Value;
+        DebugTestStatus = "Preparing T045 arena…";
+    }
+
+    public void DebugPrepareRepairPlaytest()
+    {
+        if (_bridge is null) return;
+        SimTick execution = _bridge.World.Tick.Next();
+        _bridge.Enqueue(new CommandEnvelope(execution, 0, _sequence++, SimCommandType.DebugPrepareRepairTest,
+            Array.Empty<EntityId>(), FixVec2.Zero));
+        _pendingDebugFocus = DebugFocusKind.Repair;
+        _pendingDebugTick = execution.Value;
+        DebugTestStatus = "Preparing T046 repair arena…";
+    }
+
+    public void DebugPrepareTransportPlaytest()
+    {
+        if (_bridge is null) return;
+        SimTick execution = _bridge.World.Tick.Next();
+        _bridge.Enqueue(new CommandEnvelope(execution, 0, _sequence++, SimCommandType.DebugPrepareTransportTest,
+            Array.Empty<EntityId>(), FixVec2.Zero));
+        _pendingDebugFocus = DebugFocusKind.Transport;
+        _pendingDebugTick = execution.Value;
+        DebugTestStatus = "Preparing T047 transport arena…";
+    }
+
+    public void DebugDestroyPreparedTransport()
+    {
+        if (_bridge is null) return;
+        _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, _sequence++, SimCommandType.DebugDestroyPreparedTransport,
+            Array.Empty<EntityId>(), FixVec2.Zero));
+        DebugTestStatus = "Destroying prepared Rapid Rider; loaded Crew must emergency-deploy.";
+    }
+
+    public void DebugPrepareTransformationPlaytest()
+    {
+        if (_bridge is null) return;
+        SimTick execution = _bridge.World.Tick.Next();
+        _bridge.Enqueue(new CommandEnvelope(execution, 0, _sequence++, SimCommandType.DebugPrepareTransformationTest,
+            Array.Empty<EntityId>(), FixVec2.Zero));
+        _pendingDebugFocus = DebugFocusKind.Transformation;
+        _pendingDebugTick = execution.Value;
+        DebugTestStatus = "Preparing T048 MX-41 transformation arena…";
+    }
+
+    public void StateChangeSelected() => IssueSimple(SimCommandType.StateChange);
+    public void StopSelected() => IssueSimple(SimCommandType.Stop);
+
+    public void DebugMoveVisibleEnemies()
+    {
+        if (_bridge is null) return;
+        List<EntityId> enemies = new();
+        FixVec2 sum = FixVec2.Zero; FootprintClass largest = FootprintClass.Tiny;
+        IReadOnlyList<EntityId> alive = _bridge.World.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (!_bridge.World.Entities.Ownership.TryGet(id, out Ownership ownership) || ownership.PlayerSlot != 1 ||
+                !_bridge.World.Entities.Transform.TryGet(id, out SimTransform transform) ||
+                !_bridge.World.Entities.Navigation.TryGet(id, out NavigationAgent navigation) ||
+                !_bridge.World.Entities.Movement.Has(id) ||
+                (_bridge.World.Entities.Health.TryGet(id, out Health health) && health.IsDepleted) ||
+                !_bridge.World.Fog.IsVisible(0, transform.Position.X.FloorToInt(), transform.Position.Y.FloorToInt())) continue;
+            enemies.Add(id); sum += transform.Position;
+            if (navigation.Footprint > largest) largest = navigation.Footprint;
+        }
+        if (enemies.Count == 0) return;
+        FixVec2 center = sum / Fix32.FromInt(enemies.Count);
+        Fix32 verticalOffset = center.Y < Fix32.FromInt(MapGrid.BuildHeight - 8) ? Fix32.FromInt(6) : Fix32.FromInt(-6);
+        FixVec2 desired = new(center.X, center.Y + verticalOffset);
+        FixVec2 target = FormationPlanner.ResolvePassableSlot(_bridge.World, desired, largest);
+        _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 1, _sequence++, SimCommandType.Move, enemies.ToArray(), target));
+    }
+
+    public void DebugDestroyPreparedCrew() => DebugDestroyPrepared(DebugPlaytestScenario.CrewKey);
+    public void DebugDestroyPreparedChrome() => DebugDestroyPrepared(DebugPlaytestScenario.ChromeCrusherKey);
+    public void DebugDestroyPreparedBuilding() => DebugDestroyPrepared(DebugPlaytestScenario.DestructionBuildingKey);
+
+    private void DebugDestroyPrepared(string contentKey)
+    {
+        if (_bridge is null) return;
+        ContentId content = StableId.FromKey(contentKey);
+        EntityId target = EntityId.None;
+        IReadOnlyList<EntityId> alive = _bridge.World.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (!_bridge.World.Entities.Ownership.TryGet(id, out Ownership owner) || owner.PlayerSlot == 0 ||
+                !_bridge.World.Entities.Selectable.TryGet(id, out Selectable selectable) || selectable.ContentType != content ||
+                !_bridge.World.Entities.Health.TryGet(id, out Health health) || health.IsDepleted ||
+                !_bridge.World.Entities.Transform.TryGet(id, out SimTransform transform) ||
+                !_bridge.World.Fog.IsVisible(0, transform.Position.X.FloorToInt(), transform.Position.Y.FloorToInt())) continue;
+            target = id;
+        }
+        if (target == EntityId.None)
+        {
+            DebugTestStatus = $"No prepared {contentKey} target — press Prepare T045 arena.";
+            return;
+        }
+        _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, _sequence++, SimCommandType.DebugDestroyVisibleEnemy,
+            Array.Empty<EntityId>(), FixVec2.Zero, targetEntity: target));
+        DebugTestStatus = $"Destroying prepared {contentKey}.";
+    }
+
+    private void ResolvePendingDebugFocus()
+    {
+        if (_bridge is null || _selection is null || _camera is null || _pendingDebugFocus == DebugFocusKind.None ||
+            _bridge.World.Tick.Value < _pendingDebugTick) return;
+        if (_pendingDebugFocus == DebugFocusKind.Construction)
+        {
+            EntityId site = EntityId.None;
+            IReadOnlyList<EntityId> alive = _bridge.World.Entities.Alive;
+            for (int i = 0; i < alive.Count; i++)
+            {
+                EntityId id = alive[i];
+                if (_bridge.World.Entities.ConstructionSite.Has(id) &&
+                    _bridge.World.Entities.Ownership.TryGet(id, out Ownership owner) && owner.PlayerSlot == 0) site = id;
+            }
+            if (site != EntityId.None && _bridge.World.Entities.Transform.TryGet(site, out SimTransform transform))
+            {
+                _selection.SetSelection(new[] { site });
+                _camera.CenterOn(transform.Position.ToWorld());
+                DebugTestStatus = "READY: construction site selected; resources supplied; health bar must stay hidden.";
+                _pendingDebugFocus = DebugFocusKind.None;
+            }
+            return;
+        }
+
+        if (_pendingDebugFocus == DebugFocusKind.Repair)
+        {
+            EntityId hover = EntityId.None; ContentId hoverType = StableId.FromKey(DebugPlaytestScenario.HoverScoutKey);
+            IReadOnlyList<EntityId> repairEntities = _bridge.World.Entities.Alive;
+            for (int i = 0; i < repairEntities.Count; i++)
+            {
+                EntityId id = repairEntities[i];
+                if (_bridge.World.Entities.Selectable.TryGet(id, out Selectable selectable) && selectable.ContentType == hoverType &&
+                    _bridge.World.Entities.Ownership.TryGet(id, out Ownership owner) && owner.PlayerSlot == 0 &&
+                    _bridge.World.Entities.Health.TryGet(id, out Health health) && health.Current < health.Maximum) { hover = id; break; }
+            }
+            EntityId crew = FindClosestOwnedContent(StableId.FromKey(DebugPlaytestScenario.CrewKey), hover);
+            if (hover != EntityId.None && crew != EntityId.None && _bridge.World.Entities.Transform.TryGet(hover, out SimTransform hoverTransform))
+            {
+                _selection.SetSelection(new[] { crew }); _camera.CenterOn(hoverTransform.Position.ToWorld());
+                DebugTestStatus = "READY: Crew selected; RMB the damaged Hover Scout to repair it; resources supplied.";
+                _pendingDebugFocus = DebugFocusKind.None;
+            }
+            return;
+        }
+
+        if (_pendingDebugFocus == DebugFocusKind.Transport)
+        {
+            EntityId rider = EntityId.None; List<EntityId> crews = new();
+            IReadOnlyList<EntityId> transportEntities = _bridge.World.Entities.Alive;
+            for (int i = 0; i < transportEntities.Count; i++)
+            {
+                EntityId id = transportEntities[i];
+                if (!_bridge.World.Entities.Ownership.TryGet(id, out Ownership owner) || owner.PlayerSlot != 0) continue;
+                if (_bridge.World.Entities.Transport.Has(id) && _bridge.World.Entities.Transform.TryGet(id, out SimTransform riderTransform) &&
+                    FixVec2.Distance(riderTransform.Position, DebugPlaytestScenario.TransportArenaCenter) <= Fix32.FromInt(20)) rider = id;
+                if (_bridge.World.Entities.Passenger.TryGet(id, out Passenger passenger) && passenger.State == PassengerState.Grounded &&
+                    _bridge.World.Entities.Transform.TryGet(id, out SimTransform crewTransform) &&
+                    FixVec2.Distance(crewTransform.Position, DebugPlaytestScenario.TransportArenaCenter) <= Fix32.FromInt(20)) crews.Add(id);
+            }
+            crews.Sort(static (a, b) => a.Value.CompareTo(b.Value));
+            if (rider != EntityId.None && crews.Count >= 4 && _bridge.World.Entities.Transform.TryGet(rider, out SimTransform focusTransform))
+            {
+                _selection.SetSelection(crews.Take(4)); _camera.CenterOn(focusTransform.Position.ToWorld());
+                DebugTestStatus = "READY: four Crew selected; RMB Rapid Rider to load. Then select Rider, point at ground and press U. Re-prepare/load and use Kill loaded Rider for emergency deployment.";
+                _pendingDebugFocus = DebugFocusKind.None;
+            }
+            return;
+        }
+
+        if (_pendingDebugFocus == DebugFocusKind.Transformation)
+        {
+            ContentId mx41Type = StableId.FromKey(DebugPlaytestScenario.Mx41Key);
+            IReadOnlyList<EntityId> transformEntities = _bridge.World.Entities.Alive;
+            for (int i = 0; i < transformEntities.Count; i++)
+            {
+                EntityId id = transformEntities[i];
+                if (!_bridge.World.Entities.Selectable.TryGet(id, out Selectable selectable) || selectable.ContentType != mx41Type ||
+                    !_bridge.World.Entities.Ownership.TryGet(id, out Ownership owner) || owner.PlayerSlot != 0 ||
+                    !_bridge.World.Entities.Transformation.Has(id) || !_bridge.World.Entities.Transform.TryGet(id, out SimTransform transform)) continue;
+                _selection.SetSelection(new[] { id }); _camera.CenterOn(transform.Position.ToWorld());
+                DebugTestStatus = "READY: MX-41 selected in Ground mode. Press Q to transform; S before 40% cancels.";
+                _pendingDebugFocus = DebugFocusKind.None;
+                return;
+            }
+            return;
+        }
+
+        EntityId building = EntityId.None;
+        ContentId buildingType = StableId.FromKey(DebugPlaytestScenario.DestructionBuildingKey);
+        IReadOnlyList<EntityId> entities = _bridge.World.Entities.Alive;
+        for (int i = 0; i < entities.Count; i++)
+        {
+            EntityId id = entities[i];
+            if (_bridge.World.Entities.Selectable.TryGet(id, out Selectable selectable) && selectable.ContentType == buildingType &&
+                _bridge.World.Entities.Ownership.TryGet(id, out Ownership owner) && owner.PlayerSlot != 0 &&
+                _bridge.World.Entities.Building.Has(id)) building = id;
+        }
+        EntityId chrome = FindClosestOwnedContent(StableId.FromKey(DebugPlaytestScenario.ChromeCrusherKey), building);
+        if (building != EntityId.None && chrome != EntityId.None && _bridge.World.Entities.Transform.TryGet(building, out SimTransform buildingTransform))
+        {
+            _selection.SetSelection(new[] { chrome });
+            _camera.CenterOn(buildingTransform.Position.ToWorld());
+            DebugTestStatus = "READY: your Chrome selected; damaged Crew/Chrome and enemy building are in frame.";
+            _pendingDebugFocus = DebugFocusKind.None;
+        }
+    }
+
+    private EntityId FindClosestOwnedContent(ContentId content, EntityId reference)
+    {
+        if (_bridge is null) return EntityId.None;
+        FixVec2 referencePosition = reference != EntityId.None && _bridge.World.Entities.Transform.TryGet(reference, out SimTransform transform)
+            ? transform.Position : FixVec2.Zero;
+        EntityId best = EntityId.None;
+        Fix32 bestDistance = Fix32.MaxValue;
+        IReadOnlyList<EntityId> alive = _bridge.World.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (!_bridge.World.Entities.Selectable.TryGet(id, out Selectable selectable) || selectable.ContentType != content ||
+                !_bridge.World.Entities.Ownership.TryGet(id, out Ownership owner) || owner.PlayerSlot != 0 ||
+                !_bridge.World.Entities.Transform.TryGet(id, out SimTransform candidateTransform)) continue;
+            Fix32 distance = FixVec2.Distance(referencePosition, candidateTransform.Position);
+            if (best == EntityId.None || distance < bestDistance) { best = id; bestDistance = distance; }
+        }
+        return best;
+    }
+
     private bool PreferRoundRobin(ContentId unitType, EntityId candidate, EntityId current)
     {
         if (current == EntityId.None) return true;
         if (!_productionRoundRobin.TryGetValue(unitType.Value, out uint last)) return candidate.Value < current.Value;
         bool candidateAfter = candidate.Value > last, currentAfter = current.Value > last;
         return candidateAfter != currentAfter ? candidateAfter : candidate.Value < current.Value;
+    }
+
+    private enum DebugFocusKind : byte { None = 0, Construction = 1, Destruction = 2, Repair = 3, Transport = 4, Transformation = 5 }
+
+    private bool TryGetCameraPosition(EntityId id, out FixVec2 position)
+    {
+        if (_bridge is not null && _bridge.World.Entities.Transform.TryGet(id, out SimTransform transform)) { position = transform.Position; return true; }
+        if (_bridge is not null && _bridge.World.Entities.Passenger.TryGet(id, out Passenger passenger) && passenger.Transport != EntityId.None &&
+            _bridge.World.Entities.Transform.TryGet(passenger.Transport, out SimTransform carrierTransform)) { position = carrierTransform.Position; return true; }
+        position = default; return false;
+    }
+
+    private bool HasSelectedLoadablePassenger()
+    {
+        if (_bridge is null || _selection is null) return false;
+        for (int i = 0; i < _selection.Selected.Count; i++)
+            if (_bridge.World.Entities.Passenger.TryGet(_selection.Selected[i], out Passenger passenger) && passenger.State == PassengerState.Grounded) return true;
+        return false;
+    }
+
+    private void IssueLoad(EntityId transport)
+    {
+        if (_bridge is null || _selection is null) return;
+        List<EntityId> passengers = new();
+        for (int i = 0; i < _selection.Selected.Count; i++)
+            if (_bridge.World.Entities.Passenger.TryGet(_selection.Selected[i], out Passenger passenger) && passenger.State == PassengerState.Grounded)
+                passengers.Add(_selection.Selected[i]);
+        if (passengers.Count == 0) return;
+        CommandModifiers modifiers = Input.IsKeyPressed(Key.Shift) ? CommandModifiers.Queue : CommandModifiers.None;
+        _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, _sequence++, SimCommandType.Load,
+            passengers.ToArray(), FixVec2.Zero, modifiers, transport));
+        if (modifiers == CommandModifiers.None) ClearMovePreviews();
+    }
+
+    private void IssueLoadSelected()
+    {
+        if (_bridge is null || _selection is null) return;
+        List<EntityId> transports = new(); List<EntityId> passengers = new();
+        for (int i = 0; i < _selection.Selected.Count; i++)
+        {
+            EntityId id = _selection.Selected[i];
+            if (_bridge.World.Entities.Transport.Has(id)) transports.Add(id);
+            else if (_bridge.World.Entities.Passenger.TryGet(id, out Passenger passenger) && passenger.State == PassengerState.Grounded) passengers.Add(id);
+        }
+        transports.Sort(static (a, b) => a.Value.CompareTo(b.Value)); passengers.Sort(static (a, b) => a.Value.CompareTo(b.Value));
+        Dictionary<uint, int> available = new(); Dictionary<uint, List<EntityId>> assigned = new();
+        for (int i = 0; i < transports.Count; i++)
+        {
+            Transport transport = _bridge.World.Entities.Transport.Get(transports[i]);
+            available[transports[i].Value] = transport.CapacityPoints - transport.OccupiedPoints;
+            assigned[transports[i].Value] = new List<EntityId>();
+        }
+        for (int p = 0; p < passengers.Count; p++)
+        {
+            Passenger passenger = _bridge.World.Entities.Passenger.Get(passengers[p]);
+            if (!TryGetCameraPosition(passengers[p], out FixVec2 passengerPosition)) continue;
+            EntityId best = EntityId.None; Fix32 bestDistance = Fix32.MaxValue;
+            for (int i = 0; i < transports.Count; i++)
+            {
+                EntityId candidate = transports[i];
+                if (available[candidate.Value] < passenger.SizePoints || !TryGetCameraPosition(candidate, out FixVec2 carrierPosition)) continue;
+                Fix32 distance = FixVec2.Distance(passengerPosition, carrierPosition);
+                if (best == EntityId.None || distance < bestDistance || (distance == bestDistance && candidate.Value < best.Value))
+                { best = candidate; bestDistance = distance; }
+            }
+            if (best == EntityId.None) continue;
+            assigned[best.Value].Add(passengers[p]); available[best.Value] -= passenger.SizePoints;
+        }
+        for (int i = 0; i < transports.Count; i++)
+        {
+            List<EntityId> load = assigned[transports[i].Value];
+            if (load.Count > 0)
+                _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, _sequence++, SimCommandType.Load,
+                    load.ToArray(), FixVec2.Zero, targetEntity: transports[i]));
+        }
+    }
+
+    private void IssueUnload(Vector3 worldPoint)
+    {
+        if (_bridge is null || _selection is null) return;
+        List<EntityId> transports = new();
+        for (int i = 0; i < _selection.Selected.Count; i++)
+            if (_bridge.World.Entities.Transport.TryGet(_selection.Selected[i], out Transport transport) && transport.PassengerCount > 0)
+                transports.Add(_selection.Selected[i]);
+        if (transports.Count == 0) return;
+        _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, _sequence++, SimCommandType.Unload,
+            transports.ToArray(), worldPoint.ToFixedBuild()));
+        ClearMovePreviews();
     }
 
     private bool HasSelectedProduction()
@@ -228,6 +578,45 @@ public partial class RtsInputController : Node
         if (workers.Count == 0) return;
         CommandModifiers modifiers = Input.IsKeyPressed(Key.Shift) ? CommandModifiers.Queue : CommandModifiers.None;
         _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, _sequence++, SimCommandType.Harvest, workers.ToArray(), FixVec2.Zero, modifiers, resource));
+        if (modifiers == CommandModifiers.None) ClearMovePreviews();
+    }
+
+    private void IssueAttack(EntityId target)
+    {
+        if (_bridge is null || _selection is null) return;
+        List<EntityId> attackers = new(_selection.Selected.Count);
+        for (int i = 0; i < _selection.Selected.Count; i++)
+        {
+            EntityId id = _selection.Selected[i];
+            if (TargetingSystem.IsLegalTarget(_bridge.World, id, target, requireVisible: true)) attackers.Add(id);
+        }
+        if (attackers.Count == 0) return;
+        CommandModifiers modifiers = Input.IsKeyPressed(Key.Shift) ? CommandModifiers.Queue : CommandModifiers.None;
+        _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, _sequence++, SimCommandType.Attack,
+            attackers.ToArray(), FixVec2.Zero, modifiers, target));
+        if (modifiers == CommandModifiers.None) ClearMovePreviews();
+    }
+
+    private bool HasSelectedRepairer()
+    {
+        if (_bridge is null || _selection is null) return false;
+        for (int i = 0; i < _selection.Selected.Count; i++) if (_bridge.World.Entities.Builder.Has(_selection.Selected[i])) return true;
+        return false;
+    }
+
+    private void IssueRepair(EntityId target)
+    {
+        if (_bridge is null || _selection is null) return;
+        List<EntityId> repairers = new();
+        for (int i = 0; i < _selection.Selected.Count; i++)
+        {
+            EntityId id = _selection.Selected[i];
+            if (id != target && _bridge.World.Entities.Builder.Has(id)) repairers.Add(id);
+        }
+        if (repairers.Count == 0) return;
+        CommandModifiers modifiers = Input.IsKeyPressed(Key.Shift) ? CommandModifiers.Queue : CommandModifiers.None;
+        _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, _sequence++, SimCommandType.Repair,
+            repairers.ToArray(), FixVec2.Zero, modifiers, target));
         if (modifiers == CommandModifiers.None) ClearMovePreviews();
     }
 

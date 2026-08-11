@@ -27,7 +27,7 @@ public sealed class ControlGroups
     public IReadOnlyList<EntityId> Recall(int index, SimulationWorld world)
     {
         List<EntityId> group = _groups[index];
-        for (int i = group.Count - 1; i >= 0; i--) if (!world.Entities.Exists(group[i])) group.RemoveAt(i);
+        for (int i = group.Count - 1; i >= 0; i--) if (!world.Entities.Selectable.Has(group[i])) group.RemoveAt(i);
         return group;
     }
 

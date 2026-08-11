@@ -50,7 +50,63 @@ public partial class SelectionController : Node
             Vector3 world = entity.Position.ToWorld(0.5f);
             if (_camera.IsPositionBehind(world)) continue;
             Vector2 projected = _camera.UnprojectPosition(world);
-            float radius = Mathf.Max(28f, Mathf.Max(entity.BuildingWidth, entity.BuildingHeight) * 4f);
+            float radius = EntityPickRadius(entity, projected);
+            float normalized = (projected - screen).LengthSquared() / (radius * radius);
+            if (normalized < bestNormalized) { bestNormalized = normalized; best = entity.EntityId; }
+        }
+        return best;
+    }
+
+    public EntityId FindVisibleEnemyAtScreen(Vector2 screen)
+    {
+        if (_bridge?.Current is null || _camera is null) return EntityId.None;
+        EntityId best = EntityId.None;
+        float bestNormalized = 1f;
+        for (int i = 0; i < _bridge.Current.Entities.Count; i++)
+        {
+            PresentationEntity entity = _bridge.Current.Entities[i];
+            if (entity.IsDestroyed || entity.Owner == 0 || entity.Owner == byte.MaxValue) continue;
+            Vector3 world = entity.Position.ToWorld(0.5f);
+            if (_camera.IsPositionBehind(world)) continue;
+            Vector2 projected = _camera.UnprojectPosition(world);
+            float radius = EntityPickRadius(entity, projected);
+            float normalized = (projected - screen).LengthSquared() / (radius * radius);
+            if (normalized < bestNormalized) { bestNormalized = normalized; best = entity.EntityId; }
+        }
+        return best;
+    }
+
+    public EntityId FindDamagedFriendlyAtScreen(Vector2 screen)
+    {
+        if (_bridge?.Current is null || _camera is null) return EntityId.None;
+        EntityId best = EntityId.None; float bestNormalized = 1f;
+        for (int i = 0; i < _bridge.Current.Entities.Count; i++)
+        {
+            PresentationEntity entity = _bridge.Current.Entities[i];
+            if (entity.IsDestroyed || entity.Owner != 0 || !entity.HasHealth ||
+                entity.CurrentHitPointsRaw <= 0 || entity.CurrentHitPointsRaw >= entity.MaximumHitPointsRaw) continue;
+            Vector3 world = entity.Position.ToWorld(0.5f);
+            if (_camera.IsPositionBehind(world)) continue;
+            Vector2 projected = _camera.UnprojectPosition(world);
+            float radius = EntityPickRadius(entity, projected);
+            float normalized = (projected - screen).LengthSquared() / (radius * radius);
+            if (normalized < bestNormalized) { bestNormalized = normalized; best = entity.EntityId; }
+        }
+        return best;
+    }
+
+    public EntityId FindFriendlyTransportAtScreen(Vector2 screen)
+    {
+        if (_bridge?.Current is null || _camera is null) return EntityId.None;
+        EntityId best = EntityId.None; float bestNormalized = 1f;
+        for (int i = 0; i < _bridge.Current.Entities.Count; i++)
+        {
+            PresentationEntity entity = _bridge.Current.Entities[i];
+            if (entity.IsDestroyed || entity.Owner != 0 || !entity.IsTransport) continue;
+            Vector3 world = entity.Position.ToWorld(0.5f);
+            if (_camera.IsPositionBehind(world)) continue;
+            Vector2 projected = _camera.UnprojectPosition(world);
+            float radius = EntityPickRadius(entity, projected);
             float normalized = (projected - screen).LengthSquared() / (radius * radius);
             if (normalized < bestNormalized) { bestNormalized = normalized; best = entity.EntityId; }
         }
@@ -72,6 +128,8 @@ public partial class SelectionController : Node
     public override void _Process(double delta)
     {
         if (_bridge is null || _camera is null) return;
+        for (int i = _selected.Count - 1; i >= 0; i--)
+            if (!_bridge.World.Entities.Selectable.Has(_selected[i])) _selected.RemoveAt(i);
         Vector2 pointer = GetViewport().GetMousePosition();
         Hovered = FindClosest(pointer);
         bool down = Input.IsMouseButtonPressed(MouseButton.Left);
@@ -106,7 +164,7 @@ public partial class SelectionController : Node
         _selected.Clear();
         LastFilteredWorkerCount = 0;
         foreach (EntityId id in ids)
-            if (_selected.Count < 128 && _bridge.World.Entities.Exists(id)) _selected.Add(id);
+            if (_selected.Count < 128 && _bridge.World.Entities.Selectable.Has(id)) _selected.Add(id);
         _selected.Sort(static (a, b) => a.Value.CompareTo(b.Value));
     }
 
@@ -118,11 +176,11 @@ public partial class SelectionController : Node
         for (int i = 0; i < _bridge.Current.Entities.Count; i++)
         {
             PresentationEntity e = _bridge.Current.Entities[i];
-            if (e.Owner != 0) continue;
+            if (e.IsDestroyed || e.Owner != 0) continue;
             Vector3 world = e.Position.ToWorld(0.5f);
             if (_camera.IsPositionBehind(world)) continue;
             Vector2 sp = _camera.UnprojectPosition(world);
-            float radius = EntityPickRadius(e);
+            float radius = EntityPickRadius(e, sp);
             float normalized = (sp - screen).LengthSquared() / (radius * radius);
             if (normalized < bestNormalized) { bestNormalized = normalized; best = e.EntityId; }
         }
@@ -143,7 +201,7 @@ public partial class SelectionController : Node
             for (int i = 0; i < _bridge.Current.Entities.Count; i++)
             {
                 PresentationEntity e = _bridge.Current.Entities[i];
-                if (e.Owner == 0 && e.ContentType == type) Apply(e.EntityId, subtract, false);
+                if (!e.IsDestroyed && e.Owner == 0 && e.ContentType == type) Apply(e.EntityId, subtract, false);
             }
         }
         else
@@ -164,7 +222,7 @@ public partial class SelectionController : Node
         for (int i = 0; i < _bridge.Current.Entities.Count; i++)
         {
             PresentationEntity e = _bridge.Current.Entities[i];
-            if (e.Owner != 0 || e.SelectableKind == SelectableKind.Building) continue;
+            if (e.IsDestroyed || e.Owner != 0 || e.SelectableKind == SelectableKind.Building) continue;
             Vector3 world = e.Position.ToWorld(0.5f);
             if (_camera.IsPositionBehind(world)) continue;
             Vector2 screen = _camera.UnprojectPosition(world);
@@ -198,10 +256,22 @@ public partial class SelectionController : Node
         _ => 22f
     };
 
-    private static float EntityPickRadius(PresentationEntity entity)
-        => entity.SelectableKind == SelectableKind.Building
-            ? Mathf.Max(28f, Mathf.Max(entity.BuildingWidth, entity.BuildingHeight) * 4f)
-            : ScreenPickRadius(entity.Footprint);
+    private float EntityPickRadius(PresentationEntity entity, Vector2 projectedCenter)
+    {
+        if (entity.SelectableKind != SelectableKind.Building || _camera is null) return ScreenPickRadius(entity.Footprint);
+        Vector3 center = entity.Position.ToWorld(0.5f);
+        float halfX = entity.BuildingWidth * GodotConversions.WorldUnitsPerBuildCell * 0.5f;
+        float halfZ = entity.BuildingHeight * GodotConversions.WorldUnitsPerBuildCell * 0.5f;
+        float radius = 28f;
+        for (int z = -1; z <= 1; z += 2)
+        for (int x = -1; x <= 1; x += 2)
+        {
+            Vector3 corner = center + new Vector3(halfX * x, 0f, halfZ * z);
+            if (_camera.IsPositionBehind(corner)) continue;
+            radius = Mathf.Max(radius, (_camera.UnprojectPosition(corner) - projectedCenter).Length() + 16f);
+        }
+        return radius;
+    }
 
     private void Apply(EntityId id, bool subtract, bool toggle)
     {

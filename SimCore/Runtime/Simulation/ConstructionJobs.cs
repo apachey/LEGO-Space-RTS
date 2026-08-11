@@ -14,6 +14,7 @@ public sealed class ConstructionSystem : ISimSystem
         {
             EntityId builderId = alive[i];
             if (!world.Entities.Builder.TryGet(builderId, out Builder builder) || builder.JobState == BuilderJobState.Idle) continue;
+            if (builder.JobState == BuilderJobState.MovingToRepair || builder.JobState == BuilderJobState.Repairing) continue;
             if (!world.Entities.ConstructionSite.Has(builder.ConstructionTarget) ||
                 !world.Entities.Building.TryGet(builder.ConstructionTarget, out Building building) ||
                 !world.Entities.Transform.TryGet(builderId, out SimTransform builderTransform))
@@ -67,6 +68,8 @@ public sealed class ConstructionSystem : ISimSystem
         EntityId oldTarget = builder.ConstructionTarget;
         ref Builder stored = ref world.Entities.Builder.Get(builderId);
         stored.ConstructionTarget = EntityId.None;
+        stored.RepairTarget = EntityId.None;
+        stored.RepairOreRemainder = Fix32.Zero;
         stored.JobState = BuilderJobState.Idle;
         if (oldTarget != EntityId.None) RecomputePrimaryBuilder(world, oldTarget, builderId);
 

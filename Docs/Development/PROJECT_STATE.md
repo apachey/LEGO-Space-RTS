@@ -5,12 +5,25 @@ remain authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M3 — Economy & Base Building / deterministic Ore loop in progress.**
+**M4 — Combat complete; T049 starts M5 in a separate development task.**
 
-The revised M2 automated gates pass and PR #8 is merged. Human movement-feel
-acceptance is also complete: the remaining settling jitter is minimal and some
-movement actions can still read oddly, but the game director accepted both as
-non-blocking polish rather than further M2 work.
+The accepted M3 T030-T039 economy/base-building stack is merged through PR #10.
+M4 T040 Targeting, T041 Weapons, T042 Projectiles and T044 Contact weapons are
+fully automated-verified and human-accepted. T043 Damage / Armor and T045
+Destruction are implemented on the current stacked branches. Successive T045
+playtests exposed handoff, interaction, projectile-feedback and collision-rule
+defects. Those defects are corrected and the game director explicitly directed
+development to continue into T046 while the combined human retest remains due.
+T046 Crew field repair is now implemented and automated-green on the current
+stacked branch. The game director accepted the combined prepared T045-T046
+human test on 2026-08-11 and accepted T047 Rapid Rider loading, unloading and
+transport-destruction behavior on 2026-08-11. T048 MX-41 transformation is
+implemented and automated-green on the current stacked branch. The game
+director accepted its prepared Ground/Flight interaction on 2026-08-11 and
+requested a smooth visual return for pre-40% cancellation; that follow-up is
+implemented, visual-smoke protected and human-accepted on 2026-08-11. M4 is
+complete. Per game-director instruction, M5/T049 will begin in a separate
+development task.
 
 ## Engine / architecture
 
@@ -285,6 +298,358 @@ narrow placement cases allowed by Phase 09B.
   beyond its intended bounds; the stable-width change did not fix that height
   defect. It is explicitly accepted as non-blocking UI polish and must not be
   reported as fixed.
+- M4 T040 Targeting is implemented on the current task branch. Canonical target
+  class, ground/true-air layer and role flags are compiled for the first-playable
+  Rock Raider roster and buildings. Armed entities select only visible hostile
+  legal targets through the existing deterministic spatial index, with
+  role-profile ranking followed by distance and Entity ID ties.
+- Direct Attack is an authoritative queueable command and overrides automatic
+  priority while legal. Hidden, friendly and wrong-layer targets are rejected;
+  loss of legal visibility clears the direct target without exact through-fog
+  tracking. Stop/Move ordinary intent clears the current combat target.
+- Player-facing right-click on a visible enemy issues Attack only to compatible
+  selected units. An orange-red world ring identifies the current target of the
+  selected group; a wholly unarmed selection is not converted into a charge.
+- Snapshot v11 / simulation protocol v9, replay v6 and prototype content v10
+  preserve targeting state, queued Attack intent and canonical target metadata
+  while retaining existing legacy readers. T041 builds weapon cooldown/firing
+  on that target authority; later combat tasks own projectiles, damage and
+  destruction.
+- The T040 full verification acceptance candidate is green across every
+  `BLOCKING_NOW` stage: builds, 131 NUnit tests, the representative 24-mover
+  movement gate, compiled content, HeadlessSim, Godot smoke, 100-repeat
+  determinism, replay, snapshot continuation, regeneration and macOS export.
+- A launchable T040 debug build was produced at
+  `Builds/macOS/LEGO Space RTS.app` and passed the export smoke launch.
+- M4 T041 Weapons is implemented on the current stacked task branch. Four
+  canonical Rock Raider weapon definitions cover Crew Portable Mining Tool,
+  Hover Scout Survey Pulse, Loader Dozer Scoop Ram and Chrome Crusher Chrome
+  Drill. Rapid Rider remains an unarmed transport.
+- Weapon readiness executes immediately after targeting in the authoritative
+  20 Hz pipeline. A ready weapon fires only at a visible legal target inside its
+  exact range with clear combat LoS, records a monotonic firing revision and
+  begins its exact canonical 24 / 30 / 27 / 32-tick cooldown. Cooldown advances
+  without a target; a ready weapon waits without losing readiness when range or
+  LoS is invalid.
+- Godot receives only the authoritative firing revision/target and presents a
+  short amber muzzle flash. Presentation timing cannot authorize a shot or
+  alter cooldown. HP damage, armor resolution and contact approach/facing rules
+  remain intentionally absent until T043-T044.
+- Snapshot v12 / simulation protocol v10 and prototype content v11 preserve
+  weapon profile, readiness, firing sequence and last firing event while
+  retaining supported legacy readers. Replay remains v6 because T041 adds no
+  command encoding.
+- The built-in headless content mirror now uses the compiler's canonical stable
+  key ordering, so built-in and tracked compiled startup report the same
+  gameplay-content hash for identical definitions.
+- The T041 full verification acceptance candidate is green across every
+  `BLOCKING_NOW` stage: builds, 138 NUnit tests, the representative 24-mover
+  movement gate, compiled content, HeadlessSim, Godot smoke, 100-repeat
+  determinism, replay, snapshot continuation, regeneration and macOS export.
+- A launchable T041 debug build was produced at
+  `Builds/macOS/LEGO Space RTS.app` and passed the export smoke launch.
+- M4 T042 Projectiles is implemented on the current stacked task branch. The
+  canonical Hover Scout Survey Pulse launches an authoritative compact
+  projectile record at 12 cells/s; Contact weapons do not create projectile
+  records and remain T044 scope.
+- Projectile creation and movement execute after weapon firing in stable
+  Projectile-ID order at authoritative 20 Hz. Ordinary shots commit the impact
+  position at launch, ignore unrelated units and continue to that position if
+  the original target is destroyed. They never retarget.
+- Every launched shot remains independent. Simultaneous arrivals emit ordered
+  impact records without an attacker cap, preserving genuine overkill for the
+  T043 damage/armor resolver. T042 does not reduce HP or destroy entities.
+- Snapshot v13 / simulation protocol v11 and prototype content v12 preserve
+  projectile speed metadata, monotonic IDs, in-flight state and same-tick impact
+  output while retaining supported legacy readers. Replay remains v6 because
+  T042 adds no command encoding.
+- Godot presents visible authoritative projectiles as small interpolated amber
+  pulses. Visual objects are presentation-only and cannot collide, redirect or
+  authorize impact.
+- The T042 full verification acceptance candidate is green across every
+  `BLOCKING_NOW` stage: builds, 143 NUnit tests, the representative 24-mover
+  movement gate, compiled content, HeadlessSim, Godot smoke, 100-repeat
+  determinism, replay, snapshot continuation, regeneration and macOS export.
+- A launchable T042 debug build was produced at
+  `Builds/macOS/LEGO Space RTS.app` and passed the export smoke launch.
+- Human T040-T042 playtest acceptance is complete as of 2026-08-11. The game
+  director confirmed automatic target acquisition, direct right-click target
+  override, readable target-ring feedback, visible firing feedback and visible
+  Survey Pulse travel. The current muzzle flash and projectile are accepted as
+  prototype placeholders rather than final combat VFX.
+- The same playtest confirmed that Direct Attack currently locks an out-of-range
+  target without approaching it. This is an acknowledged missing combat-chase
+  behavior, not a T040-T042 regression; the canonical 12-cell pursuit leash must
+  be implemented in later M4 combat work before the loop is complete.
+- M4 T043 Damage / Armor is implemented on the current stacked task branch.
+  Every first-playable Rock Raider unit and building now spawns with its exact
+  canonical HP, target class and Armor Rating. Authoritative health uses Fix32,
+  preserving fractional matrix/armor results between hits rather than silently
+  rounding balance values per shot.
+- A delivery-independent SimCore resolver applies the complete six-by-seven
+  Phase 06 damage-type matrix, then the canonical A0-A5 multiplier, clamps HP at
+  zero and enforces the one-damage armor floor. Projectile impacts feed this
+  resolver in stable Projectile-ID order; targets at zero HP are no longer legal
+  targets and cannot fire. T045 still owns removal, wrecks and collision timers.
+- Snapshot v14 / simulation protocol v12 and prototype content v13 preserve HP,
+  Armor Rating, fractional current health and last-damage tick while retaining
+  supported legacy readers. Replay remains v6 because T043 adds no command
+  encoding.
+- Godot displays exact HP / maximum HP, Armor Rating, target class and canonical
+  healthy/damaged/heavily-damaged state in the selection panel. Contextual
+  world-space health bars appear for selected, targeted or damaged visible
+  entities; their state is presentation-only.
+- The T043 full verification acceptance candidate is green across every
+  `BLOCKING_NOW` stage: builds, 157 NUnit tests, the representative 24-mover
+  movement gate, compiled content, HeadlessSim, Godot smoke, 100-repeat
+  determinism, replay, snapshot continuation, regeneration and macOS export.
+  Verification summary: `Artifacts/Verification/20260810T232508Z-full-summary.txt`.
+- A launchable T043 debug build was produced at
+  `Builds/macOS/LEGO Space RTS.app` and passed the export smoke launch.
+- M4 T044 Contact weapons are implemented on the current stacked task branch.
+  Contact distance is footprint-aware for units and rectangular structures.
+  Attackers reserve distinct legal positions from a deterministic sixteen-point
+  engagement ring, retain those reservations while the target moves and choose
+  passable alternatives in stable Entity-ID order.
+- Contact readiness now enforces canonical facing: ±30° for the Chrome Crusher
+  drill and ±45° for the Crew tool and Loader scoop. An attacker may maintain
+  engagement at at most 35% of maximum speed; full-speed drive-through contact
+  cannot deal damage. Neither participant is locked, so retreat, reversal and
+  displacement remain ordinary deterministic movement.
+- Contact firing applies immediate delivery through the same canonical
+  class/Armor resolver as projectile impacts. Direct attacks with projectile
+  weapons now move into range rather than only selecting the target. All direct
+  pursuit is bounded by the canonical twelve-cell leash from its recorded
+  start, after which an unreachable target is released.
+- Snapshot v15 / simulation protocol v13 and prototype content v14 preserve
+  pursuit origin, contact-slot reservation, combat-move state, facing tolerance
+  and moving-fire limit while retaining supported legacy readers. Replay remains
+  v6 because T044 adds no command encoding.
+- The T044 full verification candidate is green across every `BLOCKING_NOW`
+  stage: builds, 162 NUnit tests, the representative 24-mover movement gate,
+  compiled content, HeadlessSim, Godot smoke, 100-repeat determinism, replay,
+  snapshot continuation, regeneration and macOS export. Verification summary:
+  `Artifacts/Verification/20260811T070232Z-full-summary.txt`.
+- A launchable T044 debug build was produced at
+  `Builds/macOS/LEGO Space RTS.app` and passed the export smoke launch.
+- The first T044 human playtest found three follow-up defects: world health bars
+  inherited unit rotation/scale and could render with confusing overlap;
+  Contact weapons reused the projectile-style spherical muzzle flash; and a
+  Hover Scout could acquire a follow-up target outside firing range without
+  beginning pursuit. These root causes are fixed on the current branch.
+- Health bars are now independent camera-facing unshaded quads with explicit
+  background/fill render order. Their fill changes mesh geometry around a fixed
+  billboard origin, so damage cannot move it away from its background. Health
+  materials are isolated from the non-billboard construction-progress
+  materials after the shared-material follow-up caused a playtest regression.
+  Godot smoke cycles health fill through 75%, 55% and 25%, checks containment
+  at each step and verifies a seeded construction bar independently. The
+  construction bar now remains at a fixed 1.75-world-unit height while the site
+  grows; smoke verifies the invariant at early, middle and complete heights.
+- Projectile weapons retain the compact muzzle flash, while Contact weapons
+  show a short forward impact plate and continue to create no projectile.
+  Invalid direct targets now fall back to automatic acquisition in the same
+  targeting pass, and an idle ranged unit pursues its automatic follow-up
+  target under the existing deterministic chase rules.
+- The hidden F8 developer panel now includes `Move visible enemies`, which
+  issues an ordinary deterministic player-1 Move command for reproducible
+  moving-target feel review without changing normal match behavior. The
+  latest follow-up fast and full verification are green with 165 NUnit tests,
+  real Godot visual/runtime smoke, deterministic replay/snapshot continuation
+  and macOS export. Full summary:
+  `Artifacts/Verification/20260811T085345Z-full-summary.txt`; the final fixed-
+  height bar fast verification is
+  `Artifacts/Verification/20260811T090944Z-fast-summary.txt`. Human T044
+  acceptance is complete as of 2026-08-11.
+- M4 T045 Destruction is implemented on the current stacked task branch. A
+  zero-HP unit or structure loses commands, selection, targeting, weapons,
+  vision and economic/energy function in the same authoritative tick. Builder
+  assignments and entity-local command/navigation state are released rather
+  than surviving into the wreck state; Operations Capacity and energy domains
+  recalculate immediately.
+- Per the game director's two explicit 2026-08-11 canon changes, every unit and
+  structure removes movement/navigation collision in the same authoritative
+  tick that it reaches 0 HP. Standard unit debris remains nonblocking until 8
+  seconds total and Huge/Massive debris until 12 seconds total. Structure
+  collapse/rubble remains persistent cosmetic presentation but its authored
+  footprint is immediately pathable. Cosmetic debris never restores gameplay
+  identity or collision.
+- Snapshot v16 / simulation protocol v14 preserve mid-collapse owner/content,
+  footprint, building anchor and authoritative timer state while retaining the
+  supported v2-v15 readers. Replay remains v6 because the deterministic F8
+  destruction helper reuses the existing command envelope encoding.
+- The first T045 human handoff exposed that the playable canonical opening has
+  only Crew while the engineering scenario used by earlier tests already had a
+  Chrome Crusher. It also required the game director to gather resources and
+  find/reveal a building, and a selected construction site incorrectly showed a
+  health bar above its progress bar. That handoff is rejected and superseded.
+- The F8 panel now provides two complete deterministic fixtures. `Prepare
+  construction test` supplies 5,000 Ore, starts and selects a progressing site
+  and centers the camera. `Prepare T045 arena` creates/selects the player's
+  Chrome Crusher and frames an explicitly damaged enemy Crew, enemy Chrome and
+  destructible building. Exact `Kill test Crew`, `Kill test Chrome` and `Kill
+  test building` actions replace the ambiguous first-visible-target controls.
+- Construction sites now suppress their world health bar entirely while the
+  independent fixed-height progress bar is active. Godot smoke asserts both
+  states simultaneously. Placeholder wrecks no longer progressively squash or
+  “melt”; units and structures transition immediately to flattened nonblocking
+  debris.
+- The second T045 handoff exposed that large-building clicks covered only a
+  small center radius, so right-clicking the visible footprint became an
+  invalid Move command; ranged pursuit also measured to the occluded building
+  center, and contact approach slots omitted pathfinder clearance. Building
+  picking now covers the projected footprint, ranged attacks use the nearest
+  structure edge/aim point, and contact slots include deterministic navigation
+  clearance. The prepared arena places every mobile unit on a passable external
+  slot. `Chrome Crusher` now has its human-readable HUD name.
+- The third T045 handoff reported that visible Hover Scout projectiles appeared
+  not to reduce HP. Authoritative damage was present, but the prepared building
+  used 180 current HP against its canonical 1,350 maximum, making each 3.84 HP
+  Survey Pulse change less than 0.3% of the world bar. The debug-only target now
+  uses a visible 48/48 test health pool without changing normal content balance.
+  NUnit asserts actual HP loss, and Godot smoke now issues a real Scout attack
+  and requires the target's authoritative HP to decrease.
+- `AGENTS.md` now contains a mandatory manual-playtest handoff gate: future
+  player-facing work cannot be called ready until the exact exported opening is
+  provided with all entities/resources/visibility, camera and selection setup,
+  and the prepared path has been exercised from a fresh launch.
+- The T045 full automated acceptance candidate is green across every
+  `BLOCKING_NOW` stage: builds, 175 NUnit tests, the representative 24-mover
+  movement gate, compiled content, Godot destruction smoke, 100-repeat
+  determinism, replay, mid-wreck snapshot continuation, regeneration and macOS
+  export. Verification summary:
+  `Artifacts/Verification/20260811T113552Z-full-summary.txt`. The legacy 60-mover
+  stress remains the same M2-M5 diagnostic failure and does not block T045.
+- A launchable T045 debug build was produced at
+  `Builds/macOS/LEGO Space RTS.app` and passed the export smoke launch. Both
+  prepared paths were then exercised from fresh launches of that exported app;
+  captures include `Artifacts/Screenshots/t045-exported-construction-test.png`
+  and the current damage/collision handoff at
+  `Artifacts/Screenshots/t045-scout-damage-and-instant-rubble.png`.
+  T045 is automated-green; its human interaction/readability retest may be
+  exercised together with the next prepared T046 build.
+- M4 T046 now provides the explicit, queueable deterministic `Repair` command.
+  Right-clicking a damaged friendly with selected Crew makes eligible Crew stop
+  combat/work, approach the target and repair at the canonical 7 HP/s. A Crew
+  damaged during the previous second pauses; targets damaged during the
+  previous two seconds receive the canonical 60% rate. Stable Entity-ID order
+  enforces at most three repairers with 100% / 70% / 40% coefficients.
+- Field repair consumes 1.35× dedicated-service economics, proportional to HP:
+  units use 28% original Ore + 10% original Energy for full restoration and
+  structures use 30% + 15%. Fractional deterministic Ore accounting prevents
+  free restoration while Energy is charged as Fix32. Repair pauses when either
+  resource is unavailable and never restores a zero-HP destroyed entity.
+- Snapshot v17 / simulation protocol v15 preserve repair target, job state and
+  fractional Ore remainder while retaining v2-v16 readers. Replay remains v6
+  because Repair uses the existing command envelope layout.
+- `Prepare T046 repair` supplies 500 Ore and Energy, places a 40/120 HP Hover
+  Scout beside selected Crew and centers the camera. RMB begins repair. The HUD
+  reports `Repair ACTIVE`, and a temporary cyan service effect gives visible
+  feedback. Godot visual smoke confirms actual HP restoration, Ore/Energy
+  expenditure and the visible effect. Capture:
+  `Artifacts/Screenshots/t046-exported-prepared-field-repair.png`.
+- All 180 NUnit tests and every `BLOCKING_NOW` full-verification stage pass,
+  including deterministic ×100, replay, active-repair snapshot continuation,
+  Godot smoke and macOS export. Summary:
+  `Artifacts/Verification/20260811T115613Z-full-summary.txt`. The legacy
+  60-mover diagnostic remains unchanged and nonblocking through M5.
+- Worksite 10 HP/s membership, 4 HP/s passive maintenance and Vehicle Service
+  Bay 28 HP/s service queues remain correctly tied to the later T049/T051
+  Worksite/service-region dependencies; T046 does not invent those regions
+  early.
+- The game director accepted the combined prepared T045 destruction/collision
+  and T046 Crew field-repair playtest on 2026-08-11. No remaining blocker was
+  reported for either task.
+- M4 T047 adds authoritative `Load` and `Unload` commands plus `Passenger` and
+  `Transport` state. Rapid Rider accepts exactly four Personnel points. Crew
+  physically approach and remain in range through the canonical 1.5-second
+  docking settle and 0.75-second per-Crew loading time. Direct damage to the
+  Rider or active Crew pauses loading for 0.75 seconds.
+- Loaded Crew retain Entity ID, health, selection/control-group identity and
+  Operations Capacity, but leave ground transforms/spatial queries and cannot
+  be individually targeted. Control-group camera recall resolves their center
+  to the current Rapid Rider position. Normal unload uses the canonical
+  1-second settle and 0.5-second per Crew, finds deterministic legal ground and
+  prevents overlap with the carrier, other units and earlier passengers.
+- Rapid Rider destruction never randomly deletes cargo. Every loaded Crew
+  emergency-deploys in stable passenger order onto the nearest legal ground at
+  exactly 40% maximum HP, receives the canonical 1.5-second attack lock and
+  2.5-second 30% movement penalty, while the destroyed Rider itself becomes
+  nonblocking in the same tick under the approved T045 rule.
+- Snapshot v18 / simulation protocol v16 preserve active load/unload state,
+  fixed passenger ordering, capacity, recovery penalties and loaded entities
+  without ground transforms. Legacy v2-v17 snapshots remain supported; replay
+  remains v6 because T047 uses the existing command-envelope layout.
+- `Prepare T047 transport` creates and frames one Rapid Rider with four nearby
+  Crew already selected. RMB loads them; selecting the Rider and pressing `U`
+  unloads at the cursor. `Kill loaded Rider` provides the separate emergency-
+  deployment test without resource or production setup. HUD/world labels show
+  `Passengers 4 / 4`; Godot transport smoke verifies four truly loaded Crew.
+  The same fixture passes from a fresh launch of the exported macOS app.
+  Capture:
+  `Artifacts/Screenshots/t047-exported-prepared-rapid-rider-loaded.png`.
+- Seven focused T047 NUnit tests cover canonical timing, damage pause,
+  capacity, legal non-overlapping unload, emergency deployment, snapshot
+  continuation and the prepared fixture. All 187 NUnit tests and every
+  `BLOCKING_NOW` stage of full repository verification are green, including
+  deterministic replay/snapshot continuation, Godot smoke and macOS export.
+  Summary: `Artifacts/Verification/20260811T131127Z-full-summary.txt`. The
+  legacy 60-mover diagnostic remains unchanged and nonblocking through M5.
+- The game director accepted the prepared T047 Rapid Rider playtest on
+  2026-08-11. Loading, unloading and emergency deployment were reported working
+  with no remaining blocker.
+- M4 T048 adds data-driven two-mode transformation and the canonical MX-41
+  Switch Fighter representative. Ground ↔ Flight takes exactly 2.25 seconds;
+  the unit cannot move or attack while changing and remains targetable by both
+  Ground and True Air weapons. Completion preserves Entity ID while swapping
+  movement layer/speed, footprint, target layer, weapon and presentation mode.
+- `Q` begins State Change. `S` before 40% enters the canonical 0.6-second
+  rollback; requests at or after 40% commit the current change and queue its
+  reverse. Completed changes enforce the canonical eight-second reversal lock.
+  Landing validates ground passability and occupancy and cannot place the unit
+  into a blocker.
+- Snapshot v19 / simulation protocol v17 preserve active transition, rollback,
+  lock and queued reversal state while retaining supported legacy readers.
+  Prototype content schema v14 / compiled format v15 include the MX-41's two
+  authoritative component bundles and transformation rules.
+- `Prepare T048 MX-41` on F8 creates, selects and frames the fighter on clear
+  ground with no economy or production setup. The world label and HUD expose
+  named current/destination state, transition progress and reversal lock. The
+  Godot transformation smoke completes a real Ground → Flight change and
+  asserts the resulting True Air state. The same prepared path passes from a
+  fresh launch of the exported macOS app. Capture:
+  `Artifacts/Screenshots/t048-exported-prepared-mx41-flight.png`.
+- Seven focused T048 NUnit tests cover component/identity swap, movement and
+  attack suppression, dual-layer vulnerability, pre-threshold rollback,
+  committed queued reversal, blocked landing, snapshot continuation and the
+  prepared fixture. All 195 NUnit tests and every `BLOCKING_NOW` full-
+  verification stage pass, including deterministic ×100, replay, active-
+  transformation snapshot continuation, Godot smoke, content regeneration and
+  macOS export. Summary:
+  `Artifacts/Verification/20260811T150246Z-full-summary.txt`. The legacy
+  60-mover diagnostic remains unchanged and nonblocking through M5.
+- The T048 human playtest was accepted on 2026-08-11 with one presentation
+  follow-up: `S` cancellation must physically reverse the partial change rather
+  than snap to Ground height. Rollback now retains reached normalized progress
+  and visibly returns it over the canonical 0.6 seconds. A dedicated Godot
+  smoke asserts the unit remains partially elevated during `CANCELLING`, the
+  bar remains active and HUD reports `ROLLBACK`. Capture:
+  `Artifacts/Screenshots/t048-smooth-transformation-rollback.png`. The follow-up
+  full verification is green across all `BLOCKING_NOW` stages with 195 NUnit
+  tests, deterministic ×100, replay/snapshot continuation, Godot smoke and a
+  fresh macOS export; the rollback fixture also passes from that exported app.
+  Exported capture: `Artifacts/Screenshots/t048-exported-smooth-rollback.png`.
+  Summary:
+  `Artifacts/Verification/20260811T160529Z-full-summary.txt`. The game director
+  confirmed the corrected rollback works as intended on 2026-08-11; T048 and
+  M4 require no further human retest.
+- Canon/source research confirms T048 is a shared data-driven foundation, not
+  MX-41-only code. Future state-change users include Solar Explorer, MT-201,
+  ETX Alien Strike, ETX Alien Infiltrator, Red Planet Protector and Excavation
+  Searcher. They should reuse the state machine but receive content and their
+  specialized service/siege/Surge/Stability/Brace integrations in the tasks
+  where those roster systems become playable; adding all units to the M4
+  prototype early would not prove additional architecture.
 
 ## Current gates
 
@@ -297,7 +662,7 @@ narrow placement cases allowed by Phase 09B.
 - Legacy 60-mover stress: `DIAGNOSTIC` during M2–M5 and `BLOCKING_LATER`
   before M6. The latest full run remains diagnostic-failing at 51.67%
   completion (31/60), 8,483 oscillation incidents and elevated tail latency;
-  it does not block the current M3 task.
+  it does not block the current M4 task.
 
 ## Known unresolved work
 
@@ -317,6 +682,12 @@ narrow placement cases allowed by Phase 09B.
   and split. The minimap, full 3×4 command grid, F3 production overview,
   waiting-item drag reordering and cancellation/refund presentation
   remain later interface/economy work beyond the current prototype gates.
+- T049 canon defines HQ/Vehicle Service Bay overlap, connected components and
+  shared Energy, but does not specify how an already pooled Energy reserve is
+  divided when destruction splits one component into two. This is gameplay-
+  material: assigning reserve to the old root, dividing proportionally, or
+  tracking physical per-node storage produce different raid/recovery outcomes.
+  Do not implement a split policy until the game director selects one.
 - The canonical implementation schedule assigns the functional fog-correct
   minimap to M7 T069, so it is intentionally not pulled into T039. Building
   prototype records currently specify zero vision radius; adding local building
@@ -330,6 +701,18 @@ narrow placement cases allowed by Phase 09B.
   current SimCore entity in explored fog; that would become an information leak
   in multiplayer. Add serialized/per-viewer knowledge through a separately
   reviewed fog-information task no later than M6 T061 fog filtering.
+- T044 now supplies footprint-aware contact delivery, deterministic approach
+  slots/facing and the canonical 12-cell direct-pursuit leash. Attack-move and
+  Patrol are not yet player-facing implemented commands, so their canonical
+  route leashes remain pending with those later combat-command tasks; no
+  presentation-owned chase or damage behavior is introduced.
+- Muzzle flash and Survey Pulse presentation currently use simple short-lived
+  prototype geometry. Survey Pulse remains a visible amber sphere; Contact
+  tools now use a distinct source-attached impact plate instead of implying a
+  missing projectile. Final differentiated combat VFX remains later work.
+- Final LEGO breakup animation, bounded hero fragments and faction-specific
+  destruction VFX remain M7 T067. T045 deliberately uses readable darkened
+  collapse/rubble placeholders while preserving the canonical gameplay timers.
 
 ## Explicitly rejected / do not resurrect
 
@@ -342,6 +725,6 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Merge the accepted stacked T030-T039 M3 economy/base-building branches.
-2. Begin M4 T040 Targeting only after the merged M3 executable baseline is
-   accepted.
+1. Start M5 T049 in a separate development task.
+2. Resolve the Energy-reserve split policy there before implementing Worksite
+   merge/split behavior.

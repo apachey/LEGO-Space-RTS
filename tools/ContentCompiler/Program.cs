@@ -17,7 +17,7 @@ byte[] contentBytes = PrototypeContentCodec.Write(catalog);
 string contentOutput = Path.Combine(outputDirectory, "PrototypeEntities.contentbin");
 File.WriteAllBytes(contentOutput, contentBytes);
 PrototypeContentCatalog contentRoundTrip = PrototypeContentCodec.Read(contentBytes);
-if (contentRoundTrip.ContentHash != catalog.ContentHash || contentRoundTrip.Entities.Length != catalog.Entities.Length || contentRoundTrip.ResourceNodes.Length != catalog.ResourceNodes.Length || contentRoundTrip.Buildings.Length != catalog.Buildings.Length || contentRoundTrip.Production.Length != catalog.Production.Length)
+if (contentRoundTrip.ContentHash != catalog.ContentHash || contentRoundTrip.Entities.Length != catalog.Entities.Length || contentRoundTrip.ResourceNodes.Length != catalog.ResourceNodes.Length || contentRoundTrip.Buildings.Length != catalog.Buildings.Length || contentRoundTrip.Production.Length != catalog.Production.Length || contentRoundTrip.Weapons.Length != catalog.Weapons.Length || contentRoundTrip.Transformations.Length != catalog.Transformations.Length)
     throw new InvalidDataException("Prototype content round-trip validation failed.");
 
 MapDefinition definition = CompileMap(mapSource, catalog);
@@ -28,7 +28,7 @@ MapDefinition mapRoundTrip = CompiledMapCodec.ReadDefinition(mapBytes);
 if (mapRoundTrip.Grid.Id.Value != definition.Grid.Id.Value || mapRoundTrip.InitialEntities.Length != definition.InitialEntities.Length || mapRoundTrip.InitialResourceNodes.Length != definition.InitialResourceNodes.Length || mapRoundTrip.InitialResourceReceivers.Length != definition.InitialResourceReceivers.Length)
     throw new InvalidDataException("Compiled map round-trip validation failed.");
 
-Console.WriteLine($"Prototype content: {contentOutput} ({contentBytes.Length} bytes), hash={catalog.ContentHash:X16}, entities={catalog.Entities.Length}, resourceDefinitions={catalog.ResourceNodes.Length}, buildingDefinitions={catalog.Buildings.Length}, productionDefinitions={catalog.Production.Length}");
+Console.WriteLine($"Prototype content: {contentOutput} ({contentBytes.Length} bytes), hash={catalog.ContentHash:X16}, entities={catalog.Entities.Length}, resourceDefinitions={catalog.ResourceNodes.Length}, buildingDefinitions={catalog.Buildings.Length}, productionDefinitions={catalog.Production.Length}, weaponDefinitions={catalog.Weapons.Length}, transformationDefinitions={catalog.Transformations.Length}");
 Console.WriteLine($"Map: {mapOutput} ({mapBytes.Length} bytes), starts={definition.Starts.Length}, spawns={definition.InitialEntities.Length}, resourceNodes={definition.InitialResourceNodes.Length}, resourceReceivers={definition.InitialResourceReceivers.Length}, features={definition.Grid.Features.Count}");
 return 0;
 
@@ -36,7 +36,7 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
 {
     using JsonDocument document = JsonDocument.Parse(File.ReadAllText(path));
     JsonElement root = document.RootElement;
-    if (root.GetProperty("schemaVersion").GetInt32() != 9) throw new InvalidDataException("Unsupported prototype content schema.");
+    if (root.GetProperty("schemaVersion").GetInt32() != 14) throw new InvalidDataException("Unsupported prototype content schema.");
     if (!string.Equals(root.GetProperty("contentKind").GetString(), "prototype_entities", StringComparison.Ordinal)) throw new InvalidDataException("Unexpected contentKind.");
 
     List<PrototypeMovementProfile> profiles = new();
@@ -77,6 +77,23 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
     }
     resourceNodes.Sort((a, b) => string.CompareOrdinal(a.StableKey, b.StableKey));
 
+    List<WeaponDefinition> weapons = new();
+    Dictionary<string, WeaponDefinition> weaponByKey = new(StringComparer.Ordinal);
+    foreach (JsonElement item in root.GetProperty("weaponDefinitions").EnumerateArray())
+    {
+        string key = RequiredString(item, "stableId");
+        uint id = StableId.FromKey(key).Value; if (!stableIds.Add(id)) throw new InvalidDataException($"Stable ID collision at weapon {key}.");
+        WeaponDefinition weapon = new(key, ReadTargetLayerMask(item.GetProperty("legalLayers")), ReadTargetClassMask(item.GetProperty("legalClasses")),
+            Enum.Parse<TargetPriorityProfile>(RequiredString(item, "priorityProfile"), false),
+            checked((ushort)item.GetProperty("damage").GetInt32()), Enum.Parse<DamageType>(RequiredString(item, "damageType"), false),
+            checked((ushort)item.GetProperty("cooldownTicks").GetInt32()), ReadRatio(item, key, "rangeRatio"), ReadRatio(item, key, "minimumRangeRatio"),
+            Enum.Parse<WeaponDeliveryKind>(RequiredString(item, "delivery"), false), ReadRatio(item, key, "projectileSpeedRatio"), item.GetProperty("requiresLineOfSight").GetBoolean(),
+            checked((ushort)item.GetProperty("facingToleranceDegrees").GetInt32()), checked((ushort)item.GetProperty("maximumMovingFireSpeedBasisPoints").GetInt32()));
+        if (!weaponByKey.TryAdd(key, weapon)) throw new InvalidDataException($"Duplicate weapon key {key}.");
+        weapons.Add(weapon);
+    }
+    weapons.Sort((a, b) => string.CompareOrdinal(a.StableKey, b.StableKey));
+
     List<PrototypeEntityDefinition> entities = new();
     HashSet<string> entityKeys = new(StringComparer.Ordinal);
     foreach (JsonElement item in root.GetProperty("entities").EnumerateArray())
@@ -95,9 +112,28 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
         if (selectableKind == SelectableKind.Worker && (oreTicks == 0 || oreCapacity == 0)) throw new InvalidDataException($"{key}: Worker requires workerHarvest metadata.");
         byte operationsCapacity = checked((byte)item.GetProperty("operationsCapacity").GetInt32());
         if (selectableKind == SelectableKind.Building && operationsCapacity != 0) throw new InvalidDataException($"{key}: Buildings cannot consume Operations Capacity.");
+        byte visionRadius = checked((byte)item.GetProperty("visionRadius").GetInt32());
+        JsonElement combatTarget = item.GetProperty("combatTarget");
+        CombatTargetClass targetClass = Enum.Parse<CombatTargetClass>(RequiredString(combatTarget, "class"), false);
+        CombatTargetLayer targetLayer = Enum.Parse<CombatTargetLayer>(RequiredString(combatTarget, "layer"), false);
+        CombatTargetFlags targetFlags = ReadCombatTargetFlags(combatTarget.GetProperty("flags"));
+        ushort maximumHitPoints = checked((ushort)combatTarget.GetProperty("hitPoints").GetInt32());
+        byte armorRating = checked((byte)combatTarget.GetProperty("armorRating").GetInt32());
+        PrototypeCombatProfile combat;
+        if (item.TryGetProperty("weaponProfile", out JsonElement weaponProfileElement))
+        {
+            string weaponKey = weaponProfileElement.GetString() ?? throw new InvalidDataException($"{key}: weaponProfile must be a string.");
+            if (!weaponByKey.TryGetValue(weaponKey, out WeaponDefinition weapon)) throw new InvalidDataException($"{key}: unknown weaponProfile {weaponKey}.");
+            Fix32 acquisitionRadius = weapon.Range + Fix32.FromInt(4);
+            Fix32 sightRadius = Fix32.FromInt(visionRadius);
+            if (acquisitionRadius > sightRadius) acquisitionRadius = sightRadius;
+            combat = new PrototypeCombatProfile(targetClass, targetLayer, targetFlags, maximumHitPoints, armorRating,
+                weapon.PriorityProfile, weapon.LegalTargetLayers, weapon.LegalTargetClasses, acquisitionRadius, weapon.Id);
+        }
+        else combat = new PrototypeCombatProfile(targetClass, targetLayer, targetFlags, maximumHitPoints, armorRating);
         entities.Add(new PrototypeEntityDefinition(key, RequiredString(item, "faction"), RequiredString(item, "sourceClassification"), movement,
             Enum.Parse<FootprintClass>(RequiredString(item, "footprint"), false), selectableKind,
-            checked((byte)item.GetProperty("visionRadius").GetInt32()), RequiredString(item, "viewProfile"), oreTicks, oreCapacity, operationsCapacity));
+            visionRadius, RequiredString(item, "viewProfile"), oreTicks, oreCapacity, operationsCapacity, combat));
     }
     entities.Sort((a, b) => string.CompareOrdinal(a.StableKey, b.StableKey));
 
@@ -161,7 +197,45 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
             checked((ushort)item.GetProperty("buildTicks").GetInt32())));
     }
     production.Sort((a, b) => string.CompareOrdinal(a.UnitStableKey, b.UnitStableKey));
-    return new PrototypeContentCatalog(profiles.ToArray(), entities.ToArray(), resourceNodes.ToArray(), buildings.ToArray(), production.ToArray());
+    List<TransformationDefinition> transformations = new();
+    HashSet<string> transformedEntities = new(StringComparer.Ordinal);
+    foreach (JsonElement item in root.GetProperty("transformationDefinitions").EnumerateArray())
+    {
+        string key = RequiredString(item, "stableId"), entityKey = RequiredString(item, "entity");
+        if (!entityKeys.Contains(entityKey)) throw new InvalidDataException($"{key}: unknown transformation entity {entityKey}.");
+        if (!transformedEntities.Add(entityKey)) throw new InvalidDataException($"{entityKey}: only one primary tactical transformation is allowed.");
+        uint definitionId = StableId.FromKey(key).Value; if (!stableIds.Add(definitionId)) throw new InvalidDataException($"Stable ID collision at transformation {key}.");
+        JsonElement modes = item.GetProperty("modes");
+        if (modes.GetArrayLength() != 2) throw new InvalidDataException($"{key}: exactly two modes are required.");
+        TransformationModeDefinition modeA = ReadTransformationMode(modes[0], key, profileKeys, weaponByKey, stableIds);
+        TransformationModeDefinition modeB = ReadTransformationMode(modes[1], key, profileKeys, weaponByKey, stableIds);
+        transformations.Add(new TransformationDefinition(key, entityKey, modeA, modeB,
+            checked((ushort)item.GetProperty("aToBDurationTicks").GetInt32()), checked((ushort)item.GetProperty("bToADurationTicks").GetInt32()),
+            checked((ushort)item.GetProperty("cancellationThresholdBasisPoints").GetInt32()), checked((ushort)item.GetProperty("rollbackTicks").GetInt32()),
+            checked((ushort)item.GetProperty("reversalLockTicks").GetInt32()), item.GetProperty("moveDuringTransition").GetBoolean(),
+            item.GetProperty("attackDuringTransition").GetBoolean(), ReadTargetLayerMask(item.GetProperty("transitionTargetLayers"))));
+    }
+    transformations.Sort((a, b) => string.CompareOrdinal(a.StableKey, b.StableKey));
+    return new PrototypeContentCatalog(profiles.ToArray(), entities.ToArray(), resourceNodes.ToArray(), buildings.ToArray(), production.ToArray(), weapons.ToArray(), transformations.ToArray());
+}
+
+static TransformationModeDefinition ReadTransformationMode(JsonElement item, string definitionKey, HashSet<string> profileKeys,
+    Dictionary<string, WeaponDefinition> weaponByKey, HashSet<uint> stableIds)
+{
+    string stateKey = RequiredString(item, "stableId"), movement = RequiredString(item, "movementProfile"), weaponKey = RequiredString(item, "weaponProfile");
+    uint stateId = StableId.FromKey(stateKey).Value; if (!stableIds.Add(stateId)) throw new InvalidDataException($"Stable ID collision at transformation state {stateKey}.");
+    if (!profileKeys.Contains(movement)) throw new InvalidDataException($"{definitionKey}: unknown mode movement {movement}.");
+    if (!weaponByKey.TryGetValue(weaponKey, out WeaponDefinition weapon)) throw new InvalidDataException($"{definitionKey}: unknown mode weapon {weaponKey}.");
+    JsonElement combat = item.GetProperty("combatTarget");
+    PrototypeCombatProfile combatProfile = new(
+        Enum.Parse<CombatTargetClass>(RequiredString(combat, "class"), false),
+        Enum.Parse<CombatTargetLayer>(RequiredString(combat, "layer"), false),
+        ReadCombatTargetFlags(combat.GetProperty("flags")),
+        checked((ushort)combat.GetProperty("hitPoints").GetInt32()), checked((byte)combat.GetProperty("armorRating").GetInt32()),
+        weapon.PriorityProfile, weapon.LegalTargetLayers, weapon.LegalTargetClasses, ReadRatio(item, stateKey, "acquisitionRadiusRatio"), weapon.Id);
+    return new TransformationModeDefinition(stateKey, RequiredString(item, "displayName"), movement,
+        Enum.Parse<FootprintClass>(RequiredString(item, "footprint"), false), checked((byte)item.GetProperty("visionRadius").GetInt32()),
+        RequiredString(item, "viewProfile"), combatProfile);
 }
 
 static MapDefinition CompileMap(string path, PrototypeContentCatalog catalog)
@@ -280,4 +354,30 @@ static MapCellFlags ReadFlags(JsonElement element)
     MapCellFlags flags = MapCellFlags.None;
     foreach (JsonElement flag in element.EnumerateArray()) flags |= Enum.Parse<MapCellFlags>(flag.GetString() ?? string.Empty, false);
     return flags;
+}
+
+static CombatTargetFlags ReadCombatTargetFlags(JsonElement element)
+{
+    CombatTargetFlags flags = CombatTargetFlags.None;
+    foreach (JsonElement flag in element.EnumerateArray()) flags |= Enum.Parse<CombatTargetFlags>(flag.GetString() ?? string.Empty, false);
+    return flags;
+}
+
+static TargetLayerMask ReadTargetLayerMask(JsonElement element)
+{
+    TargetLayerMask mask = TargetLayerMask.None;
+    foreach (JsonElement layer in element.EnumerateArray())
+        mask |= Enum.Parse<CombatTargetLayer>(layer.GetString() ?? string.Empty, false) == CombatTargetLayer.Ground ? TargetLayerMask.Ground : TargetLayerMask.TrueAir;
+    return mask;
+}
+
+static TargetClassMask ReadTargetClassMask(JsonElement element)
+{
+    TargetClassMask mask = TargetClassMask.None;
+    foreach (JsonElement item in element.EnumerateArray())
+    {
+        CombatTargetClass targetClass = Enum.Parse<CombatTargetClass>(item.GetString() ?? string.Empty, false);
+        mask |= (TargetClassMask)(1 << (int)targetClass);
+    }
+    return mask;
 }

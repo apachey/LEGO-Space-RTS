@@ -26,6 +26,50 @@ public sealed class CommandExecutionSystem : ISimSystem
             EnergyDomainSystem.DebugDrainPlayerDomains(world, command.PlayerSlot);
             return;
         }
+        if (command.Type == SimCommandType.DebugDestroyVisibleEnemy)
+        {
+            EntityId target = command.TargetEntity;
+            if (world.Entities.Ownership.TryGet(target, out Ownership targetOwner) && targetOwner.PlayerSlot != command.PlayerSlot &&
+                world.Entities.Transform.TryGet(target, out SimTransform targetTransform) &&
+                world.Fog.IsVisible(command.PlayerSlot, targetTransform.Position.X.FloorToInt(), targetTransform.Position.Y.FloorToInt()) &&
+                world.Entities.Health.Has(target))
+            {
+                ref Health health = ref world.Entities.Health.Get(target);
+                health.Current = Fix32.Zero;
+                health.LastDamageTick = world.Tick.Value;
+            }
+            return;
+        }
+        if (command.Type == SimCommandType.DebugPrepareConstructionTest)
+        {
+            DebugPlaytestScenario.PrepareConstruction(world, command.PlayerSlot);
+            return;
+        }
+        if (command.Type == SimCommandType.DebugPrepareDestructionTest)
+        {
+            DebugPlaytestScenario.PrepareDestruction(world, command.PlayerSlot);
+            return;
+        }
+        if (command.Type == SimCommandType.DebugPrepareRepairTest)
+        {
+            DebugPlaytestScenario.PrepareRepair(world, command.PlayerSlot);
+            return;
+        }
+        if (command.Type == SimCommandType.DebugPrepareTransportTest)
+        {
+            DebugPlaytestScenario.PrepareTransport(world, command.PlayerSlot);
+            return;
+        }
+        if (command.Type == SimCommandType.DebugDestroyPreparedTransport)
+        {
+            DebugPlaytestScenario.DestroyPreparedTransport(world, command.PlayerSlot);
+            return;
+        }
+        if (command.Type == SimCommandType.DebugPrepareTransformationTest)
+        {
+            DebugPlaytestScenario.PrepareTransformation(world, command.PlayerSlot);
+            return;
+        }
         if (command.Type == SimCommandType.SetEnergyPriority)
         {
             BrownoutSystem.TrySetPriority(world, command.PlayerSlot, command.Entities, command.EnergyPriority);
@@ -56,11 +100,102 @@ public sealed class CommandExecutionSystem : ISimSystem
             return;
         }
 
+        if (command.Type == SimCommandType.Attack)
+        {
+            world.ScratchEntities.Clear();
+            for (int i = 0; i < command.Entities.Length; i++)
+            {
+                EntityId id = command.Entities[i];
+                if (!world.Entities.Exists(id) || !world.Entities.Targeting.Has(id) ||
+                    TransportSystem.IsPassengerBusy(world, id) ||
+                    !world.Entities.Ownership.TryGet(id, out Ownership owner) || owner.PlayerSlot != command.PlayerSlot) continue;
+                world.ScratchEntities.Add(id);
+            }
+            world.ScratchEntities.Sort(EntityIdComparer.Instance);
+            bool queued = (command.Modifiers & CommandModifiers.Queue) != 0;
+            for (int i = 0; i < world.ScratchEntities.Count; i++)
+            {
+                EntityId id = world.ScratchEntities[i];
+                if (!TargetingSystem.IsLegalTarget(world, id, command.TargetEntity, requireVisible: true)) continue;
+                if (queued && IsBusy(world, id))
+                {
+                    world.GetQueue(id).Enqueue(new UnitOrder(UnitOrderType.Attack, FixVec2.Zero, targetEntity: command.TargetEntity));
+                    continue;
+                }
+                if (!queued) { ConstructionSystem.ReleaseBuilderAssignment(world, id); CancelHarvest(world, id); world.GetQueue(id).Clear(); }
+                if (world.Entities.Navigation.Has(id) && world.Entities.Movement.Has(id))
+                {
+                    ref NavigationAgent nav = ref world.Entities.Navigation.Get(id);
+                    ref Movement movement = ref world.Entities.Movement.Get(id);
+                    StopMovement(world, id, ref nav, ref movement);
+                }
+                TargetingSystem.TryIssueDirectOrder(world, command.PlayerSlot, id, command.TargetEntity);
+            }
+            return;
+        }
+
+        if (command.Type == SimCommandType.Repair)
+        {
+            bool queued = (command.Modifiers & CommandModifiers.Queue) != 0;
+            for (int i = 0; i < command.Entities.Length; i++)
+            {
+                EntityId id = command.Entities[i];
+                if (!world.Entities.Ownership.TryGet(id, out Ownership owner) || owner.PlayerSlot != command.PlayerSlot ||
+                    !world.Entities.Builder.Has(id) || TransportSystem.IsPassengerBusy(world, id)) continue;
+                if (queued && IsBusy(world, id))
+                    world.GetQueue(id).Enqueue(new UnitOrder(UnitOrderType.Repair, FixVec2.Zero, targetEntity: command.TargetEntity));
+                else RepairSystem.TryStart(world, id, command.TargetEntity, clearQueue: !queued);
+            }
+            return;
+        }
+
+        if (command.Type == SimCommandType.Load)
+        {
+            world.ScratchEntities.Clear();
+            for (int i = 0; i < command.Entities.Length; i++)
+            {
+                EntityId id = command.Entities[i];
+                if (world.Entities.Ownership.TryGet(id, out Ownership owner) && owner.PlayerSlot == command.PlayerSlot && world.Entities.Passenger.Has(id))
+                    world.ScratchEntities.Add(id);
+            }
+            world.ScratchEntities.Sort(EntityIdComparer.Instance);
+            bool queued = (command.Modifiers & CommandModifiers.Queue) != 0;
+            for (int i = 0; i < world.ScratchEntities.Count; i++)
+            {
+                EntityId id = world.ScratchEntities[i];
+                if (queued && IsBusy(world, id)) world.GetQueue(id).Enqueue(new UnitOrder(UnitOrderType.Load, FixVec2.Zero, targetEntity: command.TargetEntity));
+                else TransportSystem.TryStartLoad(world, id, command.TargetEntity, clearQueue: !queued);
+            }
+            return;
+        }
+
+        if (command.Type == SimCommandType.Unload)
+        {
+            for (int i = 0; i < command.Entities.Length; i++)
+            {
+                EntityId id = command.Entities[i];
+                if (world.Entities.Ownership.TryGet(id, out Ownership owner) && owner.PlayerSlot == command.PlayerSlot)
+                    TransportSystem.TryStartUnload(world, id, command.TargetPosition);
+            }
+            return;
+        }
+
+        if (command.Type == SimCommandType.StateChange)
+        {
+            for (int i = 0; i < command.Entities.Length; i++)
+            {
+                EntityId id = command.Entities[i];
+                if (world.Entities.Ownership.TryGet(id, out Ownership owner) && owner.PlayerSlot == command.PlayerSlot)
+                    TransformationSystem.TryToggle(world, id);
+            }
+            return;
+        }
+
         world.ScratchEntities.Clear();
         for (int i = 0; i < command.Entities.Length; i++)
         {
             EntityId id = command.Entities[i];
-            if (!world.Entities.Exists(id) || !world.Entities.Ownership.TryGet(id, out Ownership owner) || owner.PlayerSlot != command.PlayerSlot || !world.Entities.Navigation.Has(id)) continue;
+            if (!world.Entities.Exists(id) || TransportSystem.IsLoadedPassenger(world, id) || !world.Entities.Ownership.TryGet(id, out Ownership owner) || owner.PlayerSlot != command.PlayerSlot || !world.Entities.Navigation.Has(id)) continue;
             world.ScratchEntities.Add(id);
         }
         world.ScratchEntities.Sort(EntityIdComparer.Instance);
@@ -74,6 +209,7 @@ public sealed class CommandExecutionSystem : ISimSystem
             {
                 EntityId id = world.ScratchEntities[i];
                 if (!world.Entities.Builder.Has(id)) continue;
+                if (!queued) TransportSystem.CancelForDirectOrder(world, id);
                 ConstructionSystem.AssignBuilder(world, id, command.TargetEntity, queued);
             }
             return;
@@ -90,7 +226,7 @@ public sealed class CommandExecutionSystem : ISimSystem
                 if (queued && IsBusy(world, id)) world.GetQueue(id).Enqueue(new UnitOrder(UnitOrderType.Harvest, FixVec2.Zero, targetEntity: command.TargetEntity));
                 else
                 {
-                    if (!queued) { ConstructionSystem.ReleaseBuilderAssignment(world, id); world.GetQueue(id).Clear(); }
+                    if (!queued) { TransportSystem.CancelForDirectOrder(world, id); ConstructionSystem.ReleaseBuilderAssignment(world, id); world.GetQueue(id).Clear(); }
                     StartHarvest(world, id, command.TargetEntity);
                 }
             }
@@ -123,8 +259,9 @@ public sealed class CommandExecutionSystem : ISimSystem
                 }
                 else
                 {
-                    if (!queued) { ConstructionSystem.ReleaseBuilderAssignment(world, id); world.GetQueue(id).Clear(); }
+                    if (!queued) { TransportSystem.CancelForDirectOrder(world, id); ConstructionSystem.ReleaseBuilderAssignment(world, id); world.GetQueue(id).Clear(); }
                     CancelHarvest(world, id);
+                    TargetingSystem.ClearTarget(world, id);
                     SetMove(world, id, slotTarget, formation);
                 }
             }
@@ -136,9 +273,12 @@ public sealed class CommandExecutionSystem : ISimSystem
             EntityId id = world.ScratchEntities[i];
             ref NavigationAgent nav = ref world.Entities.Navigation.Get(id);
             ref Movement move = ref world.Entities.Movement.Get(id);
+            if (command.Type == SimCommandType.Stop) TransformationSystem.TryCancel(world, id);
             world.GetQueue(id).Clear();
+            TransportSystem.CancelForDirectOrder(world, id);
             ConstructionSystem.ReleaseBuilderAssignment(world, id);
             CancelHarvest(world, id);
+            TargetingSystem.ClearTarget(world, id);
             StopMovement(world, id, ref nav, ref move);
             move.State = command.Type == SimCommandType.HoldPosition ? MovementState.Holding : MovementState.Idle;
         }
@@ -146,8 +286,11 @@ public sealed class CommandExecutionSystem : ISimSystem
 
     internal static bool IsBusy(SimulationWorld world, EntityId id)
     {
+        if (world.Entities.Targeting.TryGet(id, out Targeting targeting) && targeting.SelectionKind == TargetSelectionKind.DirectOrder) return true;
         if (world.Entities.Navigation.TryGet(id, out NavigationAgent nav) && nav.HasTarget) return true;
         if (world.Entities.Builder.TryGet(id, out Builder builder) && builder.JobState != BuilderJobState.Idle) return true;
+        if (TransportSystem.IsPassengerBusy(world, id)) return true;
+        if (TransformationSystem.IsBusy(world, id)) return true;
         return world.Entities.Worker.TryGet(id, out Worker worker) && (worker.TaskState == WorkerTaskState.MovingToResource || worker.TaskState == WorkerTaskState.Mining || worker.TaskState == WorkerTaskState.ReturningToReceiver);
     }
 
@@ -157,6 +300,7 @@ public sealed class CommandExecutionSystem : ISimSystem
             !world.Entities.ResourceNode.TryGet(resourceId, out ResourceNode node) || node.IsDepleted || carrier.Type != node.Type ||
             !world.Entities.Transform.TryGet(id, out SimTransform workerTransform) || !world.Entities.Transform.TryGet(resourceId, out SimTransform resourceTransform)) return false;
 
+        TargetingSystem.ClearTarget(world, id);
         ref Worker worker = ref world.Entities.Worker.Get(id);
         worker.ResourceTarget = resourceId;
         worker.ReceiverTarget = EntityId.None;
@@ -250,6 +394,22 @@ public sealed class CommandExecutionSystem : ISimSystem
             {
                 CancelHarvest(world, id);
                 if (ConstructionSystem.StartBuilder(world, id, next.TargetEntity)) return true;
+                continue;
+            }
+            if (next.Type == UnitOrderType.Attack)
+            {
+                if (!world.Entities.Ownership.TryGet(id, out Ownership owner)) continue;
+                if (TargetingSystem.TryIssueDirectOrder(world, owner.PlayerSlot, id, next.TargetEntity)) return true;
+                continue;
+            }
+            if (next.Type == UnitOrderType.Repair)
+            {
+                if (RepairSystem.TryStart(world, id, next.TargetEntity, clearQueue: false)) return true;
+                continue;
+            }
+            if (next.Type == UnitOrderType.Load)
+            {
+                if (TransportSystem.TryStartLoad(world, id, next.TargetEntity, clearQueue: false)) return true;
                 continue;
             }
             if (next.Type == UnitOrderType.Move)
@@ -663,7 +823,12 @@ public sealed class MovementIntentSystem : ISimSystem
             // 0.5-cell A* node, producing visibly jerky movement and queue delays.
             bool finalWaypoint = move.PathIndex >= path.Cells.Count - 1 && world.GetQueue(id).Count == 0;
             Fix32 brakingSpeed = finalWaypoint ? Fix32.Sqrt(Two * move.Deceleration * FixVec2.Distance(transform.Position, nav.Target)) : move.MaxSpeed;
-            Fix32 desiredSpeed = Fix32.Min(move.MaxSpeed, brakingSpeed);
+            Fix32 speedLimit = move.MaxSpeed * TransportSystem.MovementMultiplier(world, id);
+            Fix32 desiredSpeed = Fix32.Min(speedLimit, brakingSpeed);
+            if (world.Entities.Targeting.TryGet(id, out Targeting targeting) && targeting.CurrentTarget != EntityId.None &&
+                world.Entities.Weapon.TryGet(id, out WeaponState weaponState) && world.Content.TryGetWeapon(weaponState.WeaponProfile, out WeaponDefinition weapon) &&
+                weapon.DeliveryKind == WeaponDeliveryKind.Contact && CombatGeometry.ContactGap(world, id, targeting.CurrentTarget) <= weapon.Range)
+                desiredSpeed = Fix32.Min(desiredSpeed, move.MaxSpeed * Fix32.FromRatio(weapon.MaximumMovingFireSpeedBasisPoints, 10_000));
             move.DesiredMovement = delta.NormalizeSafe() * desiredSpeed;
             world.PendingVelocity[id.Value] = move.DesiredMovement * SimClock.TickSeconds;
         }
@@ -1028,7 +1193,12 @@ public sealed class TransformMovementSystem : ISimSystem
 
     private static void CompleteOrder(SimulationWorld world, EntityId id, ref NavigationAgent nav, ref Movement move)
     {
-        if (world.Entities.Worker.TryGet(id, out Worker worker) && (worker.TaskState == WorkerTaskState.MovingToResource || worker.TaskState == WorkerTaskState.ReturningToReceiver))
+        if (world.Entities.Targeting.TryGet(id, out Targeting targeting) && targeting.SelectionKind == TargetSelectionKind.DirectOrder && targeting.CurrentTarget != EntityId.None)
+        {
+            CommandExecutionSystem.StopMovement(world, id, ref nav, ref move);
+            ref Targeting stored = ref world.Entities.Targeting.Get(id); stored.HasCombatMove = false;
+        }
+        else if (world.Entities.Worker.TryGet(id, out Worker worker) && (worker.TaskState == WorkerTaskState.MovingToResource || worker.TaskState == WorkerTaskState.ReturningToReceiver))
         {
             CommandExecutionSystem.StopMovement(world, id, ref nav, ref move);
         }
@@ -1062,7 +1232,7 @@ public sealed class VisionSystem : ISimSystem
         }
     }
 
-    private static bool HasLineOfSight(MapGrid map, int x0, int y0, int x1, int y1)
+    internal static bool HasLineOfSight(MapGrid map, int x0, int y0, int x1, int y1)
     {
         int e0=BuildElevation(map,x0,y0),e1=BuildElevation(map,x1,y1);
         int totalSteps=Math.Max(Math.Abs(x1-x0),Math.Abs(y1-y0));if(totalSteps==0)return true;

@@ -366,3 +366,89 @@ not change gameplay canon.
 
 These are implementation decisions within approved M3 HUD and UX canon. They
 do not change gameplay canon.
+
+---
+
+## 2026-08-10 — M4 deterministic targeting authority and priority order
+
+- T040 adds authoritative `Targetable` and `Targeting` components. Target class,
+  ground/true-air layer, semantic role flags, legal target masks, acquisition
+  radius and current target live in SimCore; Godot only performs visible-object
+  hit testing and presents the resulting target ring.
+- Acquisition runs after visibility/LoS in the locked 20 Hz system order and
+  queries the existing deterministic spatial buckets. Candidates must be alive,
+  visible, hostile and legal for the attacker's layer/class masks. Canonical
+  role priority is resolved before distance, with Entity ID as the final tie.
+- Direct Attack is a queueable versioned command. It overrides automatic
+  priority while legal and is cleared on target loss or loss of shared-player
+  visibility, preventing exact through-fog tracking. T040 does not invent
+  weapon firing, damage or a temporary chase authority; those remain scheduled
+  M4 systems.
+- Snapshot format v11 / simulation protocol v9 add the two combat components;
+  replay v6 admits Attack commands and queued Attack orders; prototype content
+  v10 carries canonical first-playable target metadata. Existing supported
+  snapshot and replay readers remain intact.
+
+These are implementation decisions within approved M4 targeting and combat UX
+canon. They do not change gameplay canon.
+
+---
+
+## 2026-08-10 — M4 authoritative weapon readiness and firing events
+
+- T041 adds compiled `WeaponDefinition` records and per-entity authoritative
+  `WeaponState`. The state records the stable weapon profile, remaining cooldown,
+  monotonic firing sequence and last fired target/tick. Godot consumes the
+  sequence for a short muzzle flash but never authorizes firing.
+- Weapons execute after T040 targeting in stable Entity ID order. Each 20 Hz
+  step advances an active cooldown, then a ready weapon revalidates target
+  legality, shared visibility, exact fixed-point range, minimum range and combat
+  LoS before emitting a firing event and starting the full canonical cooldown.
+  Readiness is retained while no eligible in-range target exists.
+- Prototype content v11 defines the canonical first-playable weapon profiles:
+  Crew 24 ticks, Hover Scout 30, Loader Dozer 27 and Chrome Crusher 32. Damage,
+  type and delivery metadata are compiled now for later common resolvers, but
+  T041 applies no HP change. The built-in catalog uses the compiler's canonical
+  stable-key ordering so identical built-in and compiled definitions produce
+  the same compatibility hash.
+- Snapshot format v12 / simulation protocol v10 persist weapon readiness and
+  firing history while retaining supported v2-v11 readers. Replay remains v6
+  because no command representation changed.
+- T041 does not create projectile records, resolve damage/armor, implement
+  contact approach slots/facing/moving-contact rules or add combat chase. Those
+  remain T042-T044 and cannot be inferred from the presentation flash.
+- The game director explicitly deferred rather than accepted the human T040
+  interaction gate so automated T041 work could proceed on a stacked branch.
+  Both human gates remain pending before T042 begins.
+
+These are implementation decisions within approved M4 weapon and combat-system
+canon. They do not change gameplay canon.
+
+---
+
+## 2026-08-11 — M4 shared transformation foundation and roster rollout boundary
+
+- Phase 03/06 canon distinguishes player-facing tactical transformations from
+  deployment, Mission Refit, automatic machinery and visual-only folding. The
+  canonical state-change roster currently includes MX-41 Switch Fighter, Solar
+  Explorer, MT-201 Ultra-Drill Walker, ETX Alien Strike, ETX Alien Infiltrator,
+  Red Planet Protector and Excavation Searcher. Physical transformability by
+  itself does not create another command.
+- The official LEGO instruction archive corroborates the source-set identities
+  and physical models behind this roster: 7647 MX-41 Switch Fighter, 7646 ETX
+  Alien Infiltrator, 7693 ETX Alien Strike, 7649 MT-201 Ultra-Drill Walker,
+  7315 Solar Explorer and 7316 Excavation Searcher. Gameplay states, timings and
+  roles remain governed by project canon rather than inferred from packaging.
+- T048 therefore implements one reusable, data-driven authoritative state
+  machine and proves it end-to-end with MX-41 instead of cloning seven unit-
+  specific transform systems or prematurely adding the unimplemented roster.
+  Each later unit supplies its own two mode bundles, duration, cancellation,
+  target-layer and lock data while specialized consequences remain owned by
+  their scheduled systems: Forward Service, siege/deployment, Surge,
+  Stability/Sweep and Brace/Clamp.
+- Cancellation retains the actual normalized progress already reached and
+  reverses that presentation over the canonical rollback duration. It never
+  changes the source mode early or visually snaps to its source height.
+
+These decisions apply the approved Phase 03/06/07/09 transformation architecture
+without changing gameplay canon.

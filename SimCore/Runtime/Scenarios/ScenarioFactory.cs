@@ -114,7 +114,10 @@ public static class ScenarioFactory
         world.Entities.Navigation.Set(id, new NavigationAgent { Footprint = spawn.Footprint, Layer = spawn.Layer, Target = spawn.Position, PathTopologyVersion = world.Map.TopologyVersion });
         world.Entities.Selectable.Set(id, new Selectable { IsSelectable = true, ContentType = StableId.FromKey(spawn.ContentKey), Kind = spawn.SelectableKind });
         world.Entities.Vision.Set(id, new Vision { RadiusBuildCells = spawn.VisionRadius, LastFogX = -1, LastFogY = -1 });
+        AddCombatComponents(world, id, definition);
+        AddTransformationComponents(world, id, definition);
         AddWorkerComponents(world, id, definition);
+        AddTransportComponents(world, id, definition);
         world.GetQueue(id);
     }
 
@@ -200,8 +203,9 @@ public static class ScenarioFactory
         world.Entities.Ownership.Set(id,new Ownership{PlayerSlot=player});world.Entities.Transform.Set(id,new SimTransform{Position=position,Orientation=Angle16.Zero});
         world.Entities.Movement.Set(id,CreateMovement(profile,position));world.Entities.Navigation.Set(id,new NavigationAgent{Footprint=definition.Footprint,Layer=profile.Layer,Target=position,PathTopologyVersion=world.Map.TopologyVersion});
         world.Entities.Selectable.Set(id,new Selectable{IsSelectable=true,ContentType=definition.Id,Kind=definition.SelectableKind});
-        world.Entities.Vision.Set(id,new Vision{RadiusBuildCells=definition.VisionRadius,LastFogX=-1,LastFogY=-1});world.GetQueue(id);
+        world.Entities.Vision.Set(id,new Vision{RadiusBuildCells=definition.VisionRadius,LastFogX=-1,LastFogY=-1});AddCombatComponents(world,id,definition);AddTransformationComponents(world,id,definition);world.GetQueue(id);
         AddWorkerComponents(world,id,definition);
+        AddTransportComponents(world,id,definition);
     }
 
     private static void AddWorkerComponents(SimulationWorld world, EntityId id, PrototypeEntityDefinition definition)
@@ -221,6 +225,7 @@ public static class ScenarioFactory
         world.Entities.Ownership.Set(id, new Ownership { PlayerSlot = spawn.PlayerSlot });
         world.Entities.Transform.Set(id, new SimTransform { Position = spawn.Position, Orientation = Angle16.Zero });
         world.Entities.Selectable.Set(id, new Selectable { IsSelectable = true, ContentType = definition.Id, Kind = SelectableKind.Building });
+        AddCombatComponents(world, id, definition);
         world.Entities.ResourceReceiver.Set(id, new ResourceReceiver { AcceptedType = ResourceType.Ore, PendingHauledAmount = 0, IsHqEmergencyReceiver = true });
         world.Entities.ResourceBank.Set(id, new ResourceBank { Type = ResourceType.Ore, ProcessedAmount = 500 });
         if (!content.TryGetBuilding(definition.Id, out BuildingDefinition buildingDefinition)) throw new InvalidOperationException($"Missing building definition {spawn.ContentKey}.");
@@ -253,9 +258,63 @@ public static class ScenarioFactory
         world.Entities.Navigation.Set(id, new NavigationAgent { Footprint = definition.Footprint, Layer = profile.Layer, Target = position, PathTopologyVersion = world.Map.TopologyVersion });
         world.Entities.Selectable.Set(id, new Selectable { IsSelectable = true, ContentType = definition.Id, Kind = definition.SelectableKind });
         world.Entities.Vision.Set(id, new Vision { RadiusBuildCells = definition.VisionRadius, LastFogX = -1, LastFogY = -1 });
+        AddCombatComponents(world, id, definition);
+        AddTransformationComponents(world, id, definition);
         AddWorkerComponents(world, id, definition);
+        AddTransportComponents(world, id, definition);
         world.GetQueue(id);
         return id;
+    }
+
+    internal static void AddTransportComponents(SimulationWorld world, EntityId id, PrototypeEntityDefinition definition)
+    {
+        if (definition.Id == StableId.FromKey("unit.rock_raiders.crew"))
+            world.Entities.Passenger.Set(id, new Passenger { Transport = EntityId.None, State = PassengerState.Grounded, SizePoints = 1 });
+        if (definition.Id == StableId.FromKey("unit.rock_raiders.rapid_rider"))
+            world.Entities.Transport.Set(id, new Transport { CapacityPoints = 4, JobState = TransportJobState.Idle });
+    }
+
+    internal static void AddTransformationComponents(SimulationWorld world, EntityId id, PrototypeEntityDefinition definition)
+    {
+        if (!world.Content.TryGetTransformation(definition.Id, out TransformationDefinition transformation)) return;
+        world.Entities.Transformation.Set(id, new Transformation
+        {
+            Definition = transformation.Id,
+            CurrentState = transformation.ModeA.StateId,
+            SourceState = transformation.ModeA.StateId,
+            DestinationState = transformation.ModeA.StateId,
+            Phase = TransformationPhase.Idle
+        });
+    }
+
+    internal static void AddCombatComponents(SimulationWorld world, EntityId id, PrototypeEntityDefinition definition)
+    {
+        PrototypeCombatProfile combat = definition.Combat;
+        if (!combat.IsTargetable) return;
+        world.Entities.Targetable.Set(id, new Targetable { Class = combat.TargetClass, Layer = combat.TargetLayer, Flags = combat.TargetFlags });
+        Fix32 maximum = Fix32.FromInt(combat.MaximumHitPoints);
+        world.Entities.Health.Set(id, new Health { Maximum = maximum, Current = maximum, ArmorRating = combat.ArmorRating, LastDamageTick = -1 });
+        if (!combat.CanAcquireTargets) return;
+        world.Entities.Targeting.Set(id, new Targeting
+        {
+            CurrentTarget = EntityId.None, AcquisitionRadius = combat.AcquisitionRadius, LegalLayers = combat.LegalTargetLayers,
+            LegalClasses = combat.LegalTargetClasses, PriorityProfile = combat.PriorityProfile, SelectionKind = TargetSelectionKind.None
+        });
+        AddWeaponComponent(world, id, definition);
+    }
+
+    internal static void AddWeaponComponent(SimulationWorld world, EntityId id, PrototypeEntityDefinition definition)
+    {
+        if (definition.Combat.WeaponProfile.Value == 0) return;
+        if (!world.Content.TryGetWeapon(definition.Combat.WeaponProfile, out _)) throw new InvalidOperationException($"Missing weapon profile for {definition.StableKey}.");
+        world.Entities.Weapon.Set(id, new WeaponState
+        {
+            WeaponProfile = definition.Combat.WeaponProfile,
+            CooldownRemainingTicks = 0,
+            FireSequence = 0,
+            LastFiredTarget = EntityId.None,
+            LastFiredTick = -1
+        });
     }
 }
 }

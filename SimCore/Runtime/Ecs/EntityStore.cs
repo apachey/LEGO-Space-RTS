@@ -18,6 +18,9 @@ public sealed class EntityStore
     public readonly ComponentStore<ResourceNode> ResourceNode = new();
     public readonly ComponentStore<Worker> Worker = new();
     public readonly ComponentStore<Builder> Builder = new();
+    public readonly ComponentStore<Passenger> Passenger = new();
+    public readonly ComponentStore<Transport> Transport = new();
+    public readonly ComponentStore<Transformation> Transformation = new();
     public readonly ComponentStore<ResourceCarrier> ResourceCarrier = new();
     public readonly ComponentStore<ResourceReceiver> ResourceReceiver = new();
     public readonly ComponentStore<ResourceBank> ResourceBank = new();
@@ -27,6 +30,11 @@ public sealed class EntityStore
     public readonly ComponentStore<PowerState> PowerState = new();
     public readonly ComponentStore<ConstructionSite> ConstructionSite = new();
     public readonly ComponentStore<Production> Production = new();
+    public readonly ComponentStore<Targetable> Targetable = new();
+    public readonly ComponentStore<Health> Health = new();
+    public readonly ComponentStore<DestructionState> Destruction = new();
+    public readonly ComponentStore<Targeting> Targeting = new();
+    public readonly ComponentStore<WeaponState> Weapon = new();
 
     public IReadOnlyList<EntityId> Alive => _alive;
 
@@ -74,6 +82,9 @@ public sealed class EntityStore
         ResourceNode.Remove(id);
         Worker.Remove(id);
         Builder.Remove(id);
+        Passenger.Remove(id);
+        Transport.Remove(id);
+        Transformation.Remove(id);
         ResourceCarrier.Remove(id);
         ResourceReceiver.Remove(id);
         ResourceBank.Remove(id);
@@ -83,6 +94,11 @@ public sealed class EntityStore
         PowerState.Remove(id);
         ConstructionSite.Remove(id);
         Production.Remove(id);
+        Targetable.Remove(id);
+        Health.Remove(id);
+        Destruction.Remove(id);
+        Targeting.Remove(id);
+        Weapon.Remove(id);
         return true;
     }
 

@@ -112,14 +112,14 @@ public partial class BasicHud : CanvasLayer
         portrait.AddChild(_portraitLabel); layout.AddChild(portrait);
 
         VBoxContainer box = new() { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill }; box.AddThemeConstantOverride("separation", 7); layout.AddChild(box);
-        _selectionTitle = HudLabel("NO SELECTION", 19, RaiderAccent); box.AddChild(_selectionTitle);
+        _selectionTitle = HudLabel("NO SELECTION", 19, RaiderAccent); _selectionTitle.Name = "SelectionTitle"; box.AddChild(_selectionTitle);
         _selectionDetails = HudLabel("Select Crew, a structure, or an Ore deposit.", 15, TextMuted);
         _selectionDetails.AutowrapMode = TextServer.AutowrapMode.WordSmart; _selectionDetails.SizeFlagsVertical = Control.SizeFlags.ExpandFill; box.AddChild(_selectionDetails);
         _priorityRow = new HBoxContainer { Name = "ContextualEnergyPriority", Visible = false };
         _priorityRow.AddThemeConstantOverride("separation", 5); _priorityRow.AddChild(HudLabel("POWER PRIORITY", 13, TextMuted));
         AddPriorityButton(EnergyPriority.High); AddPriorityButton(EnergyPriority.Normal); AddPriorityButton(EnergyPriority.Low);
         box.AddChild(_priorityRow);
-        Label help = HudLabel("RMB context command  •  Shift queues  •  B build  •  F8 developer tools", 13, TextMuted); box.AddChild(help);
+        Label help = HudLabel("RMB context  •  Q state change  •  S stop/cancel  •  L/U transport  •  Shift queues  •  B build  •  F8 tests", 13, TextMuted); box.AddChild(help);
 
         MarginContainer contextualSlot = new() { Name = "ContextualSlot", CustomMinimumSize = new Vector2(340, 0), SizeFlagsVertical = Control.SizeFlags.ExpandFill };
         layout.AddChild(contextualSlot);
@@ -185,8 +185,69 @@ public partial class BasicHud : CanvasLayer
         _portraitLabel.Text = PortraitPlaceholder(first, _selection.Selected.Count);
         _builder.Clear();
         if (_selection.Selected.Count > 1) _builder.Append("Primary: ").Append(EntityName(first)).Append('\n');
+        if (_bridge.World.Entities.Health.TryGet(first, out Health health))
+        {
+            int percent = health.Maximum.Raw == 0 ? 0 : checked((int)((long)health.Current.Raw * 100 / health.Maximum.Raw));
+            _builder.Append("HP  ").Append(health.Current.RoundToInt()).Append(" / ").Append(health.Maximum.RoundToInt())
+                .Append("   Armor  A").Append(health.ArmorRating).Append("   ")
+                .Append(percent >= 70 ? "HEALTHY" : percent >= 35 ? "DAMAGED" : percent > 0 ? "HEAVILY DAMAGED" : "DEPLETED").Append('\n');
+        }
+        if (_bridge.World.Entities.Targetable.TryGet(first, out Targetable targetable))
+            _builder.Append("Target class  ").Append(targetable.Class).Append("   Layer  ").Append(targetable.Layer == CombatTargetLayer.TrueAir ? "TRUE AIR" : "GROUND").Append('\n');
+        if (_bridge.World.Entities.Transformation.TryGet(first, out Transformation transformation) &&
+            _bridge.World.Content.TryGetTransformation(_bridge.World.Entities.Selectable.Get(first).ContentType, out TransformationDefinition transformationDefinition))
+        {
+            TransformationModeDefinition currentMode = transformationDefinition.GetMode(transformation.CurrentState);
+            TransformationModeDefinition destinationMode = transformationDefinition.GetMode(transformation.DestinationState);
+            if (transformation.Phase == TransformationPhase.Idle)
+            {
+                _builder.Append("State  ").Append(currentMode.DisplayName.ToUpperInvariant());
+                int lockTicks = System.Math.Max(0, transformation.ReversalLockedUntilTick - _bridge.World.Tick.Value);
+                if (lockTicks > 0) _builder.Append($"   REVERSAL LOCK  {lockTicks / (float)SimClock.TicksPerSecond:0.0}s");
+                else _builder.Append("   Q → ").Append(transformationDefinition.GetDestination(transformation.CurrentState).DisplayName.ToUpperInvariant());
+                if (transformation.QueuedToggle) _builder.Append("   REVERSE QUEUED");
+                _builder.Append('\n');
+            }
+            else
+            {
+                _builder.Append(transformation.Phase == TransformationPhase.RollingBack ? "Returning  " : "Transforming  ")
+                    .Append(currentMode.DisplayName.ToUpperInvariant()).Append(" → ").Append(destinationMode.DisplayName.ToUpperInvariant())
+                    .Append("   ").Append(TransformationSystem.ProgressBasisPoints(transformation) / 100).Append("%");
+                if (transformation.Phase == TransformationPhase.RollingBack) _builder.Append("   ROLLBACK");
+                else _builder.Append(TransformationSystem.ProgressBasisPoints(transformation) < transformationDefinition.CancellationThresholdBasisPoints
+                    ? "   S CANCEL AVAILABLE" : "   COMMITTED");
+                _builder.Append('\n');
+            }
+        }
         if (_bridge.World.Entities.Worker.TryGet(first, out Worker worker) && _bridge.World.Entities.ResourceCarrier.TryGet(first, out ResourceCarrier carrier))
             _builder.Append("Task  ").Append(worker.TaskState).Append("   Cargo  ").Append(carrier.Amount).Append('/').Append(carrier.Capacity).Append(" Ore\n");
+        if (_bridge.World.Entities.Builder.TryGet(first, out Builder builder) &&
+            (builder.JobState == BuilderJobState.MovingToRepair || builder.JobState == BuilderJobState.Repairing))
+            _builder.Append("Repair  ").Append(builder.JobState == BuilderJobState.Repairing ? "ACTIVE" : "APPROACHING")
+                .Append("   Target #").Append(builder.RepairTarget.Value).Append('\n');
+        if (_bridge.World.Entities.Passenger.TryGet(first, out Passenger passenger) && passenger.State != PassengerState.Grounded)
+            _builder.Append("Transport  ").Append(passenger.State == PassengerState.Loaded ? "LOADED" : passenger.State == PassengerState.WaitingToLoad ? "BOARDING" : "APPROACHING")
+                .Append("   Rapid Rider #").Append(passenger.Transport.Value).Append('\n');
+        if (_bridge.World.Entities.Transport.TryGet(first, out Transport transport))
+        {
+            _builder.Append("Passengers  ").Append(transport.OccupiedPoints).Append(" / ").Append(transport.CapacityPoints)
+                .Append("   Crew onboard  ").Append(transport.PassengerCount).Append('\n');
+            if (transport.PassengerCount > 0)
+            {
+                _builder.Append("  Crew ×").Append(transport.PassengerCount).Append("   HP ");
+                for (int i = 0; i < transport.PassengerCount; i++)
+                {
+                    EntityId passengerId = transport.GetPassenger(i);
+                    if (i > 0) _builder.Append(", ");
+                    if (_bridge.World.Entities.Health.TryGet(passengerId, out Health passengerHealth))
+                        _builder.Append(passengerHealth.Current.RoundToInt()).Append('/').Append(passengerHealth.Maximum.RoundToInt());
+                    else _builder.Append("—");
+                }
+                _builder.Append("   TRANSPORTED\n");
+            }
+            if (transport.JobState != TransportJobState.Idle)
+                _builder.Append("Transport  ").Append(transport.UnloadBlocked ? "UNLOAD BLOCKED" : transport.JobState.ToString()).Append('\n');
+        }
         if (_bridge.World.Entities.ConstructionSite.TryGet(first, out ConstructionSite site))
             _builder.Append("Construction  ").Append(site.ProgressTicks * 100 / site.RequiredTicks).Append("%   Reserved  ").Append(site.ReservedOre).Append(" Ore / ").Append(site.ReservedEnergy).Append(" Energy\n");
         if (_bridge.World.Entities.PowerState.TryGet(first, out PowerState power))
@@ -336,6 +397,8 @@ public partial class BasicHud : CanvasLayer
         "unit.rock_raiders.hover_scout" => "Hover Scout",
         "unit.rock_raiders.rapid_rider" => "Rapid Rider",
         "unit.rock_raiders.loader_dozer" => "Loader Dozer",
+        "unit.rock_raiders.chrome_crusher" => "Chrome Crusher",
+        "unit.astronauts.mx41_switch_fighter" => "MX-41 Switch Fighter",
         "resource.ore.standard" => "Standard Ore Deposit",
         "resource.ore.small" => "Small Ore Deposit",
         "resource.ore.rich" => "Rich Ore Deposit",

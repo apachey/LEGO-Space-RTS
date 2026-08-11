@@ -17,16 +17,55 @@ public readonly struct PresentationEntity
     public readonly bool IsEnergyConsumer;
     public readonly bool IsPowered;
     public readonly EnergyPriority EnergyPriority;
+    public readonly uint WeaponFireSequence;
+    public readonly EntityId WeaponFireTarget;
+    public readonly WeaponDeliveryKind WeaponDelivery;
+    public readonly bool HasHealth;
+    public readonly int CurrentHitPointsRaw;
+    public readonly int MaximumHitPointsRaw;
+    public readonly byte ArmorRating;
+    public readonly int LastDamageTick;
+    public readonly bool IsDestroyed;
+    public readonly DestructionKind DestructionKind;
+    public readonly ushort DestructionProgressBasisPoints;
+    public readonly ushort NonBlockingDebrisTicks;
+    public readonly bool PersistentDebris;
+    public readonly bool IsRepairing;
+    public readonly EntityId RepairTarget;
+    public readonly bool IsTransport;
+    public readonly byte TransportOccupiedPoints;
+    public readonly byte TransportCapacityPoints;
+    public readonly byte TransportPassengerCount;
+    public readonly TransportJobState TransportJobState;
+    public readonly bool TransportUnloadBlocked;
+    public readonly bool IsTransformable;
+    public readonly ContentId TransformationState;
+    public readonly ContentId TransformationDestination;
+    public readonly TransformationPhase TransformationPhase;
+    public readonly ushort TransformationProgressBasisPoints;
+    public readonly ushort ReversalLockRemainingTicks;
+    public readonly bool TransformationQueued;
+    public readonly bool IsTrueAir;
     public readonly bool Snap;
-    public PresentationEntity(EntityId entityId, ContentId contentType, byte owner, FixVec2 position, Angle16 orientation, MovementState movement, VisibilityState visibility, FootprintClass footprint, SelectableKind selectableKind, bool snap = false, ResourceVisualState resourceState = ResourceVisualState.Full, byte buildingWidth = 0, byte buildingHeight = 0, bool isConstructionSite = false, ushort constructionProgressBasisPoints = 0, bool isEnergyConsumer = false, bool isPowered = true, EnergyPriority energyPriority = EnergyPriority.Normal)
-    { EntityId = entityId; ContentType = contentType; Owner = owner; Position = position; Orientation = orientation; Movement = movement; Visibility = visibility; Footprint = footprint; SelectableKind=selectableKind; ResourceState=resourceState; BuildingWidth=buildingWidth; BuildingHeight=buildingHeight; IsConstructionSite=isConstructionSite; ConstructionProgressBasisPoints=constructionProgressBasisPoints; IsEnergyConsumer=isEnergyConsumer; IsPowered=isPowered; EnergyPriority=energyPriority; Snap = snap; }
+public PresentationEntity(EntityId entityId, ContentId contentType, byte owner, FixVec2 position, Angle16 orientation, MovementState movement, VisibilityState visibility, FootprintClass footprint, SelectableKind selectableKind, bool snap = false, ResourceVisualState resourceState = ResourceVisualState.Full, byte buildingWidth = 0, byte buildingHeight = 0, bool isConstructionSite = false, ushort constructionProgressBasisPoints = 0, bool isEnergyConsumer = false, bool isPowered = true, EnergyPriority energyPriority = EnergyPriority.Normal, uint weaponFireSequence = 0, EntityId weaponFireTarget = default, WeaponDeliveryKind weaponDelivery = WeaponDeliveryKind.Projectile, bool hasHealth = false, int currentHitPointsRaw = 0, int maximumHitPointsRaw = 0, byte armorRating = 0, int lastDamageTick = -1, bool isDestroyed = false, DestructionKind destructionKind = DestructionKind.Unit, ushort destructionProgressBasisPoints = 0, ushort nonBlockingDebrisTicks = 0, bool persistentDebris = false, bool isRepairing = false, EntityId repairTarget = default, bool isTransport = false, byte transportOccupiedPoints = 0, byte transportCapacityPoints = 0, byte transportPassengerCount = 0, TransportJobState transportJobState = TransportJobState.Idle, bool transportUnloadBlocked = false, bool isTransformable = false, ContentId transformationState = default, ContentId transformationDestination = default, TransformationPhase transformationPhase = TransformationPhase.Idle, ushort transformationProgressBasisPoints = 0, ushort reversalLockRemainingTicks = 0, bool transformationQueued = false, bool isTrueAir = false)
+    { EntityId = entityId; ContentType = contentType; Owner = owner; Position = position; Orientation = orientation; Movement = movement; Visibility = visibility; Footprint = footprint; SelectableKind=selectableKind; ResourceState=resourceState; BuildingWidth=buildingWidth; BuildingHeight=buildingHeight; IsConstructionSite=isConstructionSite; ConstructionProgressBasisPoints=constructionProgressBasisPoints; IsEnergyConsumer=isEnergyConsumer; IsPowered=isPowered; EnergyPriority=energyPriority; WeaponFireSequence=weaponFireSequence; WeaponFireTarget=weaponFireTarget; WeaponDelivery=weaponDelivery; HasHealth=hasHealth; CurrentHitPointsRaw=currentHitPointsRaw; MaximumHitPointsRaw=maximumHitPointsRaw; ArmorRating=armorRating; LastDamageTick=lastDamageTick; IsDestroyed=isDestroyed; DestructionKind=destructionKind; DestructionProgressBasisPoints=destructionProgressBasisPoints; NonBlockingDebrisTicks=nonBlockingDebrisTicks; PersistentDebris=persistentDebris; IsRepairing=isRepairing; RepairTarget=repairTarget; IsTransport=isTransport; TransportOccupiedPoints=transportOccupiedPoints; TransportCapacityPoints=transportCapacityPoints; TransportPassengerCount=transportPassengerCount; TransportJobState=transportJobState; TransportUnloadBlocked=transportUnloadBlocked; IsTransformable=isTransformable; TransformationState=transformationState; TransformationDestination=transformationDestination; TransformationPhase=transformationPhase; TransformationProgressBasisPoints=transformationProgressBasisPoints; ReversalLockRemainingTicks=reversalLockRemainingTicks; TransformationQueued=transformationQueued; IsTrueAir=isTrueAir; Snap = snap; }
+}
+
+public readonly struct PresentationProjectile
+{
+    public readonly ProjectileId ProjectileId;
+    public readonly byte Owner;
+    public readonly FixVec2 Position;
+    public PresentationProjectile(ProjectileId projectileId, byte owner, FixVec2 position)
+    { ProjectileId = projectileId; Owner = owner; Position = position; }
 }
 
 public sealed class PresentationSnapshot
 {
     public SimTick Tick { get; }
     public IReadOnlyList<PresentationEntity> Entities { get; }
-    public PresentationSnapshot(SimTick tick, List<PresentationEntity> entities) { Tick = tick; Entities = entities; }
+    public IReadOnlyList<PresentationProjectile> Projectiles { get; }
+    public PresentationSnapshot(SimTick tick, List<PresentationEntity> entities, List<PresentationProjectile> projectiles) { Tick = tick; Entities = entities; Projectiles = projectiles; }
 
     public static PresentationSnapshot Capture(SimulationWorld world, byte viewerPlayer)
     {
@@ -35,6 +74,23 @@ public sealed class PresentationSnapshot
         for (int i = 0; i < alive.Count; i++)
         {
             EntityId id = alive[i];
+            if (world.Entities.Destruction.TryGet(id, out DestructionState destruction) && world.Entities.Transform.TryGet(id, out SimTransform destructionTransform))
+            {
+                VisibilityState destructionVisibility = destruction.Owner == viewerPlayer ? VisibilityState.Visible : world.Fog.Get(viewerPlayer, destructionTransform.Position.X.FloorToInt(), destructionTransform.Position.Y.FloorToInt());
+                if (destruction.Owner != viewerPlayer && destructionVisibility != VisibilityState.Visible) continue;
+                int duration = destruction.BlockingUntilTick - destruction.StartedTick;
+                int elapsed = world.Tick.Value - destruction.StartedTick;
+                ushort progress = duration <= 0 ? (ushort)10_000 : checked((ushort)System.Math.Clamp((long)elapsed * 10_000 / duration, 0, 10_000));
+                ushort debrisTicks = destruction.Kind == DestructionKind.Unit
+                    ? (ushort)0
+                    : checked((ushort)System.Math.Max(0, destruction.VisualUntilTick - destruction.BlockingUntilTick));
+                list.Add(new PresentationEntity(id, destruction.ContentType, destruction.Owner, destructionTransform.Position, destructionTransform.Orientation,
+                    MovementState.Idle, destructionVisibility, destruction.Footprint, destruction.SelectableKind,
+                    buildingWidth: destruction.BuildingWidth, buildingHeight: destruction.BuildingHeight,
+                    isDestroyed: true, destructionKind: destruction.Kind, destructionProgressBasisPoints: progress, nonBlockingDebrisTicks: debrisTicks,
+                    persistentDebris: destruction.Kind == DestructionKind.Structure));
+                continue;
+            }
             if (world.Entities.ResourceNode.TryGet(id, out ResourceNode resource) && world.Entities.Transform.TryGet(id, out SimTransform resourceTransform) && world.Entities.Selectable.TryGet(id, out Selectable resourceSelectable))
             {
                 int rx = resourceTransform.Position.X.FloorToInt(), ry = resourceTransform.Position.Y.FloorToInt();
@@ -59,9 +115,11 @@ public sealed class PresentationSnapshot
                 bool isSite = world.Entities.ConstructionSite.TryGet(id, out ConstructionSite site);
                 ushort progress = isSite && site.RequiredTicks > 0 ? checked((ushort)((long)site.ProgressTicks * 10_000 / site.RequiredTicks)) : (ushort)10_000;
                 bool isConsumer = world.Entities.PowerState.TryGet(id, out PowerState power);
+                bool hasHealth = world.Entities.Health.TryGet(id, out Health health);
                 list.Add(new PresentationEntity(id, buildingSelectable.ContentType, buildingOwner.PlayerSlot, buildingTransform.Position, buildingTransform.Orientation,
                     MovementState.Idle, buildingVisibility, FootprintClass.Huge, SelectableKind.Building, buildingWidth: building.FootprintWidth, buildingHeight: building.FootprintHeight, isConstructionSite: isSite, constructionProgressBasisPoints: progress,
-                    isEnergyConsumer: isConsumer, isPowered: !isConsumer || power.IsPowered, energyPriority: isConsumer ? power.Priority : EnergyPriority.Normal));
+                    isEnergyConsumer: isConsumer, isPowered: !isConsumer || power.IsPowered, energyPriority: isConsumer ? power.Priority : EnergyPriority.Normal,
+                    hasHealth: hasHealth, currentHitPointsRaw: hasHealth ? health.Current.Raw : 0, maximumHitPointsRaw: hasHealth ? health.Maximum.Raw : 0, armorRating: hasHealth ? health.ArmorRating : (byte)0, lastDamageTick: hasHealth ? health.LastDamageTick : -1));
                 continue;
             }
             if (!world.Entities.Transform.TryGet(id, out SimTransform t) || !world.Entities.Ownership.TryGet(id, out Ownership o) || !world.Entities.Selectable.TryGet(id, out Selectable s) || !world.Entities.Movement.TryGet(id, out Movement m) || !world.Entities.Navigation.TryGet(id, out NavigationAgent n)) continue;
@@ -69,9 +127,40 @@ public sealed class PresentationSnapshot
             VisibilityState v = o.PlayerSlot == viewerPlayer ? VisibilityState.Visible : world.Fog.Get(viewerPlayer, fx, fy);
             // M2 has no last-known enemy record yet. Never publish current hidden-enemy truth as an "Explored" entity.
             if (o.PlayerSlot != viewerPlayer && v != VisibilityState.Visible) continue;
-            list.Add(new PresentationEntity(id, s.ContentType, o.PlayerSlot, t.Position, t.Orientation, m.State, v, n.Footprint, s.Kind));
+            uint fireSequence = 0; EntityId fireTarget = EntityId.None; WeaponDeliveryKind weaponDelivery = WeaponDeliveryKind.Projectile;
+            if (world.Entities.Weapon.TryGet(id, out WeaponState weapon))
+            {
+                fireSequence = weapon.FireSequence; fireTarget = weapon.LastFiredTarget;
+                if (world.Content.TryGetWeapon(weapon.WeaponProfile, out WeaponDefinition definition)) weaponDelivery = definition.DeliveryKind;
+            }
+            bool hasUnitHealth = world.Entities.Health.TryGet(id, out Health unitHealth);
+            bool isRepairing = world.Entities.Builder.TryGet(id, out Builder repairBuilder) && repairBuilder.JobState == BuilderJobState.Repairing;
+            bool isTransport = world.Entities.Transport.TryGet(id, out Transport transport);
+            bool isTransformable = world.Entities.Transformation.TryGet(id, out Transformation transformation);
+            ushort reversalLock = isTransformable ? checked((ushort)System.Math.Clamp(transformation.ReversalLockedUntilTick - world.Tick.Value, 0, ushort.MaxValue)) : (ushort)0;
+            list.Add(new PresentationEntity(id, s.ContentType, o.PlayerSlot, t.Position, t.Orientation, m.State, v, n.Footprint, s.Kind,
+                weaponFireSequence: fireSequence, weaponFireTarget: fireTarget, weaponDelivery: weaponDelivery, hasHealth: hasUnitHealth,
+                currentHitPointsRaw: hasUnitHealth ? unitHealth.Current.Raw : 0, maximumHitPointsRaw: hasUnitHealth ? unitHealth.Maximum.Raw : 0,
+                armorRating: hasUnitHealth ? unitHealth.ArmorRating : (byte)0, lastDamageTick: hasUnitHealth ? unitHealth.LastDamageTick : -1,
+                isRepairing: isRepairing, repairTarget: isRepairing ? repairBuilder.RepairTarget : EntityId.None,
+                isTransport: isTransport, transportOccupiedPoints: isTransport ? transport.OccupiedPoints : (byte)0,
+                transportCapacityPoints: isTransport ? transport.CapacityPoints : (byte)0, transportPassengerCount: isTransport ? transport.PassengerCount : (byte)0,
+                transportJobState: isTransport ? transport.JobState : TransportJobState.Idle, transportUnloadBlocked: isTransport && transport.UnloadBlocked,
+                isTransformable: isTransformable, transformationState: isTransformable ? transformation.CurrentState : default,
+                transformationDestination: isTransformable ? transformation.DestinationState : default,
+                transformationPhase: isTransformable ? transformation.Phase : TransformationPhase.Idle,
+                transformationProgressBasisPoints: isTransformable ? TransformationSystem.ProgressBasisPoints(transformation) : (ushort)0,
+                reversalLockRemainingTicks: reversalLock, transformationQueued: isTransformable && transformation.QueuedToggle,
+                isTrueAir: n.Layer == MovementLayer.TrueAir));
         }
-        return new PresentationSnapshot(world.Tick, list);
+        List<PresentationProjectile> projectiles = new(world.Projectiles.Count);
+        for (int i = 0; i < world.Projectiles.Count; i++)
+        {
+            ProjectileRecord projectile = world.Projectiles[i];
+            if (projectile.Owner != viewerPlayer && !world.Fog.IsVisible(viewerPlayer, projectile.Position.X.FloorToInt(), projectile.Position.Y.FloorToInt())) continue;
+            projectiles.Add(new PresentationProjectile(projectile.Id, projectile.Owner, projectile.Position));
+        }
+        return new PresentationSnapshot(world.Tick, list, projectiles);
     }
 }
 }
