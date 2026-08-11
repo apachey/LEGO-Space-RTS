@@ -6,6 +6,57 @@ using NUnit.Framework;
 public sealed class M4DestructionTests
 {
     [Test]
+    public void ConstructionPlaytestPreparationStartsFromCanonicalOpeningWithoutResourceGrind()
+    {
+        SimulationWorld world = ScenarioFactory.CreateCanonicalOpening();
+        world.Commands.Enqueue(new CommandEnvelope(new SimTick(1), 0, 91, SimCommandType.DebugPrepareConstructionTest,
+            System.Array.Empty<EntityId>(), FixVec2.Zero));
+
+        new SimulationRunner(world).StepOneTick();
+
+        EntityId site = world.Entities.Alive.Single(id => world.Entities.ConstructionSite.Has(id));
+        ConstructionSite construction = world.Entities.ConstructionSite.Get(site);
+        EntityId bank = world.Entities.Alive.Single(id => world.Entities.ResourceBank.Has(id) &&
+            world.Entities.Ownership.TryGet(id, out Ownership owner) && owner.PlayerSlot == 0);
+        Assert.Multiple(() =>
+        {
+            Assert.That(construction.ProgressTicks, Is.GreaterThan(0));
+            Assert.That(world.Entities.Building.Get(site).State, Is.EqualTo(BuildingState.ConstructionSite));
+            Assert.That(world.Entities.ResourceBank.Get(bank).ProcessedAmount, Is.GreaterThan(4_000));
+            Assert.That(world.Entities.Ownership.Get(site).PlayerSlot, Is.Zero);
+        });
+    }
+
+    [Test]
+    public void DestructionPlaytestPreparationProvidesExactTargetsFromCanonicalOpening()
+    {
+        SimulationWorld world = ScenarioFactory.CreateCanonicalOpening();
+        Assert.That(FindOptional(world, 0, DebugPlaytestScenario.ChromeCrusherKey), Is.EqualTo(EntityId.None),
+            "The shipped opening deliberately contains no Chrome before debug preparation.");
+        world.Commands.Enqueue(new CommandEnvelope(new SimTick(1), 0, 92, SimCommandType.DebugPrepareDestructionTest,
+            System.Array.Empty<EntityId>(), FixVec2.Zero));
+
+        new SimulationRunner(world).StepOneTick();
+
+        EntityId friendlyChrome = Find(world, 0, DebugPlaytestScenario.ChromeCrusherKey);
+        EntityId enemyCrew = FindClosest(world, 1, DebugPlaytestScenario.CrewKey, DebugPlaytestScenario.DestructionArenaCenter);
+        EntityId enemyChrome = Find(world, 1, DebugPlaytestScenario.ChromeCrusherKey);
+        EntityId enemyBuilding = Find(world, 1, DebugPlaytestScenario.DestructionBuildingKey);
+        Assert.Multiple(() =>
+        {
+            Assert.That(FixVec2.Distance(world.Entities.Transform.Get(friendlyChrome).Position, DebugPlaytestScenario.DestructionArenaCenter), Is.LessThan(Fix32.FromInt(20)));
+            Assert.That(FixVec2.Distance(world.Entities.Transform.Get(enemyCrew).Position, DebugPlaytestScenario.DestructionArenaCenter), Is.LessThan(Fix32.FromInt(20)));
+            Assert.That(FixVec2.Distance(world.Entities.Transform.Get(enemyChrome).Position, DebugPlaytestScenario.DestructionArenaCenter), Is.LessThan(Fix32.FromInt(20)));
+            Assert.That(world.Entities.Building.Get(enemyBuilding).State, Is.EqualTo(BuildingState.Completed));
+            Assert.That(world.Entities.Health.Get(enemyCrew).Current, Is.EqualTo(Fix32.FromInt(12)));
+            Assert.That(world.Entities.Health.Get(enemyChrome).Current, Is.EqualTo(Fix32.FromInt(160)));
+            Assert.That(world.Entities.Health.Get(enemyBuilding).Current, Is.EqualTo(Fix32.FromInt(180)));
+            Assert.That(world.Fog.IsVisible(0, world.Entities.Transform.Get(enemyBuilding).Position.X.FloorToInt(),
+                world.Entities.Transform.Get(enemyBuilding).Position.Y.FloorToInt()), Is.True);
+        });
+    }
+
+    [Test]
     public void StandardUnitImmediatelyLosesGameplayAndClearsAfterTwentyFiveTicks()
     {
         SimulationWorld world = ScenarioFactory.CreateFirstControllable(18);
@@ -172,5 +223,35 @@ public sealed class M4DestructionTests
         }
         Assert.Fail($"Missing {contentKey} for player {owner}.");
         return EntityId.None;
+    }
+
+    private static EntityId FindOptional(SimulationWorld world, byte owner, string contentKey)
+    {
+        ContentId type = StableId.FromKey(contentKey);
+        for (int i = 0; i < world.Entities.Alive.Count; i++)
+        {
+            EntityId id = world.Entities.Alive[i];
+            if (world.Entities.Selectable.TryGet(id, out Selectable selectable) && selectable.ContentType == type &&
+                world.Entities.Ownership.TryGet(id, out Ownership ownership) && ownership.PlayerSlot == owner) return id;
+        }
+        return EntityId.None;
+    }
+
+    private static EntityId FindClosest(SimulationWorld world, byte owner, string contentKey, FixVec2 origin)
+    {
+        ContentId type = StableId.FromKey(contentKey);
+        EntityId best = EntityId.None;
+        Fix32 bestDistance = Fix32.MaxValue;
+        for (int i = 0; i < world.Entities.Alive.Count; i++)
+        {
+            EntityId id = world.Entities.Alive[i];
+            if (!world.Entities.Selectable.TryGet(id, out Selectable selectable) || selectable.ContentType != type ||
+                !world.Entities.Ownership.TryGet(id, out Ownership ownership) || ownership.PlayerSlot != owner ||
+                !world.Entities.Transform.TryGet(id, out SimTransform transform)) continue;
+            Fix32 distance = FixVec2.Distance(origin, transform.Position);
+            if (best == EntityId.None || distance < bestDistance) { best = id; bestDistance = distance; }
+        }
+        Assert.That(best, Is.Not.EqualTo(EntityId.None), $"Missing prepared {contentKey} for player {owner}.");
+        return best;
     }
 }

@@ -9,6 +9,7 @@ public partial class GodotSmokeRunner : Node
     private GodotSimBridge? _bridge;
     private SelectionController? _selection;
     private RtsCameraController? _camera;
+    private RtsInputController? _input;
     private string? _capturePath;
     private bool _captureConstruction;
     private bool _constructionSeeded;
@@ -18,9 +19,9 @@ public partial class GodotSmokeRunner : Node
     private EntityId _collapseUnit;
     private bool _finished;
     private int _frames;
-    public void Configure(GodotSimBridge bridge, SelectionController selection, RtsCameraController camera, string[] commandLineArgs)
+    public void Configure(GodotSimBridge bridge, SelectionController selection, RtsCameraController camera, RtsInputController input, string[] commandLineArgs)
     {
-        _bridge = bridge; _selection = selection; _camera = camera;
+        _bridge = bridge; _selection = selection; _camera = camera; _input = input;
         ProcessPriority = 1000;
         for (int i = 0; i + 1 < commandLineArgs.Length; i++)
         {
@@ -30,33 +31,17 @@ public partial class GodotSmokeRunner : Node
     }
     public override void _Process(double delta)
     {
-        if (_bridge is null || _finished) return;
+        if (_bridge is null || _input is null || _finished) return;
         _frames++;
         if (_capturePath is not null && _captureFocus != EntityId.None && _bridge.World.Entities.Transform.TryGet(_captureFocus, out SimTransform focusTransform))
             _camera?.CenterOn(focusTransform.Position.ToWorld());
-        if (_frames == 2 && _selection is not null)
+        if (_frames == 2)
         {
-            if (_captureConstruction && TrySeedConstructionSite(out EntityId site))
-            {
-                _constructionSeeded = true;
-                _captureFocus = site;
-                _selection.SetSelection(new[] { site });
-                if (_bridge.World.Entities.Transform.TryGet(site, out SimTransform siteTransform)) _camera?.CenterOn(siteTransform.Position.ToWorld());
-            }
-            else
-            {
-                IReadOnlyList<EntityId> alive = _bridge.World.Entities.Alive;
-                for (int i = 0; i < alive.Count; i++)
-                {
-                    EntityId id = alive[i];
-                    if (_bridge.World.Entities.Production.Has(id) && _bridge.World.Entities.Ownership.TryGet(id, out Ownership ownership) && ownership.PlayerSlot == 0)
-                    { _selection.SetSelection(new[] { id }); _captureFocus = id; break; }
-                }
-            }
-            TrySeedDamagedHealth(_captureFocus);
-            TrySeedDestroyedUnit();
+            if (_captureConstruction) _input.DebugPrepareConstructionPlaytest();
+            else _input.DebugPrepareDestructionPlaytest();
         }
-        TrySeedActiveCollapse();
+        ResolvePreparedCaptureFocus();
+        if (!_captureConstruction) SeedPreparedDestructionStates();
         if (_bridge.World.Tick.Value < 40 || _frames < 60) return;
         Node? hud = GetTree().Root.FindChild("BasicHUD", true, false);
         bool hudOk = hud is not null && hud.FindChild("ResourceStrip", true, false) is not null &&
@@ -65,15 +50,20 @@ public partial class GodotSmokeRunner : Node
         Node? focusedView = _captureFocus == EntityId.None ? null : GetTree().Root.FindChild($"SimEntity_{_captureFocus.Value}_*", true, false);
         Node? damagedView = _damagedFocus == EntityId.None ? null : GetTree().Root.FindChild($"SimEntity_{_damagedFocus.Value}_*", true, false);
         Node? constructionProgress = focusedView?.FindChild("ConstructionProgressBar", false, false);
+        Node? constructionHealth = focusedView?.FindChild("HealthBar", false, false);
         Node? movingTargetControl = GetTree().Root.FindChild("MoveEnemyTest", true, false);
-        Node? destroyUnitControl = GetTree().Root.FindChild("DestroyEnemyUnitTest", true, false);
-        Node? destroyStructureControl = GetTree().Root.FindChild("DestroyEnemyStructureTest", true, false);
+        Node? prepareConstructionControl = GetTree().Root.FindChild("PrepareConstructionTest", true, false);
+        Node? prepareDestructionControl = GetTree().Root.FindChild("PrepareDestructionTest", true, false);
+        Node? destroyCrewControl = GetTree().Root.FindChild("DestroyCrewTest", true, false);
+        Node? destroyChromeControl = GetTree().Root.FindChild("DestroyChromeTest", true, false);
+        Node? destroyBuildingControl = GetTree().Root.FindChild("DestroyBuildingTest", true, false);
         Node? debris = _destroyedUnit == EntityId.None ? null : GetTree().Root.FindChild($"Debris_{_destroyedUnit.Value}", true, false);
         Node? activeCollapse = _collapseUnit == EntityId.None ? null : GetTree().Root.FindChild($"SimEntity_{_collapseUnit.Value}_*", true, false);
         Node? healthBar = damagedView?.FindChild("HealthBar", false, false);
         Node? contactImpact = GetTree().Root.FindChild("ContactImpact", true, false);
         bool healthBarOk = HealthBarGeometryOk(healthBar);
         bool constructionOk = !_captureConstruction || (_constructionSeeded && constructionProgress is Node3D progressBar && progressBar.Visible &&
+            constructionHealth is Node3D siteHealth && !siteHealth.Visible &&
             ConstructionProgressHeightOk(progressBar, focusedView) &&
             progressBar.FindChild("Background", false, false) is MeshInstance3D constructionBackground &&
             constructionBackground.Mesh is BoxMesh constructionBackgroundMesh &&
@@ -82,12 +72,16 @@ public partial class GodotSmokeRunner : Node
             progressBar.FindChild("Fill", false, false) is MeshInstance3D constructionFill && constructionFill.Mesh is BoxMesh constructionFillMesh &&
             constructionFillMesh.Material is StandardMaterial3D constructionFillMaterial &&
             constructionFillMaterial.BillboardMode == BaseMaterial3D.BillboardModeEnum.Disabled);
-        bool ok = _bridge.Current is not null && _bridge.World.Entities.Alive.Count >= 17 && _bridge.GameplayContentHash != 0 && hudOk && constructionOk &&
-            movingTargetControl is Button && destroyUnitControl is Button && destroyStructureControl is Button &&
-            _destroyedUnit != EntityId.None && !_bridge.World.Entities.Exists(_destroyedUnit) && debris is MeshInstance3D &&
-            _collapseUnit != EntityId.None && _bridge.World.Entities.Destruction.Has(_collapseUnit) &&
-            activeCollapse is MeshInstance3D collapseView && collapseView.Scale.Y < 1.5f &&
-            contactImpact is MeshInstance3D && healthBarOk;
+        bool destructionOk = _captureConstruction ||
+            (_destroyedUnit != EntityId.None && !_bridge.World.Entities.Exists(_destroyedUnit) && debris is MeshInstance3D &&
+             _collapseUnit != EntityId.None && _bridge.World.Entities.Destruction.Has(_collapseUnit) &&
+             activeCollapse is MeshInstance3D collapseView && TryGetPresentation(_collapseUnit, out PresentationEntity collapseEntity) &&
+             collapseView.Scale.IsEqualApprox(UnitViewManager.BaseVisualScale(collapseEntity)));
+        int minimumAlive = _captureConstruction ? 15 : 17;
+        bool controlsOk = movingTargetControl is Button && prepareConstructionControl is Button && prepareDestructionControl is Button &&
+            destroyCrewControl is Button && destroyChromeControl is Button && destroyBuildingControl is Button;
+        bool ok = _bridge.Current is not null && _bridge.World.Entities.Alive.Count >= minimumAlive && _bridge.GameplayContentHash != 0 &&
+            hudOk && constructionOk && destructionOk && controlsOk && contactImpact is MeshInstance3D && healthBarOk;
         if (ok && _capturePath is not null)
         {
             _finished = true;
@@ -110,98 +104,99 @@ public partial class GodotSmokeRunner : Node
             GD.Print($"PHASE10 VISUAL SMOKE CAPTURE: PASS path={_capturePath}");
         }
         if (!ok)
-            GD.PrintErr($"PHASE10 GODOT HEADLESS SMOKE DETAIL: hud={hudOk} construction={constructionOk} health={healthBarOk} movingTarget={movingTargetControl is Button} destructionControls={destroyUnitControl is Button && destroyStructureControl is Button} debris={debris is MeshInstance3D} collapseId={_collapseUnit.Value} collapseActive={_collapseUnit != EntityId.None && _bridge.World.Entities.Destruction.Has(_collapseUnit)} collapseView={activeCollapse is MeshInstance3D} contact={contactImpact is MeshInstance3D}");
+            GD.PrintErr($"PHASE10 GODOT HEADLESS SMOKE DETAIL: hud={hudOk} construction={constructionOk} health={healthBarOk} controls={controlsOk} destruction={destructionOk} debris={debris is MeshInstance3D} collapseId={_collapseUnit.Value} collapseActive={_collapseUnit != EntityId.None && _bridge.World.Entities.Destruction.Has(_collapseUnit)} collapseView={activeCollapse is MeshInstance3D} contact={contactImpact is MeshInstance3D}");
         _finished = true;
         GD.Print(ok ? $"PHASE10 GODOT HEADLESS SMOKE: PASS tick={_bridge.World.Tick.Value} hash={_bridge.StateHashHex()}" : "PHASE10 GODOT HEADLESS SMOKE: FAIL");
         GetTree().Quit(ok ? 0 : 2);
     }
 
-    private bool TrySeedConstructionSite(out EntityId site)
+    private void ResolvePreparedCaptureFocus()
     {
-        site = EntityId.None;
-        if (_bridge is null) return false;
-        List<EntityId> builders = new();
+        if (_bridge is null || _captureFocus != EntityId.None) return;
         IReadOnlyList<EntityId> alive = _bridge.World.Entities.Alive;
-        for (int i = 0; i < alive.Count; i++)
-            if (_bridge.World.Entities.Builder.Has(alive[i]) && _bridge.World.Entities.Ownership.TryGet(alive[i], out Ownership ownership) && ownership.PlayerSlot == 0)
-            { builders.Add(alive[i]); break; }
-        if (builders.Count == 0) return false;
-        ContentId buildingType = StableId.FromKey("building.rock_raiders.ore_processing_plant");
-        const int preferredAnchorX = 21;
-        const int preferredAnchorY = 71;
-        for (int radius = 0; radius <= 28; radius++) for (int dy = -radius; dy <= radius; dy++) for (int dx = -radius; dx <= radius; dx++)
+        if (_captureConstruction)
         {
-            if (Math.Max(Math.Abs(dx), Math.Abs(dy)) != radius) continue;
-            short x = checked((short)(preferredAnchorX + dx));
-            short y = checked((short)(preferredAnchorY + dy));
-            if (!ConstructionPlacement.TryPlace(_bridge.World, 0, builders, buildingType, x, y, 0, out site, out _)) continue;
-            ref ConstructionSite construction = ref _bridge.World.Entities.ConstructionSite.Get(site);
-            construction.ProgressTicks = checked((ushort)Math.Max(1, construction.RequiredTicks * 14 / 100));
-            return true;
-        }
-        return false;
-    }
-
-    private void TrySeedDamagedHealth(EntityId preferred)
-    {
-        if (_bridge is null) return;
-        EntityId target = preferred;
-        if (target == EntityId.None || !_bridge.World.Entities.Health.Has(target))
-        {
-            IReadOnlyList<EntityId> alive = _bridge.World.Entities.Alive;
-            target = EntityId.None;
             for (int i = 0; i < alive.Count; i++)
             {
-                EntityId candidate = alive[i];
-                if (!_bridge.World.Entities.Health.Has(candidate) ||
-                    !_bridge.World.Entities.Transform.TryGet(candidate, out SimTransform transform) ||
-                    !_bridge.World.Fog.IsVisible(0, transform.Position.X.FloorToInt(), transform.Position.Y.FloorToInt())) continue;
-                target = candidate;
+                EntityId id = alive[i];
+                if (!_bridge.World.Entities.ConstructionSite.Has(id) ||
+                    !_bridge.World.Entities.Ownership.TryGet(id, out Ownership owner) || owner.PlayerSlot != 0) continue;
+                _captureFocus = id;
+                _constructionSeeded = true;
+                break;
+            }
+            if (_captureFocus == EntityId.None) return;
+            for (int i = 0; i < alive.Count; i++)
+            {
+                EntityId id = alive[i];
+                if (!_bridge.World.Entities.Building.TryGet(id, out Building building) || building.State != BuildingState.Completed ||
+                    !_bridge.World.Entities.Ownership.TryGet(id, out Ownership owner) || owner.PlayerSlot != 0 || !_bridge.World.Entities.Health.Has(id)) continue;
+                ref Health health = ref _bridge.World.Entities.Health.Get(id);
+                health.Current = health.Maximum * Fix32.FromRatio(75, 100);
+                health.LastDamageTick = _bridge.World.Tick.Value;
+                _damagedFocus = id;
+                break;
+            }
+            return;
+        }
+        ContentId buildingType = StableId.FromKey(DebugPlaytestScenario.DestructionBuildingKey);
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (!_bridge.World.Entities.Selectable.TryGet(id, out Selectable selectable) || selectable.ContentType != buildingType ||
+                !_bridge.World.Entities.Ownership.TryGet(id, out Ownership owner) || owner.PlayerSlot == 0 || !_bridge.World.Entities.Building.Has(id)) continue;
+            _captureFocus = id;
+            _damagedFocus = id;
+        }
+    }
+
+    private void SeedPreparedDestructionStates()
+    {
+        if (_bridge is null) return;
+        IReadOnlyList<EntityId> alive = _bridge.World.Entities.Alive;
+        if (_destroyedUnit == EntityId.None && _bridge.World.Tick.Value >= 3)
+        {
+            ContentId crewType = StableId.FromKey(DebugPlaytestScenario.CrewKey);
+            for (int i = 0; i < alive.Count; i++)
+            {
+                EntityId id = alive[i];
+                if (!_bridge.World.Entities.Ownership.TryGet(id, out Ownership owner) || owner.PlayerSlot == 0 ||
+                    !_bridge.World.Entities.Selectable.TryGet(id, out Selectable selectable) || selectable.ContentType != crewType ||
+                    !_bridge.World.Entities.Health.Has(id) || !_bridge.World.Entities.Transform.TryGet(id, out SimTransform transform) ||
+                    FixVec2.Distance(transform.Position, DebugPlaytestScenario.DestructionArenaCenter) > Fix32.FromInt(20)) continue;
+                ref Health health = ref _bridge.World.Entities.Health.Get(id);
+                health.Current = Fix32.Zero;
+                health.LastDamageTick = _bridge.World.Tick.Value;
+                _destroyedUnit = id;
                 break;
             }
         }
-        if (target == EntityId.None) return;
-        ref Health health = ref _bridge.World.Entities.Health.Get(target);
-        health.Current = health.Maximum * Fix32.FromRatio(75, 100);
-        _damagedFocus = target;
-    }
-
-    private void TrySeedDestroyedUnit()
-    {
-        if (_bridge is null) return;
-        IReadOnlyList<EntityId> alive = _bridge.World.Entities.Alive;
-        for (int i = 0; i < alive.Count; i++)
+        if (_collapseUnit == EntityId.None && _bridge.World.Tick.Value >= 20)
         {
-            EntityId id = alive[i];
-            if (id == _captureFocus || !_bridge.World.Entities.Ownership.TryGet(id, out Ownership ownership) || ownership.PlayerSlot != 0 ||
-                !_bridge.World.Entities.Selectable.TryGet(id, out Selectable selectable) || selectable.Kind == SelectableKind.Building ||
-                !_bridge.World.Entities.Targetable.TryGet(id, out Targetable targetable) || targetable.Class == CombatTargetClass.MassiveMachine ||
-                !_bridge.World.Entities.Health.Has(id)) continue;
-            ref Health health = ref _bridge.World.Entities.Health.Get(id);
-            health.Current = Fix32.Zero;
-            health.LastDamageTick = _bridge.World.Tick.Value;
-            _destroyedUnit = id;
-            break;
+            ContentId chromeType = StableId.FromKey(DebugPlaytestScenario.ChromeCrusherKey);
+            for (int i = 0; i < alive.Count; i++)
+            {
+                EntityId id = alive[i];
+                if (!_bridge.World.Entities.Ownership.TryGet(id, out Ownership owner) || owner.PlayerSlot == 0 ||
+                    !_bridge.World.Entities.Selectable.TryGet(id, out Selectable selectable) || selectable.ContentType != chromeType ||
+                    !_bridge.World.Entities.Health.Has(id) || !_bridge.World.Entities.Transform.TryGet(id, out SimTransform transform) ||
+                    FixVec2.Distance(transform.Position, DebugPlaytestScenario.DestructionArenaCenter) > Fix32.FromInt(20)) continue;
+                ref Health health = ref _bridge.World.Entities.Health.Get(id);
+                health.Current = Fix32.Zero;
+                health.LastDamageTick = _bridge.World.Tick.Value;
+                _collapseUnit = id;
+                break;
+            }
         }
     }
 
-    private void TrySeedActiveCollapse()
+    private bool TryGetPresentation(EntityId id, out PresentationEntity entity)
     {
-        if (_bridge is null || _collapseUnit != EntityId.None || _bridge.World.Tick.Value < 20) return;
-        IReadOnlyList<EntityId> alive = _bridge.World.Entities.Alive;
-        for (int i = 0; i < alive.Count; i++)
-        {
-            EntityId id = alive[i];
-            if (id == _captureFocus || id == _destroyedUnit || id == _damagedFocus ||
-                !_bridge.World.Entities.Ownership.TryGet(id, out Ownership ownership) || ownership.PlayerSlot != 0 ||
-                !_bridge.World.Entities.Selectable.TryGet(id, out Selectable selectable) || selectable.Kind == SelectableKind.Building ||
-                !_bridge.World.Entities.Health.Has(id)) continue;
-            ref Health health = ref _bridge.World.Entities.Health.Get(id);
-            health.Current = Fix32.Zero;
-            health.LastDamageTick = _bridge.World.Tick.Value;
-            _collapseUnit = id;
-            break;
-        }
+        if (_bridge?.Current is not null)
+            for (int i = 0; i < _bridge.Current.Entities.Count; i++)
+                if (_bridge.Current.Entities[i].EntityId == id) { entity = _bridge.Current.Entities[i]; return true; }
+        entity = default;
+        return false;
     }
 
     private static bool HealthBarGeometryOk(Node? healthBar)

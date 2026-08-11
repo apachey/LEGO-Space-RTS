@@ -27,10 +27,13 @@ public partial class RtsInputController : Node
     private string _buildStatus = "Off";
     private uint _sequence = 1;
     private readonly Dictionary<uint, uint> _productionRoundRobin = new();
+    private DebugFocusKind _pendingDebugFocus;
+    private int _pendingDebugTick;
 
     public ControlGroups Groups => _groups;
     public bool BuildModeActive => _buildMode;
     public string BuildStatus => _buildStatus;
+    public string DebugTestStatus { get; private set; } = "No prepared playtest scene.";
 
     public void Configure(GodotSimBridge bridge, SelectionController selection, RtsCameraController camera)
     {
@@ -41,6 +44,7 @@ public partial class RtsInputController : Node
     public override void _Process(double delta)
     {
         if (_bridge is null || _selection is null || _camera is null) return;
+        ResolvePendingDebugFocus();
         double now = Time.GetTicksMsec() / 1000.0;
         if (_movePreviewMarkers.Count > 0 && PreviewGroupFinished()) ClearMovePreviews();
 
@@ -174,6 +178,28 @@ public partial class RtsInputController : Node
             Array.Empty<EntityId>(), FixVec2.Zero));
     }
 
+    public void DebugPrepareConstructionPlaytest()
+    {
+        if (_bridge is null) return;
+        SimTick execution = _bridge.World.Tick.Next();
+        _bridge.Enqueue(new CommandEnvelope(execution, 0, _sequence++, SimCommandType.DebugPrepareConstructionTest,
+            Array.Empty<EntityId>(), FixVec2.Zero));
+        _pendingDebugFocus = DebugFocusKind.Construction;
+        _pendingDebugTick = execution.Value;
+        DebugTestStatus = "Preparing construction bar test…";
+    }
+
+    public void DebugPrepareDestructionPlaytest()
+    {
+        if (_bridge is null) return;
+        SimTick execution = _bridge.World.Tick.Next();
+        _bridge.Enqueue(new CommandEnvelope(execution, 0, _sequence++, SimCommandType.DebugPrepareDestructionTest,
+            Array.Empty<EntityId>(), FixVec2.Zero));
+        _pendingDebugFocus = DebugFocusKind.Destruction;
+        _pendingDebugTick = execution.Value;
+        DebugTestStatus = "Preparing T045 arena…";
+    }
+
     public void DebugMoveVisibleEnemies()
     {
         if (_bridge is null) return;
@@ -200,25 +226,98 @@ public partial class RtsInputController : Node
         _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 1, _sequence++, SimCommandType.Move, enemies.ToArray(), target));
     }
 
-    public void DebugDestroyVisibleEnemyUnit() => DebugDestroyVisibleEnemy(structure: false);
-    public void DebugDestroyVisibleEnemyStructure() => DebugDestroyVisibleEnemy(structure: true);
+    public void DebugDestroyPreparedCrew() => DebugDestroyPrepared(DebugPlaytestScenario.CrewKey);
+    public void DebugDestroyPreparedChrome() => DebugDestroyPrepared(DebugPlaytestScenario.ChromeCrusherKey);
+    public void DebugDestroyPreparedBuilding() => DebugDestroyPrepared(DebugPlaytestScenario.DestructionBuildingKey);
 
-    private void DebugDestroyVisibleEnemy(bool structure)
+    private void DebugDestroyPrepared(string contentKey)
     {
         if (_bridge is null) return;
+        ContentId content = StableId.FromKey(contentKey);
+        EntityId target = EntityId.None;
         IReadOnlyList<EntityId> alive = _bridge.World.Entities.Alive;
         for (int i = 0; i < alive.Count; i++)
         {
             EntityId id = alive[i];
-            if (!_bridge.World.Entities.Ownership.TryGet(id, out Ownership ownership) || ownership.PlayerSlot == 0 ||
-                !_bridge.World.Entities.Selectable.TryGet(id, out Selectable selectable) || (selectable.Kind == SelectableKind.Building) != structure ||
+            if (!_bridge.World.Entities.Ownership.TryGet(id, out Ownership owner) || owner.PlayerSlot == 0 ||
+                !_bridge.World.Entities.Selectable.TryGet(id, out Selectable selectable) || selectable.ContentType != content ||
                 !_bridge.World.Entities.Health.TryGet(id, out Health health) || health.IsDepleted ||
                 !_bridge.World.Entities.Transform.TryGet(id, out SimTransform transform) ||
                 !_bridge.World.Fog.IsVisible(0, transform.Position.X.FloorToInt(), transform.Position.Y.FloorToInt())) continue;
-            _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, _sequence++, SimCommandType.DebugDestroyVisibleEnemy,
-                Array.Empty<EntityId>(), FixVec2.Zero, targetEntity: id));
+            target = id;
+        }
+        if (target == EntityId.None)
+        {
+            DebugTestStatus = $"No prepared {contentKey} target — press Prepare T045 arena.";
             return;
         }
+        _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, _sequence++, SimCommandType.DebugDestroyVisibleEnemy,
+            Array.Empty<EntityId>(), FixVec2.Zero, targetEntity: target));
+        DebugTestStatus = $"Destroying prepared {contentKey}.";
+    }
+
+    private void ResolvePendingDebugFocus()
+    {
+        if (_bridge is null || _selection is null || _camera is null || _pendingDebugFocus == DebugFocusKind.None ||
+            _bridge.World.Tick.Value < _pendingDebugTick) return;
+        if (_pendingDebugFocus == DebugFocusKind.Construction)
+        {
+            EntityId site = EntityId.None;
+            IReadOnlyList<EntityId> alive = _bridge.World.Entities.Alive;
+            for (int i = 0; i < alive.Count; i++)
+            {
+                EntityId id = alive[i];
+                if (_bridge.World.Entities.ConstructionSite.Has(id) &&
+                    _bridge.World.Entities.Ownership.TryGet(id, out Ownership owner) && owner.PlayerSlot == 0) site = id;
+            }
+            if (site != EntityId.None && _bridge.World.Entities.Transform.TryGet(site, out SimTransform transform))
+            {
+                _selection.SetSelection(new[] { site });
+                _camera.CenterOn(transform.Position.ToWorld());
+                DebugTestStatus = "READY: construction site selected; resources supplied; health bar must stay hidden.";
+                _pendingDebugFocus = DebugFocusKind.None;
+            }
+            return;
+        }
+
+        EntityId building = EntityId.None;
+        ContentId buildingType = StableId.FromKey(DebugPlaytestScenario.DestructionBuildingKey);
+        IReadOnlyList<EntityId> entities = _bridge.World.Entities.Alive;
+        for (int i = 0; i < entities.Count; i++)
+        {
+            EntityId id = entities[i];
+            if (_bridge.World.Entities.Selectable.TryGet(id, out Selectable selectable) && selectable.ContentType == buildingType &&
+                _bridge.World.Entities.Ownership.TryGet(id, out Ownership owner) && owner.PlayerSlot != 0 &&
+                _bridge.World.Entities.Building.Has(id)) building = id;
+        }
+        EntityId chrome = FindClosestOwnedContent(StableId.FromKey(DebugPlaytestScenario.ChromeCrusherKey), building);
+        if (building != EntityId.None && chrome != EntityId.None && _bridge.World.Entities.Transform.TryGet(building, out SimTransform buildingTransform))
+        {
+            _selection.SetSelection(new[] { chrome });
+            _camera.CenterOn(buildingTransform.Position.ToWorld());
+            DebugTestStatus = "READY: your Chrome selected; damaged Crew/Chrome and enemy building are in frame.";
+            _pendingDebugFocus = DebugFocusKind.None;
+        }
+    }
+
+    private EntityId FindClosestOwnedContent(ContentId content, EntityId reference)
+    {
+        if (_bridge is null) return EntityId.None;
+        FixVec2 referencePosition = reference != EntityId.None && _bridge.World.Entities.Transform.TryGet(reference, out SimTransform transform)
+            ? transform.Position : FixVec2.Zero;
+        EntityId best = EntityId.None;
+        Fix32 bestDistance = Fix32.MaxValue;
+        IReadOnlyList<EntityId> alive = _bridge.World.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (!_bridge.World.Entities.Selectable.TryGet(id, out Selectable selectable) || selectable.ContentType != content ||
+                !_bridge.World.Entities.Ownership.TryGet(id, out Ownership owner) || owner.PlayerSlot != 0 ||
+                !_bridge.World.Entities.Transform.TryGet(id, out SimTransform candidateTransform)) continue;
+            Fix32 distance = FixVec2.Distance(referencePosition, candidateTransform.Position);
+            if (best == EntityId.None || distance < bestDistance) { best = id; bestDistance = distance; }
+        }
+        return best;
     }
 
     private bool PreferRoundRobin(ContentId unitType, EntityId candidate, EntityId current)
@@ -228,6 +327,8 @@ public partial class RtsInputController : Node
         bool candidateAfter = candidate.Value > last, currentAfter = current.Value > last;
         return candidateAfter != currentAfter ? candidateAfter : candidate.Value < current.Value;
     }
+
+    private enum DebugFocusKind : byte { None = 0, Construction = 1, Destruction = 2 }
 
     private bool HasSelectedProduction()
     {

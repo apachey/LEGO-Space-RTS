@@ -5,14 +5,16 @@ remain authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M4 — Combat / T045 Destruction implemented; human playtest pending.**
+**M4 — Combat / T045 playtest handoff corrected; human retest pending.**
 
 The accepted M3 T030-T039 economy/base-building stack is merged through PR #10.
 M4 T040 Targeting, T041 Weapons, T042 Projectiles and T044 Contact weapons are
 fully automated-verified and human-accepted. T043 Damage / Armor and T045
-Destruction are implemented on the current stacked branches. T045 automated
-acceptance is complete; its collapse/wreck readability and timing still require
-the game director's human playtest before T046 Repair begins.
+Destruction are implemented on the current stacked branches. The first T045
+playtest handoff was rejected because it exposed an overlay regression, lacked
+the required Chrome/building fixtures and delegated resource setup to the game
+director. Those handoff defects are corrected; human retest is still required
+before T046 Repair begins.
 
 ## Engine / architecture
 
@@ -466,22 +468,39 @@ narrow placement cases allowed by Phase 09B.
   footprint, building anchor and authoritative timer state while retaining the
   supported v2-v15 readers. Replay remains v6 because the deterministic F8
   destruction helper reuses the existing command envelope encoding.
-- The hidden F8 developer panel now includes `Destroy enemy unit` and `Destroy
-  enemy structure`. Each issues a deterministic command against the first
-  visible valid enemy of that category, preparing the manual timing/readability
-  test without requiring a full combat setup. Automated visual smoke separately
-  seeds an active collapse and expired blocking wreck, verifies flattened debris
-  and keeps the fixed-height construction-bar regression active.
+- The first T045 human handoff exposed that the playable canonical opening has
+  only Crew while the engineering scenario used by earlier tests already had a
+  Chrome Crusher. It also required the game director to gather resources and
+  find/reveal a building, and a selected construction site incorrectly showed a
+  health bar above its progress bar. That handoff is rejected and superseded.
+- The F8 panel now provides two complete deterministic fixtures. `Prepare
+  construction test` supplies 5,000 Ore, starts and selects a progressing site
+  and centers the camera. `Prepare T045 arena` creates/selects the player's
+  Chrome Crusher and frames an explicitly damaged enemy Crew, enemy Chrome and
+  destructible building. Exact `Kill test Crew`, `Kill test Chrome` and `Kill
+  test building` actions replace the ambiguous first-visible-target controls.
+- Construction sites now suppress their world health bar entirely while the
+  independent fixed-height progress bar is active. Godot smoke asserts both
+  states simultaneously. Placeholder wrecks no longer progressively squash or
+  “melt”; they darken at 0 HP and transition directly to flattened cosmetic
+  debris only when their authoritative blocking collision clears.
+- `AGENTS.md` now contains a mandatory manual-playtest handoff gate: future
+  player-facing work cannot be called ready until the exact exported opening is
+  provided with all entities/resources/visibility, camera and selection setup,
+  and the prepared path has been exercised from a fresh launch.
 - The T045 full automated acceptance candidate is green across every
-  `BLOCKING_NOW` stage: builds, 171 NUnit tests, the representative 24-mover
+  `BLOCKING_NOW` stage: builds, 173 NUnit tests, the representative 24-mover
   movement gate, compiled content, Godot destruction smoke, 100-repeat
   determinism, replay, mid-wreck snapshot continuation, regeneration and macOS
   export. Verification summary:
-  `Artifacts/Verification/20260811T094040Z-full-summary.txt`. The legacy 60-mover
+  `Artifacts/Verification/20260811T102530Z-full-summary.txt`. The legacy 60-mover
   stress remains the same M2-M5 diagnostic failure and does not block T045.
 - A launchable T045 debug build was produced at
-  `Builds/macOS/LEGO Space RTS.app` and passed the export smoke launch. T045 is
-  awaiting only human timing/readability acceptance.
+  `Builds/macOS/LEGO Space RTS.app` and passed the export smoke launch. Both
+  prepared paths were then exercised from fresh launches of that exported app;
+  captures are `Artifacts/Screenshots/t045-exported-construction-test.png` and
+  `Artifacts/Screenshots/t045-exported-destruction-arena.png`. T045 is awaiting
+  only human timing/readability acceptance.
 
 ## Current gates
 

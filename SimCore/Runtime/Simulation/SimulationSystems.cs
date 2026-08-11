@@ -40,6 +40,16 @@ public sealed class CommandExecutionSystem : ISimSystem
             }
             return;
         }
+        if (command.Type == SimCommandType.DebugPrepareConstructionTest)
+        {
+            DebugPlaytestScenario.PrepareConstruction(world, command.PlayerSlot);
+            return;
+        }
+        if (command.Type == SimCommandType.DebugPrepareDestructionTest)
+        {
+            DebugPlaytestScenario.PrepareDestruction(world, command.PlayerSlot);
+            return;
+        }
         if (command.Type == SimCommandType.SetEnergyPriority)
         {
             BrownoutSystem.TrySetPriority(world, command.PlayerSlot, command.Entities, command.EnergyPriority);

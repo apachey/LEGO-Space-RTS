@@ -35,7 +35,7 @@ public partial class RtsCompositionRoot : Node3D
         {
             GodotSmokeRunner smoke = new() { Name = "GodotSmokeRunner" };
             AddChild(smoke);
-            smoke.Configure(bridge, selection, camera, commandLineArgs);
+            smoke.Configure(bridge, selection, camera, input, commandLineArgs);
         }
     }
     private static Vector3 ComputeInitialPlayerFocus(SimulationWorld world, byte playerSlot)

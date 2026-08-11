@@ -72,7 +72,8 @@ public partial class UnitViewManager : Node3D
             if (ring is not null) ring.Visible = !c.IsDestroyed && (selected || hovered);
             Node3D? targetRing = view.GetNodeOrNull<Node3D>("TargetRing");
             if (targetRing is not null) targetRing.Visible = !c.IsDestroyed && IsCurrentTarget(c.EntityId);
-            UpdateHealthBar(view, c, !c.IsDestroyed && (selected || IsCurrentTarget(c.EntityId) || (c.HasHealth && c.CurrentHitPointsRaw < c.MaximumHitPointsRaw)));
+            UpdateHealthBar(view, c, !c.IsDestroyed && !c.IsConstructionSite &&
+                (selected || IsCurrentTarget(c.EntityId) || (c.HasHealth && c.CurrentHitPointsRaw < c.MaximumHitPointsRaw)));
             if (c.IsDestroyed)
             {
                 HideWeaponFeedback(view);
@@ -184,11 +185,10 @@ public partial class UnitViewManager : Node3D
 
     private static void UpdateDestructionView(MeshInstance3D view, PresentationEntity entity)
     {
-        float progress = Mathf.Clamp(entity.DestructionProgressBasisPoints / 10000f, 0f, 1f);
-        Vector3 baseline = BaseVisualScale(entity);
-        float horizontal = Mathf.Lerp(1f, entity.DestructionKind == DestructionKind.Structure ? 0.82f : 0.72f, progress);
-        float vertical = Mathf.Lerp(1f, entity.DestructionKind == DestructionKind.Structure ? 0.12f : 0.18f, progress);
-        view.Scale = new Vector3(baseline.X * horizontal, baseline.Y * vertical, baseline.Z * horizontal);
+        // Placeholder primitives do not pretend to be final LEGO breakup animation.
+        // Gameplay timing is shown by the dark wreck state; actual flattening happens
+        // only when collision clears and the view transitions to cosmetic debris.
+        view.Scale = BaseVisualScale(entity);
     }
 
     private static Vector3 DebrisScale(PresentationEntity entity)
@@ -199,7 +199,7 @@ public partial class UnitViewManager : Node3D
         return new Vector3(baseline.X * horizontal, baseline.Y * vertical, baseline.Z * horizontal);
     }
 
-    private static Vector3 BaseVisualScale(PresentationEntity entity)
+    internal static Vector3 BaseVisualScale(PresentationEntity entity)
     {
         if (entity.SelectableKind == SelectableKind.Building)
             return new Vector3(entity.BuildingWidth * GodotConversions.WorldUnitsPerBuildCell, 2.4f, entity.BuildingHeight * GodotConversions.WorldUnitsPerBuildCell);

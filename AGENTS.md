@@ -490,6 +490,40 @@ Do NOT ask the user to manually test:
 - whether a serialization roundtrip succeeds;
 - other checks that a reliable automated test can perform.
 
+### Manual playtest handoff gate
+
+A player-facing task is NOT ready for human playtest merely because its code,
+headless smoke, or an engineering-only scenario passes.
+
+Before handing a manual test to the user:
+
+1. start from the exact playable opening and exported build the user will run;
+2. provide a deterministic developer fixture for every required unit, building,
+   target, resource state and visibility condition;
+3. provide enough test resources automatically, or create the required state
+   directly through a clearly named developer action;
+4. center the camera and select the primary test subject when practical;
+5. make every requested target explicit by type; do not use ambiguous actions
+   such as "first visible unit" when the test distinguishes Standard/Massive or
+   unit/structure behavior;
+6. verify simultaneous UI states, especially selection + health + construction
+   + progress overlays, rather than testing each overlay only in isolation;
+7. run the prepared path from a fresh launch and capture evidence from that
+   exact path;
+8. keep the user's manual work to human judgement. Resource farming, prerequisite
+   construction, map traversal, fog scouting and searching for the relevant
+   prototype are setup work and must not be delegated to the user unless that
+   setup itself is the behavior under test.
+
+For placeholder geometry or missing final models, implement only the minimum
+readable presentation required to expose authoritative state. Do not spend task
+scope polishing speculative temporary animation while the playtest fixture,
+required entities, or core interaction remains unavailable.
+
+The completion report may say "ready for playtest" only when this gate has been
+executed successfully. It must name the exact preparation control and state what
+the user will see after activating it.
+
 ---
 
 ## 17. PLAYABLE BUILD POLICY
