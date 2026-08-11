@@ -210,11 +210,13 @@ public partial class BasicHud : CanvasLayer
             }
             else
             {
-                _builder.Append(transformation.Phase == TransformationPhase.RollingBack ? "Cancelling  " : "Transforming  ")
+                _builder.Append(transformation.Phase == TransformationPhase.RollingBack ? "Returning  " : "Transforming  ")
                     .Append(currentMode.DisplayName.ToUpperInvariant()).Append(" → ").Append(destinationMode.DisplayName.ToUpperInvariant())
-                    .Append("   ").Append(TransformationSystem.ProgressBasisPoints(transformation) / 100).Append("%")
-                    .Append(transformation.Phase == TransformationPhase.Transitioning && TransformationSystem.ProgressBasisPoints(transformation) < transformationDefinition.CancellationThresholdBasisPoints
-                        ? "   S CANCEL AVAILABLE" : "   COMMITTED").Append('\n');
+                    .Append("   ").Append(TransformationSystem.ProgressBasisPoints(transformation) / 100).Append("%");
+                if (transformation.Phase == TransformationPhase.RollingBack) _builder.Append("   ROLLBACK");
+                else _builder.Append(TransformationSystem.ProgressBasisPoints(transformation) < transformationDefinition.CancellationThresholdBasisPoints
+                    ? "   S CANCEL AVAILABLE" : "   COMMITTED");
+                _builder.Append('\n');
             }
         }
         if (_bridge.World.Entities.Worker.TryGet(first, out Worker worker) && _bridge.World.Entities.ResourceCarrier.TryGet(first, out ResourceCarrier carrier))

@@ -249,6 +249,7 @@ public partial class RtsInputController : Node
     }
 
     public void StateChangeSelected() => IssueSimple(SimCommandType.StateChange);
+    public void StopSelected() => IssueSimple(SimCommandType.Stop);
 
     public void DebugMoveVisibleEnemies()
     {

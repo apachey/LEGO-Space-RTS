@@ -127,8 +127,13 @@ public sealed class TransformationSystem : ISimSystem
     {
         StopForTransition(world, id);
         ref Transformation state = ref world.Entities.Transformation.Get(id);
+        ushort remainingBeforeStep = state.RollbackTicksRemaining;
+        if (state.ProgressTicks > 0 && remainingBeforeStep > 0)
+        {
+            int decrement = (state.ProgressTicks + remainingBeforeStep - 1) / remainingBeforeStep;
+            state.ProgressTicks = checked((ushort)System.Math.Max(0, state.ProgressTicks - decrement));
+        }
         if (state.RollbackTicksRemaining > 0) state.RollbackTicksRemaining--;
-        if (state.ProgressTicks > 0) state.ProgressTicks--;
         if (state.RollbackTicksRemaining > 0) return;
         state.DestinationState = state.CurrentState;
         state.SourceState = state.CurrentState;
@@ -142,8 +147,6 @@ public sealed class TransformationSystem : ISimSystem
     {
         ref Transformation state = ref world.Entities.Transformation.Get(id);
         state.Phase = TransformationPhase.RollingBack;
-        state.TotalTicks = definition.RollbackTicks;
-        state.ProgressTicks = definition.RollbackTicks;
         state.RollbackTicksRemaining = definition.RollbackTicks;
         state.QueuedToggle = false;
         StopForTransition(world, id);

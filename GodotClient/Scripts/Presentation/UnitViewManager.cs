@@ -449,7 +449,7 @@ public partial class UnitViewManager : Node3D
             Name = "TransformationLabel", Text = string.Empty, Visible = false, FontSize = 23, OutlineSize = 4, PixelSize = 0.03f,
             Modulate = new Color(0.42f, 0.84f, 1f), OutlineModulate = new Color(0.02f, 0.02f, 0.02f, 0.98f),
             Billboard = BaseMaterial3D.BillboardModeEnum.Enabled, FixedSize = false, NoDepthTest = true,
-            Position = new Vector3(0f, (labelHeightWorld + 0.55f) / visualScale.Y, 0f),
+            Position = new Vector3(0f, (labelHeightWorld + 2.0f) / visualScale.Y, 0f),
             Scale = new Vector3(1f / visualScale.X, 1f / visualScale.Y, 1f / visualScale.Z)
         };
         view.AddChild(transformationLabel);
@@ -573,7 +573,7 @@ public partial class UnitViewManager : Node3D
     {
         if (!entity.IsTransformable || _bridge is null || !_bridge.World.Content.TryGetTransformation(entity.ContentType, out TransformationDefinition definition)) return 0f;
         bool sourceAir = entity.TransformationState == definition.ModeB.StateId;
-        if (entity.TransformationPhase != TransformationPhase.Transitioning) return sourceAir ? 1.6f : 0f;
+        if (entity.TransformationPhase == TransformationPhase.Idle) return sourceAir ? 1.6f : 0f;
         bool destinationAir = entity.TransformationDestination == definition.ModeB.StateId;
         return Mathf.Lerp(sourceAir ? 1.6f : 0f, destinationAir ? 1.6f : 0f, entity.TransformationProgressBasisPoints / 10000f);
     }

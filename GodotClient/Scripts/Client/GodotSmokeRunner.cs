@@ -16,6 +16,7 @@ public partial class GodotSmokeRunner : Node
     private bool _captureRepair;
     private bool _captureTransport;
     private bool _captureTransformation;
+    private bool _captureTransformationRollback;
     private bool _constructionSeeded;
     private EntityId _captureFocus;
     private EntityId _damagedFocus;
@@ -30,6 +31,8 @@ public partial class GodotSmokeRunner : Node
     private bool _repairSeeded;
     private bool _transportSeeded;
     private bool _transformationSeeded;
+    private bool _transformationCancelIssued;
+    private int _rollbackObservedFrames;
     private bool _finished;
     private int _frames;
     public void Configure(GodotSimBridge bridge, SelectionController selection, RtsCameraController camera, RtsInputController input,
@@ -45,6 +48,8 @@ public partial class GodotSmokeRunner : Node
         for (int i = 0; i < commandLineArgs.Length; i++) if (commandLineArgs[i] == "--capture-repair") _captureRepair = true;
         for (int i = 0; i < commandLineArgs.Length; i++) if (commandLineArgs[i] == "--capture-transport") _captureTransport = true;
         for (int i = 0; i < commandLineArgs.Length; i++) if (commandLineArgs[i] == "--capture-transformation") _captureTransformation = true;
+        for (int i = 0; i < commandLineArgs.Length; i++) if (commandLineArgs[i] == "--capture-transformation-rollback")
+        { _captureTransformation = true; _captureTransformationRollback = true; }
     }
     public override void _Process(double delta)
     {
@@ -67,8 +72,16 @@ public partial class GodotSmokeRunner : Node
         else if (_captureTransport) SeedPreparedTransport();
         else if (_captureRepair) SeedPreparedRepair();
         else if (!_captureConstruction) { SeedPreparedScoutDamage(); SeedPreparedDestructionStates(); }
-        int requiredTick = _captureTransport ? 170 : _captureTransformation ? 80 : 120;
-        int requiredFrames = _captureTransport ? 190 : _captureTransformation ? 100 : 140;
+        if (_captureTransformationRollback)
+        {
+            if (!_bridge.World.Entities.Transformation.TryGet(_captureFocus, out Transformation rollbackState) ||
+                !_transformationCancelIssued || rollbackState.Phase != TransformationPhase.RollingBack) return;
+            _rollbackObservedFrames++;
+            if (_rollbackObservedFrames < 2) return;
+        }
+        int requiredTick = _captureTransport ? 170 : _captureTransformation && !_captureTransformationRollback ? 80 : 120;
+        int requiredFrames = _captureTransport ? 190 : _captureTransformation && !_captureTransformationRollback ? 100 : 140;
+        if (_captureTransformationRollback) { requiredTick = 0; requiredFrames = 0; }
         if (_bridge.World.Tick.Value < requiredTick || _frames < requiredFrames) return;
         Node? hud = GetTree().Root.FindChild("BasicHUD", true, false);
         bool hudOk = hud is not null && hud.FindChild("ResourceStrip", true, false) is not null &&
@@ -126,11 +139,18 @@ public partial class GodotSmokeRunner : Node
         bool transportOk = !_captureTransport || (_transportSeeded && _bridge.World.Entities.Transport.TryGet(_captureFocus, out Transport transport) &&
             transport.PassengerCount == 4 && transport.OccupiedPoints == 4 && selectionTitle?.Text == "Rapid Rider" &&
             focusedView?.FindChild("TransportLabel", false, false) is Label3D cargoLabel && cargoLabel.Visible);
-        bool transformationOk = !_captureTransformation || (_transformationSeeded && _bridge.World.Entities.Transformation.TryGet(_captureFocus, out Transformation transformation) &&
+        bool transformationCompleteOk = !_captureTransformationRollback && _transformationSeeded && _bridge.World.Entities.Transformation.TryGet(_captureFocus, out Transformation transformation) &&
             _bridge.World.Content.TryGetTransformation(StableId.FromKey(DebugPlaytestScenario.Mx41Key), out TransformationDefinition transformationDefinition) &&
             transformation.CurrentState == transformationDefinition.ModeB.StateId && transformation.Phase == TransformationPhase.Idle &&
             _bridge.World.Entities.Navigation.Get(_captureFocus).Layer == MovementLayer.TrueAir && selectionTitle?.Text == "MX-41 Switch Fighter" &&
-            focusedView?.FindChild("TransformationLabel", false, false) is Label3D transformationLabel && transformationLabel.Visible);
+            focusedView?.FindChild("TransformationLabel", false, false) is Label3D transformationLabel && transformationLabel.Visible;
+        bool transformationRollbackOk = _captureTransformationRollback && _transformationCancelIssued &&
+            _bridge.World.Entities.Transformation.TryGet(_captureFocus, out Transformation rollback) && rollback.Phase == TransformationPhase.RollingBack &&
+            TransformationSystem.ProgressBasisPoints(rollback) is > 0 and < 4_000 && focusedView is MeshInstance3D rollbackView &&
+            rollbackView.Position.Y is > 0.03f and < 1.57f &&
+            focusedView.FindChild("TransformationLabel", false, false) is Label3D rollbackLabel && rollbackLabel.Visible && rollbackLabel.Text.StartsWith("CANCELLING") &&
+            focusedView.FindChild("TransformationProgressBar", false, false) is Node3D rollbackBar && rollbackBar.Visible;
+        bool transformationOk = !_captureTransformation || transformationCompleteOk || transformationRollbackOk;
         int minimumAlive = _captureConstruction ? 15 : _captureRepair ? 16 : _captureTransport ? 16 : _captureTransformation ? 16 : 17;
         bool controlsOk = movingTargetControl is Button && prepareConstructionControl is Button && prepareDestructionControl is Button && prepareRepairControl is Button &&
             prepareTransportControl is Button && destroyTransportControl is Button && prepareTransformationControl is Button &&
@@ -244,11 +264,20 @@ public partial class GodotSmokeRunner : Node
 
     private void SeedPreparedTransformation()
     {
-        if (_bridge is null || _input is null || _captureFocus == EntityId.None || _transformationSeeded ||
-            !_bridge.World.Entities.Transformation.TryGet(_captureFocus, out Transformation state) || state.Phase != TransformationPhase.Idle) return;
-        _selection?.SetSelection(new[] { _captureFocus });
-        _input.StateChangeSelected();
-        _transformationSeeded = true;
+        if (_bridge is null || _input is null || _captureFocus == EntityId.None ||
+            !_bridge.World.Entities.Transformation.TryGet(_captureFocus, out Transformation state)) return;
+        if (!_transformationSeeded && state.Phase == TransformationPhase.Idle)
+        {
+            _selection?.SetSelection(new[] { _captureFocus });
+            _input.StateChangeSelected();
+            _transformationSeeded = true;
+            return;
+        }
+        if (_captureTransformationRollback && !_transformationCancelIssued && state.Phase == TransformationPhase.Transitioning && state.ProgressTicks >= 10)
+        {
+            _input.StopSelected();
+            _transformationCancelIssued = true;
+        }
     }
 
     private void SeedPreparedDestructionStates()

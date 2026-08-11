@@ -423,3 +423,32 @@ canon. They do not change gameplay canon.
 
 These are implementation decisions within approved M4 weapon and combat-system
 canon. They do not change gameplay canon.
+
+---
+
+## 2026-08-11 — M4 shared transformation foundation and roster rollout boundary
+
+- Phase 03/06 canon distinguishes player-facing tactical transformations from
+  deployment, Mission Refit, automatic machinery and visual-only folding. The
+  canonical state-change roster currently includes MX-41 Switch Fighter, Solar
+  Explorer, MT-201 Ultra-Drill Walker, ETX Alien Strike, ETX Alien Infiltrator,
+  Red Planet Protector and Excavation Searcher. Physical transformability by
+  itself does not create another command.
+- The official LEGO instruction archive corroborates the source-set identities
+  and physical models behind this roster: 7647 MX-41 Switch Fighter, 7646 ETX
+  Alien Infiltrator, 7693 ETX Alien Strike, 7649 MT-201 Ultra-Drill Walker,
+  7315 Solar Explorer and 7316 Excavation Searcher. Gameplay states, timings and
+  roles remain governed by project canon rather than inferred from packaging.
+- T048 therefore implements one reusable, data-driven authoritative state
+  machine and proves it end-to-end with MX-41 instead of cloning seven unit-
+  specific transform systems or prematurely adding the unimplemented roster.
+  Each later unit supplies its own two mode bundles, duration, cancellation,
+  target-layer and lock data while specialized consequences remain owned by
+  their scheduled systems: Forward Service, siege/deployment, Surge,
+  Stability/Sweep and Brace/Clamp.
+- Cancellation retains the actual normalized progress already reached and
+  reverses that presentation over the canonical rollback duration. It never
+  changes the source mode early or visually snaps to its source height.
+
+These decisions apply the approved Phase 03/06/07/09 transformation architecture
+without changing gameplay canon.

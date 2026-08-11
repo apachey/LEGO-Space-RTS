@@ -5,7 +5,7 @@ remain authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M4 — Combat / T048 Transformation implemented; human test pending.**
+**M4 — Combat complete; T049 starts M5 in a separate development task.**
 
 The accepted M3 T030-T039 economy/base-building stack is merged through PR #10.
 M4 T040 Targeting, T041 Weapons, T042 Projectiles and T044 Contact weapons are
@@ -18,8 +18,11 @@ T046 Crew field repair is now implemented and automated-green on the current
 stacked branch. The game director accepted the combined prepared T045-T046
 human test on 2026-08-11 and accepted T047 Rapid Rider loading, unloading and
 transport-destruction behavior on 2026-08-11. T048 MX-41 transformation is
-implemented and automated-green on the current stacked branch; its prepared
-human interaction/readability test remains due.
+implemented and automated-green on the current stacked branch. The game
+director accepted its prepared Ground/Flight interaction on 2026-08-11 and
+requested a smooth visual return for pre-40% cancellation; that follow-up is
+implemented and visual-smoke protected. M4 is complete. Per game-director
+instruction, M5/T049 will begin in a separate development task.
 
 ## Engine / architecture
 
@@ -624,6 +627,26 @@ narrow placement cases allowed by Phase 09B.
   macOS export. Summary:
   `Artifacts/Verification/20260811T150246Z-full-summary.txt`. The legacy
   60-mover diagnostic remains unchanged and nonblocking through M5.
+- The T048 human playtest was accepted on 2026-08-11 with one presentation
+  follow-up: `S` cancellation must physically reverse the partial change rather
+  than snap to Ground height. Rollback now retains reached normalized progress
+  and visibly returns it over the canonical 0.6 seconds. A dedicated Godot
+  smoke asserts the unit remains partially elevated during `CANCELLING`, the
+  bar remains active and HUD reports `ROLLBACK`. Capture:
+  `Artifacts/Screenshots/t048-smooth-transformation-rollback.png`. The follow-up
+  full verification is green across all `BLOCKING_NOW` stages with 195 NUnit
+  tests, deterministic ×100, replay/snapshot continuation, Godot smoke and a
+  fresh macOS export; the rollback fixture also passes from that exported app.
+  Exported capture: `Artifacts/Screenshots/t048-exported-smooth-rollback.png`.
+  Summary:
+  `Artifacts/Verification/20260811T160529Z-full-summary.txt`.
+- Canon/source research confirms T048 is a shared data-driven foundation, not
+  MX-41-only code. Future state-change users include Solar Explorer, MT-201,
+  ETX Alien Strike, ETX Alien Infiltrator, Red Planet Protector and Excavation
+  Searcher. They should reuse the state machine but receive content and their
+  specialized service/siege/Surge/Stability/Brace integrations in the tasks
+  where those roster systems become playable; adding all units to the M4
+  prototype early would not prove additional architecture.
 
 ## Current gates
 
@@ -656,6 +679,12 @@ narrow placement cases allowed by Phase 09B.
   and split. The minimap, full 3×4 command grid, F3 production overview,
   waiting-item drag reordering and cancellation/refund presentation
   remain later interface/economy work beyond the current prototype gates.
+- T049 canon defines HQ/Vehicle Service Bay overlap, connected components and
+  shared Energy, but does not specify how an already pooled Energy reserve is
+  divided when destruction splits one component into two. This is gameplay-
+  material: assigning reserve to the old root, dividing proportionally, or
+  tracking physical per-node storage produce different raid/recovery outcomes.
+  Do not implement a split policy until the game director selects one.
 - The canonical implementation schedule assigns the functional fog-correct
   minimap to M7 T069, so it is intentionally not pulled into T039. Building
   prototype records currently specify zero vision radius; adding local building
@@ -693,6 +722,6 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Prepared T048 human test for Ground ↔ Flight timing, rollback, committed
-   reversal, lock readability and landing interaction.
-2. M5 T049 Worksite graph only after T048 acceptance.
+1. Start M5 T049 in a separate development task.
+2. Resolve the Energy-reserve split policy there before implementing Worksite
+   merge/split behavior.

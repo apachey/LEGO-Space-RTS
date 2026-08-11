@@ -61,10 +61,17 @@ public sealed class M4TransformationTests
         SimulationRunner runner = new(world);
         IssueStateChange(world, fighter, 13);
         runner.StepTicks(10);
-        Assert.That(TransformationSystem.ProgressBasisPoints(world.Entities.Transformation.Get(fighter)), Is.LessThan(4_000));
+        ushort progressBeforeCancel = TransformationSystem.ProgressBasisPoints(world.Entities.Transformation.Get(fighter));
+        Assert.That(progressBeforeCancel, Is.LessThan(4_000));
         world.Commands.Enqueue(new CommandEnvelope(world.Tick.Next(), 0, 14, SimCommandType.Stop, new[] { fighter }, FixVec2.Zero));
         runner.StepOneTick();
-        Assert.That(world.Entities.Transformation.Get(fighter).Phase, Is.EqualTo(TransformationPhase.RollingBack));
+        Transformation rollingBack = world.Entities.Transformation.Get(fighter);
+        Assert.Multiple(() =>
+        {
+            Assert.That(rollingBack.Phase, Is.EqualTo(TransformationPhase.RollingBack));
+            Assert.That(TransformationSystem.ProgressBasisPoints(rollingBack), Is.GreaterThan(0));
+            Assert.That(TransformationSystem.ProgressBasisPoints(rollingBack), Is.LessThan(progressBeforeCancel));
+        });
 
         runner.StepTicks(10);
         Assert.That(world.Entities.Transformation.Get(fighter).Phase, Is.EqualTo(TransformationPhase.RollingBack));
