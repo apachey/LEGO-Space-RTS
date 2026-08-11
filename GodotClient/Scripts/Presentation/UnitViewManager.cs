@@ -25,9 +25,9 @@ public partial class UnitViewManager : Node3D
     private readonly StandardMaterial3D _construction = MakeConstructionMaterial();
     private readonly StandardMaterial3D _brownout = MakeMaterial(new Color(0.20f, 0.22f, 0.25f));
     private readonly StandardMaterial3D _projectile = MakeProjectileMaterial();
-    private readonly StandardMaterial3D _healthGood = MakeOverlayMaterial(new Color(0.24f, 0.82f, 0.38f, 0.96f));
-    private readonly StandardMaterial3D _healthDamaged = MakeOverlayMaterial(new Color(0.98f, 0.68f, 0.12f, 0.96f));
-    private readonly StandardMaterial3D _healthCritical = MakeOverlayMaterial(new Color(1f, 0.24f, 0.12f, 0.96f));
+    private readonly StandardMaterial3D _healthGood = MakeHealthBarMaterial(new Color(0.24f, 0.82f, 0.38f, 0.96f));
+    private readonly StandardMaterial3D _healthDamaged = MakeHealthBarMaterial(new Color(0.98f, 0.68f, 0.12f, 0.96f));
+    private readonly StandardMaterial3D _healthCritical = MakeHealthBarMaterial(new Color(1f, 0.24f, 0.12f, 0.96f));
 
     public void Configure(GodotSimBridge bridge, SelectionController selection, ControlGroups groups)
     {
@@ -387,7 +387,7 @@ public partial class UnitViewManager : Node3D
         {
             Name = "HealthBar", Visible = false, TopLevel = true
         };
-        StandardMaterial3D backgroundMaterial = MakeOverlayMaterial(new Color(0.035f, 0.045f, 0.05f, 0.96f));
+        StandardMaterial3D backgroundMaterial = MakeHealthBarMaterial(new Color(0.035f, 0.045f, 0.05f, 0.96f));
         backgroundMaterial.RenderPriority = 0;
         QuadMesh backgroundMesh = new() { Size = new Vector2(2.5f, 0.38f), Material = backgroundMaterial };
         bar.AddChild(new MeshInstance3D { Name = "Background", Mesh = backgroundMesh });
@@ -405,12 +405,21 @@ public partial class UnitViewManager : Node3D
         bar.Visible = entity.HasHealth && visible;
         if (!bar.Visible) return;
         MeshInstance3D? fill = bar.GetNodeOrNull<MeshInstance3D>("Fill");
-        if (fill is null) return;
+        if (fill?.Mesh is not QuadMesh) return;
         float ratio = entity.MaximumHitPointsRaw <= 0 ? 0f : Mathf.Clamp((float)entity.CurrentHitPointsRaw / entity.MaximumHitPointsRaw, 0f, 1f);
-        float width = 2.32f * ratio;
-        fill.Scale = new Vector3(Mathf.Max(ratio, 0.004f), 1f, 1f);
-        fill.Position = new Vector3(-1.16f + width * 0.5f, 0f, 0f);
+        UpdateHealthBarFillGeometry(fill, ratio);
         fill.MaterialOverride = ratio >= 0.70f ? _healthGood : ratio >= 0.35f ? _healthDamaged : _healthCritical;
+    }
+
+    internal static void UpdateHealthBarFillGeometry(MeshInstance3D fill, float ratio)
+    {
+        if (fill.Mesh is not QuadMesh fillMesh) return;
+        ratio = Mathf.Clamp(ratio, 0f, 1f);
+        float width = Mathf.Max(2.32f * ratio, 0.01f);
+        fillMesh.Size = new Vector2(width, 0.26f);
+        fillMesh.CenterOffset = new Vector3(-1.16f + width * 0.5f, 0f, 0f);
+        fill.Position = Vector3.Zero;
+        fill.Scale = Vector3.One;
     }
 
     private static float HealthBarHeightWorld(PresentationEntity entity)
@@ -437,6 +446,13 @@ public partial class UnitViewManager : Node3D
         ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded
     };
     private static StandardMaterial3D MakeOverlayMaterial(Color color) => new()
+    {
+        AlbedoColor = color,
+        ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
+        Transparency = BaseMaterial3D.TransparencyEnum.Alpha,
+        NoDepthTest = true
+    };
+    private static StandardMaterial3D MakeHealthBarMaterial(Color color) => new()
     {
         AlbedoColor = color,
         ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,

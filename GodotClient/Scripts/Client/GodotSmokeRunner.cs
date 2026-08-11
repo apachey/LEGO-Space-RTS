@@ -13,6 +13,7 @@ public partial class GodotSmokeRunner : Node
     private bool _captureConstruction;
     private bool _constructionSeeded;
     private EntityId _captureFocus;
+    private EntityId _damagedFocus;
     private bool _finished;
     private int _frames;
     public void Configure(GodotSimBridge bridge, SelectionController selection, RtsCameraController camera, string[] commandLineArgs)
@@ -50,21 +51,28 @@ public partial class GodotSmokeRunner : Node
                     { _selection.SetSelection(new[] { id }); _captureFocus = id; break; }
                 }
             }
+            TrySeedDamagedHealth(_captureFocus);
         }
         if (_bridge.World.Tick.Value < 40 || _frames < 60) return;
         Node? hud = GetTree().Root.FindChild("BasicHUD", true, false);
         bool hudOk = hud is not null && hud.FindChild("ResourceStrip", true, false) is not null &&
             hud.FindChild("SelectionPanel", true, false) is not null && hud.FindChild("PortraitSlot", true, false) is not null &&
             hud.FindChild("ContextualSlot", true, false) is not null && hud.FindChild("ContextualActions", true, false) is not null;
-        Node? constructionProgress = GetTree().Root.FindChild("ConstructionProgressBar", true, false);
+        Node? focusedView = _captureFocus == EntityId.None ? null : GetTree().Root.FindChild($"SimEntity_{_captureFocus.Value}_*", true, false);
+        Node? damagedView = _damagedFocus == EntityId.None ? null : GetTree().Root.FindChild($"SimEntity_{_damagedFocus.Value}_*", true, false);
+        Node? constructionProgress = focusedView?.FindChild("ConstructionProgressBar", false, false);
         Node? movingTargetControl = GetTree().Root.FindChild("MoveEnemyTest", true, false);
-        Node? healthBar = GetTree().Root.FindChild("HealthBar", true, false);
+        Node? healthBar = damagedView?.FindChild("HealthBar", false, false);
         Node? contactImpact = GetTree().Root.FindChild("ContactImpact", true, false);
-        bool healthBarOk = healthBar is Node3D bar && bar.TopLevel &&
-            bar.FindChild("Background", false, false) is MeshInstance3D background && background.Mesh is QuadMesh backgroundMesh &&
-            backgroundMesh.Material is StandardMaterial3D barMaterial && barMaterial.BillboardMode == BaseMaterial3D.BillboardModeEnum.Enabled &&
-            barMaterial.ShadingMode == BaseMaterial3D.ShadingModeEnum.Unshaded && barMaterial.NoDepthTest;
-        bool constructionOk = !_captureConstruction || (_constructionSeeded && constructionProgress is Node3D progressBar && progressBar.Visible);
+        bool healthBarOk = HealthBarGeometryOk(healthBar);
+        bool constructionOk = !_captureConstruction || (_constructionSeeded && constructionProgress is Node3D progressBar && progressBar.Visible &&
+            progressBar.FindChild("Background", false, false) is MeshInstance3D constructionBackground &&
+            constructionBackground.Mesh is BoxMesh constructionBackgroundMesh &&
+            constructionBackgroundMesh.Material is StandardMaterial3D constructionBackgroundMaterial &&
+            constructionBackgroundMaterial.BillboardMode == BaseMaterial3D.BillboardModeEnum.Disabled &&
+            progressBar.FindChild("Fill", false, false) is MeshInstance3D constructionFill && constructionFill.Mesh is BoxMesh constructionFillMesh &&
+            constructionFillMesh.Material is StandardMaterial3D constructionFillMaterial &&
+            constructionFillMaterial.BillboardMode == BaseMaterial3D.BillboardModeEnum.Disabled);
         bool ok = _bridge.Current is not null && _bridge.World.Entities.Alive.Count >= 18 && _bridge.GameplayContentHash != 0 && hudOk && constructionOk &&
             movingTargetControl is Button && contactImpact is MeshInstance3D && healthBarOk;
         if (ok && _capturePath is not null)
@@ -88,6 +96,8 @@ public partial class GodotSmokeRunner : Node
             }
             GD.Print($"PHASE10 VISUAL SMOKE CAPTURE: PASS path={_capturePath}");
         }
+        if (!ok)
+            GD.PrintErr($"PHASE10 GODOT HEADLESS SMOKE DETAIL: hud={hudOk} construction={constructionOk} health={healthBarOk} movingTarget={movingTargetControl is Button} contact={contactImpact is MeshInstance3D}");
         _finished = true;
         GD.Print(ok ? $"PHASE10 GODOT HEADLESS SMOKE: PASS tick={_bridge.World.Tick.Value} hash={_bridge.StateHashHex()}" : "PHASE10 GODOT HEADLESS SMOKE: FAIL");
         GetTree().Quit(ok ? 0 : 2);
@@ -117,5 +127,54 @@ public partial class GodotSmokeRunner : Node
             return true;
         }
         return false;
+    }
+
+    private void TrySeedDamagedHealth(EntityId preferred)
+    {
+        if (_bridge is null) return;
+        EntityId target = preferred;
+        if (target == EntityId.None || !_bridge.World.Entities.Health.Has(target))
+        {
+            IReadOnlyList<EntityId> alive = _bridge.World.Entities.Alive;
+            target = EntityId.None;
+            for (int i = 0; i < alive.Count; i++)
+            {
+                EntityId candidate = alive[i];
+                if (!_bridge.World.Entities.Health.Has(candidate) ||
+                    !_bridge.World.Entities.Transform.TryGet(candidate, out SimTransform transform) ||
+                    !_bridge.World.Fog.IsVisible(0, transform.Position.X.FloorToInt(), transform.Position.Y.FloorToInt())) continue;
+                target = candidate;
+                break;
+            }
+        }
+        if (target == EntityId.None) return;
+        ref Health health = ref _bridge.World.Entities.Health.Get(target);
+        health.Current = health.Maximum * Fix32.FromRatio(75, 100);
+        _damagedFocus = target;
+    }
+
+    private static bool HealthBarGeometryOk(Node? healthBar)
+    {
+        if (healthBar is not Node3D bar || !bar.TopLevel ||
+            bar.FindChild("Background", false, false) is not MeshInstance3D background || background.Mesh is not QuadMesh backgroundMesh ||
+            backgroundMesh.Material is not StandardMaterial3D barMaterial || barMaterial.BillboardMode != BaseMaterial3D.BillboardModeEnum.Enabled ||
+            barMaterial.ShadingMode != BaseMaterial3D.ShadingModeEnum.Unshaded || !barMaterial.NoDepthTest || barMaterial.RenderPriority != 0 ||
+            bar.FindChild("Fill", false, false) is not MeshInstance3D fill || fill.Mesh is not QuadMesh fillMesh ||
+            fill.MaterialOverride is not StandardMaterial3D fillMaterial || fillMaterial.BillboardMode != BaseMaterial3D.BillboardModeEnum.Enabled ||
+            fillMaterial.RenderPriority != 1) return false;
+        int[] percentages = { 75, 55, 25 };
+        for (int i = 0; i < percentages.Length; i++)
+        {
+            float ratio = percentages[i] / 100f;
+            UnitViewManager.UpdateHealthBarFillGeometry(fill, ratio);
+            float expectedWidth = 2.32f * ratio;
+            float expectedCenter = -1.16f + expectedWidth * 0.5f;
+            if (!Mathf.IsEqualApprox(fillMesh.Size.X, expectedWidth) || !Mathf.IsEqualApprox(fillMesh.CenterOffset.X, expectedCenter) ||
+                fill.Position.DistanceSquaredTo(Vector3.Zero) >= 0.000001f ||
+                fillMesh.CenterOffset.X - fillMesh.Size.X * 0.5f < -backgroundMesh.Size.X * 0.5f ||
+                fillMesh.CenterOffset.X + fillMesh.Size.X * 0.5f > backgroundMesh.Size.X * 0.5f) return false;
+        }
+        UnitViewManager.UpdateHealthBarFillGeometry(fill, 0.75f);
+        return true;
     }
 }

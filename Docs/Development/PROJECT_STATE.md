@@ -426,18 +426,24 @@ narrow placement cases allowed by Phase 09B.
   Hover Scout could acquire a follow-up target outside firing range without
   beginning pursuit. These root causes are fixed on the current branch.
 - Health bars are now independent camera-facing unshaded quads with explicit
-  background/fill render order. Projectile weapons retain the compact muzzle
-  flash, while Contact weapons show a short forward impact plate and continue
-  to create no projectile. Invalid direct targets now fall back to automatic
-  acquisition in the same targeting pass, and an idle ranged unit pursues its
-  automatic follow-up target under the existing deterministic chase rules.
+  background/fill render order. Their fill changes mesh geometry around a fixed
+  billboard origin, so damage cannot move it away from its background. Health
+  materials are isolated from the non-billboard construction-progress
+  materials after the shared-material follow-up caused a playtest regression.
+  Godot smoke cycles health fill through 75%, 55% and 25%, checks containment
+  at each step and verifies a seeded construction bar independently.
+- Projectile weapons retain the compact muzzle flash, while Contact weapons
+  show a short forward impact plate and continue to create no projectile.
+  Invalid direct targets now fall back to automatic acquisition in the same
+  targeting pass, and an idle ranged unit pursues its automatic follow-up
+  target under the existing deterministic chase rules.
 - The hidden F8 developer panel now includes `Move visible enemies`, which
   issues an ordinary deterministic player-1 Move command for reproducible
   moving-target feel review without changing normal match behavior. The
-  follow-up fast and full verification are green with 165 NUnit tests, real
-  Godot visual/runtime smoke, deterministic replay/snapshot continuation and
-  macOS export. Full summary:
-  `Artifacts/Verification/20260811T082837Z-full-summary.txt`. Human retest
+  latest follow-up fast and full verification are green with 165 NUnit tests,
+  real Godot visual/runtime smoke, deterministic replay/snapshot continuation
+  and macOS export. Full summary:
+  `Artifacts/Verification/20260811T085345Z-full-summary.txt`. Human retest
   remains pending.
 
 ## Current gates
