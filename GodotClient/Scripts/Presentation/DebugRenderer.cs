@@ -25,6 +25,7 @@ public partial class DebugRenderer : MeshInstance3D
     public bool DrawSpatialBuckets { get; set; }
     public bool DrawVision { get; set; }
     public bool DrawExcavatable { get; set; }
+    public bool DrawForwardService { get; set; }
 
     public void Configure(GodotSimBridge bridge)
     {
@@ -49,7 +50,7 @@ public partial class DebugRenderer : MeshInstance3D
     {
         if (_bridge is null) return;
         _mesh.ClearSurfaces();
-        bool hasVisibleOverlay = DrawNavigation || DrawClusters || DrawPortals || DrawPaths || DrawLocalSeparation || DrawSpatialBuckets || DrawVision || DrawExcavatable;
+        bool hasVisibleOverlay = DrawNavigation || DrawClusters || DrawPortals || DrawPaths || DrawLocalSeparation || DrawSpatialBuckets || DrawVision || DrawExcavatable || DrawForwardService;
         if (!hasVisibleOverlay)
         {
             _lastTick = _bridge.World.Tick;
@@ -65,6 +66,7 @@ public partial class DebugRenderer : MeshInstance3D
         if (DrawSpatialBuckets) DrawSpatialOverlay();
         if (DrawVision) DrawVisionOverlay();
         if (DrawExcavatable) DrawExcavatableOverlay();
+        if (DrawForwardService) DrawForwardServiceOverlay();
         _mesh.SurfaceEnd();
         _lastTick = _bridge.World.Tick;
         _lastTopology = _bridge.World.Map.TopologyVersion;
@@ -181,6 +183,19 @@ public partial class DebugRenderer : MeshInstance3D
             Line(new Vector3(x1, y, z0), new Vector3(x1, y, z1), c);
             Line(new Vector3(x1, y, z1), new Vector3(x0, y, z1), c);
             Line(new Vector3(x0, y, z1), new Vector3(x0, y, z0), c);
+        }
+    }
+
+    private void DrawForwardServiceOverlay()
+    {
+        IReadOnlyList<EntityId> alive = _bridge!.World.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (!_bridge.World.Entities.ForwardServiceProvider.TryGet(id, out ForwardServiceProvider provider) ||
+                !_bridge.World.Entities.Transform.TryGet(id, out SimTransform transform)) continue;
+            Color color = provider.IsActive ? new Color(0.15f, 0.85f, 1f, 0.82f) : new Color(0.45f, 0.52f, 0.56f, 0.42f);
+            WireCircle(transform.Position.ToWorld(0.2f), provider.RadiusBuildCells * GodotConversions.WorldUnitsPerBuildCell, color, 48);
         }
     }
 }

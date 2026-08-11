@@ -5,15 +5,16 @@ remain authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M5 — Four-Faction System Proof / T050 Excavation topology implemented and fully verified on the current stacked task branch.**
+**M5 — Four-Faction System Proof / T051 Forward Service implemented and fully verified on the current stacked task branch.**
 
 M3 is merged and human-accepted. At the game director's explicit request,
 development moved directly to M5 T049 rather than beginning M4 T040. M4 combat
 T040-T048 remains unimplemented and deferred; it must not be described as
 complete or silently treated as an M5 dependency.
 
-T049 is human-accepted and recorded in commit `3f677b2`. T050 is stacked on
-that commit in `codex/m5-excavation-topology`; neither task is merged to main.
+T049 is human-accepted and recorded in commit `3f677b2`. T050 is recorded in
+commit `8731f61`. T051 is stacked on both in `codex/m5-forward-service`; none
+of these M5 task commits is merged to main.
 
 ## Engine / architecture
 
@@ -352,6 +353,36 @@ narrow placement cases allowed by Phase 09B.
 - The T050 Godot visual smoke opens the feature through the deterministic
   command path, verifies matching MapGrid/ECS Open state and captures the
   resulting route at `Artifacts/Screenshots/m5-excavation-open.png`.
+- M5 T051 Forward Service membership is implemented on the current stacked
+  task branch. Completed, operational `building.ast.service_refit_hub` sources
+  provide the canonical 18-cell radius; only `DeploymentState.Deployed`
+  `unit.ast.solar_explorer` sources provide the canonical 10-cell radius.
+  Construction sites, mobile/transitioning Solar Explorers and Brownout-
+  disabled Hubs do not provide service.
+- Same-owner T3-Trikes cache a stable primary provider in deterministic Entity
+  ID order. Providers occupy dedicated four-cell spatial buckets; a member is
+  re-queried only after crossing a build-grid query cell or after the active
+  provider set changes through deployment, destruction, ownership, position or
+  power state. The runtime never performs an every-member/every-provider nested
+  scan each tick, and Forward Service grants no combat aura.
+- Deployment, provider and member state participate in snapshot v13,
+  simulation protocol v11, replay v8, deterministic hashes and ordered state
+  dumps. Six focused regressions cover canonical activation/radii, exact
+  geometry and ownership, query-cell movement, deployment/destruction/
+  Brownout invalidation, incomplete Hub rejection and deterministic snapshot
+  continuation. The selected-unit HUD exposes `Service Available` / `No
+  Forward Service`, and the F8 developer tools can draw provider radii.
+- T051 full verification is green across every `BLOCKING_NOW` stage: warnings-
+  as-errors builds, 142 NUnit tests, representative 24-mover acceptance,
+  compiled-content identity, HeadlessSim, Godot headless smoke, 100-repeat
+  determinism, replay, snapshot continuation, regeneration and macOS export.
+  The golden/replay hash is `234EBEC1C990C6AB`; the snapshot continuation hash
+  is `BF3928D89A687E6E`. The preserved 60-mover stage remains diagnostic-failing
+  at its unchanged 31/60 completion and 8,483 oscillation incidents. The
+  authoritative summary is
+  `Artifacts/Verification/20260811T181947Z-full-summary.txt`.
+- A launchable T051 debug build exists at
+  `Builds/macOS/LEGO Space RTS.app` and passed the export smoke.
 
 ## Current gates
 
@@ -405,6 +436,12 @@ narrow placement cases allowed by Phase 09B.
   canonical 15–35 / 30–60 second ranges. The deterministic F9 completion
   command continues to exercise topology; player-facing Excavate validation,
   progress and Energy spending require approved exact timing/eligibility data.
+- T051 consumes authoritative deployment state but intentionally does not add
+  the player command, 3.0/2.5-second Solar Explorer transition job or its
+  presentation. Those belong to deferred T048 Transformation or a separately
+  approved integration task; focused fixtures exercise the canonical deployed
+  state without inventing an alternate transformation rule. Full Astronaut
+  roster/infrastructure import remains scheduled for T070/T071.
 
 ## Explicitly rejected / do not resurrect
 
@@ -417,7 +454,7 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Finish the T050 stacked branch handoff; merge only through game-director
+1. Finish the T051 stacked branch handoff; merge only through game-director
    review.
-2. Continue M5 with T051 Forward Service after T050 is accepted and merged,
-   unless the game director explicitly returns to deferred M4 T040 Targeting.
+2. Continue M5 with T052 Mission Refit after T051 is accepted/merged, unless
+   the game director explicitly returns to deferred M4 T040 Targeting.

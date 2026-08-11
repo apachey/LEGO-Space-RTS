@@ -201,6 +201,14 @@ public partial class BasicHud : CanvasLayer
             if (_bridge.World.Entities.WorksiteMember.TryGet(first, out WorksiteMember worksite)) _builder.Append("Worksite  #").Append(worksite.ComponentRoot.Value).Append("   SERVICED\n");
             else _builder.Append("Worksite  DISCONNECTED — local supplied work may continue\n");
         }
+        if (_bridge.World.Entities.ForwardServiceMember.Has(first))
+            _builder.Append(ForwardServiceSystem.TryGetProviderForMember(_bridge.World, first, out EntityId serviceProvider)
+                ? $"Service Available  •  source #{serviceProvider.Value}\n"
+                : "No Forward Service.\n");
+        if (_bridge.World.Entities.ForwardServiceProvider.TryGet(first, out ForwardServiceProvider forwardService))
+            _builder.Append("Forward Service  ").Append(forwardService.IsActive ? "ACTIVE" : "INACTIVE").Append("  •  ").Append(forwardService.RadiusBuildCells).Append(" cells\n");
+        if (_bridge.World.Entities.Deployment.TryGet(first, out Deployment deployment))
+            _builder.Append("Deployment  ").Append(deployment.State).Append('\n');
         if (_bridge.World.Entities.PowerState.TryGet(first, out PowerState power))
             _builder.Append("Power  ").Append(power.IsPowered ? "ONLINE" : "DISABLED — Energy Domain Brownout").Append("   Priority  ").Append(power.Priority).Append('\n');
         if (_bridge.World.Entities.Production.TryGet(first, out Production production)) AppendProductionQueue(production, first);

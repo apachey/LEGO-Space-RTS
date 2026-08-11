@@ -28,6 +28,9 @@ public sealed class EntityStore
     public readonly ComponentStore<WorksiteNode> WorksiteNode = new();
     public readonly ComponentStore<WorksiteMember> WorksiteMember = new();
     public readonly ComponentStore<WorksiteComponent> WorksiteComponent = new();
+    public readonly ComponentStore<Deployment> Deployment = new();
+    public readonly ComponentStore<ForwardServiceProvider> ForwardServiceProvider = new();
+    public readonly ComponentStore<ForwardServiceMember> ForwardServiceMember = new();
     public readonly ComponentStore<PowerState> PowerState = new();
     public readonly ComponentStore<ConstructionSite> ConstructionSite = new();
     public readonly ComponentStore<Production> Production = new();
@@ -88,6 +91,9 @@ public sealed class EntityStore
         WorksiteNode.Remove(id);
         WorksiteMember.Remove(id);
         WorksiteComponent.Remove(id);
+        Deployment.Remove(id);
+        ForwardServiceProvider.Remove(id);
+        ForwardServiceMember.Remove(id);
         PowerState.Remove(id);
         ConstructionSite.Remove(id);
         Production.Remove(id);

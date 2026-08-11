@@ -17,6 +17,7 @@ public enum BuildingState : byte { ConstructionSite = 0, Completed = 1 }
 public enum EnergyFunctionalClass : byte { CommandAndBasicEconomy = 1, ResourceProcessing = 2, ProductionAndResearch = 3, ServiceAndFactionSystems = 4, StaticDefenseAndNonessential = 5 }
 public enum EnergyPriority : byte { High = 0, Normal = 1, Low = 2 }
 public enum BrownoutEventKind : byte { None = 0, Entered = 1, Changed = 2, Recovered = 3 }
+public enum DeploymentState : byte { Mobile = 0, Deploying = 1, Deployed = 2, Undeploying = 3 }
 
 public struct Ownership
 {
@@ -207,6 +208,25 @@ public struct WorksiteComponent
     public ushort NodeCount;
     public ushort MemberCount;
     public uint TopologyRevision;
+}
+
+public struct Deployment
+{
+    public DeploymentState State;
+}
+
+public struct ForwardServiceProvider
+{
+    public byte RadiusBuildCells;
+    public bool IsActive;
+}
+
+public struct ForwardServiceMember
+{
+    public EntityId Provider;
+    public byte QueryOwner;
+    public short QueryCellX;
+    public short QueryCellY;
 }
 
 public struct PowerState

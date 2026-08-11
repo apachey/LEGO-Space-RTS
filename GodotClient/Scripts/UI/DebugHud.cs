@@ -29,6 +29,7 @@ public partial class DebugHud : CanvasLayer
         AddToggle(toggles, "Buckets", () => debug.DrawSpatialBuckets, v => debug.DrawSpatialBuckets = v);
         AddToggle(toggles, "Vision", () => debug.DrawVision, v => debug.DrawVision = v);
         AddToggle(toggles, "Excavatable", () => debug.DrawExcavatable, v => debug.DrawExcavatable = v);
+        AddToggle(toggles, "Forward Service", () => debug.DrawForwardService, v => debug.DrawForwardService = v);
         AddToggle(toggles, "Fog", () => fog.FogVisible, fog.SetFogVisible);
         AddChild(_panel);
     }

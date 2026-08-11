@@ -7,8 +7,8 @@ namespace LegoSpaceRTS.SimCore
 public static class SnapshotSerializer
 {
     public const uint Magic = 0x53525453; // STRS
-    public const ushort FormatVersion = 12;
-    public const ushort SimulationProtocolVersion = 10;
+    public const ushort FormatVersion = 13;
+    public const ushort SimulationProtocolVersion = 11;
 
     [Flags]
     private enum EntityComponents : uint
@@ -38,7 +38,10 @@ public static class SnapshotSerializer
         WorksiteMember = 1 << 21,
         WorksiteComponent = 1 << 22,
         Excavatable = 1 << 23,
-        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver | ResourceBank | Building | ConstructionSite | Builder | Production | EnergyDomain | EnergyDomainMember | PowerState | WorksiteNode | WorksiteMember | WorksiteComponent | Excavatable
+        Deployment = 1 << 24,
+        ForwardServiceProvider = 1 << 25,
+        ForwardServiceMember = 1 << 26,
+        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver | ResourceBank | Building | ConstructionSite | Builder | Production | EnergyDomain | EnergyDomainMember | PowerState | WorksiteNode | WorksiteMember | WorksiteComponent | Excavatable | Deployment | ForwardServiceProvider | ForwardServiceMember
     }
 
     public static byte[] Serialize(SimulationWorld world)
@@ -59,7 +62,7 @@ public static class SnapshotSerializer
         using MemoryStream ms = new(bytes, false); using BinaryReader r = new(ms);
         if (r.ReadUInt32() != Magic) throw new InvalidDataException("Snapshot magic mismatch.");
         ushort format = r.ReadUInt16(), protocol = r.ReadUInt16();
-        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8) || (format == 11 && protocol == 9);
+        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8) || (format == 11 && protocol == 9) || (format == 12 && protocol == 10);
         if (!supportedLegacy && (format != FormatVersion || protocol != SimulationProtocolVersion)) throw new InvalidDataException($"Unsupported snapshot {format}/{protocol}.");
         SimTick tick = new(r.ReadInt32()); MapGrid map = MapGrid.Deserialize(r, includeExcavatableMetadata: format >= 12); uint nextEntity = r.ReadUInt32();
         EntityStore entities = new(); int entityCount = r.ReadInt32(); if (entityCount < 0 || entityCount > 10000) throw new InvalidDataException("Invalid entity count.");
@@ -110,6 +113,9 @@ public static class SnapshotSerializer
         if (world.Entities.WorksiteMember.Has(id)) components |= EntityComponents.WorksiteMember;
         if (world.Entities.WorksiteComponent.Has(id)) components |= EntityComponents.WorksiteComponent;
         if (world.Entities.Excavatable.Has(id)) components |= EntityComponents.Excavatable;
+        if (world.Entities.Deployment.Has(id)) components |= EntityComponents.Deployment;
+        if (world.Entities.ForwardServiceProvider.Has(id)) components |= EntityComponents.ForwardServiceProvider;
+        if (world.Entities.ForwardServiceMember.Has(id)) components |= EntityComponents.ForwardServiceMember;
         if (world.Entities.ConstructionSite.Has(id)) components |= EntityComponents.ConstructionSite;
         if (world.Entities.Production.Has(id)) components |= EntityComponents.Production;
         if (world.TryGetQueue(id, out _)) components |= EntityComponents.CommandQueue;
@@ -146,6 +152,17 @@ public static class SnapshotSerializer
             Excavatable feature = world.Entities.Excavatable.Get(id);
             w.Write(feature.MapFeatureId); w.Write(feature.StableId.Value); w.Write((byte)feature.TerrainClass);
             w.Write((byte)feature.State); w.Write(feature.RequiredEnergy); w.Write(feature.VisualProfile.Value);
+        }
+        if ((components & EntityComponents.Deployment) != 0) w.Write((byte)world.Entities.Deployment.Get(id).State);
+        if ((components & EntityComponents.ForwardServiceProvider) != 0)
+        {
+            ForwardServiceProvider provider = world.Entities.ForwardServiceProvider.Get(id);
+            w.Write(provider.RadiusBuildCells); w.Write(provider.IsActive);
+        }
+        if ((components & EntityComponents.ForwardServiceMember) != 0)
+        {
+            ForwardServiceMember member = world.Entities.ForwardServiceMember.Get(id);
+            w.Write(member.Provider.Value); w.Write(member.QueryOwner); w.Write(member.QueryCellX); w.Write(member.QueryCellY);
         }
         if ((components & EntityComponents.ConstructionSite) != 0) WriteConstructionSite(w, world.Entities.ConstructionSite.Get(id));
         if ((components & EntityComponents.Production) != 0) WriteProduction(w, world.Entities.Production.Get(id));
@@ -284,6 +301,20 @@ public static class SnapshotSerializer
                 throw new InvalidDataException("Invalid authoritative Excavatable Feature.");
             world.Entities.Excavatable.Set(id, feature);
         }
+        if ((components & EntityComponents.Deployment) != 0)
+        {
+            DeploymentState state = (DeploymentState)r.ReadByte();
+            if (state < DeploymentState.Mobile || state > DeploymentState.Undeploying) throw new InvalidDataException("Invalid deployment state.");
+            world.Entities.Deployment.Set(id, new Deployment { State = state });
+        }
+        if ((components & EntityComponents.ForwardServiceProvider) != 0)
+        {
+            byte radius = r.ReadByte(); bool active = r.ReadBoolean();
+            if (radius == 0) throw new InvalidDataException("Invalid Forward Service provider radius.");
+            world.Entities.ForwardServiceProvider.Set(id, new ForwardServiceProvider { RadiusBuildCells = radius, IsActive = active });
+        }
+        if ((components & EntityComponents.ForwardServiceMember) != 0)
+            world.Entities.ForwardServiceMember.Set(id, new ForwardServiceMember { Provider = new EntityId(r.ReadUInt32()), QueryOwner = r.ReadByte(), QueryCellX = r.ReadInt16(), QueryCellY = r.ReadInt16() });
         if ((components & EntityComponents.ConstructionSite) != 0) world.Entities.ConstructionSite.Set(id, ReadConstructionSite(r, format));
         if ((components & EntityComponents.Production) != 0) world.Entities.Production.Set(id, ReadProduction(r));
         if ((components & EntityComponents.CommandQueue) != 0) world.GetQueue(id).Deserialize(r, includeTargetEntity: format >= 4);

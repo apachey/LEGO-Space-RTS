@@ -7,7 +7,7 @@ namespace LegoSpaceRTS.SimCore
 public sealed class ReplayLog
 {
     public const uint Magic = 0x52545253; // RTRS
-    public const ushort Version = 7;
+    public const ushort Version = 8;
     public byte[] InitialSnapshot { get; }
     public List<CommandEnvelope> Commands { get; } = new();
     public ulong ExpectedFinalHash { get; set; }
