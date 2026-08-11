@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 9,
+  "schemaVersion": 10,
   "contentKind": "prototype_entities",
   "policy": "M2 movement metadata plus canonical M3 Ore, construction, production, Operations Capacity and Energy Domain values; no unapproved combat/economy values are invented here.",
   "movementProfiles": [
@@ -166,6 +166,7 @@
       "energyReserveCapacity": 150,
       "continuousEnergyDemandPerSecond": 0,
       "energyFunctionalClass": "CommandAndBasicEconomy",
+      "worksiteServiceRadius": 18,
       "productionExit": { "width": 2, "depth": 2, "largestFootprint": "Tiny" }
     },
     {
@@ -203,6 +204,7 @@
       "energyReserveCapacity": 0,
       "continuousEnergyDemandPerSecond": 1,
       "energyFunctionalClass": "ProductionAndResearch",
+      "worksiteServiceRadius": 12,
       "productionExit": { "width": 3, "depth": 3, "largestFootprint": "Medium" }
     }
   ],

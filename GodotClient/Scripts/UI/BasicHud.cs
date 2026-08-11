@@ -69,7 +69,7 @@ public partial class BasicHud : CanvasLayer
         HBoxContainer row = new() { Name = "ResourceRow", Alignment = BoxContainer.AlignmentMode.Center };
         row.AddThemeConstantOverride("separation", 6);
         panel.AddChild(row);
-        _oreValue = AddResourceBlock(row, "ORE", "500", "Processed Ore available to spend");
+        _oreValue = AddResourceBlock(row, "ORE", "500", "Processed Ore available to the active Worksite");
         Button energyButton = new() { Name = "EnergyButton", Flat = true, CustomMinimumSize = new Vector2(330, 48), TooltipText = "Open Energy Domain details" };
         VBoxContainer energyBox = ResourceBox("ENERGY", out _energyValue);
         energyButton.AddChild(energyBox);
@@ -77,7 +77,7 @@ public partial class BasicHud : CanvasLayer
         row.AddChild(energyButton);
         _crystalValue = AddResourceBlock(row, "CRYSTALS", "0", "Spendable Crystals");
         _ocValue = AddResourceBlock(row, "OPERATIONS", "6 / 16", "Active and maximum Operations Capacity");
-        Label phase = new() { Text = "M3", HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center, CustomMinimumSize = new Vector2(54, 48), TooltipText = "Economy & Base Building prototype" };
+        Label phase = new() { Text = "M5", HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center, CustomMinimumSize = new Vector2(54, 48), TooltipText = "Four-Faction System Proof — Worksite graph" };
         phase.AddThemeColorOverride("font_color", RaiderAccent); phase.AddThemeFontSizeOverride("font_size", 15); row.AddChild(phase);
         root.AddChild(panel);
 
@@ -137,9 +137,12 @@ public partial class BasicHud : CanvasLayer
     private void UpdateResources()
     {
         if (_bridge is null || _oreValue is null || _energyValue is null || _crystalValue is null || _ocValue is null) return;
-        int ore = _bridge.World.GetProcessedResourceTotal(0, ResourceType.Ore);
-        int pending = _bridge.World.GetPendingHauledResourceTotal(0, ResourceType.Ore);
+        EntityId[] components = WorksiteGraphSystem.GetPlayerComponents(_bridge.World, 0);
+        EntityId activeRoot = ActiveWorksiteRoot(components);
+        int ore = activeRoot == EntityId.None ? 0 : WorksiteGraphSystem.GetProcessedResourceTotal(_bridge.World, activeRoot, ResourceType.Ore);
+        int pending = activeRoot == EntityId.None ? 0 : WorksiteGraphSystem.GetPendingHauledResourceTotal(_bridge.World, activeRoot, ResourceType.Ore);
         _oreValue.Text = pending > 0 ? $"{ore}  (+{pending} receiving)" : ore.ToString();
+        if (components.Length > 1) _oreValue.Text += $"  •  {components.Length} SITES";
         _crystalValue.Text = "0";
         OperationsCapacityState capacity = _bridge.World.GetOperationsCapacity(0);
         _ocValue.Text = capacity.Reserved > 0 ? $"{capacity.Used} / {capacity.Maximum}  (+{capacity.Reserved} queued)" : $"{capacity.Used} / {capacity.Maximum}";
@@ -147,14 +150,15 @@ public partial class BasicHud : CanvasLayer
         else if (capacity.IsAdvanceWarning) _ocValue.Text += "  WARNING";
         _ocValue.AddThemeColorOverride("font_color", capacity.IsOverCapacity ? Danger : capacity.IsAdvanceWarning ? Warning : TextPrimary);
 
-        if (!EnergyDomainSystem.TryGetPlayerDomain(_bridge.World, 0, out EntityId root)) { _energyValue.Text = "NO DOMAIN"; return; }
+        EntityId root = activeRoot;
+        if (root == EntityId.None || !_bridge.World.Entities.EnergyDomain.Has(root)) { _energyValue.Text = "NO DOMAIN"; return; }
         EnergyDomain energy = _bridge.World.Entities.EnergyDomain.Get(root);
         int net = energy.GenerationPerSecond - energy.ContinuousDemandPerSecond;
         _energyValue.Text = $"{EnergyText(energy.Reserve)} / {EnergyText(energy.ReserveCapacity)}  |  {energy.GenerationPerSecond}↑  {energy.ContinuousDemandPerSecond}↓  |  {(net >= 0 ? "+" : string.Empty)}{net}/s";
         _energyValue.AddThemeColorOverride("font_color", energy.IsBrownout ? Danger : energy.IsDeficit ? Warning : TextPrimary);
         if (_energyPopoverLabel is not null)
         {
-            _energyPopoverLabel.Text = $"HQ Domain #{root.Value}\nReserve  {EnergyText(energy.Reserve)} / {EnergyText(energy.ReserveCapacity)}\nGeneration  +{energy.GenerationPerSecond} E/s\nDemand  -{energy.ContinuousDemandPerSecond} E/s\nNet  {(net >= 0 ? "+" : string.Empty)}{net} E/s\nState  {(energy.IsBrownout ? $"BROWNOUT — {energy.PoweredDemandPerSecond}/{energy.ContinuousDemandPerSecond} E/s powered" : energy.IsDeficit ? "Reserve draining" : "Stable")}";
+            _energyPopoverLabel.Text = $"Worksite #{root.Value}  •  {components.Length} component{(components.Length == 1 ? string.Empty : "s")}\nReserve  {EnergyText(energy.Reserve)} / {EnergyText(energy.ReserveCapacity)}\nGeneration  +{energy.GenerationPerSecond} E/s\nDemand  -{energy.ContinuousDemandPerSecond} E/s\nNet  {(net >= 0 ? "+" : string.Empty)}{net} E/s\nState  {(energy.IsBrownout ? $"BROWNOUT — {energy.PoweredDemandPerSecond}/{energy.ContinuousDemandPerSecond} E/s powered" : energy.IsDeficit ? "Reserve draining" : "Stable")}";
         }
     }
 
@@ -162,10 +166,13 @@ public partial class BasicHud : CanvasLayer
     {
         if (_bridge is null || _alertPanel is null || _alertLabel is null) return;
         OperationsCapacityState capacity = _bridge.World.GetOperationsCapacity(0);
-        if (EnergyDomainSystem.TryGetPlayerDomain(_bridge.World, 0, out EntityId root) && _bridge.World.Entities.EnergyDomain.TryGet(root, out EnergyDomain energy) && energy.IsBrownout)
+        EntityId[] roots = WorksiteGraphSystem.GetPlayerComponents(_bridge.World, 0);
+        for (int i = 0; i < roots.Length; i++)
         {
+            EntityId root = roots[i];
+            if (!_bridge.World.Entities.EnergyDomain.TryGet(root, out EnergyDomain energy) || !energy.IsBrownout) continue;
             int deficit = energy.ContinuousDemandPerSecond - energy.GenerationPerSecond;
-            _alertPanel.Visible = true; _alertLabel.Text = $"⚡ BROWNOUT — Energy Domain demand exceeds generation by {deficit} E/s"; return;
+            _alertPanel.Visible = true; _alertLabel.Text = $"⚡ BROWNOUT — Worksite #{root.Value} demand exceeds generation by {deficit} E/s"; return;
         }
         if (capacity.IsOverCapacity) { _alertPanel.Visible = true; _alertLabel.Text = "OPERATIONS CAPACITY EXCEEDED — increase operational infrastructure"; return; }
         _alertPanel.Visible = false;
@@ -189,6 +196,11 @@ public partial class BasicHud : CanvasLayer
             _builder.Append("Task  ").Append(worker.TaskState).Append("   Cargo  ").Append(carrier.Amount).Append('/').Append(carrier.Capacity).Append(" Ore\n");
         if (_bridge.World.Entities.ConstructionSite.TryGet(first, out ConstructionSite site))
             _builder.Append("Construction  ").Append(site.ProgressTicks * 100 / site.RequiredTicks).Append("%   Reserved  ").Append(site.ReservedOre).Append(" Ore / ").Append(site.ReservedEnergy).Append(" Energy\n");
+        if (_bridge.World.Entities.Building.Has(first))
+        {
+            if (_bridge.World.Entities.WorksiteMember.TryGet(first, out WorksiteMember worksite)) _builder.Append("Worksite  #").Append(worksite.ComponentRoot.Value).Append("   SERVICED\n");
+            else _builder.Append("Worksite  DISCONNECTED — local supplied work may continue\n");
+        }
         if (_bridge.World.Entities.PowerState.TryGet(first, out PowerState power))
             _builder.Append("Power  ").Append(power.IsPowered ? "ONLINE" : "DISABLED — Energy Domain Brownout").Append("   Priority  ").Append(power.Priority).Append('\n');
         if (_bridge.World.Entities.Production.TryGet(first, out Production production)) AppendProductionQueue(production, first);
@@ -300,6 +312,13 @@ public partial class BasicHud : CanvasLayer
     {
         int tenths = (int)(((long)value.Raw * 10 + Fix32.OneRaw / 2) / Fix32.OneRaw);
         return $"{tenths / 10}.{tenths % 10}";
+    }
+
+    private EntityId ActiveWorksiteRoot(EntityId[] components)
+    {
+        if (_bridge is not null && _selection is not null && _selection.Selected.Count > 0 &&
+            _bridge.World.Entities.WorksiteMember.TryGet(_selection.Selected[0], out WorksiteMember selected)) return selected.ComponentRoot;
+        return components.Length > 0 ? components[0] : EntityId.None;
     }
 
     private static string UnitName(ContentId id)

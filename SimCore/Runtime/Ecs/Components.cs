@@ -181,6 +181,24 @@ public struct EnergyDomainMember
     public EntityId DomainRoot;
 }
 
+public struct WorksiteNode
+{
+    public byte ServiceRadius;
+    public EntityId ComponentRoot;
+}
+
+public struct WorksiteMember
+{
+    public EntityId ComponentRoot;
+}
+
+public struct WorksiteComponent
+{
+    public ushort NodeCount;
+    public ushort MemberCount;
+    public uint TopologyRevision;
+}
+
 public struct PowerState
 {
     public EnergyPriority Priority;

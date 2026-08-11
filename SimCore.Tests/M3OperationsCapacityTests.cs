@@ -193,6 +193,11 @@ public sealed class M3OperationsCapacityTests
             FootprintWidth = definition.FootprintWidth, FootprintHeight = definition.FootprintHeight, State = BuildingState.Completed
         });
         world.Entities.Production.Set(id, new Production());
+        if (EnergyDomainSystem.TryGetPlayerDomain(world, player, out EntityId root))
+        {
+            world.Entities.WorksiteMember.Set(id, new WorksiteMember { ComponentRoot = root });
+            world.Entities.EnergyDomainMember.Set(id, new EnergyDomainMember { DomainRoot = root });
+        }
         OperationsCapacitySystem.Recalculate(world);
         return id;
     }

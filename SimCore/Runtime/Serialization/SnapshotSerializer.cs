@@ -7,8 +7,8 @@ namespace LegoSpaceRTS.SimCore
 public static class SnapshotSerializer
 {
     public const uint Magic = 0x53525453; // STRS
-    public const ushort FormatVersion = 10;
-    public const ushort SimulationProtocolVersion = 8;
+    public const ushort FormatVersion = 11;
+    public const ushort SimulationProtocolVersion = 9;
 
     [Flags]
     private enum EntityComponents : uint
@@ -34,7 +34,10 @@ public static class SnapshotSerializer
         EnergyDomain = 1 << 17,
         EnergyDomainMember = 1 << 18,
         PowerState = 1 << 19,
-        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver | ResourceBank | Building | ConstructionSite | Builder | Production | EnergyDomain | EnergyDomainMember | PowerState
+        WorksiteNode = 1 << 20,
+        WorksiteMember = 1 << 21,
+        WorksiteComponent = 1 << 22,
+        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver | ResourceBank | Building | ConstructionSite | Builder | Production | EnergyDomain | EnergyDomainMember | PowerState | WorksiteNode | WorksiteMember | WorksiteComponent
     }
 
     public static byte[] Serialize(SimulationWorld world)
@@ -55,7 +58,7 @@ public static class SnapshotSerializer
         using MemoryStream ms = new(bytes, false); using BinaryReader r = new(ms);
         if (r.ReadUInt32() != Magic) throw new InvalidDataException("Snapshot magic mismatch.");
         ushort format = r.ReadUInt16(), protocol = r.ReadUInt16();
-        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7);
+        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8);
         if (!supportedLegacy && (format != FormatVersion || protocol != SimulationProtocolVersion)) throw new InvalidDataException($"Unsupported snapshot {format}/{protocol}.");
         SimTick tick = new(r.ReadInt32()); MapGrid map = MapGrid.Deserialize(r); uint nextEntity = r.ReadUInt32();
         EntityStore entities = new(); int entityCount = r.ReadInt32(); if (entityCount < 0 || entityCount > 10000) throw new InvalidDataException("Invalid entity count.");
@@ -74,6 +77,7 @@ public static class SnapshotSerializer
         temp.Fog = FogState.Deserialize(r);
         if (ms.Position != ms.Length) throw new InvalidDataException("Trailing snapshot bytes.");
         if (format < 9) InitializeLegacyEnergy(temp);
+        else if (format < 11) MigrateLegacyWorksites(temp);
         else EnergyDomainSystem.RecalculateAll(temp);
         OperationsCapacitySystem.Recalculate(temp);
         temp.Spatial.Rebuild(temp.Entities);
@@ -100,6 +104,9 @@ public static class SnapshotSerializer
         if (world.Entities.EnergyDomain.Has(id)) components |= EntityComponents.EnergyDomain;
         if (world.Entities.EnergyDomainMember.Has(id)) components |= EntityComponents.EnergyDomainMember;
         if (world.Entities.PowerState.Has(id)) components |= EntityComponents.PowerState;
+        if (world.Entities.WorksiteNode.Has(id)) components |= EntityComponents.WorksiteNode;
+        if (world.Entities.WorksiteMember.Has(id)) components |= EntityComponents.WorksiteMember;
+        if (world.Entities.WorksiteComponent.Has(id)) components |= EntityComponents.WorksiteComponent;
         if (world.Entities.ConstructionSite.Has(id)) components |= EntityComponents.ConstructionSite;
         if (world.Entities.Production.Has(id)) components |= EntityComponents.Production;
         if (world.TryGetQueue(id, out _)) components |= EntityComponents.CommandQueue;
@@ -128,6 +135,9 @@ public static class SnapshotSerializer
         if ((components & EntityComponents.EnergyDomain) != 0) WriteEnergyDomain(w, world.Entities.EnergyDomain.Get(id));
         if ((components & EntityComponents.EnergyDomainMember) != 0) w.Write(world.Entities.EnergyDomainMember.Get(id).DomainRoot.Value);
         if ((components & EntityComponents.PowerState) != 0) { PowerState state = world.Entities.PowerState.Get(id); w.Write((byte)state.Priority); w.Write(state.IsPowered); }
+        if ((components & EntityComponents.WorksiteNode) != 0) { WorksiteNode node = world.Entities.WorksiteNode.Get(id); w.Write(node.ServiceRadius); w.Write(node.ComponentRoot.Value); }
+        if ((components & EntityComponents.WorksiteMember) != 0) w.Write(world.Entities.WorksiteMember.Get(id).ComponentRoot.Value);
+        if ((components & EntityComponents.WorksiteComponent) != 0) { WorksiteComponent component = world.Entities.WorksiteComponent.Get(id); w.Write(component.NodeCount); w.Write(component.MemberCount); w.Write(component.TopologyRevision); }
         if ((components & EntityComponents.ConstructionSite) != 0) WriteConstructionSite(w, world.Entities.ConstructionSite.Get(id));
         if ((components & EntityComponents.Production) != 0) WriteProduction(w, world.Entities.Production.Get(id));
         if ((components & EntityComponents.CommandQueue) != 0) world.GetQueue(id).Serialize(w, includeTargetEntity: true);
@@ -246,6 +256,12 @@ public static class SnapshotSerializer
             if (priority < EnergyPriority.High || priority > EnergyPriority.Low) throw new InvalidDataException("Invalid Energy priority.");
             world.Entities.PowerState.Set(id, new PowerState { Priority = priority, IsPowered = powered });
         }
+        if ((components & EntityComponents.WorksiteNode) != 0)
+            world.Entities.WorksiteNode.Set(id, new WorksiteNode { ServiceRadius = r.ReadByte(), ComponentRoot = new EntityId(r.ReadUInt32()) });
+        if ((components & EntityComponents.WorksiteMember) != 0)
+            world.Entities.WorksiteMember.Set(id, new WorksiteMember { ComponentRoot = new EntityId(r.ReadUInt32()) });
+        if ((components & EntityComponents.WorksiteComponent) != 0)
+            world.Entities.WorksiteComponent.Set(id, new WorksiteComponent { NodeCount = r.ReadUInt16(), MemberCount = r.ReadUInt16(), TopologyRevision = r.ReadUInt32() });
         if ((components & EntityComponents.ConstructionSite) != 0) world.Entities.ConstructionSite.Set(id, ReadConstructionSite(r, format));
         if ((components & EntityComponents.Production) != 0) world.Entities.Production.Set(id, ReadProduction(r));
         if ((components & EntityComponents.CommandQueue) != 0) world.GetQueue(id).Deserialize(r, includeTargetEntity: format >= 4);
@@ -378,6 +394,18 @@ public static class SnapshotSerializer
             if (!world.Entities.Production.TryGet(id, out Production production)) continue;
             for (int q = 0; q < production.Count; q++) SpendLegacyEnergy(world, root, production.Get(q).RequiredEnergy);
         }
+    }
+
+    private static void MigrateLegacyWorksites(SimulationWorld world)
+    {
+        IReadOnlyList<EntityId> alive = world.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (world.Entities.EnergyDomainMember.TryGet(id, out EnergyDomainMember member))
+                world.Entities.WorksiteMember.Set(id, new WorksiteMember { ComponentRoot = member.DomainRoot });
+        }
+        WorksiteGraphSystem.Rebuild(world);
     }
 
     private static void SpendLegacyEnergy(SimulationWorld world, EntityId root, int amount)

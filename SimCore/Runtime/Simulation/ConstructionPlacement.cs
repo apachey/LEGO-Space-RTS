@@ -55,8 +55,10 @@ public static class ConstructionPlacement
         if (definition.ProductionExitWidth > 0 && !ValidateProductionExit(world, definition, anchorX, anchorY, orientation))
             return new PlacementValidation(PlacementFailure.NoLegalProductionExit);
 
-        EntityId bank = FindFundingBank(world, playerSlot, definition.OreCost, SiteCenter(anchorX, anchorY, width, height));
-        if (bank == EntityId.None) return new PlacementValidation(PlacementFailure.InsufficientOre);
+        FixVec2 siteCenter = SiteCenter(anchorX, anchorY, width, height);
+        EntityId requiredComponent = WorksiteGraphSystem.TryGetComponentAt(world, playerSlot, siteCenter, out EntityId component) ? component : EntityId.None;
+        if (!WorksiteGraphSystem.TryFindFundingBank(world, playerSlot, requiredComponent, ResourceType.Ore, definition.OreCost, siteCenter, out EntityId bank))
+            return new PlacementValidation(PlacementFailure.InsufficientOre);
         if (!EnergyDomainSystem.TryResolveForEntity(world, bank, playerSlot, out EntityId energyDomain)) return new PlacementValidation(PlacementFailure.NoEnergyDomain);
         if (!EnergyDomainSystem.CanSpend(world, energyDomain, definition.EnergyCost)) return new PlacementValidation(PlacementFailure.InsufficientEnergy);
         return new PlacementValidation(PlacementFailure.None, builder, bank, energyDomain);
@@ -69,8 +71,12 @@ public static class ConstructionPlacement
         failure = validation.Failure; site = EntityId.None;
         if (!validation.IsValid || !world.Content.TryGetBuilding(buildingType, out BuildingDefinition definition)) return false;
         if (!EnergyDomainSystem.TrySpend(world, validation.EnergyDomainRoot, definition.EnergyCost)) { failure = PlacementFailure.InsufficientEnergy; return false; }
-        ref ResourceBank bank = ref world.Entities.ResourceBank.Get(validation.FundingBank);
-        bank.ProcessedAmount = checked(bank.ProcessedAmount - definition.OreCost);
+        if (!WorksiteGraphSystem.TrySpendProcessedResource(world, playerSlot, validation.FundingBank, ResourceType.Ore, definition.OreCost))
+        {
+            EnergyDomainSystem.Refund(world, validation.EnergyDomainRoot, definition.EnergyCost);
+            failure = PlacementFailure.InsufficientOre;
+            return false;
+        }
         byte width = definition.RotatedWidth(orientation), height = definition.RotatedHeight(orientation);
         Building building = new()
         {
@@ -90,6 +96,7 @@ public static class ConstructionPlacement
             RequiredTicks = definition.BuildTicks, ProgressTicks = 0
         });
         world.SetConstructionOccupied(building, true);
+        WorksiteGraphSystem.Rebuild(world);
         ConstructionSystem.AssignBuilder(world, validation.Builder, site, queueBuilder);
         return true;
     }
@@ -114,7 +121,9 @@ public static class ConstructionPlacement
         world.Entities.ConstructionSite.Remove(site);
         ConstructionSystem.ReleaseSiteAssignments(world, site);
         world.SetConstructionOccupied(building, false);
-        return world.Entities.Destroy(site);
+        bool destroyed = world.Entities.Destroy(site);
+        WorksiteGraphSystem.Rebuild(world);
+        return destroyed;
     }
 
     public static IntRect GetProductionExit(BuildingDefinition definition, short anchorX, short anchorY, byte orientation)
@@ -223,22 +232,6 @@ public static class ConstructionPlacement
             if (world.Entities.Transform.TryGet(id, out SimTransform transform) && exit.Contains(transform.Position.X.FloorToInt(), transform.Position.Y.FloorToInt())) return false;
         }
         return true;
-    }
-
-    private static EntityId FindFundingBank(SimulationWorld world, byte playerSlot, int oreCost, FixVec2 siteCenter)
-    {
-        EntityId best = EntityId.None; Fix32 bestDistance = Fix32.MaxValue;
-        IReadOnlyList<EntityId> alive = world.Entities.Alive;
-        for (int i = 0; i < alive.Count; i++)
-        {
-            EntityId id = alive[i];
-            if (!world.Entities.ResourceBank.TryGet(id, out ResourceBank bank) || bank.Type != ResourceType.Ore || bank.ProcessedAmount < oreCost ||
-                !world.Entities.Ownership.TryGet(id, out Ownership ownership) || ownership.PlayerSlot != playerSlot ||
-                !world.Entities.Transform.TryGet(id, out SimTransform transform)) continue;
-            Fix32 distance = FixVec2.Distance(siteCenter, transform.Position);
-            if (best == EntityId.None || distance < bestDistance || (distance == bestDistance && id.Value < best.Value)) { best = id; bestDistance = distance; }
-        }
-        return best;
     }
 
     private static bool FootprintsOverlap(SimulationWorld world, BuildingDefinition candidate, short anchorX, short anchorY, byte orientation, Building existing)

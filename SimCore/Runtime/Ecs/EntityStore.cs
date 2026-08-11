@@ -24,6 +24,9 @@ public sealed class EntityStore
     public readonly ComponentStore<Building> Building = new();
     public readonly ComponentStore<EnergyDomain> EnergyDomain = new();
     public readonly ComponentStore<EnergyDomainMember> EnergyDomainMember = new();
+    public readonly ComponentStore<WorksiteNode> WorksiteNode = new();
+    public readonly ComponentStore<WorksiteMember> WorksiteMember = new();
+    public readonly ComponentStore<WorksiteComponent> WorksiteComponent = new();
     public readonly ComponentStore<PowerState> PowerState = new();
     public readonly ComponentStore<ConstructionSite> ConstructionSite = new();
     public readonly ComponentStore<Production> Production = new();
@@ -80,6 +83,9 @@ public sealed class EntityStore
         Building.Remove(id);
         EnergyDomain.Remove(id);
         EnergyDomainMember.Remove(id);
+        WorksiteNode.Remove(id);
+        WorksiteMember.Remove(id);
+        WorksiteComponent.Remove(id);
         PowerState.Remove(id);
         ConstructionSite.Remove(id);
         Production.Remove(id);

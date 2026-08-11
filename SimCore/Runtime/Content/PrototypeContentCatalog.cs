@@ -109,12 +109,13 @@ public readonly struct BuildingDefinition
     public readonly ushort EnergyReserveCapacity;
     public readonly ushort ContinuousEnergyDemandPerSecond;
     public readonly EnergyFunctionalClass EnergyFunctionalClass;
+    public readonly byte WorksiteServiceRadius;
 
     public BuildingDefinition(string stableKey, byte footprintWidth, byte footprintHeight, ulong footprintMask, bool rotatable,
         ushort oreCost, ushort energyCost, ushort buildTicks, byte productionExitWidth = 0, byte productionExitDepth = 0,
         FootprintClass productionExitFootprint = FootprintClass.Tiny, byte operationsCapacityProvided = 0,
         ushort energyGenerationPerSecond = 0, ushort energyReserveCapacity = 0, ushort continuousEnergyDemandPerSecond = 0,
-        EnergyFunctionalClass energyFunctionalClass = EnergyFunctionalClass.StaticDefenseAndNonessential)
+        EnergyFunctionalClass energyFunctionalClass = EnergyFunctionalClass.StaticDefenseAndNonessential, byte worksiteServiceRadius = 0)
     {
         if (footprintWidth == 0 || footprintHeight == 0 || footprintWidth > 8 || footprintHeight > 8) throw new ArgumentOutOfRangeException(nameof(footprintWidth));
         int cells = footprintWidth * footprintHeight;
@@ -130,6 +131,7 @@ public readonly struct BuildingDefinition
         EnergyGenerationPerSecond = energyGenerationPerSecond; EnergyReserveCapacity = energyReserveCapacity;
         ContinuousEnergyDemandPerSecond = continuousEnergyDemandPerSecond;
         EnergyFunctionalClass = energyFunctionalClass;
+        WorksiteServiceRadius = worksiteServiceRadius;
     }
 
     public byte RotatedWidth(byte orientation) => (orientation & 1) == 0 ? FootprintWidth : FootprintHeight;
@@ -268,10 +270,10 @@ public static class PrototypeContentFactory
         };
         BuildingDefinition[] buildings =
         {
-            new BuildingDefinition("building.rock_raiders.hq", 8, 8, ulong.MaxValue, false, 320, 40, 1200, 2, 2, FootprintClass.Tiny, 16, 2, 150, energyFunctionalClass: EnergyFunctionalClass.CommandAndBasicEconomy),
+            new BuildingDefinition("building.rock_raiders.hq", 8, 8, ulong.MaxValue, false, 320, 40, 1200, 2, 2, FootprintClass.Tiny, 16, 2, 150, energyFunctionalClass: EnergyFunctionalClass.CommandAndBasicEconomy, worksiteServiceRadius: 18),
             new BuildingDefinition("building.rock_raiders.ore_processing_plant", 6, 6, (1UL << 36) - 1UL, false, 140, 15, 600, continuousEnergyDemandPerSecond: 1, energyFunctionalClass: EnergyFunctionalClass.ResourceProcessing),
             new BuildingDefinition("building.rock_raiders.power_station", 5, 5, (1UL << 25) - 1UL, false, 150, 20, 700, energyGenerationPerSecond: 10, energyReserveCapacity: 120),
-            new BuildingDefinition("building.rock_raiders.vehicle_service_bay", 8, 6, (1UL << 48) - 1UL, true, 160, 20, 800, 3, 3, FootprintClass.Medium, 4, continuousEnergyDemandPerSecond: 1, energyFunctionalClass: EnergyFunctionalClass.ProductionAndResearch)
+            new BuildingDefinition("building.rock_raiders.vehicle_service_bay", 8, 6, (1UL << 48) - 1UL, true, 160, 20, 800, 3, 3, FootprintClass.Medium, 4, continuousEnergyDemandPerSecond: 1, energyFunctionalClass: EnergyFunctionalClass.ProductionAndResearch, worksiteServiceRadius: 12)
         };
         UnitProductionDefinition[] production =
         {
@@ -290,7 +292,7 @@ public static class PrototypeContentFactory
 public static class PrototypeContentCodec
 {
     private const int Magic = 0x4350534C; // LSPC little-endian bytes.
-    public const int FormatVersion = 9;
+    public const int FormatVersion = 10;
 
     public static byte[] Write(PrototypeContentCatalog catalog)
     {
@@ -329,6 +331,7 @@ public static class PrototypeContentCodec
             writer.Write(b.OperationsCapacityProvided);
             writer.Write(b.EnergyGenerationPerSecond); writer.Write(b.EnergyReserveCapacity); writer.Write(b.ContinuousEnergyDemandPerSecond);
             writer.Write((byte)b.EnergyFunctionalClass);
+            writer.Write(b.WorksiteServiceRadius);
         }
         writer.Write(catalog.Production.Length);
         for (int i = 0; i < catalog.Production.Length; i++)
@@ -397,7 +400,8 @@ public static class PrototypeContentCodec
                 LegacyEnergyDefinition(key, out ushort generation, out ushort reserveCapacity, out ushort demand);
                 if (formatVersion >= 8) { generation = reader.ReadUInt16(); reserveCapacity = reader.ReadUInt16(); demand = reader.ReadUInt16(); }
                 EnergyFunctionalClass functionalClass = formatVersion >= 9 ? (EnergyFunctionalClass)reader.ReadByte() : LegacyEnergyFunctionalClass(key);
-                buildings[i] = new BuildingDefinition(key, width, height, mask, rotatable, oreCost, energyCost, buildTicks, exitWidth, exitDepth, exitFootprint, capacityProvided, generation, reserveCapacity, demand, functionalClass);
+                byte worksiteServiceRadius = formatVersion >= 10 ? reader.ReadByte() : LegacyWorksiteServiceRadius(key);
+                buildings[i] = new BuildingDefinition(key, width, height, mask, rotatable, oreCost, energyCost, buildTicks, exitWidth, exitDepth, exitFootprint, capacityProvided, generation, reserveCapacity, demand, functionalClass, worksiteServiceRadius);
                 if (buildings[i].Id.Value != id) throw new InvalidDataException("Stable building ID mismatch.");
             }
         }
@@ -425,6 +429,13 @@ public static class PrototypeContentCodec
         "unit.rock_raiders.rapid_rider" => 2,
         "unit.rock_raiders.loader_dozer" => 3,
         "unit.rock_raiders.chrome_crusher" => 6,
+        _ => 0
+    };
+
+    private static byte LegacyWorksiteServiceRadius(string stableKey) => stableKey switch
+    {
+        "building.rock_raiders.hq" => 18,
+        "building.rock_raiders.vehicle_service_bay" => 12,
         _ => 0
     };
 

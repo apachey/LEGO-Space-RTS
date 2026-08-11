@@ -134,7 +134,7 @@ check(len(source.get('resourceReceivers',[])) == 2, 'M3 starting HQ resource rec
 check(len(source.get('visionTestGeometry',[])) >= 4, 'vision test geometry missing')
 
 content_source = json.loads((ROOT/'Content/PrototypeEntities.json').read_text())
-check(content_source.get('schemaVersion') == 9 and content_source.get('contentKind') == 'prototype_entities', 'prototype content schema mismatch')
+check(content_source.get('schemaVersion') == 10 and content_source.get('contentKind') == 'prototype_entities', 'prototype content schema mismatch')
 entity_keys = [e.get('stableId') for e in content_source.get('entities',[])]
 check(len(entity_keys) >= 5 and len(entity_keys) == len(set(entity_keys)), 'prototype content entries missing/duplicated')
 for required_key in ['building.rock_raiders.hq','building.rock_raiders.ore_processing_plant','building.rock_raiders.power_station','building.rock_raiders.vehicle_service_bay','unit.rock_raiders.crew','unit.rock_raiders.hover_scout','unit.rock_raiders.rapid_rider','unit.rock_raiders.loader_dozer','unit.rock_raiders.chrome_crusher','prototype.nav.huge']:
@@ -202,6 +202,11 @@ expected_energy_classes = {
     'building.rock_raiders.vehicle_service_bay': 'ProductionAndResearch',
 }
 check({key:building_by_key.get(key,{}).get('energyFunctionalClass') for key in expected_energy_classes} == expected_energy_classes, 'canonical Brownout functional classes missing or incorrect')
+expected_worksite_radii = {
+    'building.rock_raiders.hq': 18,
+    'building.rock_raiders.vehicle_service_bay': 12,
+}
+check({key:building_by_key.get(key,{}).get('worksiteServiceRadius') for key in expected_worksite_radii} == expected_worksite_radii, 'canonical M5 Worksite service radii missing or incorrect')
 
 headless = (ROOT/'HeadlessSim/Program.cs').read_text()
 for token in ['--snapshot-in','--snapshot-out','--replay','--record-replay','--benchmark','--path-benchmark','--hash-every','--repeat','--golden-manifest-out','--golden-manifest-in','--dump-state','--compiled-dir']:

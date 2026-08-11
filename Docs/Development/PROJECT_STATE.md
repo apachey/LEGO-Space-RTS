@@ -5,12 +5,12 @@ remain authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M3 — Economy & Base Building / deterministic Ore loop in progress.**
+**M5 — Four-Faction System Proof / T049 Worksite graph implemented and human-accepted on the current task branch.**
 
-The revised M2 automated gates pass and PR #8 is merged. Human movement-feel
-acceptance is also complete: the remaining settling jitter is minimal and some
-movement actions can still read oddly, but the game director accepted both as
-non-blocking polish rather than further M2 work.
+M3 is merged and human-accepted. At the game director's explicit request,
+development moved directly to M5 T049 rather than beginning M4 T040. M4 combat
+T040-T048 remains unimplemented and deferred; it must not be described as
+complete or silently treated as an M5 dependency.
 
 ## Engine / architecture
 
@@ -285,6 +285,43 @@ narrow placement cases allowed by Phase 09B.
   beyond its intended bounds; the stable-width change did not fix that height
   defect. It is explicitly accepted as non-blocking UI polish and must not be
   reported as fixed.
+- M5 T049 Worksite graph is implemented on the current task branch. Completed
+  Rock Raiders HQs and Vehicle Service Bays create the canonical 18-cell and
+  12-cell service zones from compiled content metadata. Same-owner overlapping
+  zones form cached deterministic components rooted by the lowest Entity ID;
+  building operating centers determine service membership.
+- Worksite topology updates are event-driven on scenario initialization,
+  building placement/cancellation and construction completion. Merge and split
+  preserve exact whole/raw Energy reserve across surviving storage capacity,
+  rederive generation/demand/Brownout membership, and preserve local HQ Ore
+  banks rather than physically merging them.
+- Connected Worksites expose all local processed Ore banks to construction and
+  production. A single order may draw from multiple same-component banks in
+  deterministic nearest-bank/Entity-ID order; disconnected components never
+  pool funds. An already supplied production queue remains present after a
+  split, while new orders immediately lose remote-bank access.
+- The HUD now reports Ore and Energy for the selected/active Worksite, shows
+  component count, labels selected structures as serviced or disconnected, and
+  identifies the specific Worksite in Brownout alerts. Authoritative Worksite
+  node/member/component state is covered by snapshot v11, simulation protocol
+  v9 and replay v6; content schema/binary format v10 carries service radii and
+  retains older binary readers.
+- T049 regression coverage verifies service geometry and ownership, bridge
+  merge, removal split, local Ore retention, Energy conservation, multi-bank
+  spending, immediate access loss, idempotent graph rebuild and deterministic
+  snapshot continuation.
+- T049 full verification is green across every `BLOCKING_NOW` stage: warnings-
+  as-errors builds, 130 NUnit tests, representative 24-mover acceptance,
+  compiled-content identity, HeadlessSim, Godot headless smoke, 100-repeat
+  determinism, replay, snapshot continuation, regeneration and macOS export.
+  The preserved 60-mover stage remains diagnostic-failing at its unchanged
+  31/60 completion and 8,483 oscillation incidents.
+- A launchable T049 debug build exists at `Builds/macOS/LEGO Space RTS.app` and
+  passed export smoke. `Artifacts/Screenshots/m5-worksite-hud.png` confirms the
+  M5 resource strip and selected-structure Worksite status render cleanly.
+- Human T049 readability acceptance is complete as of 2026-08-11: the game
+  director confirmed that the selected-structure Worksite status and active
+  Worksite resource display are understandable in the playable build.
 
 ## Current gates
 
@@ -297,7 +334,7 @@ narrow placement cases allowed by Phase 09B.
 - Legacy 60-mover stress: `DIAGNOSTIC` during M2–M5 and `BLOCKING_LATER`
   before M6. The latest full run remains diagnostic-failing at 51.67%
   completion (31/60), 8,483 oscillation incidents and elevated tail latency;
-  it does not block the current M3 task.
+  it does not block the current M5 task.
 
 ## Known unresolved work
 
@@ -313,10 +350,9 @@ narrow placement cases allowed by Phase 09B.
   / 20 navigation nodes, while the imported runtime/static validator currently
   use 10 navigation nodes / 5 build cells; resolve in a separate canon-alignment
   task before changing cluster geometry;
-- T049 later adds full Rock Raider Worksite-zone connectivity, overlap, merge
-  and split. The minimap, full 3×4 command grid, F3 production overview,
-  waiting-item drag reordering and cancellation/refund presentation
-  remain later interface/economy work beyond the current prototype gates.
+- The minimap, full 3×4 command grid, F3 production overview, waiting-item drag
+  reordering and cancellation/refund presentation remain later
+  interface/economy work beyond the current prototype gates.
 - The canonical implementation schedule assigns the functional fog-correct
   minimap to M7 T069, so it is intentionally not pulled into T039. Building
   prototype records currently specify zero vision radius; adding local building
@@ -330,6 +366,11 @@ narrow placement cases allowed by Phase 09B.
   current SimCore entity in explored fog; that would become an information leak
   in multiplayer. Add serialized/per-viewer knowledge through a separately
   reviewed fog-information task no later than M6 T061 fog filtering.
+- Phase 04 canon promises a short local Energy buffer for disconnected Raider
+  infrastructure but does not assign its capacity. T049 does not invent a
+  balance value for a Service-Bay-only component after HQ/storage loss. Resolve
+  that exact buffer rule before M4 destruction can create this state in normal
+  play; ordinary HQ-to-HQ Worksite split/merge is implemented and covered.
 
 ## Explicitly rejected / do not resurrect
 
@@ -342,6 +383,6 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Merge the accepted stacked T030-T039 M3 economy/base-building branches.
-2. Begin M4 T040 Targeting only after the merged M3 executable baseline is
-   accepted.
+1. Complete the T049 branch handoff and merge only through game-director review.
+2. Continue M5 with T050 Excavation topology after T049 is merged, unless the
+   game director explicitly returns to deferred M4 T040 Targeting first.

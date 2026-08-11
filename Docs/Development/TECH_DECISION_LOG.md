@@ -366,3 +366,41 @@ not change gameplay canon.
 
 These are implementation decisions within approved M3 HUD and UX canon. They
 do not change gameplay canon.
+
+---
+
+## 2026-08-11 — M5 T049 deterministic Worksite graph and local-pool access
+
+- The game director explicitly advanced the task sequence from merged M3 to
+  M5 T049. This defers but does not complete or remove M4 T040-T048.
+- Worksite service radius is compiled building metadata: Rock Raiders HQ is 18
+  build cells and Vehicle Service Bay is 12. Completed nodes connect only when
+  same-owner circular service zones overlap. The lowest Entity ID is the stable
+  component root, so insertion order cannot change component identity.
+- Graph recomputation is event-driven. It runs for scenario initialization and
+  building lifecycle events, not every simulation tick. Cached WorksiteNode,
+  WorksiteMember and WorksiteComponent state is authoritative, hashed and
+  serialized.
+- Processed Ore remains in its physical HQ ResourceBank. Accessibility is a
+  component query rather than a global wallet. Orders may debit several local
+  banks within one connected component, choosing the nearest funding endpoint
+  and then stable Entity-ID order. Cancellation refunds return to that funding
+  endpoint; disconnected components are never combined.
+- Energy Domain identity follows Worksite component identity. Merge adds the
+  prior component reserves. Split apportions raw fixed-point reserve by the
+  surviving local reserve capacity in deterministic root order, assigning the
+  integer remainder to the last stable component. This conserves represented
+  Energy exactly while keeping local generators/capacity with their buildings.
+- The exact capacity of Phase 04's promised short local buffer for a component
+  with no surviving reserve-capacity structure is not canonically specified.
+  T049 does not invent that balance value; it remains a required decision before
+  later destruction gameplay can create that edge state.
+- The Basic HUD chooses the selected structure's Worksite when possible and
+  otherwise the first stable player component. It shows component-local Ore and
+  Energy plus total component count, while SimCore remains authoritative.
+- Snapshot v11 / simulation protocol v9 / replay v6 add Worksite topology.
+  Prototype content schema and binary format v10 add service radius with legacy
+  defaults for prior compiled content.
+
+These decisions implement existing Phase 04/09 Worksite canon. They do not
+change gameplay canon.
