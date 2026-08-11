@@ -148,7 +148,8 @@ At 0 HP:
 - production/repair/research/defense immediately stops;
 - Energy or network function is removed;
 - collapse begins;
-- temporary rubble collision applies;
+- movement collision is removed in the same authoritative simulation tick;
+- rubble and remaining collapse visuals are nonblocking;
 - structure is then removed from active gameplay.
 
 There is no hidden random survival roll.
@@ -1683,13 +1684,9 @@ Huge/Massive unit:
 
 ## STRUCTURE RUBBLE
 
-Destroyed structure remains blocking for:
-
-**4s**
-
-during primary collapse.
-
-It then becomes pathable nonblocking debris.
+Destroyed structures have **no blocking collision after 0 HP**. Their authored
+footprint becomes pathable in the same authoritative simulation tick. Collapse
+and rubble may remain visually, but are cosmetic and nonblocking.
 
 There is no permanent wreck-field pathing problem.
 

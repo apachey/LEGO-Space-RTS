@@ -5,16 +5,15 @@ remain authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M4 — Combat / T045 playtest handoff corrected; human retest pending.**
+**M4 — Combat / T045 automated acceptance complete; T046 Repair next.**
 
 The accepted M3 T030-T039 economy/base-building stack is merged through PR #10.
 M4 T040 Targeting, T041 Weapons, T042 Projectiles and T044 Contact weapons are
 fully automated-verified and human-accepted. T043 Damage / Armor and T045
-Destruction are implemented on the current stacked branches. The first T045
-playtest handoff was rejected because it exposed an overlay regression, lacked
-the required Chrome/building fixtures and delegated resource setup to the game
-director. Those handoff defects are corrected; human retest is still required
-before T046 Repair begins.
+Destruction are implemented on the current stacked branches. Successive T045
+playtests exposed handoff, interaction, projectile-feedback and collision-rule
+defects. Those defects are corrected and the game director explicitly directed
+development to continue into T046 while the combined human retest remains due.
 
 ## Engine / architecture
 
@@ -458,13 +457,13 @@ narrow placement cases allowed by Phase 09B.
   assignments and entity-local command/navigation state are released rather
   than surviving into the wreck state; Operations Capacity and energy domains
   recalculate immediately.
-- Per the game director's 2026-08-11 canon change, all mobile units remove
-  Movement/Navigation collision in the same authoritative tick that they reach
-  0 HP. Standard unit debris remains nonblocking until 8 seconds total and
-  Huge/Massive debris until 12 seconds total. Structure rubble still blocks its
-  authored footprint for 4 seconds, then clears pathfinding while leaving
-  persistent cosmetic rubble. Cosmetic debris is presentation-only and never
-  restores gameplay identity or collision.
+- Per the game director's two explicit 2026-08-11 canon changes, every unit and
+  structure removes movement/navigation collision in the same authoritative
+  tick that it reaches 0 HP. Standard unit debris remains nonblocking until 8
+  seconds total and Huge/Massive debris until 12 seconds total. Structure
+  collapse/rubble remains persistent cosmetic presentation but its authored
+  footprint is immediately pathable. Cosmetic debris never restores gameplay
+  identity or collision.
 - Snapshot v16 / simulation protocol v14 preserve mid-collapse owner/content,
   footprint, building anchor and authoritative timer state while retaining the
   supported v2-v15 readers. Replay remains v6 because the deterministic F8
@@ -483,8 +482,8 @@ narrow placement cases allowed by Phase 09B.
 - Construction sites now suppress their world health bar entirely while the
   independent fixed-height progress bar is active. Godot smoke asserts both
   states simultaneously. Placeholder wrecks no longer progressively squash or
-  “melt”; mobile units transition immediately to flattened nonblocking debris,
-  while structures darken during their canonical 4-second blocking collapse.
+  “melt”; units and structures transition immediately to flattened nonblocking
+  debris.
 - The second T045 handoff exposed that large-building clicks covered only a
   small center radius, so right-clicking the visible footprint became an
   invalid Move command; ranged pursuit also measured to the occluded building
@@ -493,6 +492,13 @@ narrow placement cases allowed by Phase 09B.
   structure edge/aim point, and contact slots include deterministic navigation
   clearance. The prepared arena places every mobile unit on a passable external
   slot. `Chrome Crusher` now has its human-readable HUD name.
+- The third T045 handoff reported that visible Hover Scout projectiles appeared
+  not to reduce HP. Authoritative damage was present, but the prepared building
+  used 180 current HP against its canonical 1,350 maximum, making each 3.84 HP
+  Survey Pulse change less than 0.3% of the world bar. The debug-only target now
+  uses a visible 48/48 test health pool without changing normal content balance.
+  NUnit asserts actual HP loss, and Godot smoke now issues a real Scout attack
+  and requires the target's authoritative HP to decrease.
 - `AGENTS.md` now contains a mandatory manual-playtest handoff gate: future
   player-facing work cannot be called ready until the exact exported opening is
   provided with all entities/resources/visibility, camera and selection setup,
@@ -502,15 +508,16 @@ narrow placement cases allowed by Phase 09B.
   movement gate, compiled content, Godot destruction smoke, 100-repeat
   determinism, replay, mid-wreck snapshot continuation, regeneration and macOS
   export. Verification summary:
-  `Artifacts/Verification/20260811T110414Z-full-summary.txt`. The legacy 60-mover
+  `Artifacts/Verification/20260811T113552Z-full-summary.txt`. The legacy 60-mover
   stress remains the same M2-M5 diagnostic failure and does not block T045.
 - A launchable T045 debug build was produced at
   `Builds/macOS/LEGO Space RTS.app` and passed the export smoke launch. Both
   prepared paths were then exercised from fresh launches of that exported app;
   captures include `Artifacts/Screenshots/t045-exported-construction-test.png`
-  and the current collision/attack handoff at
-  `Artifacts/Screenshots/t045-exported-immediate-unit-collision-release.png`.
-  T045 is awaiting only human interaction/readability acceptance.
+  and the current damage/collision handoff at
+  `Artifacts/Screenshots/t045-scout-damage-and-instant-rubble.png`.
+  T045 is automated-green; its human interaction/readability retest may be
+  exercised together with the next prepared T046 build.
 
 ## Current gates
 
@@ -580,7 +587,7 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Human playtest acceptance for M4 T045 attack interaction, immediate mobile-
-   unit collision release, nonblocking wreck readability and the unchanged
-   4-second structure-rubble transition.
-2. M4 T046 Repair after T045 acceptance.
+1. M4 T046 Repair, explicitly authorized by the game director while the T045
+   combined human retest remains due.
+2. Combined prepared human retest for Scout damage readability, immediate
+   unit/structure collision release and T046 repair interaction.

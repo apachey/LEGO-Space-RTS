@@ -49,7 +49,9 @@ public sealed class M4DestructionTests
             Assert.That(world.Entities.Building.Get(enemyBuilding).State, Is.EqualTo(BuildingState.Completed));
             Assert.That(world.Entities.Health.Get(enemyCrew).Current, Is.EqualTo(Fix32.FromInt(12)));
             Assert.That(world.Entities.Health.Get(enemyChrome).Current, Is.EqualTo(Fix32.FromInt(160)));
-            Assert.That(world.Entities.Health.Get(enemyBuilding).Current, Is.EqualTo(Fix32.FromInt(180)));
+            Assert.That(world.Entities.Health.Get(enemyBuilding).Current, Is.EqualTo(Fix32.FromInt(48)));
+            Assert.That(world.Entities.Health.Get(enemyBuilding).Maximum, Is.EqualTo(Fix32.FromInt(48)),
+                "The playtest fixture uses a full, visibly responsive test health bar without changing gameplay content balance.");
             Assert.That(world.Fog.IsVisible(0, world.Entities.Transform.Get(enemyBuilding).Position.X.FloorToInt(),
                 world.Entities.Transform.Get(enemyBuilding).Position.Y.FloorToInt()), Is.True);
             Assert.That(world.Fog.IsVisible(0, world.Entities.Transform.Get(enemyCrew).Position.X.FloorToInt(),
@@ -120,7 +122,7 @@ public sealed class M4DestructionTests
     }
 
     [Test]
-    public void StructureStopsFunctionImmediatelyAndRubbleClearsAfterFourSeconds()
+    public void StructureStopsFunctionAndCollisionImmediatelyButLeavesCosmeticRubble()
     {
         SimulationWorld world = ScenarioFactory.CreateFirstControllable(18);
         EntityId hq = Find(world, 0, "building.rock_raiders.hq");
@@ -141,13 +143,13 @@ public sealed class M4DestructionTests
             Assert.That(world.Entities.Production.Has(hq), Is.False);
             Assert.That(world.Entities.ResourceBank.Has(hq), Is.False);
             Assert.That(world.Entities.EnergyDomain.Has(hq), Is.False);
-            Assert.That(world.Pathfinder.IsPassable(footprintCell, FootprintClass.Tiny), Is.False, "Collapse rubble remains blocking.");
+            Assert.That(world.Pathfinder.IsPassable(footprintCell, FootprintClass.Tiny), Is.True,
+                "A 0-HP structure must stop blocking in the same authoritative tick.");
             PresentationEntity presentation = PresentationSnapshot.Capture(world, 0).Entities.Single(candidate => candidate.EntityId == hq);
             Assert.That(presentation.PersistentDebris, Is.True, "Structures leave pathable cosmetic debris after collapse.");
+            Assert.That(presentation.DestructionProgressBasisPoints, Is.EqualTo(10_000));
         });
 
-        runner.StepTicks(DestructionSystem.StructureBlockingTicks - 1);
-        Assert.That(world.Entities.Exists(hq), Is.True);
         runner.StepOneTick();
         Assert.Multiple(() =>
         {
@@ -238,6 +240,7 @@ public sealed class M4DestructionTests
         SimulationRunner runner = new(world); runner.StepOneTick();
         EntityId hover = Find(world, 0, DebugPlaytestScenario.HoverScoutKey);
         EntityId building = Find(world, 1, DebugPlaytestScenario.DestructionBuildingKey);
+        Fix32 healthBefore = world.Entities.Health.Get(building).Current;
         world.Commands.Enqueue(new CommandEnvelope(new SimTick(2), 0, 96, SimCommandType.Attack,
             new[] { hover }, FixVec2.Zero, targetEntity: building));
 
@@ -246,6 +249,8 @@ public sealed class M4DestructionTests
         Assert.Multiple(() =>
         {
             Assert.That(world.Entities.Weapon.Get(hover).FireSequence, Is.GreaterThan(0));
+            Assert.That(world.Entities.Health.Get(building).Current, Is.LessThan(healthBefore),
+                "A visible Survey Pulse must resolve authoritative damage on the prepared target.");
             Assert.That(CombatGeometry.ContactGap(world, hover, building), Is.GreaterThan(Fix32.Zero));
         });
     }

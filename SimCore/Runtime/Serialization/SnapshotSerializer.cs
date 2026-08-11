@@ -71,7 +71,7 @@ public static class SnapshotSerializer
             if (format == 2) ReadEntityV2(r, temp);
             else ReadEntity(r, temp, format);
         }
-        NormalizeDestroyedUnitCollision(temp);
+        NormalizeDestroyedCollision(temp);
         if (format < 5) AddLegacyResourceBanks(entities);
         if (format < 6) AddLegacyBuildings(temp);
         if (format < 7) AddLegacyBuilders(temp);
@@ -540,9 +540,7 @@ public static class SnapshotSerializer
             (destruction.BuildingType.Value != 0 && destruction.BuildingWidth > 0 && destruction.BuildingHeight > 0 &&
              world.Content.TryGetBuilding(destruction.BuildingType, out _));
         bool unitFieldsValid = destruction.Kind != DestructionKind.Unit || destruction.BuildingType.Value == 0;
-        bool activeLifetime = destruction.Kind == DestructionKind.Unit
-            ? destruction.VisualUntilTick > world.Tick.Value
-            : destruction.BlockingUntilTick > world.Tick.Value;
+        bool activeLifetime = destruction.VisualUntilTick > world.Tick.Value;
         if (destruction.Kind < DestructionKind.Unit || destruction.Kind > DestructionKind.Structure || destruction.StartedTick < 0 ||
             destruction.StartedTick > world.Tick.Value || destruction.BlockingUntilTick < destruction.StartedTick ||
             destruction.VisualUntilTick < destruction.BlockingUntilTick || !activeLifetime ||
@@ -552,15 +550,16 @@ public static class SnapshotSerializer
         return destruction;
     }
 
-    private static void NormalizeDestroyedUnitCollision(SimulationWorld world)
+    private static void NormalizeDestroyedCollision(SimulationWorld world)
     {
         IReadOnlyList<EntityId> alive = world.Entities.Alive;
         for (int i = 0; i < alive.Count; i++)
         {
             EntityId id = alive[i];
-            if (!world.Entities.Destruction.TryGet(id, out DestructionState destruction) || destruction.Kind != DestructionKind.Unit) continue;
+            if (!world.Entities.Destruction.TryGet(id, out DestructionState destruction)) continue;
             ref DestructionState stored = ref world.Entities.Destruction.Get(id);
             stored.BlockingUntilTick = stored.StartedTick;
+            if (stored.Kind == DestructionKind.Structure) world.ClearDestroyedStructureFootprint(stored);
             world.RemoveRuntimeState(id);
             world.Entities.Movement.Remove(id);
             world.Entities.Navigation.Remove(id);

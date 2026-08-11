@@ -6,7 +6,8 @@ public sealed class DestructionSystem : ISimSystem
 {
     public const int StandardUnitBlockingTicks = 0;
     public const int MassiveUnitBlockingTicks = 0;
-    public const int StructureBlockingTicks = 80;
+    public const int StructureBlockingTicks = 0;
+    public const int StructureVisualTicks = 1;
     public const int StandardUnitVisualTicks = 160;
     public const int MassiveUnitVisualTicks = 240;
 
@@ -22,8 +23,7 @@ public sealed class DestructionSystem : ISimSystem
             EntityId id = alive[i];
             if (world.Entities.Destruction.TryGet(id, out DestructionState destruction))
             {
-                int removalTick = destruction.Kind == DestructionKind.Unit ? destruction.VisualUntilTick : destruction.BlockingUntilTick;
-                if (world.Tick.Value >= removalTick) _expired.Add(id);
+                if (world.Tick.Value >= destruction.VisualUntilTick) _expired.Add(id);
                 continue;
             }
             if (!world.Entities.Health.TryGet(id, out Health health) || !health.IsDepleted) continue;
@@ -57,8 +57,8 @@ public sealed class DestructionSystem : ISimSystem
         bool isStructure = world.Entities.Building.TryGet(id, out Building building);
         bool isMassive = !isStructure && (navigation.Footprint == FootprintClass.Huge || targetable.Class == CombatTargetClass.MassiveMachine);
         int blockingTicks = isStructure ? StructureBlockingTicks : isMassive ? MassiveUnitBlockingTicks : StandardUnitBlockingTicks;
-        int visualTicks = isStructure ? StructureBlockingTicks : isMassive ? MassiveUnitVisualTicks : StandardUnitVisualTicks;
-        world.Entities.Destruction.Set(id, new DestructionState
+        int visualTicks = isStructure ? StructureVisualTicks : isMassive ? MassiveUnitVisualTicks : StandardUnitVisualTicks;
+        DestructionState destruction = new()
         {
             Kind = isStructure ? DestructionKind.Structure : DestructionKind.Unit,
             StartedTick = world.Tick.Value,
@@ -74,7 +74,9 @@ public sealed class DestructionSystem : ISimSystem
             BuildingOrientation = isStructure ? building.Orientation : (byte)0,
             BuildingWidth = isStructure ? building.FootprintWidth : (byte)0,
             BuildingHeight = isStructure ? building.FootprintHeight : (byte)0
-        });
+        };
+        world.Entities.Destruction.Set(id, destruction);
+        if (isStructure) world.ClearDestroyedStructureFootprint(destruction);
 
         if (world.Entities.Builder.Has(id)) ConstructionSystem.ReleaseBuilderAssignment(world, id);
         ReleaseBuildersTargeting(world, id);
@@ -104,10 +106,9 @@ public sealed class DestructionSystem : ISimSystem
         world.Entities.Targetable.Remove(id);
         world.Entities.Targeting.Remove(id);
         world.Entities.Weapon.Remove(id);
-        // A depleted mobile unit becomes nonblocking in this same authoritative
-        // tick. Its DestructionState/Transform remain only to publish cosmetic
-        // debris until VisualUntilTick. Structures retain canonical rubble
-        // collision until their separate blocking timer expires.
+        // Every depleted gameplay object becomes nonblocking in this same
+        // authoritative tick. DestructionState/Transform remain only long
+        // enough to publish the cosmetic debris transition.
         world.Entities.Movement.Remove(id);
         world.Entities.Navigation.Remove(id);
     }

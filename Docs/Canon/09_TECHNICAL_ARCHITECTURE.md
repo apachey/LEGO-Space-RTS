@@ -2695,9 +2695,9 @@ Phase 06 timing remains:
 
 - normal unit collision clears in the same authoritative tick as 0 HP;
 - Massive/Huge unit collision clears in the same authoritative tick as 0 HP;
-- structure blocking collapse: 4 s.
+- structure collision clears in the same authoritative tick as 0 HP.
 
-After unit destruction begins or structure blocking expires, respectively:
+After destruction begins:
 
 - navigation occupancy clears;
 - remaining debris is cosmetic.

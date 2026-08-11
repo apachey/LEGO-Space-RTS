@@ -89,7 +89,7 @@ public static class DebugPlaytestScenario
 
         SetTestHealth(world, enemyCrew, 12);
         SetTestHealth(world, enemyChrome, 160);
-        SetTestHealth(world, building, 180);
+        SetTestHealth(world, building, 48, useAsMaximum: true);
         OperationsCapacitySystem.Recalculate(world);
         world.Spatial.Rebuild(world.Entities);
         new VisionSystem().Step(world);
@@ -204,10 +204,11 @@ public static class DebugPlaytestScenario
         }
     }
 
-    private static void SetTestHealth(SimulationWorld world, EntityId id, int hitPoints)
+    private static void SetTestHealth(SimulationWorld world, EntityId id, int hitPoints, bool useAsMaximum = false)
     {
         if (!world.Entities.Health.Has(id)) return;
         ref Health health = ref world.Entities.Health.Get(id);
+        if (useAsMaximum) health.Maximum = Fix32.FromInt(hitPoints);
         health.Current = Fix32.Min(health.Maximum, Fix32.FromInt(hitPoints));
         health.LastDamageTick = world.Tick.Value;
     }

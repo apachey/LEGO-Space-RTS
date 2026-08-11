@@ -18,6 +18,10 @@ public partial class GodotSmokeRunner : Node
     private EntityId _damagedFocus;
     private EntityId _destroyedUnit;
     private EntityId _collapseUnit;
+    private EntityId _scoutDamageTarget;
+    private int _scoutDamageInitialRaw;
+    private bool _scoutDamageSeeded;
+    private bool _preparedEdgePickObserved;
     private bool _finished;
     private int _frames;
     public void Configure(GodotSimBridge bridge, SelectionController selection, RtsCameraController camera, RtsInputController input,
@@ -43,8 +47,11 @@ public partial class GodotSmokeRunner : Node
             else _input.DebugPrepareDestructionPlaytest();
         }
         ResolvePreparedCaptureFocus();
+        if (!_captureConstruction && !_preparedEdgePickObserved && _captureFocus != EntityId.None)
+            _preparedEdgePickObserved = PreparedBuildingEdgePick() == _captureFocus;
+        if (!_captureConstruction) SeedPreparedScoutDamage();
         if (!_captureConstruction) SeedPreparedDestructionStates();
-        if (_bridge.World.Tick.Value < 40 || _frames < 60) return;
+        if (_bridge.World.Tick.Value < 120 || _frames < 140) return;
         Node? hud = GetTree().Root.FindChild("BasicHUD", true, false);
         bool hudOk = hud is not null && hud.FindChild("ResourceStrip", true, false) is not null &&
             hud.FindChild("SelectionPanel", true, false) is not null && hud.FindChild("PortraitSlot", true, false) is not null &&
@@ -84,13 +91,17 @@ public partial class GodotSmokeRunner : Node
              !_bridge.World.Entities.Navigation.Has(_collapseUnit) && activeCollapse is MeshInstance3D collapseView &&
              TryGetPresentation(_collapseUnit, out PresentationEntity collapseEntity) &&
              collapseView.Scale.IsEqualApprox(UnitViewManager.DebrisScale(collapseEntity)));
-        bool preparedUiOk = _captureConstruction ||
-            (selectionTitle?.Text == "Chrome Crusher" && PreparedBuildingEdgePickOk());
+        bool preparedTitleOk = _captureConstruction || selectionTitle?.Text == "Chrome Crusher";
+        bool preparedEdgePickOk = _captureConstruction || _preparedEdgePickObserved;
+        bool preparedUiOk = preparedTitleOk && preparedEdgePickOk;
+        bool scoutDamageOk = _captureConstruction || (_scoutDamageSeeded &&
+            _bridge.World.Entities.Health.TryGet(_scoutDamageTarget, out Health damagedByScout) &&
+            damagedByScout.Current.Raw < _scoutDamageInitialRaw);
         int minimumAlive = _captureConstruction ? 15 : 17;
         bool controlsOk = movingTargetControl is Button && prepareConstructionControl is Button && prepareDestructionControl is Button &&
             destroyCrewControl is Button && destroyChromeControl is Button && destroyBuildingControl is Button;
         bool ok = _bridge.Current is not null && _bridge.World.Entities.Alive.Count >= minimumAlive && _bridge.GameplayContentHash != 0 &&
-            hudOk && constructionOk && destructionOk && preparedUiOk && controlsOk && contactImpact is MeshInstance3D && healthBarOk;
+            hudOk && constructionOk && destructionOk && preparedUiOk && scoutDamageOk && controlsOk && contactImpact is MeshInstance3D && healthBarOk;
         if (ok && _capturePath is not null)
         {
             _finished = true;
@@ -113,7 +124,7 @@ public partial class GodotSmokeRunner : Node
             GD.Print($"PHASE10 VISUAL SMOKE CAPTURE: PASS path={_capturePath}");
         }
         if (!ok)
-            GD.PrintErr($"PHASE10 GODOT HEADLESS SMOKE DETAIL: hud={hudOk} construction={constructionOk} health={healthBarOk} controls={controlsOk} destruction={destructionOk} preparedUi={preparedUiOk} standardWreck={standardWreck is MeshInstance3D} collapseId={_collapseUnit.Value} collapseActive={_collapseUnit != EntityId.None && _bridge.World.Entities.Destruction.Has(_collapseUnit)} collapseView={activeCollapse is MeshInstance3D} contact={contactImpact is MeshInstance3D}");
+            GD.PrintErr($"PHASE10 GODOT HEADLESS SMOKE DETAIL: hud={hudOk} construction={constructionOk} health={healthBarOk} controls={controlsOk} destruction={destructionOk} preparedTitle={preparedTitleOk} preparedEdgePick={preparedEdgePickOk} scoutDamage={scoutDamageOk} standardWreck={standardWreck is MeshInstance3D} collapseId={_collapseUnit.Value} collapseActive={_collapseUnit != EntityId.None && _bridge.World.Entities.Destruction.Has(_collapseUnit)} collapseView={activeCollapse is MeshInstance3D} contact={contactImpact is MeshInstance3D}");
         _finished = true;
         GD.Print(ok ? $"PHASE10 GODOT HEADLESS SMOKE: PASS tick={_bridge.World.Tick.Value} hash={_bridge.StateHashHex()}" : "PHASE10 GODOT HEADLESS SMOKE: FAIL");
         GetTree().Quit(ok ? 0 : 2);
@@ -199,6 +210,26 @@ public partial class GodotSmokeRunner : Node
         }
     }
 
+    private void SeedPreparedScoutDamage()
+    {
+        if (_bridge is null || _scoutDamageSeeded || _captureFocus == EntityId.None || _bridge.World.Tick.Value < 3 ||
+            !_bridge.World.Entities.Health.TryGet(_captureFocus, out Health targetHealth)) return;
+        ContentId hoverType = StableId.FromKey(DebugPlaytestScenario.HoverScoutKey);
+        IReadOnlyList<EntityId> alive = _bridge.World.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (!_bridge.World.Entities.Selectable.TryGet(id, out Selectable selectable) || selectable.ContentType != hoverType ||
+                !_bridge.World.Entities.Ownership.TryGet(id, out Ownership owner) || owner.PlayerSlot != 0) continue;
+            _scoutDamageTarget = _captureFocus;
+            _scoutDamageInitialRaw = targetHealth.Current.Raw;
+            _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, uint.MaxValue - 1, SimCommandType.Attack,
+                new[] { id }, FixVec2.Zero, targetEntity: _captureFocus));
+            _scoutDamageSeeded = true;
+            return;
+        }
+    }
+
     private bool TryGetPresentation(EntityId id, out PresentationEntity entity)
     {
         if (_bridge?.Current is not null)
@@ -208,13 +239,13 @@ public partial class GodotSmokeRunner : Node
         return false;
     }
 
-    private bool PreparedBuildingEdgePickOk()
+    private EntityId PreparedBuildingEdgePick()
     {
         if (_selection is null || _camera is null || !TryGetPresentation(_captureFocus, out PresentationEntity building) ||
-            building.SelectableKind != SelectableKind.Building) return false;
+            building.SelectableKind != SelectableKind.Building) return EntityId.None;
         FixVec2 nearEdge = building.Position + new FixVec2(Fix32.FromRatio(building.BuildingWidth * 9, 20), Fix32.Zero);
         Vector2 screen = _camera.UnprojectPosition(nearEdge.ToWorld(0.5f));
-        return _selection.FindVisibleEnemyAtScreen(screen) == _captureFocus;
+        return _selection.FindVisibleEnemyAtScreen(screen);
     }
 
     private static bool HealthBarGeometryOk(Node? healthBar)
