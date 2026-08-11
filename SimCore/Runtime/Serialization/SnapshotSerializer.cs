@@ -7,8 +7,8 @@ namespace LegoSpaceRTS.SimCore
 public static class SnapshotSerializer
 {
     public const uint Magic = 0x53525453; // STRS
-    public const ushort FormatVersion = 15;
-    public const ushort SimulationProtocolVersion = 13;
+    public const ushort FormatVersion = 16;
+    public const ushort SimulationProtocolVersion = 14;
 
     [Flags]
     private enum EntityComponents : uint
@@ -38,7 +38,8 @@ public static class SnapshotSerializer
         Targeting = 1 << 21,
         Weapon = 1 << 22,
         Health = 1 << 23,
-        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver | ResourceBank | Building | ConstructionSite | Builder | Production | EnergyDomain | EnergyDomainMember | PowerState | Targetable | Targeting | Weapon | Health
+        Destruction = 1 << 24,
+        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver | ResourceBank | Building | ConstructionSite | Builder | Production | EnergyDomain | EnergyDomainMember | PowerState | Targetable | Targeting | Weapon | Health | Destruction
     }
 
     public static byte[] Serialize(SimulationWorld world)
@@ -60,7 +61,7 @@ public static class SnapshotSerializer
         using MemoryStream ms = new(bytes, false); using BinaryReader r = new(ms);
         if (r.ReadUInt32() != Magic) throw new InvalidDataException("Snapshot magic mismatch.");
         ushort format = r.ReadUInt16(), protocol = r.ReadUInt16();
-        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8) || (format == 11 && protocol == 9) || (format == 12 && protocol == 10) || (format == 13 && protocol == 11) || (format == 14 && protocol == 12);
+        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8) || (format == 11 && protocol == 9) || (format == 12 && protocol == 10) || (format == 13 && protocol == 11) || (format == 14 && protocol == 12) || (format == 15 && protocol == 13);
         if (!supportedLegacy && (format != FormatVersion || protocol != SimulationProtocolVersion)) throw new InvalidDataException($"Unsupported snapshot {format}/{protocol}.");
         SimTick tick = new(r.ReadInt32()); MapGrid map = MapGrid.Deserialize(r); uint nextEntity = r.ReadUInt32();
         EntityStore entities = new(); int entityCount = r.ReadInt32(); if (entityCount < 0 || entityCount > 10000) throw new InvalidDataException("Invalid entity count.");
@@ -175,6 +176,7 @@ public static class SnapshotSerializer
         if (world.Entities.Targeting.Has(id)) components |= EntityComponents.Targeting;
         if (world.Entities.Weapon.Has(id)) components |= EntityComponents.Weapon;
         if (world.Entities.Health.Has(id)) components |= EntityComponents.Health;
+        if (world.Entities.Destruction.Has(id)) components |= EntityComponents.Destruction;
         if (world.TryGetQueue(id, out _)) components |= EntityComponents.CommandQueue;
         if (world.Corridors.ContainsKey(id.Value)) components |= EntityComponents.RouteCorridor;
         w.Write((uint)components);
@@ -207,6 +209,7 @@ public static class SnapshotSerializer
         if ((components & EntityComponents.Targeting) != 0) WriteTargeting(w, world.Entities.Targeting.Get(id));
         if ((components & EntityComponents.Weapon) != 0) WriteWeapon(w, world.Entities.Weapon.Get(id));
         if ((components & EntityComponents.Health) != 0) WriteHealth(w, world.Entities.Health.Get(id));
+        if ((components & EntityComponents.Destruction) != 0) WriteDestruction(w, world.Entities.Destruction.Get(id));
         if ((components & EntityComponents.CommandQueue) != 0) world.GetQueue(id).Serialize(w, includeTargetEntity: true);
         if ((components & EntityComponents.RouteCorridor) != 0) WriteCorridor(w, world.Corridors[id.Value]);
     }
@@ -315,6 +318,14 @@ public static class SnapshotSerializer
         w.Write(health.Maximum.Raw); w.Write(health.Current.Raw); w.Write(health.ArmorRating); w.Write(health.LastDamageTick);
     }
 
+    private static void WriteDestruction(BinaryWriter w, DestructionState destruction)
+    {
+        w.Write((byte)destruction.Kind); w.Write(destruction.StartedTick); w.Write(destruction.BlockingUntilTick); w.Write(destruction.VisualUntilTick);
+        w.Write(destruction.Owner); w.Write(destruction.ContentType.Value); w.Write((byte)destruction.SelectableKind); w.Write((byte)destruction.Footprint);
+        w.Write(destruction.BuildingType.Value); w.Write(destruction.BuildingAnchorX); w.Write(destruction.BuildingAnchorY); w.Write(destruction.BuildingOrientation);
+        w.Write(destruction.BuildingWidth); w.Write(destruction.BuildingHeight);
+    }
+
     private static void WriteCorridor(BinaryWriter w, RouteCorridor path)
     {
         w.Write(path.TopologyVersion); w.Write(path.Cells.Count);
@@ -359,6 +370,7 @@ public static class SnapshotSerializer
             world.Entities.Weapon.Set(id, weapon);
         }
         if ((components & EntityComponents.Health) != 0) world.Entities.Health.Set(id, ReadHealth(r, world.Tick.Value));
+        if ((components & EntityComponents.Destruction) != 0) world.Entities.Destruction.Set(id, ReadDestruction(r, world));
         if ((components & EntityComponents.CommandQueue) != 0) world.GetQueue(id).Deserialize(r, includeTargetEntity: format >= 4);
         if ((components & EntityComponents.RouteCorridor) != 0) world.Corridors[id.Value] = ReadCorridor(r);
     }
@@ -512,6 +524,27 @@ public static class SnapshotSerializer
         if (health.Maximum <= Fix32.Zero || health.Current < Fix32.Zero || health.Current > health.Maximum || health.ArmorRating > 5 ||
             health.LastDamageTick < -1 || health.LastDamageTick > currentTick) throw new InvalidDataException("Invalid health state.");
         return health;
+    }
+
+    private static DestructionState ReadDestruction(BinaryReader r, SimulationWorld world)
+    {
+        DestructionState destruction = new()
+        {
+            Kind = (DestructionKind)r.ReadByte(), StartedTick = r.ReadInt32(), BlockingUntilTick = r.ReadInt32(), VisualUntilTick = r.ReadInt32(),
+            Owner = r.ReadByte(), ContentType = new ContentId(r.ReadUInt32()), SelectableKind = (SelectableKind)r.ReadByte(), Footprint = (FootprintClass)r.ReadByte(),
+            BuildingType = new ContentId(r.ReadUInt32()), BuildingAnchorX = r.ReadInt16(), BuildingAnchorY = r.ReadInt16(), BuildingOrientation = r.ReadByte(),
+            BuildingWidth = r.ReadByte(), BuildingHeight = r.ReadByte()
+        };
+        bool structureFieldsValid = destruction.Kind != DestructionKind.Structure ||
+            (destruction.BuildingType.Value != 0 && destruction.BuildingWidth > 0 && destruction.BuildingHeight > 0 &&
+             world.Content.TryGetBuilding(destruction.BuildingType, out _));
+        bool unitFieldsValid = destruction.Kind != DestructionKind.Unit || destruction.BuildingType.Value == 0;
+        if (destruction.Kind < DestructionKind.Unit || destruction.Kind > DestructionKind.Structure || destruction.StartedTick < 0 ||
+            destruction.StartedTick > world.Tick.Value || destruction.BlockingUntilTick <= world.Tick.Value || destruction.VisualUntilTick < destruction.BlockingUntilTick ||
+            destruction.Owner >= world.PlayerCount || destruction.ContentType.Value == 0 || destruction.SelectableKind < SelectableKind.CombatSupport ||
+            destruction.SelectableKind > SelectableKind.ResourceNode || destruction.Footprint < FootprintClass.Tiny || destruction.Footprint > FootprintClass.Huge ||
+            !structureFieldsValid || !unitFieldsValid) throw new InvalidDataException("Invalid destruction state.");
+        return destruction;
     }
 
     private static void AddLegacyProduction(SimulationWorld world)

@@ -63,7 +63,8 @@ public sealed class SimulationRunner
             new WeaponSystem(),
             new ContactDamageSystem(),
             new ProjectileSystem(),
-            new DamageSystem()
+            new DamageSystem(),
+            new DestructionSystem()
         };
         EnergyDomainSystem.RecalculateAll(World);
         OperationsCapacitySystem.Recalculate(World);
@@ -102,7 +103,7 @@ public sealed class SimulationRunner
             else if(system is TargetingSystem||system is ContactFacingSystem)g+=elapsed;
             else if(system is WeaponSystem)w+=elapsed;
             else if(system is ProjectileSystem)r+=elapsed;
-            else if(system is ContactDamageSystem||system is DamageSystem)d+=elapsed;
+            else if(system is ContactDamageSystem||system is DamageSystem||system is DestructionSystem)d+=elapsed;
         }
         return new TickProfile(Stopwatch.GetTimestamp()-totalStart,c,n,m,l,t,b,h,j,p,e,o,s,v,g,w,r,d);
     }

@@ -22,6 +22,12 @@ public partial class DebugHud : CanvasLayer
         Button moveEnemies = new() { Name = "MoveEnemyTest", Text = "Move visible enemies" };
         moveEnemies.TooltipText = "Issues a normal deterministic Move command to visible enemy units for moving-target combat tests.";
         moveEnemies.Pressed += input.DebugMoveVisibleEnemies; header.AddChild(moveEnemies);
+        Button destroyUnit = new() { Name = "DestroyEnemyUnitTest", Text = "Destroy enemy unit" };
+        destroyUnit.TooltipText = "Destroys the first visible enemy unit through a deterministic debug command to test wreck timing.";
+        destroyUnit.Pressed += input.DebugDestroyVisibleEnemyUnit; header.AddChild(destroyUnit);
+        Button destroyStructure = new() { Name = "DestroyEnemyStructureTest", Text = "Destroy enemy structure" };
+        destroyStructure.TooltipText = "Destroys the first visible enemy structure through a deterministic debug command to test collapse and rubble.";
+        destroyStructure.Pressed += input.DebugDestroyVisibleEnemyStructure; header.AddChild(destroyStructure);
         _label = new Label(); _label.AddThemeFontSizeOverride("font_size", 14); box.AddChild(_label);
         HFlowContainer toggles = new(); box.AddChild(toggles);
         AddToggle(toggles, "Nav", () => debug.DrawNavigation, v => debug.DrawNavigation = v);

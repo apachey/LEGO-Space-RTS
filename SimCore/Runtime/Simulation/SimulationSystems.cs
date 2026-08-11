@@ -26,6 +26,20 @@ public sealed class CommandExecutionSystem : ISimSystem
             EnergyDomainSystem.DebugDrainPlayerDomains(world, command.PlayerSlot);
             return;
         }
+        if (command.Type == SimCommandType.DebugDestroyVisibleEnemy)
+        {
+            EntityId target = command.TargetEntity;
+            if (world.Entities.Ownership.TryGet(target, out Ownership targetOwner) && targetOwner.PlayerSlot != command.PlayerSlot &&
+                world.Entities.Transform.TryGet(target, out SimTransform targetTransform) &&
+                world.Fog.IsVisible(command.PlayerSlot, targetTransform.Position.X.FloorToInt(), targetTransform.Position.Y.FloorToInt()) &&
+                world.Entities.Health.Has(target))
+            {
+                ref Health health = ref world.Entities.Health.Get(target);
+                health.Current = Fix32.Zero;
+                health.LastDamageTick = world.Tick.Value;
+            }
+            return;
+        }
         if (command.Type == SimCommandType.SetEnergyPriority)
         {
             BrownoutSystem.TrySetPriority(world, command.PlayerSlot, command.Entities, command.EnergyPriority);

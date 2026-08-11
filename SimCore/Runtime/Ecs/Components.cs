@@ -217,6 +217,26 @@ public struct Health
     public bool IsDepleted => Current <= Fix32.Zero;
 }
 
+public enum DestructionKind : byte { Unit = 0, Structure = 1 }
+
+public struct DestructionState
+{
+    public DestructionKind Kind;
+    public int StartedTick;
+    public int BlockingUntilTick;
+    public int VisualUntilTick;
+    public byte Owner;
+    public ContentId ContentType;
+    public SelectableKind SelectableKind;
+    public FootprintClass Footprint;
+    public ContentId BuildingType;
+    public short BuildingAnchorX;
+    public short BuildingAnchorY;
+    public byte BuildingOrientation;
+    public byte BuildingWidth;
+    public byte BuildingHeight;
+}
+
 public struct Targeting
 {
     public EntityId CurrentTarget;

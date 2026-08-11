@@ -17,6 +17,10 @@ public partial class UnitViewManager : Node3D
     private readonly Dictionary<uint, MeshInstance3D> _projectileViews = new();
     private readonly HashSet<uint> _liveProjectiles = new();
     private readonly List<uint> _removeProjectiles = new();
+    private readonly Dictionary<uint, DebrisSeed> _pendingDebris = new();
+    private readonly Dictionary<uint, DebrisVisual> _debrisViews = new();
+    private readonly List<uint> _debrisScratch = new();
+    private readonly List<uint> _removeDebris = new();
 
     private readonly StandardMaterial3D _friendly = MakeMaterial(new Color(0.10f, 0.82f, 0.66f));
     private readonly StandardMaterial3D _other = MakeMaterial(new Color(0.92f, 0.30f, 0.18f));
@@ -26,6 +30,7 @@ public partial class UnitViewManager : Node3D
     private readonly StandardMaterial3D _construction = MakeConstructionMaterial();
     private readonly StandardMaterial3D _brownout = MakeMaterial(new Color(0.20f, 0.22f, 0.25f));
     private readonly StandardMaterial3D _projectile = MakeProjectileMaterial();
+    private readonly StandardMaterial3D _wreck = MakeMaterial(new Color(0.18f, 0.17f, 0.15f));
     private readonly StandardMaterial3D _healthGood = MakeHealthBarMaterial(new Color(0.24f, 0.82f, 0.38f, 0.96f));
     private readonly StandardMaterial3D _healthDamaged = MakeHealthBarMaterial(new Color(0.98f, 0.68f, 0.12f, 0.96f));
     private readonly StandardMaterial3D _healthCritical = MakeHealthBarMaterial(new Color(1f, 0.24f, 0.12f, 0.96f));
@@ -62,24 +67,46 @@ public partial class UnitViewManager : Node3D
             else if (c.SelectableKind == SelectableKind.Building && c.IsConstructionSite) view.MaterialOverride = _construction;
             else if (c.SelectableKind == SelectableKind.Building && c.IsEnergyConsumer && !c.IsPowered) view.MaterialOverride = _brownout;
             else view.MaterialOverride = hovered && !selected ? _hover : (c.Owner == 0 ? _friendly : _other);
+            if (c.IsDestroyed) view.MaterialOverride = _wreck;
             Node3D? ring = view.GetNodeOrNull<Node3D>("SelectionRing");
-            if (ring is not null) ring.Visible = selected || hovered;
+            if (ring is not null) ring.Visible = !c.IsDestroyed && (selected || hovered);
             Node3D? targetRing = view.GetNodeOrNull<Node3D>("TargetRing");
-            if (targetRing is not null) targetRing.Visible = IsCurrentTarget(c.EntityId);
-            UpdateHealthBar(view, c, selected || IsCurrentTarget(c.EntityId) || (c.HasHealth && c.CurrentHitPointsRaw < c.MaximumHitPointsRaw));
-            UpdateWeaponFlash(view, c, (float)delta);
+            if (targetRing is not null) targetRing.Visible = !c.IsDestroyed && IsCurrentTarget(c.EntityId);
+            UpdateHealthBar(view, c, !c.IsDestroyed && (selected || IsCurrentTarget(c.EntityId) || (c.HasHealth && c.CurrentHitPointsRaw < c.MaximumHitPointsRaw)));
+            if (c.IsDestroyed)
+            {
+                HideWeaponFeedback(view);
+                UpdateDestructionView(view, c);
+                _pendingDebris[c.EntityId.Value] = new DebrisSeed(c.NonBlockingDebrisTicks / (float)SimClock.TicksPerSecond, DebrisScale(c), c.PersistentDebris);
+            }
+            else
+            {
+                _pendingDebris.Remove(c.EntityId.Value);
+                UpdateWeaponFlash(view, c, (float)delta);
+            }
             Label3D? groupLabel = view.GetNodeOrNull<Label3D>("ControlGroupLabel");
             if (groupLabel is not null)
             {
-                string membership = c.Owner == 0 ? _groups.GetMembershipText(c.EntityId) : string.Empty;
+                string membership = !c.IsDestroyed && c.Owner == 0 ? _groups.GetMembershipText(c.EntityId) : string.Empty;
                 groupLabel.Text = membership;
                 groupLabel.Visible = membership.Length > 0;
             }
         }
         _remove.Clear();
-        foreach ((uint id, MeshInstance3D view) in _views) if (!_live.Contains(id)) { view.QueueFree(); _remove.Add(id); }
+        foreach ((uint id, MeshInstance3D view) in _views) if (!_live.Contains(id))
+        {
+            if (_pendingDebris.TryGetValue(id, out DebrisSeed debris) && (debris.Seconds > 0f || debris.Persistent))
+            {
+                PrepareDebrisView(id, view, debris.Scale);
+                _debrisViews[id] = new DebrisVisual(view, debris.Seconds, debris.Persistent);
+            }
+            else view.QueueFree();
+            _remove.Add(id);
+        }
         for (int i = 0; i < _remove.Count; i++) { uint id = _remove[i]; _views.Remove(id); _seenFireSequence.Remove(id); _fireFlashRemaining.Remove(id); }
+        for (int i = 0; i < _remove.Count; i++) _pendingDebris.Remove(_remove[i]);
         UpdateProjectileViews(previous, current, alpha);
+        UpdateDebrisViews((float)delta);
     }
 
     private void UpdateProjectileViews(PresentationSnapshot previous, PresentationSnapshot current, float alpha)
@@ -147,6 +174,92 @@ public partial class UnitViewManager : Node3D
         if (flash is not null) flash.Visible = remaining > 0f && !contactDelivery;
         if (contact is not null) contact.Visible = remaining > 0f && contactDelivery;
         if (remaining > 0f) _fireFlashRemaining[entity.EntityId.Value] = Mathf.Max(0f, remaining - delta);
+    }
+
+    private static void HideWeaponFeedback(MeshInstance3D view)
+    {
+        Node3D? flash = view.GetNodeOrNull<Node3D>("WeaponFlash"); if (flash is not null) flash.Visible = false;
+        Node3D? contact = view.GetNodeOrNull<Node3D>("ContactImpact"); if (contact is not null) contact.Visible = false;
+    }
+
+    private static void UpdateDestructionView(MeshInstance3D view, PresentationEntity entity)
+    {
+        float progress = Mathf.Clamp(entity.DestructionProgressBasisPoints / 10000f, 0f, 1f);
+        Vector3 baseline = BaseVisualScale(entity);
+        float horizontal = Mathf.Lerp(1f, entity.DestructionKind == DestructionKind.Structure ? 0.82f : 0.72f, progress);
+        float vertical = Mathf.Lerp(1f, entity.DestructionKind == DestructionKind.Structure ? 0.12f : 0.18f, progress);
+        view.Scale = new Vector3(baseline.X * horizontal, baseline.Y * vertical, baseline.Z * horizontal);
+    }
+
+    private static Vector3 DebrisScale(PresentationEntity entity)
+    {
+        Vector3 baseline = BaseVisualScale(entity);
+        float horizontal = entity.DestructionKind == DestructionKind.Structure ? 0.82f : 0.72f;
+        float vertical = entity.DestructionKind == DestructionKind.Structure ? 0.10f : 0.16f;
+        return new Vector3(baseline.X * horizontal, baseline.Y * vertical, baseline.Z * horizontal);
+    }
+
+    private static Vector3 BaseVisualScale(PresentationEntity entity)
+    {
+        if (entity.SelectableKind == SelectableKind.Building)
+            return new Vector3(entity.BuildingWidth * GodotConversions.WorldUnitsPerBuildCell, 2.4f, entity.BuildingHeight * GodotConversions.WorldUnitsPerBuildCell);
+        return entity.Footprint switch
+        {
+            FootprintClass.Tiny => new Vector3(2.0f, 1.45f, 2.0f),
+            FootprintClass.Small => new Vector3(2.2f, 1.55f, 2.2f),
+            FootprintClass.Medium => new Vector3(2.8f, 1.9f, 2.8f),
+            FootprintClass.Large => new Vector3(4.6f, 2.6f, 4.6f),
+            _ => new Vector3(4.25f, 3.0f, 4.25f)
+        };
+    }
+
+    private static void PrepareDebrisView(uint id, MeshInstance3D view, Vector3 scale)
+    {
+        view.Name = $"Debris_{id}";
+        view.Scale = scale;
+        string[] hidden = { "SelectionRing", "TargetRing", "HealthBar", "ConstructionProgressBar", "ControlGroupLabel", "BrownoutLabel", "WeaponFlash", "ContactImpact" };
+        for (int i = 0; i < hidden.Length; i++)
+        {
+            Node3D? node = view.GetNodeOrNull<Node3D>(hidden[i]);
+            if (node is not null) node.Visible = false;
+        }
+    }
+
+    private void UpdateDebrisViews(float delta)
+    {
+        _debrisScratch.Clear();
+        foreach (uint id in _debrisViews.Keys) _debrisScratch.Add(id);
+        _removeDebris.Clear();
+        for (int i = 0; i < _debrisScratch.Count; i++)
+        {
+            uint id = _debrisScratch[i];
+            DebrisVisual debris = _debrisViews[id];
+            if (debris.Persistent) continue;
+            debris.Remaining -= delta;
+            if (debris.Remaining <= 0f)
+            {
+                debris.View.QueueFree();
+                _removeDebris.Add(id);
+            }
+            else _debrisViews[id] = debris;
+        }
+        for (int i = 0; i < _removeDebris.Count; i++) _debrisViews.Remove(_removeDebris[i]);
+    }
+
+    private readonly struct DebrisSeed
+    {
+        public readonly float Seconds;
+        public readonly Vector3 Scale;
+        public readonly bool Persistent;
+        public DebrisSeed(float seconds, Vector3 scale, bool persistent) { Seconds = seconds; Scale = scale; Persistent = persistent; }
+    }
+
+    private struct DebrisVisual
+    {
+        public readonly MeshInstance3D View;
+        public readonly bool Persistent;
+        public float Remaining;
+        public DebrisVisual(MeshInstance3D view, float remaining, bool persistent) { View = view; Remaining = remaining; Persistent = persistent; }
     }
 
     private MeshInstance3D CreateView(PresentationEntity entity)

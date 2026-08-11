@@ -65,7 +65,7 @@ public partial class SelectionController : Node
         for (int i = 0; i < _bridge.Current.Entities.Count; i++)
         {
             PresentationEntity entity = _bridge.Current.Entities[i];
-            if (entity.Owner == 0 || entity.Owner == byte.MaxValue) continue;
+            if (entity.IsDestroyed || entity.Owner == 0 || entity.Owner == byte.MaxValue) continue;
             Vector3 world = entity.Position.ToWorld(0.5f);
             if (_camera.IsPositionBehind(world)) continue;
             Vector2 projected = _camera.UnprojectPosition(world);
@@ -91,6 +91,8 @@ public partial class SelectionController : Node
     public override void _Process(double delta)
     {
         if (_bridge is null || _camera is null) return;
+        for (int i = _selected.Count - 1; i >= 0; i--)
+            if (!_bridge.World.Entities.Selectable.Has(_selected[i])) _selected.RemoveAt(i);
         Vector2 pointer = GetViewport().GetMousePosition();
         Hovered = FindClosest(pointer);
         bool down = Input.IsMouseButtonPressed(MouseButton.Left);
@@ -125,7 +127,7 @@ public partial class SelectionController : Node
         _selected.Clear();
         LastFilteredWorkerCount = 0;
         foreach (EntityId id in ids)
-            if (_selected.Count < 128 && _bridge.World.Entities.Exists(id)) _selected.Add(id);
+            if (_selected.Count < 128 && _bridge.World.Entities.Selectable.Has(id)) _selected.Add(id);
         _selected.Sort(static (a, b) => a.Value.CompareTo(b.Value));
     }
 
@@ -137,7 +139,7 @@ public partial class SelectionController : Node
         for (int i = 0; i < _bridge.Current.Entities.Count; i++)
         {
             PresentationEntity e = _bridge.Current.Entities[i];
-            if (e.Owner != 0) continue;
+            if (e.IsDestroyed || e.Owner != 0) continue;
             Vector3 world = e.Position.ToWorld(0.5f);
             if (_camera.IsPositionBehind(world)) continue;
             Vector2 sp = _camera.UnprojectPosition(world);
@@ -162,7 +164,7 @@ public partial class SelectionController : Node
             for (int i = 0; i < _bridge.Current.Entities.Count; i++)
             {
                 PresentationEntity e = _bridge.Current.Entities[i];
-                if (e.Owner == 0 && e.ContentType == type) Apply(e.EntityId, subtract, false);
+                if (!e.IsDestroyed && e.Owner == 0 && e.ContentType == type) Apply(e.EntityId, subtract, false);
             }
         }
         else
@@ -183,7 +185,7 @@ public partial class SelectionController : Node
         for (int i = 0; i < _bridge.Current.Entities.Count; i++)
         {
             PresentationEntity e = _bridge.Current.Entities[i];
-            if (e.Owner != 0 || e.SelectableKind == SelectableKind.Building) continue;
+            if (e.IsDestroyed || e.Owner != 0 || e.SelectableKind == SelectableKind.Building) continue;
             Vector3 world = e.Position.ToWorld(0.5f);
             if (_camera.IsPositionBehind(world)) continue;
             Vector2 screen = _camera.UnprojectPosition(world);

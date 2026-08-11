@@ -144,7 +144,7 @@ public sealed class M4ContactWeaponTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(world.Entities.Health.Get(first).IsDepleted, Is.True);
+            Assert.That(world.Entities.Exists(first), Is.False, "The depleted first target should finish its canonical wreck lifetime.");
             Assert.That(world.Entities.Transform.Get(source).Position.X, Is.GreaterThan(Fix32.FromInt(12)));
             Assert.That(world.Entities.Health.Get(followUp).Current, Is.LessThan(world.Entities.Health.Get(followUp).Maximum));
         });

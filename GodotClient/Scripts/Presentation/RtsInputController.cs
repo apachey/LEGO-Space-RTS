@@ -200,6 +200,27 @@ public partial class RtsInputController : Node
         _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 1, _sequence++, SimCommandType.Move, enemies.ToArray(), target));
     }
 
+    public void DebugDestroyVisibleEnemyUnit() => DebugDestroyVisibleEnemy(structure: false);
+    public void DebugDestroyVisibleEnemyStructure() => DebugDestroyVisibleEnemy(structure: true);
+
+    private void DebugDestroyVisibleEnemy(bool structure)
+    {
+        if (_bridge is null) return;
+        IReadOnlyList<EntityId> alive = _bridge.World.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (!_bridge.World.Entities.Ownership.TryGet(id, out Ownership ownership) || ownership.PlayerSlot == 0 ||
+                !_bridge.World.Entities.Selectable.TryGet(id, out Selectable selectable) || (selectable.Kind == SelectableKind.Building) != structure ||
+                !_bridge.World.Entities.Health.TryGet(id, out Health health) || health.IsDepleted ||
+                !_bridge.World.Entities.Transform.TryGet(id, out SimTransform transform) ||
+                !_bridge.World.Fog.IsVisible(0, transform.Position.X.FloorToInt(), transform.Position.Y.FloorToInt())) continue;
+            _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, _sequence++, SimCommandType.DebugDestroyVisibleEnemy,
+                Array.Empty<EntityId>(), FixVec2.Zero, targetEntity: id));
+            return;
+        }
+    }
+
     private bool PreferRoundRobin(ContentId unitType, EntityId candidate, EntityId current)
     {
         if (current == EntityId.None) return true;

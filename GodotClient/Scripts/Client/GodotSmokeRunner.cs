@@ -14,6 +14,8 @@ public partial class GodotSmokeRunner : Node
     private bool _constructionSeeded;
     private EntityId _captureFocus;
     private EntityId _damagedFocus;
+    private EntityId _destroyedUnit;
+    private EntityId _collapseUnit;
     private bool _finished;
     private int _frames;
     public void Configure(GodotSimBridge bridge, SelectionController selection, RtsCameraController camera, string[] commandLineArgs)
@@ -52,7 +54,9 @@ public partial class GodotSmokeRunner : Node
                 }
             }
             TrySeedDamagedHealth(_captureFocus);
+            TrySeedDestroyedUnit();
         }
+        TrySeedActiveCollapse();
         if (_bridge.World.Tick.Value < 40 || _frames < 60) return;
         Node? hud = GetTree().Root.FindChild("BasicHUD", true, false);
         bool hudOk = hud is not null && hud.FindChild("ResourceStrip", true, false) is not null &&
@@ -62,6 +66,10 @@ public partial class GodotSmokeRunner : Node
         Node? damagedView = _damagedFocus == EntityId.None ? null : GetTree().Root.FindChild($"SimEntity_{_damagedFocus.Value}_*", true, false);
         Node? constructionProgress = focusedView?.FindChild("ConstructionProgressBar", false, false);
         Node? movingTargetControl = GetTree().Root.FindChild("MoveEnemyTest", true, false);
+        Node? destroyUnitControl = GetTree().Root.FindChild("DestroyEnemyUnitTest", true, false);
+        Node? destroyStructureControl = GetTree().Root.FindChild("DestroyEnemyStructureTest", true, false);
+        Node? debris = _destroyedUnit == EntityId.None ? null : GetTree().Root.FindChild($"Debris_{_destroyedUnit.Value}", true, false);
+        Node? activeCollapse = _collapseUnit == EntityId.None ? null : GetTree().Root.FindChild($"SimEntity_{_collapseUnit.Value}_*", true, false);
         Node? healthBar = damagedView?.FindChild("HealthBar", false, false);
         Node? contactImpact = GetTree().Root.FindChild("ContactImpact", true, false);
         bool healthBarOk = HealthBarGeometryOk(healthBar);
@@ -74,8 +82,12 @@ public partial class GodotSmokeRunner : Node
             progressBar.FindChild("Fill", false, false) is MeshInstance3D constructionFill && constructionFill.Mesh is BoxMesh constructionFillMesh &&
             constructionFillMesh.Material is StandardMaterial3D constructionFillMaterial &&
             constructionFillMaterial.BillboardMode == BaseMaterial3D.BillboardModeEnum.Disabled);
-        bool ok = _bridge.Current is not null && _bridge.World.Entities.Alive.Count >= 18 && _bridge.GameplayContentHash != 0 && hudOk && constructionOk &&
-            movingTargetControl is Button && contactImpact is MeshInstance3D && healthBarOk;
+        bool ok = _bridge.Current is not null && _bridge.World.Entities.Alive.Count >= 17 && _bridge.GameplayContentHash != 0 && hudOk && constructionOk &&
+            movingTargetControl is Button && destroyUnitControl is Button && destroyStructureControl is Button &&
+            _destroyedUnit != EntityId.None && !_bridge.World.Entities.Exists(_destroyedUnit) && debris is MeshInstance3D &&
+            _collapseUnit != EntityId.None && _bridge.World.Entities.Destruction.Has(_collapseUnit) &&
+            activeCollapse is MeshInstance3D collapseView && collapseView.Scale.Y < 1.5f &&
+            contactImpact is MeshInstance3D && healthBarOk;
         if (ok && _capturePath is not null)
         {
             _finished = true;
@@ -98,7 +110,7 @@ public partial class GodotSmokeRunner : Node
             GD.Print($"PHASE10 VISUAL SMOKE CAPTURE: PASS path={_capturePath}");
         }
         if (!ok)
-            GD.PrintErr($"PHASE10 GODOT HEADLESS SMOKE DETAIL: hud={hudOk} construction={constructionOk} health={healthBarOk} movingTarget={movingTargetControl is Button} contact={contactImpact is MeshInstance3D}");
+            GD.PrintErr($"PHASE10 GODOT HEADLESS SMOKE DETAIL: hud={hudOk} construction={constructionOk} health={healthBarOk} movingTarget={movingTargetControl is Button} destructionControls={destroyUnitControl is Button && destroyStructureControl is Button} debris={debris is MeshInstance3D} collapseId={_collapseUnit.Value} collapseActive={_collapseUnit != EntityId.None && _bridge.World.Entities.Destruction.Has(_collapseUnit)} collapseView={activeCollapse is MeshInstance3D} contact={contactImpact is MeshInstance3D}");
         _finished = true;
         GD.Print(ok ? $"PHASE10 GODOT HEADLESS SMOKE: PASS tick={_bridge.World.Tick.Value} hash={_bridge.StateHashHex()}" : "PHASE10 GODOT HEADLESS SMOKE: FAIL");
         GetTree().Quit(ok ? 0 : 2);
@@ -152,6 +164,44 @@ public partial class GodotSmokeRunner : Node
         ref Health health = ref _bridge.World.Entities.Health.Get(target);
         health.Current = health.Maximum * Fix32.FromRatio(75, 100);
         _damagedFocus = target;
+    }
+
+    private void TrySeedDestroyedUnit()
+    {
+        if (_bridge is null) return;
+        IReadOnlyList<EntityId> alive = _bridge.World.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (id == _captureFocus || !_bridge.World.Entities.Ownership.TryGet(id, out Ownership ownership) || ownership.PlayerSlot != 0 ||
+                !_bridge.World.Entities.Selectable.TryGet(id, out Selectable selectable) || selectable.Kind == SelectableKind.Building ||
+                !_bridge.World.Entities.Targetable.TryGet(id, out Targetable targetable) || targetable.Class == CombatTargetClass.MassiveMachine ||
+                !_bridge.World.Entities.Health.Has(id)) continue;
+            ref Health health = ref _bridge.World.Entities.Health.Get(id);
+            health.Current = Fix32.Zero;
+            health.LastDamageTick = _bridge.World.Tick.Value;
+            _destroyedUnit = id;
+            break;
+        }
+    }
+
+    private void TrySeedActiveCollapse()
+    {
+        if (_bridge is null || _collapseUnit != EntityId.None || _bridge.World.Tick.Value < 20) return;
+        IReadOnlyList<EntityId> alive = _bridge.World.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (id == _captureFocus || id == _destroyedUnit || id == _damagedFocus ||
+                !_bridge.World.Entities.Ownership.TryGet(id, out Ownership ownership) || ownership.PlayerSlot != 0 ||
+                !_bridge.World.Entities.Selectable.TryGet(id, out Selectable selectable) || selectable.Kind == SelectableKind.Building ||
+                !_bridge.World.Entities.Health.Has(id)) continue;
+            ref Health health = ref _bridge.World.Entities.Health.Get(id);
+            health.Current = Fix32.Zero;
+            health.LastDamageTick = _bridge.World.Tick.Value;
+            _collapseUnit = id;
+            break;
+        }
     }
 
     private static bool HealthBarGeometryOk(Node? healthBar)

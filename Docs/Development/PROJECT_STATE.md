@@ -5,14 +5,14 @@ remain authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M4 — Combat / T044 Contact weapons accepted; T045 Destruction is next.**
+**M4 — Combat / T045 Destruction implemented; human playtest pending.**
 
 The accepted M3 T030-T039 economy/base-building stack is merged through PR #10.
-M4 T040 Targeting, T041 Weapons and T042 Projectiles are fully automated-verified
-and human-accepted. T043 Damage / Armor and T044 Contact weapons are implemented
-on the current stacked branch. The game director accepted T044 combat behavior
-and readability after its follow-up fixes; destruction and repair remain their
-separately scheduled T045-T046 tasks.
+M4 T040 Targeting, T041 Weapons, T042 Projectiles and T044 Contact weapons are
+fully automated-verified and human-accepted. T043 Damage / Armor and T045
+Destruction are implemented on the current stacked branches. T045 automated
+acceptance is complete; its collapse/wreck readability and timing still require
+the game director's human playtest before T046 Repair begins.
 
 ## Engine / architecture
 
@@ -450,6 +450,38 @@ narrow placement cases allowed by Phase 09B.
   height bar fast verification is
   `Artifacts/Verification/20260811T090944Z-fast-summary.txt`. Human T044
   acceptance is complete as of 2026-08-11.
+- M4 T045 Destruction is implemented on the current stacked task branch. A
+  zero-HP unit or structure loses commands, selection, targeting, weapons,
+  vision and economic/energy function in the same authoritative tick. Builder
+  assignments and entity-local command/navigation state are released rather
+  than surviving into the wreck state; Operations Capacity and energy domains
+  recalculate immediately.
+- Standard unit wrecks remain blocking for the canonical 1.25 seconds and
+  retain nonblocking cosmetic debris until 8 seconds total. Huge/Massive units
+  block for 2.5 seconds and retain debris until 12 seconds total. Structure
+  rubble blocks its authored footprint for 4 seconds, then clears pathfinding
+  while leaving persistent cosmetic rubble. Cosmetic debris is presentation-
+  only and never restores gameplay identity or collision.
+- Snapshot v16 / simulation protocol v14 preserve mid-collapse owner/content,
+  footprint, building anchor and authoritative timer state while retaining the
+  supported v2-v15 readers. Replay remains v6 because the deterministic F8
+  destruction helper reuses the existing command envelope encoding.
+- The hidden F8 developer panel now includes `Destroy enemy unit` and `Destroy
+  enemy structure`. Each issues a deterministic command against the first
+  visible valid enemy of that category, preparing the manual timing/readability
+  test without requiring a full combat setup. Automated visual smoke separately
+  seeds an active collapse and expired blocking wreck, verifies flattened debris
+  and keeps the fixed-height construction-bar regression active.
+- The T045 full automated acceptance candidate is green across every
+  `BLOCKING_NOW` stage: builds, 171 NUnit tests, the representative 24-mover
+  movement gate, compiled content, Godot destruction smoke, 100-repeat
+  determinism, replay, mid-wreck snapshot continuation, regeneration and macOS
+  export. Verification summary:
+  `Artifacts/Verification/20260811T094040Z-full-summary.txt`. The legacy 60-mover
+  stress remains the same M2-M5 diagnostic failure and does not block T045.
+- A launchable T045 debug build was produced at
+  `Builds/macOS/LEGO Space RTS.app` and passed the export smoke launch. T045 is
+  awaiting only human timing/readability acceptance.
 
 ## Current gates
 
@@ -504,10 +536,9 @@ narrow placement cases allowed by Phase 09B.
   prototype geometry. Survey Pulse remains a visible amber sphere; Contact
   tools now use a distinct source-attached impact plate instead of implying a
   missing projectile. Final differentiated combat VFX remains later work.
-- Zero-HP entities currently remain visible and retain collision because T045
-  Destruction / wreck timing has not started. This is scheduled missing work,
-  not a T044 health/damage defect; T045 must remove gameplay function at zero HP
-  and apply the canonical 1.25 / 2.5 / 4-second collision transitions.
+- Final LEGO breakup animation, bounded hero fragments and faction-specific
+  destruction VFX remain M7 T067. T045 deliberately uses readable darkened
+  collapse/rubble placeholders while preserving the canonical gameplay timers.
 
 ## Explicitly rejected / do not resurrect
 
@@ -520,5 +551,6 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. M4 T045 Destruction / wrecks / collision transition.
+1. Human playtest acceptance for M4 T045 collapse, wreck/rubble readability and
+   the 1.25 / 2.5 / 4-second collision transitions.
 2. M4 T046 Repair after T045 acceptance.

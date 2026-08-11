@@ -148,6 +148,31 @@ public sealed class SimulationWorld
         ApplyTopologyChange(rect);
     }
 
+    internal void ClearDestroyedStructureFootprint(DestructionState destruction)
+    {
+        Building building = new()
+        {
+            Type = destruction.BuildingType,
+            AnchorX = destruction.BuildingAnchorX,
+            AnchorY = destruction.BuildingAnchorY,
+            Orientation = destruction.BuildingOrientation,
+            FootprintWidth = destruction.BuildingWidth,
+            FootprintHeight = destruction.BuildingHeight,
+            State = BuildingState.Completed
+        };
+        SetConstructionOccupied(building, false);
+    }
+
+    internal void RemoveRuntimeState(EntityId id)
+    {
+        Queues.Remove(id.Value);
+        Corridors.Remove(id.Value);
+        PendingVelocity.Remove(id.Value);
+        CompressionUsed.Remove(id.Value);
+        DiagnosticLastDelta.Remove(id.Value);
+        DiagnosticLastReversalTick.Remove(id.Value);
+    }
+
     private void ApplyTopologyChange(IntRect rect)
     {
         Pathfinder.RebuildAffected(rect);

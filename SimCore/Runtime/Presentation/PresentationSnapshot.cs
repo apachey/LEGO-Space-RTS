@@ -25,9 +25,14 @@ public readonly struct PresentationEntity
     public readonly int MaximumHitPointsRaw;
     public readonly byte ArmorRating;
     public readonly int LastDamageTick;
+    public readonly bool IsDestroyed;
+    public readonly DestructionKind DestructionKind;
+    public readonly ushort DestructionProgressBasisPoints;
+    public readonly ushort NonBlockingDebrisTicks;
+    public readonly bool PersistentDebris;
     public readonly bool Snap;
-    public PresentationEntity(EntityId entityId, ContentId contentType, byte owner, FixVec2 position, Angle16 orientation, MovementState movement, VisibilityState visibility, FootprintClass footprint, SelectableKind selectableKind, bool snap = false, ResourceVisualState resourceState = ResourceVisualState.Full, byte buildingWidth = 0, byte buildingHeight = 0, bool isConstructionSite = false, ushort constructionProgressBasisPoints = 0, bool isEnergyConsumer = false, bool isPowered = true, EnergyPriority energyPriority = EnergyPriority.Normal, uint weaponFireSequence = 0, EntityId weaponFireTarget = default, WeaponDeliveryKind weaponDelivery = WeaponDeliveryKind.Projectile, bool hasHealth = false, int currentHitPointsRaw = 0, int maximumHitPointsRaw = 0, byte armorRating = 0, int lastDamageTick = -1)
-    { EntityId = entityId; ContentType = contentType; Owner = owner; Position = position; Orientation = orientation; Movement = movement; Visibility = visibility; Footprint = footprint; SelectableKind=selectableKind; ResourceState=resourceState; BuildingWidth=buildingWidth; BuildingHeight=buildingHeight; IsConstructionSite=isConstructionSite; ConstructionProgressBasisPoints=constructionProgressBasisPoints; IsEnergyConsumer=isEnergyConsumer; IsPowered=isPowered; EnergyPriority=energyPriority; WeaponFireSequence=weaponFireSequence; WeaponFireTarget=weaponFireTarget; WeaponDelivery=weaponDelivery; HasHealth=hasHealth; CurrentHitPointsRaw=currentHitPointsRaw; MaximumHitPointsRaw=maximumHitPointsRaw; ArmorRating=armorRating; LastDamageTick=lastDamageTick; Snap = snap; }
+    public PresentationEntity(EntityId entityId, ContentId contentType, byte owner, FixVec2 position, Angle16 orientation, MovementState movement, VisibilityState visibility, FootprintClass footprint, SelectableKind selectableKind, bool snap = false, ResourceVisualState resourceState = ResourceVisualState.Full, byte buildingWidth = 0, byte buildingHeight = 0, bool isConstructionSite = false, ushort constructionProgressBasisPoints = 0, bool isEnergyConsumer = false, bool isPowered = true, EnergyPriority energyPriority = EnergyPriority.Normal, uint weaponFireSequence = 0, EntityId weaponFireTarget = default, WeaponDeliveryKind weaponDelivery = WeaponDeliveryKind.Projectile, bool hasHealth = false, int currentHitPointsRaw = 0, int maximumHitPointsRaw = 0, byte armorRating = 0, int lastDamageTick = -1, bool isDestroyed = false, DestructionKind destructionKind = DestructionKind.Unit, ushort destructionProgressBasisPoints = 0, ushort nonBlockingDebrisTicks = 0, bool persistentDebris = false)
+    { EntityId = entityId; ContentType = contentType; Owner = owner; Position = position; Orientation = orientation; Movement = movement; Visibility = visibility; Footprint = footprint; SelectableKind=selectableKind; ResourceState=resourceState; BuildingWidth=buildingWidth; BuildingHeight=buildingHeight; IsConstructionSite=isConstructionSite; ConstructionProgressBasisPoints=constructionProgressBasisPoints; IsEnergyConsumer=isEnergyConsumer; IsPowered=isPowered; EnergyPriority=energyPriority; WeaponFireSequence=weaponFireSequence; WeaponFireTarget=weaponFireTarget; WeaponDelivery=weaponDelivery; HasHealth=hasHealth; CurrentHitPointsRaw=currentHitPointsRaw; MaximumHitPointsRaw=maximumHitPointsRaw; ArmorRating=armorRating; LastDamageTick=lastDamageTick; IsDestroyed=isDestroyed; DestructionKind=destructionKind; DestructionProgressBasisPoints=destructionProgressBasisPoints; NonBlockingDebrisTicks=nonBlockingDebrisTicks; PersistentDebris=persistentDebris; Snap = snap; }
 }
 
 public readonly struct PresentationProjectile
@@ -53,6 +58,21 @@ public sealed class PresentationSnapshot
         for (int i = 0; i < alive.Count; i++)
         {
             EntityId id = alive[i];
+            if (world.Entities.Destruction.TryGet(id, out DestructionState destruction) && world.Entities.Transform.TryGet(id, out SimTransform destructionTransform))
+            {
+                VisibilityState destructionVisibility = destruction.Owner == viewerPlayer ? VisibilityState.Visible : world.Fog.Get(viewerPlayer, destructionTransform.Position.X.FloorToInt(), destructionTransform.Position.Y.FloorToInt());
+                if (destruction.Owner != viewerPlayer && destructionVisibility != VisibilityState.Visible) continue;
+                int duration = destruction.BlockingUntilTick - destruction.StartedTick;
+                int elapsed = world.Tick.Value - destruction.StartedTick;
+                ushort progress = duration <= 0 ? (ushort)10_000 : checked((ushort)System.Math.Clamp((long)elapsed * 10_000 / duration, 0, 10_000));
+                ushort debrisTicks = checked((ushort)System.Math.Max(0, destruction.VisualUntilTick - destruction.BlockingUntilTick));
+                list.Add(new PresentationEntity(id, destruction.ContentType, destruction.Owner, destructionTransform.Position, destructionTransform.Orientation,
+                    MovementState.Idle, destructionVisibility, destruction.Footprint, destruction.SelectableKind,
+                    buildingWidth: destruction.BuildingWidth, buildingHeight: destruction.BuildingHeight,
+                    isDestroyed: true, destructionKind: destruction.Kind, destructionProgressBasisPoints: progress, nonBlockingDebrisTicks: debrisTicks,
+                    persistentDebris: destruction.Kind == DestructionKind.Structure));
+                continue;
+            }
             if (world.Entities.ResourceNode.TryGet(id, out ResourceNode resource) && world.Entities.Transform.TryGet(id, out SimTransform resourceTransform) && world.Entities.Selectable.TryGet(id, out Selectable resourceSelectable))
             {
                 int rx = resourceTransform.Position.X.FloorToInt(), ry = resourceTransform.Position.Y.FloorToInt();
