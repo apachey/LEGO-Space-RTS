@@ -92,6 +92,7 @@
 | `SimCore/Runtime/Simulation/SimulationRunner.cs` | Authoritative simulation world, fixed-tick systems, movement, fog and state updates. |
 | `SimCore/Runtime/Simulation/SimulationSystems.cs` | Authoritative simulation world, fixed-tick systems, movement, fog and state updates. |
 | `SimCore/Runtime/Simulation/SimulationWorld.cs` | Authoritative simulation world, fixed-tick systems, movement, fog and state updates. |
+| `SimCore/Runtime/Simulation/ExcavationTopologySystem.cs` | Authoritative Excavatable Feature entity binding and deterministic topology-state synchronization. |
 | `SimCore/Runtime/Simulation/WorksiteGraphSystem.cs` | Deterministic Rock Raider Worksite overlap graph, component membership and local resource access. |
 | `SimCore.Tests/Angle16Tests.cs` | Pure NUnit test for deterministic simulation/navigation/serialization behavior. |
 | `SimCore.Tests/AssemblyBoundaryTests.cs` | Pure NUnit test for deterministic simulation/navigation/serialization behavior. |
@@ -104,6 +105,7 @@
 | `SimCore.Tests/FogLosTests.cs` | Pure NUnit test for deterministic simulation/navigation/serialization behavior. |
 | `SimCore.Tests/FormationTests.cs` | Pure NUnit test for deterministic simulation/navigation/serialization behavior. |
 | `SimCore.Tests/MovementFogTests.cs` | Pure NUnit test for deterministic simulation/navigation/serialization behavior. |
+| `SimCore.Tests/M5ExcavationTopologyTests.cs` | Excavatable metadata, entity state, local rebuild, universal-route and snapshot regression coverage. |
 | `SimCore.Tests/M5WorksiteGraphTests.cs` | Worksite service geometry, merge/split, resource access and snapshot regression coverage. |
 | `SimCore.Tests/NavigationTests.cs` | Pure NUnit test for deterministic simulation/navigation/serialization behavior. |
 | `SimCore.Tests/PrototypeContentTests.cs` | Pure NUnit test for deterministic simulation/navigation/serialization behavior. |

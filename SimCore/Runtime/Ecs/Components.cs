@@ -86,6 +86,16 @@ public struct Vision
     public int LastFogY;
 }
 
+public struct Excavatable
+{
+    public ushort MapFeatureId;
+    public ContentId StableId;
+    public ExcavatableTerrainClass TerrainClass;
+    public ExcavatableFeatureState State;
+    public ushort RequiredEnergy;
+    public ContentId VisualProfile;
+}
+
 public struct ResourceNode
 {
     public ResourceType Type;

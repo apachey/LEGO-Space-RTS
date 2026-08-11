@@ -7,8 +7,8 @@ namespace LegoSpaceRTS.SimCore
 public static class SnapshotSerializer
 {
     public const uint Magic = 0x53525453; // STRS
-    public const ushort FormatVersion = 11;
-    public const ushort SimulationProtocolVersion = 9;
+    public const ushort FormatVersion = 12;
+    public const ushort SimulationProtocolVersion = 10;
 
     [Flags]
     private enum EntityComponents : uint
@@ -37,7 +37,8 @@ public static class SnapshotSerializer
         WorksiteNode = 1 << 20,
         WorksiteMember = 1 << 21,
         WorksiteComponent = 1 << 22,
-        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver | ResourceBank | Building | ConstructionSite | Builder | Production | EnergyDomain | EnergyDomainMember | PowerState | WorksiteNode | WorksiteMember | WorksiteComponent
+        Excavatable = 1 << 23,
+        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver | ResourceBank | Building | ConstructionSite | Builder | Production | EnergyDomain | EnergyDomainMember | PowerState | WorksiteNode | WorksiteMember | WorksiteComponent | Excavatable
     }
 
     public static byte[] Serialize(SimulationWorld world)
@@ -58,9 +59,9 @@ public static class SnapshotSerializer
         using MemoryStream ms = new(bytes, false); using BinaryReader r = new(ms);
         if (r.ReadUInt32() != Magic) throw new InvalidDataException("Snapshot magic mismatch.");
         ushort format = r.ReadUInt16(), protocol = r.ReadUInt16();
-        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8);
+        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8) || (format == 11 && protocol == 9);
         if (!supportedLegacy && (format != FormatVersion || protocol != SimulationProtocolVersion)) throw new InvalidDataException($"Unsupported snapshot {format}/{protocol}.");
-        SimTick tick = new(r.ReadInt32()); MapGrid map = MapGrid.Deserialize(r); uint nextEntity = r.ReadUInt32();
+        SimTick tick = new(r.ReadInt32()); MapGrid map = MapGrid.Deserialize(r, includeExcavatableMetadata: format >= 12); uint nextEntity = r.ReadUInt32();
         EntityStore entities = new(); int entityCount = r.ReadInt32(); if (entityCount < 0 || entityCount > 10000) throw new InvalidDataException("Invalid entity count.");
         SimulationWorld temp = new(map, entities, new FogState(2), tick, content);
         for (int i = 0; i < entityCount; i++)
@@ -76,6 +77,7 @@ public static class SnapshotSerializer
         temp.Commands.Deserialize(r, includeBuildFields: format >= 6, includeEnergyPriority: format >= 10);
         temp.Fog = FogState.Deserialize(r);
         if (ms.Position != ms.Length) throw new InvalidDataException("Trailing snapshot bytes.");
+        ExcavationTopologySystem.InitializeFeatures(temp);
         if (format < 9) InitializeLegacyEnergy(temp);
         else if (format < 11) MigrateLegacyWorksites(temp);
         else EnergyDomainSystem.RecalculateAll(temp);
@@ -107,6 +109,7 @@ public static class SnapshotSerializer
         if (world.Entities.WorksiteNode.Has(id)) components |= EntityComponents.WorksiteNode;
         if (world.Entities.WorksiteMember.Has(id)) components |= EntityComponents.WorksiteMember;
         if (world.Entities.WorksiteComponent.Has(id)) components |= EntityComponents.WorksiteComponent;
+        if (world.Entities.Excavatable.Has(id)) components |= EntityComponents.Excavatable;
         if (world.Entities.ConstructionSite.Has(id)) components |= EntityComponents.ConstructionSite;
         if (world.Entities.Production.Has(id)) components |= EntityComponents.Production;
         if (world.TryGetQueue(id, out _)) components |= EntityComponents.CommandQueue;
@@ -138,6 +141,12 @@ public static class SnapshotSerializer
         if ((components & EntityComponents.WorksiteNode) != 0) { WorksiteNode node = world.Entities.WorksiteNode.Get(id); w.Write(node.ServiceRadius); w.Write(node.ComponentRoot.Value); }
         if ((components & EntityComponents.WorksiteMember) != 0) w.Write(world.Entities.WorksiteMember.Get(id).ComponentRoot.Value);
         if ((components & EntityComponents.WorksiteComponent) != 0) { WorksiteComponent component = world.Entities.WorksiteComponent.Get(id); w.Write(component.NodeCount); w.Write(component.MemberCount); w.Write(component.TopologyRevision); }
+        if ((components & EntityComponents.Excavatable) != 0)
+        {
+            Excavatable feature = world.Entities.Excavatable.Get(id);
+            w.Write(feature.MapFeatureId); w.Write(feature.StableId.Value); w.Write((byte)feature.TerrainClass);
+            w.Write((byte)feature.State); w.Write(feature.RequiredEnergy); w.Write(feature.VisualProfile.Value);
+        }
         if ((components & EntityComponents.ConstructionSite) != 0) WriteConstructionSite(w, world.Entities.ConstructionSite.Get(id));
         if ((components & EntityComponents.Production) != 0) WriteProduction(w, world.Entities.Production.Get(id));
         if ((components & EntityComponents.CommandQueue) != 0) world.GetQueue(id).Serialize(w, includeTargetEntity: true);
@@ -262,6 +271,19 @@ public static class SnapshotSerializer
             world.Entities.WorksiteMember.Set(id, new WorksiteMember { ComponentRoot = new EntityId(r.ReadUInt32()) });
         if ((components & EntityComponents.WorksiteComponent) != 0)
             world.Entities.WorksiteComponent.Set(id, new WorksiteComponent { NodeCount = r.ReadUInt16(), MemberCount = r.ReadUInt16(), TopologyRevision = r.ReadUInt32() });
+        if ((components & EntityComponents.Excavatable) != 0)
+        {
+            Excavatable feature = new()
+            {
+                MapFeatureId = r.ReadUInt16(), StableId = new ContentId(r.ReadUInt32()), TerrainClass = (ExcavatableTerrainClass)r.ReadByte(),
+                State = (ExcavatableFeatureState)r.ReadByte(), RequiredEnergy = r.ReadUInt16(), VisualProfile = new ContentId(r.ReadUInt32())
+            };
+            if (feature.MapFeatureId == 0 || feature.StableId.Value == 0 || feature.TerrainClass < ExcavatableTerrainClass.LooseRubbleBlockage ||
+                feature.TerrainClass > ExcavatableTerrainClass.ReinforcedBedrockBarrier || feature.State < ExcavatableFeatureState.Blocked ||
+                feature.State > ExcavatableFeatureState.Open || feature.VisualProfile.Value == 0)
+                throw new InvalidDataException("Invalid authoritative Excavatable Feature.");
+            world.Entities.Excavatable.Set(id, feature);
+        }
         if ((components & EntityComponents.ConstructionSite) != 0) world.Entities.ConstructionSite.Set(id, ReadConstructionSite(r, format));
         if ((components & EntityComponents.Production) != 0) world.Entities.Production.Set(id, ReadProduction(r));
         if ((components & EntityComponents.CommandQueue) != 0) world.GetQueue(id).Deserialize(r, includeTargetEntity: format >= 4);

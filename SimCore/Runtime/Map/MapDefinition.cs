@@ -128,7 +128,7 @@ public sealed class MapDefinition
 
     internal static MapDefinition Deserialize(BinaryReader reader, ushort formatVersion)
     {
-        MapGrid grid = MapGrid.Deserialize(reader);
+        MapGrid grid = MapGrid.Deserialize(reader, includeExcavatableMetadata: formatVersion >= 4);
         int startCount = reader.ReadInt32();
         MapStart[] starts = new MapStart[startCount];
         for (int i = 0; i < startCount; i++) starts[i] = new MapStart(reader.ReadByte(), new FixVec2(Fix32.FromRaw(reader.ReadInt32()), Fix32.FromRaw(reader.ReadInt32())));

@@ -11,6 +11,7 @@ public partial class GodotSmokeRunner : Node
     private RtsCameraController? _camera;
     private string? _capturePath;
     private bool _captureConstruction;
+    private bool _captureExcavation;
     private bool _constructionSeeded;
     private EntityId _captureFocus;
     private bool _finished;
@@ -23,7 +24,11 @@ public partial class GodotSmokeRunner : Node
         {
             if (commandLineArgs[i] == "--capture-path") _capturePath = commandLineArgs[i + 1];
         }
-        for (int i = 0; i < commandLineArgs.Length; i++) if (commandLineArgs[i] == "--capture-construction") _captureConstruction = true;
+        for (int i = 0; i < commandLineArgs.Length; i++)
+        {
+            if (commandLineArgs[i] == "--capture-construction") _captureConstruction = true;
+            if (commandLineArgs[i] == "--capture-excavation") _captureExcavation = true;
+        }
     }
     public override void _Process(double delta)
     {
@@ -33,7 +38,11 @@ public partial class GodotSmokeRunner : Node
             _camera?.CenterOn(focusTransform.Position.ToWorld());
         if (_frames == 2 && _selection is not null)
         {
-            if (_captureConstruction && TrySeedConstructionSite(out EntityId site))
+            if (_captureExcavation && TryOpenExcavatable())
+            {
+                _selection.SetSelection(Array.Empty<EntityId>());
+            }
+            else if (_captureConstruction && TrySeedConstructionSite(out EntityId site))
             {
                 _constructionSeeded = true;
                 _captureFocus = site;
@@ -58,7 +67,8 @@ public partial class GodotSmokeRunner : Node
             hud.FindChild("ContextualSlot", true, false) is not null && hud.FindChild("ContextualActions", true, false) is not null;
         Node? constructionProgress = GetTree().Root.FindChild("ConstructionProgressBar", true, false);
         bool constructionOk = !_captureConstruction || (_constructionSeeded && constructionProgress is Node3D progressBar && progressBar.Visible);
-        bool ok = _bridge.Current is not null && _bridge.World.Entities.Alive.Count >= 18 && _bridge.GameplayContentHash != 0 && hudOk && constructionOk;
+        bool excavationOk = !_captureExcavation || ExcavationIsOpen();
+        bool ok = _bridge.Current is not null && _bridge.World.Entities.Alive.Count >= 18 && _bridge.GameplayContentHash != 0 && hudOk && constructionOk && excavationOk;
         if (ok && _capturePath is not null)
         {
             _finished = true;
@@ -83,6 +93,28 @@ public partial class GodotSmokeRunner : Node
         _finished = true;
         GD.Print(ok ? $"PHASE10 GODOT HEADLESS SMOKE: PASS tick={_bridge.World.Tick.Value} hash={_bridge.StateHashHex()}" : "PHASE10 GODOT HEADLESS SMOKE: FAIL");
         GetTree().Quit(ok ? 0 : 2);
+    }
+
+    private bool TryOpenExcavatable()
+    {
+        if (_bridge is null || _bridge.World.Map.Features.Count == 0) return false;
+        ExcavatableFeature feature = _bridge.World.Map.Features[0];
+        _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, uint.MaxValue - 1,
+            SimCommandType.DebugOpenExcavatable, Array.Empty<EntityId>(), FixVec2.Zero, debugFeatureId: feature.FeatureId));
+        float centerX = feature.NavRect.X + feature.NavRect.Width * 0.5f;
+        float centerZ = feature.NavRect.Y + feature.NavRect.Height * 0.5f;
+        _camera?.CenterOn(new Vector3(centerX, 0f, centerZ));
+        if (GetTree().Root.FindChild("DebugRenderer", true, false) is DebugRenderer debug) debug.DrawExcavatable = true;
+        return true;
+    }
+
+    private bool ExcavationIsOpen()
+    {
+        if (_bridge is null || _bridge.World.Map.Features.Count == 0) return false;
+        ExcavatableFeature feature = _bridge.World.Map.Features[0];
+        return feature.State == ExcavatableFeatureState.Open &&
+            ExcavationTopologySystem.TryGetFeatureEntity(_bridge.World, feature.FeatureId, out EntityId entity) &&
+            _bridge.World.Entities.Excavatable.Get(entity).State == ExcavatableFeatureState.Open;
     }
 
     private bool TrySeedConstructionSite(out EntityId site)

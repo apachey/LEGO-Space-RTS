@@ -5,12 +5,15 @@ remain authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M5 — Four-Faction System Proof / T049 Worksite graph implemented and human-accepted on the current task branch.**
+**M5 — Four-Faction System Proof / T050 Excavation topology implemented and fully verified on the current stacked task branch.**
 
 M3 is merged and human-accepted. At the game director's explicit request,
 development moved directly to M5 T049 rather than beginning M4 T040. M4 combat
 T040-T048 remains unimplemented and deferred; it must not be described as
 complete or silently treated as an M5 dependency.
+
+T049 is human-accepted and recorded in commit `3f677b2`. T050 is stacked on
+that commit in `codex/m5-excavation-topology`; neither task is merged to main.
 
 ## Engine / architecture
 
@@ -322,6 +325,33 @@ narrow placement cases allowed by Phase 09B.
 - Human T049 readability acceptance is complete as of 2026-08-11: the game
   director confirmed that the selected-structure Worksite status and active
   Worksite resource display are understandable in the playable build.
+- M5 T050 Excavation topology is implemented on the current stacked task
+  branch. The authored prototype shortcut is now a stable Fractured Rock Wall
+  feature with canonical 25-Energy metadata, a visual-profile ID and explicit
+  non-buildable opened terrain. Compiled map/source schema v4 carries the full
+  metadata and retains readers for compiled map versions 1–3.
+- Every authored feature binds to an authoritative ECS Excavatable entity in
+  stable feature-ID order. Blocked/ActiveExcavation/Open state participates in
+  snapshot v12, simulation protocol v10, replay v7, deterministic hashes and
+  ordered state dumps. Legacy snapshots receive deterministic feature entities
+  from their preserved map state.
+- Opening is one-way and idempotent: Excavatable, Impassable and GroundOccluder
+  flags clear together, topology advances exactly once, only affected HPA
+  clusters plus the existing neighbor halo rebuild, and only spatially affected
+  corridors become dirty. The opened route is ordinary owner-neutral ground.
+- Six focused T050 regression tests are authored for metadata/entity identity,
+  local/idempotent rebuild, universal routing, compiled-map roundtrip,
+  snapshot/hash continuity and invalid authored overlap/identity rejection.
+- T050 full verification is green across every `BLOCKING_NOW` stage: warnings-
+  as-errors builds, 136 NUnit tests, representative 24-mover acceptance,
+  compiled-content identity, HeadlessSim, Godot headless smoke, 100-repeat
+  determinism, replay, snapshot continuation, regeneration and macOS export.
+  The preserved 60-mover stage remains diagnostic-failing at its unchanged
+  31/60 completion and 8,483 oscillation incidents. The authoritative summary
+  is `Artifacts/Verification/20260811T175008Z-full-summary.txt`.
+- The T050 Godot visual smoke opens the feature through the deterministic
+  command path, verifies matching MapGrid/ECS Open state and captures the
+  resulting route at `Artifacts/Screenshots/m5-excavation-open.png`.
 
 ## Current gates
 
@@ -371,6 +401,10 @@ narrow placement cases allowed by Phase 09B.
   balance value for a Service-Bay-only component after HQ/storage loss. Resolve
   that exact buffer rule before M4 destruction can create this state in normal
   play; ordinary HQ-to-HQ Worksite split/merge is implemented and covered.
+- T050 intentionally does not guess per-machine excavation duration within the
+  canonical 15–35 / 30–60 second ranges. The deterministic F9 completion
+  command continues to exercise topology; player-facing Excavate validation,
+  progress and Energy spending require approved exact timing/eligibility data.
 
 ## Explicitly rejected / do not resurrect
 
@@ -383,6 +417,7 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Complete the T049 branch handoff and merge only through game-director review.
-2. Continue M5 with T050 Excavation topology after T049 is merged, unless the
-   game director explicitly returns to deferred M4 T040 Targeting first.
+1. Finish the T050 stacked branch handoff; merge only through game-director
+   review.
+2. Continue M5 with T051 Forward Service after T050 is accepted and merged,
+   unless the game director explicitly returns to deferred M4 T040 Targeting.

@@ -115,10 +115,14 @@ public sealed class SimulationWorld
         return total;
     }
 
-    public void OpenExcavatable(ushort featureId)
+    public bool OpenExcavatable(ushort featureId)
     {
-        IntRect rect = Map.OpenFeature(featureId);
+        if (!Map.TryGetFeature(featureId, out _)) throw new System.InvalidOperationException($"Unknown Excavatable Feature {featureId}.");
+        ExcavationTopologySystem.InitializeFeatures(this);
+        if (!Map.TryOpenFeature(featureId, out IntRect rect)) return false;
+        ExcavationTopologySystem.MarkOpen(this, featureId);
         ApplyTopologyChange(rect);
+        return true;
     }
 
     internal void SetConstructionOccupied(Building building, bool occupied)

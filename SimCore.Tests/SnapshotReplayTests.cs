@@ -3,11 +3,11 @@ using NUnit.Framework;
 
 public class SnapshotReplayTests
 {
-    [Test] public void SnapshotFormatSupportsM5WorksiteTopology() => Assert.Multiple(() =>
+    [Test] public void SnapshotFormatSupportsM5ExcavationTopology() => Assert.Multiple(() =>
     {
-        Assert.That(SnapshotSerializer.FormatVersion,Is.EqualTo(11));
-        Assert.That(SnapshotSerializer.SimulationProtocolVersion,Is.EqualTo(9));
-        Assert.That(ReplayLog.Version,Is.EqualTo(6));
+        Assert.That(SnapshotSerializer.FormatVersion,Is.EqualTo(12));
+        Assert.That(SnapshotSerializer.SimulationProtocolVersion,Is.EqualTo(10));
+        Assert.That(ReplayLog.Version,Is.EqualTo(7));
     });
     [Test] public void SnapshotRoundTripPreservesHash()
     {

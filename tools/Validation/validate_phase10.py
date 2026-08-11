@@ -121,13 +121,17 @@ for token in ['SimCommandType.Move','SimCommandType.Stop','SimCommandType.HoldPo
     check(token in input_controller, f'Godot M2 command missing: {token}')
 
 source = json.loads((ROOT/'Content/Maps/DEV_FirstControllableRTS.map.json').read_text())
-check(source.get('schemaVersion') == 3, 'map source schema version mismatch')
+check(source.get('schemaVersion') == 4, 'map source schema version mismatch')
 check(source.get('stableId') == 'map.dev_first_controllable_rts', 'map stable ID mismatch')
 check(source.get('buildSize') == [160,160] and source.get('navScale') == 2, 'map source dimensions mismatch')
 check(len(source.get('starts',[])) >= 2, 'map starts missing')
 check(len(source.get('flagRects',[])) >= 10, 'authored obstacle/pathing data missing')
 check(len(source.get('elevationRects',[])) >= 2, 'elevation test data missing')
 check(len(source.get('excavatableFeatures',[])) == 1, 'expected one M2 Excavatable feature')
+excavatable=source.get('excavatableFeatures',[{}])[0] if source.get('excavatableFeatures') else {}
+check(excavatable.get('stableId') == 'feature.dev.fractured_shortcut', 'T050 Excavatable stable ID mismatch')
+check(excavatable.get('class') == 'FracturedRockWall' and excavatable.get('requiredEnergy') == 25, 'T050 Excavatable class/Energy metadata mismatch')
+check(excavatable.get('initialState') == 'Blocked' and excavatable.get('openBuildable') is False, 'T050 Excavatable topology metadata mismatch')
 check(len(source.get('initialEntities',[])) >= 26, 'initial prototype entity spawns missing')
 check(len(source.get('resourceNodes',[])) == 4, 'M3 starting Ore node spawns missing')
 check(len(source.get('resourceReceivers',[])) == 2, 'M3 starting HQ resource receivers missing')

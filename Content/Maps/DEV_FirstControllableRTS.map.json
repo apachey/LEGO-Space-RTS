@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 3,
+  "schemaVersion": 4,
   "stableId": "map.dev_first_controllable_rts",
   "buildSize": [
     160,
@@ -293,14 +293,19 @@
   ],
   "excavatableFeatures": [
     {
+      "stableId": "feature.dev.fractured_shortcut",
       "featureId": 1,
+      "class": "FracturedRockWall",
+      "requiredEnergy": 25,
+      "visualProfile": "view.placeholder.excavatable.fractured_rock_wall",
+      "openBuildable": false,
       "navRect": [
         152,
         264,
         16,
         14
       ],
-      "initialState": "Closed"
+      "initialState": "Blocked"
     }
   ],
   "initialEntities": [

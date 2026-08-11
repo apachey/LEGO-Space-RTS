@@ -165,11 +165,16 @@ public partial class DebugRenderer : MeshInstance3D
 
     private void DrawExcavatableOverlay()
     {
-        Color c = new(1f, 0.45f, 0.05f, 0.85f);
         IReadOnlyList<ExcavatableFeature> features = _bridge!.World.Map.Features;
         for (int i = 0; i < features.Count; i++)
         {
-            IntRect r = features[i].NavRect;
+            ExcavatableFeature feature = features[i];
+            Color c = feature.State == ExcavatableFeatureState.Open
+                ? new Color(0.2f, 0.9f, 0.45f, 0.75f)
+                : feature.TerrainClass == ExcavatableTerrainClass.ReinforcedBedrockBarrier
+                    ? new Color(0.85f, 0.16f, 0.08f, 0.9f)
+                    : new Color(1f, 0.45f, 0.05f, 0.85f);
+            IntRect r = feature.NavRect;
             float x0 = r.X; float x1 = r.X + r.Width; float z0 = r.Y; float z1 = r.Y + r.Height;
             float y = 0.18f;
             Line(new Vector3(x0, y, z0), new Vector3(x1, y, z0), c);

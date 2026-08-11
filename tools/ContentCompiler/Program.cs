@@ -171,7 +171,7 @@ static MapDefinition CompileMap(string path, PrototypeContentCatalog catalog)
     using JsonDocument document = JsonDocument.Parse(File.ReadAllText(path));
     JsonElement root = document.RootElement;
     int schemaVersion = root.GetProperty("schemaVersion").GetInt32();
-    if (schemaVersion != 3) throw new InvalidDataException($"Unsupported map source schema {schemaVersion}.");
+    if (schemaVersion != 4) throw new InvalidDataException($"Unsupported map source schema {schemaVersion}.");
     string stableId = RequiredString(root, "stableId");
     int width = root.GetProperty("buildSize")[0].GetInt32();
     int height = root.GetProperty("buildSize")[1].GetInt32();
@@ -184,12 +184,28 @@ static MapDefinition CompileMap(string path, PrototypeContentCatalog catalog)
     foreach (JsonElement item in root.GetProperty("elevationRects").EnumerateArray()) { IntRect rect=ReadRect(item.GetProperty("rect")); ValidateRect(rect, "elevation rect"); map.SetElevationRect(rect, checked((sbyte)item.GetProperty("band").GetInt32())); }
 
     HashSet<ushort> featureIds = new();
+    StableIdRegistry featureStableIds = new();
     foreach (JsonElement item in root.GetProperty("excavatableFeatures").EnumerateArray())
     {
         ushort id = checked((ushort)item.GetProperty("featureId").GetInt32()); if (id == 0) throw new InvalidDataException("Excavatable Feature ID 0 is reserved."); if (!featureIds.Add(id)) throw new InvalidDataException($"Duplicate Excavatable Feature ID {id}.");
-        bool open = string.Equals(item.GetProperty("initialState").GetString(), "Open", StringComparison.Ordinal);
+        string stableKey = RequiredString(item, "stableId"); featureStableIds.Register(stableKey);
+        ExcavatableTerrainClass terrainClass = Enum.Parse<ExcavatableTerrainClass>(RequiredString(item, "class"), false);
+        if (terrainClass < ExcavatableTerrainClass.LooseRubbleBlockage || terrainClass > ExcavatableTerrainClass.ReinforcedBedrockBarrier)
+            throw new InvalidDataException($"Excavatable Feature {id} has invalid terrain class.");
+        ushort requiredEnergy = checked((ushort)item.GetProperty("requiredEnergy").GetInt32());
+        ushort canonicalEnergy = terrainClass == ExcavatableTerrainClass.LooseRubbleBlockage ? (ushort)0
+            : terrainClass == ExcavatableTerrainClass.ReinforcedBedrockBarrier ? (ushort)50 : (ushort)25;
+        if (requiredEnergy != canonicalEnergy) throw new InvalidDataException($"Excavatable Feature {id} Energy must be {canonicalEnergy} for {terrainClass}.");
+        string initialStateText = RequiredString(item, "initialState");
+        ExcavatableFeatureState state = initialStateText switch
+        {
+            "Blocked" => ExcavatableFeatureState.Blocked,
+            "Open" => ExcavatableFeatureState.Open,
+            _ => throw new InvalidDataException($"Excavatable Feature {id} has invalid authored initial state {initialStateText}.")
+        };
         IntRect rect=ReadRect(item.GetProperty("navRect")); ValidateRect(rect, $"Excavatable Feature {id}");
-        map.AddExcavatable(new ExcavatableFeature(id, rect, open));
+        map.AddExcavatable(new ExcavatableFeature(stableKey, id, rect, terrainClass, requiredEnergy,
+            StableId.FromKey(RequiredString(item, "visualProfile")), item.GetProperty("openBuildable").GetBoolean(), state));
     }
 
     List<MapStart> starts = new();

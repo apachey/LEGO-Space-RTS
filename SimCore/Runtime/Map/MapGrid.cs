@@ -17,6 +17,22 @@ public enum MapCellFlags : ushort
     Excavatable = 1 << 6
 }
 
+public enum ExcavatableTerrainClass : byte
+{
+    LooseRubbleBlockage = 0,
+    FracturedRockWall = 1,
+    MineralizedRidge = 2,
+    SealedTunnelMouth = 3,
+    ReinforcedBedrockBarrier = 4
+}
+
+public enum ExcavatableFeatureState : byte
+{
+    Blocked = 0,
+    ActiveExcavation = 1,
+    Open = 2
+}
+
 public readonly struct NavCell : IComparable<NavCell>, IEquatable<NavCell>
 {
     public readonly short X; public readonly short Y;
@@ -38,14 +54,37 @@ public readonly struct IntRect
 
 public sealed class ExcavatableFeature
 {
+    public string StableKey { get; }
+    public ContentId StableId { get; }
     public ushort FeatureId { get; }
     public IntRect NavRect { get; }
-    public bool Open { get; internal set; }
+    public ExcavatableTerrainClass TerrainClass { get; }
+    public ushort RequiredEnergy { get; }
+    public ContentId VisualProfile { get; }
+    public bool OpenBuildable { get; }
+    public ExcavatableFeatureState State { get; internal set; }
+    public bool Open => State == ExcavatableFeatureState.Open;
+
     public ExcavatableFeature(ushort featureId, IntRect navRect, bool open = false)
+        : this($"map.feature.{featureId}", featureId, navRect, ExcavatableTerrainClass.FracturedRockWall,
+            requiredEnergy: 25, LegoSpaceRTS.SimCore.StableId.FromKey("view.placeholder.excavatable.fractured_rock_wall"),
+            openBuildable: true, open ? ExcavatableFeatureState.Open : ExcavatableFeatureState.Blocked)
     {
+    }
+
+    public ExcavatableFeature(string stableKey, ushort featureId, IntRect navRect,
+        ExcavatableTerrainClass terrainClass, ushort requiredEnergy, ContentId visualProfile,
+        bool openBuildable, ExcavatableFeatureState state = ExcavatableFeatureState.Blocked)
+    {
+        StableKey = stableKey ?? throw new ArgumentNullException(nameof(stableKey));
+        StableId = LegoSpaceRTS.SimCore.StableId.FromKey(stableKey);
         FeatureId = featureId;
         NavRect = navRect;
-        Open = open;
+        TerrainClass = terrainClass;
+        RequiredEnergy = requiredEnergy;
+        VisualProfile = visualProfile;
+        OpenBuildable = openBuildable;
+        State = state;
     }
 }
 
@@ -96,30 +135,78 @@ public sealed class MapGrid
 
     public void AddExcavatable(ExcavatableFeature feature)
     {
+        if (feature == null) throw new ArgumentNullException(nameof(feature));
+        if (feature.FeatureId == 0) throw new ArgumentOutOfRangeException(nameof(feature), "Excavatable Feature ID 0 is reserved.");
+        if (feature.StableId.Value == 0 || feature.VisualProfile.Value == 0 || feature.TerrainClass < ExcavatableTerrainClass.LooseRubbleBlockage ||
+            feature.TerrainClass > ExcavatableTerrainClass.ReinforcedBedrockBarrier || feature.State < ExcavatableFeatureState.Blocked ||
+            feature.State > ExcavatableFeatureState.Open)
+            throw new ArgumentOutOfRangeException(nameof(feature), "Excavatable Feature metadata is invalid.");
+        IntRect rect = feature.NavRect;
+        if (rect.Width <= 0 || rect.Height <= 0 || rect.X < 0 || rect.Y < 0 || rect.X + rect.Width > NavWidth || rect.Y + rect.Height > NavHeight)
+            throw new ArgumentOutOfRangeException(nameof(feature), "Excavatable Feature bounds must be positive and inside the navigation grid.");
+        for (int i = 0; i < _features.Count; i++)
+        {
+            ExcavatableFeature existing = _features[i];
+            if (existing.FeatureId == feature.FeatureId) throw new InvalidOperationException($"Duplicate Excavatable Feature ID {feature.FeatureId}.");
+            if (existing.StableId == feature.StableId) throw new InvalidOperationException($"Duplicate Excavatable Feature stable ID {feature.StableKey}.");
+        }
+        for (int y = rect.Y; y < rect.Y + rect.Height; y++)
+            for (int x = rect.X; x < rect.X + rect.Width; x++)
+                if (_feature[Index(x, y)] != 0) throw new InvalidOperationException($"Excavatable Feature {feature.FeatureId} overlaps another authored feature.");
+
         _features.Add(feature);
         for (int y = feature.NavRect.Y; y < feature.NavRect.Y + feature.NavRect.Height; y++)
             for (int x = feature.NavRect.X; x < feature.NavRect.X + feature.NavRect.Width; x++)
             {
                 int i = Index(x, y);
                 _feature[i] = feature.FeatureId;
-                _flags[i] |= MapCellFlags.Excavatable;
-                if (!feature.Open) _flags[i] |= MapCellFlags.Impassable | MapCellFlags.GroundOccluder;
+                if (feature.Open)
+                {
+                    _flags[i] = (_flags[i] | MapCellFlags.Ground) & ~(MapCellFlags.Excavatable | MapCellFlags.Impassable | MapCellFlags.GroundOccluder);
+                    if (feature.OpenBuildable) _flags[i] |= MapCellFlags.Buildable;
+                    else _flags[i] &= ~MapCellFlags.Buildable;
+                }
+                else
+                {
+                    _flags[i] |= MapCellFlags.Excavatable | MapCellFlags.Impassable | MapCellFlags.GroundOccluder;
+                    if (!feature.OpenBuildable) _flags[i] &= ~MapCellFlags.Buildable;
+                }
             }
     }
 
     public IntRect OpenFeature(ushort featureId)
     {
+        if (TryOpenFeature(featureId, out IntRect affected)) return affected;
+        if (TryGetFeature(featureId, out ExcavatableFeature feature)) return feature.NavRect;
+        throw new InvalidOperationException($"Unknown Excavatable Feature {featureId}.");
+    }
+
+    public bool TryOpenFeature(ushort featureId, out IntRect affected)
+    {
         for (int i = 0; i < _features.Count; i++)
         {
             ExcavatableFeature feature = _features[i];
             if (feature.FeatureId != featureId) continue;
-            if (feature.Open) return feature.NavRect;
-            feature.Open = true;
-            SetFlagsRect(feature.NavRect, MapCellFlags.Ground | MapCellFlags.Buildable, MapCellFlags.Impassable | MapCellFlags.GroundOccluder);
+            affected = feature.NavRect;
+            if (feature.Open) return false;
+            feature.State = ExcavatableFeatureState.Open;
+            SetFlagsRect(feature.NavRect, MapCellFlags.Ground,
+                MapCellFlags.Excavatable | MapCellFlags.Impassable | MapCellFlags.GroundOccluder);
+            if (feature.OpenBuildable) SetFlagsRect(feature.NavRect, MapCellFlags.Buildable);
+            else SetFlagsRect(feature.NavRect, MapCellFlags.None, MapCellFlags.Buildable);
             TopologyVersion++;
-            return feature.NavRect;
+            return true;
         }
-        throw new InvalidOperationException($"Unknown Excavatable Feature {featureId}.");
+        affected = default;
+        return false;
+    }
+
+    public bool TryGetFeature(ushort featureId, out ExcavatableFeature feature)
+    {
+        for (int i = 0; i < _features.Count; i++)
+            if (_features[i].FeatureId == featureId) { feature = _features[i]; return true; }
+        feature = null!;
+        return false;
     }
 
     public IntRect SetConstructionOccupied(short anchorX, short anchorY, BuildingDefinition definition, byte orientation, bool occupied)
@@ -168,11 +255,13 @@ public sealed class MapGrid
             ExcavatableFeature f = _features[i];
             writer.Write(f.FeatureId);
             writer.Write(f.NavRect.X); writer.Write(f.NavRect.Y); writer.Write(f.NavRect.Width); writer.Write(f.NavRect.Height);
-            writer.Write(f.Open);
+            writer.Write((byte)f.State);
+            writer.Write(f.StableKey); writer.Write((byte)f.TerrainClass); writer.Write(f.RequiredEnergy);
+            writer.Write(f.VisualProfile.Value); writer.Write(f.OpenBuildable);
         }
     }
 
-    public static MapGrid Deserialize(BinaryReader reader)
+    public static MapGrid Deserialize(BinaryReader reader, bool includeExcavatableMetadata = false)
     {
         string key = reader.ReadString();
         int topology = reader.ReadInt32();
@@ -191,8 +280,16 @@ public sealed class MapGrid
         {
             ushort id = reader.ReadUInt16();
             IntRect rect = new(reader.ReadInt16(), reader.ReadInt16(), reader.ReadInt16(), reader.ReadInt16());
-            bool open = reader.ReadBoolean();
-            map._features.Add(new ExcavatableFeature(id, rect, open));
+            ExcavatableFeatureState state = includeExcavatableMetadata
+                ? (ExcavatableFeatureState)reader.ReadByte()
+                : (reader.ReadBoolean() ? ExcavatableFeatureState.Open : ExcavatableFeatureState.Blocked);
+            if (state < ExcavatableFeatureState.Blocked || state > ExcavatableFeatureState.Open) throw new InvalidDataException("Invalid Excavatable Feature state.");
+            string stableKey = includeExcavatableMetadata ? reader.ReadString() : $"{key}.excavatable.{id}";
+            ExcavatableTerrainClass terrainClass = includeExcavatableMetadata ? (ExcavatableTerrainClass)reader.ReadByte() : ExcavatableTerrainClass.FracturedRockWall;
+            ushort requiredEnergy = includeExcavatableMetadata ? reader.ReadUInt16() : (ushort)25;
+            ContentId visualProfile = includeExcavatableMetadata ? new ContentId(reader.ReadUInt32()) : StableId.FromKey("view.placeholder.excavatable.fractured_rock_wall");
+            bool openBuildable = !includeExcavatableMetadata || reader.ReadBoolean();
+            map._features.Add(new ExcavatableFeature(stableKey, id, rect, terrainClass, requiredEnergy, visualProfile, openBuildable, state));
         }
         map.TopologyVersion = topology;
         return map;

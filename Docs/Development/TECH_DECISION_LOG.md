@@ -404,3 +404,34 @@ do not change gameplay canon.
 
 These decisions implement existing Phase 04/09 Worksite canon. They do not
 change gameplay canon.
+
+---
+
+## 2026-08-11 — M5 T050 authored Excavatable topology boundary
+
+- Each authored Excavatable Feature now has a stable key, canonical terrain
+  class, required-Energy metadata, visual-profile ID, local navigation mask and
+  explicit post-opening buildability. The prototype feature is a 25-Energy
+  Fractured Rock Wall whose opened route remains non-buildable; this preserves
+  Phase 05's rule that excavation and buildability are orthogonal layers.
+- The dense MapGrid remains the authoritative pathing/LoS raster, while a
+  deterministic ECS Excavatable component provides the feature's authoritative
+  gameplay identity and Blocked/ActiveExcavation/Open state. Scenario creation
+  binds map features to entities in ascending authored feature-ID order.
+- Opening is one-way and idempotent. A successful transition removes the
+  Excavatable, Impassable and GroundOccluder flags, increments topology exactly
+  once, rebuilds only the affected HPA clusters plus their existing one-cluster
+  neighbor halo, and invalidates only spatially affected route corridors.
+  Opened ground has no faction ownership restriction.
+- T050 implements the scheduled topology/local-rebuild slice. It deliberately
+  does not invent per-machine progress rates or an exact excavation duration
+  within canon's 15–35 / 30–60 second ranges. The existing F9/debug command is
+  retained as the deterministic completion trigger until the separately scoped
+  excavation execution/order layer has approved exact timing and eligibility
+  data.
+- Snapshot v12 / simulation protocol v10 / replay v7 add authoritative feature
+  components and full map-feature metadata. Compiled map/source schema v4 adds
+  the same metadata while readers retain legacy compiled maps and snapshots.
+
+These decisions implement existing Phase 05/09 excavation-topology canon. They
+do not change gameplay canon.

@@ -15,6 +15,7 @@ public sealed class EntityStore
     public readonly ComponentStore<NavigationAgent> Navigation = new();
     public readonly ComponentStore<Selectable> Selectable = new();
     public readonly ComponentStore<Vision> Vision = new();
+    public readonly ComponentStore<Excavatable> Excavatable = new();
     public readonly ComponentStore<ResourceNode> ResourceNode = new();
     public readonly ComponentStore<Worker> Worker = new();
     public readonly ComponentStore<Builder> Builder = new();
@@ -74,6 +75,7 @@ public sealed class EntityStore
         Navigation.Remove(id);
         Selectable.Remove(id);
         Vision.Remove(id);
+        Excavatable.Remove(id);
         ResourceNode.Remove(id);
         Worker.Remove(id);
         Builder.Remove(id);
