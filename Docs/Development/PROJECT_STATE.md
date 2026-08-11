@@ -21,8 +21,9 @@ transport-destruction behavior on 2026-08-11. T048 MX-41 transformation is
 implemented and automated-green on the current stacked branch. The game
 director accepted its prepared Ground/Flight interaction on 2026-08-11 and
 requested a smooth visual return for pre-40% cancellation; that follow-up is
-implemented and visual-smoke protected. M4 is complete. Per game-director
-instruction, M5/T049 will begin in a separate development task.
+implemented, visual-smoke protected and human-accepted on 2026-08-11. M4 is
+complete. Per game-director instruction, M5/T049 will begin in a separate
+development task.
 
 ## Engine / architecture
 
@@ -639,7 +640,9 @@ narrow placement cases allowed by Phase 09B.
   fresh macOS export; the rollback fixture also passes from that exported app.
   Exported capture: `Artifacts/Screenshots/t048-exported-smooth-rollback.png`.
   Summary:
-  `Artifacts/Verification/20260811T160529Z-full-summary.txt`.
+  `Artifacts/Verification/20260811T160529Z-full-summary.txt`. The game director
+  confirmed the corrected rollback works as intended on 2026-08-11; T048 and
+  M4 require no further human retest.
 - Canon/source research confirms T048 is a shared data-driven foundation, not
   MX-41-only code. Future state-change users include Solar Explorer, MT-201,
   ETX Alien Strike, ETX Alien Infiltrator, Red Planet Protector and Excavation
