@@ -31,6 +31,8 @@ public sealed class EntityStore
     public readonly ComponentStore<Deployment> Deployment = new();
     public readonly ComponentStore<ForwardServiceProvider> ForwardServiceProvider = new();
     public readonly ComponentStore<ForwardServiceMember> ForwardServiceMember = new();
+    public readonly ComponentStore<MissionRefitState> MissionRefitState = new();
+    public readonly ComponentStore<MissionRefitJob> MissionRefitJob = new();
     public readonly ComponentStore<PowerState> PowerState = new();
     public readonly ComponentStore<ConstructionSite> ConstructionSite = new();
     public readonly ComponentStore<Production> Production = new();
@@ -94,6 +96,8 @@ public sealed class EntityStore
         Deployment.Remove(id);
         ForwardServiceProvider.Remove(id);
         ForwardServiceMember.Remove(id);
+        MissionRefitState.Remove(id);
+        MissionRefitJob.Remove(id);
         PowerState.Remove(id);
         ConstructionSite.Remove(id);
         Production.Remove(id);

@@ -5,7 +5,7 @@ remain authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M5 — Four-Faction System Proof / T051 Forward Service implemented and fully verified on the current stacked task branch.**
+**M5 — Four-Faction System Proof / T052 Mission Refit implemented and fully verified on the current stacked task branch.**
 
 M3 is merged and human-accepted. At the game director's explicit request,
 development moved directly to M5 T049 rather than beginning M4 T040. M4 combat
@@ -13,8 +13,9 @@ T040-T048 remains unimplemented and deferred; it must not be described as
 complete or silently treated as an M5 dependency.
 
 T049 is human-accepted and recorded in commit `3f677b2`. T050 is recorded in
-commit `8731f61`. T051 is stacked on both in `codex/m5-forward-service`; none
-of these M5 task commits is merged to main.
+commit `8731f61`; T051 is recorded in commit `ad93ec1`. T052 is stacked on all
+three in `codex/m5-mission-refit`; none of these M5 task commits is merged to
+main.
 
 ## Engine / architecture
 
@@ -383,6 +384,35 @@ narrow placement cases allowed by Phase 09B.
   `Artifacts/Verification/20260811T181947Z-full-summary.txt`.
 - A launchable T051 debug build exists at
   `Builds/macOS/LEGO Space RTS.app` and passed the export smoke.
+- M5 T052 Mission Refit is implemented for the narrow T3-Trike proof. T3s
+  initialize in Escort with the Escort module owned. An authoritative explicit
+  command validates ownership, Field Survey Package proof-unlock, active same-
+  owner Forward Service, configuration legality, funds and the 20-second
+  Configuration Lock before creating a service job on the same entity.
+- First Survey installation commits the canonical 25 Ore / 10 Energy for 18
+  seconds. Once Survey is owned, Escort↔Survey swaps commit 8 Ore / 5 Energy
+  for 10 seconds. Completion preserves Entity ID, records owned modules, applies
+  the 20-second lock and refreshes the currently implemented canonical T3
+  movement/sight values (Escort 1.70/9; Survey 1.85/13). Active jobs reject
+  movement commands and retain normalized authoritative progress.
+- Mission configuration, owned-module mask, proof research unlock, lock timer
+  and committed service-job state participate in snapshot v14, simulation
+  protocol v12, replay v9, hashes, state dumps and Ore conservation accounting.
+  Four focused regressions cover first install/cost/identity, later swap and
+  lock, command rejection, movement downtime and mid-job deterministic
+  snapshot continuation. The selected-unit HUD reports configuration, module,
+  lock and refit progress.
+- T052 full verification is green across every `BLOCKING_NOW` stage: warnings-
+  as-errors builds, 146 NUnit tests, representative 24-mover acceptance,
+  compiled-content identity, HeadlessSim, Godot headless smoke, 100-repeat
+  determinism, replay, snapshot continuation, regeneration and macOS export.
+  The golden/replay hash is `89EBF2D2B4CA5A67`; the snapshot continuation hash
+  is `A8259F4F2EE7B862`. The preserved 60-mover stage remains diagnostic-failing
+  at its unchanged 31/60 completion and 8,483 oscillation incidents. The
+  authoritative summary is
+  `Artifacts/Verification/20260811T183406Z-full-summary.txt`.
+- A launchable T052 debug build exists at
+  `Builds/macOS/LEGO Space RTS.app` and passed the export smoke.
 
 ## Current gates
 
@@ -442,6 +472,13 @@ narrow placement cases allowed by Phase 09B.
   approved integration task; focused fixtures exercise the canonical deployed
   state without inventing an alternate transformation rule. Full Astronaut
   roster/infrastructure import remains scheduled for T070/T071.
+- T052's proof unlock is authoritative but unit-local until the full Research
+  DAG/player technology state arrives in T072. Normal provider destruction and
+  Solar Explorer undeploy commands are unavailable because T045/T048 remain
+  deferred; their mid-refit cancellation integration is therefore not exposed
+  in the current executable. Before implementing that later path, canon must
+  resolve how the 50% refund of the odd 25-Ore first-install cost rounds in the
+  integer resource model.
 
 ## Explicitly rejected / do not resurrect
 
@@ -454,7 +491,7 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Finish the T051 stacked branch handoff; merge only through game-director
+1. Finish the T052 stacked branch handoff; merge only through game-director
    review.
-2. Continue M5 with T052 Mission Refit after T051 is accepted/merged, unless
+2. Continue M5 with T053 Resonance Core after T052 is accepted/merged, unless
    the game director explicitly returns to deferred M4 T040 Targeting.

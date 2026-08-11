@@ -48,6 +48,8 @@ public static class ResourceConservation
             }
             if (type == ResourceType.Ore && world.Entities.Production.TryGet(id, out Production production))
                 for (int q = 0; q < production.Count; q++) reserved = checked(reserved + production.Get(q).ReservedOre);
+            if (type == ResourceType.Ore && world.Entities.MissionRefitJob.TryGet(id, out MissionRefitJob refit))
+                reserved = checked(reserved + refit.CommittedOre);
         }
         return new ResourceConservationTotals(raw, carried, hauled, processed, reserved, consumed);
     }

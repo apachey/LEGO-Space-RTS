@@ -18,6 +18,7 @@ public enum EnergyFunctionalClass : byte { CommandAndBasicEconomy = 1, ResourceP
 public enum EnergyPriority : byte { High = 0, Normal = 1, Low = 2 }
 public enum BrownoutEventKind : byte { None = 0, Entered = 1, Changed = 2, Recovered = 3 }
 public enum DeploymentState : byte { Mobile = 0, Deploying = 1, Deployed = 2, Undeploying = 3 }
+public enum MissionConfiguration : byte { None = 0, T3Escort = 1, T3Survey = 2 }
 
 public struct Ownership
 {
@@ -227,6 +228,27 @@ public struct ForwardServiceMember
     public byte QueryOwner;
     public short QueryCellX;
     public short QueryCellY;
+}
+
+public struct MissionRefitState
+{
+    public MissionConfiguration CurrentConfiguration;
+    public byte OwnedConfigurationMask;
+    public ushort ConfigurationLockTicks;
+    public bool SurveyUnlocked;
+}
+
+public struct MissionRefitJob
+{
+    public EntityId Provider;
+    public EntityId FundingBank;
+    public EntityId EnergyDomainRoot;
+    public MissionConfiguration OldConfiguration;
+    public MissionConfiguration NewConfiguration;
+    public ushort TotalTicks;
+    public ushort RemainingTicks;
+    public ushort CommittedOre;
+    public ushort CommittedEnergy;
 }
 
 public struct PowerState

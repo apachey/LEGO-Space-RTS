@@ -31,6 +31,11 @@ public sealed class CommandExecutionSystem : ISimSystem
             BrownoutSystem.TrySetPriority(world, command.PlayerSlot, command.Entities, command.EnergyPriority);
             return;
         }
+        if (command.Type == SimCommandType.MissionRefit)
+        {
+            MissionRefitSystem.TryStartT3Refit(world, command.PlayerSlot, command.TargetEntity, command.MissionConfiguration);
+            return;
+        }
         if (command.Type == SimCommandType.Build)
         {
             if ((command.TargetPosition.X.Raw & (Fix32.OneRaw - 1)) != 0 || (command.TargetPosition.Y.Raw & (Fix32.OneRaw - 1)) != 0) return;
@@ -60,7 +65,7 @@ public sealed class CommandExecutionSystem : ISimSystem
         for (int i = 0; i < command.Entities.Length; i++)
         {
             EntityId id = command.Entities[i];
-            if (!world.Entities.Exists(id) || !world.Entities.Ownership.TryGet(id, out Ownership owner) || owner.PlayerSlot != command.PlayerSlot || !world.Entities.Navigation.Has(id)) continue;
+            if (!world.Entities.Exists(id) || !world.Entities.Ownership.TryGet(id, out Ownership owner) || owner.PlayerSlot != command.PlayerSlot || !world.Entities.Navigation.Has(id) || world.Entities.MissionRefitJob.Has(id)) continue;
             world.ScratchEntities.Add(id);
         }
         world.ScratchEntities.Sort(EntityIdComparer.Instance);
@@ -146,6 +151,7 @@ public sealed class CommandExecutionSystem : ISimSystem
 
     internal static bool IsBusy(SimulationWorld world, EntityId id)
     {
+        if (world.Entities.MissionRefitJob.Has(id)) return true;
         if (world.Entities.Navigation.TryGet(id, out NavigationAgent nav) && nav.HasTarget) return true;
         if (world.Entities.Builder.TryGet(id, out Builder builder) && builder.JobState != BuilderJobState.Idle) return true;
         return world.Entities.Worker.TryGet(id, out Worker worker) && (worker.TaskState == WorkerTaskState.MovingToResource || worker.TaskState == WorkerTaskState.Mining || worker.TaskState == WorkerTaskState.ReturningToReceiver);

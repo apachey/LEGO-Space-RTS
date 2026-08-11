@@ -218,6 +218,12 @@ for token in ['building.ast.service_refit_hub','unit.ast.solar_explorer','unit.a
 check('DeploymentState.Deployed' in forward_service and 'BrownoutSystem.IsOperational' in forward_service, 'T051 provider activation rules missing')
 check('world.Entities.Ownership' in forward_service and 'Contains(' in forward_service, 'T051 owner/radius membership validation missing')
 
+mission_refit = (ROOT/'SimCore/Runtime/Simulation/MissionRefitSystem.cs').read_text()
+for token in ['FirstSurveyInstallOre = 25','FirstSurveyInstallEnergy = 10','18 * EnergyDomainSystem.TicksPerSecond','LaterSwapOre = 8','LaterSwapEnergy = 5','10 * EnergyDomainSystem.TicksPerSecond','20 * EnergyDomainSystem.TicksPerSecond','unit.ast.t3_trike']:
+    check(token in mission_refit, f'canonical T052 Mission Refit contract missing: {token}')
+check('ForwardServiceSystem.TryGetProviderForMember' in mission_refit and 'world.Entities.MissionRefitJob.Set' in mission_refit, 'T052 service validation or authoritative job missing')
+check('state.CurrentConfiguration = job.NewConfiguration' in mission_refit and 'MissionRefitJob.Remove' in mission_refit, 'T052 identity-preserving completion missing')
+
 headless = (ROOT/'HeadlessSim/Program.cs').read_text()
 for token in ['--snapshot-in','--snapshot-out','--replay','--record-replay','--benchmark','--path-benchmark','--hash-every','--repeat','--golden-manifest-out','--golden-manifest-in','--dump-state','--compiled-dir']:
     check(token in headless, f'HeadlessSim switch missing: {token}')

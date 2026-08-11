@@ -7,8 +7,8 @@ namespace LegoSpaceRTS.SimCore
 public static class SnapshotSerializer
 {
     public const uint Magic = 0x53525453; // STRS
-    public const ushort FormatVersion = 13;
-    public const ushort SimulationProtocolVersion = 11;
+    public const ushort FormatVersion = 14;
+    public const ushort SimulationProtocolVersion = 12;
 
     [Flags]
     private enum EntityComponents : uint
@@ -41,7 +41,9 @@ public static class SnapshotSerializer
         Deployment = 1 << 24,
         ForwardServiceProvider = 1 << 25,
         ForwardServiceMember = 1 << 26,
-        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver | ResourceBank | Building | ConstructionSite | Builder | Production | EnergyDomain | EnergyDomainMember | PowerState | WorksiteNode | WorksiteMember | WorksiteComponent | Excavatable | Deployment | ForwardServiceProvider | ForwardServiceMember
+        MissionRefitState = 1 << 27,
+        MissionRefitJob = 1 << 28,
+        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver | ResourceBank | Building | ConstructionSite | Builder | Production | EnergyDomain | EnergyDomainMember | PowerState | WorksiteNode | WorksiteMember | WorksiteComponent | Excavatable | Deployment | ForwardServiceProvider | ForwardServiceMember | MissionRefitState | MissionRefitJob
     }
 
     public static byte[] Serialize(SimulationWorld world)
@@ -62,7 +64,7 @@ public static class SnapshotSerializer
         using MemoryStream ms = new(bytes, false); using BinaryReader r = new(ms);
         if (r.ReadUInt32() != Magic) throw new InvalidDataException("Snapshot magic mismatch.");
         ushort format = r.ReadUInt16(), protocol = r.ReadUInt16();
-        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8) || (format == 11 && protocol == 9) || (format == 12 && protocol == 10);
+        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8) || (format == 11 && protocol == 9) || (format == 12 && protocol == 10) || (format == 13 && protocol == 11);
         if (!supportedLegacy && (format != FormatVersion || protocol != SimulationProtocolVersion)) throw new InvalidDataException($"Unsupported snapshot {format}/{protocol}.");
         SimTick tick = new(r.ReadInt32()); MapGrid map = MapGrid.Deserialize(r, includeExcavatableMetadata: format >= 12); uint nextEntity = r.ReadUInt32();
         EntityStore entities = new(); int entityCount = r.ReadInt32(); if (entityCount < 0 || entityCount > 10000) throw new InvalidDataException("Invalid entity count.");
@@ -77,7 +79,7 @@ public static class SnapshotSerializer
         if (format < 7) AddLegacyBuilders(temp);
         if (format < 8) AddLegacyProduction(temp);
         entities.RestoreNextEntityValue(nextEntity);
-        temp.Commands.Deserialize(r, includeBuildFields: format >= 6, includeEnergyPriority: format >= 10);
+        temp.Commands.Deserialize(r, includeBuildFields: format >= 6, includeEnergyPriority: format >= 10, includeMissionRefit: format >= 14);
         temp.Fog = FogState.Deserialize(r);
         if (ms.Position != ms.Length) throw new InvalidDataException("Trailing snapshot bytes.");
         ExcavationTopologySystem.InitializeFeatures(temp);
@@ -116,6 +118,8 @@ public static class SnapshotSerializer
         if (world.Entities.Deployment.Has(id)) components |= EntityComponents.Deployment;
         if (world.Entities.ForwardServiceProvider.Has(id)) components |= EntityComponents.ForwardServiceProvider;
         if (world.Entities.ForwardServiceMember.Has(id)) components |= EntityComponents.ForwardServiceMember;
+        if (world.Entities.MissionRefitState.Has(id)) components |= EntityComponents.MissionRefitState;
+        if (world.Entities.MissionRefitJob.Has(id)) components |= EntityComponents.MissionRefitJob;
         if (world.Entities.ConstructionSite.Has(id)) components |= EntityComponents.ConstructionSite;
         if (world.Entities.Production.Has(id)) components |= EntityComponents.Production;
         if (world.TryGetQueue(id, out _)) components |= EntityComponents.CommandQueue;
@@ -163,6 +167,18 @@ public static class SnapshotSerializer
         {
             ForwardServiceMember member = world.Entities.ForwardServiceMember.Get(id);
             w.Write(member.Provider.Value); w.Write(member.QueryOwner); w.Write(member.QueryCellX); w.Write(member.QueryCellY);
+        }
+        if ((components & EntityComponents.MissionRefitState) != 0)
+        {
+            MissionRefitState state = world.Entities.MissionRefitState.Get(id);
+            w.Write((byte)state.CurrentConfiguration); w.Write(state.OwnedConfigurationMask); w.Write(state.ConfigurationLockTicks); w.Write(state.SurveyUnlocked);
+        }
+        if ((components & EntityComponents.MissionRefitJob) != 0)
+        {
+            MissionRefitJob job = world.Entities.MissionRefitJob.Get(id);
+            w.Write(job.Provider.Value); w.Write(job.FundingBank.Value); w.Write(job.EnergyDomainRoot.Value);
+            w.Write((byte)job.OldConfiguration); w.Write((byte)job.NewConfiguration); w.Write(job.TotalTicks); w.Write(job.RemainingTicks);
+            w.Write(job.CommittedOre); w.Write(job.CommittedEnergy);
         }
         if ((components & EntityComponents.ConstructionSite) != 0) WriteConstructionSite(w, world.Entities.ConstructionSite.Get(id));
         if ((components & EntityComponents.Production) != 0) WriteProduction(w, world.Entities.Production.Get(id));
@@ -315,6 +331,26 @@ public static class SnapshotSerializer
         }
         if ((components & EntityComponents.ForwardServiceMember) != 0)
             world.Entities.ForwardServiceMember.Set(id, new ForwardServiceMember { Provider = new EntityId(r.ReadUInt32()), QueryOwner = r.ReadByte(), QueryCellX = r.ReadInt16(), QueryCellY = r.ReadInt16() });
+        if ((components & EntityComponents.MissionRefitState) != 0)
+        {
+            MissionRefitState state = new() { CurrentConfiguration = (MissionConfiguration)r.ReadByte(), OwnedConfigurationMask = r.ReadByte(), ConfigurationLockTicks = r.ReadUInt16(), SurveyUnlocked = r.ReadBoolean() };
+            if (state.CurrentConfiguration < MissionConfiguration.T3Escort || state.CurrentConfiguration > MissionConfiguration.T3Survey || (state.OwnedConfigurationMask & 1) == 0)
+                throw new InvalidDataException("Invalid Mission Refit state.");
+            world.Entities.MissionRefitState.Set(id, state);
+        }
+        if ((components & EntityComponents.MissionRefitJob) != 0)
+        {
+            MissionRefitJob job = new()
+            {
+                Provider = new EntityId(r.ReadUInt32()), FundingBank = new EntityId(r.ReadUInt32()), EnergyDomainRoot = new EntityId(r.ReadUInt32()),
+                OldConfiguration = (MissionConfiguration)r.ReadByte(), NewConfiguration = (MissionConfiguration)r.ReadByte(),
+                TotalTicks = r.ReadUInt16(), RemainingTicks = r.ReadUInt16(), CommittedOre = r.ReadUInt16(), CommittedEnergy = r.ReadUInt16()
+            };
+            if (job.Provider == EntityId.None || job.FundingBank == EntityId.None || job.EnergyDomainRoot == EntityId.None || job.TotalTicks == 0 || job.RemainingTicks == 0 || job.RemainingTicks > job.TotalTicks ||
+                job.OldConfiguration < MissionConfiguration.T3Escort || job.OldConfiguration > MissionConfiguration.T3Survey || job.NewConfiguration < MissionConfiguration.T3Escort || job.NewConfiguration > MissionConfiguration.T3Survey || job.OldConfiguration == job.NewConfiguration)
+                throw new InvalidDataException("Invalid Mission Refit job.");
+            world.Entities.MissionRefitJob.Set(id, job);
+        }
         if ((components & EntityComponents.ConstructionSite) != 0) world.Entities.ConstructionSite.Set(id, ReadConstructionSite(r, format));
         if ((components & EntityComponents.Production) != 0) world.Entities.Production.Set(id, ReadProduction(r));
         if ((components & EntityComponents.CommandQueue) != 0) world.GetQueue(id).Deserialize(r, includeTargetEntity: format >= 4);

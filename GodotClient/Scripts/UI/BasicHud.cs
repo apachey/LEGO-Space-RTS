@@ -209,6 +209,16 @@ public partial class BasicHud : CanvasLayer
             _builder.Append("Forward Service  ").Append(forwardService.IsActive ? "ACTIVE" : "INACTIVE").Append("  •  ").Append(forwardService.RadiusBuildCells).Append(" cells\n");
         if (_bridge.World.Entities.Deployment.TryGet(first, out Deployment deployment))
             _builder.Append("Deployment  ").Append(deployment.State).Append('\n');
+        if (_bridge.World.Entities.MissionRefitState.TryGet(first, out MissionRefitState refitState))
+        {
+            _builder.Append("Configuration  ").Append(refitState.CurrentConfiguration == MissionConfiguration.T3Survey ? "Survey" : "Escort")
+                .Append("  •  Survey module ").Append((refitState.OwnedConfigurationMask & 2) != 0 ? "OWNED" : refitState.SurveyUnlocked ? "AVAILABLE" : "LOCKED").Append('\n');
+            if (refitState.ConfigurationLockTicks > 0)
+                _builder.Append("Configuration Lock  ").Append((refitState.ConfigurationLockTicks + 19) / 20).Append("s\n");
+        }
+        if (_bridge.World.Entities.MissionRefitJob.TryGet(first, out MissionRefitJob refitJob))
+            _builder.Append("Mission Refit  ").Append((refitJob.TotalTicks - refitJob.RemainingTicks) * 100 / refitJob.TotalTicks).Append("%  •  committed ")
+                .Append(refitJob.CommittedOre).Append(" Ore / ").Append(refitJob.CommittedEnergy).Append(" Energy\n");
         if (_bridge.World.Entities.PowerState.TryGet(first, out PowerState power))
             _builder.Append("Power  ").Append(power.IsPowered ? "ONLINE" : "DISABLED — Energy Domain Brownout").Append("   Priority  ").Append(power.Priority).Append('\n');
         if (_bridge.World.Entities.Production.TryGet(first, out Production production)) AppendProductionQueue(production, first);
