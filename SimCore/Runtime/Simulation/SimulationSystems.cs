@@ -50,6 +50,11 @@ public sealed class CommandExecutionSystem : ISimSystem
             DebugPlaytestScenario.PrepareDestruction(world, command.PlayerSlot);
             return;
         }
+        if (command.Type == SimCommandType.DebugPrepareRepairTest)
+        {
+            DebugPlaytestScenario.PrepareRepair(world, command.PlayerSlot);
+            return;
+        }
         if (command.Type == SimCommandType.SetEnergyPriority)
         {
             BrownoutSystem.TrySetPriority(world, command.PlayerSlot, command.Entities, command.EnergyPriority);
@@ -109,6 +114,21 @@ public sealed class CommandExecutionSystem : ISimSystem
                     StopMovement(world, id, ref nav, ref movement);
                 }
                 TargetingSystem.TryIssueDirectOrder(world, command.PlayerSlot, id, command.TargetEntity);
+            }
+            return;
+        }
+
+        if (command.Type == SimCommandType.Repair)
+        {
+            bool queued = (command.Modifiers & CommandModifiers.Queue) != 0;
+            for (int i = 0; i < command.Entities.Length; i++)
+            {
+                EntityId id = command.Entities[i];
+                if (!world.Entities.Ownership.TryGet(id, out Ownership owner) || owner.PlayerSlot != command.PlayerSlot ||
+                    !world.Entities.Builder.Has(id)) continue;
+                if (queued && IsBusy(world, id))
+                    world.GetQueue(id).Enqueue(new UnitOrder(UnitOrderType.Repair, FixVec2.Zero, targetEntity: command.TargetEntity));
+                else RepairSystem.TryStart(world, id, command.TargetEntity, clearQueue: !queued);
             }
             return;
         }
@@ -317,6 +337,11 @@ public sealed class CommandExecutionSystem : ISimSystem
             {
                 if (!world.Entities.Ownership.TryGet(id, out Ownership owner)) continue;
                 if (TargetingSystem.TryIssueDirectOrder(world, owner.PlayerSlot, id, next.TargetEntity)) return true;
+                continue;
+            }
+            if (next.Type == UnitOrderType.Repair)
+            {
+                if (RepairSystem.TryStart(world, id, next.TargetEntity, clearQueue: false)) return true;
                 continue;
             }
             if (next.Type == UnitOrderType.Move)

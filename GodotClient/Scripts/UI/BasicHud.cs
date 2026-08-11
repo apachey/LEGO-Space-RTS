@@ -196,6 +196,10 @@ public partial class BasicHud : CanvasLayer
             _builder.Append("Target class  ").Append(targetable.Class).Append('\n');
         if (_bridge.World.Entities.Worker.TryGet(first, out Worker worker) && _bridge.World.Entities.ResourceCarrier.TryGet(first, out ResourceCarrier carrier))
             _builder.Append("Task  ").Append(worker.TaskState).Append("   Cargo  ").Append(carrier.Amount).Append('/').Append(carrier.Capacity).Append(" Ore\n");
+        if (_bridge.World.Entities.Builder.TryGet(first, out Builder builder) &&
+            (builder.JobState == BuilderJobState.MovingToRepair || builder.JobState == BuilderJobState.Repairing))
+            _builder.Append("Repair  ").Append(builder.JobState == BuilderJobState.Repairing ? "ACTIVE" : "APPROACHING")
+                .Append("   Target #").Append(builder.RepairTarget.Value).Append('\n');
         if (_bridge.World.Entities.ConstructionSite.TryGet(first, out ConstructionSite site))
             _builder.Append("Construction  ").Append(site.ProgressTicks * 100 / site.RequiredTicks).Append("%   Reserved  ").Append(site.ReservedOre).Append(" Ore / ").Append(site.ReservedEnergy).Append(" Energy\n");
         if (_bridge.World.Entities.PowerState.TryGet(first, out PowerState power))

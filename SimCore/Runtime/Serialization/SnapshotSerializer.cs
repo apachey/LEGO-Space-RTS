@@ -7,8 +7,8 @@ namespace LegoSpaceRTS.SimCore
 public static class SnapshotSerializer
 {
     public const uint Magic = 0x53525453; // STRS
-    public const ushort FormatVersion = 16;
-    public const ushort SimulationProtocolVersion = 14;
+    public const ushort FormatVersion = 17;
+    public const ushort SimulationProtocolVersion = 15;
 
     [Flags]
     private enum EntityComponents : uint
@@ -61,7 +61,7 @@ public static class SnapshotSerializer
         using MemoryStream ms = new(bytes, false); using BinaryReader r = new(ms);
         if (r.ReadUInt32() != Magic) throw new InvalidDataException("Snapshot magic mismatch.");
         ushort format = r.ReadUInt16(), protocol = r.ReadUInt16();
-        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8) || (format == 11 && protocol == 9) || (format == 12 && protocol == 10) || (format == 13 && protocol == 11) || (format == 14 && protocol == 12) || (format == 15 && protocol == 13);
+        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8) || (format == 11 && protocol == 9) || (format == 12 && protocol == 10) || (format == 13 && protocol == 11) || (format == 14 && protocol == 12) || (format == 15 && protocol == 13) || (format == 16 && protocol == 14);
         if (!supportedLegacy && (format != FormatVersion || protocol != SimulationProtocolVersion)) throw new InvalidDataException($"Unsupported snapshot {format}/{protocol}.");
         SimTick tick = new(r.ReadInt32()); MapGrid map = MapGrid.Deserialize(r); uint nextEntity = r.ReadUInt32();
         EntityStore entities = new(); int entityCount = r.ReadInt32(); if (entityCount < 0 || entityCount > 10000) throw new InvalidDataException("Invalid entity count.");
@@ -246,6 +246,7 @@ public static class SnapshotSerializer
     private static void WriteBuilder(BinaryWriter w, Builder builder)
     {
         w.Write(builder.ConstructionTarget.Value); w.Write((byte)builder.JobState);
+        w.Write(builder.RepairTarget.Value); w.Write(builder.RepairOreRemainder.Raw);
     }
 
     private static void WriteResourceCarrier(BinaryWriter w, ResourceCarrier carrier)
@@ -346,7 +347,7 @@ public static class SnapshotSerializer
         if ((components & EntityComponents.Vision) != 0) world.Entities.Vision.Set(id, new Vision { RadiusBuildCells = r.ReadByte(), IsAirVision = r.ReadBoolean(), LastFogX = r.ReadInt32(), LastFogY = r.ReadInt32() });
         if ((components & EntityComponents.ResourceNode) != 0) world.Entities.ResourceNode.Set(id, ReadResourceNode(r));
         if ((components & EntityComponents.Worker) != 0) world.Entities.Worker.Set(id, ReadWorker(r));
-        if ((components & EntityComponents.Builder) != 0) world.Entities.Builder.Set(id, ReadBuilder(r));
+        if ((components & EntityComponents.Builder) != 0) world.Entities.Builder.Set(id, ReadBuilder(r, format));
         if ((components & EntityComponents.ResourceCarrier) != 0) world.Entities.ResourceCarrier.Set(id, ReadResourceCarrier(r));
         if ((components & EntityComponents.ResourceReceiver) != 0) world.Entities.ResourceReceiver.Set(id, ReadResourceReceiver(r));
         if ((components & EntityComponents.ResourceBank) != 0) world.Entities.ResourceBank.Set(id, ReadResourceBank(r));
@@ -400,10 +401,18 @@ public static class SnapshotSerializer
     private static Worker ReadWorker(BinaryReader r)
         => new() { ResourceTarget = new EntityId(r.ReadUInt32()), ReceiverTarget = new EntityId(r.ReadUInt32()), TaskState = (WorkerTaskState)r.ReadByte(), ExtractionTicks = r.ReadUInt16(), TicksPerOre = r.ReadUInt16() };
 
-    private static Builder ReadBuilder(BinaryReader r)
+    private static Builder ReadBuilder(BinaryReader r, ushort format)
     {
         Builder builder = new() { ConstructionTarget = new EntityId(r.ReadUInt32()), JobState = (BuilderJobState)r.ReadByte() };
-        if (builder.JobState < BuilderJobState.Idle || builder.JobState > BuilderJobState.Constructing) throw new InvalidDataException("Invalid builder job state.");
+        if (format >= 17)
+        {
+            builder.RepairTarget = new EntityId(r.ReadUInt32());
+            builder.RepairOreRemainder = Fix32.FromRaw(r.ReadInt32());
+        }
+        if (builder.JobState < BuilderJobState.Idle || builder.JobState > BuilderJobState.Repairing ||
+            builder.RepairOreRemainder < Fix32.Zero || builder.RepairOreRemainder >= Fix32.One ||
+            ((builder.JobState == BuilderJobState.MovingToRepair || builder.JobState == BuilderJobState.Repairing) && builder.RepairTarget == EntityId.None))
+            throw new InvalidDataException("Invalid builder job state.");
         return builder;
     }
 

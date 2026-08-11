@@ -100,9 +100,11 @@ public partial class RtsInputController : Node
         if (@event is InputEventMouseButton mouse && mouse.Pressed && mouse.ButtonIndex == MouseButton.Right && _selection.Selected.Count > 0)
         {
             EntityId enemy = _selection.FindVisibleEnemyAtScreen(mouse.Position);
+            EntityId damagedFriendly = _selection.FindDamagedFriendlyAtScreen(mouse.Position);
             EntityId constructionSite = _selection.FindConstructionSiteAtScreen(mouse.Position);
             EntityId resource = _selection.FindResourceAtScreen(mouse.Position);
             if (enemy != EntityId.None) IssueAttack(enemy);
+            else if (damagedFriendly != EntityId.None && HasSelectedRepairer()) IssueRepair(damagedFriendly);
             else if (HasSelectedProduction() && _camera.TryProjectToGround(mouse.Position, out Vector3 rallyPoint)) IssueRally(rallyPoint, resource);
             else if (constructionSite != EntityId.None) IssueAssistConstruction(constructionSite);
             else if (resource != EntityId.None) IssueHarvest(resource);
@@ -200,6 +202,17 @@ public partial class RtsInputController : Node
         DebugTestStatus = "Preparing T045 arena…";
     }
 
+    public void DebugPrepareRepairPlaytest()
+    {
+        if (_bridge is null) return;
+        SimTick execution = _bridge.World.Tick.Next();
+        _bridge.Enqueue(new CommandEnvelope(execution, 0, _sequence++, SimCommandType.DebugPrepareRepairTest,
+            Array.Empty<EntityId>(), FixVec2.Zero));
+        _pendingDebugFocus = DebugFocusKind.Repair;
+        _pendingDebugTick = execution.Value;
+        DebugTestStatus = "Preparing T046 repair arena…";
+    }
+
     public void DebugMoveVisibleEnemies()
     {
         if (_bridge is null) return;
@@ -280,6 +293,27 @@ public partial class RtsInputController : Node
             return;
         }
 
+        if (_pendingDebugFocus == DebugFocusKind.Repair)
+        {
+            EntityId hover = EntityId.None; ContentId hoverType = StableId.FromKey(DebugPlaytestScenario.HoverScoutKey);
+            IReadOnlyList<EntityId> repairEntities = _bridge.World.Entities.Alive;
+            for (int i = 0; i < repairEntities.Count; i++)
+            {
+                EntityId id = repairEntities[i];
+                if (_bridge.World.Entities.Selectable.TryGet(id, out Selectable selectable) && selectable.ContentType == hoverType &&
+                    _bridge.World.Entities.Ownership.TryGet(id, out Ownership owner) && owner.PlayerSlot == 0 &&
+                    _bridge.World.Entities.Health.TryGet(id, out Health health) && health.Current < health.Maximum) { hover = id; break; }
+            }
+            EntityId crew = FindClosestOwnedContent(StableId.FromKey(DebugPlaytestScenario.CrewKey), hover);
+            if (hover != EntityId.None && crew != EntityId.None && _bridge.World.Entities.Transform.TryGet(hover, out SimTransform hoverTransform))
+            {
+                _selection.SetSelection(new[] { crew }); _camera.CenterOn(hoverTransform.Position.ToWorld());
+                DebugTestStatus = "READY: Crew selected; RMB the damaged Hover Scout to repair it; resources supplied.";
+                _pendingDebugFocus = DebugFocusKind.None;
+            }
+            return;
+        }
+
         EntityId building = EntityId.None;
         ContentId buildingType = StableId.FromKey(DebugPlaytestScenario.DestructionBuildingKey);
         IReadOnlyList<EntityId> entities = _bridge.World.Entities.Alive;
@@ -328,7 +362,7 @@ public partial class RtsInputController : Node
         return candidateAfter != currentAfter ? candidateAfter : candidate.Value < current.Value;
     }
 
-    private enum DebugFocusKind : byte { None = 0, Construction = 1, Destruction = 2 }
+    private enum DebugFocusKind : byte { None = 0, Construction = 1, Destruction = 2, Repair = 3 }
 
     private bool HasSelectedProduction()
     {
@@ -394,6 +428,29 @@ public partial class RtsInputController : Node
         CommandModifiers modifiers = Input.IsKeyPressed(Key.Shift) ? CommandModifiers.Queue : CommandModifiers.None;
         _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, _sequence++, SimCommandType.Attack,
             attackers.ToArray(), FixVec2.Zero, modifiers, target));
+        if (modifiers == CommandModifiers.None) ClearMovePreviews();
+    }
+
+    private bool HasSelectedRepairer()
+    {
+        if (_bridge is null || _selection is null) return false;
+        for (int i = 0; i < _selection.Selected.Count; i++) if (_bridge.World.Entities.Builder.Has(_selection.Selected[i])) return true;
+        return false;
+    }
+
+    private void IssueRepair(EntityId target)
+    {
+        if (_bridge is null || _selection is null) return;
+        List<EntityId> repairers = new();
+        for (int i = 0; i < _selection.Selected.Count; i++)
+        {
+            EntityId id = _selection.Selected[i];
+            if (id != target && _bridge.World.Entities.Builder.Has(id)) repairers.Add(id);
+        }
+        if (repairers.Count == 0) return;
+        CommandModifiers modifiers = Input.IsKeyPressed(Key.Shift) ? CommandModifiers.Queue : CommandModifiers.None;
+        _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, _sequence++, SimCommandType.Repair,
+            repairers.ToArray(), FixVec2.Zero, modifiers, target));
         if (modifiers == CommandModifiers.None) ClearMovePreviews();
     }
 

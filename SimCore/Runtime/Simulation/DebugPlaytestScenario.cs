@@ -12,6 +12,7 @@ public static class DebugPlaytestScenario
     public const string HoverScoutKey = "unit.rock_raiders.hover_scout";
     public const string ChromeCrusherKey = "unit.rock_raiders.chrome_crusher";
     public static readonly FixVec2 DestructionArenaCenter = FixVec2.FromInts(103, 103);
+    public static readonly FixVec2 RepairArenaCenter = FixVec2.FromInts(72, 96);
 
     private static readonly (short X, short Y)[] DestructionBuildingAnchors =
     {
@@ -94,6 +95,30 @@ public static class DebugPlaytestScenario
         world.Spatial.Rebuild(world.Entities);
         new VisionSystem().Step(world);
         return friendlyChrome;
+    }
+
+    public static EntityId PrepareRepair(SimulationWorld world, byte playerSlot)
+    {
+        EntityId crew = EnsureUnit(world, playerSlot, CrewKey, PreparedPosition(world, CrewKey, RepairArenaCenter + FixVec2.FromInts(-4, 0)));
+        EntityId hover = EnsureUnit(world, playerSlot, HoverScoutKey, PreparedPosition(world, HoverScoutKey, RepairArenaCenter));
+        if (world.Entities.Health.Has(hover))
+        {
+            ref Health health = ref world.Entities.Health.Get(hover);
+            health.Current = Fix32.FromInt(40);
+            health.LastDamageTick = -1;
+        }
+        IReadOnlyList<EntityId> alive = world.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (world.Entities.ResourceBank.Has(id) && world.Entities.Ownership.TryGet(id, out Ownership owner) && owner.PlayerSlot == playerSlot)
+                world.Entities.ResourceBank.Get(id).ProcessedAmount = System.Math.Max(500, world.Entities.ResourceBank.Get(id).ProcessedAmount);
+        }
+        if (EnergyDomainSystem.TryGetPlayerDomain(world, playerSlot, out EntityId root))
+            world.Entities.EnergyDomain.Get(root).Reserve = Fix32.Min(world.Entities.EnergyDomain.Get(root).ReserveCapacity, Fix32.FromInt(100));
+        world.Spatial.Rebuild(world.Entities);
+        new VisionSystem().Step(world);
+        return crew;
     }
 
     private static void SpawnInvisibleObserver(SimulationWorld world, byte ownerSlot, FixVec2 position)

@@ -91,6 +91,8 @@ public partial class UnitViewManager : Node3D
             {
                 _pendingDebris.Remove(c.EntityId.Value);
                 UpdateWeaponFlash(view, c, (float)delta);
+                Node3D? repairEffect = view.GetNodeOrNull<Node3D>("RepairEffect");
+                if (repairEffect is not null) repairEffect.Visible = c.IsRepairing;
             }
             Label3D? groupLabel = view.GetNodeOrNull<Label3D>("ControlGroupLabel");
             if (groupLabel is not null)
@@ -224,7 +226,7 @@ public partial class UnitViewManager : Node3D
     {
         view.Name = $"Debris_{id}";
         view.Scale = scale;
-        string[] hidden = { "SelectionRing", "TargetRing", "HealthBar", "ConstructionProgressBar", "ControlGroupLabel", "BrownoutLabel", "WeaponFlash", "ContactImpact" };
+        string[] hidden = { "SelectionRing", "TargetRing", "HealthBar", "ConstructionProgressBar", "ControlGroupLabel", "BrownoutLabel", "WeaponFlash", "ContactImpact", "RepairEffect" };
         for (int i = 0; i < hidden.Length; i++)
         {
             Node3D? node = view.GetNodeOrNull<Node3D>(hidden[i]);
@@ -381,6 +383,17 @@ public partial class UnitViewManager : Node3D
         {
             Name = "WeaponFlash", Mesh = flashMesh, Visible = false,
             Position = new Vector3(0f, 0.75f / visualScale.Y, 0f),
+            Scale = new Vector3(1f / visualScale.X, 1f / visualScale.Y, 1f / visualScale.Z)
+        });
+
+        SphereMesh repairMesh = new() { Radius = 0.18f, Height = 0.36f, RadialSegments = 8, Rings = 4 };
+        StandardMaterial3D repairMaterial = MakeProjectileMaterial();
+        repairMaterial.AlbedoColor = new Color(0.20f, 0.95f, 0.82f); repairMaterial.Emission = new Color(0.08f, 0.75f, 0.55f);
+        repairMesh.Material = repairMaterial;
+        view.AddChild(new MeshInstance3D
+        {
+            Name = "RepairEffect", Mesh = repairMesh, Visible = false,
+            Position = new Vector3(ringRadiusWorld * 0.7f / visualScale.X, 0.55f / visualScale.Y, 0f),
             Scale = new Vector3(1f / visualScale.X, 1f / visualScale.Y, 1f / visualScale.Z)
         });
 

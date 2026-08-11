@@ -5,7 +5,7 @@ remain authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M4 — Combat / T045 automated acceptance complete; T046 Repair next.**
+**M4 — Combat / T046 first-playable field repair implemented; human test pending.**
 
 The accepted M3 T030-T039 economy/base-building stack is merged through PR #10.
 M4 T040 Targeting, T041 Weapons, T042 Projectiles and T044 Contact weapons are
@@ -14,6 +14,8 @@ Destruction are implemented on the current stacked branches. Successive T045
 playtests exposed handoff, interaction, projectile-feedback and collision-rule
 defects. Those defects are corrected and the game director explicitly directed
 development to continue into T046 while the combined human retest remains due.
+T046 Crew field repair is now implemented and automated-green on the current
+stacked branch.
 
 ## Engine / architecture
 
@@ -518,6 +520,35 @@ narrow placement cases allowed by Phase 09B.
   `Artifacts/Screenshots/t045-scout-damage-and-instant-rubble.png`.
   T045 is automated-green; its human interaction/readability retest may be
   exercised together with the next prepared T046 build.
+- M4 T046 now provides the explicit, queueable deterministic `Repair` command.
+  Right-clicking a damaged friendly with selected Crew makes eligible Crew stop
+  combat/work, approach the target and repair at the canonical 7 HP/s. A Crew
+  damaged during the previous second pauses; targets damaged during the
+  previous two seconds receive the canonical 60% rate. Stable Entity-ID order
+  enforces at most three repairers with 100% / 70% / 40% coefficients.
+- Field repair consumes 1.35× dedicated-service economics, proportional to HP:
+  units use 28% original Ore + 10% original Energy for full restoration and
+  structures use 30% + 15%. Fractional deterministic Ore accounting prevents
+  free restoration while Energy is charged as Fix32. Repair pauses when either
+  resource is unavailable and never restores a zero-HP destroyed entity.
+- Snapshot v17 / simulation protocol v15 preserve repair target, job state and
+  fractional Ore remainder while retaining v2-v16 readers. Replay remains v6
+  because Repair uses the existing command envelope layout.
+- `Prepare T046 repair` supplies 500 Ore and Energy, places a 40/120 HP Hover
+  Scout beside selected Crew and centers the camera. RMB begins repair. The HUD
+  reports `Repair ACTIVE`, and a temporary cyan service effect gives visible
+  feedback. Godot visual smoke confirms actual HP restoration, Ore/Energy
+  expenditure and the visible effect. Capture:
+  `Artifacts/Screenshots/t046-exported-prepared-field-repair.png`.
+- All 180 NUnit tests and every `BLOCKING_NOW` full-verification stage pass,
+  including deterministic ×100, replay, active-repair snapshot continuation,
+  Godot smoke and macOS export. Summary:
+  `Artifacts/Verification/20260811T115613Z-full-summary.txt`. The legacy
+  60-mover diagnostic remains unchanged and nonblocking through M5.
+- Worksite 10 HP/s membership, 4 HP/s passive maintenance and Vehicle Service
+  Bay 28 HP/s service queues remain correctly tied to the later T049/T051
+  Worksite/service-region dependencies; T046 does not invent those regions
+  early.
 
 ## Current gates
 
@@ -587,7 +618,6 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. M4 T046 Repair, explicitly authorized by the game director while the T045
-   combined human retest remains due.
-2. Combined prepared human retest for Scout damage readability, immediate
-   unit/structure collision release and T046 repair interaction.
+1. Combined prepared human retest for Scout damage readability, immediate
+   unit/structure collision release and T046 Crew field-repair interaction.
+2. M4 T047 Transport after combined acceptance.

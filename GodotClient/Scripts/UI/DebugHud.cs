@@ -25,6 +25,9 @@ public partial class DebugHud : CanvasLayer
         Button prepareDestruction = new() { Name = "PrepareDestructionTest", Text = "Prepare T045 arena" };
         prepareDestruction.TooltipText = "Creates and frames your Chrome Crusher, damaged enemy Crew/Chrome and a destructible building.";
         prepareDestruction.Pressed += input.DebugPrepareDestructionPlaytest; actions.AddChild(prepareDestruction);
+        Button prepareRepair = new() { Name = "PrepareRepairTest", Text = "Prepare T046 repair" };
+        prepareRepair.TooltipText = "Supplies resources, damages a Hover Scout, selects nearby Crew and centers the camera.";
+        prepareRepair.Pressed += input.DebugPrepareRepairPlaytest; actions.AddChild(prepareRepair);
         Button destroyCrew = new() { Name = "DestroyCrewTest", Text = "Kill test Crew" };
         destroyCrew.Pressed += input.DebugDestroyPreparedCrew; actions.AddChild(destroyCrew);
         Button destroyChrome = new() { Name = "DestroyChromeTest", Text = "Kill test Chrome" };

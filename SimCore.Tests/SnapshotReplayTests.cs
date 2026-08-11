@@ -5,8 +5,8 @@ public class SnapshotReplayTests
 {
     [Test] public void SnapshotFormatSupportsM4DestructionState() => Assert.Multiple(() =>
     {
-        Assert.That(SnapshotSerializer.FormatVersion,Is.EqualTo(16));
-        Assert.That(SnapshotSerializer.SimulationProtocolVersion,Is.EqualTo(14));
+        Assert.That(SnapshotSerializer.FormatVersion,Is.EqualTo(17));
+        Assert.That(SnapshotSerializer.SimulationProtocolVersion,Is.EqualTo(15));
         Assert.That(ReplayLog.Version,Is.EqualTo(6));
     });
     [Test] public void SnapshotRoundTripPreservesHash()

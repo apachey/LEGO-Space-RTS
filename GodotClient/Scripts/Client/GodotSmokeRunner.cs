@@ -13,6 +13,7 @@ public partial class GodotSmokeRunner : Node
     private UnitViewManager? _views;
     private string? _capturePath;
     private bool _captureConstruction;
+    private bool _captureRepair;
     private bool _constructionSeeded;
     private EntityId _captureFocus;
     private EntityId _damagedFocus;
@@ -22,6 +23,9 @@ public partial class GodotSmokeRunner : Node
     private int _scoutDamageInitialRaw;
     private bool _scoutDamageSeeded;
     private bool _preparedEdgePickObserved;
+    private EntityId _repairer;
+    private int _repairInitialRaw;
+    private bool _repairSeeded;
     private bool _finished;
     private int _frames;
     public void Configure(GodotSimBridge bridge, SelectionController selection, RtsCameraController camera, RtsInputController input,
@@ -34,6 +38,7 @@ public partial class GodotSmokeRunner : Node
             if (commandLineArgs[i] == "--capture-path") _capturePath = commandLineArgs[i + 1];
         }
         for (int i = 0; i < commandLineArgs.Length; i++) if (commandLineArgs[i] == "--capture-construction") _captureConstruction = true;
+        for (int i = 0; i < commandLineArgs.Length; i++) if (commandLineArgs[i] == "--capture-repair") _captureRepair = true;
     }
     public override void _Process(double delta)
     {
@@ -43,14 +48,15 @@ public partial class GodotSmokeRunner : Node
             _camera?.CenterOn(focusTransform.Position.ToWorld());
         if (_frames == 2)
         {
-            if (_captureConstruction) _input.DebugPrepareConstructionPlaytest();
+            if (_captureRepair) _input.DebugPrepareRepairPlaytest();
+            else if (_captureConstruction) _input.DebugPrepareConstructionPlaytest();
             else _input.DebugPrepareDestructionPlaytest();
         }
         ResolvePreparedCaptureFocus();
-        if (!_captureConstruction && !_preparedEdgePickObserved && _captureFocus != EntityId.None)
+        if (!_captureConstruction && !_captureRepair && !_preparedEdgePickObserved && _captureFocus != EntityId.None)
             _preparedEdgePickObserved = PreparedBuildingEdgePick() == _captureFocus;
-        if (!_captureConstruction) SeedPreparedScoutDamage();
-        if (!_captureConstruction) SeedPreparedDestructionStates();
+        if (_captureRepair) SeedPreparedRepair();
+        else if (!_captureConstruction) { SeedPreparedScoutDamage(); SeedPreparedDestructionStates(); }
         if (_bridge.World.Tick.Value < 120 || _frames < 140) return;
         Node? hud = GetTree().Root.FindChild("BasicHUD", true, false);
         bool hudOk = hud is not null && hud.FindChild("ResourceStrip", true, false) is not null &&
@@ -63,6 +69,7 @@ public partial class GodotSmokeRunner : Node
         Node? movingTargetControl = GetTree().Root.FindChild("MoveEnemyTest", true, false);
         Node? prepareConstructionControl = GetTree().Root.FindChild("PrepareConstructionTest", true, false);
         Node? prepareDestructionControl = GetTree().Root.FindChild("PrepareDestructionTest", true, false);
+        Node? prepareRepairControl = GetTree().Root.FindChild("PrepareRepairTest", true, false);
         Node? destroyCrewControl = GetTree().Root.FindChild("DestroyCrewTest", true, false);
         Node? destroyChromeControl = GetTree().Root.FindChild("DestroyChromeTest", true, false);
         Node? destroyBuildingControl = GetTree().Root.FindChild("DestroyBuildingTest", true, false);
@@ -82,7 +89,7 @@ public partial class GodotSmokeRunner : Node
             progressBar.FindChild("Fill", false, false) is MeshInstance3D constructionFill && constructionFill.Mesh is BoxMesh constructionFillMesh &&
             constructionFillMesh.Material is StandardMaterial3D constructionFillMaterial &&
             constructionFillMaterial.BillboardMode == BaseMaterial3D.BillboardModeEnum.Disabled);
-        bool destructionOk = _captureConstruction ||
+        bool destructionOk = _captureConstruction || _captureRepair ||
             (_destroyedUnit != EntityId.None && _bridge.World.Entities.Destruction.Has(_destroyedUnit) &&
              !_bridge.World.Entities.Navigation.Has(_destroyedUnit) && standardWreck is MeshInstance3D standardView &&
              TryGetPresentation(_destroyedUnit, out PresentationEntity standardEntity) &&
@@ -91,17 +98,21 @@ public partial class GodotSmokeRunner : Node
              !_bridge.World.Entities.Navigation.Has(_collapseUnit) && activeCollapse is MeshInstance3D collapseView &&
              TryGetPresentation(_collapseUnit, out PresentationEntity collapseEntity) &&
              collapseView.Scale.IsEqualApprox(UnitViewManager.DebrisScale(collapseEntity)));
-        bool preparedTitleOk = _captureConstruction || selectionTitle?.Text == "Chrome Crusher";
-        bool preparedEdgePickOk = _captureConstruction || _preparedEdgePickObserved;
+        bool preparedTitleOk = _captureConstruction || _captureRepair || selectionTitle?.Text == "Chrome Crusher";
+        bool preparedEdgePickOk = _captureConstruction || _captureRepair || _preparedEdgePickObserved;
         bool preparedUiOk = preparedTitleOk && preparedEdgePickOk;
-        bool scoutDamageOk = _captureConstruction || (_scoutDamageSeeded &&
+        bool scoutDamageOk = _captureConstruction || _captureRepair || (_scoutDamageSeeded &&
             _bridge.World.Entities.Health.TryGet(_scoutDamageTarget, out Health damagedByScout) &&
             damagedByScout.Current.Raw < _scoutDamageInitialRaw);
-        int minimumAlive = _captureConstruction ? 15 : 17;
-        bool controlsOk = movingTargetControl is Button && prepareConstructionControl is Button && prepareDestructionControl is Button &&
+        bool repairOk = !_captureRepair || (_repairSeeded && _bridge.World.Entities.Health.TryGet(_captureFocus, out Health repaired) &&
+            repaired.Current.Raw > _repairInitialRaw && _bridge.World.Entities.Builder.TryGet(_repairer, out Builder repairBuilder) &&
+            repairBuilder.JobState == BuilderJobState.Repairing && _views is not null && _views.TryGetEntityView(_repairer, out MeshInstance3D repairView) &&
+            repairView.GetNodeOrNull<Node3D>("RepairEffect") is Node3D repairEffect && repairEffect.Visible);
+        int minimumAlive = _captureConstruction ? 15 : _captureRepair ? 16 : 17;
+        bool controlsOk = movingTargetControl is Button && prepareConstructionControl is Button && prepareDestructionControl is Button && prepareRepairControl is Button &&
             destroyCrewControl is Button && destroyChromeControl is Button && destroyBuildingControl is Button;
         bool ok = _bridge.Current is not null && _bridge.World.Entities.Alive.Count >= minimumAlive && _bridge.GameplayContentHash != 0 &&
-            hudOk && constructionOk && destructionOk && preparedUiOk && scoutDamageOk && controlsOk && contactImpact is MeshInstance3D && healthBarOk;
+            hudOk && constructionOk && destructionOk && preparedUiOk && scoutDamageOk && repairOk && controlsOk && contactImpact is MeshInstance3D && healthBarOk;
         if (ok && _capturePath is not null)
         {
             _finished = true;
@@ -124,7 +135,7 @@ public partial class GodotSmokeRunner : Node
             GD.Print($"PHASE10 VISUAL SMOKE CAPTURE: PASS path={_capturePath}");
         }
         if (!ok)
-            GD.PrintErr($"PHASE10 GODOT HEADLESS SMOKE DETAIL: hud={hudOk} construction={constructionOk} health={healthBarOk} controls={controlsOk} destruction={destructionOk} preparedTitle={preparedTitleOk} preparedEdgePick={preparedEdgePickOk} scoutDamage={scoutDamageOk} standardWreck={standardWreck is MeshInstance3D} collapseId={_collapseUnit.Value} collapseActive={_collapseUnit != EntityId.None && _bridge.World.Entities.Destruction.Has(_collapseUnit)} collapseView={activeCollapse is MeshInstance3D} contact={contactImpact is MeshInstance3D}");
+            GD.PrintErr($"PHASE10 GODOT HEADLESS SMOKE DETAIL: hud={hudOk} construction={constructionOk} health={healthBarOk} controls={controlsOk} destruction={destructionOk} preparedTitle={preparedTitleOk} preparedEdgePick={preparedEdgePickOk} scoutDamage={scoutDamageOk} repair={repairOk} standardWreck={standardWreck is MeshInstance3D} collapseId={_collapseUnit.Value} collapseActive={_collapseUnit != EntityId.None && _bridge.World.Entities.Destruction.Has(_collapseUnit)} collapseView={activeCollapse is MeshInstance3D} contact={contactImpact is MeshInstance3D}");
         _finished = true;
         GD.Print(ok ? $"PHASE10 GODOT HEADLESS SMOKE: PASS tick={_bridge.World.Tick.Value} hash={_bridge.StateHashHex()}" : "PHASE10 GODOT HEADLESS SMOKE: FAIL");
         GetTree().Quit(ok ? 0 : 2);
@@ -156,6 +167,19 @@ public partial class GodotSmokeRunner : Node
                 health.LastDamageTick = _bridge.World.Tick.Value;
                 _damagedFocus = id;
                 break;
+            }
+            return;
+        }
+        if (_captureRepair)
+        {
+            ContentId hoverType = StableId.FromKey(DebugPlaytestScenario.HoverScoutKey);
+            for (int i = 0; i < alive.Count; i++)
+            {
+                EntityId id = alive[i];
+                if (_bridge.World.Entities.Selectable.TryGet(id, out Selectable selectable) && selectable.ContentType == hoverType &&
+                    _bridge.World.Entities.Ownership.TryGet(id, out Ownership owner) && owner.PlayerSlot == 0 &&
+                    _bridge.World.Entities.Health.TryGet(id, out Health health) && health.Current < health.Maximum)
+                { _captureFocus = id; _damagedFocus = id; break; }
             }
             return;
         }
@@ -227,6 +251,24 @@ public partial class GodotSmokeRunner : Node
                 new[] { id }, FixVec2.Zero, targetEntity: _captureFocus));
             _scoutDamageSeeded = true;
             return;
+        }
+    }
+
+    private void SeedPreparedRepair()
+    {
+        if (_bridge is null || _repairSeeded || _captureFocus == EntityId.None || _bridge.World.Tick.Value < 3 ||
+            !_bridge.World.Entities.Health.TryGet(_captureFocus, out Health health)) return;
+        ContentId crewType = StableId.FromKey(DebugPlaytestScenario.CrewKey);
+        IReadOnlyList<EntityId> alive = _bridge.World.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (!_bridge.World.Entities.Selectable.TryGet(id, out Selectable selectable) || selectable.ContentType != crewType ||
+                !_bridge.World.Entities.Ownership.TryGet(id, out Ownership owner) || owner.PlayerSlot != 0) continue;
+            _repairer = id; _repairInitialRaw = health.Current.Raw;
+            _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, uint.MaxValue - 2, SimCommandType.Repair,
+                new[] { id }, FixVec2.Zero, targetEntity: _captureFocus));
+            _repairSeeded = true; return;
         }
     }
 
