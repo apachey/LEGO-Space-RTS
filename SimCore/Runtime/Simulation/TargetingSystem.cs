@@ -19,8 +19,8 @@ public sealed class TargetingSystem : ISimSystem
             {
                 if (IsLegalTarget(world, source, targeting.CurrentTarget, requireVisible: true)) continue;
                 ClearTarget(world, source);
-                if (world.TryGetQueue(source, out UnitCommandQueue queue) && queue.Count > 0) CommandExecutionSystem.TryStartNextOrder(world, source);
-                continue;
+                if (world.TryGetQueue(source, out UnitCommandQueue queue) && queue.Count > 0 && CommandExecutionSystem.TryStartNextOrder(world, source)) continue;
+                targeting = world.Entities.Targeting.Get(source);
             }
 
             if (targeting.PriorityProfile == TargetPriorityProfile.Support)

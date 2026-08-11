@@ -98,6 +98,18 @@ public sealed class M4ContactWeaponTests
     }
 
     [Test]
+    public void PresentationIdentifiesContactFireWithoutInventingAProjectile()
+    {
+        SimulationWorld world = NewWorld();
+        EntityId source = SpawnArmedUnit(world, 0, FixVec2.FromInts(20, 20), "unit.rock_raiders.loader_dozer");
+
+        PresentationEntity presented = PresentationSnapshot.Capture(world, 0).Entities.Single(entity => entity.EntityId == source);
+
+        Assert.That(presented.WeaponDelivery, Is.EqualTo(WeaponDeliveryKind.Contact));
+        Assert.That(PresentationSnapshot.Capture(world, 0).Projectiles, Is.Empty);
+    }
+
+    [Test]
     public void DirectPursuitAbandonsTargetAtCanonicalTwelveCellLeash()
     {
         SimulationWorld world = NewWorld();
@@ -117,6 +129,27 @@ public sealed class M4ContactWeaponTests
         });
     }
 
+    [Test]
+    public void HoverAutomaticallyPursuesFollowUpTargetOutsideWeaponRange()
+    {
+        SimulationWorld world = NewWorld();
+        EntityId source = SpawnArmedUnit(world, 0, FixVec2.FromInts(12, 60), "unit.rock_raiders.hover_scout");
+        EntityId first = SpawnTarget(world, 1, FixVec2.FromInts(14, 60));
+        EntityId followUp = SpawnTarget(world, 1, FixVec2.FromInts(18, 60));
+        ref Health firstHealth = ref world.Entities.Health.Get(first); firstHealth.Current = Fix32.One;
+        new VisionSystem().Step(world);
+        Assert.That(TargetingSystem.TryIssueDirectOrder(world, 0, source, first), Is.True);
+
+        new SimulationRunner(world).StepTicks(180);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(world.Entities.Health.Get(first).IsDepleted, Is.True);
+            Assert.That(world.Entities.Transform.Get(source).Position.X, Is.GreaterThan(Fix32.FromInt(12)));
+            Assert.That(world.Entities.Health.Get(followUp).Current, Is.LessThan(world.Entities.Health.Get(followUp).Maximum));
+        });
+    }
+
     private static SimulationWorld NewWorld() => new(new MapGrid("map.test.m4.contact"), 2);
 
     private static EntityId SpawnArmedUnit(SimulationWorld world, byte owner, FixVec2 position, string entityKey)
@@ -132,6 +165,7 @@ public sealed class M4ContactWeaponTests
             TurnRatePerTick = profile.TurnRatePerTick, ReversePolicy = profile.ReversePolicy, State = MovementState.Idle, LastPosition = position
         });
         world.Entities.Navigation.Set(id, new NavigationAgent { Footprint = definition.Footprint, Layer = profile.Layer, Target = position, PathTopologyVersion = world.Map.TopologyVersion });
+        world.Entities.Selectable.Set(id, new Selectable { IsSelectable = true, ContentType = definition.Id, Kind = definition.SelectableKind });
         world.Entities.Targetable.Set(id, new Targetable { Class = definition.Combat.TargetClass, Layer = definition.Combat.TargetLayer, Flags = definition.Combat.TargetFlags });
         world.Entities.Health.Set(id, new Health { Maximum = Fix32.FromInt(definition.Combat.MaximumHitPoints), Current = Fix32.FromInt(definition.Combat.MaximumHitPoints), ArmorRating = definition.Combat.ArmorRating, LastDamageTick = -1 });
         world.Entities.Targeting.Set(id, new Targeting

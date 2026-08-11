@@ -95,6 +95,7 @@ public sealed class M4WeaponTests
         PresentationEntity sourcePresentation = presentation.Entities.Single(e => e.EntityId == source);
         Assert.That(sourcePresentation.WeaponFireSequence, Is.EqualTo(1));
         Assert.That(sourcePresentation.WeaponFireTarget, Is.EqualTo(target));
+        Assert.That(sourcePresentation.WeaponDelivery, Is.EqualTo(WeaponDeliveryKind.Projectile));
 
         SimulationRunner b = new(SnapshotSerializer.Deserialize(SnapshotSerializer.Serialize(world)));
         a.StepTicks(75); b.StepTicks(75);

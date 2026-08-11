@@ -174,6 +174,32 @@ public partial class RtsInputController : Node
             Array.Empty<EntityId>(), FixVec2.Zero));
     }
 
+    public void DebugMoveVisibleEnemies()
+    {
+        if (_bridge is null) return;
+        List<EntityId> enemies = new();
+        FixVec2 sum = FixVec2.Zero; FootprintClass largest = FootprintClass.Tiny;
+        IReadOnlyList<EntityId> alive = _bridge.World.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (!_bridge.World.Entities.Ownership.TryGet(id, out Ownership ownership) || ownership.PlayerSlot != 1 ||
+                !_bridge.World.Entities.Transform.TryGet(id, out SimTransform transform) ||
+                !_bridge.World.Entities.Navigation.TryGet(id, out NavigationAgent navigation) ||
+                !_bridge.World.Entities.Movement.Has(id) ||
+                (_bridge.World.Entities.Health.TryGet(id, out Health health) && health.IsDepleted) ||
+                !_bridge.World.Fog.IsVisible(0, transform.Position.X.FloorToInt(), transform.Position.Y.FloorToInt())) continue;
+            enemies.Add(id); sum += transform.Position;
+            if (navigation.Footprint > largest) largest = navigation.Footprint;
+        }
+        if (enemies.Count == 0) return;
+        FixVec2 center = sum / Fix32.FromInt(enemies.Count);
+        Fix32 verticalOffset = center.Y < Fix32.FromInt(MapGrid.BuildHeight - 8) ? Fix32.FromInt(6) : Fix32.FromInt(-6);
+        FixVec2 desired = new(center.X, center.Y + verticalOffset);
+        FixVec2 target = FormationPlanner.ResolvePassableSlot(_bridge.World, desired, largest);
+        _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 1, _sequence++, SimCommandType.Move, enemies.ToArray(), target));
+    }
+
     private bool PreferRoundRobin(ContentId unitType, EntityId candidate, EntityId current)
     {
         if (current == EntityId.None) return true;

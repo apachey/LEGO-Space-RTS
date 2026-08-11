@@ -141,7 +141,10 @@ public partial class UnitViewManager : Node3D
         }
         float remaining = _fireFlashRemaining.TryGetValue(entity.EntityId.Value, out float value) ? value : 0f;
         Node3D? flash = view.GetNodeOrNull<Node3D>("WeaponFlash");
-        if (flash is not null) flash.Visible = remaining > 0f;
+        Node3D? contact = view.GetNodeOrNull<Node3D>("ContactImpact");
+        bool contactDelivery = entity.WeaponDelivery == WeaponDeliveryKind.Contact;
+        if (flash is not null) flash.Visible = remaining > 0f && !contactDelivery;
+        if (contact is not null) contact.Visible = remaining > 0f && contactDelivery;
         if (remaining > 0f) _fireFlashRemaining[entity.EntityId.Value] = Mathf.Max(0f, remaining - delta);
     }
 
@@ -260,6 +263,18 @@ public partial class UnitViewManager : Node3D
             Scale = new Vector3(1f / visualScale.X, 1f / visualScale.Y, 1f / visualScale.Z)
         });
 
+        BoxMesh contactMesh = new() { Size = new Vector3(0.62f, 0.18f, 0.82f) };
+        StandardMaterial3D contactMaterial = MakeProjectileMaterial();
+        contactMaterial.AlbedoColor = new Color(1f, 0.86f, 0.28f);
+        contactMaterial.Emission = new Color(1f, 0.48f, 0.06f);
+        contactMesh.Material = contactMaterial;
+        view.AddChild(new MeshInstance3D
+        {
+            Name = "ContactImpact", Mesh = contactMesh, Visible = false,
+            Position = new Vector3(ringRadiusWorld * 0.72f / visualScale.X, 0.12f / visualScale.Y, 0f),
+            Scale = new Vector3(1f / visualScale.X, 1f / visualScale.Y, 1f / visualScale.Z)
+        });
+
         Label3D groupLabel = new()
         {
             Name = "ControlGroupLabel",
@@ -278,7 +293,7 @@ public partial class UnitViewManager : Node3D
         };
         view.AddChild(groupLabel);
         view.AddChild(CreateConstructionProgressBar());
-        view.AddChild(CreateHealthBar(labelHeightWorld, visualScale));
+        view.AddChild(CreateHealthBar());
         Label3D brownoutLabel = new()
         {
             Name = "BrownoutLabel", Text = "⚡ BROWNOUT", Visible = false, FontSize = 22, OutlineSize = 3, PixelSize = 0.03f,
@@ -334,12 +349,6 @@ public partial class UnitViewManager : Node3D
             brownoutLabel.Position = new Vector3(0f, (scale.Y + 0.8f) / scale.Y, 0f);
             brownoutLabel.Scale = new Vector3(1f / scale.X, 1f / scale.Y, 1f / scale.Z);
         }
-        Node3D? healthBar = view.GetNodeOrNull<Node3D>("HealthBar");
-        if (healthBar is not null)
-        {
-            healthBar.Position = new Vector3(0f, (scale.Y + 1.12f) / scale.Y, 0f);
-            healthBar.Scale = new Vector3(1f / scale.X, 1f / scale.Y, 1f / scale.Z);
-        }
     }
 
     private static Vector3 ResourceScale(FootprintClass size, ResourceVisualState state)
@@ -372,17 +381,17 @@ public partial class UnitViewManager : Node3D
         return bar;
     }
 
-    private static Node3D CreateHealthBar(float labelHeightWorld, Vector3 visualScale)
+    private static Node3D CreateHealthBar()
     {
         Node3D bar = new()
         {
-            Name = "HealthBar", Visible = false,
-            Position = new Vector3(0f, (labelHeightWorld + 0.38f) / visualScale.Y, 0f),
-            Scale = new Vector3(1f / visualScale.X, 1f / visualScale.Y, 1f / visualScale.Z)
+            Name = "HealthBar", Visible = false, TopLevel = true
         };
-        BoxMesh backgroundMesh = new() { Size = Vector3.One, Material = MakeOverlayMaterial(new Color(0.035f, 0.045f, 0.05f, 0.92f)) };
-        bar.AddChild(new MeshInstance3D { Name = "Background", Mesh = backgroundMesh, Scale = new Vector3(2.5f, 0.08f, 0.38f) });
-        bar.AddChild(new MeshInstance3D { Name = "Fill", Mesh = new BoxMesh { Size = Vector3.One }, Scale = new Vector3(2.32f, 0.10f, 0.26f), Position = new Vector3(0f, 0.08f, 0f) });
+        StandardMaterial3D backgroundMaterial = MakeOverlayMaterial(new Color(0.035f, 0.045f, 0.05f, 0.96f));
+        backgroundMaterial.RenderPriority = 0;
+        QuadMesh backgroundMesh = new() { Size = new Vector2(2.5f, 0.38f), Material = backgroundMaterial };
+        bar.AddChild(new MeshInstance3D { Name = "Background", Mesh = backgroundMesh });
+        bar.AddChild(new MeshInstance3D { Name = "Fill", Mesh = new QuadMesh { Size = new Vector2(2.32f, 0.26f) } });
         return bar;
     }
 
@@ -390,15 +399,32 @@ public partial class UnitViewManager : Node3D
     {
         Node3D? bar = view.GetNodeOrNull<Node3D>("HealthBar");
         if (bar is null) return;
+        bar.GlobalPosition = view.GlobalPosition + Vector3.Up * HealthBarHeightWorld(entity);
+        bar.GlobalRotation = Vector3.Zero;
+        bar.Scale = Vector3.One;
         bar.Visible = entity.HasHealth && visible;
         if (!bar.Visible) return;
         MeshInstance3D? fill = bar.GetNodeOrNull<MeshInstance3D>("Fill");
         if (fill is null) return;
         float ratio = entity.MaximumHitPointsRaw <= 0 ? 0f : Mathf.Clamp((float)entity.CurrentHitPointsRaw / entity.MaximumHitPointsRaw, 0f, 1f);
         float width = 2.32f * ratio;
-        fill.Scale = new Vector3(Mathf.Max(width, 0.01f), 0.10f, 0.26f);
-        fill.Position = new Vector3(-1.16f + width * 0.5f, 0.08f, 0f);
+        fill.Scale = new Vector3(Mathf.Max(ratio, 0.004f), 1f, 1f);
+        fill.Position = new Vector3(-1.16f + width * 0.5f, 0f, 0f);
         fill.MaterialOverride = ratio >= 0.70f ? _healthGood : ratio >= 0.35f ? _healthDamaged : _healthCritical;
+    }
+
+    private static float HealthBarHeightWorld(PresentationEntity entity)
+    {
+        if (entity.SelectableKind == SelectableKind.Building) return BuildingScale(entity).Y + 1.12f;
+        float labelHeight = entity.Footprint switch
+        {
+            FootprintClass.Tiny => 1.35f,
+            FootprintClass.Small => 1.45f,
+            FootprintClass.Medium => 1.65f,
+            FootprintClass.Large => 2.05f,
+            _ => 2.35f
+        };
+        return labelHeight + 0.38f;
     }
 
     private static StandardMaterial3D MakeMaterial(Color color) => new() { AlbedoColor = color, Roughness = 0.45f };
@@ -415,7 +441,9 @@ public partial class UnitViewManager : Node3D
         AlbedoColor = color,
         ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
         Transparency = BaseMaterial3D.TransparencyEnum.Alpha,
-        NoDepthTest = true
+        NoDepthTest = true,
+        BillboardMode = BaseMaterial3D.BillboardModeEnum.Enabled,
+        RenderPriority = 1
     };
     private static StandardMaterial3D MakeConstructionMaterial() => new()
     {

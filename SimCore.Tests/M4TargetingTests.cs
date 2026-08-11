@@ -39,7 +39,7 @@ public sealed class M4TargetingTests
     {
         SimulationWorld world = NewWorld();
         EntityId source = SpawnTargeter(world, 0, FixVec2.FromInts(40, 40), TargetPriorityProfile.AntiLight);
-        SpawnTarget(world, 1, FixVec2.FromInts(41, 40), CombatTargetClass.Personnel, CombatTargetFlags.Worker);
+        EntityId automatic = SpawnTarget(world, 1, FixVec2.FromInts(41, 40), CombatTargetClass.Personnel, CombatTargetFlags.Worker);
         EntityId ordered = SpawnTarget(world, 1, FixVec2.FromInts(45, 40), CombatTargetClass.Structure, CombatTargetFlags.EconomicInfrastructure);
         new VisionSystem().Step(world);
         world.Commands.Enqueue(new CommandEnvelope(new SimTick(1), 0, 1, SimCommandType.Attack, new[] { source }, FixVec2.Zero, targetEntity: ordered));
@@ -56,8 +56,8 @@ public sealed class M4TargetingTests
         runner.StepOneTick();
         Assert.Multiple(() =>
         {
-            Assert.That(world.Entities.Targeting.Get(source).CurrentTarget, Is.EqualTo(EntityId.None));
-            Assert.That(world.Entities.Targeting.Get(source).SelectionKind, Is.EqualTo(TargetSelectionKind.None));
+            Assert.That(world.Entities.Targeting.Get(source).CurrentTarget, Is.EqualTo(automatic));
+            Assert.That(world.Entities.Targeting.Get(source).SelectionKind, Is.EqualTo(TargetSelectionKind.Automatic));
         });
     }
 
@@ -70,12 +70,35 @@ public sealed class M4TargetingTests
         EntityId friendly = SpawnTarget(world, 0, FixVec2.FromInts(51, 50), CombatTargetClass.MediumMachine, CombatTargetFlags.CombatThreat);
         EntityId air = SpawnTarget(world, 1, FixVec2.FromInts(52, 50), CombatTargetClass.LightMachine, CombatTargetFlags.CombatThreat, CombatTargetLayer.TrueAir);
         new VisionSystem().Step(world);
+        new SpatialIndexSystem().Step(world);
 
         Assert.Multiple(() =>
         {
             Assert.That(TargetingSystem.IsLegalTarget(world, source, hidden, requireVisible: true), Is.False);
             Assert.That(TargetingSystem.IsLegalTarget(world, source, friendly, requireVisible: true), Is.False);
             Assert.That(TargetingSystem.IsLegalTarget(world, source, air, requireVisible: true), Is.False);
+        });
+    }
+
+    [Test]
+    public void DepletedDirectTargetImmediatelyFallsBackToAutomaticTarget()
+    {
+        SimulationWorld world = NewWorld();
+        EntityId source = SpawnTargeter(world, 0, FixVec2.FromInts(40, 40), TargetPriorityProfile.Generalist);
+        EntityId depleted = SpawnTarget(world, 1, FixVec2.FromInts(42, 40), CombatTargetClass.MediumMachine, CombatTargetFlags.CombatThreat);
+        EntityId replacement = SpawnTarget(world, 1, FixVec2.FromInts(44, 40), CombatTargetClass.MediumMachine, CombatTargetFlags.CombatThreat);
+        world.Entities.Health.Set(depleted, new Health { Maximum = Fix32.FromInt(10), Current = Fix32.FromInt(10), LastDamageTick = -1 });
+        new VisionSystem().Step(world);
+        new SpatialIndexSystem().Step(world);
+        Assert.That(TargetingSystem.TryIssueDirectOrder(world, 0, source, depleted), Is.True);
+        world.Entities.Health.Get(depleted).Current = Fix32.Zero;
+
+        new TargetingSystem().Step(world);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(world.Entities.Targeting.Get(source).CurrentTarget, Is.EqualTo(replacement));
+            Assert.That(world.Entities.Targeting.Get(source).SelectionKind, Is.EqualTo(TargetSelectionKind.Automatic));
         });
     }
 

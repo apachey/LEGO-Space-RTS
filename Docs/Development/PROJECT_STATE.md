@@ -420,6 +420,25 @@ narrow placement cases allowed by Phase 09B.
   `Artifacts/Verification/20260811T070232Z-full-summary.txt`.
 - A launchable T044 debug build was produced at
   `Builds/macOS/LEGO Space RTS.app` and passed the export smoke launch.
+- The first T044 human playtest found three follow-up defects: world health bars
+  inherited unit rotation/scale and could render with confusing overlap;
+  Contact weapons reused the projectile-style spherical muzzle flash; and a
+  Hover Scout could acquire a follow-up target outside firing range without
+  beginning pursuit. These root causes are fixed on the current branch.
+- Health bars are now independent camera-facing unshaded quads with explicit
+  background/fill render order. Projectile weapons retain the compact muzzle
+  flash, while Contact weapons show a short forward impact plate and continue
+  to create no projectile. Invalid direct targets now fall back to automatic
+  acquisition in the same targeting pass, and an idle ranged unit pursues its
+  automatic follow-up target under the existing deterministic chase rules.
+- The hidden F8 developer panel now includes `Move visible enemies`, which
+  issues an ordinary deterministic player-1 Move command for reproducible
+  moving-target feel review without changing normal match behavior. The
+  follow-up fast and full verification are green with 165 NUnit tests, real
+  Godot visual/runtime smoke, deterministic replay/snapshot continuation and
+  macOS export. Full summary:
+  `Artifacts/Verification/20260811T082837Z-full-summary.txt`. Human retest
+  remains pending.
 
 ## Current gates
 
@@ -471,8 +490,13 @@ narrow placement cases allowed by Phase 09B.
   route leashes remain pending with those later combat-command tasks; no
   presentation-owned chase or damage behavior is introduced.
 - Muzzle flash and Survey Pulse presentation currently use simple short-lived
-  amber spheres. Human acceptance classifies them as adequate prototype
-  feedback but not final differentiated combat VFX.
+  prototype geometry. Survey Pulse remains a visible amber sphere; Contact
+  tools now use a distinct source-attached impact plate instead of implying a
+  missing projectile. Final differentiated combat VFX remains later work.
+- Zero-HP entities currently remain visible and retain collision because T045
+  Destruction / wreck timing has not started. This is scheduled missing work,
+  not a T044 health/damage defect; T045 must remove gameplay function at zero HP
+  and apply the canonical 1.25 / 2.5 / 4-second collision transitions.
 
 ## Explicitly rejected / do not resurrect
 

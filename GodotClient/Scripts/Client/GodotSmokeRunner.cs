@@ -57,8 +57,16 @@ public partial class GodotSmokeRunner : Node
             hud.FindChild("SelectionPanel", true, false) is not null && hud.FindChild("PortraitSlot", true, false) is not null &&
             hud.FindChild("ContextualSlot", true, false) is not null && hud.FindChild("ContextualActions", true, false) is not null;
         Node? constructionProgress = GetTree().Root.FindChild("ConstructionProgressBar", true, false);
+        Node? movingTargetControl = GetTree().Root.FindChild("MoveEnemyTest", true, false);
+        Node? healthBar = GetTree().Root.FindChild("HealthBar", true, false);
+        Node? contactImpact = GetTree().Root.FindChild("ContactImpact", true, false);
+        bool healthBarOk = healthBar is Node3D bar && bar.TopLevel &&
+            bar.FindChild("Background", false, false) is MeshInstance3D background && background.Mesh is QuadMesh backgroundMesh &&
+            backgroundMesh.Material is StandardMaterial3D barMaterial && barMaterial.BillboardMode == BaseMaterial3D.BillboardModeEnum.Enabled &&
+            barMaterial.ShadingMode == BaseMaterial3D.ShadingModeEnum.Unshaded && barMaterial.NoDepthTest;
         bool constructionOk = !_captureConstruction || (_constructionSeeded && constructionProgress is Node3D progressBar && progressBar.Visible);
-        bool ok = _bridge.Current is not null && _bridge.World.Entities.Alive.Count >= 18 && _bridge.GameplayContentHash != 0 && hudOk && constructionOk;
+        bool ok = _bridge.Current is not null && _bridge.World.Entities.Alive.Count >= 18 && _bridge.GameplayContentHash != 0 && hudOk && constructionOk &&
+            movingTargetControl is Button && contactImpact is MeshInstance3D && healthBarOk;
         if (ok && _capturePath is not null)
         {
             _finished = true;

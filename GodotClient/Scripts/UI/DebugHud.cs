@@ -19,6 +19,9 @@ public partial class DebugHud : CanvasLayer
         HBoxContainer header = new(); box.AddChild(header);
         Label title = new() { Text = "DEVELOPER TOOLS — F8", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill }; title.AddThemeFontSizeOverride("font_size", 16); header.AddChild(title);
         Button drain = new() { Text = "Drain Energy" }; drain.Pressed += input.DebugDrainEnergy; header.AddChild(drain);
+        Button moveEnemies = new() { Name = "MoveEnemyTest", Text = "Move visible enemies" };
+        moveEnemies.TooltipText = "Issues a normal deterministic Move command to visible enemy units for moving-target combat tests.";
+        moveEnemies.Pressed += input.DebugMoveVisibleEnemies; header.AddChild(moveEnemies);
         _label = new Label(); _label.AddThemeFontSizeOverride("font_size", 14); box.AddChild(_label);
         HFlowContainer toggles = new(); box.AddChild(toggles);
         AddToggle(toggles, "Nav", () => debug.DrawNavigation, v => debug.DrawNavigation = v);

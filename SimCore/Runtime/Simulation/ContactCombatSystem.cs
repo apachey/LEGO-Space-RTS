@@ -80,7 +80,7 @@ public sealed class ContactApproachSystem : ISimSystem
             EntityId source = alive[i];
             if (!TryActiveMobileAttacker(world, source, out Targeting targeting, out WeaponDefinition weapon)) continue;
             if (weapon.DeliveryKind == WeaponDeliveryKind.Contact) _contactAttackers.Add(source);
-            else if (targeting.SelectionKind == TargetSelectionKind.DirectOrder) UpdateRangedPursuit(world, source, weapon);
+            else UpdateRangedPursuit(world, source, weapon);
         }
 
         // Retained reservations win in stable EntityId order, preventing slot churn as units move.
