@@ -125,6 +125,8 @@
       "minimumRangeRatio": [0, 1],
       "delivery": "Contact",
       "projectileSpeedRatio": [0, 1],
+      "facingToleranceDegrees": 45,
+      "maximumMovingFireSpeedBasisPoints": 3500,
       "requiresLineOfSight": true
     },
     {
@@ -139,6 +141,8 @@
       "minimumRangeRatio": [0, 1],
       "delivery": "Projectile",
       "projectileSpeedRatio": [12, 1],
+      "facingToleranceDegrees": 180,
+      "maximumMovingFireSpeedBasisPoints": 10000,
       "requiresLineOfSight": true
     },
     {
@@ -153,6 +157,8 @@
       "minimumRangeRatio": [0, 1],
       "delivery": "Contact",
       "projectileSpeedRatio": [0, 1],
+      "facingToleranceDegrees": 45,
+      "maximumMovingFireSpeedBasisPoints": 3500,
       "requiresLineOfSight": true
     },
     {
@@ -167,6 +173,8 @@
       "minimumRangeRatio": [0, 1],
       "delivery": "Contact",
       "projectileSpeedRatio": [0, 1],
+      "facingToleranceDegrees": 30,
+      "maximumMovingFireSpeedBasisPoints": 3500,
       "requiresLineOfSight": true
     }
   ],

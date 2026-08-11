@@ -87,7 +87,8 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
             Enum.Parse<TargetPriorityProfile>(RequiredString(item, "priorityProfile"), false),
             checked((ushort)item.GetProperty("damage").GetInt32()), Enum.Parse<DamageType>(RequiredString(item, "damageType"), false),
             checked((ushort)item.GetProperty("cooldownTicks").GetInt32()), ReadRatio(item, key, "rangeRatio"), ReadRatio(item, key, "minimumRangeRatio"),
-            Enum.Parse<WeaponDeliveryKind>(RequiredString(item, "delivery"), false), ReadRatio(item, key, "projectileSpeedRatio"), item.GetProperty("requiresLineOfSight").GetBoolean());
+            Enum.Parse<WeaponDeliveryKind>(RequiredString(item, "delivery"), false), ReadRatio(item, key, "projectileSpeedRatio"), item.GetProperty("requiresLineOfSight").GetBoolean(),
+            checked((ushort)item.GetProperty("facingToleranceDegrees").GetInt32()), checked((ushort)item.GetProperty("maximumMovingFireSpeedBasisPoints").GetInt32()));
         if (!weaponByKey.TryAdd(key, weapon)) throw new InvalidDataException($"Duplicate weapon key {key}.");
         weapons.Add(weapon);
     }

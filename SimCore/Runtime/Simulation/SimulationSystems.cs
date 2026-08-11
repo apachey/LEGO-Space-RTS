@@ -707,6 +707,10 @@ public sealed class MovementIntentSystem : ISimSystem
             bool finalWaypoint = move.PathIndex >= path.Cells.Count - 1 && world.GetQueue(id).Count == 0;
             Fix32 brakingSpeed = finalWaypoint ? Fix32.Sqrt(Two * move.Deceleration * FixVec2.Distance(transform.Position, nav.Target)) : move.MaxSpeed;
             Fix32 desiredSpeed = Fix32.Min(move.MaxSpeed, brakingSpeed);
+            if (world.Entities.Targeting.TryGet(id, out Targeting targeting) && targeting.CurrentTarget != EntityId.None &&
+                world.Entities.Weapon.TryGet(id, out WeaponState weaponState) && world.Content.TryGetWeapon(weaponState.WeaponProfile, out WeaponDefinition weapon) &&
+                weapon.DeliveryKind == WeaponDeliveryKind.Contact && CombatGeometry.ContactGap(world, id, targeting.CurrentTarget) <= weapon.Range)
+                desiredSpeed = Fix32.Min(desiredSpeed, move.MaxSpeed * Fix32.FromRatio(weapon.MaximumMovingFireSpeedBasisPoints, 10_000));
             move.DesiredMovement = delta.NormalizeSafe() * desiredSpeed;
             world.PendingVelocity[id.Value] = move.DesiredMovement * SimClock.TickSeconds;
         }
@@ -1071,7 +1075,12 @@ public sealed class TransformMovementSystem : ISimSystem
 
     private static void CompleteOrder(SimulationWorld world, EntityId id, ref NavigationAgent nav, ref Movement move)
     {
-        if (world.Entities.Worker.TryGet(id, out Worker worker) && (worker.TaskState == WorkerTaskState.MovingToResource || worker.TaskState == WorkerTaskState.ReturningToReceiver))
+        if (world.Entities.Targeting.TryGet(id, out Targeting targeting) && targeting.SelectionKind == TargetSelectionKind.DirectOrder && targeting.CurrentTarget != EntityId.None)
+        {
+            CommandExecutionSystem.StopMovement(world, id, ref nav, ref move);
+            ref Targeting stored = ref world.Entities.Targeting.Get(id); stored.HasCombatMove = false;
+        }
+        else if (world.Entities.Worker.TryGet(id, out Worker worker) && (worker.TaskState == WorkerTaskState.MovingToResource || worker.TaskState == WorkerTaskState.ReturningToReceiver))
         {
             CommandExecutionSystem.StopMovement(world, id, ref nav, ref move);
         }

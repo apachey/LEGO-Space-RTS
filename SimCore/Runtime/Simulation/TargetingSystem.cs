@@ -57,6 +57,13 @@ public sealed class TargetingSystem : ISimSystem
             }
 
             ref Targeting stored = ref world.Entities.Targeting.Get(source);
+            if (stored.CurrentTarget != best)
+            {
+                stored.PursuitOrigin = sourceTransform.Position;
+                stored.HasPursuitOrigin = best != EntityId.None;
+                stored.HasApproachSlot = false;
+                stored.HasCombatMove = false;
+            }
             stored.CurrentTarget = best;
             stored.SelectionKind = best == EntityId.None ? TargetSelectionKind.None : TargetSelectionKind.Automatic;
         }
@@ -69,6 +76,10 @@ public sealed class TargetingSystem : ISimSystem
         ref Targeting targeting = ref world.Entities.Targeting.Get(source);
         targeting.CurrentTarget = target;
         targeting.SelectionKind = TargetSelectionKind.DirectOrder;
+        targeting.PursuitOrigin = world.Entities.Transform.TryGet(source, out SimTransform transform) ? transform.Position : FixVec2.Zero;
+        targeting.HasPursuitOrigin = true;
+        targeting.HasApproachSlot = false;
+        targeting.HasCombatMove = false;
         return true;
     }
 
@@ -78,6 +89,9 @@ public sealed class TargetingSystem : ISimSystem
         ref Targeting targeting = ref world.Entities.Targeting.Get(source);
         targeting.CurrentTarget = EntityId.None;
         targeting.SelectionKind = TargetSelectionKind.None;
+        targeting.HasPursuitOrigin = false;
+        targeting.HasApproachSlot = false;
+        targeting.HasCombatMove = false;
     }
 
     public static bool IsLegalTarget(SimulationWorld world, EntityId source, EntityId target, bool requireVisible)

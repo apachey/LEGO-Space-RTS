@@ -7,8 +7,8 @@ namespace LegoSpaceRTS.SimCore
 public static class SnapshotSerializer
 {
     public const uint Magic = 0x53525453; // STRS
-    public const ushort FormatVersion = 14;
-    public const ushort SimulationProtocolVersion = 12;
+    public const ushort FormatVersion = 15;
+    public const ushort SimulationProtocolVersion = 13;
 
     [Flags]
     private enum EntityComponents : uint
@@ -60,7 +60,7 @@ public static class SnapshotSerializer
         using MemoryStream ms = new(bytes, false); using BinaryReader r = new(ms);
         if (r.ReadUInt32() != Magic) throw new InvalidDataException("Snapshot magic mismatch.");
         ushort format = r.ReadUInt16(), protocol = r.ReadUInt16();
-        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8) || (format == 11 && protocol == 9) || (format == 12 && protocol == 10) || (format == 13 && protocol == 11);
+        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8) || (format == 11 && protocol == 9) || (format == 12 && protocol == 10) || (format == 13 && protocol == 11) || (format == 14 && protocol == 12);
         if (!supportedLegacy && (format != FormatVersion || protocol != SimulationProtocolVersion)) throw new InvalidDataException($"Unsupported snapshot {format}/{protocol}.");
         SimTick tick = new(r.ReadInt32()); MapGrid map = MapGrid.Deserialize(r); uint nextEntity = r.ReadUInt32();
         EntityStore entities = new(); int entityCount = r.ReadInt32(); if (entityCount < 0 || entityCount > 10000) throw new InvalidDataException("Invalid entity count.");
@@ -300,6 +300,8 @@ public static class SnapshotSerializer
     {
         w.Write(targeting.CurrentTarget.Value); w.Write(targeting.AcquisitionRadius.Raw); w.Write((byte)targeting.LegalLayers);
         w.Write((byte)targeting.LegalClasses); w.Write((byte)targeting.PriorityProfile); w.Write((byte)targeting.SelectionKind);
+        w.Write(targeting.PursuitOrigin.X.Raw); w.Write(targeting.PursuitOrigin.Y.Raw); w.Write(targeting.ApproachSlotIndex);
+        w.Write(targeting.HasPursuitOrigin); w.Write(targeting.HasApproachSlot); w.Write(targeting.HasCombatMove);
     }
 
     private static void WriteWeapon(BinaryWriter w, WeaponState weapon)
@@ -348,7 +350,7 @@ public static class SnapshotSerializer
         if ((components & EntityComponents.ConstructionSite) != 0) world.Entities.ConstructionSite.Set(id, ReadConstructionSite(r, format));
         if ((components & EntityComponents.Production) != 0) world.Entities.Production.Set(id, ReadProduction(r));
         if ((components & EntityComponents.Targetable) != 0) world.Entities.Targetable.Set(id, ReadTargetable(r));
-        if ((components & EntityComponents.Targeting) != 0) world.Entities.Targeting.Set(id, ReadTargeting(r));
+        if ((components & EntityComponents.Targeting) != 0) world.Entities.Targeting.Set(id, ReadTargeting(r, format));
         if ((components & EntityComponents.Weapon) != 0)
         {
             WeaponState weapon = ReadWeapon(r);
@@ -465,19 +467,25 @@ public static class SnapshotSerializer
         return targetable;
     }
 
-    private static Targeting ReadTargeting(BinaryReader r)
+    private static Targeting ReadTargeting(BinaryReader r, ushort format)
     {
         Targeting targeting = new()
         {
             CurrentTarget = new EntityId(r.ReadUInt32()), AcquisitionRadius = Fix32.FromRaw(r.ReadInt32()), LegalLayers = (TargetLayerMask)r.ReadByte(),
             LegalClasses = (TargetClassMask)r.ReadByte(), PriorityProfile = (TargetPriorityProfile)r.ReadByte(), SelectionKind = (TargetSelectionKind)r.ReadByte()
         };
+        if (format >= 15)
+        {
+            targeting.PursuitOrigin = new FixVec2(Fix32.FromRaw(r.ReadInt32()), Fix32.FromRaw(r.ReadInt32()));
+            targeting.ApproachSlotIndex = r.ReadByte(); targeting.HasPursuitOrigin = r.ReadBoolean(); targeting.HasApproachSlot = r.ReadBoolean(); targeting.HasCombatMove = r.ReadBoolean();
+        }
         if (targeting.AcquisitionRadius <= Fix32.Zero || targeting.LegalLayers == TargetLayerMask.None || (targeting.LegalLayers & ~TargetLayerMask.All) != 0 ||
             targeting.LegalClasses == TargetClassMask.None || (targeting.LegalClasses & ~TargetClassMask.All) != 0 ||
             targeting.PriorityProfile < TargetPriorityProfile.AntiLight || targeting.PriorityProfile > TargetPriorityProfile.Control ||
             targeting.SelectionKind < TargetSelectionKind.None || targeting.SelectionKind > TargetSelectionKind.DirectOrder ||
             (targeting.SelectionKind == TargetSelectionKind.None && targeting.CurrentTarget != EntityId.None) ||
-            (targeting.SelectionKind != TargetSelectionKind.None && targeting.CurrentTarget == EntityId.None)) throw new InvalidDataException("Invalid targeting state.");
+            (targeting.SelectionKind != TargetSelectionKind.None && targeting.CurrentTarget == EntityId.None) ||
+            targeting.ApproachSlotIndex >= 16 || (targeting.SelectionKind == TargetSelectionKind.None && (targeting.HasPursuitOrigin || targeting.HasApproachSlot || targeting.HasCombatMove))) throw new InvalidDataException("Invalid targeting state.");
         return targeting;
     }
 

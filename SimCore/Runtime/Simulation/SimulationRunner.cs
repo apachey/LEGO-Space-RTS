@@ -45,6 +45,7 @@ public sealed class SimulationRunner
         _systems = new ISimSystem[]
         {
             new CommandExecutionSystem(),
+            new ContactApproachSystem(),
             new NavigationRequestSystem(),
             new MovementIntentSystem(),
             new LocalSeparationSystem(),
@@ -58,7 +59,9 @@ public sealed class SimulationRunner
             new SpatialIndexSystem(),
             new VisionSystem(),
             new TargetingSystem(),
+            new ContactFacingSystem(),
             new WeaponSystem(),
+            new ContactDamageSystem(),
             new ProjectileSystem(),
             new DamageSystem()
         };
@@ -82,7 +85,24 @@ public sealed class SimulationRunner
         for(int i=0;i<_systems.Length;i++)
         {
             long start=Stopwatch.GetTimestamp();_systems[i].Step(World);long elapsed=Stopwatch.GetTimestamp()-start;
-            switch(i){case 0:c=elapsed;break;case 1:n=elapsed;break;case 2:m=elapsed;break;case 3:l=elapsed;break;case 4:t=elapsed;break;case 5:b=elapsed;break;case 6:h=elapsed;break;case 7:j=elapsed;break;case 8:p=elapsed;break;case 9:e=elapsed;break;case 10:o=elapsed;break;case 11:s=elapsed;break;case 12:v=elapsed;break;case 13:g=elapsed;break;case 14:w=elapsed;break;case 15:r=elapsed;break;case 16:d=elapsed;break;}
+            ISimSystem system=_systems[i];
+            if(system is CommandExecutionSystem)c+=elapsed;
+            else if(system is ContactApproachSystem||system is NavigationRequestSystem)n+=elapsed;
+            else if(system is MovementIntentSystem)m+=elapsed;
+            else if(system is LocalSeparationSystem)l+=elapsed;
+            else if(system is TransformMovementSystem)t+=elapsed;
+            else if(system is ResourceBankingSystem)b+=elapsed;
+            else if(system is HarvestSystem)h+=elapsed;
+            else if(system is ConstructionSystem)j+=elapsed;
+            else if(system is ProductionSystem)p+=elapsed;
+            else if(system is EnergyDomainSystem)e+=elapsed;
+            else if(system is OperationsCapacitySystem)o+=elapsed;
+            else if(system is SpatialIndexSystem)s+=elapsed;
+            else if(system is VisionSystem)v+=elapsed;
+            else if(system is TargetingSystem||system is ContactFacingSystem)g+=elapsed;
+            else if(system is WeaponSystem)w+=elapsed;
+            else if(system is ProjectileSystem)r+=elapsed;
+            else if(system is ContactDamageSystem||system is DamageSystem)d+=elapsed;
         }
         return new TickProfile(Stopwatch.GetTimestamp()-totalStart,c,n,m,l,t,b,h,j,p,e,o,s,v,g,w,r,d);
     }

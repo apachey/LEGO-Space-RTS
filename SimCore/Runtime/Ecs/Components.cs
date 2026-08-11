@@ -220,11 +220,16 @@ public struct Health
 public struct Targeting
 {
     public EntityId CurrentTarget;
+    public FixVec2 PursuitOrigin;
     public Fix32 AcquisitionRadius;
     public TargetLayerMask LegalLayers;
     public TargetClassMask LegalClasses;
     public TargetPriorityProfile PriorityProfile;
     public TargetSelectionKind SelectionKind;
+    public byte ApproachSlotIndex;
+    public bool HasPursuitOrigin;
+    public bool HasApproachSlot;
+    public bool HasCombatMove;
 }
 
 public struct WeaponState

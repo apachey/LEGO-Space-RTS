@@ -17,6 +17,11 @@ public sealed class M4WeaponTests
             Assert.That(rider.Combat.WeaponProfile.Value, Is.Zero);
             Assert.That(content.TryGetWeapon("weapon.rr.hover_scout.survey_pulse", out WeaponDefinition pulse), Is.True);
             Assert.That(pulse.ProjectileSpeed, Is.EqualTo(Fix32.FromInt(12)));
+            Assert.That(pulse.FacingToleranceAngle16, Is.EqualTo(Angle16.Half.Raw));
+            Assert.That(pulse.MaximumMovingFireSpeedBasisPoints, Is.EqualTo(10_000));
+            Assert.That(content.TryGetWeapon("weapon.rr.chrome_crusher.chrome_drill", out WeaponDefinition drill), Is.True);
+            Assert.That(drill.FacingToleranceAngle16, Is.EqualTo(5461));
+            Assert.That(drill.MaximumMovingFireSpeedBasisPoints, Is.EqualTo(3_500));
         });
     }
 

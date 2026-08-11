@@ -180,12 +180,12 @@ check({key:by_key.get(key,{}).get('weaponProfile') for key in expected_weapon_pr
 check('weaponProfile' not in by_key.get('unit.rock_raiders.rapid_rider',{}), 'Rapid Rider is an unarmed transport and must not acquire attack targets')
 weapon_by_key={w.get('stableId'):w for w in content_source.get('weaponDefinitions',[])}
 expected_weapons={
-    'weapon.rr.crew.portable_mining_tool':(6,'General',24,[4,5],'Contact',[0,1],'Support'),
-    'weapon.rr.hover_scout.survey_pulse':(6,'General',30,[3,1],'Projectile',[12,1],'Scout'),
-    'weapon.rr.loader_dozer.scoop_ram':(18,'General',27,[9,10],'Contact',[0,1],'AntiLight'),
-    'weapon.rr.chrome_crusher.chrome_drill':(55,'Siege',32,[21,20],'Contact',[0,1],'Siege'),
+    'weapon.rr.crew.portable_mining_tool':(6,'General',24,[4,5],'Contact',[0,1],'Support',45,3500),
+    'weapon.rr.hover_scout.survey_pulse':(6,'General',30,[3,1],'Projectile',[12,1],'Scout',180,10000),
+    'weapon.rr.loader_dozer.scoop_ram':(18,'General',27,[9,10],'Contact',[0,1],'AntiLight',45,3500),
+    'weapon.rr.chrome_crusher.chrome_drill':(55,'Siege',32,[21,20],'Contact',[0,1],'Siege',30,3500),
 }
-check({key:(weapon_by_key.get(key,{}).get('damage'),weapon_by_key.get(key,{}).get('damageType'),weapon_by_key.get(key,{}).get('cooldownTicks'),weapon_by_key.get(key,{}).get('rangeRatio'),weapon_by_key.get(key,{}).get('delivery'),weapon_by_key.get(key,{}).get('projectileSpeedRatio'),weapon_by_key.get(key,{}).get('priorityProfile')) for key in expected_weapons} == expected_weapons, 'canonical T042 Rock Raider weapon/projectile definitions missing or incorrect')
+check({key:(weapon_by_key.get(key,{}).get('damage'),weapon_by_key.get(key,{}).get('damageType'),weapon_by_key.get(key,{}).get('cooldownTicks'),weapon_by_key.get(key,{}).get('rangeRatio'),weapon_by_key.get(key,{}).get('delivery'),weapon_by_key.get(key,{}).get('projectileSpeedRatio'),weapon_by_key.get(key,{}).get('priorityProfile'),weapon_by_key.get(key,{}).get('facingToleranceDegrees'),weapon_by_key.get(key,{}).get('maximumMovingFireSpeedBasisPoints')) for key in expected_weapons} == expected_weapons, 'canonical T042/T044 Rock Raider weapon/contact definitions missing or incorrect')
 profile_by_key={p.get('stableId'):p for p in content_source.get('movementProfiles',[])}
 check(profile_by_key.get('movement.prototype.crew',{}).get('speedRatio')==[135,100],'Crew M2 speed must match Phase 06 1.35')
 check(profile_by_key.get('movement.prototype.hover_scout',{}).get('speedRatio')==[225,100],'Hover Scout M2 speed must match Phase 06 2.25')

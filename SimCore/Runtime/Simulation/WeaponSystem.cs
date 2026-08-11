@@ -24,12 +24,24 @@ public sealed class WeaponSystem : ISimSystem
                 !world.Entities.Ownership.TryGet(source, out Ownership ownership) ||
                 !BrownoutSystem.IsOperational(world, source)) continue;
 
-            long dx = (long)targetTransform.Position.X.Raw - sourceTransform.Position.X.Raw;
-            long dy = (long)targetTransform.Position.Y.Raw - sourceTransform.Position.Y.Raw;
-            long distanceSquared = dx * dx + dy * dy;
-            long maximum = weapon.Range.Raw;
-            long minimum = weapon.MinimumRange.Raw;
-            if (distanceSquared > maximum * maximum || distanceSquared < minimum * minimum) continue;
+            if (weapon.DeliveryKind == WeaponDeliveryKind.Contact)
+            {
+                Fix32 gap = CombatGeometry.ContactGap(world, source, targeting.CurrentTarget);
+                if (gap > weapon.Range || gap < weapon.MinimumRange) continue;
+                Angle16 targetFacing = Angle16.FromDirection(targetTransform.Position - sourceTransform.Position);
+                if (System.Math.Abs(Angle16.ShortestDelta(sourceTransform.Orientation, targetFacing)) > weapon.FacingToleranceAngle16) continue;
+                if (world.Entities.Movement.TryGet(source, out Movement movement) &&
+                    movement.CurrentSpeed > movement.MaxSpeed * Fix32.FromRatio(weapon.MaximumMovingFireSpeedBasisPoints, 10_000)) continue;
+            }
+            else
+            {
+                long dx = (long)targetTransform.Position.X.Raw - sourceTransform.Position.X.Raw;
+                long dy = (long)targetTransform.Position.Y.Raw - sourceTransform.Position.Y.Raw;
+                long distanceSquared = dx * dx + dy * dy;
+                long maximum = weapon.Range.Raw;
+                long minimum = weapon.MinimumRange.Raw;
+                if (distanceSquared > maximum * maximum || distanceSquared < minimum * minimum) continue;
+            }
 
             if (weapon.RequiresLineOfSight)
             {

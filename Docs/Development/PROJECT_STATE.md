@@ -5,13 +5,13 @@ remain authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M4 — Combat / T043 deterministic Damage / Armor implemented; acceptance candidate.**
+**M4 — Combat / T044 Contact weapons implemented; automated acceptance candidate.**
 
 The accepted M3 T030-T039 economy/base-building stack is merged through PR #10.
 M4 T040 Targeting, T041 Weapons and T042 Projectiles are fully automated-verified
-and human-accepted. T043 Damage / Armor is implemented on the current stacked
-branch; contact resolution, destruction and repair remain their separately
-scheduled T044-T046 tasks.
+and human-accepted. T043 Damage / Armor and T044 Contact weapons are implemented
+on the current stacked branch; T044 still needs human feel/readability review,
+while destruction and repair remain their separately scheduled T045-T046 tasks.
 
 ## Engine / architecture
 
@@ -394,6 +394,32 @@ narrow placement cases allowed by Phase 09B.
   Verification summary: `Artifacts/Verification/20260810T232508Z-full-summary.txt`.
 - A launchable T043 debug build was produced at
   `Builds/macOS/LEGO Space RTS.app` and passed the export smoke launch.
+- M4 T044 Contact weapons are implemented on the current stacked task branch.
+  Contact distance is footprint-aware for units and rectangular structures.
+  Attackers reserve distinct legal positions from a deterministic sixteen-point
+  engagement ring, retain those reservations while the target moves and choose
+  passable alternatives in stable Entity-ID order.
+- Contact readiness now enforces canonical facing: ±30° for the Chrome Crusher
+  drill and ±45° for the Crew tool and Loader scoop. An attacker may maintain
+  engagement at at most 35% of maximum speed; full-speed drive-through contact
+  cannot deal damage. Neither participant is locked, so retreat, reversal and
+  displacement remain ordinary deterministic movement.
+- Contact firing applies immediate delivery through the same canonical
+  class/Armor resolver as projectile impacts. Direct attacks with projectile
+  weapons now move into range rather than only selecting the target. All direct
+  pursuit is bounded by the canonical twelve-cell leash from its recorded
+  start, after which an unreachable target is released.
+- Snapshot v15 / simulation protocol v13 and prototype content v14 preserve
+  pursuit origin, contact-slot reservation, combat-move state, facing tolerance
+  and moving-fire limit while retaining supported legacy readers. Replay remains
+  v6 because T044 adds no command encoding.
+- The T044 full verification candidate is green across every `BLOCKING_NOW`
+  stage: builds, 162 NUnit tests, the representative 24-mover movement gate,
+  compiled content, HeadlessSim, Godot smoke, 100-repeat determinism, replay,
+  snapshot continuation, regeneration and macOS export. Verification summary:
+  `Artifacts/Verification/20260811T070232Z-full-summary.txt`.
+- A launchable T044 debug build was produced at
+  `Builds/macOS/LEGO Space RTS.app` and passed the export smoke launch.
 
 ## Current gates
 
@@ -439,11 +465,11 @@ narrow placement cases allowed by Phase 09B.
   current SimCore entity in explored fog; that would become an information leak
   in multiplayer. Add serialized/per-viewer knowledge through a separately
   reviewed fog-information task no later than M6 T061 fog filtering.
-- T043 now consumes ordered projectile impacts through the common canonical
-  damage/armor resolver. Contact delivery, approach slots/facing and movement
-  into chase range remain T044/later M4 scope. The canonical
-  12-cell direct-pursuit leash and attack-move route leash also remain pending;
-  no temporary presentation-owned chase or damage behavior is introduced.
+- T044 now supplies footprint-aware contact delivery, deterministic approach
+  slots/facing and the canonical 12-cell direct-pursuit leash. Attack-move and
+  Patrol are not yet player-facing implemented commands, so their canonical
+  route leashes remain pending with those later combat-command tasks; no
+  presentation-owned chase or damage behavior is introduced.
 - Muzzle flash and Survey Pulse presentation currently use simple short-lived
   amber spheres. Human acceptance classifies them as adequate prototype
   feedback but not final differentiated combat VFX.
@@ -459,6 +485,6 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. M4 T044 Contact weapons / deterministic approach slots and facing. The
-   remaining canonical ranged/direct pursuit behavior must receive an explicit
-   implementation home in the M4 combat sequence rather than being lost.
+1. Complete T044 human playtest acceptance for contact approach readability,
+   facing/engagement feel and the repaired out-of-range direct Attack behavior.
+2. M4 T045 Destruction / wrecks / collision transition after T044 acceptance.
