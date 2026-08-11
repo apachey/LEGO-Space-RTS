@@ -185,6 +185,15 @@ public partial class BasicHud : CanvasLayer
         _portraitLabel.Text = PortraitPlaceholder(first, _selection.Selected.Count);
         _builder.Clear();
         if (_selection.Selected.Count > 1) _builder.Append("Primary: ").Append(EntityName(first)).Append('\n');
+        if (_bridge.World.Entities.Health.TryGet(first, out Health health))
+        {
+            int percent = health.Maximum.Raw == 0 ? 0 : checked((int)((long)health.Current.Raw * 100 / health.Maximum.Raw));
+            _builder.Append("HP  ").Append(health.Current.RoundToInt()).Append(" / ").Append(health.Maximum.RoundToInt())
+                .Append("   Armor  A").Append(health.ArmorRating).Append("   ")
+                .Append(percent >= 70 ? "HEALTHY" : percent >= 35 ? "DAMAGED" : percent > 0 ? "HEAVILY DAMAGED" : "DEPLETED").Append('\n');
+        }
+        if (_bridge.World.Entities.Targetable.TryGet(first, out Targetable targetable))
+            _builder.Append("Target class  ").Append(targetable.Class).Append('\n');
         if (_bridge.World.Entities.Worker.TryGet(first, out Worker worker) && _bridge.World.Entities.ResourceCarrier.TryGet(first, out ResourceCarrier carrier))
             _builder.Append("Task  ").Append(worker.TaskState).Append("   Cargo  ").Append(carrier.Amount).Append('/').Append(carrier.Capacity).Append(" Ore\n");
         if (_bridge.World.Entities.ConstructionSite.TryGet(first, out ConstructionSite site))

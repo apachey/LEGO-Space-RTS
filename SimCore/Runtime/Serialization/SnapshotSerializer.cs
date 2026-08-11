@@ -7,8 +7,8 @@ namespace LegoSpaceRTS.SimCore
 public static class SnapshotSerializer
 {
     public const uint Magic = 0x53525453; // STRS
-    public const ushort FormatVersion = 13;
-    public const ushort SimulationProtocolVersion = 11;
+    public const ushort FormatVersion = 14;
+    public const ushort SimulationProtocolVersion = 12;
 
     [Flags]
     private enum EntityComponents : uint
@@ -37,7 +37,8 @@ public static class SnapshotSerializer
         Targetable = 1 << 20,
         Targeting = 1 << 21,
         Weapon = 1 << 22,
-        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver | ResourceBank | Building | ConstructionSite | Builder | Production | EnergyDomain | EnergyDomainMember | PowerState | Targetable | Targeting | Weapon
+        Health = 1 << 23,
+        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver | ResourceBank | Building | ConstructionSite | Builder | Production | EnergyDomain | EnergyDomainMember | PowerState | Targetable | Targeting | Weapon | Health
     }
 
     public static byte[] Serialize(SimulationWorld world)
@@ -59,7 +60,7 @@ public static class SnapshotSerializer
         using MemoryStream ms = new(bytes, false); using BinaryReader r = new(ms);
         if (r.ReadUInt32() != Magic) throw new InvalidDataException("Snapshot magic mismatch.");
         ushort format = r.ReadUInt16(), protocol = r.ReadUInt16();
-        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8) || (format == 11 && protocol == 9) || (format == 12 && protocol == 10);
+        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8) || (format == 11 && protocol == 9) || (format == 12 && protocol == 10) || (format == 13 && protocol == 11);
         if (!supportedLegacy && (format != FormatVersion || protocol != SimulationProtocolVersion)) throw new InvalidDataException($"Unsupported snapshot {format}/{protocol}.");
         SimTick tick = new(r.ReadInt32()); MapGrid map = MapGrid.Deserialize(r); uint nextEntity = r.ReadUInt32();
         EntityStore entities = new(); int entityCount = r.ReadInt32(); if (entityCount < 0 || entityCount > 10000) throw new InvalidDataException("Invalid entity count.");
@@ -74,7 +75,11 @@ public static class SnapshotSerializer
         if (format < 7) AddLegacyBuilders(temp);
         if (format < 8) AddLegacyProduction(temp);
         if (format < 11) AddLegacyCombatComponents(temp);
-        else if (format < 12) AddLegacyWeaponComponents(temp);
+        else
+        {
+            if (format < 12) AddLegacyWeaponComponents(temp);
+            if (format < 14) AddLegacyHealthComponents(temp);
+        }
         entities.RestoreNextEntityValue(nextEntity);
         temp.Commands.Deserialize(r, includeBuildFields: format >= 6, includeEnergyPriority: format >= 10);
         temp.Fog = FogState.Deserialize(r);
@@ -169,6 +174,7 @@ public static class SnapshotSerializer
         if (world.Entities.Targetable.Has(id)) components |= EntityComponents.Targetable;
         if (world.Entities.Targeting.Has(id)) components |= EntityComponents.Targeting;
         if (world.Entities.Weapon.Has(id)) components |= EntityComponents.Weapon;
+        if (world.Entities.Health.Has(id)) components |= EntityComponents.Health;
         if (world.TryGetQueue(id, out _)) components |= EntityComponents.CommandQueue;
         if (world.Corridors.ContainsKey(id.Value)) components |= EntityComponents.RouteCorridor;
         w.Write((uint)components);
@@ -200,6 +206,7 @@ public static class SnapshotSerializer
         if ((components & EntityComponents.Targetable) != 0) WriteTargetable(w, world.Entities.Targetable.Get(id));
         if ((components & EntityComponents.Targeting) != 0) WriteTargeting(w, world.Entities.Targeting.Get(id));
         if ((components & EntityComponents.Weapon) != 0) WriteWeapon(w, world.Entities.Weapon.Get(id));
+        if ((components & EntityComponents.Health) != 0) WriteHealth(w, world.Entities.Health.Get(id));
         if ((components & EntityComponents.CommandQueue) != 0) world.GetQueue(id).Serialize(w, includeTargetEntity: true);
         if ((components & EntityComponents.RouteCorridor) != 0) WriteCorridor(w, world.Corridors[id.Value]);
     }
@@ -301,6 +308,11 @@ public static class SnapshotSerializer
         w.Write(weapon.LastFiredTarget.Value); w.Write(weapon.LastFiredTick);
     }
 
+    private static void WriteHealth(BinaryWriter w, Health health)
+    {
+        w.Write(health.Maximum.Raw); w.Write(health.Current.Raw); w.Write(health.ArmorRating); w.Write(health.LastDamageTick);
+    }
+
     private static void WriteCorridor(BinaryWriter w, RouteCorridor path)
     {
         w.Write(path.TopologyVersion); w.Write(path.Cells.Count);
@@ -344,6 +356,7 @@ public static class SnapshotSerializer
                 throw new InvalidDataException("Invalid weapon state.");
             world.Entities.Weapon.Set(id, weapon);
         }
+        if ((components & EntityComponents.Health) != 0) world.Entities.Health.Set(id, ReadHealth(r, world.Tick.Value));
         if ((components & EntityComponents.CommandQueue) != 0) world.GetQueue(id).Deserialize(r, includeTargetEntity: format >= 4);
         if ((components & EntityComponents.RouteCorridor) != 0) world.Corridors[id.Value] = ReadCorridor(r);
     }
@@ -482,6 +495,17 @@ public static class SnapshotSerializer
         return weapon;
     }
 
+    private static Health ReadHealth(BinaryReader r, int currentTick)
+    {
+        Health health = new()
+        {
+            Maximum = Fix32.FromRaw(r.ReadInt32()), Current = Fix32.FromRaw(r.ReadInt32()), ArmorRating = r.ReadByte(), LastDamageTick = r.ReadInt32()
+        };
+        if (health.Maximum <= Fix32.Zero || health.Current < Fix32.Zero || health.Current > health.Maximum || health.ArmorRating > 5 ||
+            health.LastDamageTick < -1 || health.LastDamageTick > currentTick) throw new InvalidDataException("Invalid health state.");
+        return health;
+    }
+
     private static void AddLegacyProduction(SimulationWorld world)
     {
         IReadOnlyList<EntityId> alive = world.Entities.Alive;
@@ -514,6 +538,19 @@ public static class SnapshotSerializer
             if (!world.Entities.Selectable.TryGet(id, out Selectable selectable) ||
                 !world.Content.TryGetEntity(selectable.ContentType, out PrototypeEntityDefinition definition)) continue;
             ScenarioFactory.AddWeaponComponent(world, id, definition);
+        }
+    }
+
+    private static void AddLegacyHealthComponents(SimulationWorld world)
+    {
+        IReadOnlyList<EntityId> alive = world.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (!world.Entities.Targetable.Has(id) || !world.Entities.Selectable.TryGet(id, out Selectable selectable) ||
+                !world.Content.TryGetEntity(selectable.ContentType, out PrototypeEntityDefinition definition) || !definition.Combat.IsTargetable) continue;
+            Fix32 maximum = Fix32.FromInt(definition.Combat.MaximumHitPoints);
+            world.Entities.Health.Set(id, new Health { Maximum = maximum, Current = maximum, ArmorRating = definition.Combat.ArmorRating, LastDamageTick = -1 });
         }
     }
 

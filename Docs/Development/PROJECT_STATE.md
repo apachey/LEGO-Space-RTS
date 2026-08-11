@@ -5,13 +5,13 @@ remain authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M4 — Combat / T042 deterministic Projectiles human-accepted; T043 next.**
+**M4 — Combat / T043 deterministic Damage / Armor implemented; acceptance candidate.**
 
 The accepted M3 T030-T039 economy/base-building stack is merged through PR #10.
-M4 T040 Targeting, T041 Weapons and T042 Projectiles are implemented, fully
-automated-verified and human-accepted on the current stacked branch. Damage,
-contact resolution, destruction and repair remain their separately scheduled
-T043-T046 tasks.
+M4 T040 Targeting, T041 Weapons and T042 Projectiles are fully automated-verified
+and human-accepted. T043 Damage / Armor is implemented on the current stacked
+branch; contact resolution, destruction and repair remain their separately
+scheduled T044-T046 tasks.
 
 ## Engine / architecture
 
@@ -369,6 +369,31 @@ narrow placement cases allowed by Phase 09B.
   target without approaching it. This is an acknowledged missing combat-chase
   behavior, not a T040-T042 regression; the canonical 12-cell pursuit leash must
   be implemented in later M4 combat work before the loop is complete.
+- M4 T043 Damage / Armor is implemented on the current stacked task branch.
+  Every first-playable Rock Raider unit and building now spawns with its exact
+  canonical HP, target class and Armor Rating. Authoritative health uses Fix32,
+  preserving fractional matrix/armor results between hits rather than silently
+  rounding balance values per shot.
+- A delivery-independent SimCore resolver applies the complete six-by-seven
+  Phase 06 damage-type matrix, then the canonical A0-A5 multiplier, clamps HP at
+  zero and enforces the one-damage armor floor. Projectile impacts feed this
+  resolver in stable Projectile-ID order; targets at zero HP are no longer legal
+  targets and cannot fire. T045 still owns removal, wrecks and collision timers.
+- Snapshot v14 / simulation protocol v12 and prototype content v13 preserve HP,
+  Armor Rating, fractional current health and last-damage tick while retaining
+  supported legacy readers. Replay remains v6 because T043 adds no command
+  encoding.
+- Godot displays exact HP / maximum HP, Armor Rating, target class and canonical
+  healthy/damaged/heavily-damaged state in the selection panel. Contextual
+  world-space health bars appear for selected, targeted or damaged visible
+  entities; their state is presentation-only.
+- The T043 full verification acceptance candidate is green across every
+  `BLOCKING_NOW` stage: builds, 157 NUnit tests, the representative 24-mover
+  movement gate, compiled content, HeadlessSim, Godot smoke, 100-repeat
+  determinism, replay, snapshot continuation, regeneration and macOS export.
+  Verification summary: `Artifacts/Verification/20260810T232508Z-full-summary.txt`.
+- A launchable T043 debug build was produced at
+  `Builds/macOS/LEGO Space RTS.app` and passed the export smoke launch.
 
 ## Current gates
 
@@ -414,9 +439,9 @@ narrow placement cases allowed by Phase 09B.
   current SimCore entity in explored fog; that would become an information leak
   in multiplayer. Add serialized/per-viewer knowledge through a separately
   reviewed fog-information task no later than M6 T061 fog filtering.
-- T042 deliberately emits ordered projectile impacts without applying
-  damage/armor, resolving contact approach slots/facing, or moving into chase
-  range. Those remain T043-T044 scope. The canonical
+- T043 now consumes ordered projectile impacts through the common canonical
+  damage/armor resolver. Contact delivery, approach slots/facing and movement
+  into chase range remain T044/later M4 scope. The canonical
   12-cell direct-pursuit leash and attack-move route leash also remain pending;
   no temporary presentation-owned chase or damage behavior is introduced.
 - Muzzle flash and Survey Pulse presentation currently use simple short-lived
@@ -434,7 +459,6 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. M4 T043 Damage / armor using the canonical Phase 06 formula.
-2. M4 T044 Contact weapons / deterministic approach slots and facing. The
+1. M4 T044 Contact weapons / deterministic approach slots and facing. The
    remaining canonical ranged/direct pursuit behavior must receive an explicit
    implementation home in the M4 combat sequence rather than being lost.

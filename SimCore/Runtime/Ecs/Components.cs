@@ -207,6 +207,16 @@ public struct Targetable
     public CombatTargetFlags Flags;
 }
 
+public struct Health
+{
+    public Fix32 Maximum;
+    public Fix32 Current;
+    public byte ArmorRating;
+    public int LastDamageTick;
+
+    public bool IsDepleted => Current <= Fix32.Zero;
+}
+
 public struct Targeting
 {
     public EntityId CurrentTarget;

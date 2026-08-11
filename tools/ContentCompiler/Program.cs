@@ -36,7 +36,7 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
 {
     using JsonDocument document = JsonDocument.Parse(File.ReadAllText(path));
     JsonElement root = document.RootElement;
-    if (root.GetProperty("schemaVersion").GetInt32() != 12) throw new InvalidDataException("Unsupported prototype content schema.");
+    if (root.GetProperty("schemaVersion").GetInt32() != 13) throw new InvalidDataException("Unsupported prototype content schema.");
     if (!string.Equals(root.GetProperty("contentKind").GetString(), "prototype_entities", StringComparison.Ordinal)) throw new InvalidDataException("Unexpected contentKind.");
 
     List<PrototypeMovementProfile> profiles = new();
@@ -116,6 +116,8 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
         CombatTargetClass targetClass = Enum.Parse<CombatTargetClass>(RequiredString(combatTarget, "class"), false);
         CombatTargetLayer targetLayer = Enum.Parse<CombatTargetLayer>(RequiredString(combatTarget, "layer"), false);
         CombatTargetFlags targetFlags = ReadCombatTargetFlags(combatTarget.GetProperty("flags"));
+        ushort maximumHitPoints = checked((ushort)combatTarget.GetProperty("hitPoints").GetInt32());
+        byte armorRating = checked((byte)combatTarget.GetProperty("armorRating").GetInt32());
         PrototypeCombatProfile combat;
         if (item.TryGetProperty("weaponProfile", out JsonElement weaponProfileElement))
         {
@@ -124,10 +126,10 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
             Fix32 acquisitionRadius = weapon.Range + Fix32.FromInt(4);
             Fix32 sightRadius = Fix32.FromInt(visionRadius);
             if (acquisitionRadius > sightRadius) acquisitionRadius = sightRadius;
-            combat = new PrototypeCombatProfile(targetClass, targetLayer, targetFlags,
+            combat = new PrototypeCombatProfile(targetClass, targetLayer, targetFlags, maximumHitPoints, armorRating,
                 weapon.PriorityProfile, weapon.LegalTargetLayers, weapon.LegalTargetClasses, acquisitionRadius, weapon.Id);
         }
-        else combat = new PrototypeCombatProfile(targetClass, targetLayer, targetFlags);
+        else combat = new PrototypeCombatProfile(targetClass, targetLayer, targetFlags, maximumHitPoints, armorRating);
         entities.Add(new PrototypeEntityDefinition(key, RequiredString(item, "faction"), RequiredString(item, "sourceClassification"), movement,
             Enum.Parse<FootprintClass>(RequiredString(item, "footprint"), false), selectableKind,
             visionRadius, RequiredString(item, "viewProfile"), oreTicks, oreCapacity, operationsCapacity, combat));

@@ -266,6 +266,8 @@ public static class ScenarioFactory
         PrototypeCombatProfile combat = definition.Combat;
         if (!combat.IsTargetable) return;
         world.Entities.Targetable.Set(id, new Targetable { Class = combat.TargetClass, Layer = combat.TargetLayer, Flags = combat.TargetFlags });
+        Fix32 maximum = Fix32.FromInt(combat.MaximumHitPoints);
+        world.Entities.Health.Set(id, new Health { Maximum = maximum, Current = maximum, ArmorRating = combat.ArmorRating, LastDamageTick = -1 });
         if (!combat.CanAcquireTargets) return;
         world.Entities.Targeting.Set(id, new Targeting
         {

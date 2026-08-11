@@ -29,6 +29,8 @@ public readonly struct PrototypeCombatProfile
     public readonly CombatTargetClass TargetClass;
     public readonly CombatTargetLayer TargetLayer;
     public readonly CombatTargetFlags TargetFlags;
+    public readonly ushort MaximumHitPoints;
+    public readonly byte ArmorRating;
     public readonly TargetPriorityProfile PriorityProfile;
     public readonly TargetLayerMask LegalTargetLayers;
     public readonly TargetClassMask LegalTargetClasses;
@@ -36,20 +38,23 @@ public readonly struct PrototypeCombatProfile
     public readonly ContentId WeaponProfile;
     public bool CanAcquireTargets => LegalTargetLayers != TargetLayerMask.None && LegalTargetClasses != TargetClassMask.None && AcquisitionRadius > Fix32.Zero;
 
-    public PrototypeCombatProfile(CombatTargetClass targetClass, CombatTargetLayer targetLayer, CombatTargetFlags targetFlags)
-        : this(targetClass, targetLayer, targetFlags, TargetPriorityProfile.Support, TargetLayerMask.None, TargetClassMask.None, Fix32.Zero) { }
-
     public PrototypeCombatProfile(CombatTargetClass targetClass, CombatTargetLayer targetLayer, CombatTargetFlags targetFlags,
+        ushort maximumHitPoints, byte armorRating)
+        : this(targetClass, targetLayer, targetFlags, maximumHitPoints, armorRating, TargetPriorityProfile.Support, TargetLayerMask.None, TargetClassMask.None, Fix32.Zero) { }
+
+    public PrototypeCombatProfile(CombatTargetClass targetClass, CombatTargetLayer targetLayer, CombatTargetFlags targetFlags, ushort maximumHitPoints, byte armorRating,
         TargetPriorityProfile priorityProfile, TargetLayerMask legalTargetLayers, TargetClassMask legalTargetClasses, Fix32 acquisitionRadius,
         ContentId weaponProfile = default)
     {
         if (targetClass < CombatTargetClass.Personnel || targetClass > CombatTargetClass.FortifiedStructure) throw new ArgumentOutOfRangeException(nameof(targetClass));
         if (targetLayer < CombatTargetLayer.Ground || targetLayer > CombatTargetLayer.TrueAir) throw new ArgumentOutOfRangeException(nameof(targetLayer));
         if ((targetFlags & ~(CombatTargetFlags.CombatThreat | CombatTargetFlags.Worker | CombatTargetFlags.Transport | CombatTargetFlags.Support | CombatTargetFlags.DefensiveStructure | CombatTargetFlags.Production | CombatTargetFlags.EconomicInfrastructure | CombatTargetFlags.Command)) != 0) throw new ArgumentOutOfRangeException(nameof(targetFlags));
+        if (maximumHitPoints == 0 || armorRating > 5) throw new ArgumentOutOfRangeException(nameof(maximumHitPoints));
         if ((legalTargetLayers & ~TargetLayerMask.All) != 0 || (legalTargetClasses & ~TargetClassMask.All) != 0) throw new ArgumentOutOfRangeException(nameof(legalTargetLayers));
         bool hasTargeting = legalTargetLayers != TargetLayerMask.None || legalTargetClasses != TargetClassMask.None || acquisitionRadius != Fix32.Zero;
         if (hasTargeting && (legalTargetLayers == TargetLayerMask.None || legalTargetClasses == TargetClassMask.None || acquisitionRadius <= Fix32.Zero)) throw new ArgumentException("Targeting metadata must provide legal layers, legal classes and a positive acquisition radius together.");
         IsTargetable = true; TargetClass = targetClass; TargetLayer = targetLayer; TargetFlags = targetFlags;
+        MaximumHitPoints = maximumHitPoints; ArmorRating = armorRating;
         PriorityProfile = priorityProfile; LegalTargetLayers = legalTargetLayers; LegalTargetClasses = legalTargetClasses; AcquisitionRadius = acquisitionRadius;
         WeaponProfile = weaponProfile;
     }
@@ -340,16 +345,16 @@ public static class PrototypeContentFactory
         };
         PrototypeEntityDefinition[] entities =
         {
-            new PrototypeEntityDefinition("building.rock_raiders.hq", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.static", FootprintClass.Huge, SelectableKind.Building, 0, "view.placeholder.rock_raiders.hq", combat: new PrototypeCombatProfile(CombatTargetClass.FortifiedStructure, CombatTargetLayer.Ground, CombatTargetFlags.Command)),
-            new PrototypeEntityDefinition("building.rock_raiders.ore_processing_plant", "RockRaiders", "COMPOSITE_ADAPTED", "movement.prototype.static", FootprintClass.Large, SelectableKind.Building, 0, "view.placeholder.rock_raiders.ore_processing_plant", combat: new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.EconomicInfrastructure)),
-            new PrototypeEntityDefinition("building.rock_raiders.power_station", "RockRaiders", "COMPOSITE_ADAPTED", "movement.prototype.static", FootprintClass.Large, SelectableKind.Building, 0, "view.placeholder.rock_raiders.power_station", combat: new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.EconomicInfrastructure)),
-            new PrototypeEntityDefinition("building.rock_raiders.vehicle_service_bay", "RockRaiders", "COMPOSITE_ADAPTED", "movement.prototype.static", FootprintClass.Huge, SelectableKind.Building, 0, "view.placeholder.rock_raiders.vehicle_service_bay", combat: new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.Production)),
-            new PrototypeEntityDefinition("prototype.nav.huge", "Technical", "ENGINEERING_ONLY", "movement.prototype.nav_huge", FootprintClass.Huge, SelectableKind.CombatSupport, 8, "view.placeholder.navigation.huge", combat: new PrototypeCombatProfile(CombatTargetClass.MassiveMachine, CombatTargetLayer.Ground, CombatTargetFlags.None)),
-            new PrototypeEntityDefinition("unit.rock_raiders.chrome_crusher", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.chrome_crusher", FootprintClass.Large, SelectableKind.CombatSupport, 8, "view.placeholder.rock_raiders.chrome_crusher", operationsCapacity: 6, combat: new PrototypeCombatProfile(CombatTargetClass.MassiveMachine, CombatTargetLayer.Ground, CombatTargetFlags.CombatThreat, TargetPriorityProfile.Siege, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromRatio(101,20), StableId.FromKey("weapon.rr.chrome_crusher.chrome_drill"))),
-            new PrototypeEntityDefinition("unit.rock_raiders.crew", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.crew", FootprintClass.Tiny, SelectableKind.Worker, 7, "view.placeholder.rock_raiders.crew", 30, 8, 1, new PrototypeCombatProfile(CombatTargetClass.Personnel, CombatTargetLayer.Ground, CombatTargetFlags.Worker | CombatTargetFlags.Support | CombatTargetFlags.CombatThreat, TargetPriorityProfile.Support, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromRatio(24,5), StableId.FromKey("weapon.rr.crew.portable_mining_tool"))),
-            new PrototypeEntityDefinition("unit.rock_raiders.hover_scout", "RockRaiders", "OFFICIAL_DIRECT", "movement.prototype.hover_scout", FootprintClass.Small, SelectableKind.CombatSupport, 9, "view.placeholder.rock_raiders.hover_scout", operationsCapacity: 1, combat: new PrototypeCombatProfile(CombatTargetClass.LightMachine, CombatTargetLayer.Ground, CombatTargetFlags.Support | CombatTargetFlags.CombatThreat, TargetPriorityProfile.Scout, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromInt(7), StableId.FromKey("weapon.rr.hover_scout.survey_pulse"))),
-            new PrototypeEntityDefinition("unit.rock_raiders.loader_dozer", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.loader_dozer", FootprintClass.Medium, SelectableKind.CombatSupport, 7, "view.placeholder.rock_raiders.loader_dozer", operationsCapacity: 3, combat: new PrototypeCombatProfile(CombatTargetClass.MediumMachine, CombatTargetLayer.Ground, CombatTargetFlags.CombatThreat, TargetPriorityProfile.AntiLight, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromRatio(49,10), StableId.FromKey("weapon.rr.loader_dozer.scoop_ram"))),
-            new PrototypeEntityDefinition("unit.rock_raiders.rapid_rider", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.rapid_rider", FootprintClass.Small, SelectableKind.CombatSupport, 9, "view.placeholder.rock_raiders.rapid_rider", operationsCapacity: 2, combat: new PrototypeCombatProfile(CombatTargetClass.LightMachine, CombatTargetLayer.Ground, CombatTargetFlags.Transport))
+            new PrototypeEntityDefinition("building.rock_raiders.hq", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.static", FootprintClass.Huge, SelectableKind.Building, 0, "view.placeholder.rock_raiders.hq", combat: new PrototypeCombatProfile(CombatTargetClass.FortifiedStructure, CombatTargetLayer.Ground, CombatTargetFlags.Command, 3000, 5)),
+            new PrototypeEntityDefinition("building.rock_raiders.ore_processing_plant", "RockRaiders", "COMPOSITE_ADAPTED", "movement.prototype.static", FootprintClass.Large, SelectableKind.Building, 0, "view.placeholder.rock_raiders.ore_processing_plant", combat: new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.EconomicInfrastructure, 1350, 2)),
+            new PrototypeEntityDefinition("building.rock_raiders.power_station", "RockRaiders", "COMPOSITE_ADAPTED", "movement.prototype.static", FootprintClass.Large, SelectableKind.Building, 0, "view.placeholder.rock_raiders.power_station", combat: new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.EconomicInfrastructure, 1000, 1)),
+            new PrototypeEntityDefinition("building.rock_raiders.vehicle_service_bay", "RockRaiders", "COMPOSITE_ADAPTED", "movement.prototype.static", FootprintClass.Huge, SelectableKind.Building, 0, "view.placeholder.rock_raiders.vehicle_service_bay", combat: new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.Production, 1700, 3)),
+            new PrototypeEntityDefinition("prototype.nav.huge", "Technical", "ENGINEERING_ONLY", "movement.prototype.nav_huge", FootprintClass.Huge, SelectableKind.CombatSupport, 8, "view.placeholder.navigation.huge", combat: new PrototypeCombatProfile(CombatTargetClass.MassiveMachine, CombatTargetLayer.Ground, CombatTargetFlags.None, 880, 5)),
+            new PrototypeEntityDefinition("unit.rock_raiders.chrome_crusher", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.chrome_crusher", FootprintClass.Large, SelectableKind.CombatSupport, 8, "view.placeholder.rock_raiders.chrome_crusher", operationsCapacity: 6, combat: new PrototypeCombatProfile(CombatTargetClass.MassiveMachine, CombatTargetLayer.Ground, CombatTargetFlags.CombatThreat, 880, 5, TargetPriorityProfile.Siege, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromRatio(101,20), StableId.FromKey("weapon.rr.chrome_crusher.chrome_drill"))),
+            new PrototypeEntityDefinition("unit.rock_raiders.crew", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.crew", FootprintClass.Tiny, SelectableKind.Worker, 7, "view.placeholder.rock_raiders.crew", 30, 8, 1, new PrototypeCombatProfile(CombatTargetClass.Personnel, CombatTargetLayer.Ground, CombatTargetFlags.Worker | CombatTargetFlags.Support | CombatTargetFlags.CombatThreat, 110, 0, TargetPriorityProfile.Support, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromRatio(24,5), StableId.FromKey("weapon.rr.crew.portable_mining_tool"))),
+            new PrototypeEntityDefinition("unit.rock_raiders.hover_scout", "RockRaiders", "OFFICIAL_DIRECT", "movement.prototype.hover_scout", FootprintClass.Small, SelectableKind.CombatSupport, 9, "view.placeholder.rock_raiders.hover_scout", operationsCapacity: 1, combat: new PrototypeCombatProfile(CombatTargetClass.LightMachine, CombatTargetLayer.Ground, CombatTargetFlags.Support | CombatTargetFlags.CombatThreat, 120, 0, TargetPriorityProfile.Scout, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromInt(7), StableId.FromKey("weapon.rr.hover_scout.survey_pulse"))),
+            new PrototypeEntityDefinition("unit.rock_raiders.loader_dozer", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.loader_dozer", FootprintClass.Medium, SelectableKind.CombatSupport, 7, "view.placeholder.rock_raiders.loader_dozer", operationsCapacity: 3, combat: new PrototypeCombatProfile(CombatTargetClass.MediumMachine, CombatTargetLayer.Ground, CombatTargetFlags.CombatThreat, 360, 2, TargetPriorityProfile.AntiLight, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromRatio(49,10), StableId.FromKey("weapon.rr.loader_dozer.scoop_ram"))),
+            new PrototypeEntityDefinition("unit.rock_raiders.rapid_rider", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.rapid_rider", FootprintClass.Small, SelectableKind.CombatSupport, 9, "view.placeholder.rock_raiders.rapid_rider", operationsCapacity: 2, combat: new PrototypeCombatProfile(CombatTargetClass.LightMachine, CombatTargetLayer.Ground, CombatTargetFlags.Transport, 170, 0))
         };
         ResourceNodeDefinition[] resources =
         {
@@ -382,7 +387,7 @@ public static class PrototypeContentFactory
 public static class PrototypeContentCodec
 {
     private const int Magic = 0x4350534C; // LSPC little-endian bytes.
-    public const int FormatVersion = 12;
+    public const int FormatVersion = 13;
 
     public static byte[] Write(PrototypeContentCatalog catalog)
     {
@@ -407,6 +412,7 @@ public static class PrototypeContentCodec
             if (e.Combat.IsTargetable)
             {
                 writer.Write((byte)e.Combat.TargetClass); writer.Write((byte)e.Combat.TargetLayer); writer.Write((ushort)e.Combat.TargetFlags);
+                writer.Write(e.Combat.MaximumHitPoints); writer.Write(e.Combat.ArmorRating);
                 writer.Write((byte)e.Combat.PriorityProfile); writer.Write((byte)e.Combat.LegalTargetLayers); writer.Write((byte)e.Combat.LegalTargetClasses); writer.Write(e.Combat.AcquisitionRadius.Raw);
                 writer.Write(e.Combat.WeaponProfile.Value);
             }
@@ -473,8 +479,9 @@ public static class PrototypeContentCodec
             ushort oreTicks = formatVersion >= 4 ? reader.ReadUInt16() : kind == SelectableKind.Worker ? (ushort)30 : (ushort)0;
             byte oreCapacity = formatVersion >= 4 ? reader.ReadByte() : kind == SelectableKind.Worker ? (byte)8 : (byte)0;
             byte operationsCapacity = formatVersion >= 7 ? reader.ReadByte() : LegacyOperationsCapacity(key);
-            PrototypeCombatProfile combat = formatVersion >= 10 ? ReadCombatProfile(reader, formatVersion >= 11) : LegacyCombatProfile(key);
+            PrototypeCombatProfile combat = formatVersion >= 10 ? ReadCombatProfile(reader, formatVersion >= 11, formatVersion >= 13) : LegacyCombatProfile(key);
             if (formatVersion == 10) combat = AddLegacyWeaponProfile(key, combat);
+            if (formatVersion < 13) combat = AddLegacyDurability(key, combat);
             entities[i] = new PrototypeEntityDefinition(key, faction, source, movement, fp, kind, vision, view, oreTicks, oreCapacity, operationsCapacity, combat); if (entities[i].Id.Value != id) throw new InvalidDataException("Stable entity ID mismatch.");
         }
         ResourceNodeDefinition[] resourceNodes = Array.Empty<ResourceNodeDefinition>();
@@ -560,10 +567,15 @@ public static class PrototypeContentCodec
         _ => EnergyFunctionalClass.StaticDefenseAndNonessential
     };
 
-    private static PrototypeCombatProfile ReadCombatProfile(BinaryReader reader, bool includeWeaponProfile)
+    private static PrototypeCombatProfile ReadCombatProfile(BinaryReader reader, bool includeWeaponProfile, bool includeDurability)
     {
         if (!reader.ReadBoolean()) return default;
-        return new PrototypeCombatProfile((CombatTargetClass)reader.ReadByte(), (CombatTargetLayer)reader.ReadByte(), (CombatTargetFlags)reader.ReadUInt16(),
+        CombatTargetClass targetClass = (CombatTargetClass)reader.ReadByte();
+        CombatTargetLayer targetLayer = (CombatTargetLayer)reader.ReadByte();
+        CombatTargetFlags targetFlags = (CombatTargetFlags)reader.ReadUInt16();
+        ushort maximumHitPoints = includeDurability ? reader.ReadUInt16() : (ushort)1;
+        byte armorRating = includeDurability ? reader.ReadByte() : (byte)0;
+        return new PrototypeCombatProfile(targetClass, targetLayer, targetFlags, maximumHitPoints, armorRating,
             (TargetPriorityProfile)reader.ReadByte(), (TargetLayerMask)reader.ReadByte(), (TargetClassMask)reader.ReadByte(), Fix32.FromRaw(reader.ReadInt32()),
             includeWeaponProfile ? new ContentId(reader.ReadUInt32()) : default);
     }
@@ -590,7 +602,34 @@ public static class PrototypeContentCodec
     {
         string? weaponKey = LegacyWeaponKey(stableKey);
         return weaponKey is null ? combat : new PrototypeCombatProfile(combat.TargetClass, combat.TargetLayer, combat.TargetFlags,
+            combat.MaximumHitPoints, combat.ArmorRating,
             combat.PriorityProfile, combat.LegalTargetLayers, combat.LegalTargetClasses, combat.AcquisitionRadius, StableId.FromKey(weaponKey));
+    }
+
+    private static PrototypeCombatProfile AddLegacyDurability(string stableKey, PrototypeCombatProfile combat)
+    {
+        if (!combat.IsTargetable) return combat;
+        LegacyDurability(stableKey, out ushort hitPoints, out byte armorRating);
+        return new PrototypeCombatProfile(combat.TargetClass, combat.TargetLayer, combat.TargetFlags, hitPoints, armorRating,
+            combat.PriorityProfile, combat.LegalTargetLayers, combat.LegalTargetClasses, combat.AcquisitionRadius, combat.WeaponProfile);
+    }
+
+    internal static void LegacyDurability(string stableKey, out ushort hitPoints, out byte armorRating)
+    {
+        (hitPoints, armorRating) = stableKey switch
+        {
+            "building.rock_raiders.hq" => ((ushort)3000, (byte)5),
+            "building.rock_raiders.ore_processing_plant" => ((ushort)1350, (byte)2),
+            "building.rock_raiders.power_station" => ((ushort)1000, (byte)1),
+            "building.rock_raiders.vehicle_service_bay" => ((ushort)1700, (byte)3),
+            "unit.rock_raiders.crew" => ((ushort)110, (byte)0),
+            "unit.rock_raiders.hover_scout" => ((ushort)120, (byte)0),
+            "unit.rock_raiders.loader_dozer" => ((ushort)360, (byte)2),
+            "unit.rock_raiders.chrome_crusher" => ((ushort)880, (byte)5),
+            "unit.rock_raiders.rapid_rider" => ((ushort)170, (byte)0),
+            "prototype.nav.huge" => ((ushort)880, (byte)5),
+            _ => ((ushort)1, (byte)0)
+        };
     }
 
     private static string? LegacyWeaponKey(string stableKey) => stableKey switch
@@ -612,16 +651,16 @@ public static class PrototypeContentCodec
 
     private static PrototypeCombatProfile LegacyCombatProfile(string stableKey) => stableKey switch
     {
-        "building.rock_raiders.hq" => new PrototypeCombatProfile(CombatTargetClass.FortifiedStructure, CombatTargetLayer.Ground, CombatTargetFlags.Command),
-        "building.rock_raiders.ore_processing_plant" => new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.EconomicInfrastructure),
-        "building.rock_raiders.power_station" => new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.EconomicInfrastructure),
-        "building.rock_raiders.vehicle_service_bay" => new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.Production),
-        "unit.rock_raiders.crew" => new PrototypeCombatProfile(CombatTargetClass.Personnel, CombatTargetLayer.Ground, CombatTargetFlags.Worker | CombatTargetFlags.Support | CombatTargetFlags.CombatThreat, TargetPriorityProfile.Support, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromRatio(24,5), StableId.FromKey("weapon.rr.crew.portable_mining_tool")),
-        "unit.rock_raiders.hover_scout" => new PrototypeCombatProfile(CombatTargetClass.LightMachine, CombatTargetLayer.Ground, CombatTargetFlags.Support | CombatTargetFlags.CombatThreat, TargetPriorityProfile.Scout, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromInt(7), StableId.FromKey("weapon.rr.hover_scout.survey_pulse")),
-        "unit.rock_raiders.loader_dozer" => new PrototypeCombatProfile(CombatTargetClass.MediumMachine, CombatTargetLayer.Ground, CombatTargetFlags.CombatThreat, TargetPriorityProfile.AntiLight, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromRatio(49,10), StableId.FromKey("weapon.rr.loader_dozer.scoop_ram")),
-        "unit.rock_raiders.chrome_crusher" => new PrototypeCombatProfile(CombatTargetClass.MassiveMachine, CombatTargetLayer.Ground, CombatTargetFlags.CombatThreat, TargetPriorityProfile.Siege, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromRatio(101,20), StableId.FromKey("weapon.rr.chrome_crusher.chrome_drill")),
-        "unit.rock_raiders.rapid_rider" => new PrototypeCombatProfile(CombatTargetClass.LightMachine, CombatTargetLayer.Ground, CombatTargetFlags.Transport),
-        "prototype.nav.huge" => new PrototypeCombatProfile(CombatTargetClass.MassiveMachine, CombatTargetLayer.Ground, CombatTargetFlags.None),
+        "building.rock_raiders.hq" => new PrototypeCombatProfile(CombatTargetClass.FortifiedStructure, CombatTargetLayer.Ground, CombatTargetFlags.Command, 3000, 5),
+        "building.rock_raiders.ore_processing_plant" => new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.EconomicInfrastructure, 1350, 2),
+        "building.rock_raiders.power_station" => new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.EconomicInfrastructure, 1000, 1),
+        "building.rock_raiders.vehicle_service_bay" => new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.Production, 1700, 3),
+        "unit.rock_raiders.crew" => new PrototypeCombatProfile(CombatTargetClass.Personnel, CombatTargetLayer.Ground, CombatTargetFlags.Worker | CombatTargetFlags.Support | CombatTargetFlags.CombatThreat, 110, 0, TargetPriorityProfile.Support, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromRatio(24,5), StableId.FromKey("weapon.rr.crew.portable_mining_tool")),
+        "unit.rock_raiders.hover_scout" => new PrototypeCombatProfile(CombatTargetClass.LightMachine, CombatTargetLayer.Ground, CombatTargetFlags.Support | CombatTargetFlags.CombatThreat, 120, 0, TargetPriorityProfile.Scout, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromInt(7), StableId.FromKey("weapon.rr.hover_scout.survey_pulse")),
+        "unit.rock_raiders.loader_dozer" => new PrototypeCombatProfile(CombatTargetClass.MediumMachine, CombatTargetLayer.Ground, CombatTargetFlags.CombatThreat, 360, 2, TargetPriorityProfile.AntiLight, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromRatio(49,10), StableId.FromKey("weapon.rr.loader_dozer.scoop_ram")),
+        "unit.rock_raiders.chrome_crusher" => new PrototypeCombatProfile(CombatTargetClass.MassiveMachine, CombatTargetLayer.Ground, CombatTargetFlags.CombatThreat, 880, 5, TargetPriorityProfile.Siege, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromRatio(101,20), StableId.FromKey("weapon.rr.chrome_crusher.chrome_drill")),
+        "unit.rock_raiders.rapid_rider" => new PrototypeCombatProfile(CombatTargetClass.LightMachine, CombatTargetLayer.Ground, CombatTargetFlags.Transport, 170, 0),
+        "prototype.nav.huge" => new PrototypeCombatProfile(CombatTargetClass.MassiveMachine, CombatTargetLayer.Ground, CombatTargetFlags.None, 880, 5),
         _ => default
     };
 }

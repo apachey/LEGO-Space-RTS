@@ -134,7 +134,7 @@ check(len(source.get('resourceReceivers',[])) == 2, 'M3 starting HQ resource rec
 check(len(source.get('visionTestGeometry',[])) >= 4, 'vision test geometry missing')
 
 content_source = json.loads((ROOT/'Content/PrototypeEntities.json').read_text())
-check(content_source.get('schemaVersion') == 12 and content_source.get('contentKind') == 'prototype_entities', 'prototype content schema mismatch')
+check(content_source.get('schemaVersion') == 13 and content_source.get('contentKind') == 'prototype_entities', 'prototype content schema mismatch')
 entity_keys = [e.get('stableId') for e in content_source.get('entities',[])]
 check(len(entity_keys) >= 5 and len(entity_keys) == len(set(entity_keys)), 'prototype content entries missing/duplicated')
 for required_key in ['building.rock_raiders.hq','building.rock_raiders.ore_processing_plant','building.rock_raiders.power_station','building.rock_raiders.vehicle_service_bay','unit.rock_raiders.crew','unit.rock_raiders.hover_scout','unit.rock_raiders.rapid_rider','unit.rock_raiders.loader_dozer','unit.rock_raiders.chrome_crusher','prototype.nav.huge']:
@@ -158,6 +158,18 @@ expected_combat_targets={
     'building.rock_raiders.vehicle_service_bay':('Structure','Ground',['Production']),
 }
 check({key:(by_key.get(key,{}).get('combatTarget',{}).get('class'),by_key.get(key,{}).get('combatTarget',{}).get('layer'),by_key.get(key,{}).get('combatTarget',{}).get('flags')) for key in expected_combat_targets} == expected_combat_targets, 'canonical M4 target classes, layers or role flags missing')
+expected_durability={
+    'unit.rock_raiders.crew':(110,0),
+    'unit.rock_raiders.hover_scout':(120,0),
+    'unit.rock_raiders.rapid_rider':(170,0),
+    'unit.rock_raiders.loader_dozer':(360,2),
+    'unit.rock_raiders.chrome_crusher':(880,5),
+    'building.rock_raiders.hq':(3000,5),
+    'building.rock_raiders.ore_processing_plant':(1350,2),
+    'building.rock_raiders.power_station':(1000,1),
+    'building.rock_raiders.vehicle_service_bay':(1700,3),
+}
+check({key:(by_key.get(key,{}).get('combatTarget',{}).get('hitPoints'),by_key.get(key,{}).get('combatTarget',{}).get('armorRating')) for key in expected_durability} == expected_durability, 'canonical T043 hit points or Armor Ratings missing')
 expected_weapon_profiles={
     'unit.rock_raiders.crew':'weapon.rr.crew.portable_mining_tool',
     'unit.rock_raiders.hover_scout':'weapon.rr.hover_scout.survey_pulse',

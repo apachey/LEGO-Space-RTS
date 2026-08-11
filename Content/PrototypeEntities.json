@@ -1,7 +1,7 @@
 {
-  "schemaVersion": 12,
+  "schemaVersion": 13,
   "contentKind": "prototype_entities",
-  "policy": "M2 movement, canonical M3 economy metadata and the canonical M4 Rock Raider targeting, weapons and T042 projectile travel inputs; damage and contact resolution remain scheduled later systems.",
+  "policy": "M2 movement, canonical M3 economy metadata and canonical M4 Rock Raider targeting, weapons, projectile travel, hit points, target classes and Armor Ratings; contact resolution remains a scheduled later system.",
   "movementProfiles": [
     {
       "stableId": "movement.prototype.crew",
@@ -304,7 +304,7 @@
       "selectableKind": "Building",
       "visionRadius": 0,
       "operationsCapacity": 0,
-      "combatTarget": { "class": "FortifiedStructure", "layer": "Ground", "flags": ["Command"] },
+      "combatTarget": { "class": "FortifiedStructure", "layer": "Ground", "flags": ["Command"], "hitPoints": 3000, "armorRating": 5 },
       "viewProfile": "view.placeholder.rock_raiders.hq"
     },
     {
@@ -316,7 +316,7 @@
       "selectableKind": "Building",
       "visionRadius": 0,
       "operationsCapacity": 0,
-      "combatTarget": { "class": "Structure", "layer": "Ground", "flags": ["EconomicInfrastructure"] },
+      "combatTarget": { "class": "Structure", "layer": "Ground", "flags": ["EconomicInfrastructure"], "hitPoints": 1350, "armorRating": 2 },
       "viewProfile": "view.placeholder.rock_raiders.ore_processing_plant"
     },
     {
@@ -328,7 +328,7 @@
       "selectableKind": "Building",
       "visionRadius": 0,
       "operationsCapacity": 0,
-      "combatTarget": { "class": "Structure", "layer": "Ground", "flags": ["EconomicInfrastructure"] },
+      "combatTarget": { "class": "Structure", "layer": "Ground", "flags": ["EconomicInfrastructure"], "hitPoints": 1000, "armorRating": 1 },
       "viewProfile": "view.placeholder.rock_raiders.power_station"
     },
     {
@@ -340,7 +340,7 @@
       "selectableKind": "Building",
       "visionRadius": 0,
       "operationsCapacity": 0,
-      "combatTarget": { "class": "Structure", "layer": "Ground", "flags": ["Production"] },
+      "combatTarget": { "class": "Structure", "layer": "Ground", "flags": ["Production"], "hitPoints": 1700, "armorRating": 3 },
       "viewProfile": "view.placeholder.rock_raiders.vehicle_service_bay"
     },
     {
@@ -356,7 +356,7 @@
         "oreTicksPerUnit": 30,
         "oreCarryCapacity": 8
       },
-      "combatTarget": { "class": "Personnel", "layer": "Ground", "flags": ["CombatThreat", "Worker", "Support"] },
+      "combatTarget": { "class": "Personnel", "layer": "Ground", "flags": ["CombatThreat", "Worker", "Support"], "hitPoints": 110, "armorRating": 0 },
       "weaponProfile": "weapon.rr.crew.portable_mining_tool",
       "viewProfile": "view.placeholder.rock_raiders.crew"
     },
@@ -369,7 +369,7 @@
       "selectableKind": "CombatSupport",
       "visionRadius": 9,
       "operationsCapacity": 1,
-      "combatTarget": { "class": "LightMachine", "layer": "Ground", "flags": ["CombatThreat", "Support"] },
+      "combatTarget": { "class": "LightMachine", "layer": "Ground", "flags": ["CombatThreat", "Support"], "hitPoints": 120, "armorRating": 0 },
       "weaponProfile": "weapon.rr.hover_scout.survey_pulse",
       "viewProfile": "view.placeholder.rock_raiders.hover_scout"
     },
@@ -382,7 +382,7 @@
       "selectableKind": "CombatSupport",
       "visionRadius": 7,
       "operationsCapacity": 3,
-      "combatTarget": { "class": "MediumMachine", "layer": "Ground", "flags": ["CombatThreat"] },
+      "combatTarget": { "class": "MediumMachine", "layer": "Ground", "flags": ["CombatThreat"], "hitPoints": 360, "armorRating": 2 },
       "weaponProfile": "weapon.rr.loader_dozer.scoop_ram",
       "viewProfile": "view.placeholder.rock_raiders.loader_dozer"
     },
@@ -395,7 +395,7 @@
       "selectableKind": "CombatSupport",
       "visionRadius": 9,
       "operationsCapacity": 2,
-      "combatTarget": { "class": "LightMachine", "layer": "Ground", "flags": ["Transport"] },
+      "combatTarget": { "class": "LightMachine", "layer": "Ground", "flags": ["Transport"], "hitPoints": 170, "armorRating": 0 },
       "viewProfile": "view.placeholder.rock_raiders.rapid_rider"
     },
     {
@@ -407,7 +407,7 @@
       "selectableKind": "CombatSupport",
       "visionRadius": 8,
       "operationsCapacity": 6,
-      "combatTarget": { "class": "MassiveMachine", "layer": "Ground", "flags": ["CombatThreat"] },
+      "combatTarget": { "class": "MassiveMachine", "layer": "Ground", "flags": ["CombatThreat"], "hitPoints": 880, "armorRating": 5 },
       "weaponProfile": "weapon.rr.chrome_crusher.chrome_drill",
       "viewProfile": "view.placeholder.rock_raiders.chrome_crusher"
     },
@@ -420,7 +420,7 @@
       "selectableKind": "CombatSupport",
       "visionRadius": 8,
       "operationsCapacity": 0,
-      "combatTarget": { "class": "MassiveMachine", "layer": "Ground", "flags": [] },
+      "combatTarget": { "class": "MassiveMachine", "layer": "Ground", "flags": [], "hitPoints": 880, "armorRating": 5 },
       "viewProfile": "view.placeholder.navigation.huge"
     }
   ]

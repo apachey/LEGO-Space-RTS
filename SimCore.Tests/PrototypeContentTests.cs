@@ -23,13 +23,15 @@ public sealed class PrototypeContentTests
         PrototypeContentCatalog source = new PrototypeContentCatalog(
             new[] { new PrototypeMovementProfile("movement.test", Fix32.FromRatio(3, 2), MovementLayer.GroundHover) },
             new[] { new PrototypeEntityDefinition("unit.test", "Technical", "ENGINEERING_ONLY", "movement.test", FootprintClass.Small, SelectableKind.CombatSupport, 8, "view.test", operationsCapacity: 3,
-                combat: new PrototypeCombatProfile(CombatTargetClass.LightMachine, CombatTargetLayer.Ground, CombatTargetFlags.CombatThreat, TargetPriorityProfile.Generalist, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromInt(7))) });
+                combat: new PrototypeCombatProfile(CombatTargetClass.LightMachine, CombatTargetLayer.Ground, CombatTargetFlags.CombatThreat, 120, 1, TargetPriorityProfile.Generalist, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromInt(7))) });
         byte[] bytes = PrototypeContentCodec.Write(source);
         PrototypeContentCatalog restored = PrototypeContentCodec.Read(bytes);
         Assert.That(restored.ContentHash, Is.EqualTo(source.ContentHash));
         Assert.That(restored.Entities[0].StableKey, Is.EqualTo("unit.test"));
         Assert.That(restored.Entities[0].OperationsCapacity, Is.EqualTo(3));
         Assert.That(restored.Entities[0].Combat.TargetClass, Is.EqualTo(CombatTargetClass.LightMachine));
+        Assert.That(restored.Entities[0].Combat.MaximumHitPoints, Is.EqualTo(120));
+        Assert.That(restored.Entities[0].Combat.ArmorRating, Is.EqualTo(1));
         Assert.That(restored.Entities[0].Combat.PriorityProfile, Is.EqualTo(TargetPriorityProfile.Generalist));
         Assert.That(restored.Entities[0].Combat.AcquisitionRadius, Is.EqualTo(Fix32.FromInt(7)));
         Assert.That(restored.MovementProfiles[0].MaxSpeed, Is.EqualTo(Fix32.FromRatio(3, 2)));
