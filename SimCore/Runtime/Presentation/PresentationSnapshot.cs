@@ -65,7 +65,9 @@ public sealed class PresentationSnapshot
                 int duration = destruction.BlockingUntilTick - destruction.StartedTick;
                 int elapsed = world.Tick.Value - destruction.StartedTick;
                 ushort progress = duration <= 0 ? (ushort)10_000 : checked((ushort)System.Math.Clamp((long)elapsed * 10_000 / duration, 0, 10_000));
-                ushort debrisTicks = checked((ushort)System.Math.Max(0, destruction.VisualUntilTick - destruction.BlockingUntilTick));
+                ushort debrisTicks = destruction.Kind == DestructionKind.Unit
+                    ? (ushort)0
+                    : checked((ushort)System.Math.Max(0, destruction.VisualUntilTick - destruction.BlockingUntilTick));
                 list.Add(new PresentationEntity(id, destruction.ContentType, destruction.Owner, destructionTransform.Position, destructionTransform.Orientation,
                     MovementState.Idle, destructionVisibility, destruction.Footprint, destruction.SelectableKind,
                     buildingWidth: destruction.BuildingWidth, buildingHeight: destruction.BuildingHeight,

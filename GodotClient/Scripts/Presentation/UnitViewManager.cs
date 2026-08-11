@@ -40,6 +40,13 @@ public partial class UnitViewManager : Node3D
         _bridge = bridge; _selection = selection; _groups = groups; ProcessPriority = 100;
     }
 
+    internal bool TryGetEntityView(EntityId id, out MeshInstance3D view)
+    {
+        if (_views.TryGetValue(id.Value, out MeshInstance3D? stored)) { view = stored; return true; }
+        view = null!;
+        return false;
+    }
+
     public override void _Process(double delta)
     {
         if (_bridge?.Current is null || _bridge.Previous is null || _selection is null || _groups is null) return;
@@ -188,10 +195,10 @@ public partial class UnitViewManager : Node3D
         // Placeholder primitives do not pretend to be final LEGO breakup animation.
         // Gameplay timing is shown by the dark wreck state; actual flattening happens
         // only when collision clears and the view transitions to cosmetic debris.
-        view.Scale = BaseVisualScale(entity);
+        view.Scale = entity.DestructionProgressBasisPoints >= 10_000 ? DebrisScale(entity) : BaseVisualScale(entity);
     }
 
-    private static Vector3 DebrisScale(PresentationEntity entity)
+    internal static Vector3 DebrisScale(PresentationEntity entity)
     {
         Vector3 baseline = BaseVisualScale(entity);
         float horizontal = entity.DestructionKind == DestructionKind.Structure ? 0.82f : 0.72f;

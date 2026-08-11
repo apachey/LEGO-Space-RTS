@@ -112,7 +112,7 @@ public partial class BasicHud : CanvasLayer
         portrait.AddChild(_portraitLabel); layout.AddChild(portrait);
 
         VBoxContainer box = new() { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill }; box.AddThemeConstantOverride("separation", 7); layout.AddChild(box);
-        _selectionTitle = HudLabel("NO SELECTION", 19, RaiderAccent); box.AddChild(_selectionTitle);
+        _selectionTitle = HudLabel("NO SELECTION", 19, RaiderAccent); _selectionTitle.Name = "SelectionTitle"; box.AddChild(_selectionTitle);
         _selectionDetails = HudLabel("Select Crew, a structure, or an Ore deposit.", 15, TextMuted);
         _selectionDetails.AutowrapMode = TextServer.AutowrapMode.WordSmart; _selectionDetails.SizeFlagsVertical = Control.SizeFlags.ExpandFill; box.AddChild(_selectionDetails);
         _priorityRow = new HBoxContainer { Name = "ContextualEnergyPriority", Visible = false };
@@ -345,6 +345,7 @@ public partial class BasicHud : CanvasLayer
         "unit.rock_raiders.hover_scout" => "Hover Scout",
         "unit.rock_raiders.rapid_rider" => "Rapid Rider",
         "unit.rock_raiders.loader_dozer" => "Loader Dozer",
+        "unit.rock_raiders.chrome_crusher" => "Chrome Crusher",
         "resource.ore.standard" => "Standard Ore Deposit",
         "resource.ore.small" => "Small Ore Deposit",
         "resource.ore.rich" => "Rich Ore Deposit",

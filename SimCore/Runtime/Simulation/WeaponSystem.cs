@@ -35,18 +35,15 @@ public sealed class WeaponSystem : ISimSystem
             }
             else
             {
-                long dx = (long)targetTransform.Position.X.Raw - sourceTransform.Position.X.Raw;
-                long dy = (long)targetTransform.Position.Y.Raw - sourceTransform.Position.Y.Raw;
-                long distanceSquared = dx * dx + dy * dy;
-                long maximum = weapon.Range.Raw;
-                long minimum = weapon.MinimumRange.Raw;
-                if (distanceSquared > maximum * maximum || distanceSquared < minimum * minimum) continue;
+                Fix32 gap = CombatGeometry.RangedGap(world, source, targeting.CurrentTarget);
+                if (gap > weapon.Range || gap < weapon.MinimumRange) continue;
             }
 
             if (weapon.RequiresLineOfSight)
             {
+                FixVec2 aim = CombatGeometry.AimPoint(world, source, targeting.CurrentTarget);
                 int sx = sourceTransform.Position.X.FloorToInt(), sy = sourceTransform.Position.Y.FloorToInt();
-                int tx = targetTransform.Position.X.FloorToInt(), ty = targetTransform.Position.Y.FloorToInt();
+                int tx = aim.X.FloorToInt(), ty = aim.Y.FloorToInt();
                 if (!VisionSystem.HasLineOfSight(world.Map, sx, sy, tx, ty)) continue;
             }
 

@@ -50,7 +50,7 @@ public partial class SelectionController : Node
             Vector3 world = entity.Position.ToWorld(0.5f);
             if (_camera.IsPositionBehind(world)) continue;
             Vector2 projected = _camera.UnprojectPosition(world);
-            float radius = Mathf.Max(28f, Mathf.Max(entity.BuildingWidth, entity.BuildingHeight) * 4f);
+            float radius = EntityPickRadius(entity, projected);
             float normalized = (projected - screen).LengthSquared() / (radius * radius);
             if (normalized < bestNormalized) { bestNormalized = normalized; best = entity.EntityId; }
         }
@@ -69,7 +69,7 @@ public partial class SelectionController : Node
             Vector3 world = entity.Position.ToWorld(0.5f);
             if (_camera.IsPositionBehind(world)) continue;
             Vector2 projected = _camera.UnprojectPosition(world);
-            float radius = EntityPickRadius(entity);
+            float radius = EntityPickRadius(entity, projected);
             float normalized = (projected - screen).LengthSquared() / (radius * radius);
             if (normalized < bestNormalized) { bestNormalized = normalized; best = entity.EntityId; }
         }
@@ -143,7 +143,7 @@ public partial class SelectionController : Node
             Vector3 world = e.Position.ToWorld(0.5f);
             if (_camera.IsPositionBehind(world)) continue;
             Vector2 sp = _camera.UnprojectPosition(world);
-            float radius = EntityPickRadius(e);
+            float radius = EntityPickRadius(e, sp);
             float normalized = (sp - screen).LengthSquared() / (radius * radius);
             if (normalized < bestNormalized) { bestNormalized = normalized; best = e.EntityId; }
         }
@@ -219,10 +219,22 @@ public partial class SelectionController : Node
         _ => 22f
     };
 
-    private static float EntityPickRadius(PresentationEntity entity)
-        => entity.SelectableKind == SelectableKind.Building
-            ? Mathf.Max(28f, Mathf.Max(entity.BuildingWidth, entity.BuildingHeight) * 4f)
-            : ScreenPickRadius(entity.Footprint);
+    private float EntityPickRadius(PresentationEntity entity, Vector2 projectedCenter)
+    {
+        if (entity.SelectableKind != SelectableKind.Building || _camera is null) return ScreenPickRadius(entity.Footprint);
+        Vector3 center = entity.Position.ToWorld(0.5f);
+        float halfX = entity.BuildingWidth * GodotConversions.WorldUnitsPerBuildCell * 0.5f;
+        float halfZ = entity.BuildingHeight * GodotConversions.WorldUnitsPerBuildCell * 0.5f;
+        float radius = 28f;
+        for (int z = -1; z <= 1; z += 2)
+        for (int x = -1; x <= 1; x += 2)
+        {
+            Vector3 corner = center + new Vector3(halfX * x, 0f, halfZ * z);
+            if (_camera.IsPositionBehind(corner)) continue;
+            radius = Mathf.Max(radius, (_camera.UnprojectPosition(corner) - projectedCenter).Length() + 16f);
+        }
+        return radius;
+    }
 
     private void Apply(EntityId id, bool subtract, bool toggle)
     {

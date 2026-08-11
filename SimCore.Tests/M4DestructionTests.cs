@@ -1,5 +1,4 @@
 using System.Linq;
-using System.Collections.Generic;
 using LegoSpaceRTS.SimCore;
 using NUnit.Framework;
 
@@ -53,22 +52,29 @@ public sealed class M4DestructionTests
             Assert.That(world.Entities.Health.Get(enemyBuilding).Current, Is.EqualTo(Fix32.FromInt(180)));
             Assert.That(world.Fog.IsVisible(0, world.Entities.Transform.Get(enemyBuilding).Position.X.FloorToInt(),
                 world.Entities.Transform.Get(enemyBuilding).Position.Y.FloorToInt()), Is.True);
+            Assert.That(world.Fog.IsVisible(0, world.Entities.Transform.Get(enemyCrew).Position.X.FloorToInt(),
+                world.Entities.Transform.Get(enemyCrew).Position.Y.FloorToInt()), Is.True);
+            Assert.That(world.Fog.IsVisible(0, world.Entities.Transform.Get(enemyChrome).Position.X.FloorToInt(),
+                world.Entities.Transform.Get(enemyChrome).Position.Y.FloorToInt()), Is.True);
+            Assert.That(world.Pathfinder.IsPassable(MapGrid.BuildToNav(world.Entities.Transform.Get(friendlyChrome).Position),
+                world.Entities.Navigation.Get(friendlyChrome).Footprint), Is.True);
+            Assert.That(CombatGeometry.ContactGap(world, friendlyChrome, enemyBuilding), Is.GreaterThan(Fix32.Zero));
+            Assert.That(CombatGeometry.ContactGap(world, enemyCrew, enemyBuilding), Is.GreaterThan(Fix32.Zero));
+            Assert.That(CombatGeometry.ContactGap(world, enemyChrome, enemyBuilding), Is.GreaterThan(Fix32.Zero));
         });
     }
 
     [Test]
-    public void StandardUnitImmediatelyLosesGameplayAndClearsAfterTwentyFiveTicks()
+    public void StandardUnitImmediatelyLosesGameplayAndCollisionButKeepsCosmeticDebris()
     {
         SimulationWorld world = ScenarioFactory.CreateFirstControllable(18);
         EntityId crew = Find(world, 0, "unit.rock_raiders.crew");
-        FixVec2 position = world.Entities.Transform.Get(crew).Position;
         ref Health health = ref world.Entities.Health.Get(crew); health.Current = Fix32.Zero;
         SimulationRunner runner = new(world);
 
         runner.StepOneTick();
 
         DestructionState destruction = world.Entities.Destruction.Get(crew);
-        List<EntityId> nearby = new(); world.Spatial.Query(position, 2, nearby);
         Assert.Multiple(() =>
         {
             Assert.That(destruction.Kind, Is.EqualTo(DestructionKind.Unit));
@@ -78,18 +84,19 @@ public sealed class M4DestructionTests
             Assert.That(world.Entities.Ownership.Has(crew), Is.False);
             Assert.That(world.Entities.Targetable.Has(crew), Is.False);
             Assert.That(world.Entities.Weapon.Has(crew), Is.False);
-            Assert.That(world.Entities.Navigation.Has(crew), Is.True, "The blocking wreck retains its collision footprint.");
-            Assert.That(nearby, Does.Contain(crew));
+            Assert.That(world.Entities.Navigation.Has(crew), Is.False, "A 0-HP unit must stop blocking in the same tick.");
+            Assert.That(world.Entities.Movement.Has(crew), Is.False);
+            Assert.That(world.Entities.Exists(crew), Is.True, "The nonblocking visual wreck remains authoritative until its visual expiry.");
         });
 
-        runner.StepTicks(DestructionSystem.StandardUnitBlockingTicks - 1);
+        runner.StepTicks(DestructionSystem.StandardUnitVisualTicks - 1);
         Assert.That(world.Entities.Exists(crew), Is.True);
         runner.StepOneTick();
         Assert.That(world.Entities.Exists(crew), Is.False);
     }
 
     [Test]
-    public void MassiveMachineUsesCanonicalTwoAndHalfSecondBlockingWreck()
+    public void MassiveMachineImmediatelyStopsBlockingButKeepsTwelveSecondDebris()
     {
         SimulationWorld world = ScenarioFactory.CreateFirstControllable(18);
         EntityId crusher = Find(world, 0, "unit.rock_raiders.chrome_crusher");
@@ -103,8 +110,10 @@ public sealed class M4DestructionTests
         {
             Assert.That(destruction.BlockingUntilTick - destruction.StartedTick, Is.EqualTo(DestructionSystem.MassiveUnitBlockingTicks));
             Assert.That(destruction.VisualUntilTick - destruction.StartedTick, Is.EqualTo(DestructionSystem.MassiveUnitVisualTicks));
+            Assert.That(world.Entities.Navigation.Has(crusher), Is.False);
+            Assert.That(world.Entities.Movement.Has(crusher), Is.False);
         });
-        runner.StepTicks(DestructionSystem.MassiveUnitBlockingTicks - 1);
+        runner.StepTicks(DestructionSystem.MassiveUnitVisualTicks - 1);
         Assert.That(world.Entities.Exists(crusher), Is.True);
         runner.StepOneTick();
         Assert.That(world.Entities.Exists(crusher), Is.False);
@@ -148,7 +157,7 @@ public sealed class M4DestructionTests
     }
 
     [Test]
-    public void MidWreckSnapshotRoundTripsAndContinuesAtTheSameRemovalTick()
+    public void MidNonblockingDebrisSnapshotRoundTripsAndContinuesAtTheSameVisualRemovalTick()
     {
         SimulationWorld world = ScenarioFactory.CreateFirstControllable(18);
         EntityId crew = Find(world, 0, "unit.rock_raiders.crew");
@@ -161,10 +170,15 @@ public sealed class M4DestructionTests
         Assert.Multiple(() =>
         {
             Assert.That(restoredWorld.Entities.Destruction.Get(crew).BlockingUntilTick, Is.EqualTo(world.Entities.Destruction.Get(crew).BlockingUntilTick));
+            Assert.That(restoredWorld.Entities.Navigation.Has(crew), Is.False);
             Assert.That(StateHasher.Hash(restoredWorld), Is.EqualTo(StateHasher.Hash(world)));
         });
 
-        original.StepTicks(15); restored.StepTicks(15);
+        original.StepTicks(DestructionSystem.StandardUnitVisualTicks - 11);
+        restored.StepTicks(DestructionSystem.StandardUnitVisualTicks - 11);
+        Assert.That(world.Entities.Exists(crew), Is.True);
+        Assert.That(restoredWorld.Entities.Exists(crew), Is.True);
+        original.StepOneTick(); restored.StepOneTick();
         Assert.Multiple(() =>
         {
             Assert.That(world.Entities.Exists(crew), Is.False);
@@ -186,8 +200,53 @@ public sealed class M4DestructionTests
         {
             Assert.That(entity.IsDestroyed, Is.True);
             Assert.That(entity.DestructionKind, Is.EqualTo(DestructionKind.Unit));
-            Assert.That(entity.NonBlockingDebrisTicks, Is.EqualTo(DestructionSystem.StandardUnitVisualTicks - DestructionSystem.StandardUnitBlockingTicks));
+            Assert.That(entity.DestructionProgressBasisPoints, Is.EqualTo(10_000));
+            Assert.That(entity.NonBlockingDebrisTicks, Is.Zero);
             Assert.That(world.Entities.Selectable.Has(crew), Is.False);
+            Assert.That(world.Entities.Navigation.Has(crew), Is.False);
+        });
+    }
+
+    [Test]
+    public void PreparedChromeCanApproachAndAttackThePreparedBuilding()
+    {
+        SimulationWorld world = ScenarioFactory.CreateCanonicalOpening();
+        world.Commands.Enqueue(new CommandEnvelope(new SimTick(1), 0, 93, SimCommandType.DebugPrepareDestructionTest,
+            System.Array.Empty<EntityId>(), FixVec2.Zero));
+        SimulationRunner runner = new(world); runner.StepOneTick();
+        EntityId chrome = Find(world, 0, DebugPlaytestScenario.ChromeCrusherKey);
+        EntityId building = Find(world, 1, DebugPlaytestScenario.DestructionBuildingKey);
+        FixVec2 start = world.Entities.Transform.Get(chrome).Position;
+        world.Commands.Enqueue(new CommandEnvelope(new SimTick(2), 0, 94, SimCommandType.Attack,
+            new[] { chrome }, FixVec2.Zero, targetEntity: building));
+
+        runner.StepTicks(180);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(world.Entities.Weapon.Get(chrome).FireSequence, Is.GreaterThan(0));
+            Assert.That(FixVec2.Distance(start, world.Entities.Transform.Get(chrome).Position), Is.GreaterThan(Fix32.One));
+        });
+    }
+
+    [Test]
+    public void PreparedHoverAttacksBuildingFromOutsideItsFootprint()
+    {
+        SimulationWorld world = ScenarioFactory.CreateCanonicalOpening();
+        world.Commands.Enqueue(new CommandEnvelope(new SimTick(1), 0, 95, SimCommandType.DebugPrepareDestructionTest,
+            System.Array.Empty<EntityId>(), FixVec2.Zero));
+        SimulationRunner runner = new(world); runner.StepOneTick();
+        EntityId hover = Find(world, 0, DebugPlaytestScenario.HoverScoutKey);
+        EntityId building = Find(world, 1, DebugPlaytestScenario.DestructionBuildingKey);
+        world.Commands.Enqueue(new CommandEnvelope(new SimTick(2), 0, 96, SimCommandType.Attack,
+            new[] { hover }, FixVec2.Zero, targetEntity: building));
+
+        runner.StepTicks(90);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(world.Entities.Weapon.Get(hover).FireSequence, Is.GreaterThan(0));
+            Assert.That(CombatGeometry.ContactGap(world, hover, building), Is.GreaterThan(Fix32.Zero));
         });
     }
 

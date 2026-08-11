@@ -71,6 +71,7 @@ public static class SnapshotSerializer
             if (format == 2) ReadEntityV2(r, temp);
             else ReadEntity(r, temp, format);
         }
+        NormalizeDestroyedUnitCollision(temp);
         if (format < 5) AddLegacyResourceBanks(entities);
         if (format < 6) AddLegacyBuildings(temp);
         if (format < 7) AddLegacyBuilders(temp);
@@ -539,12 +540,31 @@ public static class SnapshotSerializer
             (destruction.BuildingType.Value != 0 && destruction.BuildingWidth > 0 && destruction.BuildingHeight > 0 &&
              world.Content.TryGetBuilding(destruction.BuildingType, out _));
         bool unitFieldsValid = destruction.Kind != DestructionKind.Unit || destruction.BuildingType.Value == 0;
+        bool activeLifetime = destruction.Kind == DestructionKind.Unit
+            ? destruction.VisualUntilTick > world.Tick.Value
+            : destruction.BlockingUntilTick > world.Tick.Value;
         if (destruction.Kind < DestructionKind.Unit || destruction.Kind > DestructionKind.Structure || destruction.StartedTick < 0 ||
-            destruction.StartedTick > world.Tick.Value || destruction.BlockingUntilTick <= world.Tick.Value || destruction.VisualUntilTick < destruction.BlockingUntilTick ||
+            destruction.StartedTick > world.Tick.Value || destruction.BlockingUntilTick < destruction.StartedTick ||
+            destruction.VisualUntilTick < destruction.BlockingUntilTick || !activeLifetime ||
             destruction.Owner >= world.PlayerCount || destruction.ContentType.Value == 0 || destruction.SelectableKind < SelectableKind.CombatSupport ||
             destruction.SelectableKind > SelectableKind.ResourceNode || destruction.Footprint < FootprintClass.Tiny || destruction.Footprint > FootprintClass.Huge ||
             !structureFieldsValid || !unitFieldsValid) throw new InvalidDataException("Invalid destruction state.");
         return destruction;
+    }
+
+    private static void NormalizeDestroyedUnitCollision(SimulationWorld world)
+    {
+        IReadOnlyList<EntityId> alive = world.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (!world.Entities.Destruction.TryGet(id, out DestructionState destruction) || destruction.Kind != DestructionKind.Unit) continue;
+            ref DestructionState stored = ref world.Entities.Destruction.Get(id);
+            stored.BlockingUntilTick = stored.StartedTick;
+            world.RemoveRuntimeState(id);
+            world.Entities.Movement.Remove(id);
+            world.Entities.Navigation.Remove(id);
+        }
     }
 
     private static void AddLegacyProduction(SimulationWorld world)

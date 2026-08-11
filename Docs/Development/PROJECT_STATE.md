@@ -458,12 +458,13 @@ narrow placement cases allowed by Phase 09B.
   assignments and entity-local command/navigation state are released rather
   than surviving into the wreck state; Operations Capacity and energy domains
   recalculate immediately.
-- Standard unit wrecks remain blocking for the canonical 1.25 seconds and
-  retain nonblocking cosmetic debris until 8 seconds total. Huge/Massive units
-  block for 2.5 seconds and retain debris until 12 seconds total. Structure
-  rubble blocks its authored footprint for 4 seconds, then clears pathfinding
-  while leaving persistent cosmetic rubble. Cosmetic debris is presentation-
-  only and never restores gameplay identity or collision.
+- Per the game director's 2026-08-11 canon change, all mobile units remove
+  Movement/Navigation collision in the same authoritative tick that they reach
+  0 HP. Standard unit debris remains nonblocking until 8 seconds total and
+  Huge/Massive debris until 12 seconds total. Structure rubble still blocks its
+  authored footprint for 4 seconds, then clears pathfinding while leaving
+  persistent cosmetic rubble. Cosmetic debris is presentation-only and never
+  restores gameplay identity or collision.
 - Snapshot v16 / simulation protocol v14 preserve mid-collapse owner/content,
   footprint, building anchor and authoritative timer state while retaining the
   supported v2-v15 readers. Replay remains v6 because the deterministic F8
@@ -482,25 +483,34 @@ narrow placement cases allowed by Phase 09B.
 - Construction sites now suppress their world health bar entirely while the
   independent fixed-height progress bar is active. Godot smoke asserts both
   states simultaneously. Placeholder wrecks no longer progressively squash or
-  “melt”; they darken at 0 HP and transition directly to flattened cosmetic
-  debris only when their authoritative blocking collision clears.
+  “melt”; mobile units transition immediately to flattened nonblocking debris,
+  while structures darken during their canonical 4-second blocking collapse.
+- The second T045 handoff exposed that large-building clicks covered only a
+  small center radius, so right-clicking the visible footprint became an
+  invalid Move command; ranged pursuit also measured to the occluded building
+  center, and contact approach slots omitted pathfinder clearance. Building
+  picking now covers the projected footprint, ranged attacks use the nearest
+  structure edge/aim point, and contact slots include deterministic navigation
+  clearance. The prepared arena places every mobile unit on a passable external
+  slot. `Chrome Crusher` now has its human-readable HUD name.
 - `AGENTS.md` now contains a mandatory manual-playtest handoff gate: future
   player-facing work cannot be called ready until the exact exported opening is
   provided with all entities/resources/visibility, camera and selection setup,
   and the prepared path has been exercised from a fresh launch.
 - The T045 full automated acceptance candidate is green across every
-  `BLOCKING_NOW` stage: builds, 173 NUnit tests, the representative 24-mover
+  `BLOCKING_NOW` stage: builds, 175 NUnit tests, the representative 24-mover
   movement gate, compiled content, Godot destruction smoke, 100-repeat
   determinism, replay, mid-wreck snapshot continuation, regeneration and macOS
   export. Verification summary:
-  `Artifacts/Verification/20260811T102530Z-full-summary.txt`. The legacy 60-mover
+  `Artifacts/Verification/20260811T110414Z-full-summary.txt`. The legacy 60-mover
   stress remains the same M2-M5 diagnostic failure and does not block T045.
 - A launchable T045 debug build was produced at
   `Builds/macOS/LEGO Space RTS.app` and passed the export smoke launch. Both
   prepared paths were then exercised from fresh launches of that exported app;
-  captures are `Artifacts/Screenshots/t045-exported-construction-test.png` and
-  `Artifacts/Screenshots/t045-exported-destruction-arena.png`. T045 is awaiting
-  only human timing/readability acceptance.
+  captures include `Artifacts/Screenshots/t045-exported-construction-test.png`
+  and the current collision/attack handoff at
+  `Artifacts/Screenshots/t045-exported-immediate-unit-collision-release.png`.
+  T045 is awaiting only human interaction/readability acceptance.
 
 ## Current gates
 
@@ -570,6 +580,7 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Human playtest acceptance for M4 T045 collapse, wreck/rubble readability and
-   the 1.25 / 2.5 / 4-second collision transitions.
+1. Human playtest acceptance for M4 T045 attack interaction, immediate mobile-
+   unit collision release, nonblocking wreck readability and the unchanged
+   4-second structure-rubble transition.
 2. M4 T046 Repair after T045 acceptance.

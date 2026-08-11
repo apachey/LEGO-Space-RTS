@@ -79,11 +79,13 @@ public static class DebugPlaytestScenario
         if (building == EntityId.None || !world.Entities.Transform.TryGet(building, out SimTransform buildingTransform)) return EntityId.None;
 
         FixVec2 center = buildingTransform.Position;
-        EntityId friendlyChrome = EnsureUnit(world, playerSlot, ChromeCrusherKey, center + FixVec2.FromInts(-11, 0));
-        EnsureUnit(world, playerSlot, HoverScoutKey, center + FixVec2.FromInts(-7, -4));
-        EntityId enemyCrew = EnsureUnit(world, enemyPlayer, CrewKey, center + FixVec2.FromInts(-10, -7));
-        EntityId enemyChrome = EnsureUnit(world, enemyPlayer, ChromeCrusherKey, center + FixVec2.FromInts(-10, 7));
+        EntityId friendlyChrome = EnsureUnit(world, playerSlot, ChromeCrusherKey, PreparedPosition(world, ChromeCrusherKey, center + FixVec2.FromInts(-10, 0)));
+        EnsureUnit(world, playerSlot, HoverScoutKey, PreparedPosition(world, HoverScoutKey, center + FixVec2.FromInts(-8, -8)));
+        EntityId enemyCrew = EnsureUnit(world, enemyPlayer, CrewKey, PreparedPosition(world, CrewKey, center + FixVec2.FromInts(8, -8)));
+        EntityId enemyChrome = EnsureUnit(world, enemyPlayer, ChromeCrusherKey, PreparedPosition(world, ChromeCrusherKey, center + FixVec2.FromInts(10, 0)));
         SpawnInvisibleObserver(world, playerSlot, center);
+        SpawnInvisibleObserver(world, playerSlot, world.Entities.Transform.Get(enemyCrew).Position);
+        SpawnInvisibleObserver(world, playerSlot, world.Entities.Transform.Get(enemyChrome).Position);
 
         SetTestHealth(world, enemyCrew, 12);
         SetTestHealth(world, enemyChrome, 160);
@@ -144,6 +146,12 @@ public static class DebugPlaytestScenario
         if (unit == EntityId.None) unit = ScenarioFactory.SpawnProducedUnit(world, ownerSlot, type, position);
         ResetUnit(world, unit, position);
         return unit;
+    }
+
+    private static FixVec2 PreparedPosition(SimulationWorld world, string contentKey, FixVec2 desired)
+    {
+        if (!world.Content.TryGetEntity(contentKey, out PrototypeEntityDefinition definition)) return desired;
+        return FormationPlanner.ResolvePassableSlot(world, desired, definition.Footprint);
     }
 
     private static void ResetUnit(SimulationWorld world, EntityId unit, FixVec2 position)

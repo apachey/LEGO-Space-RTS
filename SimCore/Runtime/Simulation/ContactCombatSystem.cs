@@ -6,6 +6,12 @@ namespace LegoSpaceRTS.SimCore
 /// <summary>Deterministic footprint-aware distance and approach geometry shared by contact weapons.</summary>
 public static class CombatGeometry
 {
+    public static Fix32 RangedGap(SimulationWorld world, EntityId source, EntityId target)
+    {
+        if (world.Entities.Building.Has(target)) return ContactGap(world, source, target);
+        return FixVec2.Distance(world.Entities.Transform.Get(source).Position, world.Entities.Transform.Get(target).Position);
+    }
+
     public static Fix32 ContactGap(SimulationWorld world, EntityId source, EntityId target)
     {
         SimTransform sourceTransform = world.Entities.Transform.Get(source);
@@ -33,6 +39,36 @@ public static class CombatGeometry
     public static FixVec2 ContactSlot(SimulationWorld world, EntityId source, EntityId target, WeaponDefinition weapon, byte slotIndex)
     {
         FixVec2 direction = ContactApproachSystem.SlotDirections[slotIndex];
+        Fix32 sourceRadius = world.Entities.Navigation.TryGet(source, out NavigationAgent sourceNav)
+            ? FootprintRules.CollisionRadiusBuild(sourceNav.Footprint) : Fix32.Zero;
+        Fix32 navigationClearance = world.Entities.Navigation.TryGet(source, out sourceNav)
+            ? Fix32.FromRatio(FootprintRules.ClearanceNavCells(sourceNav.Footprint), MapGrid.NavPerBuild)
+            : Fix32.Zero;
+        Fix32 gridSafety = Fix32.FromRatio(1, MapGrid.NavPerBuild * 2);
+        Fix32 standOff = Fix32.Max(Fix32.Min(Fix32.FromRatio(1, 4), weapon.Range / Fix32.FromInt(2)),
+            navigationClearance + gridSafety - sourceRadius);
+        return ApproachPoint(world, source, target, direction, standOff);
+    }
+
+    public static FixVec2 RangedApproachPoint(SimulationWorld world, EntityId source, EntityId target, FixVec2 direction, Fix32 standOff)
+        => world.Entities.Building.Has(target)
+            ? ApproachPoint(world, source, target, direction, standOff)
+            : world.Entities.Transform.Get(target).Position + direction * standOff;
+
+    public static FixVec2 AimPoint(SimulationWorld world, EntityId source, EntityId target)
+    {
+        SimTransform targetTransform = world.Entities.Transform.Get(target);
+        if (!world.Entities.Building.TryGet(target, out Building building)) return targetTransform.Position;
+        FixVec2 sourcePosition = world.Entities.Transform.Get(source).Position;
+        Fix32 minX = Fix32.FromInt(building.AnchorX), maxX = Fix32.FromInt(building.AnchorX + building.FootprintWidth);
+        Fix32 minY = Fix32.FromInt(building.AnchorY), maxY = Fix32.FromInt(building.AnchorY + building.FootprintHeight);
+        return new FixVec2(
+            Fix32.Clamp(sourcePosition.X, minX + Fix32.Half, maxX - Fix32.Half),
+            Fix32.Clamp(sourcePosition.Y, minY + Fix32.Half, maxY - Fix32.Half));
+    }
+
+    private static FixVec2 ApproachPoint(SimulationWorld world, EntityId source, EntityId target, FixVec2 direction, Fix32 standOff)
+    {
         SimTransform targetTransform = world.Entities.Transform.Get(target);
         Fix32 targetExtent;
         if (world.Entities.Building.TryGet(target, out Building building))
@@ -49,7 +85,6 @@ public static class CombatGeometry
 
         Fix32 sourceRadius = world.Entities.Navigation.TryGet(source, out NavigationAgent sourceNav)
             ? FootprintRules.CollisionRadiusBuild(sourceNav.Footprint) : Fix32.Zero;
-        Fix32 standOff = Fix32.Min(Fix32.FromRatio(1, 4), weapon.Range / Fix32.FromInt(2));
         return targetTransform.Position + direction * (targetExtent + sourceRadius + standOff);
     }
 }
@@ -171,8 +206,8 @@ public sealed class ContactApproachSystem : ISimSystem
         ref Targeting targeting = ref world.Entities.Targeting.Get(source);
         SimTransform transform = world.Entities.Transform.Get(source), target = world.Entities.Transform.Get(targeting.CurrentTarget);
         EnsurePursuitOrigin(ref targeting, transform.Position);
-        Fix32 distance = FixVec2.Distance(transform.Position, target.Position);
-        if (distance <= weapon.Range)
+        Fix32 gap = CombatGeometry.RangedGap(world, source, targeting.CurrentTarget);
+        if (gap <= weapon.Range)
         {
             StopCombatMove(world, source, ref targeting); return;
         }
@@ -182,7 +217,8 @@ public sealed class ContactApproachSystem : ISimSystem
         }
         FixVec2 away = (transform.Position - target.Position).NormalizeSafe();
         if (away.Equals(FixVec2.Zero)) away = SlotDirections[source.Value % SlotCount];
-        FixVec2 desired = target.Position + away * (weapon.Range * Fix32.FromRatio(9, 10));
+        FixVec2 desired = CombatGeometry.RangedApproachPoint(world, source, targeting.CurrentTarget, away,
+            weapon.Range * Fix32.FromRatio(9, 10));
         desired = ClampToLeash(targeting.PursuitOrigin, desired, out bool leashLimited);
         if (leashLimited && FixVec2.Distance(transform.Position, desired) <= ArrivalDistance)
         {

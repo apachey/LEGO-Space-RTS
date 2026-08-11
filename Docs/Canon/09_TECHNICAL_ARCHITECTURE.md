@@ -2693,11 +2693,11 @@ At 0 HP the simulation immediately removes gameplay function.
 
 Phase 06 timing remains:
 
-- normal unit blocking wreck: 1.25 s;
-- Massive/Huge blocking wreck: 2.5 s;
+- normal unit collision clears in the same authoritative tick as 0 HP;
+- Massive/Huge unit collision clears in the same authoritative tick as 0 HP;
 - structure blocking collapse: 4 s.
 
-After blocking expires:
+After unit destruction begins or structure blocking expires, respectively:
 
 - navigation occupancy clears;
 - remaining debris is cosmetic.

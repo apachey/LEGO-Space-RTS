@@ -4,8 +4,8 @@ namespace LegoSpaceRTS.SimCore
 {
 public sealed class DestructionSystem : ISimSystem
 {
-    public const int StandardUnitBlockingTicks = 25;
-    public const int MassiveUnitBlockingTicks = 50;
+    public const int StandardUnitBlockingTicks = 0;
+    public const int MassiveUnitBlockingTicks = 0;
     public const int StructureBlockingTicks = 80;
     public const int StandardUnitVisualTicks = 160;
     public const int MassiveUnitVisualTicks = 240;
@@ -22,7 +22,8 @@ public sealed class DestructionSystem : ISimSystem
             EntityId id = alive[i];
             if (world.Entities.Destruction.TryGet(id, out DestructionState destruction))
             {
-                if (world.Tick.Value >= destruction.BlockingUntilTick) _expired.Add(id);
+                int removalTick = destruction.Kind == DestructionKind.Unit ? destruction.VisualUntilTick : destruction.BlockingUntilTick;
+                if (world.Tick.Value >= removalTick) _expired.Add(id);
                 continue;
             }
             if (!world.Entities.Health.TryGet(id, out Health health) || !health.IsDepleted) continue;
@@ -103,11 +104,12 @@ public sealed class DestructionSystem : ISimSystem
         world.Entities.Targetable.Remove(id);
         world.Entities.Targeting.Remove(id);
         world.Entities.Weapon.Remove(id);
-        if (isStructure)
-        {
-            world.Entities.Movement.Remove(id);
-            world.Entities.Navigation.Remove(id);
-        }
+        // A depleted mobile unit becomes nonblocking in this same authoritative
+        // tick. Its DestructionState/Transform remain only to publish cosmetic
+        // debris until VisualUntilTick. Structures retain canonical rubble
+        // collision until their separate blocking timer expires.
+        world.Entities.Movement.Remove(id);
+        world.Entities.Navigation.Remove(id);
     }
 
     private static void ReleaseBuildersTargeting(SimulationWorld world, EntityId site)
