@@ -5,13 +5,14 @@ remain authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M4 — Combat / T044 Contact weapons implemented; automated acceptance candidate.**
+**M4 — Combat / T044 Contact weapons accepted; T045 Destruction is next.**
 
 The accepted M3 T030-T039 economy/base-building stack is merged through PR #10.
 M4 T040 Targeting, T041 Weapons and T042 Projectiles are fully automated-verified
 and human-accepted. T043 Damage / Armor and T044 Contact weapons are implemented
-on the current stacked branch; T044 still needs human feel/readability review,
-while destruction and repair remain their separately scheduled T045-T046 tasks.
+on the current stacked branch. The game director accepted T044 combat behavior
+and readability after its follow-up fixes; destruction and repair remain their
+separately scheduled T045-T046 tasks.
 
 ## Engine / architecture
 
@@ -431,7 +432,9 @@ narrow placement cases allowed by Phase 09B.
   materials are isolated from the non-billboard construction-progress
   materials after the shared-material follow-up caused a playtest regression.
   Godot smoke cycles health fill through 75%, 55% and 25%, checks containment
-  at each step and verifies a seeded construction bar independently.
+  at each step and verifies a seeded construction bar independently. The
+  construction bar now remains at a fixed 1.75-world-unit height while the site
+  grows; smoke verifies the invariant at early, middle and complete heights.
 - Projectile weapons retain the compact muzzle flash, while Contact weapons
   show a short forward impact plate and continue to create no projectile.
   Invalid direct targets now fall back to automatic acquisition in the same
@@ -443,8 +446,10 @@ narrow placement cases allowed by Phase 09B.
   latest follow-up fast and full verification are green with 165 NUnit tests,
   real Godot visual/runtime smoke, deterministic replay/snapshot continuation
   and macOS export. Full summary:
-  `Artifacts/Verification/20260811T085345Z-full-summary.txt`. Human retest
-  remains pending.
+  `Artifacts/Verification/20260811T085345Z-full-summary.txt`; the final fixed-
+  height bar fast verification is
+  `Artifacts/Verification/20260811T090944Z-fast-summary.txt`. Human T044
+  acceptance is complete as of 2026-08-11.
 
 ## Current gates
 
@@ -515,6 +520,5 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Complete T044 human playtest acceptance for contact approach readability,
-   facing/engagement feel and the repaired out-of-range direct Attack behavior.
-2. M4 T045 Destruction / wrecks / collision transition after T044 acceptance.
+1. M4 T045 Destruction / wrecks / collision transition.
+2. M4 T046 Repair after T045 acceptance.

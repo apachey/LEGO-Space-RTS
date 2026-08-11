@@ -5,6 +5,7 @@ namespace LegoSpaceRTS.Presentation;
 
 public partial class UnitViewManager : Node3D
 {
+    internal const float ConstructionProgressHeightWorld = 1.75f;
     private GodotSimBridge? _bridge;
     private SelectionController? _selection;
     private ControlGroups? _groups;
@@ -331,7 +332,7 @@ public partial class UnitViewManager : Node3D
         if (progressBar is not null)
         {
             progressBar.Visible = entity.IsConstructionSite;
-            progressBar.Position = new Vector3(0f, (scale.Y + 0.55f) / scale.Y, 0f);
+            progressBar.Position = new Vector3(0f, ConstructionProgressLocalY(scale.Y), 0f);
             progressBar.Scale = new Vector3(1f / scale.X, 1f / scale.Y, 1f / scale.Z);
             MeshInstance3D? fill = progressBar.GetNodeOrNull<MeshInstance3D>("Fill");
             if (fill is not null)
@@ -350,6 +351,8 @@ public partial class UnitViewManager : Node3D
             brownoutLabel.Scale = new Vector3(1f / scale.X, 1f / scale.Y, 1f / scale.Z);
         }
     }
+
+    internal static float ConstructionProgressLocalY(float buildingHeight) => ConstructionProgressHeightWorld / buildingHeight;
 
     private static Vector3 ResourceScale(FootprintClass size, ResourceVisualState state)
     {

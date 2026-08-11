@@ -66,6 +66,7 @@ public partial class GodotSmokeRunner : Node
         Node? contactImpact = GetTree().Root.FindChild("ContactImpact", true, false);
         bool healthBarOk = HealthBarGeometryOk(healthBar);
         bool constructionOk = !_captureConstruction || (_constructionSeeded && constructionProgress is Node3D progressBar && progressBar.Visible &&
+            ConstructionProgressHeightOk(progressBar, focusedView) &&
             progressBar.FindChild("Background", false, false) is MeshInstance3D constructionBackground &&
             constructionBackground.Mesh is BoxMesh constructionBackgroundMesh &&
             constructionBackgroundMesh.Material is StandardMaterial3D constructionBackgroundMaterial &&
@@ -175,6 +176,17 @@ public partial class GodotSmokeRunner : Node
                 fillMesh.CenterOffset.X + fillMesh.Size.X * 0.5f > backgroundMesh.Size.X * 0.5f) return false;
         }
         UnitViewManager.UpdateHealthBarFillGeometry(fill, 0.75f);
+        return true;
+    }
+
+    private static bool ConstructionProgressHeightOk(Node3D progressBar, Node? focusedView)
+    {
+        if (focusedView is not MeshInstance3D building ||
+            !Mathf.IsEqualApprox(progressBar.Position.Y * building.Scale.Y, UnitViewManager.ConstructionProgressHeightWorld)) return false;
+        float[] representativeHeights = { 0.35f, 1.20f, 2.40f };
+        for (int i = 0; i < representativeHeights.Length; i++)
+            if (!Mathf.IsEqualApprox(UnitViewManager.ConstructionProgressLocalY(representativeHeights[i]) * representativeHeights[i],
+                    UnitViewManager.ConstructionProgressHeightWorld)) return false;
         return true;
     }
 }
