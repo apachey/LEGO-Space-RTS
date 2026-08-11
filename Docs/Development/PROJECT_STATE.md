@@ -5,7 +5,7 @@ remain authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M4 — Combat / T047 Rapid Rider transport implemented; human test pending.**
+**M4 — Combat / T048 Transformation implemented; human test pending.**
 
 The accepted M3 T030-T039 economy/base-building stack is merged through PR #10.
 M4 T040 Targeting, T041 Weapons, T042 Projectiles and T044 Contact weapons are
@@ -16,8 +16,10 @@ defects. Those defects are corrected and the game director explicitly directed
 development to continue into T046 while the combined human retest remains due.
 T046 Crew field repair is now implemented and automated-green on the current
 stacked branch. The game director accepted the combined prepared T045-T046
-human test on 2026-08-11. T047 Rapid Rider load, unload and transport-destruction
-behavior is implemented and automated-green on the current stacked branch.
+human test on 2026-08-11 and accepted T047 Rapid Rider loading, unloading and
+transport-destruction behavior on 2026-08-11. T048 MX-41 transformation is
+implemented and automated-green on the current stacked branch; its prepared
+human interaction/readability test remains due.
 
 ## Engine / architecture
 
@@ -589,6 +591,39 @@ narrow placement cases allowed by Phase 09B.
   deterministic replay/snapshot continuation, Godot smoke and macOS export.
   Summary: `Artifacts/Verification/20260811T131127Z-full-summary.txt`. The
   legacy 60-mover diagnostic remains unchanged and nonblocking through M5.
+- The game director accepted the prepared T047 Rapid Rider playtest on
+  2026-08-11. Loading, unloading and emergency deployment were reported working
+  with no remaining blocker.
+- M4 T048 adds data-driven two-mode transformation and the canonical MX-41
+  Switch Fighter representative. Ground ↔ Flight takes exactly 2.25 seconds;
+  the unit cannot move or attack while changing and remains targetable by both
+  Ground and True Air weapons. Completion preserves Entity ID while swapping
+  movement layer/speed, footprint, target layer, weapon and presentation mode.
+- `Q` begins State Change. `S` before 40% enters the canonical 0.6-second
+  rollback; requests at or after 40% commit the current change and queue its
+  reverse. Completed changes enforce the canonical eight-second reversal lock.
+  Landing validates ground passability and occupancy and cannot place the unit
+  into a blocker.
+- Snapshot v19 / simulation protocol v17 preserve active transition, rollback,
+  lock and queued reversal state while retaining supported legacy readers.
+  Prototype content schema v14 / compiled format v15 include the MX-41's two
+  authoritative component bundles and transformation rules.
+- `Prepare T048 MX-41` on F8 creates, selects and frames the fighter on clear
+  ground with no economy or production setup. The world label and HUD expose
+  named current/destination state, transition progress and reversal lock. The
+  Godot transformation smoke completes a real Ground → Flight change and
+  asserts the resulting True Air state. The same prepared path passes from a
+  fresh launch of the exported macOS app. Capture:
+  `Artifacts/Screenshots/t048-exported-prepared-mx41-flight.png`.
+- Seven focused T048 NUnit tests cover component/identity swap, movement and
+  attack suppression, dual-layer vulnerability, pre-threshold rollback,
+  committed queued reversal, blocked landing, snapshot continuation and the
+  prepared fixture. All 195 NUnit tests and every `BLOCKING_NOW` full-
+  verification stage pass, including deterministic ×100, replay, active-
+  transformation snapshot continuation, Godot smoke, content regeneration and
+  macOS export. Summary:
+  `Artifacts/Verification/20260811T150246Z-full-summary.txt`. The legacy
+  60-mover diagnostic remains unchanged and nonblocking through M5.
 
 ## Current gates
 
@@ -658,6 +693,6 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Prepared T047 human test for Rapid Rider loading, normal unloading and
-   emergency deployment readability/interaction.
-2. M4 T048 Transformation after T047 acceptance.
+1. Prepared T048 human test for Ground ↔ Flight timing, rollback, committed
+   reversal, lock readability and landing interaction.
+2. M5 T049 Worksite graph only after T048 acceptance.

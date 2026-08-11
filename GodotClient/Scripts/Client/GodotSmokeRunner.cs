@@ -15,6 +15,7 @@ public partial class GodotSmokeRunner : Node
     private bool _captureConstruction;
     private bool _captureRepair;
     private bool _captureTransport;
+    private bool _captureTransformation;
     private bool _constructionSeeded;
     private EntityId _captureFocus;
     private EntityId _damagedFocus;
@@ -28,6 +29,7 @@ public partial class GodotSmokeRunner : Node
     private int _repairInitialRaw;
     private bool _repairSeeded;
     private bool _transportSeeded;
+    private bool _transformationSeeded;
     private bool _finished;
     private int _frames;
     public void Configure(GodotSimBridge bridge, SelectionController selection, RtsCameraController camera, RtsInputController input,
@@ -42,6 +44,7 @@ public partial class GodotSmokeRunner : Node
         for (int i = 0; i < commandLineArgs.Length; i++) if (commandLineArgs[i] == "--capture-construction") _captureConstruction = true;
         for (int i = 0; i < commandLineArgs.Length; i++) if (commandLineArgs[i] == "--capture-repair") _captureRepair = true;
         for (int i = 0; i < commandLineArgs.Length; i++) if (commandLineArgs[i] == "--capture-transport") _captureTransport = true;
+        for (int i = 0; i < commandLineArgs.Length; i++) if (commandLineArgs[i] == "--capture-transformation") _captureTransformation = true;
     }
     public override void _Process(double delta)
     {
@@ -51,19 +54,21 @@ public partial class GodotSmokeRunner : Node
             _camera?.CenterOn(focusTransform.Position.ToWorld());
         if (_frames == 2)
         {
-            if (_captureTransport) _input.DebugPrepareTransportPlaytest();
+            if (_captureTransformation) _input.DebugPrepareTransformationPlaytest();
+            else if (_captureTransport) _input.DebugPrepareTransportPlaytest();
             else if (_captureRepair) _input.DebugPrepareRepairPlaytest();
             else if (_captureConstruction) _input.DebugPrepareConstructionPlaytest();
             else _input.DebugPrepareDestructionPlaytest();
         }
         ResolvePreparedCaptureFocus();
-        if (!_captureConstruction && !_captureRepair && !_captureTransport && !_preparedEdgePickObserved && _captureFocus != EntityId.None)
+        if (!_captureConstruction && !_captureRepair && !_captureTransport && !_captureTransformation && !_preparedEdgePickObserved && _captureFocus != EntityId.None)
             _preparedEdgePickObserved = PreparedBuildingEdgePick() == _captureFocus;
-        if (_captureTransport) SeedPreparedTransport();
+        if (_captureTransformation) SeedPreparedTransformation();
+        else if (_captureTransport) SeedPreparedTransport();
         else if (_captureRepair) SeedPreparedRepair();
         else if (!_captureConstruction) { SeedPreparedScoutDamage(); SeedPreparedDestructionStates(); }
-        int requiredTick = _captureTransport ? 170 : 120;
-        int requiredFrames = _captureTransport ? 190 : 140;
+        int requiredTick = _captureTransport ? 170 : _captureTransformation ? 80 : 120;
+        int requiredFrames = _captureTransport ? 190 : _captureTransformation ? 100 : 140;
         if (_bridge.World.Tick.Value < requiredTick || _frames < requiredFrames) return;
         Node? hud = GetTree().Root.FindChild("BasicHUD", true, false);
         bool hudOk = hud is not null && hud.FindChild("ResourceStrip", true, false) is not null &&
@@ -79,6 +84,7 @@ public partial class GodotSmokeRunner : Node
         Node? prepareRepairControl = GetTree().Root.FindChild("PrepareRepairTest", true, false);
         Node? prepareTransportControl = GetTree().Root.FindChild("PrepareTransportTest", true, false);
         Node? destroyTransportControl = GetTree().Root.FindChild("DestroyTransportTest", true, false);
+        Node? prepareTransformationControl = GetTree().Root.FindChild("PrepareTransformationTest", true, false);
         Node? destroyCrewControl = GetTree().Root.FindChild("DestroyCrewTest", true, false);
         Node? destroyChromeControl = GetTree().Root.FindChild("DestroyChromeTest", true, false);
         Node? destroyBuildingControl = GetTree().Root.FindChild("DestroyBuildingTest", true, false);
@@ -98,7 +104,7 @@ public partial class GodotSmokeRunner : Node
             progressBar.FindChild("Fill", false, false) is MeshInstance3D constructionFill && constructionFill.Mesh is BoxMesh constructionFillMesh &&
             constructionFillMesh.Material is StandardMaterial3D constructionFillMaterial &&
             constructionFillMaterial.BillboardMode == BaseMaterial3D.BillboardModeEnum.Disabled);
-        bool destructionOk = _captureConstruction || _captureRepair || _captureTransport ||
+        bool destructionOk = _captureConstruction || _captureRepair || _captureTransport || _captureTransformation ||
             (_destroyedUnit != EntityId.None && _bridge.World.Entities.Destruction.Has(_destroyedUnit) &&
              !_bridge.World.Entities.Navigation.Has(_destroyedUnit) && standardWreck is MeshInstance3D standardView &&
              TryGetPresentation(_destroyedUnit, out PresentationEntity standardEntity) &&
@@ -107,10 +113,10 @@ public partial class GodotSmokeRunner : Node
              !_bridge.World.Entities.Navigation.Has(_collapseUnit) && activeCollapse is MeshInstance3D collapseView &&
              TryGetPresentation(_collapseUnit, out PresentationEntity collapseEntity) &&
              collapseView.Scale.IsEqualApprox(UnitViewManager.DebrisScale(collapseEntity)));
-        bool preparedTitleOk = _captureConstruction || _captureRepair || _captureTransport || selectionTitle?.Text == "Chrome Crusher";
-        bool preparedEdgePickOk = _captureConstruction || _captureRepair || _captureTransport || _preparedEdgePickObserved;
+        bool preparedTitleOk = _captureConstruction || _captureRepair || _captureTransport || _captureTransformation || selectionTitle?.Text == "Chrome Crusher";
+        bool preparedEdgePickOk = _captureConstruction || _captureRepair || _captureTransport || _captureTransformation || _preparedEdgePickObserved;
         bool preparedUiOk = preparedTitleOk && preparedEdgePickOk;
-        bool scoutDamageOk = _captureConstruction || _captureRepair || _captureTransport || (_scoutDamageSeeded &&
+        bool scoutDamageOk = _captureConstruction || _captureRepair || _captureTransport || _captureTransformation || (_scoutDamageSeeded &&
             _bridge.World.Entities.Health.TryGet(_scoutDamageTarget, out Health damagedByScout) &&
             damagedByScout.Current.Raw < _scoutDamageInitialRaw);
         bool repairOk = !_captureRepair || (_repairSeeded && _bridge.World.Entities.Health.TryGet(_captureFocus, out Health repaired) &&
@@ -120,12 +126,17 @@ public partial class GodotSmokeRunner : Node
         bool transportOk = !_captureTransport || (_transportSeeded && _bridge.World.Entities.Transport.TryGet(_captureFocus, out Transport transport) &&
             transport.PassengerCount == 4 && transport.OccupiedPoints == 4 && selectionTitle?.Text == "Rapid Rider" &&
             focusedView?.FindChild("TransportLabel", false, false) is Label3D cargoLabel && cargoLabel.Visible);
-        int minimumAlive = _captureConstruction ? 15 : _captureRepair ? 16 : _captureTransport ? 16 : 17;
+        bool transformationOk = !_captureTransformation || (_transformationSeeded && _bridge.World.Entities.Transformation.TryGet(_captureFocus, out Transformation transformation) &&
+            _bridge.World.Content.TryGetTransformation(StableId.FromKey(DebugPlaytestScenario.Mx41Key), out TransformationDefinition transformationDefinition) &&
+            transformation.CurrentState == transformationDefinition.ModeB.StateId && transformation.Phase == TransformationPhase.Idle &&
+            _bridge.World.Entities.Navigation.Get(_captureFocus).Layer == MovementLayer.TrueAir && selectionTitle?.Text == "MX-41 Switch Fighter" &&
+            focusedView?.FindChild("TransformationLabel", false, false) is Label3D transformationLabel && transformationLabel.Visible);
+        int minimumAlive = _captureConstruction ? 15 : _captureRepair ? 16 : _captureTransport ? 16 : _captureTransformation ? 16 : 17;
         bool controlsOk = movingTargetControl is Button && prepareConstructionControl is Button && prepareDestructionControl is Button && prepareRepairControl is Button &&
-            prepareTransportControl is Button && destroyTransportControl is Button &&
+            prepareTransportControl is Button && destroyTransportControl is Button && prepareTransformationControl is Button &&
             destroyCrewControl is Button && destroyChromeControl is Button && destroyBuildingControl is Button;
         bool ok = _bridge.Current is not null && _bridge.World.Entities.Alive.Count >= minimumAlive && _bridge.GameplayContentHash != 0 &&
-            hudOk && constructionOk && destructionOk && preparedUiOk && scoutDamageOk && repairOk && transportOk && controlsOk && contactImpact is MeshInstance3D && healthBarOk;
+            hudOk && constructionOk && destructionOk && preparedUiOk && scoutDamageOk && repairOk && transportOk && transformationOk && controlsOk && contactImpact is MeshInstance3D && healthBarOk;
         if (ok && _capturePath is not null)
         {
             _finished = true;
@@ -148,7 +159,7 @@ public partial class GodotSmokeRunner : Node
             GD.Print($"PHASE10 VISUAL SMOKE CAPTURE: PASS path={_capturePath}");
         }
         if (!ok)
-            GD.PrintErr($"PHASE10 GODOT HEADLESS SMOKE DETAIL: hud={hudOk} construction={constructionOk} health={healthBarOk} controls={controlsOk} destruction={destructionOk} preparedTitle={preparedTitleOk} preparedEdgePick={preparedEdgePickOk} scoutDamage={scoutDamageOk} repair={repairOk} transport={transportOk} standardWreck={standardWreck is MeshInstance3D} collapseId={_collapseUnit.Value} collapseActive={_collapseUnit != EntityId.None && _bridge.World.Entities.Destruction.Has(_collapseUnit)} collapseView={activeCollapse is MeshInstance3D} contact={contactImpact is MeshInstance3D}");
+            GD.PrintErr($"PHASE10 GODOT HEADLESS SMOKE DETAIL: hud={hudOk} construction={constructionOk} health={healthBarOk} controls={controlsOk} destruction={destructionOk} preparedTitle={preparedTitleOk} preparedEdgePick={preparedEdgePickOk} scoutDamage={scoutDamageOk} repair={repairOk} transport={transportOk} transformation={transformationOk} standardWreck={standardWreck is MeshInstance3D} collapseId={_collapseUnit.Value} collapseActive={_collapseUnit != EntityId.None && _bridge.World.Entities.Destruction.Has(_collapseUnit)} collapseView={activeCollapse is MeshInstance3D} contact={contactImpact is MeshInstance3D}");
         _finished = true;
         GD.Print(ok ? $"PHASE10 GODOT HEADLESS SMOKE: PASS tick={_bridge.World.Tick.Value} hash={_bridge.StateHashHex()}" : "PHASE10 GODOT HEADLESS SMOKE: FAIL");
         GetTree().Quit(ok ? 0 : 2);
@@ -158,6 +169,18 @@ public partial class GodotSmokeRunner : Node
     {
         if (_bridge is null || _captureFocus != EntityId.None) return;
         IReadOnlyList<EntityId> alive = _bridge.World.Entities.Alive;
+        if (_captureTransformation)
+        {
+            ContentId mx41Type = StableId.FromKey(DebugPlaytestScenario.Mx41Key);
+            for (int i = 0; i < alive.Count; i++)
+            {
+                EntityId id = alive[i];
+                if (_bridge.World.Entities.Selectable.TryGet(id, out Selectable selectable) && selectable.ContentType == mx41Type &&
+                    _bridge.World.Entities.Ownership.TryGet(id, out Ownership owner) && owner.PlayerSlot == 0 && _bridge.World.Entities.Transformation.Has(id))
+                { _captureFocus = id; _damagedFocus = id; break; }
+            }
+            return;
+        }
         if (_captureTransport)
         {
             ContentId riderType = StableId.FromKey(DebugPlaytestScenario.RapidRiderKey);
@@ -217,6 +240,15 @@ public partial class GodotSmokeRunner : Node
             _captureFocus = id;
             _damagedFocus = id;
         }
+    }
+
+    private void SeedPreparedTransformation()
+    {
+        if (_bridge is null || _input is null || _captureFocus == EntityId.None || _transformationSeeded ||
+            !_bridge.World.Entities.Transformation.TryGet(_captureFocus, out Transformation state) || state.Phase != TransformationPhase.Idle) return;
+        _selection?.SetSelection(new[] { _captureFocus });
+        _input.StateChangeSelected();
+        _transformationSeeded = true;
     }
 
     private void SeedPreparedDestructionStates()

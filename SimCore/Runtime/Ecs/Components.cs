@@ -15,6 +15,7 @@ public enum WorkerTaskState : byte { Idle = 0, MovingToResource = 1, Mining = 2,
 public enum BuilderJobState : byte { Idle = 0, MovingToSite = 1, Constructing = 2, MovingToRepair = 3, Repairing = 4 }
 public enum TransportJobState : byte { Idle = 0, LoadingDocking = 1, LoadingPassenger = 2, MovingToUnload = 3, UnloadSettling = 4, Unloading = 5, UnloadBlocked = 6 }
 public enum PassengerState : byte { Grounded = 0, MovingToLoad = 1, WaitingToLoad = 2, Loaded = 3 }
+public enum TransformationPhase : byte { Idle = 0, Transitioning = 1, RollingBack = 2 }
 public enum BuildingState : byte { ConstructionSite = 0, Completed = 1 }
 public enum EnergyFunctionalClass : byte { CommandAndBasicEconomy = 1, ResourceProcessing = 2, ProductionAndResearch = 3, ServiceAndFactionSystems = 4, StaticDefenseAndNonessential = 5 }
 public enum EnergyPriority : byte { High = 0, Normal = 1, Low = 2 }
@@ -217,6 +218,20 @@ public struct Transport
         OccupiedPoints = checked((byte)(OccupiedPoints - sizePoints));
         return result;
     }
+}
+
+public struct Transformation
+{
+    public ContentId Definition;
+    public ContentId CurrentState;
+    public ContentId SourceState;
+    public ContentId DestinationState;
+    public TransformationPhase Phase;
+    public ushort ProgressTicks;
+    public ushort TotalTicks;
+    public ushort RollbackTicksRemaining;
+    public int ReversalLockedUntilTick;
+    public bool QueuedToggle;
 }
 
 public struct ResourceCarrier

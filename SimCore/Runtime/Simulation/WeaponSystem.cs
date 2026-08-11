@@ -16,6 +16,7 @@ public sealed class WeaponSystem : ISimSystem
             if (state.CooldownRemainingTicks > 0) state.CooldownRemainingTicks--;
             if (state.CooldownRemainingTicks > 0 ||
                 TransportSystem.IsAttackLocked(world, source) ||
+                !TransformationSystem.CanAttack(world, source) ||
                 (world.Entities.Health.TryGet(source, out Health sourceHealth) && sourceHealth.IsDepleted) ||
                 !world.Content.TryGetWeapon(state.WeaponProfile, out WeaponDefinition weapon) ||
                 !world.Entities.Targeting.TryGet(source, out Targeting targeting) || targeting.CurrentTarget == EntityId.None ||

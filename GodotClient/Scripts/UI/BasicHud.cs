@@ -119,7 +119,7 @@ public partial class BasicHud : CanvasLayer
         _priorityRow.AddThemeConstantOverride("separation", 5); _priorityRow.AddChild(HudLabel("POWER PRIORITY", 13, TextMuted));
         AddPriorityButton(EnergyPriority.High); AddPriorityButton(EnergyPriority.Normal); AddPriorityButton(EnergyPriority.Low);
         box.AddChild(_priorityRow);
-        Label help = HudLabel("RMB context  •  L load selected  •  U unload at cursor  •  Shift queues  •  B build  •  F8 tests", 13, TextMuted); box.AddChild(help);
+        Label help = HudLabel("RMB context  •  Q state change  •  S stop/cancel  •  L/U transport  •  Shift queues  •  B build  •  F8 tests", 13, TextMuted); box.AddChild(help);
 
         MarginContainer contextualSlot = new() { Name = "ContextualSlot", CustomMinimumSize = new Vector2(340, 0), SizeFlagsVertical = Control.SizeFlags.ExpandFill };
         layout.AddChild(contextualSlot);
@@ -193,7 +193,30 @@ public partial class BasicHud : CanvasLayer
                 .Append(percent >= 70 ? "HEALTHY" : percent >= 35 ? "DAMAGED" : percent > 0 ? "HEAVILY DAMAGED" : "DEPLETED").Append('\n');
         }
         if (_bridge.World.Entities.Targetable.TryGet(first, out Targetable targetable))
-            _builder.Append("Target class  ").Append(targetable.Class).Append('\n');
+            _builder.Append("Target class  ").Append(targetable.Class).Append("   Layer  ").Append(targetable.Layer == CombatTargetLayer.TrueAir ? "TRUE AIR" : "GROUND").Append('\n');
+        if (_bridge.World.Entities.Transformation.TryGet(first, out Transformation transformation) &&
+            _bridge.World.Content.TryGetTransformation(_bridge.World.Entities.Selectable.Get(first).ContentType, out TransformationDefinition transformationDefinition))
+        {
+            TransformationModeDefinition currentMode = transformationDefinition.GetMode(transformation.CurrentState);
+            TransformationModeDefinition destinationMode = transformationDefinition.GetMode(transformation.DestinationState);
+            if (transformation.Phase == TransformationPhase.Idle)
+            {
+                _builder.Append("State  ").Append(currentMode.DisplayName.ToUpperInvariant());
+                int lockTicks = System.Math.Max(0, transformation.ReversalLockedUntilTick - _bridge.World.Tick.Value);
+                if (lockTicks > 0) _builder.Append($"   REVERSAL LOCK  {lockTicks / (float)SimClock.TicksPerSecond:0.0}s");
+                else _builder.Append("   Q → ").Append(transformationDefinition.GetDestination(transformation.CurrentState).DisplayName.ToUpperInvariant());
+                if (transformation.QueuedToggle) _builder.Append("   REVERSE QUEUED");
+                _builder.Append('\n');
+            }
+            else
+            {
+                _builder.Append(transformation.Phase == TransformationPhase.RollingBack ? "Cancelling  " : "Transforming  ")
+                    .Append(currentMode.DisplayName.ToUpperInvariant()).Append(" → ").Append(destinationMode.DisplayName.ToUpperInvariant())
+                    .Append("   ").Append(TransformationSystem.ProgressBasisPoints(transformation) / 100).Append("%")
+                    .Append(transformation.Phase == TransformationPhase.Transitioning && TransformationSystem.ProgressBasisPoints(transformation) < transformationDefinition.CancellationThresholdBasisPoints
+                        ? "   S CANCEL AVAILABLE" : "   COMMITTED").Append('\n');
+            }
+        }
         if (_bridge.World.Entities.Worker.TryGet(first, out Worker worker) && _bridge.World.Entities.ResourceCarrier.TryGet(first, out ResourceCarrier carrier))
             _builder.Append("Task  ").Append(worker.TaskState).Append("   Cargo  ").Append(carrier.Amount).Append('/').Append(carrier.Capacity).Append(" Ore\n");
         if (_bridge.World.Entities.Builder.TryGet(first, out Builder builder) &&
@@ -373,6 +396,7 @@ public partial class BasicHud : CanvasLayer
         "unit.rock_raiders.rapid_rider" => "Rapid Rider",
         "unit.rock_raiders.loader_dozer" => "Loader Dozer",
         "unit.rock_raiders.chrome_crusher" => "Chrome Crusher",
+        "unit.astronauts.mx41_switch_fighter" => "MX-41 Switch Fighter",
         "resource.ore.standard" => "Standard Ore Deposit",
         "resource.ore.small" => "Small Ore Deposit",
         "resource.ore.rich" => "Rich Ore Deposit",

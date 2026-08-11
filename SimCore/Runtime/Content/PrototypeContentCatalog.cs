@@ -134,6 +134,66 @@ public readonly struct PrototypeEntityDefinition
     }
 }
 
+public readonly struct TransformationModeDefinition
+{
+    public readonly string StateKey;
+    public readonly ContentId StateId;
+    public readonly string DisplayName;
+    public readonly string MovementProfileKey;
+    public readonly FootprintClass Footprint;
+    public readonly byte VisionRadius;
+    public readonly string ViewProfileKey;
+    public readonly PrototypeCombatProfile Combat;
+
+    public TransformationModeDefinition(string stateKey, string displayName, string movementProfileKey, FootprintClass footprint,
+        byte visionRadius, string viewProfileKey, PrototypeCombatProfile combat)
+    {
+        if (string.IsNullOrWhiteSpace(stateKey) || string.IsNullOrWhiteSpace(displayName) || string.IsNullOrWhiteSpace(movementProfileKey) ||
+            string.IsNullOrWhiteSpace(viewProfileKey) || !combat.IsTargetable) throw new ArgumentException("Transformation modes require stable state, presentation, movement and combat data.");
+        StateKey = stateKey; StateId = StableId.FromKey(stateKey); DisplayName = displayName; MovementProfileKey = movementProfileKey;
+        Footprint = footprint; VisionRadius = visionRadius; ViewProfileKey = viewProfileKey; Combat = combat;
+    }
+}
+
+/// <summary>Canonical two-state tactical transformation definition. Mode A is the entity's authored spawn state.</summary>
+public readonly struct TransformationDefinition
+{
+    public readonly string StableKey;
+    public readonly ContentId Id;
+    public readonly string EntityStableKey;
+    public readonly ContentId EntityType;
+    public readonly TransformationModeDefinition ModeA;
+    public readonly TransformationModeDefinition ModeB;
+    public readonly ushort AToBDurationTicks;
+    public readonly ushort BToADurationTicks;
+    public readonly ushort CancellationThresholdBasisPoints;
+    public readonly ushort RollbackTicks;
+    public readonly ushort ReversalLockTicks;
+    public readonly bool MoveDuringTransition;
+    public readonly bool AttackDuringTransition;
+    public readonly TargetLayerMask TransitionTargetLayers;
+
+    public TransformationDefinition(string stableKey, string entityStableKey, TransformationModeDefinition modeA, TransformationModeDefinition modeB,
+        ushort aToBDurationTicks, ushort bToADurationTicks, ushort cancellationThresholdBasisPoints, ushort rollbackTicks, ushort reversalLockTicks,
+        bool moveDuringTransition, bool attackDuringTransition, TargetLayerMask transitionTargetLayers)
+    {
+        if (string.IsNullOrWhiteSpace(stableKey) || string.IsNullOrWhiteSpace(entityStableKey) || modeA.StateId == modeB.StateId ||
+            aToBDurationTicks == 0 || bToADurationTicks == 0 || cancellationThresholdBasisPoints == 0 || cancellationThresholdBasisPoints > 10_000 ||
+            rollbackTicks == 0 || reversalLockTicks == 0 || transitionTargetLayers == TargetLayerMask.None ||
+            (transitionTargetLayers & ~TargetLayerMask.All) != 0) throw new ArgumentException("Invalid transformation definition.");
+        if (modeA.Combat.MaximumHitPoints != modeB.Combat.MaximumHitPoints)
+            throw new ArgumentException("Tactical transformation modes must preserve maximum HP.");
+        StableKey = stableKey; Id = StableId.FromKey(stableKey); EntityStableKey = entityStableKey; EntityType = StableId.FromKey(entityStableKey);
+        ModeA = modeA; ModeB = modeB; AToBDurationTicks = aToBDurationTicks; BToADurationTicks = bToADurationTicks;
+        CancellationThresholdBasisPoints = cancellationThresholdBasisPoints; RollbackTicks = rollbackTicks; ReversalLockTicks = reversalLockTicks;
+        MoveDuringTransition = moveDuringTransition; AttackDuringTransition = attackDuringTransition; TransitionTargetLayers = transitionTargetLayers;
+    }
+
+    public TransformationModeDefinition GetMode(ContentId state) => state == ModeA.StateId ? ModeA : state == ModeB.StateId ? ModeB : default;
+    public TransformationModeDefinition GetDestination(ContentId source) => source == ModeA.StateId ? ModeB : source == ModeB.StateId ? ModeA : default;
+    public ushort GetDuration(ContentId source) => source == ModeA.StateId ? AToBDurationTicks : source == ModeB.StateId ? BToADurationTicks : (ushort)0;
+}
+
 public readonly struct ResourceNodeDefinition
 {
     public readonly string StableKey;
@@ -262,8 +322,9 @@ public sealed class PrototypeContentCatalog
     public BuildingDefinition[] Buildings { get; }
     public UnitProductionDefinition[] Production { get; }
     public WeaponDefinition[] Weapons { get; }
+    public TransformationDefinition[] Transformations { get; }
     public ulong ContentHash { get; internal set; }
-    public PrototypeContentCatalog(PrototypeMovementProfile[] movementProfiles, PrototypeEntityDefinition[] entities, ResourceNodeDefinition[]? resourceNodes = null, BuildingDefinition[]? buildings = null, UnitProductionDefinition[]? production = null, WeaponDefinition[]? weapons = null)
+    public PrototypeContentCatalog(PrototypeMovementProfile[] movementProfiles, PrototypeEntityDefinition[] entities, ResourceNodeDefinition[]? resourceNodes = null, BuildingDefinition[]? buildings = null, UnitProductionDefinition[]? production = null, WeaponDefinition[]? weapons = null, TransformationDefinition[]? transformations = null)
     {
         MovementProfiles = movementProfiles ?? Array.Empty<PrototypeMovementProfile>();
         Entities = entities ?? Array.Empty<PrototypeEntityDefinition>();
@@ -271,6 +332,7 @@ public sealed class PrototypeContentCatalog
         Buildings = buildings ?? Array.Empty<BuildingDefinition>();
         Production = production ?? Array.Empty<UnitProductionDefinition>();
         Weapons = weapons ?? Array.Empty<WeaponDefinition>();
+        Transformations = transformations ?? Array.Empty<TransformationDefinition>();
         for (int i = 0; i < Entities.Length; i++)
         {
             ContentId weaponProfile = Entities[i].Combat.WeaponProfile;
@@ -279,6 +341,13 @@ public sealed class PrototypeContentCatalog
             if (!Entities[i].Combat.CanAcquireTargets || Entities[i].Combat.LegalTargetLayers != weapon.LegalTargetLayers ||
                 Entities[i].Combat.LegalTargetClasses != weapon.LegalTargetClasses || Entities[i].Combat.PriorityProfile != weapon.PriorityProfile)
                 throw new ArgumentException($"Entity {Entities[i].StableKey} targeting metadata disagrees with weapon {weapon.StableKey}.");
+        }
+        for (int i = 0; i < Transformations.Length; i++)
+        {
+            TransformationDefinition transformation = Transformations[i];
+            if (!TryGetEntity(transformation.EntityType, out PrototypeEntityDefinition entity)) throw new ArgumentException($"Transformation {transformation.StableKey} references an unknown entity.");
+            ValidateTransformationMode(transformation, entity, transformation.ModeA, authoredMode: true);
+            ValidateTransformationMode(transformation, entity, transformation.ModeB, authoredMode: false);
         }
     }
 
@@ -326,6 +395,23 @@ public sealed class PrototypeContentCatalog
         for (int i = 0; i < Weapons.Length; i++) if (Weapons[i].Id == id) { definition = Weapons[i]; return true; }
         definition = default; return false;
     }
+    public bool TryGetTransformation(ContentId entityType, out TransformationDefinition definition)
+    {
+        for (int i = 0; i < Transformations.Length; i++) if (Transformations[i].EntityType == entityType) { definition = Transformations[i]; return true; }
+        definition = default; return false;
+    }
+
+    private void ValidateTransformationMode(TransformationDefinition transformation, PrototypeEntityDefinition entity, TransformationModeDefinition mode, bool authoredMode)
+    {
+        if (!TryGetMovement(mode.MovementProfileKey, out _)) throw new ArgumentException($"Transformation {transformation.StableKey} references missing movement {mode.MovementProfileKey}.");
+        if (!TryGetWeapon(mode.Combat.WeaponProfile, out WeaponDefinition weapon)) throw new ArgumentException($"Transformation {transformation.StableKey} references a missing weapon.");
+        if (mode.Combat.LegalTargetLayers != weapon.LegalTargetLayers || mode.Combat.LegalTargetClasses != weapon.LegalTargetClasses || mode.Combat.PriorityProfile != weapon.PriorityProfile)
+            throw new ArgumentException($"Transformation {transformation.StableKey} mode targeting disagrees with its weapon.");
+        if (authoredMode && (entity.MovementProfileKey != mode.MovementProfileKey || entity.Footprint != mode.Footprint || entity.VisionRadius != mode.VisionRadius ||
+            entity.Combat.TargetClass != mode.Combat.TargetClass || entity.Combat.TargetLayer != mode.Combat.TargetLayer || entity.Combat.ArmorRating != mode.Combat.ArmorRating ||
+            entity.Combat.WeaponProfile != mode.Combat.WeaponProfile))
+            throw new ArgumentException($"Transformation {transformation.StableKey} mode A must match the authored entity spawn state.");
+    }
 }
 
 public static class PrototypeContentFactory
@@ -339,12 +425,16 @@ public static class PrototypeContentFactory
             new PrototypeMovementProfile("movement.prototype.crew", Fix32.FromRatio(135,100), Fix32.FromInt(4), Fix32.FromInt(5), 1638, ReversePolicy.Full, MovementLayer.Ground),
             new PrototypeMovementProfile("movement.prototype.hover_scout", Fix32.FromRatio(225,100), Fix32.FromInt(6), Fix32.FromRatio(15,2), 1638, ReversePolicy.Full, MovementLayer.GroundHover),
             new PrototypeMovementProfile("movement.prototype.loader_dozer", Fix32.FromRatio(130,100), Fix32.FromRatio(3,2), Fix32.FromRatio(15,8), 865, ReversePolicy.Reduced, MovementLayer.Ground),
+            new PrototypeMovementProfile("movement.prototype.mx41_flight", Fix32.FromRatio(245,100), Fix32.FromInt(4), Fix32.FromInt(5), 1229, ReversePolicy.Full, MovementLayer.TrueAir),
+            new PrototypeMovementProfile("movement.prototype.mx41_ground", Fix32.FromRatio(175,100), Fix32.FromInt(4), Fix32.FromInt(5), 1229, ReversePolicy.Reduced, MovementLayer.Ground),
             new PrototypeMovementProfile("movement.prototype.nav_huge", Fix32.FromRatio(9,10), Fix32.FromRatio(9,10), Fix32.FromRatio(9,8), 410, ReversePolicy.Reduced, MovementLayer.Ground),
             new PrototypeMovementProfile("movement.prototype.rapid_rider", Fix32.FromRatio(210,100), Fix32.FromInt(4), Fix32.FromInt(5), 1638, ReversePolicy.Full, MovementLayer.GroundHover),
             new PrototypeMovementProfile("movement.prototype.static", Fix32.Zero, Fix32.Zero, Fix32.Zero, 0, ReversePolicy.None, MovementLayer.Ground)
         };
         WeaponDefinition[] weapons =
         {
+            new WeaponDefinition("weapon.ast.mx41.flight_pulse", TargetLayerMask.All, TargetClassMask.All, TargetPriorityProfile.Generalist, 16, DamageType.General, 23, Fix32.FromRatio(9,2), Fix32.Zero, WeaponDeliveryKind.Projectile, Fix32.FromInt(12), true),
+            new WeaponDefinition("weapon.ast.mx41.pursuit_projector", TargetLayerMask.Ground, TargetClassMask.All, TargetPriorityProfile.AntiLight, 20, DamageType.Light, 21, Fix32.FromRatio(9,2), Fix32.Zero, WeaponDeliveryKind.Projectile, Fix32.FromInt(12), true),
             new WeaponDefinition("weapon.rr.chrome_crusher.chrome_drill", TargetLayerMask.Ground, TargetClassMask.All, TargetPriorityProfile.Siege, 55, DamageType.Siege, 32, Fix32.FromRatio(21,20), Fix32.Zero, WeaponDeliveryKind.Contact, Fix32.Zero, true, 30, 3_500),
             new WeaponDefinition("weapon.rr.crew.portable_mining_tool", TargetLayerMask.Ground, TargetClassMask.All, TargetPriorityProfile.Support, 6, DamageType.General, 24, Fix32.FromRatio(4,5), Fix32.Zero, WeaponDeliveryKind.Contact, Fix32.Zero, true, 45, 3_500),
             new WeaponDefinition("weapon.rr.hover_scout.survey_pulse", TargetLayerMask.Ground, TargetClassMask.All, TargetPriorityProfile.Scout, 6, DamageType.General, 30, Fix32.FromInt(3), Fix32.Zero, WeaponDeliveryKind.Projectile, Fix32.FromInt(12), true),
@@ -357,6 +447,7 @@ public static class PrototypeContentFactory
             new PrototypeEntityDefinition("building.rock_raiders.power_station", "RockRaiders", "COMPOSITE_ADAPTED", "movement.prototype.static", FootprintClass.Large, SelectableKind.Building, 0, "view.placeholder.rock_raiders.power_station", combat: new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.EconomicInfrastructure, 1000, 1)),
             new PrototypeEntityDefinition("building.rock_raiders.vehicle_service_bay", "RockRaiders", "COMPOSITE_ADAPTED", "movement.prototype.static", FootprintClass.Huge, SelectableKind.Building, 0, "view.placeholder.rock_raiders.vehicle_service_bay", combat: new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.Production, 1700, 3)),
             new PrototypeEntityDefinition("prototype.nav.huge", "Technical", "ENGINEERING_ONLY", "movement.prototype.nav_huge", FootprintClass.Huge, SelectableKind.CombatSupport, 8, "view.placeholder.navigation.huge", combat: new PrototypeCombatProfile(CombatTargetClass.MassiveMachine, CombatTargetLayer.Ground, CombatTargetFlags.None, 880, 5)),
+            new PrototypeEntityDefinition("unit.astronauts.mx41_switch_fighter", "Astronauts", "OFFICIAL_ADAPTED", "movement.prototype.mx41_ground", FootprintClass.Medium, SelectableKind.CombatSupport, 10, "view.placeholder.astronauts.mx41_ground", operationsCapacity: 3, combat: new PrototypeCombatProfile(CombatTargetClass.MediumMachine, CombatTargetLayer.Ground, CombatTargetFlags.CombatThreat, 320, 2, TargetPriorityProfile.AntiLight, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromRatio(17,2), StableId.FromKey("weapon.ast.mx41.pursuit_projector"))),
             new PrototypeEntityDefinition("unit.rock_raiders.chrome_crusher", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.chrome_crusher", FootprintClass.Large, SelectableKind.CombatSupport, 8, "view.placeholder.rock_raiders.chrome_crusher", operationsCapacity: 6, combat: new PrototypeCombatProfile(CombatTargetClass.MassiveMachine, CombatTargetLayer.Ground, CombatTargetFlags.CombatThreat, 880, 5, TargetPriorityProfile.Siege, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromRatio(101,20), StableId.FromKey("weapon.rr.chrome_crusher.chrome_drill"))),
             new PrototypeEntityDefinition("unit.rock_raiders.crew", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.crew", FootprintClass.Tiny, SelectableKind.Worker, 7, "view.placeholder.rock_raiders.crew", 30, 8, 1, new PrototypeCombatProfile(CombatTargetClass.Personnel, CombatTargetLayer.Ground, CombatTargetFlags.Worker | CombatTargetFlags.Support | CombatTargetFlags.CombatThreat, 110, 0, TargetPriorityProfile.Support, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromRatio(24,5), StableId.FromKey("weapon.rr.crew.portable_mining_tool"))),
             new PrototypeEntityDefinition("unit.rock_raiders.hover_scout", "RockRaiders", "OFFICIAL_DIRECT", "movement.prototype.hover_scout", FootprintClass.Small, SelectableKind.CombatSupport, 9, "view.placeholder.rock_raiders.hover_scout", operationsCapacity: 1, combat: new PrototypeCombatProfile(CombatTargetClass.LightMachine, CombatTargetLayer.Ground, CombatTargetFlags.Support | CombatTargetFlags.CombatThreat, 120, 0, TargetPriorityProfile.Scout, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromInt(7), StableId.FromKey("weapon.rr.hover_scout.survey_pulse"))),
@@ -384,7 +475,18 @@ public static class PrototypeContentFactory
             new UnitProductionDefinition("unit.rock_raiders.loader_dozer", "building.rock_raiders.vehicle_service_bay", 125, 15, 0, 3, 720),
             new UnitProductionDefinition("unit.rock_raiders.rapid_rider", "building.rock_raiders.vehicle_service_bay", 90, 10, 0, 2, 560)
         };
-        PrototypeContentCatalog catalog = new PrototypeContentCatalog(profiles, entities, resources, buildings, production, weapons);
+        PrototypeCombatProfile mx41GroundCombat = new(CombatTargetClass.MediumMachine, CombatTargetLayer.Ground, CombatTargetFlags.CombatThreat, 320, 2,
+            TargetPriorityProfile.AntiLight, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromRatio(17,2), StableId.FromKey("weapon.ast.mx41.pursuit_projector"));
+        PrototypeCombatProfile mx41FlightCombat = new(CombatTargetClass.MediumMachine, CombatTargetLayer.TrueAir, CombatTargetFlags.CombatThreat, 320, 2,
+            TargetPriorityProfile.Generalist, TargetLayerMask.All, TargetClassMask.All, Fix32.FromRatio(17,2), StableId.FromKey("weapon.ast.mx41.flight_pulse"));
+        TransformationDefinition[] transformations =
+        {
+            new TransformationDefinition("transformation.astronauts.mx41_switch", "unit.astronauts.mx41_switch_fighter",
+                new TransformationModeDefinition("state.astronauts.mx41.ground", "Ground", "movement.prototype.mx41_ground", FootprintClass.Medium, 10, "view.placeholder.astronauts.mx41_ground", mx41GroundCombat),
+                new TransformationModeDefinition("state.astronauts.mx41.flight", "Flight", "movement.prototype.mx41_flight", FootprintClass.Medium, 10, "view.placeholder.astronauts.mx41_flight", mx41FlightCombat),
+                45, 45, 4_000, 12, 160, false, false, TargetLayerMask.All)
+        };
+        PrototypeContentCatalog catalog = new PrototypeContentCatalog(profiles, entities, resources, buildings, production, weapons, transformations);
         PrototypeContentCodec.Write(catalog);
         return catalog;
     }
@@ -394,7 +496,7 @@ public static class PrototypeContentFactory
 public static class PrototypeContentCodec
 {
     private const int Magic = 0x4350534C; // LSPC little-endian bytes.
-    public const int FormatVersion = 14;
+    public const int FormatVersion = 15;
 
     public static byte[] Write(PrototypeContentCatalog catalog)
     {
@@ -458,6 +560,8 @@ public static class PrototypeContentCodec
             writer.Write(weapon.Range.Raw); writer.Write(weapon.MinimumRange.Raw); writer.Write((byte)weapon.DeliveryKind); writer.Write(weapon.ProjectileSpeed.Raw); writer.Write(weapon.RequiresLineOfSight);
             writer.Write(weapon.FacingToleranceAngle16); writer.Write(weapon.MaximumMovingFireSpeedBasisPoints);
         }
+        writer.Write(catalog.Transformations.Length);
+        for (int i = 0; i < catalog.Transformations.Length; i++) WriteTransformation(writer, catalog.Transformations[i]);
         writer.Flush();
         byte[] bytes = stream.ToArray(); catalog.ContentHash = DeterministicHash.Fnv1A64(bytes); return bytes;
     }
@@ -538,9 +642,57 @@ public static class PrototypeContentCodec
             }
         }
         WeaponDefinition[] weapons = formatVersion >= 11 ? ReadWeapons(reader, formatVersion >= 12, formatVersion >= 14) : LegacyWeapons();
+        TransformationDefinition[] transformations = formatVersion >= 15 ? ReadTransformations(reader) : Array.Empty<TransformationDefinition>();
         if (stream.Position != stream.Length) throw new InvalidDataException("Trailing prototype content bytes.");
-        PrototypeContentCatalog result = new PrototypeContentCatalog(profiles, entities, resourceNodes, buildings, production, weapons) { ContentHash = DeterministicHash.Fnv1A64(bytes) };
+        PrototypeContentCatalog result = new PrototypeContentCatalog(profiles, entities, resourceNodes, buildings, production, weapons, transformations) { ContentHash = DeterministicHash.Fnv1A64(bytes) };
         return result;
+    }
+
+    private static void WriteTransformation(BinaryWriter writer, TransformationDefinition definition)
+    {
+        writer.Write(definition.StableKey); writer.Write(definition.Id.Value); writer.Write(definition.EntityStableKey); writer.Write(definition.EntityType.Value);
+        WriteTransformationMode(writer, definition.ModeA); WriteTransformationMode(writer, definition.ModeB);
+        writer.Write(definition.AToBDurationTicks); writer.Write(definition.BToADurationTicks); writer.Write(definition.CancellationThresholdBasisPoints);
+        writer.Write(definition.RollbackTicks); writer.Write(definition.ReversalLockTicks); writer.Write(definition.MoveDuringTransition);
+        writer.Write(definition.AttackDuringTransition); writer.Write((byte)definition.TransitionTargetLayers);
+    }
+
+    private static void WriteTransformationMode(BinaryWriter writer, TransformationModeDefinition mode)
+    {
+        writer.Write(mode.StateKey); writer.Write(mode.StateId.Value); writer.Write(mode.DisplayName); writer.Write(mode.MovementProfileKey);
+        writer.Write((byte)mode.Footprint); writer.Write(mode.VisionRadius); writer.Write(mode.ViewProfileKey);
+        writer.Write((byte)mode.Combat.TargetClass); writer.Write((byte)mode.Combat.TargetLayer); writer.Write((ushort)mode.Combat.TargetFlags);
+        writer.Write(mode.Combat.MaximumHitPoints); writer.Write(mode.Combat.ArmorRating); writer.Write((byte)mode.Combat.PriorityProfile);
+        writer.Write((byte)mode.Combat.LegalTargetLayers); writer.Write((byte)mode.Combat.LegalTargetClasses); writer.Write(mode.Combat.AcquisitionRadius.Raw);
+        writer.Write(mode.Combat.WeaponProfile.Value);
+    }
+
+    private static TransformationDefinition[] ReadTransformations(BinaryReader reader)
+    {
+        int count = reader.ReadInt32();
+        if (count < 0 || count > 1024) throw new InvalidDataException("Invalid transformation definition count.");
+        TransformationDefinition[] definitions = new TransformationDefinition[count];
+        for (int i = 0; i < count; i++)
+        {
+            string key = reader.ReadString(); uint id = reader.ReadUInt32(); string entityKey = reader.ReadString(); uint entityId = reader.ReadUInt32();
+            TransformationModeDefinition modeA = ReadTransformationMode(reader), modeB = ReadTransformationMode(reader);
+            definitions[i] = new TransformationDefinition(key, entityKey, modeA, modeB, reader.ReadUInt16(), reader.ReadUInt16(), reader.ReadUInt16(), reader.ReadUInt16(), reader.ReadUInt16(),
+                reader.ReadBoolean(), reader.ReadBoolean(), (TargetLayerMask)reader.ReadByte());
+            if (definitions[i].Id.Value != id || definitions[i].EntityType.Value != entityId) throw new InvalidDataException("Stable transformation ID mismatch.");
+        }
+        return definitions;
+    }
+
+    private static TransformationModeDefinition ReadTransformationMode(BinaryReader reader)
+    {
+        string stateKey = reader.ReadString(); uint stateId = reader.ReadUInt32(); string display = reader.ReadString(); string movement = reader.ReadString();
+        FootprintClass footprint = (FootprintClass)reader.ReadByte(); byte vision = reader.ReadByte(); string view = reader.ReadString();
+        PrototypeCombatProfile combat = new((CombatTargetClass)reader.ReadByte(), (CombatTargetLayer)reader.ReadByte(), (CombatTargetFlags)reader.ReadUInt16(),
+            reader.ReadUInt16(), reader.ReadByte(), (TargetPriorityProfile)reader.ReadByte(), (TargetLayerMask)reader.ReadByte(), (TargetClassMask)reader.ReadByte(),
+            Fix32.FromRaw(reader.ReadInt32()), new ContentId(reader.ReadUInt32()));
+        TransformationModeDefinition mode = new(stateKey, display, movement, footprint, vision, view, combat);
+        if (mode.StateId.Value != stateId) throw new InvalidDataException("Stable transformation state ID mismatch.");
+        return mode;
     }
 
     private static byte LegacyOperationsCapacity(string stableKey) => stableKey switch

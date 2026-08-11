@@ -12,9 +12,11 @@ public static class DebugPlaytestScenario
     public const string HoverScoutKey = "unit.rock_raiders.hover_scout";
     public const string ChromeCrusherKey = "unit.rock_raiders.chrome_crusher";
     public const string RapidRiderKey = "unit.rock_raiders.rapid_rider";
+    public const string Mx41Key = "unit.astronauts.mx41_switch_fighter";
     public static readonly FixVec2 DestructionArenaCenter = FixVec2.FromInts(103, 103);
     public static readonly FixVec2 RepairArenaCenter = FixVec2.FromInts(72, 96);
     public static readonly FixVec2 TransportArenaCenter = FixVec2.FromInts(84, 112);
+    public static readonly FixVec2 TransformationArenaCenter = FixVec2.FromInts(78, 86);
 
     private static readonly (short X, short Y)[] DestructionBuildingAnchors =
     {
@@ -170,6 +172,16 @@ public static class DebugPlaytestScenario
         }
     }
 
+    public static EntityId PrepareTransformation(SimulationWorld world, byte playerSlot)
+    {
+        EntityId fighter = EnsureUnit(world, playerSlot, Mx41Key, PreparedPosition(world, Mx41Key, TransformationArenaCenter));
+        SpawnInvisibleObserver(world, playerSlot, TransformationArenaCenter);
+        OperationsCapacitySystem.Recalculate(world);
+        world.Spatial.Rebuild(world.Entities);
+        new VisionSystem().Step(world);
+        return fighter;
+    }
+
     private static void SpawnInvisibleObserver(SimulationWorld world, byte ownerSlot, FixVec2 position)
     {
         EntityId observer = world.Entities.Create();
@@ -254,6 +266,7 @@ public static class DebugPlaytestScenario
             world.Entities.Passenger.Set(unit, new Passenger { Transport = EntityId.None, State = PassengerState.Grounded, SizePoints = 1 });
         if (world.Entities.Transport.Has(unit))
             world.Entities.Transport.Set(unit, new Transport { CapacityPoints = 4, JobState = TransportJobState.Idle });
+        if (world.Entities.Transformation.Has(unit)) TransformationSystem.ResetToInitial(world, unit);
         if (world.Entities.Targeting.Has(unit))
         {
             ref Targeting targeting = ref world.Entities.Targeting.Get(unit);

@@ -20,6 +20,7 @@ public sealed class EntityStore
     public readonly ComponentStore<Builder> Builder = new();
     public readonly ComponentStore<Passenger> Passenger = new();
     public readonly ComponentStore<Transport> Transport = new();
+    public readonly ComponentStore<Transformation> Transformation = new();
     public readonly ComponentStore<ResourceCarrier> ResourceCarrier = new();
     public readonly ComponentStore<ResourceReceiver> ResourceReceiver = new();
     public readonly ComponentStore<ResourceBank> ResourceBank = new();
@@ -83,6 +84,7 @@ public sealed class EntityStore
         Builder.Remove(id);
         Passenger.Remove(id);
         Transport.Remove(id);
+        Transformation.Remove(id);
         ResourceCarrier.Remove(id);
         ResourceReceiver.Remove(id);
         ResourceBank.Remove(id);

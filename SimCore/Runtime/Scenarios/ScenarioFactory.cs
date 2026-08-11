@@ -115,6 +115,7 @@ public static class ScenarioFactory
         world.Entities.Selectable.Set(id, new Selectable { IsSelectable = true, ContentType = StableId.FromKey(spawn.ContentKey), Kind = spawn.SelectableKind });
         world.Entities.Vision.Set(id, new Vision { RadiusBuildCells = spawn.VisionRadius, LastFogX = -1, LastFogY = -1 });
         AddCombatComponents(world, id, definition);
+        AddTransformationComponents(world, id, definition);
         AddWorkerComponents(world, id, definition);
         AddTransportComponents(world, id, definition);
         world.GetQueue(id);
@@ -202,7 +203,7 @@ public static class ScenarioFactory
         world.Entities.Ownership.Set(id,new Ownership{PlayerSlot=player});world.Entities.Transform.Set(id,new SimTransform{Position=position,Orientation=Angle16.Zero});
         world.Entities.Movement.Set(id,CreateMovement(profile,position));world.Entities.Navigation.Set(id,new NavigationAgent{Footprint=definition.Footprint,Layer=profile.Layer,Target=position,PathTopologyVersion=world.Map.TopologyVersion});
         world.Entities.Selectable.Set(id,new Selectable{IsSelectable=true,ContentType=definition.Id,Kind=definition.SelectableKind});
-        world.Entities.Vision.Set(id,new Vision{RadiusBuildCells=definition.VisionRadius,LastFogX=-1,LastFogY=-1});AddCombatComponents(world,id,definition);world.GetQueue(id);
+        world.Entities.Vision.Set(id,new Vision{RadiusBuildCells=definition.VisionRadius,LastFogX=-1,LastFogY=-1});AddCombatComponents(world,id,definition);AddTransformationComponents(world,id,definition);world.GetQueue(id);
         AddWorkerComponents(world,id,definition);
         AddTransportComponents(world,id,definition);
     }
@@ -258,6 +259,7 @@ public static class ScenarioFactory
         world.Entities.Selectable.Set(id, new Selectable { IsSelectable = true, ContentType = definition.Id, Kind = definition.SelectableKind });
         world.Entities.Vision.Set(id, new Vision { RadiusBuildCells = definition.VisionRadius, LastFogX = -1, LastFogY = -1 });
         AddCombatComponents(world, id, definition);
+        AddTransformationComponents(world, id, definition);
         AddWorkerComponents(world, id, definition);
         AddTransportComponents(world, id, definition);
         world.GetQueue(id);
@@ -270,6 +272,19 @@ public static class ScenarioFactory
             world.Entities.Passenger.Set(id, new Passenger { Transport = EntityId.None, State = PassengerState.Grounded, SizePoints = 1 });
         if (definition.Id == StableId.FromKey("unit.rock_raiders.rapid_rider"))
             world.Entities.Transport.Set(id, new Transport { CapacityPoints = 4, JobState = TransportJobState.Idle });
+    }
+
+    internal static void AddTransformationComponents(SimulationWorld world, EntityId id, PrototypeEntityDefinition definition)
+    {
+        if (!world.Content.TryGetTransformation(definition.Id, out TransformationDefinition transformation)) return;
+        world.Entities.Transformation.Set(id, new Transformation
+        {
+            Definition = transformation.Id,
+            CurrentState = transformation.ModeA.StateId,
+            SourceState = transformation.ModeA.StateId,
+            DestinationState = transformation.ModeA.StateId,
+            Phase = TransformationPhase.Idle
+        });
     }
 
     internal static void AddCombatComponents(SimulationWorld world, EntityId id, PrototypeEntityDefinition definition)

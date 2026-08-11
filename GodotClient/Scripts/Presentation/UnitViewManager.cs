@@ -31,6 +31,7 @@ public partial class UnitViewManager : Node3D
     private readonly StandardMaterial3D _brownout = MakeMaterial(new Color(0.20f, 0.22f, 0.25f));
     private readonly StandardMaterial3D _projectile = MakeProjectileMaterial();
     private readonly StandardMaterial3D _wreck = MakeMaterial(new Color(0.18f, 0.17f, 0.15f));
+    private readonly StandardMaterial3D _transforming = MakeMaterial(new Color(0.30f, 0.72f, 1.0f));
     private readonly StandardMaterial3D _healthGood = MakeHealthBarMaterial(new Color(0.24f, 0.82f, 0.38f, 0.96f));
     private readonly StandardMaterial3D _healthDamaged = MakeHealthBarMaterial(new Color(0.98f, 0.68f, 0.12f, 0.96f));
     private readonly StandardMaterial3D _healthCritical = MakeHealthBarMaterial(new Color(1f, 0.24f, 0.12f, 0.96f));
@@ -60,7 +61,7 @@ public partial class UnitViewManager : Node3D
             if (!_views.TryGetValue(c.EntityId.Value, out MeshInstance3D? view)) { view = CreateView(c); _views.Add(c.EntityId.Value, view); AddChild(view); }
             PresentationEntity p = FindPrevious(previous, c);
             Vector3 a = p.Position.ToWorld(0.5f), b = c.Position.ToWorld(0.5f);
-            view.GlobalPosition = c.Snap ? b : a.Lerp(b, alpha);
+            view.GlobalPosition = (c.Snap ? b : a.Lerp(b, alpha)) + Vector3.Up * TransformationElevation(c);
             float yawA = p.Orientation.Raw * (360f / 65536f), yawB = c.Orientation.Raw * (360f / 65536f);
             float renderedYaw = c.Snap ? yawB : Mathf.RadToDeg(Mathf.LerpAngle(Mathf.DegToRad(yawA), Mathf.DegToRad(yawB), alpha));
             view.RotationDegrees = new Vector3(0f, renderedYaw, 0f);
@@ -73,6 +74,7 @@ public partial class UnitViewManager : Node3D
             }
             else if (c.SelectableKind == SelectableKind.Building && c.IsConstructionSite) view.MaterialOverride = _construction;
             else if (c.SelectableKind == SelectableKind.Building && c.IsEnergyConsumer && !c.IsPowered) view.MaterialOverride = _brownout;
+            else if (c.TransformationPhase != TransformationPhase.Idle) view.MaterialOverride = _transforming;
             else view.MaterialOverride = hovered && !selected ? _hover : (c.Owner == 0 ? _friendly : _other);
             if (c.IsDestroyed) view.MaterialOverride = _wreck;
             Node3D? ring = view.GetNodeOrNull<Node3D>("SelectionRing");
@@ -81,6 +83,7 @@ public partial class UnitViewManager : Node3D
             if (targetRing is not null) targetRing.Visible = !c.IsDestroyed && IsCurrentTarget(c.EntityId);
             UpdateHealthBar(view, c, !c.IsDestroyed && !c.IsConstructionSite &&
                 (selected || IsCurrentTarget(c.EntityId) || (c.HasHealth && c.CurrentHitPointsRaw < c.MaximumHitPointsRaw)));
+            UpdateTransformationFeedback(view, c, selected);
             if (c.IsDestroyed)
             {
                 HideWeaponFeedback(view);
@@ -232,7 +235,7 @@ public partial class UnitViewManager : Node3D
     {
         view.Name = $"Debris_{id}";
         view.Scale = scale;
-        string[] hidden = { "SelectionRing", "TargetRing", "HealthBar", "ConstructionProgressBar", "ControlGroupLabel", "TransportLabel", "BrownoutLabel", "WeaponFlash", "ContactImpact", "RepairEffect" };
+        string[] hidden = { "SelectionRing", "TargetRing", "HealthBar", "ConstructionProgressBar", "TransformationProgressBar", "ControlGroupLabel", "TransportLabel", "TransformationLabel", "BrownoutLabel", "WeaponFlash", "ContactImpact", "RepairEffect" };
         for (int i = 0; i < hidden.Length; i++)
         {
             Node3D? node = view.GetNodeOrNull<Node3D>(hidden[i]);
@@ -441,7 +444,17 @@ public partial class UnitViewManager : Node3D
             Scale = new Vector3(1f / visualScale.X, 1f / visualScale.Y, 1f / visualScale.Z)
         };
         view.AddChild(transportLabel);
+        Label3D transformationLabel = new()
+        {
+            Name = "TransformationLabel", Text = string.Empty, Visible = false, FontSize = 23, OutlineSize = 4, PixelSize = 0.03f,
+            Modulate = new Color(0.42f, 0.84f, 1f), OutlineModulate = new Color(0.02f, 0.02f, 0.02f, 0.98f),
+            Billboard = BaseMaterial3D.BillboardModeEnum.Enabled, FixedSize = false, NoDepthTest = true,
+            Position = new Vector3(0f, (labelHeightWorld + 0.55f) / visualScale.Y, 0f),
+            Scale = new Vector3(1f / visualScale.X, 1f / visualScale.Y, 1f / visualScale.Z)
+        };
+        view.AddChild(transformationLabel);
         view.AddChild(CreateConstructionProgressBar());
+        view.AddChild(CreateTransformationProgressBar());
         view.AddChild(CreateHealthBar());
         Label3D brownoutLabel = new()
         {
@@ -544,6 +557,60 @@ public partial class UnitViewManager : Node3D
         bar.AddChild(new MeshInstance3D { Name = "Background", Mesh = backgroundMesh });
         bar.AddChild(new MeshInstance3D { Name = "Fill", Mesh = new QuadMesh { Size = new Vector2(2.32f, 0.26f) } });
         return bar;
+    }
+
+    private static Node3D CreateTransformationProgressBar()
+    {
+        Node3D bar = new() { Name = "TransformationProgressBar", Visible = false, TopLevel = true };
+        QuadMesh background = new() { Size = new Vector2(2.5f, 0.30f), Material = MakeHealthBarMaterial(new Color(0.035f, 0.045f, 0.05f, 0.96f)) };
+        QuadMesh fill = new() { Size = new Vector2(0.01f, 0.20f), Material = MakeHealthBarMaterial(new Color(0.22f, 0.70f, 1f, 0.98f)) };
+        bar.AddChild(new MeshInstance3D { Name = "Background", Mesh = background });
+        bar.AddChild(new MeshInstance3D { Name = "Fill", Mesh = fill });
+        return bar;
+    }
+
+    private float TransformationElevation(PresentationEntity entity)
+    {
+        if (!entity.IsTransformable || _bridge is null || !_bridge.World.Content.TryGetTransformation(entity.ContentType, out TransformationDefinition definition)) return 0f;
+        bool sourceAir = entity.TransformationState == definition.ModeB.StateId;
+        if (entity.TransformationPhase != TransformationPhase.Transitioning) return sourceAir ? 1.6f : 0f;
+        bool destinationAir = entity.TransformationDestination == definition.ModeB.StateId;
+        return Mathf.Lerp(sourceAir ? 1.6f : 0f, destinationAir ? 1.6f : 0f, entity.TransformationProgressBasisPoints / 10000f);
+    }
+
+    private void UpdateTransformationFeedback(MeshInstance3D view, PresentationEntity entity, bool selected)
+    {
+        Label3D? label = view.GetNodeOrNull<Label3D>("TransformationLabel");
+        Node3D? bar = view.GetNodeOrNull<Node3D>("TransformationProgressBar");
+        if (label is null || bar is null || _bridge is null || !entity.IsTransformable ||
+            !_bridge.World.Content.TryGetTransformation(entity.ContentType, out TransformationDefinition definition))
+        {
+            if (label is not null) label.Visible = false;
+            if (bar is not null) bar.Visible = false;
+            return;
+        }
+        TransformationModeDefinition current = definition.GetMode(entity.TransformationState);
+        TransformationModeDefinition destination = definition.GetMode(entity.TransformationDestination);
+        bool active = entity.TransformationPhase != TransformationPhase.Idle;
+        label.Visible = selected || active || entity.ReversalLockRemainingTicks > 0;
+        if (active)
+        {
+            string action = entity.TransformationPhase == TransformationPhase.RollingBack ? "CANCELLING" : $"{current.DisplayName.ToUpperInvariant()} → {destination.DisplayName.ToUpperInvariant()}";
+            label.Text = $"{action}  {entity.TransformationProgressBasisPoints / 100}%";
+        }
+        else if (entity.ReversalLockRemainingTicks > 0)
+            label.Text = $"{current.DisplayName.ToUpperInvariant()}  •  LOCK {entity.ReversalLockRemainingTicks / (float)SimClock.TicksPerSecond:0.0}s";
+        else label.Text = $"{current.DisplayName.ToUpperInvariant()}  •  Q STATE CHANGE";
+        bar.Visible = active;
+        if (!active) return;
+        bar.GlobalPosition = view.GlobalPosition + Vector3.Up * (HealthBarHeightWorld(entity) + 0.52f);
+        bar.GlobalRotation = Vector3.Zero; bar.Scale = Vector3.One;
+        MeshInstance3D? fill = bar.GetNodeOrNull<MeshInstance3D>("Fill");
+        if (fill?.Mesh is not QuadMesh mesh) return;
+        float ratio = Mathf.Clamp(entity.TransformationProgressBasisPoints / 10000f, 0f, 1f);
+        float width = Mathf.Max(2.32f * ratio, 0.01f);
+        mesh.Size = new Vector2(width, 0.20f);
+        mesh.CenterOffset = new Vector3(-1.16f + width * 0.5f, 0f, 0f);
     }
 
     private void UpdateHealthBar(MeshInstance3D view, PresentationEntity entity, bool visible)

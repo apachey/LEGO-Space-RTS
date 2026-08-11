@@ -101,7 +101,7 @@ public sealed class TargetingSystem : ISimSystem
             !world.Entities.Ownership.TryGet(source, out Ownership sourceOwner) || !world.Entities.Ownership.TryGet(target, out Ownership targetOwner) ||
             sourceOwner.PlayerSlot == targetOwner.PlayerSlot || !world.Entities.Transform.TryGet(target, out SimTransform transform)) return false;
         if (world.Entities.Health.TryGet(target, out Health health) && health.IsDepleted) return false;
-        TargetLayerMask layer = targetable.Layer == CombatTargetLayer.Ground ? TargetLayerMask.Ground : TargetLayerMask.TrueAir;
+        TargetLayerMask layer = TransformationSystem.EffectiveTargetLayers(world, target, targetable);
         TargetClassMask targetClass = (TargetClassMask)(1 << (int)targetable.Class);
         if ((targeting.LegalLayers & layer) == 0 || (targeting.LegalClasses & targetClass) == 0) return false;
         if (!requireVisible) return true;

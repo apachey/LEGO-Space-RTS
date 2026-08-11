@@ -97,6 +97,7 @@ public sealed class DestructionSystem : ISimSystem
         world.Entities.Builder.Remove(id);
         world.Entities.Passenger.Remove(id);
         world.Entities.Transport.Remove(id);
+        world.Entities.Transformation.Remove(id);
         world.Entities.ResourceCarrier.Remove(id);
         world.Entities.ResourceReceiver.Remove(id);
         world.Entities.ResourceBank.Remove(id);

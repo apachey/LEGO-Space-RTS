@@ -59,6 +59,7 @@ public partial class RtsInputController : Node
         if (Input.IsActionJustPressed("command_hold") && _selection.Selected.Count > 0) { IssueSimple(SimCommandType.HoldPosition); ClearMovePreviews(); }
         if (Input.IsActionJustPressed("command_load") && _selection.Selected.Count > 0) IssueLoadSelected();
         if (Input.IsActionJustPressed("command_unload") && _selection.Selected.Count > 0 && _camera.TryProjectToGround(GetViewport().GetMousePosition(), out Vector3 unloadPoint)) IssueUnload(unloadPoint);
+        if (Input.IsActionJustPressed("command_state_change") && _selection.Selected.Count > 0) IssueSimple(SimCommandType.StateChange);
         if (Input.IsActionJustPressed("debug_open_excavatable"))
             _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, _sequence++, SimCommandType.DebugOpenExcavatable, Array.Empty<EntityId>(), FixVec2.Zero, debugFeatureId: DevMapFactory.ExcavatableFeatureId));
 
@@ -236,6 +237,19 @@ public partial class RtsInputController : Node
         DebugTestStatus = "Destroying prepared Rapid Rider; loaded Crew must emergency-deploy.";
     }
 
+    public void DebugPrepareTransformationPlaytest()
+    {
+        if (_bridge is null) return;
+        SimTick execution = _bridge.World.Tick.Next();
+        _bridge.Enqueue(new CommandEnvelope(execution, 0, _sequence++, SimCommandType.DebugPrepareTransformationTest,
+            Array.Empty<EntityId>(), FixVec2.Zero));
+        _pendingDebugFocus = DebugFocusKind.Transformation;
+        _pendingDebugTick = execution.Value;
+        DebugTestStatus = "Preparing T048 MX-41 transformation arena…";
+    }
+
+    public void StateChangeSelected() => IssueSimple(SimCommandType.StateChange);
+
     public void DebugMoveVisibleEnemies()
     {
         if (_bridge is null) return;
@@ -361,6 +375,24 @@ public partial class RtsInputController : Node
             return;
         }
 
+        if (_pendingDebugFocus == DebugFocusKind.Transformation)
+        {
+            ContentId mx41Type = StableId.FromKey(DebugPlaytestScenario.Mx41Key);
+            IReadOnlyList<EntityId> transformEntities = _bridge.World.Entities.Alive;
+            for (int i = 0; i < transformEntities.Count; i++)
+            {
+                EntityId id = transformEntities[i];
+                if (!_bridge.World.Entities.Selectable.TryGet(id, out Selectable selectable) || selectable.ContentType != mx41Type ||
+                    !_bridge.World.Entities.Ownership.TryGet(id, out Ownership owner) || owner.PlayerSlot != 0 ||
+                    !_bridge.World.Entities.Transformation.Has(id) || !_bridge.World.Entities.Transform.TryGet(id, out SimTransform transform)) continue;
+                _selection.SetSelection(new[] { id }); _camera.CenterOn(transform.Position.ToWorld());
+                DebugTestStatus = "READY: MX-41 selected in Ground mode. Press Q to transform; S before 40% cancels.";
+                _pendingDebugFocus = DebugFocusKind.None;
+                return;
+            }
+            return;
+        }
+
         EntityId building = EntityId.None;
         ContentId buildingType = StableId.FromKey(DebugPlaytestScenario.DestructionBuildingKey);
         IReadOnlyList<EntityId> entities = _bridge.World.Entities.Alive;
@@ -409,7 +441,7 @@ public partial class RtsInputController : Node
         return candidateAfter != currentAfter ? candidateAfter : candidate.Value < current.Value;
     }
 
-    private enum DebugFocusKind : byte { None = 0, Construction = 1, Destruction = 2, Repair = 3, Transport = 4 }
+    private enum DebugFocusKind : byte { None = 0, Construction = 1, Destruction = 2, Repair = 3, Transport = 4, Transformation = 5 }
 
     private bool TryGetCameraPosition(EntityId id, out FixVec2 position)
     {

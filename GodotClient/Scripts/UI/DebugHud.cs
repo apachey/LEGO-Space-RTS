@@ -34,6 +34,9 @@ public partial class DebugHud : CanvasLayer
         Button destroyTransport = new() { Name = "DestroyTransportTest", Text = "Kill loaded Rider" };
         destroyTransport.TooltipText = "Destroys the prepared Rapid Rider so loaded Crew emergency-deploy at 40% HP.";
         destroyTransport.Pressed += input.DebugDestroyPreparedTransport; actions.AddChild(destroyTransport);
+        Button prepareTransformation = new() { Name = "PrepareTransformationTest", Text = "Prepare T048 MX-41" };
+        prepareTransformation.TooltipText = "Creates, selects and frames an MX-41 in Ground mode for Q/Stop transformation tests.";
+        prepareTransformation.Pressed += input.DebugPrepareTransformationPlaytest; actions.AddChild(prepareTransformation);
         Button destroyCrew = new() { Name = "DestroyCrewTest", Text = "Kill test Crew" };
         destroyCrew.Pressed += input.DebugDestroyPreparedCrew; actions.AddChild(destroyCrew);
         Button destroyChrome = new() { Name = "DestroyChromeTest", Text = "Kill test Chrome" };

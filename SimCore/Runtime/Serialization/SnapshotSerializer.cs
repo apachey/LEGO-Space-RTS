@@ -7,8 +7,8 @@ namespace LegoSpaceRTS.SimCore
 public static class SnapshotSerializer
 {
     public const uint Magic = 0x53525453; // STRS
-    public const ushort FormatVersion = 18;
-    public const ushort SimulationProtocolVersion = 16;
+    public const ushort FormatVersion = 19;
+    public const ushort SimulationProtocolVersion = 17;
 
     [Flags]
     private enum EntityComponents : uint
@@ -41,7 +41,8 @@ public static class SnapshotSerializer
         Destruction = 1 << 24,
         Passenger = 1 << 25,
         Transport = 1 << 26,
-        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver | ResourceBank | Building | ConstructionSite | Builder | Production | EnergyDomain | EnergyDomainMember | PowerState | Targetable | Targeting | Weapon | Health | Destruction | Passenger | Transport
+        Transformation = 1 << 27,
+        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver | ResourceBank | Building | ConstructionSite | Builder | Production | EnergyDomain | EnergyDomainMember | PowerState | Targetable | Targeting | Weapon | Health | Destruction | Passenger | Transport | Transformation
     }
 
     public static byte[] Serialize(SimulationWorld world)
@@ -63,7 +64,7 @@ public static class SnapshotSerializer
         using MemoryStream ms = new(bytes, false); using BinaryReader r = new(ms);
         if (r.ReadUInt32() != Magic) throw new InvalidDataException("Snapshot magic mismatch.");
         ushort format = r.ReadUInt16(), protocol = r.ReadUInt16();
-        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8) || (format == 11 && protocol == 9) || (format == 12 && protocol == 10) || (format == 13 && protocol == 11) || (format == 14 && protocol == 12) || (format == 15 && protocol == 13) || (format == 16 && protocol == 14) || (format == 17 && protocol == 15);
+        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8) || (format == 11 && protocol == 9) || (format == 12 && protocol == 10) || (format == 13 && protocol == 11) || (format == 14 && protocol == 12) || (format == 15 && protocol == 13) || (format == 16 && protocol == 14) || (format == 17 && protocol == 15) || (format == 18 && protocol == 16);
         if (!supportedLegacy && (format != FormatVersion || protocol != SimulationProtocolVersion)) throw new InvalidDataException($"Unsupported snapshot {format}/{protocol}.");
         SimTick tick = new(r.ReadInt32()); MapGrid map = MapGrid.Deserialize(r); uint nextEntity = r.ReadUInt32();
         EntityStore entities = new(); int entityCount = r.ReadInt32(); if (entityCount < 0 || entityCount > 10000) throw new InvalidDataException("Invalid entity count.");
@@ -86,6 +87,8 @@ public static class SnapshotSerializer
         }
         if (format < 18) AddLegacyTransportComponents(temp);
         ValidateTransportLinks(temp);
+        if (format < 19) AddLegacyTransformationComponents(temp);
+        ValidateTransformationLinks(temp);
         entities.RestoreNextEntityValue(nextEntity);
         temp.Commands.Deserialize(r, includeBuildFields: format >= 6, includeEnergyPriority: format >= 10);
         temp.Fog = FogState.Deserialize(r);
@@ -170,6 +173,7 @@ public static class SnapshotSerializer
         if (world.Entities.Builder.Has(id)) components |= EntityComponents.Builder;
         if (world.Entities.Passenger.Has(id)) components |= EntityComponents.Passenger;
         if (world.Entities.Transport.Has(id)) components |= EntityComponents.Transport;
+        if (world.Entities.Transformation.Has(id)) components |= EntityComponents.Transformation;
         if (world.Entities.ResourceCarrier.Has(id)) components |= EntityComponents.ResourceCarrier;
         if (world.Entities.ResourceReceiver.Has(id)) components |= EntityComponents.ResourceReceiver;
         if (world.Entities.ResourceBank.Has(id)) components |= EntityComponents.ResourceBank;
@@ -205,6 +209,7 @@ public static class SnapshotSerializer
         if ((components & EntityComponents.Builder) != 0) WriteBuilder(w, world.Entities.Builder.Get(id));
         if ((components & EntityComponents.Passenger) != 0) WritePassenger(w, world.Entities.Passenger.Get(id));
         if ((components & EntityComponents.Transport) != 0) WriteTransport(w, world.Entities.Transport.Get(id));
+        if ((components & EntityComponents.Transformation) != 0) WriteTransformation(w, world.Entities.Transformation.Get(id));
         if ((components & EntityComponents.ResourceCarrier) != 0) WriteResourceCarrier(w, world.Entities.ResourceCarrier.Get(id));
         if ((components & EntityComponents.ResourceReceiver) != 0) WriteResourceReceiver(w, world.Entities.ResourceReceiver.Get(id));
         if ((components & EntityComponents.ResourceBank) != 0) WriteResourceBank(w, world.Entities.ResourceBank.Get(id));
@@ -269,6 +274,13 @@ public static class SnapshotSerializer
         w.Write((byte)transport.JobState); w.Write(transport.ActivePassenger.Value); w.Write(transport.PhaseTicks);
         w.Write(transport.UnloadTarget.X.Raw); w.Write(transport.UnloadTarget.Y.Raw); w.Write(transport.UnloadBlocked); w.Write(transport.LoadingSettled);
         for (int i = 0; i < Transport.MaximumPassengerSlots; i++) w.Write(transport.GetPassenger(i).Value);
+    }
+
+    private static void WriteTransformation(BinaryWriter w, Transformation transformation)
+    {
+        w.Write(transformation.Definition.Value); w.Write(transformation.CurrentState.Value); w.Write(transformation.SourceState.Value); w.Write(transformation.DestinationState.Value);
+        w.Write((byte)transformation.Phase); w.Write(transformation.ProgressTicks); w.Write(transformation.TotalTicks); w.Write(transformation.RollbackTicksRemaining);
+        w.Write(transformation.ReversalLockedUntilTick); w.Write(transformation.QueuedToggle);
     }
 
     private static void WriteResourceCarrier(BinaryWriter w, ResourceCarrier carrier)
@@ -372,6 +384,7 @@ public static class SnapshotSerializer
         if ((components & EntityComponents.Builder) != 0) world.Entities.Builder.Set(id, ReadBuilder(r, format));
         if ((components & EntityComponents.Passenger) != 0) world.Entities.Passenger.Set(id, ReadPassenger(r));
         if ((components & EntityComponents.Transport) != 0) world.Entities.Transport.Set(id, ReadTransport(r));
+        if ((components & EntityComponents.Transformation) != 0) world.Entities.Transformation.Set(id, ReadTransformation(r));
         if ((components & EntityComponents.ResourceCarrier) != 0) world.Entities.ResourceCarrier.Set(id, ReadResourceCarrier(r));
         if ((components & EntityComponents.ResourceReceiver) != 0) world.Entities.ResourceReceiver.Set(id, ReadResourceReceiver(r));
         if ((components & EntityComponents.ResourceBank) != 0) world.Entities.ResourceBank.Set(id, ReadResourceBank(r));
@@ -473,6 +486,20 @@ public static class SnapshotSerializer
             ((transport.JobState == TransportJobState.LoadingDocking || transport.JobState == TransportJobState.LoadingPassenger) && transport.ActivePassenger == EntityId.None))
             throw new InvalidDataException("Invalid transport state.");
         return transport;
+    }
+
+    private static Transformation ReadTransformation(BinaryReader r)
+    {
+        Transformation transformation = new()
+        {
+            Definition = new ContentId(r.ReadUInt32()), CurrentState = new ContentId(r.ReadUInt32()), SourceState = new ContentId(r.ReadUInt32()),
+            DestinationState = new ContentId(r.ReadUInt32()), Phase = (TransformationPhase)r.ReadByte(), ProgressTicks = r.ReadUInt16(),
+            TotalTicks = r.ReadUInt16(), RollbackTicksRemaining = r.ReadUInt16(), ReversalLockedUntilTick = r.ReadInt32(), QueuedToggle = r.ReadBoolean()
+        };
+        if (transformation.Definition.Value == 0 || transformation.CurrentState.Value == 0 || transformation.SourceState.Value == 0 || transformation.DestinationState.Value == 0 ||
+            transformation.Phase < TransformationPhase.Idle || transformation.Phase > TransformationPhase.RollingBack || transformation.ReversalLockedUntilTick < 0)
+            throw new InvalidDataException("Invalid transformation state.");
+        return transformation;
     }
 
     private static ResourceCarrier ReadResourceCarrier(BinaryReader r)
@@ -691,6 +718,46 @@ public static class SnapshotSerializer
             if (!world.Entities.Selectable.TryGet(id, out Selectable selectable) ||
                 !world.Content.TryGetEntity(selectable.ContentType, out PrototypeEntityDefinition definition)) continue;
             ScenarioFactory.AddTransportComponents(world, id, definition);
+        }
+    }
+
+    private static void AddLegacyTransformationComponents(SimulationWorld world)
+    {
+        IReadOnlyList<EntityId> alive = world.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (!world.Entities.Selectable.TryGet(id, out Selectable selectable) ||
+                !world.Content.TryGetEntity(selectable.ContentType, out PrototypeEntityDefinition definition)) continue;
+            ScenarioFactory.AddTransformationComponents(world, id, definition);
+        }
+    }
+
+    private static void ValidateTransformationLinks(SimulationWorld world)
+    {
+        IReadOnlyList<EntityId> alive = world.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (!world.Entities.Transformation.TryGet(id, out Transformation state)) continue;
+            if (!world.Entities.Selectable.TryGet(id, out Selectable selectable) || !world.Content.TryGetTransformation(selectable.ContentType, out TransformationDefinition definition) ||
+                state.Definition != definition.Id || (state.CurrentState != definition.ModeA.StateId && state.CurrentState != definition.ModeB.StateId) ||
+                (state.SourceState != definition.ModeA.StateId && state.SourceState != definition.ModeB.StateId) ||
+                (state.DestinationState != definition.ModeA.StateId && state.DestinationState != definition.ModeB.StateId))
+                throw new InvalidDataException("Transformation state does not match its content definition.");
+            if (state.Phase == TransformationPhase.Idle)
+            {
+                if (state.ProgressTicks != 0 || state.TotalTicks != 0 || state.RollbackTicksRemaining != 0 || state.SourceState != state.CurrentState || state.DestinationState != state.CurrentState)
+                    throw new InvalidDataException("Invalid idle transformation state.");
+            }
+            else
+            {
+                if (state.TotalTicks == 0 || state.ProgressTicks > state.TotalTicks || state.SourceState != state.CurrentState || state.DestinationState == state.CurrentState)
+                    throw new InvalidDataException("Invalid active transformation progress.");
+                if ((state.Phase == TransformationPhase.Transitioning && state.RollbackTicksRemaining != 0) ||
+                    (state.Phase == TransformationPhase.RollingBack && (state.RollbackTicksRemaining == 0 || state.RollbackTicksRemaining > state.TotalTicks)))
+                    throw new InvalidDataException("Invalid transformation rollback state.");
+            }
         }
     }
 

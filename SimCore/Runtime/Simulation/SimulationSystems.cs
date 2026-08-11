@@ -65,6 +65,11 @@ public sealed class CommandExecutionSystem : ISimSystem
             DebugPlaytestScenario.DestroyPreparedTransport(world, command.PlayerSlot);
             return;
         }
+        if (command.Type == SimCommandType.DebugPrepareTransformationTest)
+        {
+            DebugPlaytestScenario.PrepareTransformation(world, command.PlayerSlot);
+            return;
+        }
         if (command.Type == SimCommandType.SetEnergyPriority)
         {
             BrownoutSystem.TrySetPriority(world, command.PlayerSlot, command.Entities, command.EnergyPriority);
@@ -175,6 +180,17 @@ public sealed class CommandExecutionSystem : ISimSystem
             return;
         }
 
+        if (command.Type == SimCommandType.StateChange)
+        {
+            for (int i = 0; i < command.Entities.Length; i++)
+            {
+                EntityId id = command.Entities[i];
+                if (world.Entities.Ownership.TryGet(id, out Ownership owner) && owner.PlayerSlot == command.PlayerSlot)
+                    TransformationSystem.TryToggle(world, id);
+            }
+            return;
+        }
+
         world.ScratchEntities.Clear();
         for (int i = 0; i < command.Entities.Length; i++)
         {
@@ -257,6 +273,7 @@ public sealed class CommandExecutionSystem : ISimSystem
             EntityId id = world.ScratchEntities[i];
             ref NavigationAgent nav = ref world.Entities.Navigation.Get(id);
             ref Movement move = ref world.Entities.Movement.Get(id);
+            if (command.Type == SimCommandType.Stop) TransformationSystem.TryCancel(world, id);
             world.GetQueue(id).Clear();
             TransportSystem.CancelForDirectOrder(world, id);
             ConstructionSystem.ReleaseBuilderAssignment(world, id);
@@ -273,6 +290,7 @@ public sealed class CommandExecutionSystem : ISimSystem
         if (world.Entities.Navigation.TryGet(id, out NavigationAgent nav) && nav.HasTarget) return true;
         if (world.Entities.Builder.TryGet(id, out Builder builder) && builder.JobState != BuilderJobState.Idle) return true;
         if (TransportSystem.IsPassengerBusy(world, id)) return true;
+        if (TransformationSystem.IsBusy(world, id)) return true;
         return world.Entities.Worker.TryGet(id, out Worker worker) && (worker.TaskState == WorkerTaskState.MovingToResource || worker.TaskState == WorkerTaskState.Mining || worker.TaskState == WorkerTaskState.ReturningToReceiver);
     }
 

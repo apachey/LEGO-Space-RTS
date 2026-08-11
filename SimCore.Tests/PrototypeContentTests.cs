@@ -15,6 +15,7 @@ public sealed class PrototypeContentTests
         AssertOrdered(catalog.Buildings.Select(b => b.StableKey).ToArray());
         AssertOrdered(catalog.Production.Select(p => p.UnitStableKey).ToArray());
         AssertOrdered(catalog.Weapons.Select(w => w.StableKey).ToArray());
+        AssertOrdered(catalog.Transformations.Select(t => t.StableKey).ToArray());
     }
 
     [Test]
@@ -101,6 +102,27 @@ public sealed class PrototypeContentTests
             Assert.That(restored.RequiresLineOfSight, Is.True);
             Assert.That(restored.FacingToleranceAngle16, Is.EqualTo(Angle16.Quarter.Raw / 2));
             Assert.That(restored.MaximumMovingFireSpeedBasisPoints, Is.EqualTo(3_500));
+        });
+    }
+
+    [Test]
+    public void TransformationDefinitionsRoundTripCanonicalModeData()
+    {
+        PrototypeContentCatalog catalog = PrototypeContentFactory.CreateM2Catalog();
+        PrototypeContentCatalog restored = PrototypeContentCodec.Read(PrototypeContentCodec.Write(catalog));
+        Assert.That(restored.Transformations, Has.Length.EqualTo(1));
+        TransformationDefinition transformation = restored.Transformations[0];
+        Assert.Multiple(() =>
+        {
+            Assert.That(transformation.EntityType, Is.EqualTo(StableId.FromKey("unit.astronauts.mx41_switch_fighter")));
+            Assert.That(transformation.AToBDurationTicks, Is.EqualTo(45));
+            Assert.That(transformation.CancellationThresholdBasisPoints, Is.EqualTo(4_000));
+            Assert.That(transformation.RollbackTicks, Is.EqualTo(12));
+            Assert.That(transformation.ReversalLockTicks, Is.EqualTo(160));
+            Assert.That(transformation.ModeA.DisplayName, Is.EqualTo("Ground"));
+            Assert.That(transformation.ModeB.DisplayName, Is.EqualTo("Flight"));
+            Assert.That(transformation.ModeB.Combat.TargetLayer, Is.EqualTo(CombatTargetLayer.TrueAir));
+            Assert.That(transformation.TransitionTargetLayers, Is.EqualTo(TargetLayerMask.All));
         });
     }
 

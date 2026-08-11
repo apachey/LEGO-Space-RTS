@@ -45,6 +45,7 @@ public sealed class SimulationRunner
         _systems = new ISimSystem[]
         {
             new CommandExecutionSystem(),
+            new TransformationSystem(),
             new TransportSystem(),
             new RepairSystem(),
             new ContactApproachSystem(),
