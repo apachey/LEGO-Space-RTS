@@ -116,6 +116,7 @@ public static class ScenarioFactory
         world.Entities.Vision.Set(id, new Vision { RadiusBuildCells = spawn.VisionRadius, LastFogX = -1, LastFogY = -1 });
         AddCombatComponents(world, id, definition);
         AddWorkerComponents(world, id, definition);
+        AddTransportComponents(world, id, definition);
         world.GetQueue(id);
     }
 
@@ -203,6 +204,7 @@ public static class ScenarioFactory
         world.Entities.Selectable.Set(id,new Selectable{IsSelectable=true,ContentType=definition.Id,Kind=definition.SelectableKind});
         world.Entities.Vision.Set(id,new Vision{RadiusBuildCells=definition.VisionRadius,LastFogX=-1,LastFogY=-1});AddCombatComponents(world,id,definition);world.GetQueue(id);
         AddWorkerComponents(world,id,definition);
+        AddTransportComponents(world,id,definition);
     }
 
     private static void AddWorkerComponents(SimulationWorld world, EntityId id, PrototypeEntityDefinition definition)
@@ -257,8 +259,17 @@ public static class ScenarioFactory
         world.Entities.Vision.Set(id, new Vision { RadiusBuildCells = definition.VisionRadius, LastFogX = -1, LastFogY = -1 });
         AddCombatComponents(world, id, definition);
         AddWorkerComponents(world, id, definition);
+        AddTransportComponents(world, id, definition);
         world.GetQueue(id);
         return id;
+    }
+
+    internal static void AddTransportComponents(SimulationWorld world, EntityId id, PrototypeEntityDefinition definition)
+    {
+        if (definition.Id == StableId.FromKey("unit.rock_raiders.crew"))
+            world.Entities.Passenger.Set(id, new Passenger { Transport = EntityId.None, State = PassengerState.Grounded, SizePoints = 1 });
+        if (definition.Id == StableId.FromKey("unit.rock_raiders.rapid_rider"))
+            world.Entities.Transport.Set(id, new Transport { CapacityPoints = 4, JobState = TransportJobState.Idle });
     }
 
     internal static void AddCombatComponents(SimulationWorld world, EntityId id, PrototypeEntityDefinition definition)

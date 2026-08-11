@@ -119,7 +119,7 @@ public partial class BasicHud : CanvasLayer
         _priorityRow.AddThemeConstantOverride("separation", 5); _priorityRow.AddChild(HudLabel("POWER PRIORITY", 13, TextMuted));
         AddPriorityButton(EnergyPriority.High); AddPriorityButton(EnergyPriority.Normal); AddPriorityButton(EnergyPriority.Low);
         box.AddChild(_priorityRow);
-        Label help = HudLabel("RMB context command  •  Shift queues  •  B build  •  F8 developer tools", 13, TextMuted); box.AddChild(help);
+        Label help = HudLabel("RMB context  •  L load selected  •  U unload at cursor  •  Shift queues  •  B build  •  F8 tests", 13, TextMuted); box.AddChild(help);
 
         MarginContainer contextualSlot = new() { Name = "ContextualSlot", CustomMinimumSize = new Vector2(340, 0), SizeFlagsVertical = Control.SizeFlags.ExpandFill };
         layout.AddChild(contextualSlot);
@@ -200,6 +200,29 @@ public partial class BasicHud : CanvasLayer
             (builder.JobState == BuilderJobState.MovingToRepair || builder.JobState == BuilderJobState.Repairing))
             _builder.Append("Repair  ").Append(builder.JobState == BuilderJobState.Repairing ? "ACTIVE" : "APPROACHING")
                 .Append("   Target #").Append(builder.RepairTarget.Value).Append('\n');
+        if (_bridge.World.Entities.Passenger.TryGet(first, out Passenger passenger) && passenger.State != PassengerState.Grounded)
+            _builder.Append("Transport  ").Append(passenger.State == PassengerState.Loaded ? "LOADED" : passenger.State == PassengerState.WaitingToLoad ? "BOARDING" : "APPROACHING")
+                .Append("   Rapid Rider #").Append(passenger.Transport.Value).Append('\n');
+        if (_bridge.World.Entities.Transport.TryGet(first, out Transport transport))
+        {
+            _builder.Append("Passengers  ").Append(transport.OccupiedPoints).Append(" / ").Append(transport.CapacityPoints)
+                .Append("   Crew onboard  ").Append(transport.PassengerCount).Append('\n');
+            if (transport.PassengerCount > 0)
+            {
+                _builder.Append("  Crew ×").Append(transport.PassengerCount).Append("   HP ");
+                for (int i = 0; i < transport.PassengerCount; i++)
+                {
+                    EntityId passengerId = transport.GetPassenger(i);
+                    if (i > 0) _builder.Append(", ");
+                    if (_bridge.World.Entities.Health.TryGet(passengerId, out Health passengerHealth))
+                        _builder.Append(passengerHealth.Current.RoundToInt()).Append('/').Append(passengerHealth.Maximum.RoundToInt());
+                    else _builder.Append("—");
+                }
+                _builder.Append("   TRANSPORTED\n");
+            }
+            if (transport.JobState != TransportJobState.Idle)
+                _builder.Append("Transport  ").Append(transport.UnloadBlocked ? "UNLOAD BLOCKED" : transport.JobState.ToString()).Append('\n');
+        }
         if (_bridge.World.Entities.ConstructionSite.TryGet(first, out ConstructionSite site))
             _builder.Append("Construction  ").Append(site.ProgressTicks * 100 / site.RequiredTicks).Append("%   Reserved  ").Append(site.ReservedOre).Append(" Ore / ").Append(site.ReservedEnergy).Append(" Energy\n");
         if (_bridge.World.Entities.PowerState.TryGet(first, out PowerState power))

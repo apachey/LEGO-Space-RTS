@@ -101,6 +101,12 @@ public partial class UnitViewManager : Node3D
                 groupLabel.Text = membership;
                 groupLabel.Visible = membership.Length > 0;
             }
+            Label3D? transportLabel = view.GetNodeOrNull<Label3D>("TransportLabel");
+            if (transportLabel is not null)
+            {
+                transportLabel.Text = c.IsTransport ? $"CREW {c.TransportOccupiedPoints}/{c.TransportCapacityPoints}" : string.Empty;
+                transportLabel.Visible = !c.IsDestroyed && c.IsTransport && (selected || c.TransportPassengerCount > 0 || c.TransportJobState != TransportJobState.Idle);
+            }
         }
         _remove.Clear();
         foreach ((uint id, MeshInstance3D view) in _views) if (!_live.Contains(id))
@@ -226,7 +232,7 @@ public partial class UnitViewManager : Node3D
     {
         view.Name = $"Debris_{id}";
         view.Scale = scale;
-        string[] hidden = { "SelectionRing", "TargetRing", "HealthBar", "ConstructionProgressBar", "ControlGroupLabel", "BrownoutLabel", "WeaponFlash", "ContactImpact", "RepairEffect" };
+        string[] hidden = { "SelectionRing", "TargetRing", "HealthBar", "ConstructionProgressBar", "ControlGroupLabel", "TransportLabel", "BrownoutLabel", "WeaponFlash", "ContactImpact", "RepairEffect" };
         for (int i = 0; i < hidden.Length; i++)
         {
             Node3D? node = view.GetNodeOrNull<Node3D>(hidden[i]);
@@ -426,6 +432,15 @@ public partial class UnitViewManager : Node3D
             Scale = new Vector3(1f / visualScale.X, 1f / visualScale.Y, 1f / visualScale.Z)
         };
         view.AddChild(groupLabel);
+        Label3D transportLabel = new()
+        {
+            Name = "TransportLabel", Text = string.Empty, Visible = false, FontSize = 24, OutlineSize = 4, PixelSize = 0.03f,
+            Modulate = new Color(1f, 0.78f, 0.16f), OutlineModulate = new Color(0.02f, 0.02f, 0.02f, 0.98f),
+            Billboard = BaseMaterial3D.BillboardModeEnum.Enabled, FixedSize = false, NoDepthTest = true,
+            Position = new Vector3(0f, (labelHeightWorld + 0.55f) / visualScale.Y, 0f),
+            Scale = new Vector3(1f / visualScale.X, 1f / visualScale.Y, 1f / visualScale.Z)
+        };
+        view.AddChild(transportLabel);
         view.AddChild(CreateConstructionProgressBar());
         view.AddChild(CreateHealthBar());
         Label3D brownoutLabel = new()

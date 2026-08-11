@@ -4,7 +4,7 @@ using System.IO;
 
 namespace LegoSpaceRTS.SimCore
 {
-public enum SimCommandType : ushort { Move = 1, Stop = 2, HoldPosition = 3, Harvest = 4, Build = 5, CancelConstruction = 6, AssistConstruction = 7, QueueProduction = 8, SetRallyPoint = 9, SetEnergyPriority = 10, Attack = 11, Repair = 12, DebugOpenExcavatable = 1000, DebugDrainEnergy = 1001, DebugDestroyVisibleEnemy = 1002, DebugPrepareConstructionTest = 1003, DebugPrepareDestructionTest = 1004, DebugPrepareRepairTest = 1005 }
+public enum SimCommandType : ushort { Move = 1, Stop = 2, HoldPosition = 3, Harvest = 4, Build = 5, CancelConstruction = 6, AssistConstruction = 7, QueueProduction = 8, SetRallyPoint = 9, SetEnergyPriority = 10, Attack = 11, Repair = 12, Load = 13, Unload = 14, DebugOpenExcavatable = 1000, DebugDrainEnergy = 1001, DebugDestroyVisibleEnemy = 1002, DebugPrepareConstructionTest = 1003, DebugPrepareDestructionTest = 1004, DebugPrepareRepairTest = 1005, DebugPrepareTransportTest = 1006, DebugDestroyPreparedTransport = 1007 }
 [Flags] public enum CommandModifiers : byte { None = 0, Queue = 1 }
 
 public readonly struct CommandEnvelope
@@ -30,7 +30,7 @@ public readonly struct CommandEnvelope
         if (entities == null) throw new ArgumentNullException(nameof(entities));
         if (entities.Length > 128) throw new ArgumentOutOfRangeException(nameof(entities), "A command may address at most 128 entities.");
         if ((modifiers & ~CommandModifiers.Queue) != 0) throw new ArgumentOutOfRangeException(nameof(modifiers), "Unknown command modifier bits.");
-        if (type != SimCommandType.Move && type != SimCommandType.Harvest && type != SimCommandType.Build && type != SimCommandType.AssistConstruction && type != SimCommandType.Attack && type != SimCommandType.Repair && modifiers != CommandModifiers.None) throw new ArgumentException("Only Move, Attack, Harvest, Build, AssistConstruction and Repair may be queued.", nameof(modifiers));
+        if (type != SimCommandType.Move && type != SimCommandType.Harvest && type != SimCommandType.Build && type != SimCommandType.AssistConstruction && type != SimCommandType.Attack && type != SimCommandType.Repair && type != SimCommandType.Load && modifiers != CommandModifiers.None) throw new ArgumentException("Only Move, Attack, Harvest, Build, AssistConstruction, Repair and Load may be queued.", nameof(modifiers));
         if (type == SimCommandType.Harvest && targetEntity == EntityId.None) throw new ArgumentException("Harvest requires a resource target.", nameof(targetEntity));
         if (type == SimCommandType.Build && contentType.Value == 0) throw new ArgumentException("Build requires a building content type.", nameof(contentType));
         if (type == SimCommandType.CancelConstruction && targetEntity == EntityId.None) throw new ArgumentException("CancelConstruction requires a site target.", nameof(targetEntity));
@@ -38,6 +38,7 @@ public readonly struct CommandEnvelope
         if (type == SimCommandType.QueueProduction && (targetEntity == EntityId.None || contentType.Value == 0)) throw new ArgumentException("QueueProduction requires a producer and unit content type.");
         if (type == SimCommandType.Attack && targetEntity == EntityId.None) throw new ArgumentException("Attack requires a target.", nameof(targetEntity));
         if (type == SimCommandType.Repair && targetEntity == EntityId.None) throw new ArgumentException("Repair requires a target.", nameof(targetEntity));
+        if (type == SimCommandType.Load && targetEntity == EntityId.None) throw new ArgumentException("Load requires a transport target.", nameof(targetEntity));
         if (type == SimCommandType.DebugDestroyVisibleEnemy && targetEntity == EntityId.None) throw new ArgumentException("DebugDestroyVisibleEnemy requires a target.", nameof(targetEntity));
         if (energyPriority < EnergyPriority.High || energyPriority > EnergyPriority.Low) throw new ArgumentOutOfRangeException(nameof(energyPriority));
         ExecutionTick = executionTick; PlayerSlot = playerSlot; Sequence = sequence; Type = type; Entities = entities;
@@ -46,7 +47,7 @@ public readonly struct CommandEnvelope
 
     private static void ValidateType(SimCommandType type)
     {
-        if (type != SimCommandType.Move && type != SimCommandType.Stop && type != SimCommandType.HoldPosition && type != SimCommandType.Harvest && type != SimCommandType.Build && type != SimCommandType.CancelConstruction && type != SimCommandType.AssistConstruction && type != SimCommandType.QueueProduction && type != SimCommandType.SetRallyPoint && type != SimCommandType.SetEnergyPriority && type != SimCommandType.Attack && type != SimCommandType.Repair && type != SimCommandType.DebugOpenExcavatable && type != SimCommandType.DebugDrainEnergy && type != SimCommandType.DebugDestroyVisibleEnemy && type != SimCommandType.DebugPrepareConstructionTest && type != SimCommandType.DebugPrepareDestructionTest && type != SimCommandType.DebugPrepareRepairTest)
+        if (type != SimCommandType.Move && type != SimCommandType.Stop && type != SimCommandType.HoldPosition && type != SimCommandType.Harvest && type != SimCommandType.Build && type != SimCommandType.CancelConstruction && type != SimCommandType.AssistConstruction && type != SimCommandType.QueueProduction && type != SimCommandType.SetRallyPoint && type != SimCommandType.SetEnergyPriority && type != SimCommandType.Attack && type != SimCommandType.Repair && type != SimCommandType.Load && type != SimCommandType.Unload && type != SimCommandType.DebugOpenExcavatable && type != SimCommandType.DebugDrainEnergy && type != SimCommandType.DebugDestroyVisibleEnemy && type != SimCommandType.DebugPrepareConstructionTest && type != SimCommandType.DebugPrepareDestructionTest && type != SimCommandType.DebugPrepareRepairTest && type != SimCommandType.DebugPrepareTransportTest && type != SimCommandType.DebugDestroyPreparedTransport)
             throw new ArgumentOutOfRangeException(nameof(type), type, "Unknown command type.");
     }
 
@@ -72,7 +73,7 @@ public readonly struct CommandEnvelope
     }
 }
 
-public enum UnitOrderType : byte { Move = 1, Hold = 2, Harvest = 3, Construct = 4, Attack = 5, Repair = 6 }
+public enum UnitOrderType : byte { Move = 1, Hold = 2, Harvest = 3, Construct = 4, Attack = 5, Repair = 6, Load = 7 }
 public readonly struct UnitOrder
 {
     public readonly UnitOrderType Type;

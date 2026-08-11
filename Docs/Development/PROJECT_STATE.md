@@ -5,7 +5,7 @@ remain authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M4 — Combat / T046 first-playable field repair implemented; human test pending.**
+**M4 — Combat / T047 Rapid Rider transport implemented; human test pending.**
 
 The accepted M3 T030-T039 economy/base-building stack is merged through PR #10.
 M4 T040 Targeting, T041 Weapons, T042 Projectiles and T044 Contact weapons are
@@ -15,7 +15,9 @@ playtests exposed handoff, interaction, projectile-feedback and collision-rule
 defects. Those defects are corrected and the game director explicitly directed
 development to continue into T046 while the combined human retest remains due.
 T046 Crew field repair is now implemented and automated-green on the current
-stacked branch.
+stacked branch. The game director accepted the combined prepared T045-T046
+human test on 2026-08-11. T047 Rapid Rider load, unload and transport-destruction
+behavior is implemented and automated-green on the current stacked branch.
 
 ## Engine / architecture
 
@@ -549,6 +551,44 @@ narrow placement cases allowed by Phase 09B.
   Bay 28 HP/s service queues remain correctly tied to the later T049/T051
   Worksite/service-region dependencies; T046 does not invent those regions
   early.
+- The game director accepted the combined prepared T045 destruction/collision
+  and T046 Crew field-repair playtest on 2026-08-11. No remaining blocker was
+  reported for either task.
+- M4 T047 adds authoritative `Load` and `Unload` commands plus `Passenger` and
+  `Transport` state. Rapid Rider accepts exactly four Personnel points. Crew
+  physically approach and remain in range through the canonical 1.5-second
+  docking settle and 0.75-second per-Crew loading time. Direct damage to the
+  Rider or active Crew pauses loading for 0.75 seconds.
+- Loaded Crew retain Entity ID, health, selection/control-group identity and
+  Operations Capacity, but leave ground transforms/spatial queries and cannot
+  be individually targeted. Control-group camera recall resolves their center
+  to the current Rapid Rider position. Normal unload uses the canonical
+  1-second settle and 0.5-second per Crew, finds deterministic legal ground and
+  prevents overlap with the carrier, other units and earlier passengers.
+- Rapid Rider destruction never randomly deletes cargo. Every loaded Crew
+  emergency-deploys in stable passenger order onto the nearest legal ground at
+  exactly 40% maximum HP, receives the canonical 1.5-second attack lock and
+  2.5-second 30% movement penalty, while the destroyed Rider itself becomes
+  nonblocking in the same tick under the approved T045 rule.
+- Snapshot v18 / simulation protocol v16 preserve active load/unload state,
+  fixed passenger ordering, capacity, recovery penalties and loaded entities
+  without ground transforms. Legacy v2-v17 snapshots remain supported; replay
+  remains v6 because T047 uses the existing command-envelope layout.
+- `Prepare T047 transport` creates and frames one Rapid Rider with four nearby
+  Crew already selected. RMB loads them; selecting the Rider and pressing `U`
+  unloads at the cursor. `Kill loaded Rider` provides the separate emergency-
+  deployment test without resource or production setup. HUD/world labels show
+  `Passengers 4 / 4`; Godot transport smoke verifies four truly loaded Crew.
+  The same fixture passes from a fresh launch of the exported macOS app.
+  Capture:
+  `Artifacts/Screenshots/t047-exported-prepared-rapid-rider-loaded.png`.
+- Seven focused T047 NUnit tests cover canonical timing, damage pause,
+  capacity, legal non-overlapping unload, emergency deployment, snapshot
+  continuation and the prepared fixture. All 187 NUnit tests and every
+  `BLOCKING_NOW` stage of full repository verification are green, including
+  deterministic replay/snapshot continuation, Godot smoke and macOS export.
+  Summary: `Artifacts/Verification/20260811T131127Z-full-summary.txt`. The
+  legacy 60-mover diagnostic remains unchanged and nonblocking through M5.
 
 ## Current gates
 
@@ -618,6 +658,6 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Combined prepared human retest for Scout damage readability, immediate
-   unit/structure collision release and T046 Crew field-repair interaction.
-2. M4 T047 Transport after combined acceptance.
+1. Prepared T047 human test for Rapid Rider loading, normal unloading and
+   emergency deployment readability/interaction.
+2. M4 T048 Transformation after T047 acceptance.

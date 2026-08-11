@@ -13,6 +13,8 @@ public enum ResourceDepletionProfile : byte { Finite = 0 }
 public enum ResourceVisualState : byte { Full = 0, Reduced = 1, Low = 2, Critical = 3, Exhausted = 4 }
 public enum WorkerTaskState : byte { Idle = 0, MovingToResource = 1, Mining = 2, ReturningToReceiver = 3, AwaitingDelivery = 4 }
 public enum BuilderJobState : byte { Idle = 0, MovingToSite = 1, Constructing = 2, MovingToRepair = 3, Repairing = 4 }
+public enum TransportJobState : byte { Idle = 0, LoadingDocking = 1, LoadingPassenger = 2, MovingToUnload = 3, UnloadSettling = 4, Unloading = 5, UnloadBlocked = 6 }
+public enum PassengerState : byte { Grounded = 0, MovingToLoad = 1, WaitingToLoad = 2, Loaded = 3 }
 public enum BuildingState : byte { ConstructionSite = 0, Completed = 1 }
 public enum EnergyFunctionalClass : byte { CommandAndBasicEconomy = 1, ResourceProcessing = 2, ProductionAndResearch = 3, ServiceAndFactionSystems = 4, StaticDefenseAndNonessential = 5 }
 public enum EnergyPriority : byte { High = 0, Normal = 1, Low = 2 }
@@ -142,6 +144,79 @@ public struct Builder
     public EntityId RepairTarget;
     public Fix32 RepairOreRemainder;
     public BuilderJobState JobState;
+}
+
+public struct Passenger
+{
+    public EntityId Transport;
+    public PassengerState State;
+    public byte SizePoints;
+    public int AttackLockedUntilTick;
+    public int MovementPenaltyUntilTick;
+}
+
+public struct Transport
+{
+    public const int MaximumPassengerSlots = 10;
+    public byte CapacityPoints;
+    public byte OccupiedPoints;
+    public byte PassengerCount;
+    public TransportJobState JobState;
+    public EntityId ActivePassenger;
+    public ushort PhaseTicks;
+    public FixVec2 UnloadTarget;
+    public bool UnloadBlocked;
+    public bool LoadingSettled;
+    public EntityId Passenger0;
+    public EntityId Passenger1;
+    public EntityId Passenger2;
+    public EntityId Passenger3;
+    public EntityId Passenger4;
+    public EntityId Passenger5;
+    public EntityId Passenger6;
+    public EntityId Passenger7;
+    public EntityId Passenger8;
+    public EntityId Passenger9;
+
+    public EntityId GetPassenger(int index) => index switch
+    {
+        0 => Passenger0, 1 => Passenger1, 2 => Passenger2, 3 => Passenger3, 4 => Passenger4,
+        5 => Passenger5, 6 => Passenger6, 7 => Passenger7, 8 => Passenger8, 9 => Passenger9,
+        _ => throw new System.ArgumentOutOfRangeException(nameof(index))
+    };
+
+    public void SetPassenger(int index, EntityId passenger)
+    {
+        switch (index)
+        {
+            case 0: Passenger0 = passenger; break; case 1: Passenger1 = passenger; break;
+            case 2: Passenger2 = passenger; break; case 3: Passenger3 = passenger; break;
+            case 4: Passenger4 = passenger; break; case 5: Passenger5 = passenger; break;
+            case 6: Passenger6 = passenger; break; case 7: Passenger7 = passenger; break;
+            case 8: Passenger8 = passenger; break; case 9: Passenger9 = passenger; break;
+            default: throw new System.ArgumentOutOfRangeException(nameof(index));
+        }
+    }
+
+    public bool TryAddPassenger(EntityId passenger, byte sizePoints)
+    {
+        if (PassengerCount >= MaximumPassengerSlots || OccupiedPoints + sizePoints > CapacityPoints) return false;
+        SetPassenger(PassengerCount, passenger);
+        PassengerCount++;
+        OccupiedPoints = checked((byte)(OccupiedPoints + sizePoints));
+        return true;
+    }
+
+    public EntityId RemoveFirstPassenger(byte sizePoints)
+    {
+        if (PassengerCount == 0) return EntityId.None;
+        EntityId result = Passenger0;
+        for (int i = 1; i < PassengerCount; i++) SetPassenger(i - 1, GetPassenger(i));
+        PassengerCount--;
+        SetPassenger(PassengerCount, EntityId.None);
+        OccupiedPoints = checked((byte)(OccupiedPoints - sizePoints));
+        return result;
+    }
 }
 
 public struct ResourceCarrier

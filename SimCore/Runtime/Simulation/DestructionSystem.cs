@@ -50,6 +50,7 @@ public sealed class DestructionSystem : ISimSystem
 
     private static void Begin(SimulationWorld world, EntityId id)
     {
+        TransportSystem.EmergencyDeploy(world, id);
         Ownership ownership = world.Entities.Ownership.TryGet(id, out Ownership storedOwnership) ? storedOwnership : new Ownership { PlayerSlot = byte.MaxValue };
         Selectable selectable = world.Entities.Selectable.TryGet(id, out Selectable storedSelectable) ? storedSelectable : default;
         NavigationAgent navigation = world.Entities.Navigation.TryGet(id, out NavigationAgent storedNavigation) ? storedNavigation : default;
@@ -94,6 +95,8 @@ public sealed class DestructionSystem : ISimSystem
         world.Entities.ResourceNode.Remove(id);
         world.Entities.Worker.Remove(id);
         world.Entities.Builder.Remove(id);
+        world.Entities.Passenger.Remove(id);
+        world.Entities.Transport.Remove(id);
         world.Entities.ResourceCarrier.Remove(id);
         world.Entities.ResourceReceiver.Remove(id);
         world.Entities.ResourceBank.Remove(id);

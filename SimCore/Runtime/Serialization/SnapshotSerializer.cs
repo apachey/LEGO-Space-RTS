@@ -7,8 +7,8 @@ namespace LegoSpaceRTS.SimCore
 public static class SnapshotSerializer
 {
     public const uint Magic = 0x53525453; // STRS
-    public const ushort FormatVersion = 17;
-    public const ushort SimulationProtocolVersion = 15;
+    public const ushort FormatVersion = 18;
+    public const ushort SimulationProtocolVersion = 16;
 
     [Flags]
     private enum EntityComponents : uint
@@ -39,7 +39,9 @@ public static class SnapshotSerializer
         Weapon = 1 << 22,
         Health = 1 << 23,
         Destruction = 1 << 24,
-        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver | ResourceBank | Building | ConstructionSite | Builder | Production | EnergyDomain | EnergyDomainMember | PowerState | Targetable | Targeting | Weapon | Health | Destruction
+        Passenger = 1 << 25,
+        Transport = 1 << 26,
+        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver | ResourceBank | Building | ConstructionSite | Builder | Production | EnergyDomain | EnergyDomainMember | PowerState | Targetable | Targeting | Weapon | Health | Destruction | Passenger | Transport
     }
 
     public static byte[] Serialize(SimulationWorld world)
@@ -61,7 +63,7 @@ public static class SnapshotSerializer
         using MemoryStream ms = new(bytes, false); using BinaryReader r = new(ms);
         if (r.ReadUInt32() != Magic) throw new InvalidDataException("Snapshot magic mismatch.");
         ushort format = r.ReadUInt16(), protocol = r.ReadUInt16();
-        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8) || (format == 11 && protocol == 9) || (format == 12 && protocol == 10) || (format == 13 && protocol == 11) || (format == 14 && protocol == 12) || (format == 15 && protocol == 13) || (format == 16 && protocol == 14);
+        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8) || (format == 11 && protocol == 9) || (format == 12 && protocol == 10) || (format == 13 && protocol == 11) || (format == 14 && protocol == 12) || (format == 15 && protocol == 13) || (format == 16 && protocol == 14) || (format == 17 && protocol == 15);
         if (!supportedLegacy && (format != FormatVersion || protocol != SimulationProtocolVersion)) throw new InvalidDataException($"Unsupported snapshot {format}/{protocol}.");
         SimTick tick = new(r.ReadInt32()); MapGrid map = MapGrid.Deserialize(r); uint nextEntity = r.ReadUInt32();
         EntityStore entities = new(); int entityCount = r.ReadInt32(); if (entityCount < 0 || entityCount > 10000) throw new InvalidDataException("Invalid entity count.");
@@ -82,6 +84,8 @@ public static class SnapshotSerializer
             if (format < 12) AddLegacyWeaponComponents(temp);
             if (format < 14) AddLegacyHealthComponents(temp);
         }
+        if (format < 18) AddLegacyTransportComponents(temp);
+        ValidateTransportLinks(temp);
         entities.RestoreNextEntityValue(nextEntity);
         temp.Commands.Deserialize(r, includeBuildFields: format >= 6, includeEnergyPriority: format >= 10);
         temp.Fog = FogState.Deserialize(r);
@@ -164,6 +168,8 @@ public static class SnapshotSerializer
         if (world.Entities.ResourceNode.Has(id)) components |= EntityComponents.ResourceNode;
         if (world.Entities.Worker.Has(id)) components |= EntityComponents.Worker;
         if (world.Entities.Builder.Has(id)) components |= EntityComponents.Builder;
+        if (world.Entities.Passenger.Has(id)) components |= EntityComponents.Passenger;
+        if (world.Entities.Transport.Has(id)) components |= EntityComponents.Transport;
         if (world.Entities.ResourceCarrier.Has(id)) components |= EntityComponents.ResourceCarrier;
         if (world.Entities.ResourceReceiver.Has(id)) components |= EntityComponents.ResourceReceiver;
         if (world.Entities.ResourceBank.Has(id)) components |= EntityComponents.ResourceBank;
@@ -197,6 +203,8 @@ public static class SnapshotSerializer
         if ((components & EntityComponents.ResourceNode) != 0) WriteResourceNode(w, world.Entities.ResourceNode.Get(id));
         if ((components & EntityComponents.Worker) != 0) WriteWorker(w, world.Entities.Worker.Get(id));
         if ((components & EntityComponents.Builder) != 0) WriteBuilder(w, world.Entities.Builder.Get(id));
+        if ((components & EntityComponents.Passenger) != 0) WritePassenger(w, world.Entities.Passenger.Get(id));
+        if ((components & EntityComponents.Transport) != 0) WriteTransport(w, world.Entities.Transport.Get(id));
         if ((components & EntityComponents.ResourceCarrier) != 0) WriteResourceCarrier(w, world.Entities.ResourceCarrier.Get(id));
         if ((components & EntityComponents.ResourceReceiver) != 0) WriteResourceReceiver(w, world.Entities.ResourceReceiver.Get(id));
         if ((components & EntityComponents.ResourceBank) != 0) WriteResourceBank(w, world.Entities.ResourceBank.Get(id));
@@ -247,6 +255,20 @@ public static class SnapshotSerializer
     {
         w.Write(builder.ConstructionTarget.Value); w.Write((byte)builder.JobState);
         w.Write(builder.RepairTarget.Value); w.Write(builder.RepairOreRemainder.Raw);
+    }
+
+    private static void WritePassenger(BinaryWriter w, Passenger passenger)
+    {
+        w.Write(passenger.Transport.Value); w.Write((byte)passenger.State); w.Write(passenger.SizePoints);
+        w.Write(passenger.AttackLockedUntilTick); w.Write(passenger.MovementPenaltyUntilTick);
+    }
+
+    private static void WriteTransport(BinaryWriter w, Transport transport)
+    {
+        w.Write(transport.CapacityPoints); w.Write(transport.OccupiedPoints); w.Write(transport.PassengerCount);
+        w.Write((byte)transport.JobState); w.Write(transport.ActivePassenger.Value); w.Write(transport.PhaseTicks);
+        w.Write(transport.UnloadTarget.X.Raw); w.Write(transport.UnloadTarget.Y.Raw); w.Write(transport.UnloadBlocked); w.Write(transport.LoadingSettled);
+        for (int i = 0; i < Transport.MaximumPassengerSlots; i++) w.Write(transport.GetPassenger(i).Value);
     }
 
     private static void WriteResourceCarrier(BinaryWriter w, ResourceCarrier carrier)
@@ -348,6 +370,8 @@ public static class SnapshotSerializer
         if ((components & EntityComponents.ResourceNode) != 0) world.Entities.ResourceNode.Set(id, ReadResourceNode(r));
         if ((components & EntityComponents.Worker) != 0) world.Entities.Worker.Set(id, ReadWorker(r));
         if ((components & EntityComponents.Builder) != 0) world.Entities.Builder.Set(id, ReadBuilder(r, format));
+        if ((components & EntityComponents.Passenger) != 0) world.Entities.Passenger.Set(id, ReadPassenger(r));
+        if ((components & EntityComponents.Transport) != 0) world.Entities.Transport.Set(id, ReadTransport(r));
         if ((components & EntityComponents.ResourceCarrier) != 0) world.Entities.ResourceCarrier.Set(id, ReadResourceCarrier(r));
         if ((components & EntityComponents.ResourceReceiver) != 0) world.Entities.ResourceReceiver.Set(id, ReadResourceReceiver(r));
         if ((components & EntityComponents.ResourceBank) != 0) world.Entities.ResourceBank.Set(id, ReadResourceBank(r));
@@ -414,6 +438,41 @@ public static class SnapshotSerializer
             ((builder.JobState == BuilderJobState.MovingToRepair || builder.JobState == BuilderJobState.Repairing) && builder.RepairTarget == EntityId.None))
             throw new InvalidDataException("Invalid builder job state.");
         return builder;
+    }
+
+    private static Passenger ReadPassenger(BinaryReader r)
+    {
+        Passenger passenger = new()
+        {
+            Transport = new EntityId(r.ReadUInt32()), State = (PassengerState)r.ReadByte(), SizePoints = r.ReadByte(),
+            AttackLockedUntilTick = r.ReadInt32(), MovementPenaltyUntilTick = r.ReadInt32()
+        };
+        if (passenger.State < PassengerState.Grounded || passenger.State > PassengerState.Loaded || passenger.SizePoints < 1 || passenger.SizePoints > 6 ||
+            passenger.AttackLockedUntilTick < 0 || passenger.MovementPenaltyUntilTick < 0 ||
+            (passenger.State == PassengerState.Grounded && passenger.Transport != EntityId.None) ||
+            (passenger.State != PassengerState.Grounded && passenger.Transport == EntityId.None)) throw new InvalidDataException("Invalid passenger state.");
+        return passenger;
+    }
+
+    private static Transport ReadTransport(BinaryReader r)
+    {
+        Transport transport = new()
+        {
+            CapacityPoints = r.ReadByte(), OccupiedPoints = r.ReadByte(), PassengerCount = r.ReadByte(), JobState = (TransportJobState)r.ReadByte(),
+            ActivePassenger = new EntityId(r.ReadUInt32()), PhaseTicks = r.ReadUInt16(),
+            UnloadTarget = new FixVec2(Fix32.FromRaw(r.ReadInt32()), Fix32.FromRaw(r.ReadInt32())),
+            UnloadBlocked = r.ReadBoolean(), LoadingSettled = r.ReadBoolean()
+        };
+        for (int i = 0; i < Transport.MaximumPassengerSlots; i++) transport.SetPassenger(i, new EntityId(r.ReadUInt32()));
+        bool slotsValid = true;
+        for (int i = 0; i < Transport.MaximumPassengerSlots; i++)
+            if ((i < transport.PassengerCount) != (transport.GetPassenger(i) != EntityId.None)) slotsValid = false;
+        if (transport.CapacityPoints == 0 || transport.CapacityPoints > 10 || transport.OccupiedPoints > transport.CapacityPoints ||
+            transport.PassengerCount > Transport.MaximumPassengerSlots || transport.JobState < TransportJobState.Idle || transport.JobState > TransportJobState.UnloadBlocked ||
+            !slotsValid || (transport.JobState == TransportJobState.Idle && transport.ActivePassenger != EntityId.None) ||
+            ((transport.JobState == TransportJobState.LoadingDocking || transport.JobState == TransportJobState.LoadingPassenger) && transport.ActivePassenger == EntityId.None))
+            throw new InvalidDataException("Invalid transport state.");
+        return transport;
     }
 
     private static ResourceCarrier ReadResourceCarrier(BinaryReader r)
@@ -620,6 +679,54 @@ public static class SnapshotSerializer
                 !world.Content.TryGetEntity(selectable.ContentType, out PrototypeEntityDefinition definition) || !definition.Combat.IsTargetable) continue;
             Fix32 maximum = Fix32.FromInt(definition.Combat.MaximumHitPoints);
             world.Entities.Health.Set(id, new Health { Maximum = maximum, Current = maximum, ArmorRating = definition.Combat.ArmorRating, LastDamageTick = -1 });
+        }
+    }
+
+    private static void AddLegacyTransportComponents(SimulationWorld world)
+    {
+        IReadOnlyList<EntityId> alive = world.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (!world.Entities.Selectable.TryGet(id, out Selectable selectable) ||
+                !world.Content.TryGetEntity(selectable.ContentType, out PrototypeEntityDefinition definition)) continue;
+            ScenarioFactory.AddTransportComponents(world, id, definition);
+        }
+    }
+
+    private static void ValidateTransportLinks(SimulationWorld world)
+    {
+        HashSet<uint> loaded = new();
+        IReadOnlyList<EntityId> alive = world.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId carrier = alive[i];
+            if (!world.Entities.Transport.TryGet(carrier, out Transport transport)) continue;
+            int occupied = 0;
+            for (int p = 0; p < transport.PassengerCount; p++)
+            {
+                EntityId passengerId = transport.GetPassenger(p);
+                if (!loaded.Add(passengerId.Value) || !world.Entities.Passenger.TryGet(passengerId, out Passenger passenger) ||
+                    passenger.State != PassengerState.Loaded || passenger.Transport != carrier || world.Entities.Transform.Has(passengerId))
+                    throw new InvalidDataException("Invalid loaded passenger link.");
+                occupied += passenger.SizePoints;
+            }
+            if (occupied != transport.OccupiedPoints) throw new InvalidDataException("Transport occupied points do not match passenger links.");
+            if (transport.ActivePassenger != EntityId.None &&
+                (!world.Entities.Passenger.TryGet(transport.ActivePassenger, out Passenger active) || active.Transport != carrier || active.State == PassengerState.Loaded))
+                throw new InvalidDataException("Invalid active transport passenger.");
+        }
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId passengerId = alive[i];
+            if (!world.Entities.Passenger.TryGet(passengerId, out Passenger passenger)) continue;
+            if (passenger.State == PassengerState.Loaded)
+            {
+                if (!loaded.Contains(passengerId.Value)) throw new InvalidDataException("Loaded passenger is absent from its transport.");
+            }
+            else if (!world.Entities.Transform.Has(passengerId) ||
+                (passenger.State != PassengerState.Grounded && !world.Entities.Transport.Has(passenger.Transport)))
+                throw new InvalidDataException("Ground passenger has invalid spatial or transport state.");
         }
     }
 

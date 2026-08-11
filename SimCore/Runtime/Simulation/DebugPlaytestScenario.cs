@@ -11,8 +11,10 @@ public static class DebugPlaytestScenario
     public const string CrewKey = "unit.rock_raiders.crew";
     public const string HoverScoutKey = "unit.rock_raiders.hover_scout";
     public const string ChromeCrusherKey = "unit.rock_raiders.chrome_crusher";
+    public const string RapidRiderKey = "unit.rock_raiders.rapid_rider";
     public static readonly FixVec2 DestructionArenaCenter = FixVec2.FromInts(103, 103);
     public static readonly FixVec2 RepairArenaCenter = FixVec2.FromInts(72, 96);
+    public static readonly FixVec2 TransportArenaCenter = FixVec2.FromInts(84, 112);
 
     private static readonly (short X, short Y)[] DestructionBuildingAnchors =
     {
@@ -121,6 +123,53 @@ public static class DebugPlaytestScenario
         return crew;
     }
 
+    public static EntityId PrepareTransport(SimulationWorld world, byte playerSlot)
+    {
+        IReadOnlyList<EntityId> existing = world.Entities.Alive;
+        for (int i = 0; i < existing.Count; i++)
+            if (world.Entities.Transport.Has(existing[i]) && world.Entities.Ownership.TryGet(existing[i], out Ownership owner) && owner.PlayerSlot == playerSlot)
+                TransportSystem.EmergencyDeploy(world, existing[i]);
+
+        EntityId rider = EnsureUnit(world, playerSlot, RapidRiderKey, PreparedPosition(world, RapidRiderKey, TransportArenaCenter));
+        List<EntityId> crews = new();
+        ContentId crewType = StableId.FromKey(CrewKey);
+        IReadOnlyList<EntityId> alive = world.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (world.Entities.Selectable.TryGet(id, out Selectable selectable) && selectable.ContentType == crewType &&
+                world.Entities.Ownership.TryGet(id, out Ownership owner) && owner.PlayerSlot == playerSlot) crews.Add(id);
+        }
+        while (crews.Count < 4)
+            crews.Add(ScenarioFactory.SpawnProducedUnit(world, playerSlot, crewType, TransportArenaCenter + FixVec2.FromInts(-4, crews.Count - 2)));
+        crews.Sort(EntityIdComparer.Instance);
+        for (int i = 0; i < 4; i++)
+            ResetUnit(world, crews[i], PreparedPosition(world, CrewKey, TransportArenaCenter + new FixVec2(Fix32.FromInt(-4), Fix32.FromRatio((i * 2 - 3) * 3, 4))));
+        SpawnInvisibleObserver(world, playerSlot, TransportArenaCenter);
+        OperationsCapacitySystem.Recalculate(world);
+        world.Spatial.Rebuild(world.Entities);
+        new VisionSystem().Step(world);
+        return rider;
+    }
+
+    public static void DestroyPreparedTransport(SimulationWorld world, byte playerSlot)
+    {
+        ContentId riderType = StableId.FromKey(RapidRiderKey);
+        IReadOnlyList<EntityId> alive = world.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (!world.Entities.Transport.Has(id) || !world.Entities.Selectable.TryGet(id, out Selectable selectable) || selectable.ContentType != riderType ||
+                !world.Entities.Ownership.TryGet(id, out Ownership owner) || owner.PlayerSlot != playerSlot ||
+                !world.Entities.Transform.TryGet(id, out SimTransform transform) || FixVec2.Distance(transform.Position, TransportArenaCenter) > Fix32.FromInt(20) ||
+                !world.Entities.Health.Has(id)) continue;
+            ref Health health = ref world.Entities.Health.Get(id);
+            health.Current = Fix32.Zero;
+            health.LastDamageTick = world.Tick.Value;
+            return;
+        }
+    }
+
     private static void SpawnInvisibleObserver(SimulationWorld world, byte ownerSlot, FixVec2 position)
     {
         EntityId observer = world.Entities.Create();
@@ -201,6 +250,10 @@ public static class DebugPlaytestScenario
         movement.StuckTicks = 0;
         movement.CompressionTicks = 0;
         world.GetQueue(unit).Clear();
+        if (world.Entities.Passenger.Has(unit))
+            world.Entities.Passenger.Set(unit, new Passenger { Transport = EntityId.None, State = PassengerState.Grounded, SizePoints = 1 });
+        if (world.Entities.Transport.Has(unit))
+            world.Entities.Transport.Set(unit, new Transport { CapacityPoints = 4, JobState = TransportJobState.Idle });
         if (world.Entities.Targeting.Has(unit))
         {
             ref Targeting targeting = ref world.Entities.Targeting.Get(unit);

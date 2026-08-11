@@ -16,6 +16,8 @@ public static class InputBindings
         BindKey("command_move", Key.M);
         BindKey("command_stop", Key.S);
         BindKey("command_hold", Key.H);
+        BindKey("command_load", Key.L);
+        BindKey("command_unload", Key.U);
         BindKey("build_toggle", Key.B);
         BindKey("build_cycle", Key.Tab);
         BindKey("build_rotate", Key.R);
