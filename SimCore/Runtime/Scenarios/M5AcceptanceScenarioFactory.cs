@@ -16,16 +16,16 @@ public static class M5AcceptanceScenarioFactory
     public const string T3TrikeKey = "unit.ast.t3_trike";
     public const string ResonanceCoreKey = "building.ali.resonance_core";
     public const string AeroTubeHangarKey = "building.mar.aero_tube_hangar";
+    public const string SettlementStationKey = "building.mar.settlement_station";
     public const string WorkerRobotKey = "unit.mar.worker_robot";
+    public const string DoubleHoverKey = "unit.mar.double_hover";
+    public const string JetScooterKey = "unit.mar.jet_scooter";
     public const string DisplacementSourceKey = "unit.mar.excavation_searcher";
     public const string DisplacementTargetKey = "unit.ast.t3_trike.displacement_target";
+    public const string ExcavationRunnerKey = "unit.rock_raiders.hover_scout.m5_excavation_runner";
 
     private const string ServiceHubKey = "building.ast.service_refit_hub";
     private const string CommandCoreKey = "building.ali.etx_command_core";
-    private const string SettlementStationKey = "building.mar.settlement_station";
-    private const string DoubleHoverKey = "unit.mar.double_hover";
-    private const string JetScooterKey = "unit.mar.jet_scooter";
-
     public static SimulationWorld Create(PrototypeContentCatalog? content = null)
     {
         PrototypeContentCatalog catalog = content ?? PrototypeContentFactory.CreateM2Catalog();
@@ -49,6 +49,7 @@ public static class M5AcceptanceScenarioFactory
         EntityId resonanceCore = AddAlienChargeProof(world);
         (EntityId tubeOrigin, EntityId tubeDestination, EntityId[] passengers) = AddMartianTubeProof(world);
         (EntityId displacementSource, EntityId displacementTarget) = AddDisplacementProof(world);
+        EntityId excavationRunner = AddUnit(world, ExcavationRunnerKey, 0, FixVec2.FromInts(52, 24), FootprintClass.Small, SelectableKind.CombatSupport, 9);
 
         SimulationRunner bootstrap = new(world);
         ref MissionRefitState refit = ref world.Entities.MissionRefitState.Get(t3);
@@ -68,13 +69,12 @@ public static class M5AcceptanceScenarioFactory
                 throw new InvalidOperationException("M5 acceptance fixture could not queue an Aero Tube transfer.");
 
         if (!DisplacementSystem.TryApply(world, displacementSource, displacementTarget, DisplacementEffect.ExcavationClamp,
-                DisplacementRelation.Hostile, new FixVec2(Fix32.One, Fix32.Zero), out _) ||
-            !DisplacementSystem.TryApply(world, displacementSource, displacementTarget, DisplacementEffect.ExcavationClamp,
                 DisplacementRelation.Hostile, new FixVec2(Fix32.One, Fix32.Zero), out _))
             throw new InvalidOperationException("M5 acceptance fixture could not apply displacement and Stability.");
 
         if (!world.OpenExcavatable(ExcavatableFeatureId))
             throw new InvalidOperationException("M5 acceptance fixture could not open its excavation route.");
+        CommandExecutionSystem.SetMove(world, excavationRunner, FixVec2.FromInts(68, 24));
 
         world.Spatial.Rebuild(world.Entities);
         return world;
@@ -92,8 +92,19 @@ public static class M5AcceptanceScenarioFactory
         if (transfers != 3) { reason = $"expected 3 Tube transfers, found {transfers}"; return false; }
         if (!TryFindFirst(world, DisplacementTargetKey, out EntityId target) || !DisplacementSystem.IsStable(world, target)) { reason = "Stability inactive"; return false; }
         if (!world.Map.TryGetFeature(ExcavatableFeatureId, out ExcavatableFeature feature) || !feature.Open) { reason = "excavation route closed"; return false; }
+        if (!TryFindFirst(world, ExcavationRunnerKey, out EntityId runner) || !world.Entities.Navigation.TryGet(runner, out NavigationAgent runnerNavigation) || !runnerNavigation.HasTarget)
+        { reason = "excavation route demonstrator absent"; return false; }
         reason = string.Empty;
         return true;
+    }
+
+    public static bool TryRepeatDisplacement(SimulationWorld world, out FixVec2 resolvedPosition)
+    {
+        resolvedPosition = default;
+        return TryFindFirst(world, DisplacementSourceKey, out EntityId source) &&
+            TryFindFirst(world, DisplacementTargetKey, out EntityId target) &&
+            DisplacementSystem.TryApply(world, source, target, DisplacementEffect.ExcavationClamp,
+                DisplacementRelation.Hostile, new FixVec2(Fix32.One, Fix32.Zero), out resolvedPosition);
     }
 
     public static bool TryFindFirst(SimulationWorld world, string stableKey, out EntityId entity)

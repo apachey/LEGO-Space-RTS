@@ -190,19 +190,37 @@ public sealed class TubeTransferSystem : ISimSystem
             NavCell cell = new(checked((short)x), checked((short)y));
             if (!world.Pathfinder.IsPassable(cell, nav.Footprint)) continue;
             FixVec2 candidate = MapGrid.NavCellCenterToBuild(cell);
-            if (IsOccupied(world, passenger, candidate)) continue;
+            if (IsOccupied(world, passenger, candidate, nav.Footprint)) continue;
             exit = candidate; return true;
         }
         exit = default; return false;
     }
 
-    private static bool IsOccupied(SimulationWorld world, EntityId passenger, FixVec2 candidate)
+    private static bool IsOccupied(SimulationWorld world, EntityId passenger, FixVec2 candidate, FootprintClass passengerFootprint)
     {
         IReadOnlyList<EntityId> alive = world.Entities.Alive;
         for (int i = 0; i < alive.Count; i++)
-            if (alive[i] != passenger && world.Entities.Transform.TryGet(alive[i], out SimTransform other) &&
-                world.Entities.Navigation.Has(alive[i]) && FixVec2.Distance(candidate, other.Position) < Fix32.One) return true;
+        {
+            EntityId other = alive[i];
+            if (other == passenger || !world.Entities.Transform.TryGet(other, out SimTransform transform)) continue;
+            if (world.Entities.Navigation.TryGet(other, out NavigationAgent otherNavigation))
+            {
+                Fix32 required = FootprintRules.CollisionRadiusBuild(passengerFootprint) + FootprintRules.CollisionRadiusBuild(otherNavigation.Footprint);
+                if (FixVec2.Distance(candidate, transform.Position) < required) return true;
+            }
+            if (world.Entities.Building.TryGet(other, out Building building) && OverlapsBuilding(candidate, passengerFootprint, building)) return true;
+        }
         return false;
+    }
+
+    private static bool OverlapsBuilding(FixVec2 candidate, FootprintClass passengerFootprint, Building building)
+    {
+        Fix32 radius = FootprintRules.CollisionRadiusBuild(passengerFootprint);
+        Fix32 minX = Fix32.FromInt(building.AnchorX) - radius;
+        Fix32 maxX = Fix32.FromInt(building.AnchorX + building.FootprintWidth) + radius;
+        Fix32 minY = Fix32.FromInt(building.AnchorY) - radius;
+        Fix32 maxY = Fix32.FromInt(building.AnchorY + building.FootprintHeight) + radius;
+        return candidate.X > minX && candidate.X < maxX && candidate.Y > minY && candidate.Y < maxY;
     }
 
     private static void Complete(SimulationWorld world, EntityId passenger, TubeTransfer transfer)

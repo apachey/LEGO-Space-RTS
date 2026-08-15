@@ -581,39 +581,49 @@ narrow placement cases allowed by Phase 09B.
   `Artifacts/Verification/20260815T123052Z-full-summary.txt`.
 - A launchable T057 debug build exists at
   `Builds/macOS/LEGO Space RTS.app` and passed the export smoke.
-- The M5 executable handoff now has one deterministic developer fixture that
-  starts Worksite connectivity, T3 Survey Refit, Resonance Charge/Surge, three
-  simultaneous Aero Tube transfers, repeated hostile Clamp/Stability and an
-  opened excavation route together. It does not add normal-play roster content
-  or bypass the later T070/T071/T073 content and command work.
+- The M5 executable handoff has one deterministic developer fixture that starts
+  Worksite connectivity, T3 Survey Refit, Resonance Charge/Surge, three
+  simultaneous Aero Tube transfers, hostile Clamp/Stability and an opened
+  excavation route together. It does not add normal-play roster content or
+  bypass the later T070/T071/T073 content and command work.
 - From a fresh normal launch, `F8` → `Prepare M5 Playtest` is the exact
   preparation control. The resulting panel provides direct numbered focus
   controls for every proof and `ПОЧАТИ СПОЧАТКУ` restores the complete
   deterministic opening, so the game director does not need to farm resources
   or search the map.
-- Human handoff review found the first panel too technical and time-sensitive.
-  The revised handoff now opens paused, automatically focuses the first proof,
-  uses Ukrainian numbered steps 1–6, explains exactly what to watch for after
-  each focus action, and exposes explicit start/pause/restart controls. Canonical
-  simulation timings are unchanged; only the developer playtest presentation
-  pauses before the director starts the demonstration.
+- Game-director review rejected the first executable handoff: the panel exposed
+  English implementation terms without causes or gameplay consequences, Tube
+  passengers disappeared outside the focused camera and could visually exit
+  inside a Station, and displacement/excavation showed completed state without
+  identifying the actor, target or practical purpose. M5 therefore remains
+  unaccepted.
+- The replacement handoff is a six-step Ukrainian guide. Selecting any number
+  reloads a fresh deterministic fixture focused on that proof, explains who
+  acts, what it costs, what changes and why it matters, then provides one exact
+  action. Refit automatically pauses on completion; Surge pauses at activation;
+  Tube transit reports every named passenger and moves the camera to the exit;
+  displacement provides an explicit repeat-push control; and an actual Hover
+  Scout crosses the opened excavation route before the test pauses.
+- Aero Tube exit placement now rejects completed-building footprints expanded
+  by the passenger collision radius. New regression coverage runs all three M5
+  passengers to completion and proves that each retains identity, returns to
+  the map and stands outside the destination building.
 - The exported window title now identifies the build as the M5 Four-Faction
   Prototype instead of retaining the stale M3 Economy Prototype title.
-- The acceptance fixture has focused deterministic/snapshot regression
-  coverage. The latest full verification is green across every `BLOCKING_NOW`
-  stage with 173/173 NUnit tests, representative 24-mover acceptance,
-  compiled-content identity, HeadlessSim, Godot smoke, 100-repeat determinism,
-  replay, snapshot continuation, regeneration and macOS export. The summary is
-  `Artifacts/Verification/20260815T125513Z-full-summary.txt`.
-- The Ukrainian guided-handoff refinement passed the normal verification again
-  with 173/173 NUnit tests and all `BLOCKING_NOW` stages green; its summary is
-  `Artifacts/Verification/20260815T132741Z-fast-summary.txt`. A fresh macOS
-  export and both normal-opening and M5 exported-application smokes also pass.
-- The exported application itself passed the M5 fresh-handoff smoke at tick 40
-  with hash `F341A1B92A6AF92C`. Visual evidence is
-  `Artifacts/Screenshots/m5-acceptance-handoff.png`. The remaining acceptance
-  is deliberately human-only: clarity/readability of the prepared proof panel,
-  selection details and visible faction-system transitions.
+- The replacement handoff is green across every `BLOCKING_NOW` stage with
+  174/174 NUnit tests, representative 24-mover acceptance, compiled-content
+  identity, HeadlessSim, Godot smoke, 100-repeat determinism, replay, snapshot
+  continuation, regeneration and macOS export. The full summary is
+  `Artifacts/Verification/20260815T140319Z-full-summary.txt`.
+- The final instruction wording and control visibility passed the normal
+  verification again with 174/174 tests; its summary is
+  `Artifacts/Verification/20260815T140926Z-fast-summary.txt`. The rebuilt
+  exported application also passed both its normal and M5-specific smokes.
+- The exported application passed the M5 fresh-handoff smoke at tick 40 with
+  hash `391359A970F70605`. Visual evidence is
+  `Artifacts/Screenshots/m5-guided-handoff.png`. The remaining acceptance is
+  deliberately human-only: whether the six corrected explanations and visible
+  transitions are now clear to the game director.
 
 ## Current gates
 

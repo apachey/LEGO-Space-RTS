@@ -227,37 +227,37 @@ public partial class BasicHud : CanvasLayer
             _builder.Append("Deployment  ").Append(deployment.State).Append('\n');
         if (_bridge.World.Entities.MissionRefitState.TryGet(first, out MissionRefitState refitState))
         {
-            _builder.Append("Configuration  ").Append(refitState.CurrentConfiguration == MissionConfiguration.T3Survey ? "Survey" : "Escort")
-                .Append("  •  Survey module ").Append((refitState.OwnedConfigurationMask & 2) != 0 ? "OWNED" : refitState.SurveyUnlocked ? "AVAILABLE" : "LOCKED").Append('\n');
+            _builder.Append("Роль  ").Append(refitState.CurrentConfiguration == MissionConfiguration.T3Survey ? "РОЗВІДКА" : "ЕСКОРТ")
+                .Append("  •  Модуль розвідки: ").Append((refitState.OwnedConfigurationMask & 2) != 0 ? "КУПЛЕНИЙ" : refitState.SurveyUnlocked ? "ВІДКРИТИЙ, НЕ КУПЛЕНИЙ" : "ЗАБЛОКОВАНИЙ").Append('\n');
             if (refitState.ConfigurationLockTicks > 0)
-                _builder.Append("Configuration Lock  ").Append((refitState.ConfigurationLockTicks + 19) / 20).Append("s\n");
+                _builder.Append("Зміна ролі знову доступна через  ").Append((refitState.ConfigurationLockTicks + 19) / 20).Append("с\n");
         }
         if (_bridge.World.Entities.MissionRefitJob.TryGet(first, out MissionRefitJob refitJob))
-            _builder.Append("Mission Refit  ").Append((refitJob.TotalTicks - refitJob.RemainingTicks) * 100 / refitJob.TotalTicks).Append("%  •  committed ")
+            _builder.Append("Переоснащення на роль «Розвідка»  ").Append((refitJob.TotalTicks - refitJob.RemainingTicks) * 100 / refitJob.TotalTicks).Append("%  •  витрачено ")
                 .Append(refitJob.CommittedOre).Append(" Ore / ").Append(refitJob.CommittedEnergy).Append(" Energy\n");
         if (_bridge.World.Entities.ResonanceCore.TryGet(first, out ResonanceCore resonance))
         {
             int committed = ResonanceCoreSystem.CountCommitted(resonance);
-            _builder.Append("Resonance  ").Append(committed).Append(" / ").Append(ResonanceCoreSystem.MaximumSlots(resonance)).Append(" slots  •  desired ").Append(resonance.DesiredCommittedCrystals).Append('\n');
-            _builder.Append("Core Demand  ").Append(ResonanceCoreSystem.ContinuousEnergyDemand(resonance)).Append(" E/s  •  ")
-                .Append(BrownoutSystem.IsOperational(_bridge.World, first) ? "OPERATIONAL" : "BROWNOUT — commitments retained").Append('\n');
+            _builder.Append("Встановлені Crystals  ").Append(committed).Append(" / ").Append(ResonanceCoreSystem.MaximumSlots(resonance)).Append('\n');
+            _builder.Append("Споживання ядра  ").Append(ResonanceCoreSystem.ContinuousEnergyDemand(resonance)).Append(" E/s  •  ")
+                .Append(BrownoutSystem.IsOperational(_bridge.World, first) ? "ПРАЦЮЄ" : "НЕСТАЧА ENERGY — CRYSTALS ЗБЕРЕЖЕНО").Append('\n');
             int coreCommitted = ResonanceCoreSystem.CountCommitted(resonance);
-            _builder.Append("Charge Contribution  ").Append(20 * (1 + coreCommitted)).Append(" max  •  +")
+            _builder.Append("Внесок у Заряд  максимум ").Append(20 * (1 + coreCommitted)).Append("  •  +")
                 .Append(BrownoutSystem.IsOperational(_bridge.World, first) ? ChargeText(coreCommitted * AlienChargeSystem.GenerationPerCrystalMillichargePerSecond) : "0.0").Append("/s\n");
             if (resonance.TransitionKind != ResonanceTransitionKind.None)
                 _builder.Append(resonance.TransitionKind == ResonanceTransitionKind.Commit ? "Committing Crystal  " : "Withdrawing Crystal  ")
                     .Append((resonance.TransitionTotalTicks - resonance.TransitionRemainingTicks) * 100 / resonance.TransitionTotalTicks).Append("%\n");
         }
         if (_bridge.World.Entities.SurgeZone.TryGet(first, out SurgeZone surgeZone))
-            _builder.Append(surgeZone.BuildupRemainingTicks > 0 ? "Surge Buildup  " : "Surge Active  ")
-                .Append((surgeZone.BuildupRemainingTicks > 0 ? surgeZone.BuildupRemainingTicks : surgeZone.ActiveRemainingTicks) / 20.0f).Append("s  •  ").Append(surgeZone.RadiusBuildCells).Append(" cells\n");
-        if (AlienChargeSystem.IsSurged(_bridge.World, first)) _builder.Append("SURGED  •  cadence ×0.80  •  ETX reconfiguration ×0.70\n");
+            _builder.Append(surgeZone.BuildupRemainingTicks > 0 ? "Підготовка Сплеску  " : "Сплеск активний  ")
+                .Append((surgeZone.BuildupRemainingTicks > 0 ? surgeZone.BuildupRemainingTicks : surgeZone.ActiveRemainingTicks) / 20.0f).Append("с  •  радіус ").Append(surgeZone.RadiusBuildCells).Append(" клітинок\n");
+        if (AlienChargeSystem.IsSurged(_bridge.World, first)) _builder.Append("ПІДСИЛЕНИЙ СПЛЕСКОМ  •  атака відновлюється на 20% швидше  •  ETX на 30% швидше\n");
         if (_bridge.World.Entities.TubeStation.TryGet(first, out TubeStation tubeStation))
         {
-            _builder.Append("Aero Tube  ").Append(tubeStation.ConnectionCount).Append(" / ").Append(tubeStation.ConnectionLimit).Append(" connections  •  component #").Append(tubeStation.ComponentRoot.Value).Append('\n');
-            _builder.Append("Transfer channels  ").Append(tubeStation.HypersledThroughputUnlocked ? 3 : 2).Append(tubeStation.HypersledThroughputUnlocked ? "  •  Hypersled Throughput" : string.Empty).Append('\n');
+            _builder.Append("Аеротруба  ").Append(tubeStation.ConnectionCount).Append(" / ").Append(tubeStation.ConnectionLimit).Append(" з'єднань\n");
+            _builder.Append("Одночасно перевозить  ").Append(tubeStation.HypersledThroughputUnlocked ? 3 : 2).Append(" юніти").Append(tubeStation.HypersledThroughputUnlocked ? "  •  прискорена пропускна здатність" : string.Empty).Append('\n');
             if (_bridge.World.Entities.TubeComponent.TryGet(tubeStation.ComponentRoot, out TubeComponent tubeComponent))
-                _builder.Append("Network  ").Append(tubeComponent.StationCount).Append(" Stations  •  ").Append(tubeComponent.OperationalLinkCount).Append(" active Links  •  topology ").Append(tubeComponent.TopologyRevision).Append('\n');
+                _builder.Append("Мережа  ").Append(tubeComponent.StationCount).Append(" станції  •  ").Append(tubeComponent.OperationalLinkCount).Append(" активний маршрут\n");
         }
         if (_bridge.World.Entities.TubeLink.TryGet(first, out TubeLink tubeLink))
             _builder.Append("Tube Link  #").Append(tubeLink.EndpointA.Value).Append(" → #").Append(tubeLink.EndpointB.Value).Append("  •  ")
@@ -267,7 +267,7 @@ public partial class BasicHud : CanvasLayer
         if (_bridge.World.Entities.Production.TryGet(first, out Production production)) AppendProductionQueue(production, first);
         if (_input?.BuildModeActive == true) _builder.Append("BUILD MODE  ").Append(_input.BuildStatus).Append('\n');
         int stabilityTicks = DisplacementSystem.RemainingStabilityTicks(_bridge.World, first);
-        if (stabilityTicks > 0) _builder.Append("Stability  ").Append((stabilityTicks + SimClock.TicksPerSecond - 1) / SimClock.TicksPerSecond).Append("s\n");
+        if (stabilityTicks > 0) _builder.Append("Захист від повторного сильного поштовху  ").Append((stabilityTicks + SimClock.TicksPerSecond - 1) / SimClock.TicksPerSecond).Append("с\n");
         if (_builder.Length == 0) _builder.Append("Ready for orders.");
         _selectionDetails.Text = _builder.ToString().TrimEnd();
 
@@ -453,7 +453,8 @@ public partial class BasicHud : CanvasLayer
         "unit.mar.double_hover" => "Double Hover",
         "unit.mar.jet_scooter" => "Jet Scooter",
         "unit.mar.excavation_searcher" => "Excavation Searcher",
-        "unit.ast.t3_trike.displacement_target" => "Clamp Test Target",
+        "unit.ast.t3_trike.displacement_target" => "Ворожий T3-Trike — ціль поштовху",
+        "unit.rock_raiders.hover_scout.m5_excavation_runner" => "Hover Scout — перевірка проходу",
         _ => key
     };
 
@@ -463,7 +464,8 @@ public partial class BasicHud : CanvasLayer
         {
             "building.ast.service_refit_hub", "unit.ast.t3_trike", "building.ali.etx_command_core", "building.ali.resonance_core",
             "unit.ali.razor_skimmer", "building.mar.aero_tube_hangar", "building.mar.settlement_station", "unit.mar.worker_robot",
-            "unit.mar.double_hover", "unit.mar.jet_scooter", "unit.mar.excavation_searcher", "unit.ast.t3_trike.displacement_target"
+            "unit.mar.double_hover", "unit.mar.jet_scooter", "unit.mar.excavation_searcher", "unit.ast.t3_trike.displacement_target",
+            "unit.rock_raiders.hover_scout.m5_excavation_runner"
         };
         for (int i = 0; i < keys.Length; i++) if (StableId.FromKey(keys[i]) == id) return DisplayName(keys[i]);
         return string.Empty;
