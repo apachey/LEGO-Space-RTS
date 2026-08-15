@@ -587,15 +587,26 @@ narrow placement cases allowed by Phase 09B.
   opened excavation route together. It does not add normal-play roster content
   or bypass the later T070/T071/T073 content and command work.
 - From a fresh normal launch, `F8` → `Prepare M5 Playtest` is the exact
-  preparation control. The resulting panel provides direct `FOCUS` controls
-  for every proof and `RESTART M5` restores the complete deterministic opening,
-  so the game director does not need to farm resources or search the map.
+  preparation control. The resulting panel provides direct numbered focus
+  controls for every proof and `ПОЧАТИ СПОЧАТКУ` restores the complete
+  deterministic opening, so the game director does not need to farm resources
+  or search the map.
+- Human handoff review found the first panel too technical and time-sensitive.
+  The revised handoff now opens paused, automatically focuses the first proof,
+  uses Ukrainian numbered steps 1–6, explains exactly what to watch for after
+  each focus action, and exposes explicit start/pause/restart controls. Canonical
+  simulation timings are unchanged; only the developer playtest presentation
+  pauses before the director starts the demonstration.
 - The acceptance fixture has focused deterministic/snapshot regression
   coverage. The latest full verification is green across every `BLOCKING_NOW`
   stage with 173/173 NUnit tests, representative 24-mover acceptance,
   compiled-content identity, HeadlessSim, Godot smoke, 100-repeat determinism,
   replay, snapshot continuation, regeneration and macOS export. The summary is
   `Artifacts/Verification/20260815T125513Z-full-summary.txt`.
+- The Ukrainian guided-handoff refinement passed the normal verification again
+  with 173/173 NUnit tests and all `BLOCKING_NOW` stages green; its summary is
+  `Artifacts/Verification/20260815T132741Z-fast-summary.txt`. A fresh macOS
+  export and both normal-opening and M5 exported-application smokes also pass.
 - The exported application itself passed the M5 fresh-handoff smoke at tick 40
   with hash `F341A1B92A6AF92C`. Visual evidence is
   `Artifacts/Screenshots/m5-acceptance-handoff.png`. The remaining acceptance
