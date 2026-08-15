@@ -252,6 +252,15 @@ public partial class BasicHud : CanvasLayer
             _builder.Append(surgeZone.BuildupRemainingTicks > 0 ? "Surge Buildup  " : "Surge Active  ")
                 .Append((surgeZone.BuildupRemainingTicks > 0 ? surgeZone.BuildupRemainingTicks : surgeZone.ActiveRemainingTicks) / 20.0f).Append("s  •  ").Append(surgeZone.RadiusBuildCells).Append(" cells\n");
         if (AlienChargeSystem.IsSurged(_bridge.World, first)) _builder.Append("SURGED  •  cadence ×0.80  •  ETX reconfiguration ×0.70\n");
+        if (_bridge.World.Entities.TubeStation.TryGet(first, out TubeStation tubeStation))
+        {
+            _builder.Append("Aero Tube  ").Append(tubeStation.ConnectionCount).Append(" / ").Append(tubeStation.ConnectionLimit).Append(" connections  •  component #").Append(tubeStation.ComponentRoot.Value).Append('\n');
+            if (_bridge.World.Entities.TubeComponent.TryGet(tubeStation.ComponentRoot, out TubeComponent tubeComponent))
+                _builder.Append("Network  ").Append(tubeComponent.StationCount).Append(" Stations  •  ").Append(tubeComponent.OperationalLinkCount).Append(" active Links  •  topology ").Append(tubeComponent.TopologyRevision).Append('\n');
+        }
+        if (_bridge.World.Entities.TubeLink.TryGet(first, out TubeLink tubeLink))
+            _builder.Append("Tube Link  #").Append(tubeLink.EndpointA.Value).Append(" → #").Append(tubeLink.EndpointB.Value).Append("  •  ")
+                .Append(tubeLink.LengthBuildCells).Append(" cells  •  ").Append(tubeLink.IsOperational ? "ACTIVE  •  1 E/s" : "DISABLED").Append('\n');
         if (_bridge.World.Entities.PowerState.TryGet(first, out PowerState power))
             _builder.Append("Power  ").Append(power.IsPowered ? "ONLINE" : "DISABLED — Energy Domain Brownout").Append("   Priority  ").Append(power.Priority).Append('\n');
         if (_bridge.World.Entities.Production.TryGet(first, out Production production)) AppendProductionQueue(production, first);

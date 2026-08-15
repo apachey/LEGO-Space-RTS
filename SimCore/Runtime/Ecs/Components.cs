@@ -277,6 +277,31 @@ public struct SurgeReceiver
     public EntityId ActiveZone;
 }
 
+public struct TubeStation
+{
+    public EntityId ComponentRoot;
+    public byte ConnectionLimit;
+    public byte ConnectionCount;
+    public bool RedundantRoutingUnlocked;
+}
+
+public struct TubeLink
+{
+    public EntityId EndpointA;
+    public EntityId EndpointB;
+    public EntityId ComponentRoot;
+    public ushort LengthBuildCells;
+    public byte EnergyDemandPerSecond;
+    public bool IsOperational;
+}
+
+public struct TubeComponent
+{
+    public ushort StationCount;
+    public ushort OperationalLinkCount;
+    public uint TopologyRevision;
+}
+
 public struct PowerState
 {
     public EnergyPriority Priority;

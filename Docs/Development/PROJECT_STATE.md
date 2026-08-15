@@ -5,7 +5,7 @@ remain authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M5 — Four-Faction System Proof / T054 Charge/Surge implemented and fully verified on the current stacked task branch.**
+**M5 — Four-Faction System Proof / T055 Tube graph implemented and fully verified on the current stacked task branch.**
 
 M3 is merged and human-accepted. At the game director's explicit request,
 development moved directly to M5 T049 rather than beginning M4 T040. M4 combat
@@ -14,9 +14,9 @@ complete or silently treated as an M5 dependency.
 
 T049 is human-accepted and recorded in commit `3f677b2`. T050 is recorded in
 commit `8731f61`; T051 is recorded in commit `ad93ec1`; T052 is recorded in
-commit `f6f390a`; T053 is recorded in commit `5844ee1`. T054 is stacked on all
-five in `codex/m5-charge-surge`; none of these M5 task commits is merged to
-main.
+commit `f6f390a`; T053 is recorded in commit `5844ee1`; T054 is recorded in
+commit `2525747`. T055 is stacked on all six in `codex/m5-tube-graph`; none of
+these M5 task commits is merged to main.
 
 ## Engine / architecture
 
@@ -481,6 +481,42 @@ narrow placement cases allowed by Phase 09B.
   `Artifacts/Verification/20260815T110324Z-full-summary.txt`.
 - A launchable T054 debug build exists at
   `Builds/macOS/LEGO Space RTS.app` and passed the export smoke.
+- M5 T055 implements the authoritative Martian Aero Tube graph proof. Completed
+  Aero Tube Hangars and Settlement Stations register as explicit graph nodes;
+  completed Links store normalized endpoint IDs, an ordered build-cell route,
+  canonical length, 1 E/s demand and operational state. Automatic routing uses
+  deterministic Station sockets and two stable orthogonal candidates, rejecting
+  blocked routes without asking the player to draw bends.
+- Link/component topology is event-driven rather than scanned every tick.
+  Deterministic BFS assigns each connected component the lowest Station Entity
+  ID, caches Station/operational-Link counts and increments one component-level
+  segmentation revision when a surviving component splits. Disabled Links keep
+  their physical connection slot but do not connect components; invalid incident
+  Links and orphan routes are removed deterministically after Station loss.
+- Baseline limits are three Links per Settlement Station and five per Hangar;
+  Redundant Routing adds one. Canonical completed-Link economics are exposed as
+  50 + 2 Ore per build-grid cell, 10 Energy activation and 10 seconds + 0.4
+  seconds per cell. Connected Station banks are jointly queryable/spendable in
+  stable order while segmentation preserves each Station's physically local
+  resource ownership.
+- Tube Stations, Links, ordered routes, cached components and topology/
+  segmentation revisions participate in snapshot v17, simulation protocol v15,
+  replay v12, hashes and ordered state dumps. The selected-object HUD reports
+  connection usage, component size, active Links, endpoints, length and demand.
+  Five focused regressions cover limits/upgrades, automatic routing/economics/
+  validation, resource pooling and split/reconnect, Station-loss cleanup and
+  deterministic snapshot continuation.
+- T055 full verification is green across every `BLOCKING_NOW` stage:
+  warnings-as-errors builds, 161 NUnit tests, representative 24-mover
+  acceptance, compiled-content identity, HeadlessSim, Godot headless smoke,
+  100-repeat determinism, replay, snapshot continuation, regeneration and
+  macOS export. The golden/replay hash is `3113B1A3BB4C900D`; the snapshot
+  continuation hash is `FE000EA90D0C20A0`. The preserved 60-mover stage remains
+  diagnostic-failing at 31/60 completion and 8,483 oscillation incidents. The
+  authoritative summary is
+  `Artifacts/Verification/20260815T114624Z-full-summary.txt`.
+- A launchable T055 debug build exists at
+  `Builds/macOS/LEGO Space RTS.app` and passed the export smoke.
 
 ## Current gates
 
@@ -554,6 +590,12 @@ narrow placement cases allowed by Phase 09B.
   still does not expose the proof Core or Surge activation in normal play.
   Resonance destruction salvage remains dependent on deferred T045 destruction
   and must integrate the canonical cache rules when that path exists.
+- T055 deliberately does not expose a free Link-creation player command. The
+  graph accepts only a completed Link and exposes the canonical cost/timing;
+  player-facing construction funding/progress, physical Link presentation and
+  Martian local Energy-domain pooling require the full Martian content/economy
+  integration scheduled for T071. T056 remains responsible for Jet Scooter
+  Tube transit, queues, travel timing and safe reroute/return behavior.
 
 ## Explicitly rejected / do not resurrect
 
@@ -566,7 +608,7 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Finish the T054 stacked branch handoff; merge only through game-director
+1. Finish the T055 stacked branch handoff; merge only through game-director
    review.
-2. Continue M5 with T055 Tube graph after T054 is accepted/merged, unless
+2. Continue M5 with T056 Tube transit after T055 is accepted/merged, unless
    the game director explicitly returns to deferred M4 T040 Targeting.

@@ -17,12 +17,15 @@ public sealed class SimulationWorld
     public int OscillationDiagnostics { get; internal set; }
     public int PathRequestsProcessed { get; internal set; }
     public int FormationReflowDiagnostics { get; internal set; }
+    public uint TubeTopologyRevision { get; internal set; }
+    public uint TubeSegmentationRevision { get; internal set; }
     private readonly OperationsCapacityState[] _operationsCapacity;
     private readonly AlienChargeState[] _alienCharge;
 
     public int PlayerCount => Fog.PlayerCount;
 
     internal readonly Dictionary<uint, RouteCorridor> Corridors = new();
+    internal readonly Dictionary<uint, TubeRoute> TubeRoutes = new();
     internal readonly Dictionary<uint, UnitCommandQueue> Queues = new();
     internal readonly Dictionary<uint, FixVec2> PendingVelocity = new();
     internal readonly Dictionary<uint, bool> CompressionUsed = new();
@@ -68,6 +71,8 @@ public sealed class SimulationWorld
     internal bool TryGetQueue(EntityId id, out UnitCommandQueue queue) => Queues.TryGetValue(id.Value, out queue!);
 
     public RouteCorridor? GetCorridor(EntityId id) => Corridors.TryGetValue(id.Value, out RouteCorridor corridor) ? corridor : null;
+
+    public TubeRoute? GetTubeRoute(EntityId link) => TubeRoutes.TryGetValue(link.Value, out TubeRoute route) ? route : null;
 
     public OperationsCapacityState GetOperationsCapacity(byte playerSlot)
     {

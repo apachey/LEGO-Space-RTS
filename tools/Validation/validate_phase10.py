@@ -237,6 +237,13 @@ check('BrownoutSystem.IsOperational' in alien_charge and 'CurrentMillicharge' in
 check('ApplySurgedCooldownTicks' in alien_charge and '(baseTicks * 4 + 4) / 5' in alien_charge and 'ApplySurgedReconfigurationTicks' in alien_charge and '(baseTicks * 7 + 9) / 10' in alien_charge, 'T054 canonical Surge timing multipliers missing')
 check('ResonanceInitiationUnlocked' in alien_charge and 'world.Entities.SurgeZone.Set' in alien_charge and 'receiver.ActiveZone' in alien_charge, 'T054 proof unlock, zone, or deterministic membership missing')
 
+tube_graph = (ROOT/'SimCore/Runtime/Simulation/TubeGraphSystem.cs').read_text()
+for token in ['SettlementStationConnectionLimit = 3','AeroTubeHangarConnectionLimit = 5','RedundantRoutingBonusConnections = 1','ActiveLinkEnergyDemandPerSecond = 1','LinkBaseOreCost = 50','LinkOreCostPerBuildCell = 2','LinkActivationEnergyCost = 10','10 * EnergyDomainSystem.TicksPerSecond','LinkConstructionTicksPerBuildCell = 8','building.mar.aero_tube_hangar','building.mar.settlement_station']:
+    check(token in tube_graph, f'canonical T055 Tube graph contract missing: {token}')
+check('Queue<uint>' in tube_graph and 'ComponentRoot' in tube_graph and 'TubeSegmentationRevision' in tube_graph, 'T055 deterministic BFS/component segmentation missing')
+check('TryBuildAutomaticRoute' in tube_graph and 'RouteIsStructurallyValid' in tube_graph and 'TryAddCompletedLink' in tube_graph, 'T055 automatic ordered Tube route creation missing')
+check('TrySpendConnectedProcessedResource' in tube_graph and 'GetConnectedProcessedResourceTotal' in tube_graph, 'T055 connected resource-pool access missing')
+
 headless = (ROOT/'HeadlessSim/Program.cs').read_text()
 for token in ['--snapshot-in','--snapshot-out','--replay','--record-replay','--benchmark','--path-benchmark','--hash-every','--repeat','--golden-manifest-out','--golden-manifest-in','--dump-state','--compiled-dir']:
     check(token in headless, f'HeadlessSim switch missing: {token}')
