@@ -80,6 +80,7 @@ public static class M5AcceptanceScenarioFactory
         }
 
         world.Spatial.Rebuild(world.Entities);
+        new VisionSystem().Step(world);
         return world;
     }
 

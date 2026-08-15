@@ -68,6 +68,21 @@ public sealed class M5AcceptanceScenarioTests
     }
 
     [Test]
+    public void GuidedDisplacementPublishesBothActorsBeforeThePausedSimulationStarts()
+    {
+        SimulationWorld world = M5AcceptanceScenarioFactory.Create(applyInitialDisplacement: false);
+        Assert.That(M5AcceptanceScenarioFactory.TryFindFirst(world, M5AcceptanceScenarioFactory.DisplacementTargetKey, out EntityId target), Is.True);
+        SimTransform targetTransform = world.Entities.Transform.Get(target);
+        Assert.Multiple(() =>
+        {
+            Assert.That(world.Tick.Value, Is.Zero, "The guide must remain paused at its deterministic opening.");
+            Assert.That(world.Fog.Get(0, targetTransform.Position.X.FloorToInt(), targetTransform.Position.Y.FloorToInt()), Is.EqualTo(VisibilityState.Visible));
+            Assert.That(SnapshotContains(PresentationSnapshot.Capture(world, 0), target), Is.True,
+                "The enemy T3-Trike must already be visible in the paused presentation snapshot.");
+        });
+    }
+
+    [Test]
     public void GuidedExcavationStartsBlockedThenOpensAndMovesThroughTheWall()
     {
         SimulationWorld world = M5AcceptanceScenarioFactory.Create(openExcavation: false);
@@ -94,6 +109,13 @@ public sealed class M5AcceptanceScenarioTests
         int count = 0;
         foreach (EntityId id in world.Entities.Alive) if (world.Entities.TubeTransfer.Has(id)) count++;
         return count;
+    }
+
+    private static bool SnapshotContains(PresentationSnapshot snapshot, EntityId entity)
+    {
+        for (int i = 0; i < snapshot.Entities.Count; i++)
+            if (snapshot.Entities[i].EntityId == entity) return true;
+        return false;
     }
 
     private static bool FindByType(SimulationWorld world, ContentId type, out EntityId entity)

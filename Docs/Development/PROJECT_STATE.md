@@ -617,21 +617,32 @@ narrow placement cases allowed by Phase 09B.
   the prior Unicode-em-dash name could pass direct executable smoke while
   failing Finder/`open` launch with `kLSNoExecutableErr`.
 - The replacement handoff is green across every `BLOCKING_NOW` stage with
-  176/176 NUnit tests, representative 24-mover acceptance, compiled-content
+  177/177 NUnit tests, representative 24-mover acceptance, compiled-content
   identity, HeadlessSim, Godot smoke, 100-repeat determinism, replay, snapshot
   continuation, regeneration and macOS export. The full summary is
-  `Artifacts/Verification/20260815T144212Z-full-summary.txt`.
-- The final visible-transition fixes passed normal verification again with
-  176/176 tests; its summary is
-  `Artifacts/Verification/20260815T144922Z-fast-summary.txt`. The rebuilt
+  `Artifacts/Verification/20260815T150039Z-full-summary.txt`. The rebuilt
   exported application passed both its normal and M5-specific smokes.
 - The exported application passed the M5 fresh-handoff smoke at tick 40 with
   hash `391359A970F70605`.
 - Game-director acceptance is complete for guide steps 1–4. Steps 5–6 were
   rejected because the displacement produced no perceptible movement and the
   excavation view never showed the blocking wall before it opened. The fixture,
-  presentation refresh and camera framing now correct those causes. The only
-  remaining M5 acceptance is a repeat human check of corrected steps 5–6.
+  presentation refresh and excavation staging correct the underlying state
+  transitions. The only
+  remaining M5 acceptance is a repeat human check of corrected step 5; step 6
+  is now accepted after the wall visibly disappeared and the unit crossed the
+  opened route.
+- The first corrected step-5 build still hid the hostile T3-Trike because the
+  paused fixture captured presentation before its initial Vision pass. The M5
+  fixture now initializes derived fog visibility at tick zero, so the enemy
+  target and the Searcher's revealed area are both visible before either push.
+  Regression coverage verifies the exact paused-presentation visibility
+  condition. Visual acceptance remains blocked because the now-rendered enemy
+  lands beneath the guide panel. A lateral camera offset moved the pair beyond
+  the top of the isometric frame, while wider one-shot framing still failed to
+  retain the pair after the scene reload. Under the two-attempt rule, a third
+  camera approach requires architecture review; the recommended next approach
+  is a fixed step-5 camera composition maintained for the full guided test.
 
 ## Current gates
 
@@ -729,8 +740,8 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Repeat only corrected M5 playtest steps 5–6; steps 1–4 are accepted. Merge
-   the stacked M5 branches only after both remaining steps are accepted.
+1. Repeat only corrected M5 playtest step 5; steps 1–4 and 6 are accepted. Merge
+   the stacked M5 branches only after the remaining step is accepted.
 2. Before beginning M6, resolve the now-`BLOCKING_LATER` 60-mover gate rather
    than carrying its 31/60 completion into networked 1v1 work.
 3. After M5 acceptance and the pre-M6 movement gate, begin M6 T058 using the
