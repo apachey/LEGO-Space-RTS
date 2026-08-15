@@ -6,7 +6,6 @@ public sealed class EnergyDomainSystem : ISimSystem
 {
     public const int TicksPerSecond = 20;
     public const int CanonicalStartingReserve = 120;
-    private static readonly ContentId HqType = StableId.FromKey("building.rock_raiders.hq");
 
     public void Step(SimulationWorld world)
     {
@@ -46,24 +45,7 @@ public sealed class EnergyDomainSystem : ISimSystem
     }
 
     public static void InitializeOpeningDomains(SimulationWorld world)
-    {
-        IReadOnlyList<EntityId> alive = world.Entities.Alive;
-        for (int i = 0; i < alive.Count; i++)
-        {
-            EntityId id = alive[i];
-            if (!world.Entities.Building.TryGet(id, out Building building) || building.State != BuildingState.Completed || building.Type != HqType) continue;
-            world.Entities.EnergyDomain.Set(id, new EnergyDomain { Reserve = Fix32.FromInt(CanonicalStartingReserve) });
-            world.Entities.EnergyDomainMember.Set(id, new EnergyDomainMember { DomainRoot = id });
-        }
-        for (int i = 0; i < alive.Count; i++)
-        {
-            EntityId id = alive[i];
-            if (!world.Entities.Building.TryGet(id, out Building building) || building.State != BuildingState.Completed || world.Entities.EnergyDomainMember.Has(id)) continue;
-            if (world.Entities.Ownership.TryGet(id, out Ownership ownership) && TryFindOwnedDomain(world, ownership.PlayerSlot, out EntityId root))
-                world.Entities.EnergyDomainMember.Set(id, new EnergyDomainMember { DomainRoot = root });
-        }
-        RecalculateAll(world);
-    }
+        => WorksiteGraphSystem.InitializeOpening(world);
 
     public static bool TryResolveForEntity(SimulationWorld world, EntityId entity, byte playerSlot, out EntityId root)
     {
@@ -73,10 +55,8 @@ public sealed class EnergyDomainSystem : ISimSystem
             root = member.DomainRoot;
             return true;
         }
-        if (!TryFindOwnedDomain(world, playerSlot, out root)) return false;
-        world.Entities.EnergyDomainMember.Set(entity, new EnergyDomainMember { DomainRoot = root });
-        Recalculate(world, root);
-        return true;
+        root = EntityId.None;
+        return false;
     }
 
     public static bool TryGetPlayerDomain(SimulationWorld world, byte playerSlot, out EntityId root)
@@ -121,11 +101,17 @@ public sealed class EnergyDomainSystem : ISimSystem
         {
             EntityId id = alive[i];
             if (!world.Entities.EnergyDomainMember.TryGet(id, out EnergyDomainMember member) || member.DomainRoot != root ||
-                !world.Entities.Building.TryGet(id, out Building building) || building.State != BuildingState.Completed ||
-                !world.Content.TryGetBuilding(building.Type, out BuildingDefinition definition)) continue;
-            generation = checked(generation + definition.EnergyGenerationPerSecond);
-            demand = checked(demand + definition.ContinuousEnergyDemandPerSecond);
-            capacity = checked(capacity + definition.EnergyReserveCapacity);
+                !world.Entities.Building.TryGet(id, out Building building) || building.State != BuildingState.Completed) continue;
+            int entityDemand = 0;
+            if (world.Content.TryGetBuilding(building.Type, out BuildingDefinition definition))
+            {
+                generation = checked(generation + definition.EnergyGenerationPerSecond);
+                capacity = checked(capacity + definition.EnergyReserveCapacity);
+                entityDemand = definition.ContinuousEnergyDemandPerSecond;
+            }
+            if (world.Entities.ResonanceCore.TryGet(id, out ResonanceCore core) && ResonanceCoreSystem.IsValidCore(world, id))
+                entityDemand = ResonanceCoreSystem.ContinuousEnergyDemand(core);
+            demand = checked(demand + entityDemand);
         }
         ref EnergyDomain domain = ref world.Entities.EnergyDomain.Get(root);
         domain.GenerationPerSecond = generation;

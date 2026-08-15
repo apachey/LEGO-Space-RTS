@@ -17,6 +17,8 @@ public partial class GodotSmokeRunner : Node
     private bool _captureTransport;
     private bool _captureTransformation;
     private bool _captureTransformationRollback;
+    private bool _captureExcavation;
+    private bool _m5Acceptance;
     private bool _constructionSeeded;
     private EntityId _captureFocus;
     private EntityId _damagedFocus;
@@ -44,12 +46,16 @@ public partial class GodotSmokeRunner : Node
         {
             if (commandLineArgs[i] == "--capture-path") _capturePath = commandLineArgs[i + 1];
         }
-        for (int i = 0; i < commandLineArgs.Length; i++) if (commandLineArgs[i] == "--capture-construction") _captureConstruction = true;
-        for (int i = 0; i < commandLineArgs.Length; i++) if (commandLineArgs[i] == "--capture-repair") _captureRepair = true;
-        for (int i = 0; i < commandLineArgs.Length; i++) if (commandLineArgs[i] == "--capture-transport") _captureTransport = true;
-        for (int i = 0; i < commandLineArgs.Length; i++) if (commandLineArgs[i] == "--capture-transformation") _captureTransformation = true;
-        for (int i = 0; i < commandLineArgs.Length; i++) if (commandLineArgs[i] == "--capture-transformation-rollback")
-        { _captureTransformation = true; _captureTransformationRollback = true; }
+        for (int i = 0; i < commandLineArgs.Length; i++)
+        {
+            if (commandLineArgs[i] == "--capture-construction") _captureConstruction = true;
+            if (commandLineArgs[i] == "--capture-repair") _captureRepair = true;
+            if (commandLineArgs[i] == "--capture-transport") _captureTransport = true;
+            if (commandLineArgs[i] == "--capture-transformation") _captureTransformation = true;
+            if (commandLineArgs[i] == "--capture-transformation-rollback") { _captureTransformation = true; _captureTransformationRollback = true; }
+            if (commandLineArgs[i] == "--capture-excavation") _captureExcavation = true;
+            if (commandLineArgs[i] == "--m5-playtest") _m5Acceptance = true;
+        }
     }
     public override void _Process(double delta)
     {
@@ -59,19 +65,29 @@ public partial class GodotSmokeRunner : Node
             _camera?.CenterOn(focusTransform.Position.ToWorld());
         if (_frames == 2)
         {
-            if (_captureTransformation) _input.DebugPrepareTransformationPlaytest();
+            if (_m5Acceptance && M5AcceptanceScenarioFactory.TryFindFirst(_bridge.World, M5AcceptanceScenarioFactory.ResonanceCoreKey, out EntityId m5Core))
+            {
+                _selection?.SetSelection(new[] { m5Core });
+                _captureFocus = m5Core;
+                if (_bridge.World.Entities.Transform.TryGet(m5Core, out SimTransform coreTransform)) _camera?.CenterOn(coreTransform.Position.ToWorld());
+            }
+            else if (_captureExcavation && TryOpenExcavatable())
+            {
+                _selection?.SetSelection(Array.Empty<EntityId>());
+            }
+            else if (_captureTransformation) _input.DebugPrepareTransformationPlaytest();
             else if (_captureTransport) _input.DebugPrepareTransportPlaytest();
             else if (_captureRepair) _input.DebugPrepareRepairPlaytest();
             else if (_captureConstruction) _input.DebugPrepareConstructionPlaytest();
             else _input.DebugPrepareDestructionPlaytest();
         }
         ResolvePreparedCaptureFocus();
-        if (!_captureConstruction && !_captureRepair && !_captureTransport && !_captureTransformation && !_preparedEdgePickObserved && _captureFocus != EntityId.None)
+        if (!_captureConstruction && !_captureRepair && !_captureTransport && !_captureTransformation && !_captureExcavation && !_m5Acceptance && !_preparedEdgePickObserved && _captureFocus != EntityId.None)
             _preparedEdgePickObserved = PreparedBuildingEdgePick() == _captureFocus;
         if (_captureTransformation) SeedPreparedTransformation();
         else if (_captureTransport) SeedPreparedTransport();
         else if (_captureRepair) SeedPreparedRepair();
-        else if (!_captureConstruction) { SeedPreparedScoutDamage(); SeedPreparedDestructionStates(); }
+        else if (!_captureConstruction && !_captureExcavation && !_m5Acceptance) { SeedPreparedScoutDamage(); SeedPreparedDestructionStates(); }
         if (_captureTransformationRollback)
         {
             if (!_bridge.World.Entities.Transformation.TryGet(_captureFocus, out Transformation rollbackState) ||
@@ -151,12 +167,18 @@ public partial class GodotSmokeRunner : Node
             focusedView.FindChild("TransformationLabel", false, false) is Label3D rollbackLabel && rollbackLabel.Visible && rollbackLabel.Text.StartsWith("CANCELLING") &&
             focusedView.FindChild("TransformationProgressBar", false, false) is Node3D rollbackBar && rollbackBar.Visible;
         bool transformationOk = !_captureTransformation || transformationCompleteOk || transformationRollbackOk;
-        int minimumAlive = _captureConstruction ? 15 : _captureRepair ? 16 : _captureTransport ? 16 : _captureTransformation ? 16 : 17;
+        int minimumAlive = _m5Acceptance ? 18 : _captureConstruction ? 15 : _captureRepair ? 16 : _captureTransport ? 16 : _captureTransformation ? 16 : 17;
         bool controlsOk = movingTargetControl is Button && prepareConstructionControl is Button && prepareDestructionControl is Button && prepareRepairControl is Button &&
             prepareTransportControl is Button && destroyTransportControl is Button && prepareTransformationControl is Button &&
             destroyCrewControl is Button && destroyChromeControl is Button && destroyBuildingControl is Button;
+        bool excavationOk = !_captureExcavation || ExcavationIsOpen();
+        string m5Reason = string.Empty;
+        bool m5Ok = !_m5Acceptance || (M5AcceptanceScenarioFactory.IsFreshHandoffReady(_bridge.World, out m5Reason) &&
+            GetTree().Root.FindChild("M5AcceptancePanel", true, false) is not null && GetTree().Root.FindChild("M5AcceptanceStatus", true, false) is not null);
+        if (!m5Ok && _m5Acceptance) GD.PrintErr($"M5 ACCEPTANCE SMOKE: FAIL {m5Reason}");
+        bool m4VisualOk = _captureExcavation || _m5Acceptance || (destructionOk && preparedUiOk && scoutDamageOk && repairOk && transportOk && transformationOk && contactImpact is MeshInstance3D && healthBarOk);
         bool ok = _bridge.Current is not null && _bridge.World.Entities.Alive.Count >= minimumAlive && _bridge.GameplayContentHash != 0 &&
-            hudOk && constructionOk && destructionOk && preparedUiOk && scoutDamageOk && repairOk && transportOk && transformationOk && controlsOk && contactImpact is MeshInstance3D && healthBarOk;
+            hudOk && constructionOk && controlsOk && excavationOk && m5Ok && m4VisualOk;
         if (ok && _capturePath is not null)
         {
             _finished = true;
@@ -179,10 +201,32 @@ public partial class GodotSmokeRunner : Node
             GD.Print($"PHASE10 VISUAL SMOKE CAPTURE: PASS path={_capturePath}");
         }
         if (!ok)
-            GD.PrintErr($"PHASE10 GODOT HEADLESS SMOKE DETAIL: hud={hudOk} construction={constructionOk} health={healthBarOk} controls={controlsOk} destruction={destructionOk} preparedTitle={preparedTitleOk} preparedEdgePick={preparedEdgePickOk} scoutDamage={scoutDamageOk} repair={repairOk} transport={transportOk} transformation={transformationOk} standardWreck={standardWreck is MeshInstance3D} collapseId={_collapseUnit.Value} collapseActive={_collapseUnit != EntityId.None && _bridge.World.Entities.Destruction.Has(_collapseUnit)} collapseView={activeCollapse is MeshInstance3D} contact={contactImpact is MeshInstance3D}");
+            GD.PrintErr($"PHASE10 GODOT HEADLESS SMOKE DETAIL: hud={hudOk} construction={constructionOk} health={healthBarOk} controls={controlsOk} destruction={destructionOk} preparedTitle={preparedTitleOk} preparedEdgePick={preparedEdgePickOk} scoutDamage={scoutDamageOk} repair={repairOk} transport={transportOk} transformation={transformationOk} excavation={excavationOk} m5={m5Ok} standardWreck={standardWreck is MeshInstance3D} collapseId={_collapseUnit.Value} collapseActive={_collapseUnit != EntityId.None && _bridge.World.Entities.Destruction.Has(_collapseUnit)} collapseView={activeCollapse is MeshInstance3D} contact={contactImpact is MeshInstance3D}");
         _finished = true;
         GD.Print(ok ? $"PHASE10 GODOT HEADLESS SMOKE: PASS tick={_bridge.World.Tick.Value} hash={_bridge.StateHashHex()}" : "PHASE10 GODOT HEADLESS SMOKE: FAIL");
         GetTree().Quit(ok ? 0 : 2);
+    }
+
+    private bool TryOpenExcavatable()
+    {
+        if (_bridge is null || _bridge.World.Map.Features.Count == 0) return false;
+        ExcavatableFeature feature = _bridge.World.Map.Features[0];
+        _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, uint.MaxValue - 1,
+            SimCommandType.DebugOpenExcavatable, Array.Empty<EntityId>(), FixVec2.Zero, debugFeatureId: feature.FeatureId));
+        float centerX = feature.NavRect.X + feature.NavRect.Width * 0.5f;
+        float centerZ = feature.NavRect.Y + feature.NavRect.Height * 0.5f;
+        _camera?.CenterOn(new Vector3(centerX, 0f, centerZ));
+        if (GetTree().Root.FindChild("DebugRenderer", true, false) is DebugRenderer debug) debug.DrawExcavatable = true;
+        return true;
+    }
+
+    private bool ExcavationIsOpen()
+    {
+        if (_bridge is null || _bridge.World.Map.Features.Count == 0) return false;
+        ExcavatableFeature feature = _bridge.World.Map.Features[0];
+        return feature.State == ExcavatableFeatureState.Open &&
+            ExcavationTopologySystem.TryGetFeatureEntity(_bridge.World, feature.FeatureId, out EntityId entity) &&
+            _bridge.World.Entities.Excavatable.Get(entity).State == ExcavatableFeatureState.Open;
     }
 
     private void ResolvePreparedCaptureFocus()

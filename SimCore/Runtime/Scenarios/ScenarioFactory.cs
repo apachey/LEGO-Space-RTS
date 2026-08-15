@@ -137,6 +137,7 @@ public static class ScenarioFactory
 
     private static void FinalizeScenario(SimulationWorld world)
     {
+        ExcavationTopologySystem.InitializeFeatures(world);
         EnergyDomainSystem.InitializeOpeningDomains(world);
         OperationsCapacitySystem.Recalculate(world);
         world.Spatial.Rebuild(world.Entities);

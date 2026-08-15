@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 14,
+  "schemaVersion": 15,
   "contentKind": "prototype_entities",
   "policy": "M2 movement, canonical M3 economy metadata and canonical M4 combat, transport and data-driven tactical transformation metadata.",
   "movementProfiles": [
@@ -282,6 +282,7 @@
       "energyReserveCapacity": 150,
       "continuousEnergyDemandPerSecond": 0,
       "energyFunctionalClass": "CommandAndBasicEconomy",
+      "worksiteServiceRadius": 18,
       "productionExit": { "width": 2, "depth": 2, "largestFootprint": "Tiny" }
     },
     {
@@ -319,6 +320,7 @@
       "energyReserveCapacity": 0,
       "continuousEnergyDemandPerSecond": 1,
       "energyFunctionalClass": "ProductionAndResearch",
+      "worksiteServiceRadius": 12,
       "productionExit": { "width": 3, "depth": 3, "largestFootprint": "Medium" }
     }
   ],

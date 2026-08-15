@@ -33,6 +33,12 @@ public enum TargetPriorityProfile : byte { AntiLight = 0, AntiHeavy = 1, AntiAir
 public enum TargetSelectionKind : byte { None = 0, Automatic = 1, DirectOrder = 2 }
 public enum DamageType : byte { Light = 0, General = 1, Breach = 2, Siege = 3, AntiAir = 4, Control = 5 }
 public enum WeaponDeliveryKind : byte { Projectile = 0, Contact = 1 }
+public enum DeploymentState : byte { Mobile = 0, Deploying = 1, Deployed = 2, Undeploying = 3 }
+public enum MissionConfiguration : byte { None = 0, T3Escort = 1, T3Survey = 2 }
+public enum ResonanceTransitionKind : byte { None = 0, Commit = 1, Withdraw = 2 }
+public enum TubeTransferState : byte { Approaching = 0, Queued = 1, Loading = 2, Travelling = 3, Unloading = 4, ExitBlocked = 5, Returning = 6, ArrivalRecovery = 7 }
+public enum DisplacementEffect : byte { DeflectorArm = 0, GuardSweep = 1, ExcavationClamp = 2 }
+public enum DisplacementRelation : byte { Hostile = 0, FriendlyTow = 1 }
 
 public struct Ownership
 {
@@ -100,6 +106,16 @@ public struct Vision
     public bool IsAirVision;
     public int LastFogX;
     public int LastFogY;
+}
+
+public struct Excavatable
+{
+    public ushort MapFeatureId;
+    public ContentId StableId;
+    public ExcavatableTerrainClass TerrainClass;
+    public ExcavatableFeatureState State;
+    public ushort RequiredEnergy;
+    public ContentId VisualProfile;
 }
 
 public struct ResourceNode
@@ -284,6 +300,135 @@ public struct EnergyDomain
 public struct EnergyDomainMember
 {
     public EntityId DomainRoot;
+}
+
+public struct WorksiteNode
+{
+    public byte ServiceRadius;
+    public EntityId ComponentRoot;
+}
+
+public struct WorksiteMember
+{
+    public EntityId ComponentRoot;
+}
+
+public struct WorksiteComponent
+{
+    public ushort NodeCount;
+    public ushort MemberCount;
+    public uint TopologyRevision;
+}
+
+public struct Deployment
+{
+    public DeploymentState State;
+}
+
+public struct ForwardServiceProvider
+{
+    public byte RadiusBuildCells;
+    public bool IsActive;
+}
+
+public struct ForwardServiceMember
+{
+    public EntityId Provider;
+    public byte QueryOwner;
+    public short QueryCellX;
+    public short QueryCellY;
+}
+
+public struct MissionRefitState
+{
+    public MissionConfiguration CurrentConfiguration;
+    public byte OwnedConfigurationMask;
+    public ushort ConfigurationLockTicks;
+    public bool SurveyUnlocked;
+}
+
+public struct MissionRefitJob
+{
+    public EntityId Provider;
+    public EntityId FundingBank;
+    public EntityId EnergyDomainRoot;
+    public MissionConfiguration OldConfiguration;
+    public MissionConfiguration NewConfiguration;
+    public ushort TotalTicks;
+    public ushort RemainingTicks;
+    public ushort CommittedOre;
+    public ushort CommittedEnergy;
+}
+
+public struct ResonanceCore
+{
+    public EntityId CommandCore;
+    public EntityId TransitionBank;
+    public byte CommittedSlotMask;
+    public byte DesiredCommittedCrystals;
+    public byte TransitionSlot;
+    public ResonanceTransitionKind TransitionKind;
+    public ushort TransitionTotalTicks;
+    public ushort TransitionRemainingTicks;
+    public bool ExpandedLatticeUnlocked;
+}
+
+public struct SurgeZone
+{
+    public byte RadiusBuildCells;
+    public ushort BuildupRemainingTicks;
+    public ushort ActiveRemainingTicks;
+}
+
+public struct SurgeReceiver
+{
+    public EntityId ActiveZone;
+}
+
+public struct TubeStation
+{
+    public EntityId ComponentRoot;
+    public byte ConnectionLimit;
+    public byte ConnectionCount;
+    public bool RedundantRoutingUnlocked;
+    public bool HypersledThroughputUnlocked;
+}
+
+public struct TubeLink
+{
+    public EntityId EndpointA;
+    public EntityId EndpointB;
+    public EntityId ComponentRoot;
+    public ushort LengthBuildCells;
+    public byte EnergyDemandPerSecond;
+    public bool IsOperational;
+}
+
+public struct TubeComponent
+{
+    public ushort StationCount;
+    public ushort OperationalLinkCount;
+    public uint TopologyRevision;
+}
+
+public struct TubeTransfer
+{
+    public EntityId Origin;
+    public EntityId Destination;
+    public int RequestedTick;
+    public int DepartureTick;
+    public int TotalTravelTicks;
+    public int RemainingTicks;
+    public ushort CurrentEdgeIndex;
+    public ushort ExitWaitTicks;
+    public TubeTransferState State;
+    public bool HasArrivalMoveOrder;
+    public FixVec2 ArrivalMoveTarget;
+}
+
+public struct Stability
+{
+    public int UntilTick;
 }
 
 public struct PowerState

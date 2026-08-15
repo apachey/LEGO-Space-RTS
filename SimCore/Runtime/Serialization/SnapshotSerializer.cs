@@ -7,11 +7,11 @@ namespace LegoSpaceRTS.SimCore
 public static class SnapshotSerializer
 {
     public const uint Magic = 0x53525453; // STRS
-    public const ushort FormatVersion = 19;
-    public const ushort SimulationProtocolVersion = 17;
+    public const ushort FormatVersion = 20;
+    public const ushort SimulationProtocolVersion = 18;
 
     [Flags]
-    private enum EntityComponents : uint
+    private enum EntityComponents : ulong
     {
         None = 0,
         Ownership = 1 << 0,
@@ -42,7 +42,19 @@ public static class SnapshotSerializer
         Passenger = 1 << 25,
         Transport = 1 << 26,
         Transformation = 1 << 27,
-        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver | ResourceBank | Building | ConstructionSite | Builder | Production | EnergyDomain | EnergyDomainMember | PowerState | Targetable | Targeting | Weapon | Health | Destruction | Passenger | Transport | Transformation
+        WorksiteNode = 1UL << 28,
+        WorksiteMember = 1UL << 29,
+        WorksiteComponent = 1UL << 30,
+        Excavatable = 1UL << 31,
+        Deployment = 1UL << 32,
+        ForwardServiceProvider = 1UL << 33,
+        ForwardServiceMember = 1UL << 34,
+        MissionRefitState = 1UL << 35,
+        MissionRefitJob = 1UL << 36,
+        ResonanceCore = 1UL << 37,
+        SurgeZone = 1UL << 38,
+        SurgeReceiver = 1UL << 39,
+        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver | ResourceBank | Building | ConstructionSite | Builder | Production | EnergyDomain | EnergyDomainMember | PowerState | Targetable | Targeting | Weapon | Health | Destruction | Passenger | Transport | Transformation | WorksiteNode | WorksiteMember | WorksiteComponent | Excavatable | Deployment | ForwardServiceProvider | ForwardServiceMember | MissionRefitState | MissionRefitJob | ResonanceCore | SurgeZone | SurgeReceiver
     }
 
     public static byte[] Serialize(SimulationWorld world)
@@ -53,6 +65,15 @@ public static class SnapshotSerializer
         w.Write(world.Entities.NextEntityValue);
         IReadOnlyList<EntityId> alive = world.Entities.Alive; w.Write(alive.Count);
         for (int i = 0; i < alive.Count; i++) WriteEntity(w, world, alive[i]);
+        w.Write(world.PlayerCount);
+        for (byte player = 0; player < world.PlayerCount; player++)
+        {
+            AlienChargeState charge = world.GetAlienCharge(player);
+            w.Write(charge.CurrentMillicharge); w.Write(charge.ResonanceInitiationUnlocked);
+        }
+        WriteTubeGraph(w, world);
+        WriteTubeTransfers(w, world);
+        WriteStability(w, world);
         world.Commands.Serialize(w);
         world.Fog.Serialize(w);
         WriteProjectileState(w, world);
@@ -64,9 +85,9 @@ public static class SnapshotSerializer
         using MemoryStream ms = new(bytes, false); using BinaryReader r = new(ms);
         if (r.ReadUInt32() != Magic) throw new InvalidDataException("Snapshot magic mismatch.");
         ushort format = r.ReadUInt16(), protocol = r.ReadUInt16();
-        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8) || (format == 11 && protocol == 9) || (format == 12 && protocol == 10) || (format == 13 && protocol == 11) || (format == 14 && protocol == 12) || (format == 15 && protocol == 13) || (format == 16 && protocol == 14) || (format == 17 && protocol == 15) || (format == 18 && protocol == 16);
+        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8) || (format == 11 && protocol == 9) || (format == 12 && protocol == 10) || (format == 13 && protocol == 11) || (format == 14 && protocol == 12) || (format == 15 && protocol == 13) || (format == 16 && protocol == 14) || (format == 17 && protocol == 15) || (format == 18 && protocol == 16) || (format == 19 && protocol == 17);
         if (!supportedLegacy && (format != FormatVersion || protocol != SimulationProtocolVersion)) throw new InvalidDataException($"Unsupported snapshot {format}/{protocol}.");
-        SimTick tick = new(r.ReadInt32()); MapGrid map = MapGrid.Deserialize(r); uint nextEntity = r.ReadUInt32();
+        SimTick tick = new(r.ReadInt32()); MapGrid map = MapGrid.Deserialize(r, includeExcavatableMetadata: format >= 20); uint nextEntity = r.ReadUInt32();
         EntityStore entities = new(); int entityCount = r.ReadInt32(); if (entityCount < 0 || entityCount > 10000) throw new InvalidDataException("Invalid entity count.");
         SimulationWorld temp = new(map, entities, new FogState(2), tick, content);
         for (int i = 0; i < entityCount; i++)
@@ -90,12 +111,29 @@ public static class SnapshotSerializer
         if (format < 19) AddLegacyTransformationComponents(temp);
         ValidateTransformationLinks(temp);
         entities.RestoreNextEntityValue(nextEntity);
-        temp.Commands.Deserialize(r, includeBuildFields: format >= 6, includeEnergyPriority: format >= 10);
+        if (format >= 20)
+        {
+            int chargePlayers = r.ReadInt32();
+            if (chargePlayers != temp.PlayerCount) throw new InvalidDataException("Alien Charge player count mismatch.");
+            for (byte player = 0; player < chargePlayers; player++)
+            {
+                int currentMillicharge = r.ReadInt32();
+                if (currentMillicharge < 0) throw new InvalidDataException("Invalid Alien Charge amount.");
+                temp.SetAlienCharge(player, new AlienChargeState { CurrentMillicharge = currentMillicharge, ResonanceInitiationUnlocked = r.ReadBoolean() });
+            }
+        }
+        if (format >= 20) ReadTubeGraph(r, temp, format);
+        if (format >= 20) ReadTubeTransfers(r, temp);
+        if (format >= 20) ReadStability(r, temp);
+        temp.Commands.Deserialize(r, includeBuildFields: format >= 6, includeEnergyPriority: format >= 10, includeMissionRefit: format >= 20, includeResonanceCommitment: format >= 20);
         temp.Fog = FogState.Deserialize(r);
         if (format >= 13) ReadProjectileState(r, temp);
         if (ms.Position != ms.Length) throw new InvalidDataException("Trailing snapshot bytes.");
+        ExcavationTopologySystem.InitializeFeatures(temp);
         if (format < 9) InitializeLegacyEnergy(temp);
+        else if (format < 11) MigrateLegacyWorksites(temp);
         else EnergyDomainSystem.RecalculateAll(temp);
+        AlienChargeSystem.RecalculateAll(temp);
         OperationsCapacitySystem.Recalculate(temp);
         temp.Spatial.Rebuild(temp.Entities);
         return temp;
@@ -158,6 +196,145 @@ public static class SnapshotSerializer
         }
     }
 
+    private static void WriteTubeGraph(BinaryWriter w, SimulationWorld world)
+    {
+        w.Write(world.TubeTopologyRevision); w.Write(world.TubeSegmentationRevision);
+        List<EntityId> stations = new(), links = new(), components = new();
+        IReadOnlyList<EntityId> alive = world.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (world.Entities.TubeStation.Has(id)) stations.Add(id);
+            if (world.Entities.TubeLink.Has(id)) links.Add(id);
+            if (world.Entities.TubeComponent.Has(id)) components.Add(id);
+        }
+        w.Write(stations.Count);
+        for (int i = 0; i < stations.Count; i++)
+        {
+            EntityId id = stations[i]; TubeStation station = world.Entities.TubeStation.Get(id);
+            w.Write(id.Value); w.Write(station.ComponentRoot.Value); w.Write(station.ConnectionLimit); w.Write(station.ConnectionCount); w.Write(station.RedundantRoutingUnlocked); w.Write(station.HypersledThroughputUnlocked);
+        }
+        w.Write(links.Count);
+        for (int i = 0; i < links.Count; i++)
+        {
+            EntityId id = links[i]; TubeLink link = world.Entities.TubeLink.Get(id);
+            if (!world.TubeRoutes.TryGetValue(id.Value, out TubeRoute route)) throw new InvalidDataException("Tube Link has no route.");
+            w.Write(id.Value); w.Write(link.EndpointA.Value); w.Write(link.EndpointB.Value); w.Write(link.ComponentRoot.Value);
+            w.Write(link.LengthBuildCells); w.Write(link.EnergyDemandPerSecond); w.Write(link.IsOperational);
+            w.Write(route.Cells.Count);
+            for (int c = 0; c < route.Cells.Count; c++) { w.Write(route.Cells[c].X); w.Write(route.Cells[c].Y); }
+        }
+        w.Write(components.Count);
+        for (int i = 0; i < components.Count; i++)
+        {
+            EntityId id = components[i]; TubeComponent component = world.Entities.TubeComponent.Get(id);
+            w.Write(id.Value); w.Write(component.StationCount); w.Write(component.OperationalLinkCount); w.Write(component.TopologyRevision);
+        }
+    }
+
+    private static void ReadTubeGraph(BinaryReader r, SimulationWorld world, ushort format)
+    {
+        world.TubeTopologyRevision = r.ReadUInt32(); world.TubeSegmentationRevision = r.ReadUInt32();
+        int stationCount = r.ReadInt32();
+        if (stationCount < 0 || stationCount > 1000) throw new InvalidDataException("Invalid Tube Station count.");
+        for (int i = 0; i < stationCount; i++)
+        {
+            EntityId id = new(r.ReadUInt32()), root = new(r.ReadUInt32());
+            TubeStation station = new() { ComponentRoot = root, ConnectionLimit = r.ReadByte(), ConnectionCount = r.ReadByte(), RedundantRoutingUnlocked = r.ReadBoolean(), HypersledThroughputUnlocked = format >= 18 && r.ReadBoolean() };
+            if (!world.Entities.Exists(id) || world.Entities.TubeStation.Has(id) || root == EntityId.None || station.ConnectionCount > station.ConnectionLimit)
+                throw new InvalidDataException("Invalid Tube Station state.");
+            world.Entities.TubeStation.Set(id, station);
+        }
+        int linkCount = r.ReadInt32();
+        if (linkCount < 0 || linkCount > 4000) throw new InvalidDataException("Invalid Tube Link count.");
+        for (int i = 0; i < linkCount; i++)
+        {
+            EntityId id = new(r.ReadUInt32());
+            TubeLink link = new()
+            {
+                EndpointA = new EntityId(r.ReadUInt32()), EndpointB = new EntityId(r.ReadUInt32()), ComponentRoot = new EntityId(r.ReadUInt32()),
+                LengthBuildCells = r.ReadUInt16(), EnergyDemandPerSecond = r.ReadByte(), IsOperational = r.ReadBoolean()
+            };
+            int routeCount = r.ReadInt32();
+            if (!world.Entities.Exists(id) || world.Entities.TubeLink.Has(id) || routeCount <= 0 || routeCount > ushort.MaxValue || routeCount != link.LengthBuildCells)
+                throw new InvalidDataException("Invalid Tube Link state.");
+            TubeRoute route = new();
+            for (int c = 0; c < routeCount; c++) route.Cells.Add(new TubeBuildCell(r.ReadInt16(), r.ReadInt16()));
+            if (!TubeGraphSystem.RouteIsStructurallyValid(route)) throw new InvalidDataException("Invalid Tube route.");
+            world.Entities.TubeLink.Set(id, link); world.TubeRoutes.Add(id.Value, route);
+        }
+        int componentCount = r.ReadInt32();
+        if (componentCount < 0 || componentCount > stationCount) throw new InvalidDataException("Invalid Tube component count.");
+        for (int i = 0; i < componentCount; i++)
+        {
+            EntityId id = new(r.ReadUInt32());
+            TubeComponent component = new() { StationCount = r.ReadUInt16(), OperationalLinkCount = r.ReadUInt16(), TopologyRevision = r.ReadUInt32() };
+            if (!world.Entities.Exists(id) || world.Entities.TubeComponent.Has(id) || component.StationCount == 0 || component.TopologyRevision != world.TubeTopologyRevision)
+                throw new InvalidDataException("Invalid Tube component state.");
+            world.Entities.TubeComponent.Set(id, component);
+        }
+        if (TubeGraphSystem.Rebuild(world)) throw new InvalidDataException("Inconsistent cached Tube topology.");
+    }
+
+    private static void WriteTubeTransfers(BinaryWriter w, SimulationWorld world)
+    {
+        List<EntityId> passengers = new(); IReadOnlyList<EntityId> alive = world.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++) if (world.Entities.TubeTransfer.Has(alive[i])) passengers.Add(alive[i]);
+        w.Write(passengers.Count);
+        for (int i = 0; i < passengers.Count; i++)
+        {
+            EntityId id = passengers[i]; TubeTransfer transfer = world.Entities.TubeTransfer.Get(id);
+            if (!world.TubeTransitRoutes.TryGetValue(id.Value, out TubeTransitRoute route) || route.Links.Count == 0) throw new InvalidDataException("Tube transfer has no selected route.");
+            w.Write(id.Value); w.Write(transfer.Origin.Value); w.Write(transfer.Destination.Value); w.Write(transfer.RequestedTick); w.Write(transfer.DepartureTick);
+            w.Write(transfer.TotalTravelTicks); w.Write(transfer.RemainingTicks); w.Write(transfer.CurrentEdgeIndex); w.Write(transfer.ExitWaitTicks);
+            w.Write((byte)transfer.State); w.Write(transfer.HasArrivalMoveOrder); w.Write(transfer.ArrivalMoveTarget.X.Raw); w.Write(transfer.ArrivalMoveTarget.Y.Raw);
+            w.Write(route.Links.Count); for (int l = 0; l < route.Links.Count; l++) w.Write(route.Links[l].Value);
+        }
+    }
+
+    private static void ReadTubeTransfers(BinaryReader r, SimulationWorld world)
+    {
+        int count = r.ReadInt32(); if (count < 0 || count > 10000) throw new InvalidDataException("Invalid Tube transfer count.");
+        for (int i = 0; i < count; i++)
+        {
+            EntityId id = new(r.ReadUInt32()); TubeTransfer transfer = new()
+            {
+                Origin = new EntityId(r.ReadUInt32()), Destination = new EntityId(r.ReadUInt32()), RequestedTick = r.ReadInt32(), DepartureTick = r.ReadInt32(),
+                TotalTravelTicks = r.ReadInt32(), RemainingTicks = r.ReadInt32(), CurrentEdgeIndex = r.ReadUInt16(), ExitWaitTicks = r.ReadUInt16(),
+                State = (TubeTransferState)r.ReadByte(), HasArrivalMoveOrder = r.ReadBoolean(),
+                ArrivalMoveTarget = new FixVec2(Fix32.FromRaw(r.ReadInt32()), Fix32.FromRaw(r.ReadInt32()))
+            };
+            int linkCount = r.ReadInt32();
+            if (!world.Entities.Exists(id) || world.Entities.TubeTransfer.Has(id) || !world.Entities.TubeStation.Has(transfer.Origin) || !world.Entities.TubeStation.Has(transfer.Destination) ||
+                (byte)transfer.State > (byte)TubeTransferState.ArrivalRecovery || transfer.RemainingTicks < 0 || transfer.TotalTravelTicks < 0 || linkCount <= 0 || linkCount > 1000)
+                throw new InvalidDataException("Invalid Tube transfer state.");
+            TubeTransitRoute route = new(); for (int l = 0; l < linkCount; l++) route.Links.Add(new EntityId(r.ReadUInt32()));
+            if (transfer.CurrentEdgeIndex >= route.Links.Count) throw new InvalidDataException("Invalid Tube transfer edge.");
+            bool shouldHaveTransform = transfer.State == TubeTransferState.Approaching || transfer.State == TubeTransferState.Queued || transfer.State == TubeTransferState.Loading || transfer.State == TubeTransferState.ArrivalRecovery;
+            if (world.Entities.Transform.Has(id) != shouldHaveTransform) throw new InvalidDataException("Invalid Tube passenger spatial state.");
+            world.Entities.TubeTransfer.Set(id, transfer); world.TubeTransitRoutes.Add(id.Value, route);
+        }
+    }
+
+    private static void WriteStability(BinaryWriter w, SimulationWorld world)
+    {
+        List<EntityId> stable = new(); IReadOnlyList<EntityId> alive = world.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++) if (world.Entities.Stability.Has(alive[i])) stable.Add(alive[i]);
+        w.Write(stable.Count);
+        for (int i = 0; i < stable.Count; i++) { w.Write(stable[i].Value); w.Write(world.Entities.Stability.Get(stable[i]).UntilTick); }
+    }
+
+    private static void ReadStability(BinaryReader r, SimulationWorld world)
+    {
+        int count = r.ReadInt32(); if (count < 0 || count > 10000) throw new InvalidDataException("Invalid Stability count.");
+        for (int i = 0; i < count; i++)
+        {
+            EntityId id = new(r.ReadUInt32()); int untilTick = r.ReadInt32();
+            if (!world.Entities.Exists(id) || world.Entities.Stability.Has(id) || untilTick < 0) throw new InvalidDataException("Invalid Stability state.");
+            world.Entities.Stability.Set(id, new Stability { UntilTick = untilTick });
+        }
+    }
+
     private static void WriteEntity(BinaryWriter w, SimulationWorld world, EntityId id)
     {
         w.Write(id.Value);
@@ -181,6 +358,18 @@ public static class SnapshotSerializer
         if (world.Entities.EnergyDomain.Has(id)) components |= EntityComponents.EnergyDomain;
         if (world.Entities.EnergyDomainMember.Has(id)) components |= EntityComponents.EnergyDomainMember;
         if (world.Entities.PowerState.Has(id)) components |= EntityComponents.PowerState;
+        if (world.Entities.WorksiteNode.Has(id)) components |= EntityComponents.WorksiteNode;
+        if (world.Entities.WorksiteMember.Has(id)) components |= EntityComponents.WorksiteMember;
+        if (world.Entities.WorksiteComponent.Has(id)) components |= EntityComponents.WorksiteComponent;
+        if (world.Entities.Excavatable.Has(id)) components |= EntityComponents.Excavatable;
+        if (world.Entities.Deployment.Has(id)) components |= EntityComponents.Deployment;
+        if (world.Entities.ForwardServiceProvider.Has(id)) components |= EntityComponents.ForwardServiceProvider;
+        if (world.Entities.ForwardServiceMember.Has(id)) components |= EntityComponents.ForwardServiceMember;
+        if (world.Entities.MissionRefitState.Has(id)) components |= EntityComponents.MissionRefitState;
+        if (world.Entities.MissionRefitJob.Has(id)) components |= EntityComponents.MissionRefitJob;
+        if (world.Entities.ResonanceCore.Has(id)) components |= EntityComponents.ResonanceCore;
+        if (world.Entities.SurgeZone.Has(id)) components |= EntityComponents.SurgeZone;
+        if (world.Entities.SurgeReceiver.Has(id)) components |= EntityComponents.SurgeReceiver;
         if (world.Entities.ConstructionSite.Has(id)) components |= EntityComponents.ConstructionSite;
         if (world.Entities.Production.Has(id)) components |= EntityComponents.Production;
         if (world.Entities.Targetable.Has(id)) components |= EntityComponents.Targetable;
@@ -190,7 +379,7 @@ public static class SnapshotSerializer
         if (world.Entities.Destruction.Has(id)) components |= EntityComponents.Destruction;
         if (world.TryGetQueue(id, out _)) components |= EntityComponents.CommandQueue;
         if (world.Corridors.ContainsKey(id.Value)) components |= EntityComponents.RouteCorridor;
-        w.Write((uint)components);
+        w.Write((ulong)components);
 
         if ((components & EntityComponents.Ownership) != 0) w.Write(world.Entities.Ownership.Get(id).PlayerSlot);
         if ((components & EntityComponents.Transform) != 0) WriteTransform(w, world.Entities.Transform.Get(id));
@@ -217,6 +406,50 @@ public static class SnapshotSerializer
         if ((components & EntityComponents.EnergyDomain) != 0) WriteEnergyDomain(w, world.Entities.EnergyDomain.Get(id));
         if ((components & EntityComponents.EnergyDomainMember) != 0) w.Write(world.Entities.EnergyDomainMember.Get(id).DomainRoot.Value);
         if ((components & EntityComponents.PowerState) != 0) { PowerState state = world.Entities.PowerState.Get(id); w.Write((byte)state.Priority); w.Write(state.IsPowered); }
+        if ((components & EntityComponents.WorksiteNode) != 0) { WorksiteNode node = world.Entities.WorksiteNode.Get(id); w.Write(node.ServiceRadius); w.Write(node.ComponentRoot.Value); }
+        if ((components & EntityComponents.WorksiteMember) != 0) w.Write(world.Entities.WorksiteMember.Get(id).ComponentRoot.Value);
+        if ((components & EntityComponents.WorksiteComponent) != 0) { WorksiteComponent component = world.Entities.WorksiteComponent.Get(id); w.Write(component.NodeCount); w.Write(component.MemberCount); w.Write(component.TopologyRevision); }
+        if ((components & EntityComponents.Excavatable) != 0)
+        {
+            Excavatable feature = world.Entities.Excavatable.Get(id);
+            w.Write(feature.MapFeatureId); w.Write(feature.StableId.Value); w.Write((byte)feature.TerrainClass);
+            w.Write((byte)feature.State); w.Write(feature.RequiredEnergy); w.Write(feature.VisualProfile.Value);
+        }
+        if ((components & EntityComponents.Deployment) != 0) w.Write((byte)world.Entities.Deployment.Get(id).State);
+        if ((components & EntityComponents.ForwardServiceProvider) != 0)
+        {
+            ForwardServiceProvider provider = world.Entities.ForwardServiceProvider.Get(id);
+            w.Write(provider.RadiusBuildCells); w.Write(provider.IsActive);
+        }
+        if ((components & EntityComponents.ForwardServiceMember) != 0)
+        {
+            ForwardServiceMember member = world.Entities.ForwardServiceMember.Get(id);
+            w.Write(member.Provider.Value); w.Write(member.QueryOwner); w.Write(member.QueryCellX); w.Write(member.QueryCellY);
+        }
+        if ((components & EntityComponents.MissionRefitState) != 0)
+        {
+            MissionRefitState state = world.Entities.MissionRefitState.Get(id);
+            w.Write((byte)state.CurrentConfiguration); w.Write(state.OwnedConfigurationMask); w.Write(state.ConfigurationLockTicks); w.Write(state.SurveyUnlocked);
+        }
+        if ((components & EntityComponents.MissionRefitJob) != 0)
+        {
+            MissionRefitJob job = world.Entities.MissionRefitJob.Get(id);
+            w.Write(job.Provider.Value); w.Write(job.FundingBank.Value); w.Write(job.EnergyDomainRoot.Value);
+            w.Write((byte)job.OldConfiguration); w.Write((byte)job.NewConfiguration); w.Write(job.TotalTicks); w.Write(job.RemainingTicks);
+            w.Write(job.CommittedOre); w.Write(job.CommittedEnergy);
+        }
+        if ((components & EntityComponents.ResonanceCore) != 0)
+        {
+            ResonanceCore core = world.Entities.ResonanceCore.Get(id);
+            w.Write(core.CommandCore.Value); w.Write(core.TransitionBank.Value); w.Write(core.CommittedSlotMask); w.Write(core.DesiredCommittedCrystals);
+            w.Write(core.TransitionSlot); w.Write((byte)core.TransitionKind); w.Write(core.TransitionTotalTicks); w.Write(core.TransitionRemainingTicks); w.Write(core.ExpandedLatticeUnlocked);
+        }
+        if ((components & EntityComponents.SurgeZone) != 0)
+        {
+            SurgeZone zone = world.Entities.SurgeZone.Get(id);
+            w.Write(zone.RadiusBuildCells); w.Write(zone.BuildupRemainingTicks); w.Write(zone.ActiveRemainingTicks);
+        }
+        if ((components & EntityComponents.SurgeReceiver) != 0) w.Write(world.Entities.SurgeReceiver.Get(id).ActiveZone.Value);
         if ((components & EntityComponents.ConstructionSite) != 0) WriteConstructionSite(w, world.Entities.ConstructionSite.Get(id));
         if ((components & EntityComponents.Production) != 0) WriteProduction(w, world.Entities.Production.Get(id));
         if ((components & EntityComponents.Targetable) != 0) WriteTargetable(w, world.Entities.Targetable.Get(id));
@@ -371,7 +604,7 @@ public static class SnapshotSerializer
     private static void ReadEntity(BinaryReader r, SimulationWorld world, ushort format)
     {
         EntityId id = world.Entities.CreateRestored(r.ReadUInt32());
-        EntityComponents components = (EntityComponents)(format >= 8 ? r.ReadUInt32() : r.ReadUInt16());
+        EntityComponents components = format >= 20 ? (EntityComponents)r.ReadUInt64() : (EntityComponents)(format >= 8 ? r.ReadUInt32() : r.ReadUInt16());
         if ((components & ~EntityComponents.All) != 0) throw new InvalidDataException("Snapshot entity has unknown component bits.");
         if ((components & EntityComponents.Ownership) != 0) world.Entities.Ownership.Set(id, new Ownership { PlayerSlot = r.ReadByte() });
         if ((components & EntityComponents.Transform) != 0) world.Entities.Transform.Set(id, ReadTransform(r));
@@ -397,6 +630,87 @@ public static class SnapshotSerializer
             if (priority < EnergyPriority.High || priority > EnergyPriority.Low) throw new InvalidDataException("Invalid Energy priority.");
             world.Entities.PowerState.Set(id, new PowerState { Priority = priority, IsPowered = powered });
         }
+        if ((components & EntityComponents.WorksiteNode) != 0)
+            world.Entities.WorksiteNode.Set(id, new WorksiteNode { ServiceRadius = r.ReadByte(), ComponentRoot = new EntityId(r.ReadUInt32()) });
+        if ((components & EntityComponents.WorksiteMember) != 0)
+            world.Entities.WorksiteMember.Set(id, new WorksiteMember { ComponentRoot = new EntityId(r.ReadUInt32()) });
+        if ((components & EntityComponents.WorksiteComponent) != 0)
+            world.Entities.WorksiteComponent.Set(id, new WorksiteComponent { NodeCount = r.ReadUInt16(), MemberCount = r.ReadUInt16(), TopologyRevision = r.ReadUInt32() });
+        if ((components & EntityComponents.Excavatable) != 0)
+        {
+            Excavatable feature = new()
+            {
+                MapFeatureId = r.ReadUInt16(), StableId = new ContentId(r.ReadUInt32()), TerrainClass = (ExcavatableTerrainClass)r.ReadByte(),
+                State = (ExcavatableFeatureState)r.ReadByte(), RequiredEnergy = r.ReadUInt16(), VisualProfile = new ContentId(r.ReadUInt32())
+            };
+            if (feature.MapFeatureId == 0 || feature.StableId.Value == 0 || feature.TerrainClass < ExcavatableTerrainClass.LooseRubbleBlockage ||
+                feature.TerrainClass > ExcavatableTerrainClass.ReinforcedBedrockBarrier || feature.State < ExcavatableFeatureState.Blocked ||
+                feature.State > ExcavatableFeatureState.Open || feature.VisualProfile.Value == 0)
+                throw new InvalidDataException("Invalid authoritative Excavatable Feature.");
+            world.Entities.Excavatable.Set(id, feature);
+        }
+        if ((components & EntityComponents.Deployment) != 0)
+        {
+            DeploymentState state = (DeploymentState)r.ReadByte();
+            if (state < DeploymentState.Mobile || state > DeploymentState.Undeploying) throw new InvalidDataException("Invalid deployment state.");
+            world.Entities.Deployment.Set(id, new Deployment { State = state });
+        }
+        if ((components & EntityComponents.ForwardServiceProvider) != 0)
+        {
+            byte radius = r.ReadByte(); bool active = r.ReadBoolean();
+            if (radius == 0) throw new InvalidDataException("Invalid Forward Service provider radius.");
+            world.Entities.ForwardServiceProvider.Set(id, new ForwardServiceProvider { RadiusBuildCells = radius, IsActive = active });
+        }
+        if ((components & EntityComponents.ForwardServiceMember) != 0)
+            world.Entities.ForwardServiceMember.Set(id, new ForwardServiceMember { Provider = new EntityId(r.ReadUInt32()), QueryOwner = r.ReadByte(), QueryCellX = r.ReadInt16(), QueryCellY = r.ReadInt16() });
+        if ((components & EntityComponents.MissionRefitState) != 0)
+        {
+            MissionRefitState state = new() { CurrentConfiguration = (MissionConfiguration)r.ReadByte(), OwnedConfigurationMask = r.ReadByte(), ConfigurationLockTicks = r.ReadUInt16(), SurveyUnlocked = r.ReadBoolean() };
+            if (state.CurrentConfiguration < MissionConfiguration.T3Escort || state.CurrentConfiguration > MissionConfiguration.T3Survey || (state.OwnedConfigurationMask & 1) == 0)
+                throw new InvalidDataException("Invalid Mission Refit state.");
+            world.Entities.MissionRefitState.Set(id, state);
+        }
+        if ((components & EntityComponents.MissionRefitJob) != 0)
+        {
+            MissionRefitJob job = new()
+            {
+                Provider = new EntityId(r.ReadUInt32()), FundingBank = new EntityId(r.ReadUInt32()), EnergyDomainRoot = new EntityId(r.ReadUInt32()),
+                OldConfiguration = (MissionConfiguration)r.ReadByte(), NewConfiguration = (MissionConfiguration)r.ReadByte(),
+                TotalTicks = r.ReadUInt16(), RemainingTicks = r.ReadUInt16(), CommittedOre = r.ReadUInt16(), CommittedEnergy = r.ReadUInt16()
+            };
+            if (job.Provider == EntityId.None || job.FundingBank == EntityId.None || job.EnergyDomainRoot == EntityId.None || job.TotalTicks == 0 || job.RemainingTicks == 0 || job.RemainingTicks > job.TotalTicks ||
+                job.OldConfiguration < MissionConfiguration.T3Escort || job.OldConfiguration > MissionConfiguration.T3Survey || job.NewConfiguration < MissionConfiguration.T3Escort || job.NewConfiguration > MissionConfiguration.T3Survey || job.OldConfiguration == job.NewConfiguration)
+                throw new InvalidDataException("Invalid Mission Refit job.");
+            world.Entities.MissionRefitJob.Set(id, job);
+        }
+        if ((components & EntityComponents.ResonanceCore) != 0)
+        {
+            ResonanceCore core = new()
+            {
+                CommandCore = new EntityId(r.ReadUInt32()), TransitionBank = new EntityId(r.ReadUInt32()), CommittedSlotMask = r.ReadByte(), DesiredCommittedCrystals = r.ReadByte(),
+                TransitionSlot = r.ReadByte(), TransitionKind = (ResonanceTransitionKind)r.ReadByte(), TransitionTotalTicks = r.ReadUInt16(), TransitionRemainingTicks = r.ReadUInt16(), ExpandedLatticeUnlocked = r.ReadBoolean()
+            };
+            byte maximum = ResonanceCoreSystem.MaximumSlots(core);
+            bool idle = core.TransitionKind == ResonanceTransitionKind.None && core.TransitionBank == EntityId.None && core.TransitionTotalTicks == 0 && core.TransitionRemainingTicks == 0;
+            bool transitioning = (core.TransitionKind == ResonanceTransitionKind.Commit || core.TransitionKind == ResonanceTransitionKind.Withdraw) && core.TransitionBank != EntityId.None &&
+                core.TransitionSlot < maximum && (core.CommittedSlotMask & (1 << core.TransitionSlot)) == 0 &&
+                core.TransitionTotalTicks == (core.TransitionKind == ResonanceTransitionKind.Commit ? ResonanceCoreSystem.CommitTicks : ResonanceCoreSystem.WithdrawTicks) &&
+                core.TransitionRemainingTicks > 0 && core.TransitionRemainingTicks <= core.TransitionTotalTicks;
+            int legalSlotMask = (1 << maximum) - 1;
+            if (core.CommandCore == EntityId.None || (core.CommittedSlotMask & ~legalSlotMask) != 0 || ResonanceCoreSystem.CountCommitted(core) > maximum || core.DesiredCommittedCrystals > maximum || (!idle && !transitioning))
+                throw new InvalidDataException("Invalid Resonance Core state.");
+            world.Entities.ResonanceCore.Set(id, core);
+        }
+        if ((components & EntityComponents.SurgeZone) != 0)
+        {
+            SurgeZone zone = new() { RadiusBuildCells = r.ReadByte(), BuildupRemainingTicks = r.ReadUInt16(), ActiveRemainingTicks = r.ReadUInt16() };
+            bool building = zone.BuildupRemainingTicks > 0 && zone.BuildupRemainingTicks <= AlienChargeSystem.SurgeBuildupTicks && zone.ActiveRemainingTicks == 0;
+            bool active = zone.BuildupRemainingTicks == 0 && zone.ActiveRemainingTicks > 0 && zone.ActiveRemainingTicks <= AlienChargeSystem.SurgeActiveTicks;
+            if ((zone.RadiusBuildCells != AlienChargeSystem.ResonanceCoreSurgeRadius && zone.RadiusBuildCells != AlienChargeSystem.MothershipRelaySurgeRadius) || (!building && !active))
+                throw new InvalidDataException("Invalid Surge zone state.");
+            world.Entities.SurgeZone.Set(id, zone);
+        }
+        if ((components & EntityComponents.SurgeReceiver) != 0) world.Entities.SurgeReceiver.Set(id, new SurgeReceiver { ActiveZone = new EntityId(r.ReadUInt32()) });
         if ((components & EntityComponents.ConstructionSite) != 0) world.Entities.ConstructionSite.Set(id, ReadConstructionSite(r, format));
         if ((components & EntityComponents.Production) != 0) world.Entities.Production.Set(id, ReadProduction(r));
         if ((components & EntityComponents.Targetable) != 0) world.Entities.Targetable.Set(id, ReadTargetable(r));
@@ -816,6 +1130,18 @@ public static class SnapshotSerializer
             if (!world.Entities.Production.TryGet(id, out Production production)) continue;
             for (int q = 0; q < production.Count; q++) SpendLegacyEnergy(world, root, production.Get(q).RequiredEnergy);
         }
+    }
+
+    private static void MigrateLegacyWorksites(SimulationWorld world)
+    {
+        IReadOnlyList<EntityId> alive = world.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (world.Entities.EnergyDomainMember.TryGet(id, out EnergyDomainMember member))
+                world.Entities.WorksiteMember.Set(id, new WorksiteMember { ComponentRoot = member.DomainRoot });
+        }
+        WorksiteGraphSystem.Rebuild(world);
     }
 
     private static void SpendLegacyEnergy(SimulationWorld world, EntityId root, int amount)

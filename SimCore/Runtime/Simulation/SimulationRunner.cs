@@ -14,9 +14,13 @@ public readonly struct TickProfile
     public readonly long HarvestTimestampTicks;
     public readonly long ConstructionTimestampTicks;
     public readonly long ProductionTimestampTicks;
+    public readonly long ResonanceCoreTimestampTicks;
     public readonly long EnergyTimestampTicks;
+    public readonly long AlienChargeTimestampTicks;
     public readonly long OperationsCapacityTimestampTicks;
     public readonly long SpatialTimestampTicks;
+    public readonly long ForwardServiceTimestampTicks;
+    public readonly long MissionRefitTimestampTicks;
     public readonly long VisionTimestampTicks;
     public readonly long TargetingTimestampTicks;
     public readonly long WeaponTimestampTicks;
@@ -24,11 +28,11 @@ public readonly struct TickProfile
     public readonly long DamageTimestampTicks;
 
     public TickProfile(long totalTimestampTicks,long commandTimestampTicks,long navigationTimestampTicks,
-        long movementIntentTimestampTicks,long localSeparationTimestampTicks,long transformTimestampTicks,long bankingTimestampTicks,long harvestTimestampTicks,long constructionTimestampTicks,long productionTimestampTicks,long energyTimestampTicks,long operationsCapacityTimestampTicks,long spatialTimestampTicks,long visionTimestampTicks,long targetingTimestampTicks,long weaponTimestampTicks,long projectileTimestampTicks,long damageTimestampTicks)
+        long movementIntentTimestampTicks,long localSeparationTimestampTicks,long transformTimestampTicks,long bankingTimestampTicks,long harvestTimestampTicks,long constructionTimestampTicks,long productionTimestampTicks,long resonanceCoreTimestampTicks,long energyTimestampTicks,long alienChargeTimestampTicks,long operationsCapacityTimestampTicks,long spatialTimestampTicks,long forwardServiceTimestampTicks,long missionRefitTimestampTicks,long visionTimestampTicks,long targetingTimestampTicks,long weaponTimestampTicks,long projectileTimestampTicks,long damageTimestampTicks)
     {
         TotalTimestampTicks=totalTimestampTicks;CommandTimestampTicks=commandTimestampTicks;NavigationTimestampTicks=navigationTimestampTicks;
         MovementIntentTimestampTicks=movementIntentTimestampTicks;LocalSeparationTimestampTicks=localSeparationTimestampTicks;
-        TransformTimestampTicks=transformTimestampTicks;BankingTimestampTicks=bankingTimestampTicks;HarvestTimestampTicks=harvestTimestampTicks;ConstructionTimestampTicks=constructionTimestampTicks;ProductionTimestampTicks=productionTimestampTicks;EnergyTimestampTicks=energyTimestampTicks;OperationsCapacityTimestampTicks=operationsCapacityTimestampTicks;SpatialTimestampTicks=spatialTimestampTicks;VisionTimestampTicks=visionTimestampTicks;TargetingTimestampTicks=targetingTimestampTicks;WeaponTimestampTicks=weaponTimestampTicks;ProjectileTimestampTicks=projectileTimestampTicks;DamageTimestampTicks=damageTimestampTicks;
+        TransformTimestampTicks=transformTimestampTicks;BankingTimestampTicks=bankingTimestampTicks;HarvestTimestampTicks=harvestTimestampTicks;ConstructionTimestampTicks=constructionTimestampTicks;ProductionTimestampTicks=productionTimestampTicks;ResonanceCoreTimestampTicks=resonanceCoreTimestampTicks;EnergyTimestampTicks=energyTimestampTicks;AlienChargeTimestampTicks=alienChargeTimestampTicks;OperationsCapacityTimestampTicks=operationsCapacityTimestampTicks;SpatialTimestampTicks=spatialTimestampTicks;ForwardServiceTimestampTicks=forwardServiceTimestampTicks;MissionRefitTimestampTicks=missionRefitTimestampTicks;VisionTimestampTicks=visionTimestampTicks;TargetingTimestampTicks=targetingTimestampTicks;WeaponTimestampTicks=weaponTimestampTicks;ProjectileTimestampTicks=projectileTimestampTicks;DamageTimestampTicks=damageTimestampTicks;
     }
 
     public long PathfindingTimestampTicks => NavigationTimestampTicks;
@@ -42,6 +46,7 @@ public sealed class SimulationRunner
     public SimulationRunner(SimulationWorld world)
     {
         World = world;
+        ForwardServiceSystem forwardService = new();
         _systems = new ISimSystem[]
         {
             new CommandExecutionSystem(),
@@ -53,13 +58,18 @@ public sealed class SimulationRunner
             new MovementIntentSystem(),
             new LocalSeparationSystem(),
             new TransformMovementSystem(),
+            new TubeTransferSystem(),
             new ResourceBankingSystem(),
             new HarvestSystem(),
             new ConstructionSystem(),
             new ProductionSystem(),
+            new ResonanceCoreSystem(),
             new EnergyDomainSystem(),
+            new AlienChargeSystem(),
             new OperationsCapacitySystem(),
             new SpatialIndexSystem(),
+            forwardService,
+            new MissionRefitSystem(),
             new VisionSystem(),
             new TargetingSystem(),
             new ContactFacingSystem(),
@@ -70,8 +80,10 @@ public sealed class SimulationRunner
             new DestructionSystem()
         };
         EnergyDomainSystem.RecalculateAll(World);
+        AlienChargeSystem.RecalculateAll(World);
         OperationsCapacitySystem.Recalculate(World);
         World.Spatial.Rebuild(World.Entities);
+        forwardService.Step(World);
     }
 
     public void StepOneTick()
@@ -84,7 +96,7 @@ public sealed class SimulationRunner
     public TickProfile StepOneTickProfiled()
     {
         long totalStart=Stopwatch.GetTimestamp();
-        long c=0,n=0,m=0,l=0,t=0,b=0,h=0,j=0,p=0,e=0,o=0,s=0,v=0,g=0,w=0,r=0,d=0;
+        long c=0,n=0,m=0,l=0,t=0,b=0,h=0,j=0,p=0,q=0,e=0,a=0,o=0,s=0,f=0,r=0,v=0,g=0,w=0,x=0,d=0;
         World.Tick=World.Tick.Next();
         for(int i=0;i<_systems.Length;i++)
         {
@@ -94,21 +106,25 @@ public sealed class SimulationRunner
             else if(system is ContactApproachSystem||system is NavigationRequestSystem)n+=elapsed;
             else if(system is MovementIntentSystem)m+=elapsed;
             else if(system is LocalSeparationSystem)l+=elapsed;
-            else if(system is TransformMovementSystem)t+=elapsed;
+            else if(system is TransformationSystem||system is TransportSystem||system is RepairSystem||system is TransformMovementSystem||system is TubeTransferSystem)t+=elapsed;
             else if(system is ResourceBankingSystem)b+=elapsed;
             else if(system is HarvestSystem)h+=elapsed;
             else if(system is ConstructionSystem)j+=elapsed;
             else if(system is ProductionSystem)p+=elapsed;
+            else if(system is ResonanceCoreSystem)q+=elapsed;
             else if(system is EnergyDomainSystem)e+=elapsed;
+            else if(system is AlienChargeSystem)a+=elapsed;
             else if(system is OperationsCapacitySystem)o+=elapsed;
             else if(system is SpatialIndexSystem)s+=elapsed;
+            else if(system is ForwardServiceSystem)f+=elapsed;
+            else if(system is MissionRefitSystem)r+=elapsed;
             else if(system is VisionSystem)v+=elapsed;
             else if(system is TargetingSystem||system is ContactFacingSystem)g+=elapsed;
             else if(system is WeaponSystem)w+=elapsed;
-            else if(system is ProjectileSystem)r+=elapsed;
+            else if(system is ProjectileSystem)x+=elapsed;
             else if(system is ContactDamageSystem||system is DamageSystem||system is DestructionSystem)d+=elapsed;
         }
-        return new TickProfile(Stopwatch.GetTimestamp()-totalStart,c,n,m,l,t,b,h,j,p,e,o,s,v,g,w,r,d);
+        return new TickProfile(Stopwatch.GetTimestamp()-totalStart,c,n,m,l,t,b,h,j,p,q,e,a,o,s,f,r,v,g,w,x,d);
     }
 
     public void StepTicks(int count) { for (int i = 0; i < count; i++) StepOneTick(); }

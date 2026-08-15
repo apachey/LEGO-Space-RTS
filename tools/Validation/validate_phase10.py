@@ -25,7 +25,8 @@ required = [
     'GodotClient/Scripts/Presentation/GodotSimBridge.cs','GodotClient/Scripts/Presentation/RtsCameraController.cs',
     'GodotClient/Scripts/Presentation/SelectionController.cs','GodotClient/Scripts/Presentation/RtsInputController.cs',
     'GodotClient/Scripts/Presentation/FogPresenter.cs','GodotClient/Scripts/Presentation/DebugRenderer.cs',
-    'GodotClient/Scripts/UI/BasicHud.cs','GodotClient/Scripts/UI/DebugHud.cs','Docs/IMPLEMENTATION_REPORT.md',
+    'GodotClient/Scripts/UI/BasicHud.cs','GodotClient/Scripts/UI/DebugHud.cs','GodotClient/Scripts/UI/M5PlaytestHud.cs',
+    'SimCore/Runtime/Scenarios/M5AcceptanceScenarioFactory.cs','Docs/IMPLEMENTATION_REPORT.md',
     'tools/doctor.sh','tools/verify.sh','tools/run-game.sh','tools/build-mac.sh','tools/capture-visual-smoke.sh',
     'tools/setup-git-hooks.sh','.githooks/pre-commit','.githooks/pre-push',
     '.github/workflows/simcore-pr.yml','global.json','Docs/Development/AGENT_WORKFLOW.md'
@@ -83,10 +84,12 @@ check('TickSeconds = 0.05' in bridge, 'Godot bridge does not feed 20 Hz/50ms sim
 check('MaxCatchUpTicks = 4' in bridge, 'Godot bridge catch-up limit is not four ticks')
 check('Excess remainder stays queued' in bridge, 'Godot bridge does not document no authoritative tick skipping')
 composition = (ROOT/'GodotClient/Scripts/Client/RtsCompositionRoot.cs').read_text()
-check('RuntimeScenarioLoader.LoadCanonicalOpening' in composition, 'Godot composition root does not use canonical runtime opening loader')
+check('RuntimeScenarioLoader.LoadActive' in composition, 'Godot composition root does not use the active runtime scenario loader')
 check('FindChild' not in composition and 'GetNode<' not in composition, 'composition root uses runtime dependency discovery')
 loader = (ROOT/'GodotClient/Scripts/Client/RuntimeScenarioLoader.cs').read_text()
 check('PrototypeContentCodec.Read' in loader and 'CompiledMapCodec.ReadDefinition' in loader, 'Godot runtime does not consume compiled content/map when present')
+check('requested ? LoadM5Acceptance() : LoadCanonicalOpening()' in loader, 'normal launch no longer defaults to the canonical opening')
+check('M5AcceptanceScenarioFactory.Create' in loader and 'PrepareM5Acceptance' in composition, 'M5 acceptance handoff is not wired to the runtime')
 basic_hud = (ROOT/'GodotClient/Scripts/UI/BasicHud.cs').read_text()
 for token in ['ResourceStrip','SelectionPanel','PortraitSlot','ContextualSlot','ContextualActions','ContextualEnergyPriority','EnergyDomainPopover','OPERATIONS','CRYSTALS']:
     check(token in basic_hud, f'T039 Basic HUD element missing: {token}')
@@ -121,20 +124,24 @@ for token in ['SimCommandType.Move','SimCommandType.Stop','SimCommandType.HoldPo
     check(token in input_controller, f'Godot M2 command missing: {token}')
 
 source = json.loads((ROOT/'Content/Maps/DEV_FirstControllableRTS.map.json').read_text())
-check(source.get('schemaVersion') == 3, 'map source schema version mismatch')
+check(source.get('schemaVersion') == 4, 'map source schema version mismatch')
 check(source.get('stableId') == 'map.dev_first_controllable_rts', 'map stable ID mismatch')
 check(source.get('buildSize') == [160,160] and source.get('navScale') == 2, 'map source dimensions mismatch')
 check(len(source.get('starts',[])) >= 2, 'map starts missing')
 check(len(source.get('flagRects',[])) >= 10, 'authored obstacle/pathing data missing')
 check(len(source.get('elevationRects',[])) >= 2, 'elevation test data missing')
 check(len(source.get('excavatableFeatures',[])) == 1, 'expected one M2 Excavatable feature')
+excavatable=source.get('excavatableFeatures',[{}])[0] if source.get('excavatableFeatures') else {}
+check(excavatable.get('stableId') == 'feature.dev.fractured_shortcut', 'T050 Excavatable stable ID mismatch')
+check(excavatable.get('class') == 'FracturedRockWall' and excavatable.get('requiredEnergy') == 25, 'T050 Excavatable class/Energy metadata mismatch')
+check(excavatable.get('initialState') == 'Blocked' and excavatable.get('openBuildable') is False, 'T050 Excavatable topology metadata mismatch')
 check(len(source.get('initialEntities',[])) >= 26, 'initial prototype entity spawns missing')
 check(len(source.get('resourceNodes',[])) == 4, 'M3 starting Ore node spawns missing')
 check(len(source.get('resourceReceivers',[])) == 2, 'M3 starting HQ resource receivers missing')
 check(len(source.get('visionTestGeometry',[])) >= 4, 'vision test geometry missing')
 
 content_source = json.loads((ROOT/'Content/PrototypeEntities.json').read_text())
-check(content_source.get('schemaVersion') == 14 and content_source.get('contentKind') == 'prototype_entities', 'prototype content schema mismatch')
+check(content_source.get('schemaVersion') == 15 and content_source.get('contentKind') == 'prototype_entities', 'prototype content schema mismatch')
 entity_keys = [e.get('stableId') for e in content_source.get('entities',[])]
 check(len(entity_keys) >= 5 and len(entity_keys) == len(set(entity_keys)), 'prototype content entries missing/duplicated')
 for required_key in ['building.rock_raiders.hq','building.rock_raiders.ore_processing_plant','building.rock_raiders.power_station','building.rock_raiders.vehicle_service_bay','unit.rock_raiders.crew','unit.rock_raiders.hover_scout','unit.rock_raiders.rapid_rider','unit.rock_raiders.loader_dozer','unit.rock_raiders.chrome_crusher','prototype.nav.huge']:
@@ -242,6 +249,43 @@ expected_energy_classes = {
     'building.rock_raiders.vehicle_service_bay': 'ProductionAndResearch',
 }
 check({key:building_by_key.get(key,{}).get('energyFunctionalClass') for key in expected_energy_classes} == expected_energy_classes, 'canonical Brownout functional classes missing or incorrect')
+expected_worksite_radii = {
+    'building.rock_raiders.hq': 18,
+    'building.rock_raiders.vehicle_service_bay': 12,
+}
+check({key:building_by_key.get(key,{}).get('worksiteServiceRadius') for key in expected_worksite_radii} == expected_worksite_radii, 'canonical M5 Worksite service radii missing or incorrect')
+
+forward_service = (ROOT/'SimCore/Runtime/Simulation/ForwardServiceSystem.cs').read_text()
+for token in ['building.ast.service_refit_hub','unit.ast.solar_explorer','unit.ast.t3_trike','ServiceHubRadius = 18','DeployedSolarExplorerRadius = 10','ProviderBucketBuildCells = 4']:
+    check(token in forward_service, f'canonical T051 Forward Service contract missing: {token}')
+check('DeploymentState.Deployed' in forward_service and 'BrownoutSystem.IsOperational' in forward_service, 'T051 provider activation rules missing')
+check('world.Entities.Ownership' in forward_service and 'Contains(' in forward_service, 'T051 owner/radius membership validation missing')
+
+mission_refit = (ROOT/'SimCore/Runtime/Simulation/MissionRefitSystem.cs').read_text()
+for token in ['FirstSurveyInstallOre = 25','FirstSurveyInstallEnergy = 10','18 * EnergyDomainSystem.TicksPerSecond','LaterSwapOre = 8','LaterSwapEnergy = 5','10 * EnergyDomainSystem.TicksPerSecond','20 * EnergyDomainSystem.TicksPerSecond','unit.ast.t3_trike']:
+    check(token in mission_refit, f'canonical T052 Mission Refit contract missing: {token}')
+check('ForwardServiceSystem.TryGetProviderForMember' in mission_refit and 'world.Entities.MissionRefitJob.Set' in mission_refit, 'T052 service validation or authoritative job missing')
+check('state.CurrentConfiguration = job.NewConfiguration' in mission_refit and 'MissionRefitJob.Remove' in mission_refit, 'T052 identity-preserving completion missing')
+
+resonance = (ROOT/'SimCore/Runtime/Simulation/ResonanceCoreSystem.cs').read_text()
+for token in ['BaselineSlots = 4','ExpandedSlots = 6','8 * EnergyDomainSystem.TicksPerSecond','15 * EnergyDomainSystem.TicksPerSecond','BaseEnergyDemandPerSecond = 3','EnergyDemandPerInstalledCrystal = 2','building.ali.resonance_core','building.ali.etx_command_core']:
+    check(token in resonance, f'canonical T053 Resonance Core contract missing: {token}')
+check('TrySetDesiredCommitment' in resonance and 'DesiredCommittedCrystals' in resonance and 'TryStartNextTransition' in resonance, 'T053 desired-count sequential commitment missing')
+check('ResourceType.Crystal' in resonance and 'CommittedSlotMask' in resonance and 'EnergyDomainSystem.Recalculate' in resonance, 'T053 Crystal ownership/slot/Energy integration missing')
+
+alien_charge = (ROOT/'SimCore/Runtime/Simulation/AlienChargeSystem.cs').read_text()
+for token in ['MillichargePerCharge = 1000','BaseCoreCapacityMillicharge = 20 * MillichargePerCharge','CapacityPerCrystalMillicharge = 20 * MillichargePerCharge','GenerationPerCrystalMillichargePerSecond = 400','SurgeCostMillicharge = 50 * MillichargePerCharge','SurgeBuildupTicks = 15','SurgeActiveTicks = 18 * EnergyDomainSystem.TicksPerSecond','ResonanceCoreSurgeRadius = 12','MothershipRelaySurgeRadius = 10']:
+    check(token in alien_charge, f'canonical T054 Charge/Surge contract missing: {token}')
+check('BrownoutSystem.IsOperational' in alien_charge and 'CurrentMillicharge' in alien_charge and 'MaximumMillicharge' in alien_charge, 'T054 powered Charge generation or authoritative millicharge state missing')
+check('ApplySurgedCooldownTicks' in alien_charge and '(baseTicks * 4 + 4) / 5' in alien_charge and 'ApplySurgedReconfigurationTicks' in alien_charge and '(baseTicks * 7 + 9) / 10' in alien_charge, 'T054 canonical Surge timing multipliers missing')
+check('ResonanceInitiationUnlocked' in alien_charge and 'world.Entities.SurgeZone.Set' in alien_charge and 'receiver.ActiveZone' in alien_charge, 'T054 proof unlock, zone, or deterministic membership missing')
+
+tube_graph = (ROOT/'SimCore/Runtime/Simulation/TubeGraphSystem.cs').read_text()
+for token in ['SettlementStationConnectionLimit = 3','AeroTubeHangarConnectionLimit = 5','RedundantRoutingBonusConnections = 1','ActiveLinkEnergyDemandPerSecond = 1','LinkBaseOreCost = 50','LinkOreCostPerBuildCell = 2','LinkActivationEnergyCost = 10','10 * EnergyDomainSystem.TicksPerSecond','LinkConstructionTicksPerBuildCell = 8','building.mar.aero_tube_hangar','building.mar.settlement_station']:
+    check(token in tube_graph, f'canonical T055 Tube graph contract missing: {token}')
+check('Queue<uint>' in tube_graph and 'ComponentRoot' in tube_graph and 'TubeSegmentationRevision' in tube_graph, 'T055 deterministic BFS/component segmentation missing')
+check('TryBuildAutomaticRoute' in tube_graph and 'RouteIsStructurallyValid' in tube_graph and 'TryAddCompletedLink' in tube_graph, 'T055 automatic ordered Tube route creation missing')
+check('TrySpendConnectedProcessedResource' in tube_graph and 'GetConnectedProcessedResourceTotal' in tube_graph, 'T055 connected resource-pool access missing')
 
 headless = (ROOT/'HeadlessSim/Program.cs').read_text()
 for token in ['--snapshot-in','--snapshot-out','--replay','--record-replay','--benchmark','--path-benchmark','--hash-every','--repeat','--golden-manifest-out','--golden-manifest-in','--dump-state','--compiled-dir']:

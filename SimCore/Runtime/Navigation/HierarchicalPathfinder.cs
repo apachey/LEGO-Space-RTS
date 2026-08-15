@@ -45,6 +45,7 @@ public sealed class HierarchicalPathfinder
     private readonly RouteCacheEntry[] _routeCache = new RouteCacheEntry[StrategicRouteCacheCapacity];
     private int _routeCacheCount;
     private int _routeCacheNext;
+    public int LastRebuiltClusterCount { get; private set; }
 
     private sealed class RouteCacheEntry
     {
@@ -68,6 +69,7 @@ public sealed class HierarchicalPathfinder
         for (int cy = 0; cy < ClusterHeight; cy++)
             for (int cx = 0; cx < ClusterWidth; cx++)
                 RebuildCluster((short)cx, (short)cy);
+        LastRebuiltClusterCount = ClusterWidth * ClusterHeight;
     }
 
     public void RebuildAffected(IntRect navRect)
@@ -80,6 +82,7 @@ public sealed class HierarchicalPathfinder
         for (int cy = minCy; cy <= maxCy; cy++)
             for (int cx = minCx; cx <= maxCx; cx++)
                 RebuildCluster((short)cx, (short)cy);
+        LastRebuiltClusterCount = (maxCx - minCx + 1) * (maxCy - minCy + 1);
     }
 
     private void RebuildCluster(short cx, short cy)

@@ -18,6 +18,7 @@ public partial class GodotSimBridge : Node
     public double LastSimulationMs { get; private set; }
     public double LastPathfindingMs { get; private set; }
     public ulong GameplayContentHash { get; private set; }
+    public bool SimulationPaused { get; set; }
 
     public void Configure(SimulationWorld world, ulong gameplayContentHash)
     {
@@ -29,7 +30,7 @@ public partial class GodotSimBridge : Node
 
     public override void _Process(double delta)
     {
-        if (_runner is null) return;
+        if (_runner is null || SimulationPaused) return;
         _accumulator += delta;
         int steps = 0;
         while (_accumulator >= TickSeconds && steps < MaxCatchUpTicks)
@@ -46,5 +47,11 @@ public partial class GodotSimBridge : Node
     }
 
     public void Enqueue(CommandEnvelope command) => World.Commands.Enqueue(command);
+    public void RefreshPresentationNow()
+    {
+        PresentationSnapshot snapshot = PresentationSnapshot.Capture(World, 0);
+        Previous = Current = snapshot;
+        _accumulator = 0.0;
+    }
     public string StateHashHex() => StateHasher.HashHex(World);
 }

@@ -12,12 +12,15 @@ public partial class DebugHud : CanvasLayer
     private Label? _label;
     private double _nextUpdate;
 
-    public void Configure(GodotSimBridge bridge, RtsInputController input, DebugRenderer debug, FogPresenter fog)
+    public void Configure(GodotSimBridge bridge, RtsInputController input, DebugRenderer debug, FogPresenter fog, Action prepareM5Acceptance)
     {
         _bridge = bridge; _input = input; Name = "DeveloperHUD"; Layer = 20; ProcessPriority = 210;
         _panel = new PanelContainer { Name = "DeveloperPanel", Position = new Vector2(12, 90), CustomMinimumSize = new Vector2(760, 0), Visible = false };
         VBoxContainer box = new(); _panel.AddChild(box);
-        Label title = new() { Text = "DEVELOPER TOOLS — F8" }; title.AddThemeFontSizeOverride("font_size", 16); box.AddChild(title);
+        HBoxContainer header = new(); box.AddChild(header);
+        Label title = new() { Text = "DEVELOPER TOOLS — F8", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill }; title.AddThemeFontSizeOverride("font_size", 16); header.AddChild(title);
+        Button drain = new() { Text = "Drain Energy" }; drain.Pressed += input.DebugDrainEnergy; header.AddChild(drain);
+        Button m5 = new() { Name = "PrepareM5Acceptance", Text = "Prepare M5 Playtest" }; m5.Pressed += prepareM5Acceptance; header.AddChild(m5);
         HFlowContainer actions = new() { Name = "PreparedPlaytestActions" }; box.AddChild(actions);
         Button prepareConstruction = new() { Name = "PrepareConstructionTest", Text = "Prepare construction test" };
         prepareConstruction.TooltipText = "Supplies resources, creates a progressing construction site, selects it and centers the camera.";
@@ -43,7 +46,6 @@ public partial class DebugHud : CanvasLayer
         destroyChrome.Pressed += input.DebugDestroyPreparedChrome; actions.AddChild(destroyChrome);
         Button destroyBuilding = new() { Name = "DestroyBuildingTest", Text = "Kill test building" };
         destroyBuilding.Pressed += input.DebugDestroyPreparedBuilding; actions.AddChild(destroyBuilding);
-        Button drain = new() { Text = "Drain Energy" }; drain.Pressed += input.DebugDrainEnergy; actions.AddChild(drain);
         Button moveEnemies = new() { Name = "MoveEnemyTest", Text = "Move visible enemies" };
         moveEnemies.TooltipText = "Issues a normal deterministic Move command to visible enemy units for moving-target combat tests.";
         moveEnemies.Pressed += input.DebugMoveVisibleEnemies; actions.AddChild(moveEnemies);
@@ -57,6 +59,7 @@ public partial class DebugHud : CanvasLayer
         AddToggle(toggles, "Buckets", () => debug.DrawSpatialBuckets, v => debug.DrawSpatialBuckets = v);
         AddToggle(toggles, "Vision", () => debug.DrawVision, v => debug.DrawVision = v);
         AddToggle(toggles, "Excavatable", () => debug.DrawExcavatable, v => debug.DrawExcavatable = v);
+        AddToggle(toggles, "Forward Service", () => debug.DrawForwardService, v => debug.DrawForwardService = v);
         AddToggle(toggles, "Fog", () => fog.FogVisible, fog.SetFogVisible);
         AddChild(_panel);
     }

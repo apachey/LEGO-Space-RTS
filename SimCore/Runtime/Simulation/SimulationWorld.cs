@@ -20,11 +20,16 @@ public sealed class SimulationWorld
     public IReadOnlyList<ProjectileRecord> Projectiles => ProjectilesInternal;
     public IReadOnlyList<ProjectileImpactRecord> ProjectileImpacts => ProjectileImpactsInternal;
     public uint NextProjectileValue { get; internal set; } = 1;
+    public uint TubeTopologyRevision { get; internal set; }
+    public uint TubeSegmentationRevision { get; internal set; }
     private readonly OperationsCapacityState[] _operationsCapacity;
+    private readonly AlienChargeState[] _alienCharge;
 
     public int PlayerCount => Fog.PlayerCount;
 
     internal readonly Dictionary<uint, RouteCorridor> Corridors = new();
+    internal readonly Dictionary<uint, TubeRoute> TubeRoutes = new();
+    internal readonly Dictionary<uint, TubeTransitRoute> TubeTransitRoutes = new();
     internal readonly Dictionary<uint, UnitCommandQueue> Queues = new();
     internal readonly Dictionary<uint, FixVec2> PendingVelocity = new();
     internal readonly Dictionary<uint, bool> CompressionUsed = new();
@@ -43,6 +48,7 @@ public sealed class SimulationWorld
         Content = content ?? PrototypeContentFactory.CreateM2Catalog();
         Fog = new FogState(playerCount);
         _operationsCapacity = new OperationsCapacityState[playerCount];
+        _alienCharge = new AlienChargeState[playerCount];
         Tick = new SimTick(0);
     }
 
@@ -54,6 +60,7 @@ public sealed class SimulationWorld
         Content = content ?? PrototypeContentFactory.CreateM2Catalog();
         Fog = fog;
         _operationsCapacity = new OperationsCapacityState[fog.PlayerCount];
+        _alienCharge = new AlienChargeState[fog.PlayerCount];
         Tick = tick;
     }
 
@@ -70,6 +77,8 @@ public sealed class SimulationWorld
     internal bool TryGetQueue(EntityId id, out UnitCommandQueue queue) => Queues.TryGetValue(id.Value, out queue!);
 
     public RouteCorridor? GetCorridor(EntityId id) => Corridors.TryGetValue(id.Value, out RouteCorridor corridor) ? corridor : null;
+
+    public TubeRoute? GetTubeRoute(EntityId link) => TubeRoutes.TryGetValue(link.Value, out TubeRoute route) ? route : null;
 
     public OperationsCapacityState GetOperationsCapacity(byte playerSlot)
     {
@@ -96,6 +105,19 @@ public sealed class SimulationWorld
         ProjectilesInternal.Add(projectile);
     }
 
+    public AlienChargeState GetAlienCharge(byte playerSlot)
+    {
+        if (playerSlot >= _alienCharge.Length) throw new System.ArgumentOutOfRangeException(nameof(playerSlot));
+        return _alienCharge[playerSlot];
+    }
+
+    internal ref AlienChargeState GetAlienChargeRef(byte playerSlot)
+    {
+        if (playerSlot >= _alienCharge.Length) throw new System.ArgumentOutOfRangeException(nameof(playerSlot));
+        return ref _alienCharge[playerSlot];
+    }
+
+    internal void SetAlienCharge(byte playerSlot, AlienChargeState state) => _alienCharge[playerSlot] = state;
     public bool TryExtractResource(EntityId id, int requestedAmount, out int extractedAmount)
     {
         if (requestedAmount <= 0) throw new System.ArgumentOutOfRangeException(nameof(requestedAmount));
@@ -135,10 +157,14 @@ public sealed class SimulationWorld
         return total;
     }
 
-    public void OpenExcavatable(ushort featureId)
+    public bool OpenExcavatable(ushort featureId)
     {
-        IntRect rect = Map.OpenFeature(featureId);
+        if (!Map.TryGetFeature(featureId, out _)) throw new System.InvalidOperationException($"Unknown Excavatable Feature {featureId}.");
+        ExcavationTopologySystem.InitializeFeatures(this);
+        if (!Map.TryOpenFeature(featureId, out IntRect rect)) return false;
+        ExcavationTopologySystem.MarkOpen(this, featureId);
         ApplyTopologyChange(rect);
+        return true;
     }
 
     internal void SetConstructionOccupied(Building building, bool occupied)

@@ -452,3 +452,95 @@ canon. They do not change gameplay canon.
 
 These decisions apply the approved Phase 03/06/07/09 transformation architecture
 without changing gameplay canon.
+
+---
+
+## 2026-08-11 — M5 T049 deterministic Worksite graph and local-pool access
+
+- The game director explicitly advanced the task sequence from merged M3 to
+  M5 T049. This defers but does not complete or remove M4 T040-T048.
+- Worksite service radius is compiled building metadata: Rock Raiders HQ is 18
+  build cells and Vehicle Service Bay is 12. Completed nodes connect only when
+  same-owner circular service zones overlap. The lowest Entity ID is the stable
+  component root, so insertion order cannot change component identity.
+- Graph recomputation is event-driven. It runs for scenario initialization and
+  building lifecycle events, not every simulation tick. Cached WorksiteNode,
+  WorksiteMember and WorksiteComponent state is authoritative, hashed and
+  serialized.
+- Processed Ore remains in its physical HQ ResourceBank. Accessibility is a
+  component query rather than a global wallet. Orders may debit several local
+  banks within one connected component, choosing the nearest funding endpoint
+  and then stable Entity-ID order. Cancellation refunds return to that funding
+  endpoint; disconnected components are never combined.
+- Energy Domain identity follows Worksite component identity. Merge adds the
+  prior component reserves. Split apportions raw fixed-point reserve by the
+  surviving local reserve capacity in deterministic root order, assigning the
+  integer remainder to the last stable component. This conserves represented
+  Energy exactly while keeping local generators/capacity with their buildings.
+- The exact capacity of Phase 04's promised short local buffer for a component
+  with no surviving reserve-capacity structure is not canonically specified.
+  T049 does not invent that balance value; it remains a required decision before
+  later destruction gameplay can create that edge state.
+- The Basic HUD chooses the selected structure's Worksite when possible and
+  otherwise the first stable player component. It shows component-local Ore and
+  Energy plus total component count, while SimCore remains authoritative.
+- Snapshot v11 / simulation protocol v9 / replay v6 add Worksite topology.
+  Prototype content schema and binary format v10 add service radius with legacy
+  defaults for prior compiled content.
+
+These decisions implement existing Phase 04/09 Worksite canon. They do not
+change gameplay canon.
+
+---
+
+## 2026-08-11 — M5 T050 authored Excavatable topology boundary
+
+- Each authored Excavatable Feature now has a stable key, canonical terrain
+  class, required-Energy metadata, visual-profile ID, local navigation mask and
+  explicit post-opening buildability. The prototype feature is a 25-Energy
+  Fractured Rock Wall whose opened route remains non-buildable; this preserves
+  Phase 05's rule that excavation and buildability are orthogonal layers.
+- The dense MapGrid remains the authoritative pathing/LoS raster, while a
+  deterministic ECS Excavatable component provides the feature's authoritative
+  gameplay identity and Blocked/ActiveExcavation/Open state. Scenario creation
+  binds map features to entities in ascending authored feature-ID order.
+- Opening is one-way and idempotent. A successful transition removes the
+  Excavatable, Impassable and GroundOccluder flags, increments topology exactly
+  once, rebuilds only the affected HPA clusters plus their existing one-cluster
+  neighbor halo, and invalidates only spatially affected route corridors.
+  Opened ground has no faction ownership restriction.
+- T050 implements the scheduled topology/local-rebuild slice. It deliberately
+  does not invent per-machine progress rates or an exact excavation duration
+  within canon's 15–35 / 30–60 second ranges. The existing F9/debug command is
+  retained as the deterministic completion trigger until the separately scoped
+  excavation execution/order layer has approved exact timing and eligibility
+  data.
+- Snapshot v12 / simulation protocol v10 / replay v7 add authoritative feature
+  components and full map-feature metadata. Compiled map/source schema v4 adds
+  the same metadata while readers retain legacy compiled maps and snapshots.
+
+These decisions implement existing Phase 05/09 excavation-topology canon. They
+do not change gameplay canon.
+
+---
+
+## 2026-08-15 — M4/M5 integration format boundary
+
+- The independently developed and accepted M4 and M5 branches both used
+  snapshot format 19 / simulation protocol 17 for different binary layouts.
+  The combined implementation therefore writes snapshot format 20 / protocol
+  18 and replay format 15.
+- Snapshot format 20 uses a 64-bit entity-component mask so the complete M4
+  combat/transport/transformation state and M5 worksite/excavation/refit/
+  resonance state have non-overlapping authoritative bits.
+- The reader preserves the merged M4 snapshot 19 / protocol 17 layout as the
+  public predecessor. The unmerged, branch-only M5 format-19 layout and replay
+  versions 7–14 are intentionally not treated as compatible public formats.
+- M4 command identifiers 11–15 remain stable. M5 commands receive identifiers
+  16–18 in the combined protocol.
+- Combined prototype content writes binary format 16 / source schema 15; the
+  format-15 reader remains compatible and supplies canonical legacy Worksite
+  service radii for M4-era compiled content.
+
+This is an approved serialization/protocol integration decision. It does not
+change gameplay canon.

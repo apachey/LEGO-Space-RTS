@@ -152,17 +152,14 @@ public sealed class ConstructionSystem : ISimSystem
         building.State = BuildingState.Completed;
         world.Entities.ConstructionSite.Remove(siteId);
         if (world.Content.IsProducer(building.Type)) world.Entities.Production.Set(siteId, new Production());
-        if (world.Entities.EnergyDomainMember.TryGet(siteId, out EnergyDomainMember member))
+        if (building.Type == HqType)
         {
-            if (building.Type == HqType && member.DomainRoot != siteId)
-            {
-                world.Entities.EnergyDomainMember.Set(siteId, new EnergyDomainMember { DomainRoot = siteId });
-                EnergyDomainSystem.Recalculate(world, member.DomainRoot);
-                world.Entities.EnergyDomain.Set(siteId, new EnergyDomain { Reserve = Fix32.Zero });
-                EnergyDomainSystem.Recalculate(world, siteId);
-            }
-            else EnergyDomainSystem.Recalculate(world, member.DomainRoot);
+            if (!world.Entities.ResourceReceiver.Has(siteId)) world.Entities.ResourceReceiver.Set(siteId, new ResourceReceiver { AcceptedType = ResourceType.Ore, IsHqEmergencyReceiver = true });
+            if (!world.Entities.ResourceBank.Has(siteId)) world.Entities.ResourceBank.Set(siteId, new ResourceBank { Type = ResourceType.Ore, ProcessedAmount = 0 });
         }
+        bool topologyChanged = WorksiteGraphSystem.Rebuild(world);
+        if (!topologyChanged && world.Entities.WorksiteMember.TryGet(siteId, out WorksiteMember completedMember))
+            EnergyDomainSystem.Recalculate(world, completedMember.ComponentRoot);
         ReleaseSiteAssignments(world, siteId);
     }
 
