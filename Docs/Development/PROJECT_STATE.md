@@ -597,6 +597,8 @@ narrow placement cases allowed by Phase 09B.
   each focus action, and exposes explicit start/pause/restart controls. Canonical
   simulation timings are unchanged; only the developer playtest presentation
   pauses before the director starts the demonstration.
+- The exported window title now identifies the build as the M5 Four-Faction
+  Prototype instead of retaining the stale M3 Economy Prototype title.
 - The acceptance fixture has focused deterministic/snapshot regression
   coverage. The latest full verification is green across every `BLOCKING_NOW`
   stage with 173/173 NUnit tests, representative 24-mover acceptance,
