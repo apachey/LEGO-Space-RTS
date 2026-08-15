@@ -277,6 +277,8 @@ public partial class BasicHud : CanvasLayer
             if (!commonSet) { common = state.Priority; commonSet = true; }
             else if (common != state.Priority) mixed = true;
         }
+        int stabilityTicks = DisplacementSystem.RemainingStabilityTicks(_bridge.World, first);
+        if (stabilityTicks > 0) _builder.Append("Stability  ").Append((stabilityTicks + SimClock.TicksPerSecond - 1) / SimClock.TicksPerSecond).Append("s\n");
         _priorityRow.Visible = compatible;
         foreach ((EnergyPriority priority, Button button) in _priorityButtons)
             button.Modulate = !mixed && priority == common ? RaiderAccent : Colors.White;

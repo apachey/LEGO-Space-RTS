@@ -21,6 +21,8 @@ public enum DeploymentState : byte { Mobile = 0, Deploying = 1, Deployed = 2, Un
 public enum MissionConfiguration : byte { None = 0, T3Escort = 1, T3Survey = 2 }
 public enum ResonanceTransitionKind : byte { None = 0, Commit = 1, Withdraw = 2 }
 public enum TubeTransferState : byte { Approaching = 0, Queued = 1, Loading = 2, Travelling = 3, Unloading = 4, ExitBlocked = 5, Returning = 6, ArrivalRecovery = 7 }
+public enum DisplacementEffect : byte { DeflectorArm = 0, GuardSweep = 1, ExcavationClamp = 2 }
+public enum DisplacementRelation : byte { Hostile = 0, FriendlyTow = 1 }
 
 public struct Ownership
 {
@@ -317,6 +319,11 @@ public struct TubeTransfer
     public TubeTransferState State;
     public bool HasArrivalMoveOrder;
     public FixVec2 ArrivalMoveTarget;
+}
+
+public struct Stability
+{
+    public int UntilTick;
 }
 
 public struct PowerState

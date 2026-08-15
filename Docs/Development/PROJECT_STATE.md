@@ -5,7 +5,7 @@ remain authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M5 — Four-Faction System Proof / T056 Tube transit implemented and fully verified on the current stacked task branch.**
+**M5 — Four-Faction System Proof / T057 Displacement and Stability implemented; the scheduled M5 implementation proof is fully verified on the current stacked task branch.**
 
 M3 is merged and human-accepted. At the game director's explicit request,
 development moved directly to M5 T049 rather than beginning M4 T040. M4 combat
@@ -15,8 +15,9 @@ complete or silently treated as an M5 dependency.
 T049 is human-accepted and recorded in commit `3f677b2`. T050 is recorded in
 commit `8731f61`; T051 is recorded in commit `ad93ec1`; T052 is recorded in
 commit `f6f390a`; T053 is recorded in commit `5844ee1`; T054 is recorded in
-commit `2525747`. T055 is recorded in commit `da075fc`. T056 is stacked on all
-seven in `codex/m5-tube-transit`; none of these M5 task commits is merged to
+commit `2525747`. T055 is recorded in commit `da075fc`; T056 is recorded in
+commit `738340b`. T057 is stacked on all eight in
+`codex/m5-displacement-stability`; none of these M5 task commits is merged to
 main.
 
 ## Engine / architecture
@@ -553,6 +554,33 @@ narrow placement cases allowed by Phase 09B.
   `Artifacts/Verification/20260815T121716Z-full-summary.txt`.
 - A launchable T056 debug build exists at
   `Builds/macOS/LEGO Space RTS.app` and passed the export smoke.
+- M5 T057 implements deterministic mechanical displacement without rigidbody
+  force. Deflector Arm, Guard Sweep and hostile/friendly Excavation Clamp
+  profiles resolve exact canonical distances from target footprint; Huge/
+  Massive targets, structures and true-air targets are immune, while deployed
+  Heavy targets receive the canonical half-distance resistance.
+- The resolver advances in fixed 0.25-build-cell samples, clips before
+  impassable terrain and occupied ground space, and returns the furthest legal
+  fixed-point result without cancelling the target's movement order or
+  deployment. Hostile movement applies tick-based 8-second Stability; further
+  hostile displacement while active is exactly 25% distance and refreshes the
+  timer. Friendly tow does not apply Stability.
+- Stability participates in snapshot v19, simulation protocol v17, replay v14,
+  hashes and ordered state dumps. The selected-unit HUD reports whole seconds
+  remaining without world-icon spam. Five focused regressions cover canonical
+  profile scaling/immunity, terrain clipping, occupancy clipping, order/
+  deployment preservation, friendly tow and deterministic snapshot continuation.
+- T057 full verification is green across every `BLOCKING_NOW` stage:
+  warnings-as-errors builds, 172 NUnit tests, representative 24-mover
+  acceptance, compiled-content identity, HeadlessSim, Godot headless smoke,
+  100-repeat determinism, replay, snapshot continuation, regeneration and
+  macOS export. The golden/replay hash is `AA0CDA8BF1806139`; the snapshot
+  continuation hash is `29CEBEAD05D566A4`. The preserved 60-mover stage remains
+  diagnostic-failing at 31/60 completion and 8,483 oscillation incidents. The
+  authoritative summary is
+  `Artifacts/Verification/20260815T123052Z-full-summary.txt`.
+- A launchable T057 debug build exists at
+  `Builds/macOS/LEGO Space RTS.app` and passed the export smoke.
 
 ## Current gates
 
@@ -634,6 +662,10 @@ narrow placement cases allowed by Phase 09B.
   and state machine but does not invent missing Martian production content,
   player-facing Station selection/command wiring or Tube presentation; those
   remain part of the scheduled full Martian integration.
+- T057 provides the authoritative displacement/Stability resolver, profiles and
+  legality rules. Normal Deflector/Sweep/Clamp activation, Control damage and
+  cooldowns depend on deferred M4 combat plus full Martian content integration;
+  T057 does not invent a parallel combat command path.
 
 ## Explicitly rejected / do not resurrect
 
@@ -646,7 +678,9 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Finish the T056 stacked branch handoff; merge only through game-director
+1. Finish the T057/M5 stacked branch handoff; merge only through game-director
    review.
-2. Continue M5 with T057 Displacement/Stability after T056 is accepted/merged, unless
-   the game director explicitly returns to deferred M4 T040 Targeting.
+2. After M5 acceptance, begin M6 T058 using the Phase 09A project-owned
+   command/snapshot protocol over Godot packet transport (ENet candidate), not
+   the superseded Unity Transport host; alternatively return to deferred M4
+   T040 Targeting if directed by the game director.

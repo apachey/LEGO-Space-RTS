@@ -40,6 +40,7 @@ public sealed class EntityStore
     public readonly ComponentStore<TubeLink> TubeLink = new();
     public readonly ComponentStore<TubeComponent> TubeComponent = new();
     public readonly ComponentStore<TubeTransfer> TubeTransfer = new();
+    public readonly ComponentStore<Stability> Stability = new();
     public readonly ComponentStore<PowerState> PowerState = new();
     public readonly ComponentStore<ConstructionSite> ConstructionSite = new();
     public readonly ComponentStore<Production> Production = new();
@@ -112,6 +113,7 @@ public sealed class EntityStore
         TubeLink.Remove(id);
         TubeComponent.Remove(id);
         TubeTransfer.Remove(id);
+        Stability.Remove(id);
         PowerState.Remove(id);
         ConstructionSite.Remove(id);
         Production.Remove(id);

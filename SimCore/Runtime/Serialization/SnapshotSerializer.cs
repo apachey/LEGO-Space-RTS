@@ -7,8 +7,8 @@ namespace LegoSpaceRTS.SimCore
 public static class SnapshotSerializer
 {
     public const uint Magic = 0x53525453; // STRS
-    public const ushort FormatVersion = 18;
-    public const ushort SimulationProtocolVersion = 16;
+    public const ushort FormatVersion = 19;
+    public const ushort SimulationProtocolVersion = 17;
 
     [Flags]
     private enum EntityComponents : uint
@@ -65,6 +65,7 @@ public static class SnapshotSerializer
         }
         WriteTubeGraph(w, world);
         WriteTubeTransfers(w, world);
+        WriteStability(w, world);
         world.Commands.Serialize(w);
         world.Fog.Serialize(w);
         w.Flush(); return ms.ToArray();
@@ -75,7 +76,7 @@ public static class SnapshotSerializer
         using MemoryStream ms = new(bytes, false); using BinaryReader r = new(ms);
         if (r.ReadUInt32() != Magic) throw new InvalidDataException("Snapshot magic mismatch.");
         ushort format = r.ReadUInt16(), protocol = r.ReadUInt16();
-        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8) || (format == 11 && protocol == 9) || (format == 12 && protocol == 10) || (format == 13 && protocol == 11) || (format == 14 && protocol == 12) || (format == 15 && protocol == 13) || (format == 16 && protocol == 14) || (format == 17 && protocol == 15);
+        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8) || (format == 11 && protocol == 9) || (format == 12 && protocol == 10) || (format == 13 && protocol == 11) || (format == 14 && protocol == 12) || (format == 15 && protocol == 13) || (format == 16 && protocol == 14) || (format == 17 && protocol == 15) || (format == 18 && protocol == 16);
         if (!supportedLegacy && (format != FormatVersion || protocol != SimulationProtocolVersion)) throw new InvalidDataException($"Unsupported snapshot {format}/{protocol}.");
         SimTick tick = new(r.ReadInt32()); MapGrid map = MapGrid.Deserialize(r, includeExcavatableMetadata: format >= 12); uint nextEntity = r.ReadUInt32();
         EntityStore entities = new(); int entityCount = r.ReadInt32(); if (entityCount < 0 || entityCount > 10000) throw new InvalidDataException("Invalid entity count.");
@@ -103,6 +104,7 @@ public static class SnapshotSerializer
         }
         if (format >= 17) ReadTubeGraph(r, temp, format);
         if (format >= 18) ReadTubeTransfers(r, temp);
+        if (format >= 19) ReadStability(r, temp);
         temp.Commands.Deserialize(r, includeBuildFields: format >= 6, includeEnergyPriority: format >= 10, includeMissionRefit: format >= 14, includeResonanceCommitment: format >= 15);
         temp.Fog = FogState.Deserialize(r);
         if (ms.Position != ms.Length) throw new InvalidDataException("Trailing snapshot bytes.");
@@ -233,6 +235,25 @@ public static class SnapshotSerializer
             bool shouldHaveTransform = transfer.State == TubeTransferState.Approaching || transfer.State == TubeTransferState.Queued || transfer.State == TubeTransferState.Loading || transfer.State == TubeTransferState.ArrivalRecovery;
             if (world.Entities.Transform.Has(id) != shouldHaveTransform) throw new InvalidDataException("Invalid Tube passenger spatial state.");
             world.Entities.TubeTransfer.Set(id, transfer); world.TubeTransitRoutes.Add(id.Value, route);
+        }
+    }
+
+    private static void WriteStability(BinaryWriter w, SimulationWorld world)
+    {
+        List<EntityId> stable = new(); IReadOnlyList<EntityId> alive = world.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++) if (world.Entities.Stability.Has(alive[i])) stable.Add(alive[i]);
+        w.Write(stable.Count);
+        for (int i = 0; i < stable.Count; i++) { w.Write(stable[i].Value); w.Write(world.Entities.Stability.Get(stable[i]).UntilTick); }
+    }
+
+    private static void ReadStability(BinaryReader r, SimulationWorld world)
+    {
+        int count = r.ReadInt32(); if (count < 0 || count > 10000) throw new InvalidDataException("Invalid Stability count.");
+        for (int i = 0; i < count; i++)
+        {
+            EntityId id = new(r.ReadUInt32()); int untilTick = r.ReadInt32();
+            if (!world.Entities.Exists(id) || world.Entities.Stability.Has(id) || untilTick < 0) throw new InvalidDataException("Invalid Stability state.");
+            world.Entities.Stability.Set(id, new Stability { UntilTick = untilTick });
         }
     }
 
