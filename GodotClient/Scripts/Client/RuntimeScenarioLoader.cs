@@ -1,6 +1,7 @@
 using Godot;
 using GodotFileAccess = Godot.FileAccess;
 using LegoSpaceRTS.SimCore;
+using LegoSpaceRTS.UI;
 
 namespace LegoSpaceRTS.Client;
 
@@ -62,7 +63,10 @@ public static class RuntimeScenarioLoader
             GD.PushWarning("Compiled content is absent. M5 acceptance is using the deterministic built-in prototype catalog.");
             catalog = PrototypeContentFactory.CreateM2Catalog();
         }
-        return new LoadedScenario(M5AcceptanceScenarioFactory.Create(catalog), catalog.ContentHash, compiled, true);
+        int requestedStep = M5PlaytestHud.RequestedStep;
+        return new LoadedScenario(M5AcceptanceScenarioFactory.Create(catalog,
+            applyInitialDisplacement: requestedStep != 5,
+            openExcavation: requestedStep != 6), catalog.ContentHash, compiled, true);
     }
 
     private static byte[] ReadAll(string path)

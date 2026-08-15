@@ -87,6 +87,12 @@ public partial class RtsCameraController : Camera3D
         ApplyTransform();
     }
 
+    public void SetZoomCells(float cells)
+    {
+        _zoomCells = Mathf.Clamp(cells, 24f, 72f);
+        ApplyTransform();
+    }
+
     public bool TryProjectToGround(Vector2 screen, out Vector3 point)
     {
         Vector3 origin = ProjectRayOrigin(screen);

@@ -8,6 +8,7 @@ namespace LegoSpaceRTS.UI;
 public partial class M5PlaytestHud : CanvasLayer
 {
     private static int s_requestedStep = 1;
+    public static int RequestedStep => s_requestedStep;
 
     private GodotSimBridge? _bridge;
     private SelectionController? _selection;
@@ -17,7 +18,7 @@ public partial class M5PlaytestHud : CanvasLayer
     private Label? _instruction;
     private Label? _status;
     private Button? _run;
-    private Button? _repeatDisplacement;
+    private Button? _stepAction;
     private int _step;
     private bool _completionPaused;
     private bool _surgeActivationPaused;
@@ -68,11 +69,11 @@ public partial class M5PlaytestHud : CanvasLayer
         AddStep(focuses, 6, "6. ПРОХІД У СКЕЛІ");
 
         _run = Button(pauseInitially ? "ЗАПУСТИТИ ЦЕЙ ТЕСТ" : "ПАУЗА");
-        _run.Name = "ToggleM5Simulation"; _run.Visible = _step != 1 && _step != 5;
+        _run.Name = "ToggleM5Simulation"; _run.Visible = _step is 2 or 3 or 4;
         _run.Pressed += ToggleSimulation; box.AddChild(_run);
-        _repeatDisplacement = Button("ПОКАЗАТИ ПОВТОРНИЙ ПОШТОВХ");
-        _repeatDisplacement.Name = "RepeatM5Displacement"; _repeatDisplacement.Visible = _step == 5;
-        _repeatDisplacement.Pressed += RepeatDisplacement; box.AddChild(_repeatDisplacement);
+        _stepAction = Button(_step == 5 ? "ПОКАЗАТИ ПЕРШИЙ ПОШТОВХ" : "ВІДКРИТИ СКЕЛЬНУ СТІНУ");
+        _stepAction.Name = "M5StepAction"; _stepAction.Visible = _step is 5 or 6;
+        _stepAction.Pressed += PerformStepAction; box.AddChild(_stepAction);
         Button replay = Button("ПОВТОРИТИ ЦЕЙ ТЕСТ З ПОЧАТКУ"); replay.Name = "ReplayM5Step"; replay.Pressed += RestartCurrentStep; box.AddChild(replay);
         Button reset = Button("ПОВЕРНУТИСЯ ДО ТЕСТУ 1"); reset.Name = "RestartM5Acceptance"; reset.Pressed += () => SelectStep(1); box.AddChild(reset);
         AddChild(panel);
@@ -114,14 +115,45 @@ public partial class M5PlaytestHud : CanvasLayer
         _bridge.SimulationPaused = !_bridge.SimulationPaused;
     }
 
-    private void RepeatDisplacement()
+    private void PerformStepAction()
     {
-        if (_bridge is null || _instruction is null) return;
+        if (_bridge is null || _instruction is null || _stepAction is null) return;
+        if (_step == 6)
+        {
+            if (!M5AcceptanceScenarioFactory.TryOpenExcavationAndMove(_bridge.World))
+            {
+                _instruction.Text = "Прохід уже відкритий або тест втратив початковий стан. Натисни «ПОВТОРИТИ ЦЕЙ ТЕСТ З ПОЧАТКУ».";
+                return;
+            }
+            _bridge.RefreshPresentationNow();
+            _bridge.SimulationPaused = false;
+            _stepAction.Text = "СКЕЛЬНУ СТІНУ ВІДКРИТО";
+            _stepAction.Disabled = true;
+            _instruction.Text = "СТІНА ЗНИКЛА. Тепер Hover Scout їде зліва направо через щойно відкритий наземний прохід.";
+            return;
+        }
+
+        if (_step != 5) return;
         _bridge.SimulationPaused = true;
+        bool repeat = M5AcceptanceScenarioFactory.TryFindFirst(_bridge.World, M5AcceptanceScenarioFactory.DisplacementTargetKey, out EntityId target) &&
+            DisplacementSystem.IsStable(_bridge.World, target);
         if (M5AcceptanceScenarioFactory.TryRepeatDisplacement(_bridge.World, out _))
-            _instruction.Text = "РЕЗУЛЬТАТ: повторний поштовх пересунув ціль лише на 0,5 клітинки замість 2. Таймер захисту знову став 8 секунд.";
+        {
+            _bridge.RefreshPresentationNow();
+            if (repeat)
+            {
+                _instruction.Text = "ДРУГИЙ ПОШТОВХ: ціль пересунулась лише на 0,5 клітинки — рівно 25% першої сили. Ланцюг сильних поштовхів заблокований.";
+                _stepAction.Text = "ОБИДВА ПОШТОВХИ ПОКАЗАНО";
+                _stepAction.Disabled = true;
+            }
+            else
+            {
+                _instruction.Text = "ПЕРШИЙ ПОШТОВХ: ворожий T3-Trike помітно пересунувся на 2 клітинки й отримав 8 секунд захисту. Тепер натисни ще раз для слабкого повтору.";
+                _stepAction.Text = "ПОКАЗАТИ ПОВТОРНИЙ ПОШТОВХ";
+            }
+        }
         else
-            _instruction.Text = "Повторний поштовх заблокований перешкодою. Перезапусти цей тест і спробуй ще раз.";
+            _instruction.Text = "Поштовх заблокований перешкодою. Перезапусти цей тест і спробуй ще раз.";
     }
 
     private void FocusCurrentStep()
@@ -130,7 +162,7 @@ public partial class M5PlaytestHud : CanvasLayer
         if (_pauseOnFocus) _bridge.SimulationPaused = true;
         _explanation.Text = Explanation(_step);
         _instruction.Text = Instruction(_step);
-        if (_repeatDisplacement is not null) _repeatDisplacement.Visible = _step == 5;
+        if (_stepAction is not null) _stepAction.Visible = _step is 5 or 6;
 
         switch (_step)
         {
@@ -155,6 +187,7 @@ public partial class M5PlaytestHud : CanvasLayer
         if (_bridge is null || !M5AcceptanceScenarioFactory.TryFindFirst(_bridge.World, M5AcceptanceScenarioFactory.DisplacementSourceKey, out EntityId source) ||
             !M5AcceptanceScenarioFactory.TryFindFirst(_bridge.World, M5AcceptanceScenarioFactory.DisplacementTargetKey, out EntityId target)) return;
         _selection?.SetSelection(new[] { source, target });
+        _camera?.SetZoomCells(24f);
         if (_bridge.World.Entities.Transform.TryGet(source, out SimTransform a) && _bridge.World.Entities.Transform.TryGet(target, out SimTransform b))
             _camera?.CenterOn(((a.Position + b.Position) * Fix32.Half).ToWorld());
     }
@@ -280,20 +313,25 @@ public partial class M5PlaytestHud : CanvasLayer
     private void AppendDisplacement(SimulationWorld world)
     {
         int seconds = 0;
+        bool displaced = false;
         if (M5AcceptanceScenarioFactory.TryFindFirst(world, M5AcceptanceScenarioFactory.DisplacementTargetKey, out EntityId target))
+        {
             seconds = (DisplacementSystem.RemainingStabilityTicks(world, target) + 19) / 20;
+            displaced = DisplacementSystem.IsStable(world, target);
+        }
         _text.Append("Хто штовхає: Martian Excavation Searcher\n");
         _text.Append("Ціль: ворожий Astronaut T3-Trike\n");
-        _text.Append("Перший поштовх: 2 клітинки. Захист цілі: ").Append(seconds).Append("с\n");
+        _text.Append(displaced ? "Перший поштовх: ЗАСТОСОВАНО — 2 клітинки. Захист цілі: " : "Перший поштовх: ЩЕ НЕ ЗАСТОСОВАНО. Захист цілі: ").Append(seconds).Append("с\n");
         _text.Append("Навіщо: протягом захисту наступні поштовхи мають лише 25% сили — ворога не можна нескінченно тримати в ланцюгу контролю.");
     }
 
     private void AppendExcavation(SimulationWorld world)
     {
         bool open = world.Map.TryGetFeature(M5AcceptanceScenarioFactory.ExcavatableFeatureId, out ExcavatableFeature feature) && feature.Open;
-        _text.Append("Колишня перешкода: скельна стіна для НАЗЕМНИХ ЮНІТІВ\n");
+        _text.Append(open ? "Колишня перешкода: скельна стіна для НАЗЕМНИХ ЮНІТІВ\n" : "Перешкода ЗАРАЗ: видима скельна стіна для НАЗЕМНИХ ЮНІТІВ\n");
         _text.Append("Ділянка: ").Append(open ? "ВІДКРИТА ДЛЯ РУХУ" : "ЗАКРИТА").Append("\n");
-        _text.Append("Перевірка: Hover Scout їде зліва направо крізь сіру смугу. Відкритий прохід доступний усім фракціям, але не стає місцем для будівництва.");
+        _text.Append(open ? "Перевірка: Hover Scout їде зліва направо через щойно відкриту сіру смугу. Прохід доступний усім фракціям, але не стає місцем для будівництва."
+            : "Hover Scout стоїть ліворуч і не має маршруту крізь стіну. Натискання кнопки прибере скелю та дасть йому прямий наказ проїхати наскрізь.");
     }
 
     private static string Explanation(int step) => step switch
@@ -303,7 +341,7 @@ public partial class M5PlaytestHud : CanvasLayer
         3 => "ЩО ЦЕ: Resonance Core перетворює встановлені Crystals на накопичуваний Заряд. Він витрачає 50 Заряду на тимчасовий 18-секундний Сплеск навколо себе.",
         4 => "ЩО ЦЕ: три легкі Martian-юніти їдуть від Аеротрубного ангара до Поселення. У трубі вони тимчасово перебувають поза мапою, але не знищуються.",
         5 => "ЩО ЦЕ: Excavation Searcher відштовхує ворожу машину. Після першого поштовху ціль отримує 8 секунд захисту від повторного сильного відкидання.",
-        6 => "ЩО ЦЕ: Rock Raiders розкрили скельну стіну. Вона більше не блокує наземний шлях, тому Hover Scout може проїхати просто крізь колишню перешкоду.",
+        6 => "ЩО ЦЕ: перед Hover Scout зараз стоїть справжня скельна стіна, яка блокує наземний шлях. Тест відкриє її та одразу накаже юніту проїхати наскрізь.",
         _ => string.Empty
     };
 
@@ -313,8 +351,8 @@ public partial class M5PlaytestHud : CanvasLayer
         2 => "НАТИСНИ «ЗАПУСТИТИ»: стеж за відсотком. На 100% роль, огляд і швидкість зміняться, а модуль стане купленим саме цією машиною.",
         3 => "НАТИСНИ «ЗАПУСТИТИ»: через 0,75с стенд зупиниться в момент активації та покаже джерело й підсилений Razor Skimmer.",
         4 => "НАТИСНИ «ЗАПУСТИТИ»: статус покаже кожного пасажира, а після прибуття камера автоматично перейде до другої станції.",
-        5 => "ПЕРШИЙ ПОШТОВХ УЖЕ ЗАСТОСОВАНИЙ. Натисни «ПОКАЗАТИ ПОВТОРНИЙ ПОШТОВХ»: він має бути вчетверо слабшим.",
-        6 => "НАТИСНИ «ЗАПУСТИТИ»: камера лишиться на сірій смузі, а Hover Scout проїде через неї та зупинить тест.",
+        5 => "НАТИСНИ «ПОКАЗАТИ ПЕРШИЙ ПОШТОВХ»: побачиш рух на 2 клітинки. Потім ця сама кнопка покаже повторний рух лише на 0,5 клітинки.",
+        6 => "СПОЧАТКУ ПОДИВИСЬ НА ВИДИМУ СТІНУ. Потім натисни «ВІДКРИТИ СКЕЛЬНУ СТІНУ»: вона зникне, а Hover Scout проїде крізь звільнене місце.",
         _ => string.Empty
     };
 

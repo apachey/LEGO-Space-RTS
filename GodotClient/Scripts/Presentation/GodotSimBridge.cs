@@ -47,5 +47,11 @@ public partial class GodotSimBridge : Node
     }
 
     public void Enqueue(CommandEnvelope command) => World.Commands.Enqueue(command);
+    public void RefreshPresentationNow()
+    {
+        PresentationSnapshot snapshot = PresentationSnapshot.Capture(World, 0);
+        Previous = Current = snapshot;
+        _accumulator = 0.0;
+    }
     public string StateHashHex() => StateHasher.HashHex(World);
 }

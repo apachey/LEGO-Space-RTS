@@ -601,9 +601,11 @@ narrow placement cases allowed by Phase 09B.
   reloads a fresh deterministic fixture focused on that proof, explains who
   acts, what it costs, what changes and why it matters, then provides one exact
   action. Refit automatically pauses on completion; Surge pauses at activation;
-  Tube transit reports every named passenger and moves the camera to the exit;
-  displacement provides an explicit repeat-push control; and an actual Hover
-  Scout crosses the opened excavation route before the test pauses.
+  Tube transit reports every named passenger and moves the camera to the exit.
+  Displacement now starts before either push, keeps a close stationary camera
+  on both units and exposes separate full-distance and Stability-reduced pushes.
+  Excavation now starts with the real blocking wall present, then removes it and
+  sends an actual Hover Scout through the newly opened route before pausing.
 - Aero Tube exit placement now rejects completed-building footprints expanded
   by the passenger collision radius. New regression coverage runs all three M5
   passengers to completion and proves that each retains identity, returns to
@@ -615,19 +617,21 @@ narrow placement cases allowed by Phase 09B.
   the prior Unicode-em-dash name could pass direct executable smoke while
   failing Finder/`open` launch with `kLSNoExecutableErr`.
 - The replacement handoff is green across every `BLOCKING_NOW` stage with
-  174/174 NUnit tests, representative 24-mover acceptance, compiled-content
+  176/176 NUnit tests, representative 24-mover acceptance, compiled-content
   identity, HeadlessSim, Godot smoke, 100-repeat determinism, replay, snapshot
   continuation, regeneration and macOS export. The full summary is
-  `Artifacts/Verification/20260815T140319Z-full-summary.txt`.
-- The final instruction wording and control visibility passed the normal
-  verification again with 174/174 tests; its summary is
-  `Artifacts/Verification/20260815T140926Z-fast-summary.txt`. The rebuilt
-  exported application also passed both its normal and M5-specific smokes.
+  `Artifacts/Verification/20260815T144212Z-full-summary.txt`.
+- The final visible-transition fixes passed normal verification again with
+  176/176 tests; its summary is
+  `Artifacts/Verification/20260815T144922Z-fast-summary.txt`. The rebuilt
+  exported application passed both its normal and M5-specific smokes.
 - The exported application passed the M5 fresh-handoff smoke at tick 40 with
-  hash `391359A970F70605`. Visual evidence is
-  `Artifacts/Screenshots/m5-guided-handoff.png`. The remaining acceptance is
-  deliberately human-only: whether the six corrected explanations and visible
-  transitions are now clear to the game director.
+  hash `391359A970F70605`.
+- Game-director acceptance is complete for guide steps 1–4. Steps 5–6 were
+  rejected because the displacement produced no perceptible movement and the
+  excavation view never showed the blocking wall before it opened. The fixture,
+  presentation refresh and camera framing now correct those causes. The only
+  remaining M5 acceptance is a repeat human check of corrected steps 5–6.
 
 ## Current gates
 
@@ -725,8 +729,8 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Complete the short game-director playtest of the prepared M5 fixture; merge
-   the stacked M5 branches only after acceptance.
+1. Repeat only corrected M5 playtest steps 5–6; steps 1–4 are accepted. Merge
+   the stacked M5 branches only after both remaining steps are accepted.
 2. Before beginning M6, resolve the now-`BLOCKING_LATER` 60-mover gate rather
    than carrying its 31/60 completion into networked 1v1 work.
 3. After M5 acceptance and the pre-M6 movement gate, begin M6 T058 using the

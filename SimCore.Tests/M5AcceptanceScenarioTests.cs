@@ -48,6 +48,47 @@ public sealed class M5AcceptanceScenarioTests
         }
     }
 
+    [Test]
+    public void GuidedDisplacementShowsFullThenStableDistance()
+    {
+        SimulationWorld world = M5AcceptanceScenarioFactory.Create(applyInitialDisplacement: false);
+        Assert.That(M5AcceptanceScenarioFactory.TryFindFirst(world, M5AcceptanceScenarioFactory.DisplacementTargetKey, out EntityId target), Is.True);
+        FixVec2 start = world.Entities.Transform.Get(target).Position;
+        Assert.That(DisplacementSystem.IsStable(world, target), Is.False);
+
+        Assert.That(M5AcceptanceScenarioFactory.TryRepeatDisplacement(world, out FixVec2 first), Is.True);
+        Assert.Multiple(() =>
+        {
+            Assert.That(first.X - start.X, Is.EqualTo(Fix32.FromInt(2)));
+            Assert.That(DisplacementSystem.IsStable(world, target), Is.True);
+        });
+
+        Assert.That(M5AcceptanceScenarioFactory.TryRepeatDisplacement(world, out FixVec2 second), Is.True);
+        Assert.That(second.X - first.X, Is.EqualTo(Fix32.Half));
+    }
+
+    [Test]
+    public void GuidedExcavationStartsBlockedThenOpensAndMovesThroughTheWall()
+    {
+        SimulationWorld world = M5AcceptanceScenarioFactory.Create(openExcavation: false);
+        Assert.That(world.Map.TryGetFeature(M5AcceptanceScenarioFactory.ExcavatableFeatureId, out ExcavatableFeature blocked), Is.True);
+        Assert.That(blocked.Open, Is.False);
+        Assert.That(M5AcceptanceScenarioFactory.TryFindFirst(world, M5AcceptanceScenarioFactory.ExcavationRunnerKey, out EntityId runner), Is.True);
+        Assert.That(world.Entities.Navigation.Get(runner).HasTarget, Is.False);
+
+        Assert.That(M5AcceptanceScenarioFactory.TryOpenExcavationAndMove(world), Is.True);
+        Assert.That(world.Map.TryGetFeature(M5AcceptanceScenarioFactory.ExcavatableFeatureId, out ExcavatableFeature open), Is.True);
+        Assert.Multiple(() =>
+        {
+            Assert.That(open.Open, Is.True);
+            Assert.That(world.Entities.Navigation.Get(runner).HasTarget, Is.True);
+        });
+
+        SimulationRunner simulation = new(world);
+        for (int tick = 0; tick < 800 && world.Entities.Transform.Get(runner).Position.X < Fix32.FromInt(62); tick++) simulation.StepOneTick();
+        Assert.That(world.Entities.Transform.Get(runner).Position.X, Is.GreaterThanOrEqualTo(Fix32.FromInt(62)));
+    }
+
     private static int CountTransfers(SimulationWorld world)
     {
         int count = 0;

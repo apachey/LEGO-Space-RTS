@@ -26,7 +26,7 @@ public static class M5AcceptanceScenarioFactory
 
     private const string ServiceHubKey = "building.ast.service_refit_hub";
     private const string CommandCoreKey = "building.ali.etx_command_core";
-    public static SimulationWorld Create(PrototypeContentCatalog? content = null)
+    public static SimulationWorld Create(PrototypeContentCatalog? content = null, bool applyInitialDisplacement = true, bool openExcavation = true)
     {
         PrototypeContentCatalog catalog = content ?? PrototypeContentFactory.CreateM2Catalog();
         MapGrid map = new(StableMapKey);
@@ -68,13 +68,16 @@ public static class M5AcceptanceScenarioFactory
             if (!TubeTransferSystem.TryQueueTransfer(world, 0, passengers[i], tubeOrigin, tubeDestination))
                 throw new InvalidOperationException("M5 acceptance fixture could not queue an Aero Tube transfer.");
 
-        if (!DisplacementSystem.TryApply(world, displacementSource, displacementTarget, DisplacementEffect.ExcavationClamp,
+        if (applyInitialDisplacement && !DisplacementSystem.TryApply(world, displacementSource, displacementTarget, DisplacementEffect.ExcavationClamp,
                 DisplacementRelation.Hostile, new FixVec2(Fix32.One, Fix32.Zero), out _))
             throw new InvalidOperationException("M5 acceptance fixture could not apply displacement and Stability.");
 
-        if (!world.OpenExcavatable(ExcavatableFeatureId))
-            throw new InvalidOperationException("M5 acceptance fixture could not open its excavation route.");
-        CommandExecutionSystem.SetMove(world, excavationRunner, FixVec2.FromInts(68, 24));
+        if (openExcavation)
+        {
+            if (!world.OpenExcavatable(ExcavatableFeatureId))
+                throw new InvalidOperationException("M5 acceptance fixture could not open its excavation route.");
+            CommandExecutionSystem.SetMove(world, excavationRunner, FixVec2.FromInts(68, 24));
+        }
 
         world.Spatial.Rebuild(world.Entities);
         return world;
@@ -105,6 +108,15 @@ public static class M5AcceptanceScenarioFactory
             TryFindFirst(world, DisplacementTargetKey, out EntityId target) &&
             DisplacementSystem.TryApply(world, source, target, DisplacementEffect.ExcavationClamp,
                 DisplacementRelation.Hostile, new FixVec2(Fix32.One, Fix32.Zero), out resolvedPosition);
+    }
+
+    public static bool TryOpenExcavationAndMove(SimulationWorld world)
+    {
+        if (!world.Map.TryGetFeature(ExcavatableFeatureId, out ExcavatableFeature feature) || feature.Open ||
+            !TryFindFirst(world, ExcavationRunnerKey, out EntityId runner) || !world.OpenExcavatable(ExcavatableFeatureId)) return false;
+        CommandExecutionSystem.SetMove(world, runner, FixVec2.FromInts(68, 24));
+        world.Spatial.Rebuild(world.Entities);
+        return true;
     }
 
     public static bool TryFindFirst(SimulationWorld world, string stableKey, out EntityId entity)
