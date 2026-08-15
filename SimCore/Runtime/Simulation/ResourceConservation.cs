@@ -50,6 +50,8 @@ public static class ResourceConservation
                 for (int q = 0; q < production.Count; q++) reserved = checked(reserved + production.Get(q).ReservedOre);
             if (type == ResourceType.Ore && world.Entities.MissionRefitJob.TryGet(id, out MissionRefitJob refit))
                 reserved = checked(reserved + refit.CommittedOre);
+            if (type == ResourceType.Crystal && world.Entities.ResonanceCore.TryGet(id, out ResonanceCore core))
+                reserved = checked(reserved + ResonanceCoreSystem.CountCommitted(core) + (core.TransitionKind == ResonanceTransitionKind.None ? 0 : 1));
         }
         return new ResourceConservationTotals(raw, carried, hauled, processed, reserved, consumed);
     }

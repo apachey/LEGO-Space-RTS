@@ -19,6 +19,7 @@ public enum EnergyPriority : byte { High = 0, Normal = 1, Low = 2 }
 public enum BrownoutEventKind : byte { None = 0, Entered = 1, Changed = 2, Recovered = 3 }
 public enum DeploymentState : byte { Mobile = 0, Deploying = 1, Deployed = 2, Undeploying = 3 }
 public enum MissionConfiguration : byte { None = 0, T3Escort = 1, T3Survey = 2 }
+public enum ResonanceTransitionKind : byte { None = 0, Commit = 1, Withdraw = 2 }
 
 public struct Ownership
 {
@@ -249,6 +250,19 @@ public struct MissionRefitJob
     public ushort RemainingTicks;
     public ushort CommittedOre;
     public ushort CommittedEnergy;
+}
+
+public struct ResonanceCore
+{
+    public EntityId CommandCore;
+    public EntityId TransitionBank;
+    public byte CommittedSlotMask;
+    public byte DesiredCommittedCrystals;
+    public byte TransitionSlot;
+    public ResonanceTransitionKind TransitionKind;
+    public ushort TransitionTotalTicks;
+    public ushort TransitionRemainingTicks;
+    public bool ExpandedLatticeUnlocked;
 }
 
 public struct PowerState

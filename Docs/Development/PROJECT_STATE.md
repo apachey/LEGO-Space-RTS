@@ -5,7 +5,7 @@ remain authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M5 — Four-Faction System Proof / T052 Mission Refit implemented and fully verified on the current stacked task branch.**
+**M5 — Four-Faction System Proof / T053 Resonance Core implemented and fully verified on the current stacked task branch.**
 
 M3 is merged and human-accepted. At the game director's explicit request,
 development moved directly to M5 T049 rather than beginning M4 T040. M4 combat
@@ -13,9 +13,9 @@ T040-T048 remains unimplemented and deferred; it must not be described as
 complete or silently treated as an M5 dependency.
 
 T049 is human-accepted and recorded in commit `3f677b2`. T050 is recorded in
-commit `8731f61`; T051 is recorded in commit `ad93ec1`. T052 is stacked on all
-three in `codex/m5-mission-refit`; none of these M5 task commits is merged to
-main.
+commit `8731f61`; T051 is recorded in commit `ad93ec1`; T052 is recorded in
+commit `f6f390a`. T053 is stacked on all four in `codex/m5-resonance-core`;
+none of these M5 task commits is merged to main.
 
 ## Engine / architecture
 
@@ -413,6 +413,43 @@ narrow placement cases allowed by Phase 09B.
   `Artifacts/Verification/20260811T183406Z-full-summary.txt`.
 - A launchable T052 debug build exists at
   `Builds/macOS/LEGO Space RTS.app` and passed the export smoke.
+- M5 T053 Resonance Core commitment is implemented as a narrow authoritative
+  Alien-system proof. A completed `building.ali.resonance_core` links to one
+  same-owner `building.ali.etx_command_core` in the same Energy Domain, and a
+  Command Core may own at most one Resonance Core.
+- Each Core owns an explicit deterministic slot mask with four baseline slots
+  or six after the proof Expanded Resonance Lattice unlock. The explicit
+  desired-count command validates ownership, capacity and spendable faction
+  Crystals, then performs one operation at a time in stable slot order: 8
+  seconds to commit and 15 seconds to withdraw.
+- A committing Crystal leaves the spendable bank when its operation starts and
+  occupies its slot on completion. Withdrawal removes its active commitment at
+  operation start, retains the physically installed Crystal and its Energy
+  pressure during progress, then returns that Crystal to the authoritative
+  bank on completion. Crystal conservation covers occupied and transitioning
+  slots.
+- Core demand is integrated into the existing Energy Domain/Brownout ordering:
+  3 E/s base plus 2 E/s for each physically installed Crystal. Brownout pauses
+  Charge-producing operation without releasing commitments. The selected-Core
+  HUD exposes occupied/maximum/desired slots, demand, operational state and
+  normalized transition progress; the resource strip now reports spendable,
+  committed and transitioning Crystals.
+- Resonance state and pending desired-count commands participate in snapshot
+  v15, simulation protocol v13, replay v10, deterministic hashes and ordered
+  state dumps. Five focused regressions cover sequential canonical timing,
+  withdrawal timing and conservation, validation/one-Core limits, Brownout
+  retention and mid-transition snapshot continuation with a pending command.
+- T053 full verification is green across every `BLOCKING_NOW` stage: warnings-
+  as-errors builds, 151 NUnit tests, representative 24-mover acceptance,
+  compiled-content identity, HeadlessSim, Godot headless smoke, 100-repeat
+  determinism, replay, snapshot continuation, regeneration and macOS export.
+  The golden/replay hash is `F39B55E2DBB4D8EF`; the snapshot continuation hash
+  is `4874BF0ED8A2272A`. The preserved 60-mover stage remains diagnostic-failing
+  at its unchanged 31/60 completion and 8,483 oscillation incidents. The
+  authoritative summary is
+  `Artifacts/Verification/20260811T190115Z-full-summary.txt`.
+- A launchable T053 debug build exists at
+  `Builds/macOS/LEGO Space RTS.app` and passed the export smoke.
 
 ## Current gates
 
@@ -479,6 +516,12 @@ narrow placement cases allowed by Phase 09B.
   in the current executable. Before implementing that later path, canon must
   resolve how the 50% refund of the odd 25-Ore first-install cost rounds in the
   integer resource model.
+- T053 deliberately stops at Crystal commitment. Derived millicharge,
+  generation/capacity clamping and Surge belong to T054. Full Alien content,
+  construction prerequisites and research wiring remain scheduled for
+  T071/T072, so the current executable does not yet spawn the proof Core.
+  Resonance destruction salvage remains dependent on deferred T045 destruction;
+  it must be integrated with the canonical cache rules when that path exists.
 
 ## Explicitly rejected / do not resurrect
 
@@ -491,7 +534,7 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Finish the T052 stacked branch handoff; merge only through game-director
+1. Finish the T053 stacked branch handoff; merge only through game-director
    review.
-2. Continue M5 with T053 Resonance Core after T052 is accepted/merged, unless
+2. Continue M5 with T054 Charge/Surge after T053 is accepted/merged, unless
    the game director explicitly returns to deferred M4 T040 Targeting.

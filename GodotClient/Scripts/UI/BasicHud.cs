@@ -143,7 +143,22 @@ public partial class BasicHud : CanvasLayer
         int pending = activeRoot == EntityId.None ? 0 : WorksiteGraphSystem.GetPendingHauledResourceTotal(_bridge.World, activeRoot, ResourceType.Ore);
         _oreValue.Text = pending > 0 ? $"{ore}  (+{pending} receiving)" : ore.ToString();
         if (components.Length > 1) _oreValue.Text += $"  •  {components.Length} SITES";
-        _crystalValue.Text = "0";
+        int spendableCrystals = 0, committedCrystals = 0, transitioningCrystals = 0;
+        var alive = _bridge.World.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (!_bridge.World.Entities.Ownership.TryGet(id, out Ownership owner) || owner.PlayerSlot != 0) continue;
+            if (_bridge.World.Entities.ResourceBank.TryGet(id, out ResourceBank crystalBank) && crystalBank.Type == ResourceType.Crystal) spendableCrystals += crystalBank.ProcessedAmount;
+            if (_bridge.World.Entities.ResonanceCore.TryGet(id, out ResonanceCore resonance))
+            {
+                committedCrystals += ResonanceCoreSystem.CountCommitted(resonance);
+                if (resonance.TransitionKind != ResonanceTransitionKind.None) transitioningCrystals++;
+            }
+        }
+        _crystalValue.Text = committedCrystals > 0 || transitioningCrystals > 0
+            ? $"{spendableCrystals}  •  {committedCrystals} committed{(transitioningCrystals > 0 ? $"  •  {transitioningCrystals} changing" : string.Empty)}"
+            : spendableCrystals.ToString();
         OperationsCapacityState capacity = _bridge.World.GetOperationsCapacity(0);
         _ocValue.Text = capacity.Reserved > 0 ? $"{capacity.Used} / {capacity.Maximum}  (+{capacity.Reserved} queued)" : $"{capacity.Used} / {capacity.Maximum}";
         if (capacity.IsOverCapacity) _ocValue.Text += "  OVER CAPACITY";
@@ -219,6 +234,16 @@ public partial class BasicHud : CanvasLayer
         if (_bridge.World.Entities.MissionRefitJob.TryGet(first, out MissionRefitJob refitJob))
             _builder.Append("Mission Refit  ").Append((refitJob.TotalTicks - refitJob.RemainingTicks) * 100 / refitJob.TotalTicks).Append("%  •  committed ")
                 .Append(refitJob.CommittedOre).Append(" Ore / ").Append(refitJob.CommittedEnergy).Append(" Energy\n");
+        if (_bridge.World.Entities.ResonanceCore.TryGet(first, out ResonanceCore resonance))
+        {
+            int committed = ResonanceCoreSystem.CountCommitted(resonance);
+            _builder.Append("Resonance  ").Append(committed).Append(" / ").Append(ResonanceCoreSystem.MaximumSlots(resonance)).Append(" slots  •  desired ").Append(resonance.DesiredCommittedCrystals).Append('\n');
+            _builder.Append("Core Demand  ").Append(ResonanceCoreSystem.ContinuousEnergyDemand(resonance)).Append(" E/s  •  ")
+                .Append(BrownoutSystem.IsOperational(_bridge.World, first) ? "OPERATIONAL" : "BROWNOUT — commitments retained").Append('\n');
+            if (resonance.TransitionKind != ResonanceTransitionKind.None)
+                _builder.Append(resonance.TransitionKind == ResonanceTransitionKind.Commit ? "Committing Crystal  " : "Withdrawing Crystal  ")
+                    .Append((resonance.TransitionTotalTicks - resonance.TransitionRemainingTicks) * 100 / resonance.TransitionTotalTicks).Append("%\n");
+        }
         if (_bridge.World.Entities.PowerState.TryGet(first, out PowerState power))
             _builder.Append("Power  ").Append(power.IsPowered ? "ONLINE" : "DISABLED — Energy Domain Brownout").Append("   Priority  ").Append(power.Priority).Append('\n');
         if (_bridge.World.Entities.Production.TryGet(first, out Production production)) AppendProductionQueue(production, first);

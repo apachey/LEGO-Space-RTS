@@ -33,6 +33,7 @@ public sealed class EntityStore
     public readonly ComponentStore<ForwardServiceMember> ForwardServiceMember = new();
     public readonly ComponentStore<MissionRefitState> MissionRefitState = new();
     public readonly ComponentStore<MissionRefitJob> MissionRefitJob = new();
+    public readonly ComponentStore<ResonanceCore> ResonanceCore = new();
     public readonly ComponentStore<PowerState> PowerState = new();
     public readonly ComponentStore<ConstructionSite> ConstructionSite = new();
     public readonly ComponentStore<Production> Production = new();
@@ -98,6 +99,7 @@ public sealed class EntityStore
         ForwardServiceMember.Remove(id);
         MissionRefitState.Remove(id);
         MissionRefitJob.Remove(id);
+        ResonanceCore.Remove(id);
         PowerState.Remove(id);
         ConstructionSite.Remove(id);
         Production.Remove(id);

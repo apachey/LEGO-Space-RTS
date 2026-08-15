@@ -36,6 +36,11 @@ public sealed class CommandExecutionSystem : ISimSystem
             MissionRefitSystem.TryStartT3Refit(world, command.PlayerSlot, command.TargetEntity, command.MissionConfiguration);
             return;
         }
+        if (command.Type == SimCommandType.SetResonanceCommitment)
+        {
+            ResonanceCoreSystem.TrySetDesiredCommitment(world, command.PlayerSlot, command.TargetEntity, command.DesiredResonanceCommitment);
+            return;
+        }
         if (command.Type == SimCommandType.Build)
         {
             if ((command.TargetPosition.X.Raw & (Fix32.OneRaw - 1)) != 0 || (command.TargetPosition.Y.Raw & (Fix32.OneRaw - 1)) != 0) return;

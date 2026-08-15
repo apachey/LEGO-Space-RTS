@@ -101,11 +101,17 @@ public sealed class EnergyDomainSystem : ISimSystem
         {
             EntityId id = alive[i];
             if (!world.Entities.EnergyDomainMember.TryGet(id, out EnergyDomainMember member) || member.DomainRoot != root ||
-                !world.Entities.Building.TryGet(id, out Building building) || building.State != BuildingState.Completed ||
-                !world.Content.TryGetBuilding(building.Type, out BuildingDefinition definition)) continue;
-            generation = checked(generation + definition.EnergyGenerationPerSecond);
-            demand = checked(demand + definition.ContinuousEnergyDemandPerSecond);
-            capacity = checked(capacity + definition.EnergyReserveCapacity);
+                !world.Entities.Building.TryGet(id, out Building building) || building.State != BuildingState.Completed) continue;
+            int entityDemand = 0;
+            if (world.Content.TryGetBuilding(building.Type, out BuildingDefinition definition))
+            {
+                generation = checked(generation + definition.EnergyGenerationPerSecond);
+                capacity = checked(capacity + definition.EnergyReserveCapacity);
+                entityDemand = definition.ContinuousEnergyDemandPerSecond;
+            }
+            if (world.Entities.ResonanceCore.TryGet(id, out ResonanceCore core) && ResonanceCoreSystem.IsValidCore(world, id))
+                entityDemand = ResonanceCoreSystem.ContinuousEnergyDemand(core);
+            demand = checked(demand + entityDemand);
         }
         ref EnergyDomain domain = ref world.Entities.EnergyDomain.Get(root);
         domain.GenerationPerSecond = generation;

@@ -4,7 +4,7 @@ using System.IO;
 
 namespace LegoSpaceRTS.SimCore
 {
-public enum SimCommandType : ushort { Move = 1, Stop = 2, HoldPosition = 3, Harvest = 4, Build = 5, CancelConstruction = 6, AssistConstruction = 7, QueueProduction = 8, SetRallyPoint = 9, SetEnergyPriority = 10, MissionRefit = 11, DebugOpenExcavatable = 1000, DebugDrainEnergy = 1001 }
+public enum SimCommandType : ushort { Move = 1, Stop = 2, HoldPosition = 3, Harvest = 4, Build = 5, CancelConstruction = 6, AssistConstruction = 7, QueueProduction = 8, SetRallyPoint = 9, SetEnergyPriority = 10, MissionRefit = 11, SetResonanceCommitment = 12, DebugOpenExcavatable = 1000, DebugDrainEnergy = 1001 }
 [Flags] public enum CommandModifiers : byte { None = 0, Queue = 1 }
 
 public readonly struct CommandEnvelope
@@ -22,11 +22,12 @@ public readonly struct CommandEnvelope
     public readonly byte Orientation;
     public readonly EnergyPriority EnergyPriority;
     public readonly MissionConfiguration MissionConfiguration;
+    public readonly byte DesiredResonanceCommitment;
 
     public CommandEnvelope(SimTick executionTick, byte playerSlot, uint sequence, SimCommandType type, EntityId[] entities,
         FixVec2 targetPosition, CommandModifiers modifiers = CommandModifiers.None, EntityId targetEntity = default, ushort debugFeatureId = 0,
         ContentId contentType = default, byte orientation = 0, EnergyPriority energyPriority = EnergyPriority.Normal,
-        MissionConfiguration missionConfiguration = MissionConfiguration.None)
+        MissionConfiguration missionConfiguration = MissionConfiguration.None, byte desiredResonanceCommitment = 0)
     {
         ValidateType(type);
         if (entities == null) throw new ArgumentNullException(nameof(entities));
@@ -39,14 +40,15 @@ public readonly struct CommandEnvelope
         if (type == SimCommandType.AssistConstruction && targetEntity == EntityId.None) throw new ArgumentException("AssistConstruction requires a site target.", nameof(targetEntity));
         if (type == SimCommandType.QueueProduction && (targetEntity == EntityId.None || contentType.Value == 0)) throw new ArgumentException("QueueProduction requires a producer and unit content type.");
         if (type == SimCommandType.MissionRefit && (targetEntity == EntityId.None || (missionConfiguration != MissionConfiguration.T3Escort && missionConfiguration != MissionConfiguration.T3Survey))) throw new ArgumentException("MissionRefit requires a target and legal configuration.");
+        if (type == SimCommandType.SetResonanceCommitment && (targetEntity == EntityId.None || desiredResonanceCommitment > ResonanceCoreSystem.ExpandedSlots)) throw new ArgumentException("SetResonanceCommitment requires a target and legal desired count.");
         if (energyPriority < EnergyPriority.High || energyPriority > EnergyPriority.Low) throw new ArgumentOutOfRangeException(nameof(energyPriority));
         ExecutionTick = executionTick; PlayerSlot = playerSlot; Sequence = sequence; Type = type; Entities = entities;
-        TargetEntity = targetEntity; TargetPosition = targetPosition; Modifiers = modifiers; DebugFeatureId = debugFeatureId; ContentType = contentType; Orientation = orientation; EnergyPriority = energyPriority; MissionConfiguration = missionConfiguration;
+        TargetEntity = targetEntity; TargetPosition = targetPosition; Modifiers = modifiers; DebugFeatureId = debugFeatureId; ContentType = contentType; Orientation = orientation; EnergyPriority = energyPriority; MissionConfiguration = missionConfiguration; DesiredResonanceCommitment = desiredResonanceCommitment;
     }
 
     private static void ValidateType(SimCommandType type)
     {
-        if (type != SimCommandType.Move && type != SimCommandType.Stop && type != SimCommandType.HoldPosition && type != SimCommandType.Harvest && type != SimCommandType.Build && type != SimCommandType.CancelConstruction && type != SimCommandType.AssistConstruction && type != SimCommandType.QueueProduction && type != SimCommandType.SetRallyPoint && type != SimCommandType.SetEnergyPriority && type != SimCommandType.MissionRefit && type != SimCommandType.DebugOpenExcavatable && type != SimCommandType.DebugDrainEnergy)
+        if (type != SimCommandType.Move && type != SimCommandType.Stop && type != SimCommandType.HoldPosition && type != SimCommandType.Harvest && type != SimCommandType.Build && type != SimCommandType.CancelConstruction && type != SimCommandType.AssistConstruction && type != SimCommandType.QueueProduction && type != SimCommandType.SetRallyPoint && type != SimCommandType.SetEnergyPriority && type != SimCommandType.MissionRefit && type != SimCommandType.SetResonanceCommitment && type != SimCommandType.DebugOpenExcavatable && type != SimCommandType.DebugDrainEnergy)
             throw new ArgumentOutOfRangeException(nameof(type), type, "Unknown command type.");
     }
 
@@ -54,11 +56,11 @@ public readonly struct CommandEnvelope
     {
         w.Write(ExecutionTick.Value); w.Write(PlayerSlot); w.Write(Sequence); w.Write((ushort)Type); w.Write((byte)Modifiers);
         w.Write(TargetEntity.Value); w.Write(TargetPosition.X.Raw); w.Write(TargetPosition.Y.Raw); w.Write(DebugFeatureId);
-        w.Write(ContentType.Value); w.Write(Orientation); w.Write((byte)EnergyPriority); w.Write((byte)MissionConfiguration);
+        w.Write(ContentType.Value); w.Write(Orientation); w.Write((byte)EnergyPriority); w.Write((byte)MissionConfiguration); w.Write(DesiredResonanceCommitment);
         w.Write(Entities.Length); for (int i = 0; i < Entities.Length; i++) w.Write(Entities[i].Value);
     }
 
-    public static CommandEnvelope Read(BinaryReader r, bool includeBuildFields = true, bool includeEnergyPriority = true, bool includeMissionRefit = true)
+    public static CommandEnvelope Read(BinaryReader r, bool includeBuildFields = true, bool includeEnergyPriority = true, bool includeMissionRefit = true, bool includeResonanceCommitment = true)
     {
         SimTick tick = new(r.ReadInt32()); byte player = r.ReadByte(); uint seq = r.ReadUInt32(); SimCommandType type = (SimCommandType)r.ReadUInt16();
         ValidateType(type);
@@ -67,9 +69,10 @@ public readonly struct CommandEnvelope
         ContentId contentType = includeBuildFields ? new ContentId(r.ReadUInt32()) : default; byte orientation = includeBuildFields ? r.ReadByte() : (byte)0;
         EnergyPriority energyPriority = includeEnergyPriority ? (EnergyPriority)r.ReadByte() : EnergyPriority.Normal;
         MissionConfiguration missionConfiguration = includeMissionRefit ? (MissionConfiguration)r.ReadByte() : MissionConfiguration.None;
+        byte desiredResonanceCommitment = includeResonanceCommitment ? r.ReadByte() : (byte)0;
         int count = r.ReadInt32(); if (count < 0 || count > 128) throw new InvalidDataException("Invalid command entity count.");
         EntityId[] ids = new EntityId[count]; for (int i = 0; i < count; i++) ids[i] = new EntityId(r.ReadUInt32());
-        return new CommandEnvelope(tick, player, seq, type, ids, pos, mod, target, feature, contentType, orientation, energyPriority, missionConfiguration);
+        return new CommandEnvelope(tick, player, seq, type, ids, pos, mod, target, feature, contentType, orientation, energyPriority, missionConfiguration, desiredResonanceCommitment);
     }
 }
 
@@ -168,7 +171,7 @@ public sealed class CommandBuffer
         if (remove > 0) _commands.RemoveRange(0, remove);
     }
     public void Serialize(BinaryWriter w) { w.Write(_commands.Count); for (int i = 0; i < _commands.Count; i++) _commands[i].Write(w); }
-    public void Deserialize(BinaryReader r, bool includeBuildFields = true, bool includeEnergyPriority = true, bool includeMissionRefit = true) { _commands.Clear(); int n = r.ReadInt32(); if (n < 0 || n > 100000) throw new InvalidDataException("Invalid command buffer."); for (int i = 0; i < n; i++) _commands.Add(CommandEnvelope.Read(r, includeBuildFields, includeEnergyPriority, includeMissionRefit)); _commands.Sort(Compare); }
+    public void Deserialize(BinaryReader r, bool includeBuildFields = true, bool includeEnergyPriority = true, bool includeMissionRefit = true, bool includeResonanceCommitment = true) { _commands.Clear(); int n = r.ReadInt32(); if (n < 0 || n > 100000) throw new InvalidDataException("Invalid command buffer."); for (int i = 0; i < n; i++) _commands.Add(CommandEnvelope.Read(r, includeBuildFields, includeEnergyPriority, includeMissionRefit, includeResonanceCommitment)); _commands.Sort(Compare); }
     private static int Compare(CommandEnvelope a, CommandEnvelope b)
     {
         int c = a.ExecutionTick.Value.CompareTo(b.ExecutionTick.Value); if (c != 0) return c;

@@ -224,6 +224,12 @@ for token in ['FirstSurveyInstallOre = 25','FirstSurveyInstallEnergy = 10','18 *
 check('ForwardServiceSystem.TryGetProviderForMember' in mission_refit and 'world.Entities.MissionRefitJob.Set' in mission_refit, 'T052 service validation or authoritative job missing')
 check('state.CurrentConfiguration = job.NewConfiguration' in mission_refit and 'MissionRefitJob.Remove' in mission_refit, 'T052 identity-preserving completion missing')
 
+resonance = (ROOT/'SimCore/Runtime/Simulation/ResonanceCoreSystem.cs').read_text()
+for token in ['BaselineSlots = 4','ExpandedSlots = 6','8 * EnergyDomainSystem.TicksPerSecond','15 * EnergyDomainSystem.TicksPerSecond','BaseEnergyDemandPerSecond = 3','EnergyDemandPerInstalledCrystal = 2','building.ali.resonance_core','building.ali.etx_command_core']:
+    check(token in resonance, f'canonical T053 Resonance Core contract missing: {token}')
+check('TrySetDesiredCommitment' in resonance and 'DesiredCommittedCrystals' in resonance and 'TryStartNextTransition' in resonance, 'T053 desired-count sequential commitment missing')
+check('ResourceType.Crystal' in resonance and 'CommittedSlotMask' in resonance and 'EnergyDomainSystem.Recalculate' in resonance, 'T053 Crystal ownership/slot/Energy integration missing')
+
 headless = (ROOT/'HeadlessSim/Program.cs').read_text()
 for token in ['--snapshot-in','--snapshot-out','--replay','--record-replay','--benchmark','--path-benchmark','--hash-every','--repeat','--golden-manifest-out','--golden-manifest-in','--dump-state','--compiled-dir']:
     check(token in headless, f'HeadlessSim switch missing: {token}')
