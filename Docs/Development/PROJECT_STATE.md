@@ -5,7 +5,7 @@ remain authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M5 — Four-Faction System Proof / T049–T057 and the executable acceptance handoff are fully implemented and verified; game-director playtest acceptance is the remaining M5 gate.**
+**M5 — Four-Faction System Proof / T049–T057 and the executable acceptance handoff are fully implemented, verified and game-director accepted on `codex/m5-acceptance-handoff`. The remaining integration action is the user's merge to main.**
 
 M3 is merged and human-accepted. At the game director's explicit request,
 development moved directly to M5 T049 rather than beginning M4 T040. M4 combat
@@ -624,14 +624,11 @@ narrow placement cases allowed by Phase 09B.
   exported application passed both its normal and M5-specific smokes.
 - The exported application passed the M5 fresh-handoff smoke at tick 40 with
   hash `391359A970F70605`.
-- Game-director acceptance is complete for guide steps 1–4. Steps 5–6 were
-  rejected because the displacement produced no perceptible movement and the
-  excavation view never showed the blocking wall before it opened. The fixture,
-  presentation refresh and excavation staging correct the underlying state
-  transitions. The only
-  remaining M5 acceptance is a repeat human check of corrected step 5; step 6
-  is now accepted after the wall visibly disappeared and the unit crossed the
-  opened route.
+- Game-director acceptance is complete for all six guide steps as of
+  2026-08-15. The corrected excavation proof visibly removes the blocking wall
+  before its unit crosses the opened route. The corrected displacement proof
+  visibly shows its source, hostile target, full two-cell push and subsequent
+  Stability-reduced half-cell push without moving the camera.
 - The first corrected step-5 build still hid the hostile T3-Trike because the
   paused fixture captured presentation before its initial Vision pass. The M5
   fixture now initializes derived fog visibility at tick zero, so the enemy
@@ -654,7 +651,7 @@ narrow placement cases allowed by Phase 09B.
 - Legacy 60-mover stress: `DIAGNOSTIC` during M2–M5 and `BLOCKING_LATER`
   before M6. The latest full run remains diagnostic-failing at 51.67%
   completion (31/60), 8,483 oscillation incidents and elevated tail latency;
-  it does not block the current M5 task.
+  it did not block M5 acceptance but must be resolved before M6 begins.
 
 ## Known unresolved work
 
@@ -739,8 +736,8 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Repeat only corrected M5 playtest step 5; steps 1–4 and 6 are accepted. Merge
-   the stacked M5 branches only after the remaining step is accepted.
+1. Merge the accepted stacked M5 branch into main when the game director is
+   ready; implementation agents must not perform that merge automatically.
 2. Before beginning M6, resolve the now-`BLOCKING_LATER` 60-mover gate rather
    than carrying its 31/60 completion into networked 1v1 work.
 3. After M5 acceptance and the pre-M6 movement gate, begin M6 T058 using the
