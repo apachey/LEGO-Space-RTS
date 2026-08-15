@@ -5,7 +5,7 @@ remain authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M5 — Four-Faction System Proof / T055 Tube graph implemented and fully verified on the current stacked task branch.**
+**M5 — Four-Faction System Proof / T056 Tube transit implemented and fully verified on the current stacked task branch.**
 
 M3 is merged and human-accepted. At the game director's explicit request,
 development moved directly to M5 T049 rather than beginning M4 T040. M4 combat
@@ -15,8 +15,9 @@ complete or silently treated as an M5 dependency.
 T049 is human-accepted and recorded in commit `3f677b2`. T050 is recorded in
 commit `8731f61`; T051 is recorded in commit `ad93ec1`; T052 is recorded in
 commit `f6f390a`; T053 is recorded in commit `5844ee1`; T054 is recorded in
-commit `2525747`. T055 is stacked on all six in `codex/m5-tube-graph`; none of
-these M5 task commits is merged to main.
+commit `2525747`. T055 is recorded in commit `da075fc`. T056 is stacked on all
+seven in `codex/m5-tube-transit`; none of these M5 task commits is merged to
+main.
 
 ## Engine / architecture
 
@@ -517,6 +518,41 @@ narrow placement cases allowed by Phase 09B.
   `Artifacts/Verification/20260815T114624Z-full-summary.txt`.
 - A launchable T055 debug build exists at
   `Builds/macOS/LEGO Space RTS.app` and passed the export smoke.
+- M5 T056 implements deterministic Aero Tube passenger transit for Worker
+  Robots, Double Hovers and Jet Scooters while rejecting heavy/ineligible
+  units. Transfers retain their passenger Entity ID through approach, stable
+  Station queueing, loading, off-map travel, unloading, blocked-exit waiting
+  and Arrival Recovery; off-map passengers have no Transform and therefore do
+  not participate in ground spatial queries or normal targeting.
+- Canonical timing is exact at 20 Hz: 3 seconds loading, ceiling-rounded 0.12
+  seconds per ordered Tube build-grid cell, 2 seconds unloading and 0.75
+  seconds Arrival Recovery. Each Station provides two simultaneous channels,
+  raised to three by Hypersled Throughput; overflow is ordered by request tick
+  and passenger Entity ID. Move orders issued during transfer are retained as
+  post-recovery arrival orders.
+- Transfers select a stable lowest-Link-ID BFS route. A broken selected route
+  safely returns the passenger to its origin after 6 seconds; Redundant Routing
+  instead selects a surviving alternate route when one exists. Destination
+  exits reserve the local 3x3 area, wait up to 4 seconds when obstructed, then
+  use a deterministic nearest legal fallback within three build cells. No
+  arbitrary passenger loss or presentation-owned gameplay state is introduced.
+- Tube transfer jobs and selected Link routes participate in snapshot v18,
+  simulation protocol v16, replay v13, hashes and ordered state dumps. The
+  Station HUD reports its two/three transfer-channel capacity. Six focused
+  regressions cover eligibility/timing, queue throughput, off-map identity and
+  deferred orders, safe return, redundant rerouting and mid-transit snapshot
+  continuation.
+- T056 full verification is green across every `BLOCKING_NOW` stage:
+  warnings-as-errors builds, 167 NUnit tests, representative 24-mover
+  acceptance, compiled-content identity, HeadlessSim, Godot headless smoke,
+  100-repeat determinism, replay, snapshot continuation, regeneration and
+  macOS export. The golden/replay hash is `16DEA4B5FC2DD331`; the snapshot
+  continuation hash is `6A4508CE6B19BCAC`. The preserved 60-mover stage remains
+  diagnostic-failing at 31/60 completion and 8,483 oscillation incidents. The
+  authoritative summary is
+  `Artifacts/Verification/20260815T121716Z-full-summary.txt`.
+- A launchable T056 debug build exists at
+  `Builds/macOS/LEGO Space RTS.app` and passed the export smoke.
 
 ## Current gates
 
@@ -594,8 +630,10 @@ narrow placement cases allowed by Phase 09B.
   graph accepts only a completed Link and exposes the canonical cost/timing;
   player-facing construction funding/progress, physical Link presentation and
   Martian local Energy-domain pooling require the full Martian content/economy
-  integration scheduled for T071. T056 remains responsible for Jet Scooter
-  Tube transit, queues, travel timing and safe reroute/return behavior.
+  integration scheduled for T071. T056 exposes the authoritative transfer API
+  and state machine but does not invent missing Martian production content,
+  player-facing Station selection/command wiring or Tube presentation; those
+  remain part of the scheduled full Martian integration.
 
 ## Explicitly rejected / do not resurrect
 
@@ -608,7 +646,7 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Finish the T055 stacked branch handoff; merge only through game-director
+1. Finish the T056 stacked branch handoff; merge only through game-director
    review.
-2. Continue M5 with T056 Tube transit after T055 is accepted/merged, unless
+2. Continue M5 with T057 Displacement/Stability after T056 is accepted/merged, unless
    the game director explicitly returns to deferred M4 T040 Targeting.

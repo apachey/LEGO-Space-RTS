@@ -26,6 +26,7 @@ public sealed class SimulationWorld
 
     internal readonly Dictionary<uint, RouteCorridor> Corridors = new();
     internal readonly Dictionary<uint, TubeRoute> TubeRoutes = new();
+    internal readonly Dictionary<uint, TubeTransitRoute> TubeTransitRoutes = new();
     internal readonly Dictionary<uint, UnitCommandQueue> Queues = new();
     internal readonly Dictionary<uint, FixVec2> PendingVelocity = new();
     internal readonly Dictionary<uint, bool> CompressionUsed = new();

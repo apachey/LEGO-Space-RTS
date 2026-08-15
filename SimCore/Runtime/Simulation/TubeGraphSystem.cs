@@ -73,11 +73,10 @@ public static class TubeGraphSystem
         if (first == second || !IsOwnedStation(world, first, playerSlot) || !IsOwnedStation(world, second, playerSlot)) return false;
         Rebuild(world);
         if (HasDirectLink(world, first, second) || world.Entities.TubeStation.Get(first).ConnectionCount >= world.Entities.TubeStation.Get(first).ConnectionLimit ||
-            world.Entities.TubeStation.Get(second).ConnectionCount >= world.Entities.TubeStation.Get(second).ConnectionLimit ||
-            !TryBuildAutomaticRoute(world, first, second, out TubeRoute route) || route.Cells.Count > ushort.MaxValue) return false;
-
+            world.Entities.TubeStation.Get(second).ConnectionCount >= world.Entities.TubeStation.Get(second).ConnectionLimit) return false;
         EntityId endpointA = first.Value < second.Value ? first : second;
         EntityId endpointB = first.Value < second.Value ? second : first;
+        if (!TryBuildAutomaticRoute(world, endpointA, endpointB, out TubeRoute route) || route.Cells.Count > ushort.MaxValue) return false;
         link = world.Entities.Create();
         world.Entities.Ownership.Set(link, new Ownership { PlayerSlot = playerSlot });
         world.Entities.TubeLink.Set(link, new TubeLink
@@ -102,6 +101,15 @@ public static class TubeGraphSystem
         return true;
     }
 
+    public static bool TrySetHypersledThroughput(SimulationWorld world, byte playerSlot, EntityId station, bool unlocked)
+    {
+        if (!IsOwnedStation(world, station, playerSlot)) return false;
+        ref TubeStation state = ref world.Entities.TubeStation.Get(station);
+        if (state.HypersledThroughputUnlocked == unlocked) return false;
+        state.HypersledThroughputUnlocked = unlocked;
+        return true;
+    }
+
     public static bool TryRemoveLink(SimulationWorld world, byte playerSlot, EntityId link)
     {
         if (!world.Entities.TubeLink.Has(link) || !world.Entities.Ownership.TryGet(link, out Ownership owner) || owner.PlayerSlot != playerSlot) return false;
@@ -121,6 +129,53 @@ public static class TubeGraphSystem
         { root = state.ComponentRoot; return true; }
         root = EntityId.None;
         return false;
+    }
+
+    public static bool TryGetStationSocket(SimulationWorld world, EntityId link, EntityId station, out FixVec2 socket)
+    {
+        socket = FixVec2.Zero;
+        if (!world.Entities.TubeLink.TryGet(link, out TubeLink tube) || !world.TubeRoutes.TryGetValue(link.Value, out TubeRoute route) || route.Cells.Count == 0) return false;
+        TubeBuildCell cell;
+        if (tube.EndpointA == station) cell = route.Cells[0];
+        else if (tube.EndpointB == station) cell = route.Cells[route.Cells.Count - 1];
+        else return false;
+        socket = new FixVec2(Fix32.FromRatio(cell.X * 2 + 1, 2), Fix32.FromRatio(cell.Y * 2 + 1, 2));
+        return true;
+    }
+
+    public static bool TryFindOperationalRoute(SimulationWorld world, EntityId origin, EntityId destination, List<EntityId> output)
+    {
+        output.Clear();
+        if (origin == destination || !SharesComponent(world, origin, destination)) return false;
+        Queue<EntityId> queue = new();
+        Dictionary<uint, uint> parent = new();
+        Dictionary<uint, EntityId> parentLink = new();
+        parent.Add(origin.Value, 0); queue.Enqueue(origin);
+        while (queue.Count > 0 && !parent.ContainsKey(destination.Value))
+        {
+            EntityId current = queue.Dequeue();
+            List<EntityId> candidates = new();
+            IReadOnlyList<EntityId> alive = world.Entities.Alive;
+            for (int i = 0; i < alive.Count; i++)
+                if (world.Entities.TubeLink.TryGet(alive[i], out TubeLink link) && link.IsOperational && (link.EndpointA == current || link.EndpointB == current)) candidates.Add(alive[i]);
+            candidates.Sort((a, b) => a.Value.CompareTo(b.Value));
+            for (int i = 0; i < candidates.Count; i++)
+            {
+                TubeLink link = world.Entities.TubeLink.Get(candidates[i]);
+                EntityId next = link.EndpointA == current ? link.EndpointB : link.EndpointA;
+                if (parent.ContainsKey(next.Value)) continue;
+                parent.Add(next.Value, current.Value); parentLink.Add(next.Value, candidates[i]); queue.Enqueue(next);
+            }
+        }
+        if (!parent.ContainsKey(destination.Value)) return false;
+        EntityId cursor = destination;
+        while (cursor != origin)
+        {
+            output.Add(parentLink[cursor.Value]);
+            cursor = new EntityId(parent[cursor.Value]);
+        }
+        output.Reverse();
+        return output.Count > 0;
     }
 
     public static int GetConnectedProcessedResourceTotal(SimulationWorld world, EntityId station, ResourceType type)

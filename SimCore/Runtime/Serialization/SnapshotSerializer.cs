@@ -7,8 +7,8 @@ namespace LegoSpaceRTS.SimCore
 public static class SnapshotSerializer
 {
     public const uint Magic = 0x53525453; // STRS
-    public const ushort FormatVersion = 17;
-    public const ushort SimulationProtocolVersion = 15;
+    public const ushort FormatVersion = 18;
+    public const ushort SimulationProtocolVersion = 16;
 
     [Flags]
     private enum EntityComponents : uint
@@ -64,6 +64,7 @@ public static class SnapshotSerializer
             w.Write(charge.CurrentMillicharge); w.Write(charge.ResonanceInitiationUnlocked);
         }
         WriteTubeGraph(w, world);
+        WriteTubeTransfers(w, world);
         world.Commands.Serialize(w);
         world.Fog.Serialize(w);
         w.Flush(); return ms.ToArray();
@@ -74,7 +75,7 @@ public static class SnapshotSerializer
         using MemoryStream ms = new(bytes, false); using BinaryReader r = new(ms);
         if (r.ReadUInt32() != Magic) throw new InvalidDataException("Snapshot magic mismatch.");
         ushort format = r.ReadUInt16(), protocol = r.ReadUInt16();
-        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8) || (format == 11 && protocol == 9) || (format == 12 && protocol == 10) || (format == 13 && protocol == 11) || (format == 14 && protocol == 12) || (format == 15 && protocol == 13) || (format == 16 && protocol == 14);
+        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8) || (format == 11 && protocol == 9) || (format == 12 && protocol == 10) || (format == 13 && protocol == 11) || (format == 14 && protocol == 12) || (format == 15 && protocol == 13) || (format == 16 && protocol == 14) || (format == 17 && protocol == 15);
         if (!supportedLegacy && (format != FormatVersion || protocol != SimulationProtocolVersion)) throw new InvalidDataException($"Unsupported snapshot {format}/{protocol}.");
         SimTick tick = new(r.ReadInt32()); MapGrid map = MapGrid.Deserialize(r, includeExcavatableMetadata: format >= 12); uint nextEntity = r.ReadUInt32();
         EntityStore entities = new(); int entityCount = r.ReadInt32(); if (entityCount < 0 || entityCount > 10000) throw new InvalidDataException("Invalid entity count.");
@@ -100,7 +101,8 @@ public static class SnapshotSerializer
                 temp.SetAlienCharge(player, new AlienChargeState { CurrentMillicharge = currentMillicharge, ResonanceInitiationUnlocked = r.ReadBoolean() });
             }
         }
-        if (format >= 17) ReadTubeGraph(r, temp);
+        if (format >= 17) ReadTubeGraph(r, temp, format);
+        if (format >= 18) ReadTubeTransfers(r, temp);
         temp.Commands.Deserialize(r, includeBuildFields: format >= 6, includeEnergyPriority: format >= 10, includeMissionRefit: format >= 14, includeResonanceCommitment: format >= 15);
         temp.Fog = FogState.Deserialize(r);
         if (ms.Position != ms.Length) throw new InvalidDataException("Trailing snapshot bytes.");
@@ -130,7 +132,7 @@ public static class SnapshotSerializer
         for (int i = 0; i < stations.Count; i++)
         {
             EntityId id = stations[i]; TubeStation station = world.Entities.TubeStation.Get(id);
-            w.Write(id.Value); w.Write(station.ComponentRoot.Value); w.Write(station.ConnectionLimit); w.Write(station.ConnectionCount); w.Write(station.RedundantRoutingUnlocked);
+            w.Write(id.Value); w.Write(station.ComponentRoot.Value); w.Write(station.ConnectionLimit); w.Write(station.ConnectionCount); w.Write(station.RedundantRoutingUnlocked); w.Write(station.HypersledThroughputUnlocked);
         }
         w.Write(links.Count);
         for (int i = 0; i < links.Count; i++)
@@ -150,7 +152,7 @@ public static class SnapshotSerializer
         }
     }
 
-    private static void ReadTubeGraph(BinaryReader r, SimulationWorld world)
+    private static void ReadTubeGraph(BinaryReader r, SimulationWorld world, ushort format)
     {
         world.TubeTopologyRevision = r.ReadUInt32(); world.TubeSegmentationRevision = r.ReadUInt32();
         int stationCount = r.ReadInt32();
@@ -158,7 +160,7 @@ public static class SnapshotSerializer
         for (int i = 0; i < stationCount; i++)
         {
             EntityId id = new(r.ReadUInt32()), root = new(r.ReadUInt32());
-            TubeStation station = new() { ComponentRoot = root, ConnectionLimit = r.ReadByte(), ConnectionCount = r.ReadByte(), RedundantRoutingUnlocked = r.ReadBoolean() };
+            TubeStation station = new() { ComponentRoot = root, ConnectionLimit = r.ReadByte(), ConnectionCount = r.ReadByte(), RedundantRoutingUnlocked = r.ReadBoolean(), HypersledThroughputUnlocked = format >= 18 && r.ReadBoolean() };
             if (!world.Entities.Exists(id) || world.Entities.TubeStation.Has(id) || root == EntityId.None || station.ConnectionCount > station.ConnectionLimit)
                 throw new InvalidDataException("Invalid Tube Station state.");
             world.Entities.TubeStation.Set(id, station);
@@ -192,6 +194,46 @@ public static class SnapshotSerializer
             world.Entities.TubeComponent.Set(id, component);
         }
         if (TubeGraphSystem.Rebuild(world)) throw new InvalidDataException("Inconsistent cached Tube topology.");
+    }
+
+    private static void WriteTubeTransfers(BinaryWriter w, SimulationWorld world)
+    {
+        List<EntityId> passengers = new(); IReadOnlyList<EntityId> alive = world.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++) if (world.Entities.TubeTransfer.Has(alive[i])) passengers.Add(alive[i]);
+        w.Write(passengers.Count);
+        for (int i = 0; i < passengers.Count; i++)
+        {
+            EntityId id = passengers[i]; TubeTransfer transfer = world.Entities.TubeTransfer.Get(id);
+            if (!world.TubeTransitRoutes.TryGetValue(id.Value, out TubeTransitRoute route) || route.Links.Count == 0) throw new InvalidDataException("Tube transfer has no selected route.");
+            w.Write(id.Value); w.Write(transfer.Origin.Value); w.Write(transfer.Destination.Value); w.Write(transfer.RequestedTick); w.Write(transfer.DepartureTick);
+            w.Write(transfer.TotalTravelTicks); w.Write(transfer.RemainingTicks); w.Write(transfer.CurrentEdgeIndex); w.Write(transfer.ExitWaitTicks);
+            w.Write((byte)transfer.State); w.Write(transfer.HasArrivalMoveOrder); w.Write(transfer.ArrivalMoveTarget.X.Raw); w.Write(transfer.ArrivalMoveTarget.Y.Raw);
+            w.Write(route.Links.Count); for (int l = 0; l < route.Links.Count; l++) w.Write(route.Links[l].Value);
+        }
+    }
+
+    private static void ReadTubeTransfers(BinaryReader r, SimulationWorld world)
+    {
+        int count = r.ReadInt32(); if (count < 0 || count > 10000) throw new InvalidDataException("Invalid Tube transfer count.");
+        for (int i = 0; i < count; i++)
+        {
+            EntityId id = new(r.ReadUInt32()); TubeTransfer transfer = new()
+            {
+                Origin = new EntityId(r.ReadUInt32()), Destination = new EntityId(r.ReadUInt32()), RequestedTick = r.ReadInt32(), DepartureTick = r.ReadInt32(),
+                TotalTravelTicks = r.ReadInt32(), RemainingTicks = r.ReadInt32(), CurrentEdgeIndex = r.ReadUInt16(), ExitWaitTicks = r.ReadUInt16(),
+                State = (TubeTransferState)r.ReadByte(), HasArrivalMoveOrder = r.ReadBoolean(),
+                ArrivalMoveTarget = new FixVec2(Fix32.FromRaw(r.ReadInt32()), Fix32.FromRaw(r.ReadInt32()))
+            };
+            int linkCount = r.ReadInt32();
+            if (!world.Entities.Exists(id) || world.Entities.TubeTransfer.Has(id) || !world.Entities.TubeStation.Has(transfer.Origin) || !world.Entities.TubeStation.Has(transfer.Destination) ||
+                (byte)transfer.State > (byte)TubeTransferState.ArrivalRecovery || transfer.RemainingTicks < 0 || transfer.TotalTravelTicks < 0 || linkCount <= 0 || linkCount > 1000)
+                throw new InvalidDataException("Invalid Tube transfer state.");
+            TubeTransitRoute route = new(); for (int l = 0; l < linkCount; l++) route.Links.Add(new EntityId(r.ReadUInt32()));
+            if (transfer.CurrentEdgeIndex >= route.Links.Count) throw new InvalidDataException("Invalid Tube transfer edge.");
+            bool shouldHaveTransform = transfer.State == TubeTransferState.Approaching || transfer.State == TubeTransferState.Queued || transfer.State == TubeTransferState.Loading || transfer.State == TubeTransferState.ArrivalRecovery;
+            if (world.Entities.Transform.Has(id) != shouldHaveTransform) throw new InvalidDataException("Invalid Tube passenger spatial state.");
+            world.Entities.TubeTransfer.Set(id, transfer); world.TubeTransitRoutes.Add(id.Value, route);
+        }
     }
 
     private static void WriteEntity(BinaryWriter w, SimulationWorld world, EntityId id)

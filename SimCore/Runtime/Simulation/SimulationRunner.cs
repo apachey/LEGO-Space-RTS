@@ -50,6 +50,7 @@ public sealed class SimulationRunner
             new MovementIntentSystem(),
             new LocalSeparationSystem(),
             new TransformMovementSystem(),
+            new TubeTransferSystem(),
             new ResourceBankingSystem(),
             new HarvestSystem(),
             new ConstructionSystem(),
@@ -85,7 +86,7 @@ public sealed class SimulationRunner
         for(int i=0;i<_systems.Length;i++)
         {
             long start=Stopwatch.GetTimestamp();_systems[i].Step(World);long elapsed=Stopwatch.GetTimestamp()-start;
-            switch(i){case 0:c=elapsed;break;case 1:n=elapsed;break;case 2:m=elapsed;break;case 3:l=elapsed;break;case 4:t=elapsed;break;case 5:b=elapsed;break;case 6:h=elapsed;break;case 7:j=elapsed;break;case 8:p=elapsed;break;case 9:q=elapsed;break;case 10:e=elapsed;break;case 11:a=elapsed;break;case 12:o=elapsed;break;case 13:s=elapsed;break;case 14:f=elapsed;break;case 15:r=elapsed;break;case 16:v=elapsed;break;}
+            switch(i){case 0:c=elapsed;break;case 1:n=elapsed;break;case 2:m=elapsed;break;case 3:l=elapsed;break;case 4:t=elapsed;break;case 5:t+=elapsed;break;case 6:b=elapsed;break;case 7:h=elapsed;break;case 8:j=elapsed;break;case 9:p=elapsed;break;case 10:q=elapsed;break;case 11:e=elapsed;break;case 12:a=elapsed;break;case 13:o=elapsed;break;case 14:s=elapsed;break;case 15:f=elapsed;break;case 16:r=elapsed;break;case 17:v=elapsed;break;}
         }
         return new TickProfile(Stopwatch.GetTimestamp()-totalStart,c,n,m,l,t,b,h,j,p,q,e,a,o,s,f,r,v);
     }

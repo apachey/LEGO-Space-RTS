@@ -71,11 +71,21 @@ public sealed class CommandExecutionSystem : ISimSystem
             return;
         }
 
+        if (command.Type == SimCommandType.Move)
+        {
+            for (int i = 0; i < command.Entities.Length; i++)
+            {
+                EntityId passenger = command.Entities[i];
+                if (world.Entities.Exists(passenger) && world.Entities.Ownership.TryGet(passenger, out Ownership owner) && owner.PlayerSlot == command.PlayerSlot)
+                    TubeTransferSystem.CaptureArrivalMoveOrder(world, passenger, command.TargetPosition);
+            }
+        }
+
         world.ScratchEntities.Clear();
         for (int i = 0; i < command.Entities.Length; i++)
         {
             EntityId id = command.Entities[i];
-            if (!world.Entities.Exists(id) || !world.Entities.Ownership.TryGet(id, out Ownership owner) || owner.PlayerSlot != command.PlayerSlot || !world.Entities.Navigation.Has(id) || world.Entities.MissionRefitJob.Has(id)) continue;
+            if (!world.Entities.Exists(id) || !world.Entities.Ownership.TryGet(id, out Ownership owner) || owner.PlayerSlot != command.PlayerSlot || !world.Entities.Navigation.Has(id) || world.Entities.MissionRefitJob.Has(id) || world.Entities.TubeTransfer.Has(id)) continue;
             world.ScratchEntities.Add(id);
         }
         world.ScratchEntities.Sort(EntityIdComparer.Instance);
@@ -678,8 +688,10 @@ public sealed class MovementIntentSystem : ISimSystem
             // Intermediate waypoints are steering points, not stop points. v0.3 braked at every
             // 0.5-cell A* node, producing visibly jerky movement and queue delays.
             bool finalWaypoint = move.PathIndex >= path.Cells.Count - 1 && world.GetQueue(id).Count == 0;
-            Fix32 brakingSpeed = finalWaypoint ? Fix32.Sqrt(Two * move.Deceleration * FixVec2.Distance(transform.Position, nav.Target)) : move.MaxSpeed;
-            Fix32 desiredSpeed = Fix32.Min(move.MaxSpeed, brakingSpeed);
+            Fix32 effectiveMaxSpeed = world.Entities.TubeTransfer.TryGet(id, out TubeTransfer transfer) && transfer.State == TubeTransferState.ArrivalRecovery
+                ? move.MaxSpeed * Fix32.FromRatio(3, 5) : move.MaxSpeed;
+            Fix32 brakingSpeed = finalWaypoint ? Fix32.Sqrt(Two * move.Deceleration * FixVec2.Distance(transform.Position, nav.Target)) : effectiveMaxSpeed;
+            Fix32 desiredSpeed = Fix32.Min(effectiveMaxSpeed, brakingSpeed);
             move.DesiredMovement = delta.NormalizeSafe() * desiredSpeed;
             world.PendingVelocity[id.Value] = move.DesiredMovement * SimClock.TickSeconds;
         }

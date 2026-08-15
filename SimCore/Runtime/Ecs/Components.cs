@@ -20,6 +20,7 @@ public enum BrownoutEventKind : byte { None = 0, Entered = 1, Changed = 2, Recov
 public enum DeploymentState : byte { Mobile = 0, Deploying = 1, Deployed = 2, Undeploying = 3 }
 public enum MissionConfiguration : byte { None = 0, T3Escort = 1, T3Survey = 2 }
 public enum ResonanceTransitionKind : byte { None = 0, Commit = 1, Withdraw = 2 }
+public enum TubeTransferState : byte { Approaching = 0, Queued = 1, Loading = 2, Travelling = 3, Unloading = 4, ExitBlocked = 5, Returning = 6, ArrivalRecovery = 7 }
 
 public struct Ownership
 {
@@ -283,6 +284,7 @@ public struct TubeStation
     public byte ConnectionLimit;
     public byte ConnectionCount;
     public bool RedundantRoutingUnlocked;
+    public bool HypersledThroughputUnlocked;
 }
 
 public struct TubeLink
@@ -300,6 +302,21 @@ public struct TubeComponent
     public ushort StationCount;
     public ushort OperationalLinkCount;
     public uint TopologyRevision;
+}
+
+public struct TubeTransfer
+{
+    public EntityId Origin;
+    public EntityId Destination;
+    public int RequestedTick;
+    public int DepartureTick;
+    public int TotalTravelTicks;
+    public int RemainingTicks;
+    public ushort CurrentEdgeIndex;
+    public ushort ExitWaitTicks;
+    public TubeTransferState State;
+    public bool HasArrivalMoveOrder;
+    public FixVec2 ArrivalMoveTarget;
 }
 
 public struct PowerState

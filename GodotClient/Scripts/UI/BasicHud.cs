@@ -255,6 +255,7 @@ public partial class BasicHud : CanvasLayer
         if (_bridge.World.Entities.TubeStation.TryGet(first, out TubeStation tubeStation))
         {
             _builder.Append("Aero Tube  ").Append(tubeStation.ConnectionCount).Append(" / ").Append(tubeStation.ConnectionLimit).Append(" connections  •  component #").Append(tubeStation.ComponentRoot.Value).Append('\n');
+            _builder.Append("Transfer channels  ").Append(tubeStation.HypersledThroughputUnlocked ? 3 : 2).Append(tubeStation.HypersledThroughputUnlocked ? "  •  Hypersled Throughput" : string.Empty).Append('\n');
             if (_bridge.World.Entities.TubeComponent.TryGet(tubeStation.ComponentRoot, out TubeComponent tubeComponent))
                 _builder.Append("Network  ").Append(tubeComponent.StationCount).Append(" Stations  •  ").Append(tubeComponent.OperationalLinkCount).Append(" active Links  •  topology ").Append(tubeComponent.TopologyRevision).Append('\n');
         }
