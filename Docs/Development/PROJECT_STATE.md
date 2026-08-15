@@ -620,7 +620,7 @@ narrow placement cases allowed by Phase 09B.
   177/177 NUnit tests, representative 24-mover acceptance, compiled-content
   identity, HeadlessSim, Godot smoke, 100-repeat determinism, replay, snapshot
   continuation, regeneration and macOS export. The full summary is
-  `Artifacts/Verification/20260815T150039Z-full-summary.txt`. The rebuilt
+  `Artifacts/Verification/20260815T152308Z-full-summary.txt`. The rebuilt
   exported application passed both its normal and M5-specific smokes.
 - The exported application passed the M5 fresh-handoff smoke at tick 40 with
   hash `391359A970F70605`.
@@ -637,12 +637,11 @@ narrow placement cases allowed by Phase 09B.
   fixture now initializes derived fog visibility at tick zero, so the enemy
   target and the Searcher's revealed area are both visible before either push.
   Regression coverage verifies the exact paused-presentation visibility
-  condition. Visual acceptance remains blocked because the now-rendered enemy
-  lands beneath the guide panel. A lateral camera offset moved the pair beyond
-  the top of the isometric frame, while wider one-shot framing still failed to
-  retain the pair after the scene reload. Under the two-attempt rule, a third
-  camera approach requires architecture review; the recommended next approach
-  is a fixed step-5 camera composition maintained for the full guided test.
+  condition. The game director approved the post-two-attempt camera review: a
+  dedicated step-5 composition now anchors the original pair midpoint at 28%
+  width / 38% height on every presentation frame. This keeps both actors in the
+  unobstructed left battlefield area while the target moves and does not alter
+  the ordinary player camera or authoritative simulation.
 
 ## Current gates
 

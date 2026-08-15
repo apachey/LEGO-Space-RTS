@@ -24,6 +24,7 @@ public partial class M5PlaytestHud : CanvasLayer
     private bool _surgeActivationPaused;
     private bool _tubeArrivalFocused;
     private bool _pauseOnFocus;
+    private Vector3? _displacementCameraAnchor;
     private double _nextUpdate;
     private readonly StringBuilder _text = new(768);
 
@@ -83,6 +84,7 @@ public partial class M5PlaytestHud : CanvasLayer
     public override void _Process(double delta)
     {
         if (_bridge is null || _status is null) return;
+        MaintainDisplacementFraming();
         HandleGuidedCameraAndPauses();
         double now = Time.GetTicksMsec() / 1000.0;
         if (now < _nextUpdate) return;
@@ -187,9 +189,17 @@ public partial class M5PlaytestHud : CanvasLayer
         if (_bridge is null || !M5AcceptanceScenarioFactory.TryFindFirst(_bridge.World, M5AcceptanceScenarioFactory.DisplacementSourceKey, out EntityId source) ||
             !M5AcceptanceScenarioFactory.TryFindFirst(_bridge.World, M5AcceptanceScenarioFactory.DisplacementTargetKey, out EntityId target)) return;
         _selection?.SetSelection(new[] { source, target });
-        _camera?.SetZoomCells(24f);
         if (_bridge.World.Entities.Transform.TryGet(source, out SimTransform a) && _bridge.World.Entities.Transform.TryGet(target, out SimTransform b))
-            _camera?.CenterOn(((a.Position + b.Position) * Fix32.Half).ToWorld());
+        {
+            _displacementCameraAnchor = ((a.Position + b.Position) * Fix32.Half).ToWorld();
+            MaintainDisplacementFraming();
+        }
+    }
+
+    private void MaintainDisplacementFraming()
+    {
+        if (_step != 5 || _camera is null || !_displacementCameraAnchor.HasValue) return;
+        _camera.FrameGroundPointAtViewport(_displacementCameraAnchor.Value, new Vector2(0.28f, 0.38f), 24f);
     }
 
     private void FocusExcavation()
