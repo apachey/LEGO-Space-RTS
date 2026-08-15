@@ -610,6 +610,10 @@ narrow placement cases allowed by Phase 09B.
   the map and stands outside the destination building.
 - The exported window title now identifies the build as the M5 Four-Faction
   Prototype instead of retaining the stale M3 Economy Prototype title.
+- The exported application name uses an ASCII hyphen so macOS Launch Services
+  resolves the bundle executable reliably when the `.app` is opened normally;
+  the prior Unicode-em-dash name could pass direct executable smoke while
+  failing Finder/`open` launch with `kLSNoExecutableErr`.
 - The replacement handoff is green across every `BLOCKING_NOW` stage with
   174/174 NUnit tests, representative 24-mover acceptance, compiled-content
   identity, HeadlessSim, Godot smoke, 100-repeat determinism, replay, snapshot
