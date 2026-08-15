@@ -12,6 +12,7 @@ public partial class GodotSmokeRunner : Node
     private string? _capturePath;
     private bool _captureConstruction;
     private bool _captureExcavation;
+    private bool _m5Acceptance;
     private bool _constructionSeeded;
     private EntityId _captureFocus;
     private bool _finished;
@@ -28,6 +29,7 @@ public partial class GodotSmokeRunner : Node
         {
             if (commandLineArgs[i] == "--capture-construction") _captureConstruction = true;
             if (commandLineArgs[i] == "--capture-excavation") _captureExcavation = true;
+            if (commandLineArgs[i] == "--m5-playtest") _m5Acceptance = true;
         }
     }
     public override void _Process(double delta)
@@ -38,7 +40,13 @@ public partial class GodotSmokeRunner : Node
             _camera?.CenterOn(focusTransform.Position.ToWorld());
         if (_frames == 2 && _selection is not null)
         {
-            if (_captureExcavation && TryOpenExcavatable())
+            if (_m5Acceptance && M5AcceptanceScenarioFactory.TryFindFirst(_bridge.World, M5AcceptanceScenarioFactory.ResonanceCoreKey, out EntityId m5Core))
+            {
+                _selection.SetSelection(new[] { m5Core });
+                _captureFocus = m5Core;
+                if (_bridge.World.Entities.Transform.TryGet(m5Core, out SimTransform coreTransform)) _camera?.CenterOn(coreTransform.Position.ToWorld());
+            }
+            else if (_captureExcavation && TryOpenExcavatable())
             {
                 _selection.SetSelection(Array.Empty<EntityId>());
             }
@@ -68,7 +76,11 @@ public partial class GodotSmokeRunner : Node
         Node? constructionProgress = GetTree().Root.FindChild("ConstructionProgressBar", true, false);
         bool constructionOk = !_captureConstruction || (_constructionSeeded && constructionProgress is Node3D progressBar && progressBar.Visible);
         bool excavationOk = !_captureExcavation || ExcavationIsOpen();
-        bool ok = _bridge.Current is not null && _bridge.World.Entities.Alive.Count >= 18 && _bridge.GameplayContentHash != 0 && hudOk && constructionOk && excavationOk;
+        string m5Reason = string.Empty;
+        bool m5Ok = !_m5Acceptance || (M5AcceptanceScenarioFactory.IsFreshHandoffReady(_bridge.World, out m5Reason) &&
+            GetTree().Root.FindChild("M5AcceptancePanel", true, false) is not null && GetTree().Root.FindChild("M5AcceptanceStatus", true, false) is not null);
+        if (!m5Ok && _m5Acceptance) GD.PrintErr($"M5 ACCEPTANCE SMOKE: FAIL {m5Reason}");
+        bool ok = _bridge.Current is not null && _bridge.World.Entities.Alive.Count >= 18 && _bridge.GameplayContentHash != 0 && hudOk && constructionOk && excavationOk && m5Ok;
         if (ok && _capturePath is not null)
         {
             _finished = true;

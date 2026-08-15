@@ -11,7 +11,7 @@ public partial class DebugHud : CanvasLayer
     private Label? _label;
     private double _nextUpdate;
 
-    public void Configure(GodotSimBridge bridge, RtsInputController input, DebugRenderer debug, FogPresenter fog)
+    public void Configure(GodotSimBridge bridge, RtsInputController input, DebugRenderer debug, FogPresenter fog, Action prepareM5Acceptance)
     {
         _bridge = bridge; Name = "DeveloperHUD"; Layer = 20; ProcessPriority = 210;
         _panel = new PanelContainer { Name = "DeveloperPanel", Position = new Vector2(12, 90), CustomMinimumSize = new Vector2(680, 0), Visible = false };
@@ -19,6 +19,7 @@ public partial class DebugHud : CanvasLayer
         HBoxContainer header = new(); box.AddChild(header);
         Label title = new() { Text = "DEVELOPER TOOLS — F8", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill }; title.AddThemeFontSizeOverride("font_size", 16); header.AddChild(title);
         Button drain = new() { Text = "Drain Energy" }; drain.Pressed += input.DebugDrainEnergy; header.AddChild(drain);
+        Button m5 = new() { Name = "PrepareM5Acceptance", Text = "Prepare M5 Playtest" }; m5.Pressed += prepareM5Acceptance; header.AddChild(m5);
         _label = new Label(); _label.AddThemeFontSizeOverride("font_size", 14); box.AddChild(_label);
         HFlowContainer toggles = new(); box.AddChild(toggles);
         AddToggle(toggles, "Nav", () => debug.DrawNavigation, v => debug.DrawNavigation = v);

@@ -212,7 +212,7 @@ public partial class BasicHud : CanvasLayer
             _builder.Append("Task  ").Append(worker.TaskState).Append("   Cargo  ").Append(carrier.Amount).Append('/').Append(carrier.Capacity).Append(" Ore\n");
         if (_bridge.World.Entities.ConstructionSite.TryGet(first, out ConstructionSite site))
             _builder.Append("Construction  ").Append(site.ProgressTicks * 100 / site.RequiredTicks).Append("%   Reserved  ").Append(site.ReservedOre).Append(" Ore / ").Append(site.ReservedEnergy).Append(" Energy\n");
-        if (_bridge.World.Entities.Building.Has(first))
+        if (_bridge.World.Entities.Building.Has(first) && IsRockRaiderWorksiteObject(first))
         {
             if (_bridge.World.Entities.WorksiteMember.TryGet(first, out WorksiteMember worksite)) _builder.Append("Worksite  #").Append(worksite.ComponentRoot.Value).Append("   SERVICED\n");
             else _builder.Append("Worksite  DISCONNECTED — local supplied work may continue\n");
@@ -266,6 +266,8 @@ public partial class BasicHud : CanvasLayer
             _builder.Append("Power  ").Append(power.IsPowered ? "ONLINE" : "DISABLED — Energy Domain Brownout").Append("   Priority  ").Append(power.Priority).Append('\n');
         if (_bridge.World.Entities.Production.TryGet(first, out Production production)) AppendProductionQueue(production, first);
         if (_input?.BuildModeActive == true) _builder.Append("BUILD MODE  ").Append(_input.BuildStatus).Append('\n');
+        int stabilityTicks = DisplacementSystem.RemainingStabilityTicks(_bridge.World, first);
+        if (stabilityTicks > 0) _builder.Append("Stability  ").Append((stabilityTicks + SimClock.TicksPerSecond - 1) / SimClock.TicksPerSecond).Append("s\n");
         if (_builder.Length == 0) _builder.Append("Ready for orders.");
         _selectionDetails.Text = _builder.ToString().TrimEnd();
 
@@ -277,8 +279,6 @@ public partial class BasicHud : CanvasLayer
             if (!commonSet) { common = state.Priority; commonSet = true; }
             else if (common != state.Priority) mixed = true;
         }
-        int stabilityTicks = DisplacementSystem.RemainingStabilityTicks(_bridge.World, first);
-        if (stabilityTicks > 0) _builder.Append("Stability  ").Append((stabilityTicks + SimClock.TicksPerSecond - 1) / SimClock.TicksPerSecond).Append("s\n");
         _priorityRow.Visible = compatible;
         foreach ((EnergyPriority priority, Button button) in _priorityButtons)
             button.Modulate = !mixed && priority == common ? RaiderAccent : Colors.White;
@@ -316,6 +316,8 @@ public partial class BasicHud : CanvasLayer
             if (_bridge.World.Content.TryGetEntity(selectable.ContentType, out PrototypeEntityDefinition entity)) return DisplayName(entity.StableKey);
             for (int i = 0; i < _bridge.World.Content.ResourceNodes.Length; i++)
                 if (_bridge.World.Content.ResourceNodes[i].Id == selectable.ContentType) return DisplayName(_bridge.World.Content.ResourceNodes[i].StableKey);
+            string m5Name = M5ProofName(selectable.ContentType);
+            if (m5Name.Length > 0) return m5Name;
         }
         return $"Object #{id.Value}";
     }
@@ -390,6 +392,18 @@ public partial class BasicHud : CanvasLayer
         return components.Length > 0 ? components[0] : EntityId.None;
     }
 
+    private bool IsRockRaiderWorksiteObject(EntityId id)
+    {
+        if (_bridge is null || !_bridge.World.Entities.Selectable.TryGet(id, out Selectable selectable)) return false;
+        string[] keys =
+        {
+            "building.rock_raiders.hq", "building.rock_raiders.ore_processing_plant",
+            "building.rock_raiders.power_station", "building.rock_raiders.vehicle_service_bay"
+        };
+        for (int i = 0; i < keys.Length; i++) if (StableId.FromKey(keys[i]) == selectable.ContentType) return true;
+        return false;
+    }
+
     private static string UnitName(ContentId id)
     {
         for (int i = 0; i < ProductionKeys.Length; i++) if (StableId.FromKey(ProductionKeys[i]) == id) return DisplayName(ProductionKeys[i]);
@@ -428,6 +442,30 @@ public partial class BasicHud : CanvasLayer
         "resource.ore.small" => "Small Ore Deposit",
         "resource.ore.rich" => "Rich Ore Deposit",
         "resource.ore.deep_contested_seam" => "Deep Contested Ore Seam",
+        "building.ast.service_refit_hub" => "Service & Refit Hub",
+        "unit.ast.t3_trike" => "T3-Trike",
+        "building.ali.etx_command_core" => "ETX Command Core",
+        "building.ali.resonance_core" => "Resonance Core",
+        "unit.ali.razor_skimmer" => "Razor Skimmer",
+        "building.mar.aero_tube_hangar" => "Aero Tube Hangar",
+        "building.mar.settlement_station" => "Settlement Station",
+        "unit.mar.worker_robot" => "Worker Robot",
+        "unit.mar.double_hover" => "Double Hover",
+        "unit.mar.jet_scooter" => "Jet Scooter",
+        "unit.mar.excavation_searcher" => "Excavation Searcher",
+        "unit.ast.t3_trike.displacement_target" => "Clamp Test Target",
         _ => key
     };
+
+    private static string M5ProofName(ContentId id)
+    {
+        string[] keys =
+        {
+            "building.ast.service_refit_hub", "unit.ast.t3_trike", "building.ali.etx_command_core", "building.ali.resonance_core",
+            "unit.ali.razor_skimmer", "building.mar.aero_tube_hangar", "building.mar.settlement_station", "unit.mar.worker_robot",
+            "unit.mar.double_hover", "unit.mar.jet_scooter", "unit.mar.excavation_searcher", "unit.ast.t3_trike.displacement_target"
+        };
+        for (int i = 0; i < keys.Length; i++) if (StableId.FromKey(keys[i]) == id) return DisplayName(keys[i]);
+        return string.Empty;
+    }
 }

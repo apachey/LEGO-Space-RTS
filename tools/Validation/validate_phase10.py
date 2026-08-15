@@ -25,7 +25,8 @@ required = [
     'GodotClient/Scripts/Presentation/GodotSimBridge.cs','GodotClient/Scripts/Presentation/RtsCameraController.cs',
     'GodotClient/Scripts/Presentation/SelectionController.cs','GodotClient/Scripts/Presentation/RtsInputController.cs',
     'GodotClient/Scripts/Presentation/FogPresenter.cs','GodotClient/Scripts/Presentation/DebugRenderer.cs',
-    'GodotClient/Scripts/UI/BasicHud.cs','GodotClient/Scripts/UI/DebugHud.cs','Docs/IMPLEMENTATION_REPORT.md',
+    'GodotClient/Scripts/UI/BasicHud.cs','GodotClient/Scripts/UI/DebugHud.cs','GodotClient/Scripts/UI/M5PlaytestHud.cs',
+    'SimCore/Runtime/Scenarios/M5AcceptanceScenarioFactory.cs','Docs/IMPLEMENTATION_REPORT.md',
     'tools/doctor.sh','tools/verify.sh','tools/run-game.sh','tools/build-mac.sh','tools/capture-visual-smoke.sh',
     'tools/setup-git-hooks.sh','.githooks/pre-commit','.githooks/pre-push',
     '.github/workflows/simcore-pr.yml','global.json','Docs/Development/AGENT_WORKFLOW.md'
@@ -83,10 +84,12 @@ check('TickSeconds = 0.05' in bridge, 'Godot bridge does not feed 20 Hz/50ms sim
 check('MaxCatchUpTicks = 4' in bridge, 'Godot bridge catch-up limit is not four ticks')
 check('Excess remainder stays queued' in bridge, 'Godot bridge does not document no authoritative tick skipping')
 composition = (ROOT/'GodotClient/Scripts/Client/RtsCompositionRoot.cs').read_text()
-check('RuntimeScenarioLoader.LoadCanonicalOpening' in composition, 'Godot composition root does not use canonical runtime opening loader')
+check('RuntimeScenarioLoader.LoadActive' in composition, 'Godot composition root does not use the active runtime scenario loader')
 check('FindChild' not in composition and 'GetNode<' not in composition, 'composition root uses runtime dependency discovery')
 loader = (ROOT/'GodotClient/Scripts/Client/RuntimeScenarioLoader.cs').read_text()
 check('PrototypeContentCodec.Read' in loader and 'CompiledMapCodec.ReadDefinition' in loader, 'Godot runtime does not consume compiled content/map when present')
+check('requested ? LoadM5Acceptance() : LoadCanonicalOpening()' in loader, 'normal launch no longer defaults to the canonical opening')
+check('M5AcceptanceScenarioFactory.Create' in loader and 'PrepareM5Acceptance' in composition, 'M5 acceptance handoff is not wired to the runtime')
 basic_hud = (ROOT/'GodotClient/Scripts/UI/BasicHud.cs').read_text()
 for token in ['ResourceStrip','SelectionPanel','PortraitSlot','ContextualSlot','ContextualActions','ContextualEnergyPriority','EnergyDomainPopover','OPERATIONS','CRYSTALS']:
     check(token in basic_hud, f'T039 Basic HUD element missing: {token}')

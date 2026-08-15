@@ -5,7 +5,7 @@ remain authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M5 — Four-Faction System Proof / T057 Displacement and Stability implemented; the scheduled M5 implementation proof is fully verified on the current stacked task branch.**
+**M5 — Four-Faction System Proof / T049–T057 and the executable acceptance handoff are fully implemented and verified; game-director playtest acceptance is the remaining M5 gate.**
 
 M3 is merged and human-accepted. At the game director's explicit request,
 development moved directly to M5 T049 rather than beginning M4 T040. M4 combat
@@ -17,8 +17,8 @@ commit `8731f61`; T051 is recorded in commit `ad93ec1`; T052 is recorded in
 commit `f6f390a`; T053 is recorded in commit `5844ee1`; T054 is recorded in
 commit `2525747`. T055 is recorded in commit `da075fc`; T056 is recorded in
 commit `738340b`. T057 is stacked on all eight in
-`codex/m5-displacement-stability`; none of these M5 task commits is merged to
-main.
+`codex/m5-displacement-stability`. The fresh-launch acceptance handoff is on
+`codex/m5-acceptance-handoff`; none of these M5 task commits is merged to main.
 
 ## Engine / architecture
 
@@ -581,6 +581,26 @@ narrow placement cases allowed by Phase 09B.
   `Artifacts/Verification/20260815T123052Z-full-summary.txt`.
 - A launchable T057 debug build exists at
   `Builds/macOS/LEGO Space RTS.app` and passed the export smoke.
+- The M5 executable handoff now has one deterministic developer fixture that
+  starts Worksite connectivity, T3 Survey Refit, Resonance Charge/Surge, three
+  simultaneous Aero Tube transfers, repeated hostile Clamp/Stability and an
+  opened excavation route together. It does not add normal-play roster content
+  or bypass the later T070/T071/T073 content and command work.
+- From a fresh normal launch, `F8` → `Prepare M5 Playtest` is the exact
+  preparation control. The resulting panel provides direct `FOCUS` controls
+  for every proof and `RESTART M5` restores the complete deterministic opening,
+  so the game director does not need to farm resources or search the map.
+- The acceptance fixture has focused deterministic/snapshot regression
+  coverage. The latest full verification is green across every `BLOCKING_NOW`
+  stage with 173/173 NUnit tests, representative 24-mover acceptance,
+  compiled-content identity, HeadlessSim, Godot smoke, 100-repeat determinism,
+  replay, snapshot continuation, regeneration and macOS export. The summary is
+  `Artifacts/Verification/20260815T125513Z-full-summary.txt`.
+- The exported application itself passed the M5 fresh-handoff smoke at tick 40
+  with hash `F341A1B92A6AF92C`. Visual evidence is
+  `Artifacts/Screenshots/m5-acceptance-handoff.png`. The remaining acceptance
+  is deliberately human-only: clarity/readability of the prepared proof panel,
+  selection details and visible faction-system transitions.
 
 ## Current gates
 
@@ -678,9 +698,11 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Finish the T057/M5 stacked branch handoff; merge only through game-director
-   review.
-2. After M5 acceptance, begin M6 T058 using the Phase 09A project-owned
-   command/snapshot protocol over Godot packet transport (ENet candidate), not
-   the superseded Unity Transport host; alternatively return to deferred M4
-   T040 Targeting if directed by the game director.
+1. Complete the short game-director playtest of the prepared M5 fixture; merge
+   the stacked M5 branches only after acceptance.
+2. Before beginning M6, resolve the now-`BLOCKING_LATER` 60-mover gate rather
+   than carrying its 31/60 completion into networked 1v1 work.
+3. After M5 acceptance and the pre-M6 movement gate, begin M6 T058 using the
+   Phase 09A project-owned command/snapshot protocol over Godot packet transport
+   (ENet candidate), not the superseded Unity Transport host; alternatively
+   return to deferred M4 T040 Targeting if directed by the game director.
