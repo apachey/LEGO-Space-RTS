@@ -230,6 +230,13 @@ for token in ['BaselineSlots = 4','ExpandedSlots = 6','8 * EnergyDomainSystem.Ti
 check('TrySetDesiredCommitment' in resonance and 'DesiredCommittedCrystals' in resonance and 'TryStartNextTransition' in resonance, 'T053 desired-count sequential commitment missing')
 check('ResourceType.Crystal' in resonance and 'CommittedSlotMask' in resonance and 'EnergyDomainSystem.Recalculate' in resonance, 'T053 Crystal ownership/slot/Energy integration missing')
 
+alien_charge = (ROOT/'SimCore/Runtime/Simulation/AlienChargeSystem.cs').read_text()
+for token in ['MillichargePerCharge = 1000','BaseCoreCapacityMillicharge = 20 * MillichargePerCharge','CapacityPerCrystalMillicharge = 20 * MillichargePerCharge','GenerationPerCrystalMillichargePerSecond = 400','SurgeCostMillicharge = 50 * MillichargePerCharge','SurgeBuildupTicks = 15','SurgeActiveTicks = 18 * EnergyDomainSystem.TicksPerSecond','ResonanceCoreSurgeRadius = 12','MothershipRelaySurgeRadius = 10']:
+    check(token in alien_charge, f'canonical T054 Charge/Surge contract missing: {token}')
+check('BrownoutSystem.IsOperational' in alien_charge and 'CurrentMillicharge' in alien_charge and 'MaximumMillicharge' in alien_charge, 'T054 powered Charge generation or authoritative millicharge state missing')
+check('ApplySurgedCooldownTicks' in alien_charge and '(baseTicks * 4 + 4) / 5' in alien_charge and 'ApplySurgedReconfigurationTicks' in alien_charge and '(baseTicks * 7 + 9) / 10' in alien_charge, 'T054 canonical Surge timing multipliers missing')
+check('ResonanceInitiationUnlocked' in alien_charge and 'world.Entities.SurgeZone.Set' in alien_charge and 'receiver.ActiveZone' in alien_charge, 'T054 proof unlock, zone, or deterministic membership missing')
+
 headless = (ROOT/'HeadlessSim/Program.cs').read_text()
 for token in ['--snapshot-in','--snapshot-out','--replay','--record-replay','--benchmark','--path-benchmark','--hash-every','--repeat','--golden-manifest-out','--golden-manifest-in','--dump-state','--compiled-dir']:
     check(token in headless, f'HeadlessSim switch missing: {token}')

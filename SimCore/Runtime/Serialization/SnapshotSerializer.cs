@@ -7,8 +7,8 @@ namespace LegoSpaceRTS.SimCore
 public static class SnapshotSerializer
 {
     public const uint Magic = 0x53525453; // STRS
-    public const ushort FormatVersion = 15;
-    public const ushort SimulationProtocolVersion = 13;
+    public const ushort FormatVersion = 16;
+    public const ushort SimulationProtocolVersion = 14;
 
     [Flags]
     private enum EntityComponents : uint
@@ -44,7 +44,9 @@ public static class SnapshotSerializer
         MissionRefitState = 1 << 27,
         MissionRefitJob = 1 << 28,
         ResonanceCore = 1 << 29,
-        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver | ResourceBank | Building | ConstructionSite | Builder | Production | EnergyDomain | EnergyDomainMember | PowerState | WorksiteNode | WorksiteMember | WorksiteComponent | Excavatable | Deployment | ForwardServiceProvider | ForwardServiceMember | MissionRefitState | MissionRefitJob | ResonanceCore
+        SurgeZone = 1u << 30,
+        SurgeReceiver = 1u << 31,
+        All = Ownership | Transform | Movement | Navigation | Selectable | Vision | ResourceNode | CommandQueue | RouteCorridor | Worker | ResourceCarrier | ResourceReceiver | ResourceBank | Building | ConstructionSite | Builder | Production | EnergyDomain | EnergyDomainMember | PowerState | WorksiteNode | WorksiteMember | WorksiteComponent | Excavatable | Deployment | ForwardServiceProvider | ForwardServiceMember | MissionRefitState | MissionRefitJob | ResonanceCore | SurgeZone | SurgeReceiver
     }
 
     public static byte[] Serialize(SimulationWorld world)
@@ -55,6 +57,12 @@ public static class SnapshotSerializer
         w.Write(world.Entities.NextEntityValue);
         IReadOnlyList<EntityId> alive = world.Entities.Alive; w.Write(alive.Count);
         for (int i = 0; i < alive.Count; i++) WriteEntity(w, world, alive[i]);
+        w.Write(world.PlayerCount);
+        for (byte player = 0; player < world.PlayerCount; player++)
+        {
+            AlienChargeState charge = world.GetAlienCharge(player);
+            w.Write(charge.CurrentMillicharge); w.Write(charge.ResonanceInitiationUnlocked);
+        }
         world.Commands.Serialize(w);
         world.Fog.Serialize(w);
         w.Flush(); return ms.ToArray();
@@ -65,7 +73,7 @@ public static class SnapshotSerializer
         using MemoryStream ms = new(bytes, false); using BinaryReader r = new(ms);
         if (r.ReadUInt32() != Magic) throw new InvalidDataException("Snapshot magic mismatch.");
         ushort format = r.ReadUInt16(), protocol = r.ReadUInt16();
-        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8) || (format == 11 && protocol == 9) || (format == 12 && protocol == 10) || (format == 13 && protocol == 11) || (format == 14 && protocol == 12);
+        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8) || (format == 11 && protocol == 9) || (format == 12 && protocol == 10) || (format == 13 && protocol == 11) || (format == 14 && protocol == 12) || (format == 15 && protocol == 13);
         if (!supportedLegacy && (format != FormatVersion || protocol != SimulationProtocolVersion)) throw new InvalidDataException($"Unsupported snapshot {format}/{protocol}.");
         SimTick tick = new(r.ReadInt32()); MapGrid map = MapGrid.Deserialize(r, includeExcavatableMetadata: format >= 12); uint nextEntity = r.ReadUInt32();
         EntityStore entities = new(); int entityCount = r.ReadInt32(); if (entityCount < 0 || entityCount > 10000) throw new InvalidDataException("Invalid entity count.");
@@ -80,6 +88,17 @@ public static class SnapshotSerializer
         if (format < 7) AddLegacyBuilders(temp);
         if (format < 8) AddLegacyProduction(temp);
         entities.RestoreNextEntityValue(nextEntity);
+        if (format >= 16)
+        {
+            int chargePlayers = r.ReadInt32();
+            if (chargePlayers != temp.PlayerCount) throw new InvalidDataException("Alien Charge player count mismatch.");
+            for (byte player = 0; player < chargePlayers; player++)
+            {
+                int currentMillicharge = r.ReadInt32();
+                if (currentMillicharge < 0) throw new InvalidDataException("Invalid Alien Charge amount.");
+                temp.SetAlienCharge(player, new AlienChargeState { CurrentMillicharge = currentMillicharge, ResonanceInitiationUnlocked = r.ReadBoolean() });
+            }
+        }
         temp.Commands.Deserialize(r, includeBuildFields: format >= 6, includeEnergyPriority: format >= 10, includeMissionRefit: format >= 14, includeResonanceCommitment: format >= 15);
         temp.Fog = FogState.Deserialize(r);
         if (ms.Position != ms.Length) throw new InvalidDataException("Trailing snapshot bytes.");
@@ -87,6 +106,7 @@ public static class SnapshotSerializer
         if (format < 9) InitializeLegacyEnergy(temp);
         else if (format < 11) MigrateLegacyWorksites(temp);
         else EnergyDomainSystem.RecalculateAll(temp);
+        AlienChargeSystem.RecalculateAll(temp);
         OperationsCapacitySystem.Recalculate(temp);
         temp.Spatial.Rebuild(temp.Entities);
         return temp;
@@ -122,6 +142,8 @@ public static class SnapshotSerializer
         if (world.Entities.MissionRefitState.Has(id)) components |= EntityComponents.MissionRefitState;
         if (world.Entities.MissionRefitJob.Has(id)) components |= EntityComponents.MissionRefitJob;
         if (world.Entities.ResonanceCore.Has(id)) components |= EntityComponents.ResonanceCore;
+        if (world.Entities.SurgeZone.Has(id)) components |= EntityComponents.SurgeZone;
+        if (world.Entities.SurgeReceiver.Has(id)) components |= EntityComponents.SurgeReceiver;
         if (world.Entities.ConstructionSite.Has(id)) components |= EntityComponents.ConstructionSite;
         if (world.Entities.Production.Has(id)) components |= EntityComponents.Production;
         if (world.TryGetQueue(id, out _)) components |= EntityComponents.CommandQueue;
@@ -188,6 +210,12 @@ public static class SnapshotSerializer
             w.Write(core.CommandCore.Value); w.Write(core.TransitionBank.Value); w.Write(core.CommittedSlotMask); w.Write(core.DesiredCommittedCrystals);
             w.Write(core.TransitionSlot); w.Write((byte)core.TransitionKind); w.Write(core.TransitionTotalTicks); w.Write(core.TransitionRemainingTicks); w.Write(core.ExpandedLatticeUnlocked);
         }
+        if ((components & EntityComponents.SurgeZone) != 0)
+        {
+            SurgeZone zone = world.Entities.SurgeZone.Get(id);
+            w.Write(zone.RadiusBuildCells); w.Write(zone.BuildupRemainingTicks); w.Write(zone.ActiveRemainingTicks);
+        }
+        if ((components & EntityComponents.SurgeReceiver) != 0) w.Write(world.Entities.SurgeReceiver.Get(id).ActiveZone.Value);
         if ((components & EntityComponents.ConstructionSite) != 0) WriteConstructionSite(w, world.Entities.ConstructionSite.Get(id));
         if ((components & EntityComponents.Production) != 0) WriteProduction(w, world.Entities.Production.Get(id));
         if ((components & EntityComponents.CommandQueue) != 0) world.GetQueue(id).Serialize(w, includeTargetEntity: true);
@@ -377,6 +405,16 @@ public static class SnapshotSerializer
                 throw new InvalidDataException("Invalid Resonance Core state.");
             world.Entities.ResonanceCore.Set(id, core);
         }
+        if ((components & EntityComponents.SurgeZone) != 0)
+        {
+            SurgeZone zone = new() { RadiusBuildCells = r.ReadByte(), BuildupRemainingTicks = r.ReadUInt16(), ActiveRemainingTicks = r.ReadUInt16() };
+            bool building = zone.BuildupRemainingTicks > 0 && zone.BuildupRemainingTicks <= AlienChargeSystem.SurgeBuildupTicks && zone.ActiveRemainingTicks == 0;
+            bool active = zone.BuildupRemainingTicks == 0 && zone.ActiveRemainingTicks > 0 && zone.ActiveRemainingTicks <= AlienChargeSystem.SurgeActiveTicks;
+            if ((zone.RadiusBuildCells != AlienChargeSystem.ResonanceCoreSurgeRadius && zone.RadiusBuildCells != AlienChargeSystem.MothershipRelaySurgeRadius) || (!building && !active))
+                throw new InvalidDataException("Invalid Surge zone state.");
+            world.Entities.SurgeZone.Set(id, zone);
+        }
+        if ((components & EntityComponents.SurgeReceiver) != 0) world.Entities.SurgeReceiver.Set(id, new SurgeReceiver { ActiveZone = new EntityId(r.ReadUInt32()) });
         if ((components & EntityComponents.ConstructionSite) != 0) world.Entities.ConstructionSite.Set(id, ReadConstructionSite(r, format));
         if ((components & EntityComponents.Production) != 0) world.Entities.Production.Set(id, ReadProduction(r));
         if ((components & EntityComponents.CommandQueue) != 0) world.GetQueue(id).Deserialize(r, includeTargetEntity: format >= 4);

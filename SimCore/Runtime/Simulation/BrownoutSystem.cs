@@ -75,6 +75,7 @@ public static class BrownoutSystem
             domain.LastBrownoutEvent = !previousBrownout && brownout ? BrownoutEventKind.Entered
                 : previousBrownout && !brownout ? BrownoutEventKind.Recovered : BrownoutEventKind.Changed;
         }
+        if (world.Entities.Ownership.TryGet(root, out Ownership owner)) AlienChargeSystem.RecalculatePlayer(world, owner.PlayerSlot);
     }
 
     public static bool TrySetPriority(SimulationWorld world, byte playerSlot, EntityId[] entities, EnergyPriority priority)

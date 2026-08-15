@@ -34,6 +34,8 @@ public sealed class EntityStore
     public readonly ComponentStore<MissionRefitState> MissionRefitState = new();
     public readonly ComponentStore<MissionRefitJob> MissionRefitJob = new();
     public readonly ComponentStore<ResonanceCore> ResonanceCore = new();
+    public readonly ComponentStore<SurgeZone> SurgeZone = new();
+    public readonly ComponentStore<SurgeReceiver> SurgeReceiver = new();
     public readonly ComponentStore<PowerState> PowerState = new();
     public readonly ComponentStore<ConstructionSite> ConstructionSite = new();
     public readonly ComponentStore<Production> Production = new();
@@ -100,6 +102,8 @@ public sealed class EntityStore
         MissionRefitState.Remove(id);
         MissionRefitJob.Remove(id);
         ResonanceCore.Remove(id);
+        SurgeZone.Remove(id);
+        SurgeReceiver.Remove(id);
         PowerState.Remove(id);
         ConstructionSite.Remove(id);
         Production.Remove(id);

@@ -18,6 +18,7 @@ public sealed class SimulationWorld
     public int PathRequestsProcessed { get; internal set; }
     public int FormationReflowDiagnostics { get; internal set; }
     private readonly OperationsCapacityState[] _operationsCapacity;
+    private readonly AlienChargeState[] _alienCharge;
 
     public int PlayerCount => Fog.PlayerCount;
 
@@ -38,6 +39,7 @@ public sealed class SimulationWorld
         Content = content ?? PrototypeContentFactory.CreateM2Catalog();
         Fog = new FogState(playerCount);
         _operationsCapacity = new OperationsCapacityState[playerCount];
+        _alienCharge = new AlienChargeState[playerCount];
         Tick = new SimTick(0);
     }
 
@@ -49,6 +51,7 @@ public sealed class SimulationWorld
         Content = content ?? PrototypeContentFactory.CreateM2Catalog();
         Fog = fog;
         _operationsCapacity = new OperationsCapacityState[fog.PlayerCount];
+        _alienCharge = new AlienChargeState[fog.PlayerCount];
         Tick = tick;
     }
 
@@ -75,6 +78,20 @@ public sealed class SimulationWorld
     internal void SetOperationsCapacity(byte playerSlot, OperationsCapacityState state) => _operationsCapacity[playerSlot] = state;
 
     internal void ClearOperationsCapacity() => System.Array.Clear(_operationsCapacity, 0, _operationsCapacity.Length);
+
+    public AlienChargeState GetAlienCharge(byte playerSlot)
+    {
+        if (playerSlot >= _alienCharge.Length) throw new System.ArgumentOutOfRangeException(nameof(playerSlot));
+        return _alienCharge[playerSlot];
+    }
+
+    internal ref AlienChargeState GetAlienChargeRef(byte playerSlot)
+    {
+        if (playerSlot >= _alienCharge.Length) throw new System.ArgumentOutOfRangeException(nameof(playerSlot));
+        return ref _alienCharge[playerSlot];
+    }
+
+    internal void SetAlienCharge(byte playerSlot, AlienChargeState state) => _alienCharge[playerSlot] = state;
 
     public bool TryExtractResource(EntityId id, int requestedAmount, out int extractedAmount)
     {

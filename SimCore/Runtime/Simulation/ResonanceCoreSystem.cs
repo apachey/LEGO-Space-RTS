@@ -117,6 +117,7 @@ public sealed class ResonanceCoreSystem : ISimSystem
         byte withdrawalSlot = FindLastCommittedSlot(core.CommittedSlotMask);
         if (withdrawalSlot == byte.MaxValue) return false;
         core.CommittedSlotMask = (byte)(core.CommittedSlotMask & ~(1 << withdrawalSlot));
+        AlienChargeSystem.RecalculatePlayer(world, owner.PlayerSlot);
         core.TransitionBank = withdrawalBank;
         core.TransitionSlot = withdrawalSlot;
         core.TransitionKind = ResonanceTransitionKind.Withdraw;

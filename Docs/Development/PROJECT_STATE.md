@@ -5,7 +5,7 @@ remain authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M5 — Four-Faction System Proof / T053 Resonance Core implemented and fully verified on the current stacked task branch.**
+**M5 — Four-Faction System Proof / T054 Charge/Surge implemented and fully verified on the current stacked task branch.**
 
 M3 is merged and human-accepted. At the game director's explicit request,
 development moved directly to M5 T049 rather than beginning M4 T040. M4 combat
@@ -14,8 +14,9 @@ complete or silently treated as an M5 dependency.
 
 T049 is human-accepted and recorded in commit `3f677b2`. T050 is recorded in
 commit `8731f61`; T051 is recorded in commit `ad93ec1`; T052 is recorded in
-commit `f6f390a`. T053 is stacked on all four in `codex/m5-resonance-core`;
-none of these M5 task commits is merged to main.
+commit `f6f390a`; T053 is recorded in commit `5844ee1`. T054 is stacked on all
+five in `codex/m5-charge-surge`; none of these M5 task commits is merged to
+main.
 
 ## Engine / architecture
 
@@ -450,6 +451,36 @@ narrow placement cases allowed by Phase 09B.
   `Artifacts/Verification/20260811T190115Z-full-summary.txt`.
 - A launchable T053 debug build exists at
   `Builds/macOS/LEGO Space RTS.app` and passed the export smoke.
+- M5 T054 implements authoritative Alien Charge in integer millicharge. Each
+  valid Resonance Core contributes 20 maximum Charge plus 20 per committed
+  Crystal; each committed Crystal generates 0.4 Charge/s while its Core is
+  powered. Generation stops at maximum, never decays, pauses under Brownout,
+  and excess Charge discharges immediately when commitment capacity is removed.
+- Resonance Initiation proof state unlocks a command-driven Surge anchored on a
+  valid, owned, operational Core. Activation spends 50 Charge immediately,
+  runs a 0.75-second buildup, then provides an 18-second radius-12 zone.
+  Eligible same-owner receivers gain and lose membership immediately at the
+  boundary; concurrent overlaps resolve to one stable lowest-Entity-ID anchor
+  and never stack. Canonical helpers apply ×0.80 cooldown and ×0.70 ETX
+  reconfiguration timing without changing damage, range or movement.
+- Charge, proof unlock, Surge zones, receiver membership and pending Surge
+  commands participate in snapshot v16, simulation protocol v14, replay v11,
+  hashes and ordered state dumps. The HUD reports Charge/current maximum/rate,
+  committed Crystals, Core contribution/Brownout state and active zone timers.
+  Five focused regressions cover generation and capacity, Brownout/withdrawal,
+  exact Surge timing and cost, ownership/power/radius/non-stacking validation,
+  and deterministic snapshot continuation.
+- T054 full verification is green across every `BLOCKING_NOW` stage:
+  warnings-as-errors builds, 156 NUnit tests, representative 24-mover
+  acceptance, compiled-content identity, HeadlessSim, Godot headless smoke,
+  100-repeat determinism, replay, snapshot continuation, regeneration and
+  macOS export. The golden/replay hash is `2279975248A1B755`; the snapshot
+  continuation hash is `3694DFD1315BCF18`. The preserved 60-mover stage remains
+  diagnostic-failing at 31/60 completion and 8,483 oscillation incidents. The
+  authoritative summary is
+  `Artifacts/Verification/20260815T110324Z-full-summary.txt`.
+- A launchable T054 debug build exists at
+  `Builds/macOS/LEGO Space RTS.app` and passed the export smoke.
 
 ## Current gates
 
@@ -516,12 +547,13 @@ narrow placement cases allowed by Phase 09B.
   in the current executable. Before implementing that later path, canon must
   resolve how the 50% refund of the odd 25-Ore first-install cost rounds in the
   integer resource model.
-- T053 deliberately stops at Crystal commitment. Derived millicharge,
-  generation/capacity clamping and Surge belong to T054. Full Alien content,
-  construction prerequisites and research wiring remain scheduled for
-  T071/T072, so the current executable does not yet spawn the proof Core.
-  Resonance destruction salvage remains dependent on deferred T045 destruction;
-  it must be integrated with the canonical cache rules when that path exists.
+- T054 provides the authoritative Charge/Surge slice, but actual weapon reload
+  remapping and ETX transformation-job integration depend on deferred M4
+  T041/T048. Mothership relay anchoring and full research-DAG wiring remain in
+  T072; full Alien content/spawning remains in T071, so the current executable
+  still does not expose the proof Core or Surge activation in normal play.
+  Resonance destruction salvage remains dependent on deferred T045 destruction
+  and must integrate the canonical cache rules when that path exists.
 
 ## Explicitly rejected / do not resurrect
 
@@ -534,7 +566,7 @@ narrow placement cases allowed by Phase 09B.
 
 ## Next approved development sequence
 
-1. Finish the T053 stacked branch handoff; merge only through game-director
+1. Finish the T054 stacked branch handoff; merge only through game-director
    review.
-2. Continue M5 with T054 Charge/Surge after T053 is accepted/merged, unless
+2. Continue M5 with T055 Tube graph after T054 is accepted/merged, unless
    the game director explicitly returns to deferred M4 T040 Targeting.

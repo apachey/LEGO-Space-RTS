@@ -265,6 +265,18 @@ public struct ResonanceCore
     public bool ExpandedLatticeUnlocked;
 }
 
+public struct SurgeZone
+{
+    public byte RadiusBuildCells;
+    public ushort BuildupRemainingTicks;
+    public ushort ActiveRemainingTicks;
+}
+
+public struct SurgeReceiver
+{
+    public EntityId ActiveZone;
+}
+
 public struct PowerState
 {
     public EnergyPriority Priority;

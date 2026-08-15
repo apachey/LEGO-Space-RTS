@@ -41,6 +41,11 @@ public sealed class CommandExecutionSystem : ISimSystem
             ResonanceCoreSystem.TrySetDesiredCommitment(world, command.PlayerSlot, command.TargetEntity, command.DesiredResonanceCommitment);
             return;
         }
+        if (command.Type == SimCommandType.StartSurge)
+        {
+            AlienChargeSystem.TryStartSurge(world, command.PlayerSlot, command.TargetEntity);
+            return;
+        }
         if (command.Type == SimCommandType.Build)
         {
             if ((command.TargetPosition.X.Raw & (Fix32.OneRaw - 1)) != 0 || (command.TargetPosition.Y.Raw & (Fix32.OneRaw - 1)) != 0) return;

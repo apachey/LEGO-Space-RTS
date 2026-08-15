@@ -156,9 +156,10 @@ public partial class BasicHud : CanvasLayer
                 if (resonance.TransitionKind != ResonanceTransitionKind.None) transitioningCrystals++;
             }
         }
-        _crystalValue.Text = committedCrystals > 0 || transitioningCrystals > 0
-            ? $"{spendableCrystals}  •  {committedCrystals} committed{(transitioningCrystals > 0 ? $"  •  {transitioningCrystals} changing" : string.Empty)}"
-            : spendableCrystals.ToString();
+        AlienChargeState charge = _bridge.World.GetAlienCharge(0);
+        _crystalValue.Text = $"{spendableCrystals} spendable  •  Charge {ChargeText(charge.CurrentMillicharge)} / {ChargeText(charge.MaximumMillicharge)}  +{ChargeText(charge.GenerationMillichargePerSecond)}/s";
+        if (committedCrystals > 0 || transitioningCrystals > 0)
+            _crystalValue.Text += $"  •  {committedCrystals} committed{(transitioningCrystals > 0 ? $"  •  {transitioningCrystals} changing" : string.Empty)}";
         OperationsCapacityState capacity = _bridge.World.GetOperationsCapacity(0);
         _ocValue.Text = capacity.Reserved > 0 ? $"{capacity.Used} / {capacity.Maximum}  (+{capacity.Reserved} queued)" : $"{capacity.Used} / {capacity.Maximum}";
         if (capacity.IsOverCapacity) _ocValue.Text += "  OVER CAPACITY";
@@ -240,10 +241,17 @@ public partial class BasicHud : CanvasLayer
             _builder.Append("Resonance  ").Append(committed).Append(" / ").Append(ResonanceCoreSystem.MaximumSlots(resonance)).Append(" slots  •  desired ").Append(resonance.DesiredCommittedCrystals).Append('\n');
             _builder.Append("Core Demand  ").Append(ResonanceCoreSystem.ContinuousEnergyDemand(resonance)).Append(" E/s  •  ")
                 .Append(BrownoutSystem.IsOperational(_bridge.World, first) ? "OPERATIONAL" : "BROWNOUT — commitments retained").Append('\n');
+            int coreCommitted = ResonanceCoreSystem.CountCommitted(resonance);
+            _builder.Append("Charge Contribution  ").Append(20 * (1 + coreCommitted)).Append(" max  •  +")
+                .Append(BrownoutSystem.IsOperational(_bridge.World, first) ? ChargeText(coreCommitted * AlienChargeSystem.GenerationPerCrystalMillichargePerSecond) : "0.0").Append("/s\n");
             if (resonance.TransitionKind != ResonanceTransitionKind.None)
                 _builder.Append(resonance.TransitionKind == ResonanceTransitionKind.Commit ? "Committing Crystal  " : "Withdrawing Crystal  ")
                     .Append((resonance.TransitionTotalTicks - resonance.TransitionRemainingTicks) * 100 / resonance.TransitionTotalTicks).Append("%\n");
         }
+        if (_bridge.World.Entities.SurgeZone.TryGet(first, out SurgeZone surgeZone))
+            _builder.Append(surgeZone.BuildupRemainingTicks > 0 ? "Surge Buildup  " : "Surge Active  ")
+                .Append((surgeZone.BuildupRemainingTicks > 0 ? surgeZone.BuildupRemainingTicks : surgeZone.ActiveRemainingTicks) / 20.0f).Append("s  •  ").Append(surgeZone.RadiusBuildCells).Append(" cells\n");
+        if (AlienChargeSystem.IsSurged(_bridge.World, first)) _builder.Append("SURGED  •  cadence ×0.80  •  ETX reconfiguration ×0.70\n");
         if (_bridge.World.Entities.PowerState.TryGet(first, out PowerState power))
             _builder.Append("Power  ").Append(power.IsPowered ? "ONLINE" : "DISABLED — Energy Domain Brownout").Append("   Priority  ").Append(power.Priority).Append('\n');
         if (_bridge.World.Entities.Production.TryGet(first, out Production production)) AppendProductionQueue(production, first);
@@ -354,6 +362,12 @@ public partial class BasicHud : CanvasLayer
     private static string EnergyText(Fix32 value)
     {
         int tenths = (int)(((long)value.Raw * 10 + Fix32.OneRaw / 2) / Fix32.OneRaw);
+        return $"{tenths / 10}.{tenths % 10}";
+    }
+
+    private static string ChargeText(int millicharge)
+    {
+        int tenths = (millicharge + 50) / 100;
         return $"{tenths / 10}.{tenths % 10}";
     }
 
