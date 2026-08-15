@@ -43,11 +43,14 @@ public sealed class ProductionSystem : ISimSystem
         if (!OperationsCapacitySystem.CanReserve(world, playerSlot, definition.OperationsCapacity)) return false;
         if (!EnergyDomainSystem.TryResolveForEntity(world, facilityId, playerSlot, out EntityId energyDomain) ||
             !EnergyDomainSystem.CanSpend(world, energyDomain, definition.EnergyCost)) return false;
-        EntityId bankId = FindFundingBank(world, playerSlot, definition.OreCost, world.Entities.Transform.Get(facilityId).Position);
-        if (bankId == EntityId.None) return false;
+        if (!WorksiteGraphSystem.TryGetComponentForEntity(world, facilityId, out EntityId componentRoot) ||
+            !WorksiteGraphSystem.TryFindFundingBank(world, playerSlot, componentRoot, ResourceType.Ore, definition.OreCost, world.Entities.Transform.Get(facilityId).Position, out EntityId bankId)) return false;
         if (!EnergyDomainSystem.TrySpend(world, energyDomain, definition.EnergyCost)) return false;
-        ref ResourceBank bank = ref world.Entities.ResourceBank.Get(bankId);
-        bank.ProcessedAmount = checked(bank.ProcessedAmount - definition.OreCost);
+        if (!WorksiteGraphSystem.TrySpendProcessedResource(world, playerSlot, bankId, ResourceType.Ore, definition.OreCost))
+        {
+            EnergyDomainSystem.Refund(world, energyDomain, definition.EnergyCost);
+            return false;
+        }
         bool queued = production.TryEnqueue(new ProductionQueueItem
         {
             UnitType = definition.UnitType, FundingBank = bankId, ReservedOre = definition.OreCost,
@@ -56,7 +59,7 @@ public sealed class ProductionSystem : ISimSystem
         });
         if (!queued)
         {
-            bank.ProcessedAmount = checked(bank.ProcessedAmount + definition.OreCost);
+            world.Entities.ResourceBank.Get(bankId).ProcessedAmount = checked(world.Entities.ResourceBank.Get(bankId).ProcessedAmount + definition.OreCost);
             EnergyDomainSystem.Refund(world, energyDomain, definition.EnergyCost);
         }
         else OperationsCapacitySystem.Recalculate(world);
@@ -129,22 +132,6 @@ public sealed class ProductionSystem : ISimSystem
         if (!world.Entities.Navigation.TryGet(spawned, out NavigationAgent navigation) ||
             !world.Pathfinder.IsPassable(MapGrid.BuildToNav(production.RallyPoint), navigation.Footprint)) return;
         CommandExecutionSystem.SetMove(world, spawned, production.RallyPoint);
-    }
-
-    private static EntityId FindFundingBank(SimulationWorld world, byte playerSlot, int oreCost, FixVec2 origin)
-    {
-        EntityId best = EntityId.None; Fix32 bestDistance = Fix32.MaxValue;
-        IReadOnlyList<EntityId> alive = world.Entities.Alive;
-        for (int i = 0; i < alive.Count; i++)
-        {
-            EntityId id = alive[i];
-            if (!world.Entities.ResourceBank.TryGet(id, out ResourceBank bank) || bank.Type != ResourceType.Ore || bank.ProcessedAmount < oreCost ||
-                !world.Entities.Ownership.TryGet(id, out Ownership ownership) || ownership.PlayerSlot != playerSlot ||
-                !world.Entities.Transform.TryGet(id, out SimTransform transform)) continue;
-            Fix32 distance = FixVec2.Distance(origin, transform.Position);
-            if (best == EntityId.None || distance < bestDistance || (distance == bestDistance && id.Value < best.Value)) { best = id; bestDistance = distance; }
-        }
-        return best;
     }
 
     private readonly struct SpawnReservation

@@ -146,6 +146,7 @@ public sealed class M3BrownoutTests
         world.Entities.Selectable.Set(id, new Selectable { IsSelectable = true, ContentType = type, Kind = SelectableKind.Building });
         world.Entities.Building.Set(id, new Building { Type = type, AnchorX = anchorX, AnchorY = 30, FootprintWidth = definition.FootprintWidth, FootprintHeight = definition.FootprintHeight, State = BuildingState.Completed });
         world.Entities.EnergyDomainMember.Set(id, new EnergyDomainMember { DomainRoot = root });
+        world.Entities.WorksiteMember.Set(id, new WorksiteMember { ComponentRoot = root });
         return id;
     }
 }

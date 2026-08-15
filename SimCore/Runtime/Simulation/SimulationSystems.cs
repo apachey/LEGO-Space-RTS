@@ -75,6 +75,21 @@ public sealed class CommandExecutionSystem : ISimSystem
             BrownoutSystem.TrySetPriority(world, command.PlayerSlot, command.Entities, command.EnergyPriority);
             return;
         }
+        if (command.Type == SimCommandType.MissionRefit)
+        {
+            MissionRefitSystem.TryStartT3Refit(world, command.PlayerSlot, command.TargetEntity, command.MissionConfiguration);
+            return;
+        }
+        if (command.Type == SimCommandType.SetResonanceCommitment)
+        {
+            ResonanceCoreSystem.TrySetDesiredCommitment(world, command.PlayerSlot, command.TargetEntity, command.DesiredResonanceCommitment);
+            return;
+        }
+        if (command.Type == SimCommandType.StartSurge)
+        {
+            AlienChargeSystem.TryStartSurge(world, command.PlayerSlot, command.TargetEntity);
+            return;
+        }
         if (command.Type == SimCommandType.Build)
         {
             if ((command.TargetPosition.X.Raw & (Fix32.OneRaw - 1)) != 0 || (command.TargetPosition.Y.Raw & (Fix32.OneRaw - 1)) != 0) return;
@@ -191,11 +206,21 @@ public sealed class CommandExecutionSystem : ISimSystem
             return;
         }
 
+        if (command.Type == SimCommandType.Move)
+        {
+            for (int i = 0; i < command.Entities.Length; i++)
+            {
+                EntityId passenger = command.Entities[i];
+                if (world.Entities.Exists(passenger) && world.Entities.Ownership.TryGet(passenger, out Ownership owner) && owner.PlayerSlot == command.PlayerSlot)
+                    TubeTransferSystem.CaptureArrivalMoveOrder(world, passenger, command.TargetPosition);
+            }
+        }
+
         world.ScratchEntities.Clear();
         for (int i = 0; i < command.Entities.Length; i++)
         {
             EntityId id = command.Entities[i];
-            if (!world.Entities.Exists(id) || TransportSystem.IsLoadedPassenger(world, id) || !world.Entities.Ownership.TryGet(id, out Ownership owner) || owner.PlayerSlot != command.PlayerSlot || !world.Entities.Navigation.Has(id)) continue;
+            if (!world.Entities.Exists(id) || TransportSystem.IsLoadedPassenger(world, id) || !world.Entities.Ownership.TryGet(id, out Ownership owner) || owner.PlayerSlot != command.PlayerSlot || !world.Entities.Navigation.Has(id) || world.Entities.MissionRefitJob.Has(id) || world.Entities.TubeTransfer.Has(id)) continue;
             world.ScratchEntities.Add(id);
         }
         world.ScratchEntities.Sort(EntityIdComparer.Instance);
@@ -287,6 +312,7 @@ public sealed class CommandExecutionSystem : ISimSystem
     internal static bool IsBusy(SimulationWorld world, EntityId id)
     {
         if (world.Entities.Targeting.TryGet(id, out Targeting targeting) && targeting.SelectionKind == TargetSelectionKind.DirectOrder) return true;
+        if (world.Entities.MissionRefitJob.Has(id)) return true;
         if (world.Entities.Navigation.TryGet(id, out NavigationAgent nav) && nav.HasTarget) return true;
         if (world.Entities.Builder.TryGet(id, out Builder builder) && builder.JobState != BuilderJobState.Idle) return true;
         if (TransportSystem.IsPassengerBusy(world, id)) return true;
@@ -822,8 +848,10 @@ public sealed class MovementIntentSystem : ISimSystem
             // Intermediate waypoints are steering points, not stop points. v0.3 braked at every
             // 0.5-cell A* node, producing visibly jerky movement and queue delays.
             bool finalWaypoint = move.PathIndex >= path.Cells.Count - 1 && world.GetQueue(id).Count == 0;
-            Fix32 brakingSpeed = finalWaypoint ? Fix32.Sqrt(Two * move.Deceleration * FixVec2.Distance(transform.Position, nav.Target)) : move.MaxSpeed;
-            Fix32 speedLimit = move.MaxSpeed * TransportSystem.MovementMultiplier(world, id);
+            Fix32 effectiveMaxSpeed = world.Entities.TubeTransfer.TryGet(id, out TubeTransfer transfer) && transfer.State == TubeTransferState.ArrivalRecovery
+                ? move.MaxSpeed * Fix32.FromRatio(3, 5) : move.MaxSpeed;
+            Fix32 brakingSpeed = finalWaypoint ? Fix32.Sqrt(Two * move.Deceleration * FixVec2.Distance(transform.Position, nav.Target)) : effectiveMaxSpeed;
+            Fix32 speedLimit = effectiveMaxSpeed * TransportSystem.MovementMultiplier(world, id);
             Fix32 desiredSpeed = Fix32.Min(speedLimit, brakingSpeed);
             if (world.Entities.Targeting.TryGet(id, out Targeting targeting) && targeting.CurrentTarget != EntityId.None &&
                 world.Entities.Weapon.TryGet(id, out WeaponState weaponState) && world.Content.TryGetWeapon(weaponState.WeaponProfile, out WeaponDefinition weapon) &&

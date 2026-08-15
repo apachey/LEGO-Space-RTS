@@ -69,7 +69,7 @@ public partial class BasicHud : CanvasLayer
         HBoxContainer row = new() { Name = "ResourceRow", Alignment = BoxContainer.AlignmentMode.Center };
         row.AddThemeConstantOverride("separation", 6);
         panel.AddChild(row);
-        _oreValue = AddResourceBlock(row, "ORE", "500", "Processed Ore available to spend");
+        _oreValue = AddResourceBlock(row, "ORE", "500", "Processed Ore available to the active Worksite");
         Button energyButton = new() { Name = "EnergyButton", Flat = true, CustomMinimumSize = new Vector2(330, 48), TooltipText = "Open Energy Domain details" };
         VBoxContainer energyBox = ResourceBox("ENERGY", out _energyValue);
         energyButton.AddChild(energyBox);
@@ -77,7 +77,7 @@ public partial class BasicHud : CanvasLayer
         row.AddChild(energyButton);
         _crystalValue = AddResourceBlock(row, "CRYSTALS", "0", "Spendable Crystals");
         _ocValue = AddResourceBlock(row, "OPERATIONS", "6 / 16", "Active and maximum Operations Capacity");
-        Label phase = new() { Text = "M3", HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center, CustomMinimumSize = new Vector2(54, 48), TooltipText = "Economy & Base Building prototype" };
+        Label phase = new() { Text = "M5", HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center, CustomMinimumSize = new Vector2(54, 48), TooltipText = "Four-Faction System Proof — Worksite graph" };
         phase.AddThemeColorOverride("font_color", RaiderAccent); phase.AddThemeFontSizeOverride("font_size", 15); row.AddChild(phase);
         root.AddChild(panel);
 
@@ -137,24 +137,44 @@ public partial class BasicHud : CanvasLayer
     private void UpdateResources()
     {
         if (_bridge is null || _oreValue is null || _energyValue is null || _crystalValue is null || _ocValue is null) return;
-        int ore = _bridge.World.GetProcessedResourceTotal(0, ResourceType.Ore);
-        int pending = _bridge.World.GetPendingHauledResourceTotal(0, ResourceType.Ore);
+        EntityId[] components = WorksiteGraphSystem.GetPlayerComponents(_bridge.World, 0);
+        EntityId activeRoot = ActiveWorksiteRoot(components);
+        int ore = activeRoot == EntityId.None ? 0 : WorksiteGraphSystem.GetProcessedResourceTotal(_bridge.World, activeRoot, ResourceType.Ore);
+        int pending = activeRoot == EntityId.None ? 0 : WorksiteGraphSystem.GetPendingHauledResourceTotal(_bridge.World, activeRoot, ResourceType.Ore);
         _oreValue.Text = pending > 0 ? $"{ore}  (+{pending} receiving)" : ore.ToString();
-        _crystalValue.Text = "0";
+        if (components.Length > 1) _oreValue.Text += $"  •  {components.Length} SITES";
+        int spendableCrystals = 0, committedCrystals = 0, transitioningCrystals = 0;
+        var alive = _bridge.World.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (!_bridge.World.Entities.Ownership.TryGet(id, out Ownership owner) || owner.PlayerSlot != 0) continue;
+            if (_bridge.World.Entities.ResourceBank.TryGet(id, out ResourceBank crystalBank) && crystalBank.Type == ResourceType.Crystal) spendableCrystals += crystalBank.ProcessedAmount;
+            if (_bridge.World.Entities.ResonanceCore.TryGet(id, out ResonanceCore resonance))
+            {
+                committedCrystals += ResonanceCoreSystem.CountCommitted(resonance);
+                if (resonance.TransitionKind != ResonanceTransitionKind.None) transitioningCrystals++;
+            }
+        }
+        AlienChargeState charge = _bridge.World.GetAlienCharge(0);
+        _crystalValue.Text = $"{spendableCrystals} spendable  •  Charge {ChargeText(charge.CurrentMillicharge)} / {ChargeText(charge.MaximumMillicharge)}  +{ChargeText(charge.GenerationMillichargePerSecond)}/s";
+        if (committedCrystals > 0 || transitioningCrystals > 0)
+            _crystalValue.Text += $"  •  {committedCrystals} committed{(transitioningCrystals > 0 ? $"  •  {transitioningCrystals} changing" : string.Empty)}";
         OperationsCapacityState capacity = _bridge.World.GetOperationsCapacity(0);
         _ocValue.Text = capacity.Reserved > 0 ? $"{capacity.Used} / {capacity.Maximum}  (+{capacity.Reserved} queued)" : $"{capacity.Used} / {capacity.Maximum}";
         if (capacity.IsOverCapacity) _ocValue.Text += "  OVER CAPACITY";
         else if (capacity.IsAdvanceWarning) _ocValue.Text += "  WARNING";
         _ocValue.AddThemeColorOverride("font_color", capacity.IsOverCapacity ? Danger : capacity.IsAdvanceWarning ? Warning : TextPrimary);
 
-        if (!EnergyDomainSystem.TryGetPlayerDomain(_bridge.World, 0, out EntityId root)) { _energyValue.Text = "NO DOMAIN"; return; }
+        EntityId root = activeRoot;
+        if (root == EntityId.None || !_bridge.World.Entities.EnergyDomain.Has(root)) { _energyValue.Text = "NO DOMAIN"; return; }
         EnergyDomain energy = _bridge.World.Entities.EnergyDomain.Get(root);
         int net = energy.GenerationPerSecond - energy.ContinuousDemandPerSecond;
         _energyValue.Text = $"{EnergyText(energy.Reserve)} / {EnergyText(energy.ReserveCapacity)}  |  {energy.GenerationPerSecond}↑  {energy.ContinuousDemandPerSecond}↓  |  {(net >= 0 ? "+" : string.Empty)}{net}/s";
         _energyValue.AddThemeColorOverride("font_color", energy.IsBrownout ? Danger : energy.IsDeficit ? Warning : TextPrimary);
         if (_energyPopoverLabel is not null)
         {
-            _energyPopoverLabel.Text = $"HQ Domain #{root.Value}\nReserve  {EnergyText(energy.Reserve)} / {EnergyText(energy.ReserveCapacity)}\nGeneration  +{energy.GenerationPerSecond} E/s\nDemand  -{energy.ContinuousDemandPerSecond} E/s\nNet  {(net >= 0 ? "+" : string.Empty)}{net} E/s\nState  {(energy.IsBrownout ? $"BROWNOUT — {energy.PoweredDemandPerSecond}/{energy.ContinuousDemandPerSecond} E/s powered" : energy.IsDeficit ? "Reserve draining" : "Stable")}";
+            _energyPopoverLabel.Text = $"Worksite #{root.Value}  •  {components.Length} component{(components.Length == 1 ? string.Empty : "s")}\nReserve  {EnergyText(energy.Reserve)} / {EnergyText(energy.ReserveCapacity)}\nGeneration  +{energy.GenerationPerSecond} E/s\nDemand  -{energy.ContinuousDemandPerSecond} E/s\nNet  {(net >= 0 ? "+" : string.Empty)}{net} E/s\nState  {(energy.IsBrownout ? $"BROWNOUT — {energy.PoweredDemandPerSecond}/{energy.ContinuousDemandPerSecond} E/s powered" : energy.IsDeficit ? "Reserve draining" : "Stable")}";
         }
     }
 
@@ -162,10 +182,13 @@ public partial class BasicHud : CanvasLayer
     {
         if (_bridge is null || _alertPanel is null || _alertLabel is null) return;
         OperationsCapacityState capacity = _bridge.World.GetOperationsCapacity(0);
-        if (EnergyDomainSystem.TryGetPlayerDomain(_bridge.World, 0, out EntityId root) && _bridge.World.Entities.EnergyDomain.TryGet(root, out EnergyDomain energy) && energy.IsBrownout)
+        EntityId[] roots = WorksiteGraphSystem.GetPlayerComponents(_bridge.World, 0);
+        for (int i = 0; i < roots.Length; i++)
         {
+            EntityId root = roots[i];
+            if (!_bridge.World.Entities.EnergyDomain.TryGet(root, out EnergyDomain energy) || !energy.IsBrownout) continue;
             int deficit = energy.ContinuousDemandPerSecond - energy.GenerationPerSecond;
-            _alertPanel.Visible = true; _alertLabel.Text = $"⚡ BROWNOUT — Energy Domain demand exceeds generation by {deficit} E/s"; return;
+            _alertPanel.Visible = true; _alertLabel.Text = $"⚡ BROWNOUT — Worksite #{root.Value} demand exceeds generation by {deficit} E/s"; return;
         }
         if (capacity.IsOverCapacity) { _alertPanel.Visible = true; _alertLabel.Text = "OPERATIONS CAPACITY EXCEEDED — increase operational infrastructure"; return; }
         _alertPanel.Visible = false;
@@ -250,10 +273,62 @@ public partial class BasicHud : CanvasLayer
         }
         if (_bridge.World.Entities.ConstructionSite.TryGet(first, out ConstructionSite site))
             _builder.Append("Construction  ").Append(site.ProgressTicks * 100 / site.RequiredTicks).Append("%   Reserved  ").Append(site.ReservedOre).Append(" Ore / ").Append(site.ReservedEnergy).Append(" Energy\n");
+        if (_bridge.World.Entities.Building.Has(first) && IsRockRaiderWorksiteObject(first))
+        {
+            if (_bridge.World.Entities.WorksiteMember.TryGet(first, out WorksiteMember worksite)) _builder.Append("Worksite  #").Append(worksite.ComponentRoot.Value).Append("   SERVICED\n");
+            else _builder.Append("Worksite  DISCONNECTED — local supplied work may continue\n");
+        }
+        if (_bridge.World.Entities.ForwardServiceMember.Has(first))
+            _builder.Append(ForwardServiceSystem.TryGetProviderForMember(_bridge.World, first, out EntityId serviceProvider)
+                ? $"Service Available  •  source #{serviceProvider.Value}\n"
+                : "No Forward Service.\n");
+        if (_bridge.World.Entities.ForwardServiceProvider.TryGet(first, out ForwardServiceProvider forwardService))
+            _builder.Append("Forward Service  ").Append(forwardService.IsActive ? "ACTIVE" : "INACTIVE").Append("  •  ").Append(forwardService.RadiusBuildCells).Append(" cells\n");
+        if (_bridge.World.Entities.Deployment.TryGet(first, out Deployment deployment))
+            _builder.Append("Deployment  ").Append(deployment.State).Append('\n');
+        if (_bridge.World.Entities.MissionRefitState.TryGet(first, out MissionRefitState refitState))
+        {
+            _builder.Append("Роль  ").Append(refitState.CurrentConfiguration == MissionConfiguration.T3Survey ? "РОЗВІДКА" : "ЕСКОРТ")
+                .Append("  •  Модуль розвідки: ").Append((refitState.OwnedConfigurationMask & 2) != 0 ? "КУПЛЕНИЙ" : refitState.SurveyUnlocked ? "ВІДКРИТИЙ, НЕ КУПЛЕНИЙ" : "ЗАБЛОКОВАНИЙ").Append('\n');
+            if (refitState.ConfigurationLockTicks > 0)
+                _builder.Append("Зміна ролі знову доступна через  ").Append((refitState.ConfigurationLockTicks + 19) / 20).Append("с\n");
+        }
+        if (_bridge.World.Entities.MissionRefitJob.TryGet(first, out MissionRefitJob refitJob))
+            _builder.Append("Переоснащення на роль «Розвідка»  ").Append((refitJob.TotalTicks - refitJob.RemainingTicks) * 100 / refitJob.TotalTicks).Append("%  •  витрачено ")
+                .Append(refitJob.CommittedOre).Append(" Ore / ").Append(refitJob.CommittedEnergy).Append(" Energy\n");
+        if (_bridge.World.Entities.ResonanceCore.TryGet(first, out ResonanceCore resonance))
+        {
+            int committed = ResonanceCoreSystem.CountCommitted(resonance);
+            _builder.Append("Встановлені Crystals  ").Append(committed).Append(" / ").Append(ResonanceCoreSystem.MaximumSlots(resonance)).Append('\n');
+            _builder.Append("Споживання ядра  ").Append(ResonanceCoreSystem.ContinuousEnergyDemand(resonance)).Append(" E/s  •  ")
+                .Append(BrownoutSystem.IsOperational(_bridge.World, first) ? "ПРАЦЮЄ" : "НЕСТАЧА ENERGY — CRYSTALS ЗБЕРЕЖЕНО").Append('\n');
+            int coreCommitted = ResonanceCoreSystem.CountCommitted(resonance);
+            _builder.Append("Внесок у Заряд  максимум ").Append(20 * (1 + coreCommitted)).Append("  •  +")
+                .Append(BrownoutSystem.IsOperational(_bridge.World, first) ? ChargeText(coreCommitted * AlienChargeSystem.GenerationPerCrystalMillichargePerSecond) : "0.0").Append("/s\n");
+            if (resonance.TransitionKind != ResonanceTransitionKind.None)
+                _builder.Append(resonance.TransitionKind == ResonanceTransitionKind.Commit ? "Committing Crystal  " : "Withdrawing Crystal  ")
+                    .Append((resonance.TransitionTotalTicks - resonance.TransitionRemainingTicks) * 100 / resonance.TransitionTotalTicks).Append("%\n");
+        }
+        if (_bridge.World.Entities.SurgeZone.TryGet(first, out SurgeZone surgeZone))
+            _builder.Append(surgeZone.BuildupRemainingTicks > 0 ? "Підготовка Сплеску  " : "Сплеск активний  ")
+                .Append((surgeZone.BuildupRemainingTicks > 0 ? surgeZone.BuildupRemainingTicks : surgeZone.ActiveRemainingTicks) / 20.0f).Append("с  •  радіус ").Append(surgeZone.RadiusBuildCells).Append(" клітинок\n");
+        if (AlienChargeSystem.IsSurged(_bridge.World, first)) _builder.Append("ПІДСИЛЕНИЙ СПЛЕСКОМ  •  атака відновлюється на 20% швидше  •  ETX на 30% швидше\n");
+        if (_bridge.World.Entities.TubeStation.TryGet(first, out TubeStation tubeStation))
+        {
+            _builder.Append("Аеротруба  ").Append(tubeStation.ConnectionCount).Append(" / ").Append(tubeStation.ConnectionLimit).Append(" з'єднань\n");
+            _builder.Append("Одночасно перевозить  ").Append(tubeStation.HypersledThroughputUnlocked ? 3 : 2).Append(" юніти").Append(tubeStation.HypersledThroughputUnlocked ? "  •  прискорена пропускна здатність" : string.Empty).Append('\n');
+            if (_bridge.World.Entities.TubeComponent.TryGet(tubeStation.ComponentRoot, out TubeComponent tubeComponent))
+                _builder.Append("Мережа  ").Append(tubeComponent.StationCount).Append(" станції  •  ").Append(tubeComponent.OperationalLinkCount).Append(" активний маршрут\n");
+        }
+        if (_bridge.World.Entities.TubeLink.TryGet(first, out TubeLink tubeLink))
+            _builder.Append("Tube Link  #").Append(tubeLink.EndpointA.Value).Append(" → #").Append(tubeLink.EndpointB.Value).Append("  •  ")
+                .Append(tubeLink.LengthBuildCells).Append(" cells  •  ").Append(tubeLink.IsOperational ? "ACTIVE  •  1 E/s" : "DISABLED").Append('\n');
         if (_bridge.World.Entities.PowerState.TryGet(first, out PowerState power))
             _builder.Append("Power  ").Append(power.IsPowered ? "ONLINE" : "DISABLED — Energy Domain Brownout").Append("   Priority  ").Append(power.Priority).Append('\n');
         if (_bridge.World.Entities.Production.TryGet(first, out Production production)) AppendProductionQueue(production, first);
         if (_input?.BuildModeActive == true) _builder.Append("BUILD MODE  ").Append(_input.BuildStatus).Append('\n');
+        int stabilityTicks = DisplacementSystem.RemainingStabilityTicks(_bridge.World, first);
+        if (stabilityTicks > 0) _builder.Append("Захист від повторного сильного поштовху  ").Append((stabilityTicks + SimClock.TicksPerSecond - 1) / SimClock.TicksPerSecond).Append("с\n");
         if (_builder.Length == 0) _builder.Append("Ready for orders.");
         _selectionDetails.Text = _builder.ToString().TrimEnd();
 
@@ -302,6 +377,8 @@ public partial class BasicHud : CanvasLayer
             if (_bridge.World.Content.TryGetEntity(selectable.ContentType, out PrototypeEntityDefinition entity)) return DisplayName(entity.StableKey);
             for (int i = 0; i < _bridge.World.Content.ResourceNodes.Length; i++)
                 if (_bridge.World.Content.ResourceNodes[i].Id == selectable.ContentType) return DisplayName(_bridge.World.Content.ResourceNodes[i].StableKey);
+            string m5Name = M5ProofName(selectable.ContentType);
+            if (m5Name.Length > 0) return m5Name;
         }
         return $"Object #{id.Value}";
     }
@@ -363,6 +440,31 @@ public partial class BasicHud : CanvasLayer
         return $"{tenths / 10}.{tenths % 10}";
     }
 
+    private static string ChargeText(int millicharge)
+    {
+        int tenths = (millicharge + 50) / 100;
+        return $"{tenths / 10}.{tenths % 10}";
+    }
+
+    private EntityId ActiveWorksiteRoot(EntityId[] components)
+    {
+        if (_bridge is not null && _selection is not null && _selection.Selected.Count > 0 &&
+            _bridge.World.Entities.WorksiteMember.TryGet(_selection.Selected[0], out WorksiteMember selected)) return selected.ComponentRoot;
+        return components.Length > 0 ? components[0] : EntityId.None;
+    }
+
+    private bool IsRockRaiderWorksiteObject(EntityId id)
+    {
+        if (_bridge is null || !_bridge.World.Entities.Selectable.TryGet(id, out Selectable selectable)) return false;
+        string[] keys =
+        {
+            "building.rock_raiders.hq", "building.rock_raiders.ore_processing_plant",
+            "building.rock_raiders.power_station", "building.rock_raiders.vehicle_service_bay"
+        };
+        for (int i = 0; i < keys.Length; i++) if (StableId.FromKey(keys[i]) == selectable.ContentType) return true;
+        return false;
+    }
+
     private static string UnitName(ContentId id)
     {
         for (int i = 0; i < ProductionKeys.Length; i++) if (StableId.FromKey(ProductionKeys[i]) == id) return DisplayName(ProductionKeys[i]);
@@ -403,6 +505,32 @@ public partial class BasicHud : CanvasLayer
         "resource.ore.small" => "Small Ore Deposit",
         "resource.ore.rich" => "Rich Ore Deposit",
         "resource.ore.deep_contested_seam" => "Deep Contested Ore Seam",
+        "building.ast.service_refit_hub" => "Service & Refit Hub",
+        "unit.ast.t3_trike" => "T3-Trike",
+        "building.ali.etx_command_core" => "ETX Command Core",
+        "building.ali.resonance_core" => "Resonance Core",
+        "unit.ali.razor_skimmer" => "Razor Skimmer",
+        "building.mar.aero_tube_hangar" => "Aero Tube Hangar",
+        "building.mar.settlement_station" => "Settlement Station",
+        "unit.mar.worker_robot" => "Worker Robot",
+        "unit.mar.double_hover" => "Double Hover",
+        "unit.mar.jet_scooter" => "Jet Scooter",
+        "unit.mar.excavation_searcher" => "Excavation Searcher",
+        "unit.ast.t3_trike.displacement_target" => "Ворожий T3-Trike — ціль поштовху",
+        "unit.rock_raiders.hover_scout.m5_excavation_runner" => "Hover Scout — перевірка проходу",
         _ => key
     };
+
+    private static string M5ProofName(ContentId id)
+    {
+        string[] keys =
+        {
+            "building.ast.service_refit_hub", "unit.ast.t3_trike", "building.ali.etx_command_core", "building.ali.resonance_core",
+            "unit.ali.razor_skimmer", "building.mar.aero_tube_hangar", "building.mar.settlement_station", "unit.mar.worker_robot",
+            "unit.mar.double_hover", "unit.mar.jet_scooter", "unit.mar.excavation_searcher", "unit.ast.t3_trike.displacement_target",
+            "unit.rock_raiders.hover_scout.m5_excavation_runner"
+        };
+        for (int i = 0; i < keys.Length; i++) if (StableId.FromKey(keys[i]) == id) return DisplayName(keys[i]);
+        return string.Empty;
+    }
 }

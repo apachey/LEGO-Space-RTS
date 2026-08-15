@@ -26,10 +26,22 @@ public static class BrownoutSystem
         {
             EntityId id = alive[i];
             if (!world.Entities.EnergyDomainMember.TryGet(id, out EnergyDomainMember member) || member.DomainRoot != root ||
-                !world.Entities.Building.TryGet(id, out Building building) || building.State != BuildingState.Completed ||
-                !world.Content.TryGetBuilding(building.Type, out BuildingDefinition definition) || definition.ContinuousEnergyDemandPerSecond == 0) continue;
+                !world.Entities.Building.TryGet(id, out Building building) || building.State != BuildingState.Completed) continue;
+            int demand = 0;
+            EnergyFunctionalClass functionalClass = EnergyFunctionalClass.StaticDefenseAndNonessential;
+            if (world.Content.TryGetBuilding(building.Type, out BuildingDefinition definition))
+            {
+                demand = definition.ContinuousEnergyDemandPerSecond;
+                functionalClass = definition.EnergyFunctionalClass;
+            }
+            if (world.Entities.ResonanceCore.TryGet(id, out ResonanceCore core) && ResonanceCoreSystem.IsValidCore(world, id))
+            {
+                demand = ResonanceCoreSystem.ContinuousEnergyDemand(core);
+                functionalClass = EnergyFunctionalClass.ServiceAndFactionSystems;
+            }
+            if (demand == 0) continue;
             if (!world.Entities.PowerState.Has(id)) world.Entities.PowerState.Set(id, new PowerState { Priority = EnergyPriority.Normal, IsPowered = true });
-            consumers.Add(new Consumer(id, definition.EnergyFunctionalClass, definition.ContinuousEnergyDemandPerSecond));
+            consumers.Add(new Consumer(id, functionalClass, demand));
         }
 
         consumers.Sort((a, b) =>
@@ -63,6 +75,7 @@ public static class BrownoutSystem
             domain.LastBrownoutEvent = !previousBrownout && brownout ? BrownoutEventKind.Entered
                 : previousBrownout && !brownout ? BrownoutEventKind.Recovered : BrownoutEventKind.Changed;
         }
+        if (world.Entities.Ownership.TryGet(root, out Ownership owner)) AlienChargeSystem.RecalculatePlayer(world, owner.PlayerSlot);
     }
 
     public static bool TrySetPriority(SimulationWorld world, byte playerSlot, EntityId[] entities, EnergyPriority priority)

@@ -21,7 +21,7 @@ public static class DevMapFactory
 
         // Central cliff spine. Openings are authored by leaving gaps:
         // broad 22-build-cell lane, medium 13-cell passage, heavy 18-cell route,
-        // plus the debug Excavatable shortcut.
+        // plus the authored Excavatable shortcut.
         AddCliff(map, 152, 8, 16, 28);
         AddCliff(map, 152, 80, 16, 44);
         AddCliff(map, 152, 150, 16, 46);
@@ -41,7 +41,14 @@ public static class DevMapFactory
         map.SetFlagsRect(new IntRect(90, 44, 8, 46), MapCellFlags.GroundOccluder, MapCellFlags.Buildable);
         map.SetFlagsRect(new IntRect(212, 238, 8, 42), MapCellFlags.GroundOccluder, MapCellFlags.Buildable);
 
-        map.AddExcavatable(new ExcavatableFeature(ExcavatableFeatureId, new IntRect(152, 264, 16, 14), false));
+        map.AddExcavatable(new ExcavatableFeature(
+            "feature.dev.fractured_shortcut",
+            ExcavatableFeatureId,
+            new IntRect(152, 264, 16, 14),
+            ExcavatableTerrainClass.FracturedRockWall,
+            requiredEnergy: 25,
+            StableId.FromKey("view.placeholder.excavatable.fractured_rock_wall"),
+            openBuildable: false));
 
         MapStart[] starts =
         {

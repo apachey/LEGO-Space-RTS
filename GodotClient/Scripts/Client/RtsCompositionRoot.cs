@@ -11,7 +11,8 @@ public partial class RtsCompositionRoot : Node3D
     {
         Engine.MaxFps = 60;
         InputBindings.ConfigureDefaults();
-        LoadedScenario scenario = RuntimeScenarioLoader.LoadCanonicalOpening();
+        LoadedScenario scenario = RuntimeScenarioLoader.LoadActive();
+        string[] commandLineArgs = OS.GetCmdlineUserArgs();
         SimulationWorld world = scenario.World;
 
         GodotSimBridge bridge = new() { Name = "SimulationBridge" }; AddChild(bridge); bridge.Configure(world, scenario.GameplayContentHash);
@@ -24,13 +25,17 @@ public partial class RtsCompositionRoot : Node3D
         FogPresenter fog = new() { Name = "FogPresentation" }; AddChild(fog); fog.Configure(bridge);
         DebugRenderer debug = new() { Name = "DebugVisualization" }; AddChild(debug); debug.Configure(bridge);
         BasicHud hud = new(); AddChild(hud); hud.Configure(bridge, selection, input);
-        DebugHud developerHud = new(); AddChild(developerHud); developerHud.Configure(bridge, input, debug, fog);
+        DebugHud developerHud = new(); AddChild(developerHud); developerHud.Configure(bridge, input, debug, fog, PrepareM5Acceptance);
+        if (scenario.IsM5Acceptance)
+        {
+            bool pauseInitially = !commandLineArgs.Contains("--smoke") && !commandLineArgs.Contains("--capture-smoke");
+            M5PlaytestHud playtestHud = new(); AddChild(playtestHud); playtestHud.Configure(bridge, selection, camera, RestartM5Acceptance, pauseInitially);
+        }
         GD.Print($"Prototype content source: {(scenario.LoadedFromCompiledData ? "compiled runtime data" : "built-in deterministic fallback")}, content hash={scenario.GameplayContentHash:X16}");
 
         DirectionalLight3D sun = new() { Name = "Sun", RotationDegrees = new Vector3(-58f, -35f, 0f), LightEnergy = 1.2f, ShadowEnabled = true }; AddChild(sun);
         WorldEnvironment environment = new() { Name = "WorldEnvironment", Environment = new Godot.Environment { BackgroundMode = Godot.Environment.BGMode.Color, BackgroundColor = new Color(0.035f, 0.04f, 0.05f), AmbientLightSource = Godot.Environment.AmbientSource.Color, AmbientLightColor = new Color(0.64f, 0.64f, 0.68f), AmbientLightEnergy = 0.72f } }; AddChild(environment);
 
-        string[] commandLineArgs = OS.GetCmdlineUserArgs();
         if (commandLineArgs.Contains("--smoke") || commandLineArgs.Contains("--capture-smoke"))
         {
             GodotSmokeRunner smoke = new() { Name = "GodotSmokeRunner" };
@@ -38,6 +43,19 @@ public partial class RtsCompositionRoot : Node3D
             smoke.Configure(bridge, selection, camera, input, views, commandLineArgs);
         }
     }
+
+    private void PrepareM5Acceptance()
+    {
+        RuntimeScenarioLoader.ForceM5Acceptance = true;
+        Callable.From(() => GetTree().ReloadCurrentScene()).CallDeferred();
+    }
+
+    private void RestartM5Acceptance()
+    {
+        RuntimeScenarioLoader.ForceM5Acceptance = true;
+        Callable.From(() => GetTree().ReloadCurrentScene()).CallDeferred();
+    }
+
     private static Vector3 ComputeInitialPlayerFocus(SimulationWorld world, byte playerSlot)
     {
         Vector3 sum = Vector3.Zero;

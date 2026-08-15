@@ -64,10 +64,10 @@ public sealed class M3ProductionQueueTests
         SimulationWorld world = ScenarioFactory.CreateFirstControllable(1);
         EntityId worker = world.Entities.Alive.Single(id => world.Entities.Builder.Has(id) &&
             world.Entities.Ownership.TryGet(id, out Ownership owner) && owner.PlayerSlot == 0);
-        FixVec2 siteEdge = FixVec2.FromInts(29, 92);
+        FixVec2 siteEdge = FixVec2.FromInts(28, 92);
         world.Entities.Transform.Get(worker).Position = siteEdge;
         world.Entities.Movement.Get(worker).LastPosition = siteEdge;
-        Assert.That(ConstructionPlacement.TryPlace(world, 0, new[] { worker }, ServiceBay, 30, 90, 0, out EntityId serviceBay, out PlacementFailure failure), Is.True, failure.ToString());
+        Assert.That(ConstructionPlacement.TryPlace(world, 0, new[] { worker }, ServiceBay, 29, 90, 0, out EntityId serviceBay, out PlacementFailure failure), Is.True, failure.ToString());
         world.Entities.ConstructionSite.Get(serviceBay).RequiredTicks = 1;
         SimulationRunner runner = new(world);
         runner.StepOneTick();

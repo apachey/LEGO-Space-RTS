@@ -87,6 +87,29 @@ public partial class RtsCameraController : Camera3D
         ApplyTransform();
     }
 
+    public void SetZoomCells(float cells)
+    {
+        _zoomCells = Mathf.Clamp(cells, 24f, 72f);
+        ApplyTransform();
+    }
+
+    public void FrameGroundPointAtViewport(Vector3 world, Vector2 normalizedViewportPosition, float zoomCells)
+    {
+        _zoomCells = Mathf.Clamp(zoomCells, 24f, 72f);
+        _focus = new Vector3(world.X, 0f, world.Z);
+        ApplyTransform();
+
+        Vector2 viewportSize = GetViewport().GetVisibleRect().Size;
+        Vector2 desiredScreenPoint = new(
+            viewportSize.X * Mathf.Clamp(normalizedViewportPosition.X, 0f, 1f),
+            viewportSize.Y * Mathf.Clamp(normalizedViewportPosition.Y, 0f, 1f));
+        if (!TryProjectToGround(desiredScreenPoint, out Vector3 groundAtDesiredPoint)) return;
+
+        Vector3 translation = world - groundAtDesiredPoint;
+        _focus += new Vector3(translation.X, 0f, translation.Z);
+        ApplyTransform();
+    }
+
     public bool TryProjectToGround(Vector2 screen, out Vector3 point)
     {
         Vector3 origin = ProjectRayOrigin(screen);
