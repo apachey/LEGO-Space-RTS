@@ -654,7 +654,7 @@ public partial class UnitViewManager : Node3D
         return labelHeight + 0.38f;
     }
 
-    private static StandardMaterial3D MakeMaterial(Color color) => new() { AlbedoColor = color, Roughness = 0.45f };
+    private static StandardMaterial3D MakeMaterial(Color color) => LegoMaterialLibrary.MoldedPolymer(color);
     private static StandardMaterial3D MakeProjectileMaterial() => new()
     {
         AlbedoColor = new Color(1f, 0.68f, 0.10f),

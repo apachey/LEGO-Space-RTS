@@ -12,7 +12,8 @@ public partial class DebugHud : CanvasLayer
     private Label? _label;
     private double _nextUpdate;
 
-    public void Configure(GodotSimBridge bridge, RtsInputController input, DebugRenderer debug, FogPresenter fog, Action prepareM5Acceptance)
+    public void Configure(GodotSimBridge bridge, RtsInputController input, DebugRenderer debug, FogPresenter fog,
+        Action prepareM5Acceptance, Action openM7MaterialLab)
     {
         _bridge = bridge; _input = input; Name = "DeveloperHUD"; Layer = 20; ProcessPriority = 210;
         _panel = new PanelContainer { Name = "DeveloperPanel", Position = new Vector2(12, 90), CustomMinimumSize = new Vector2(760, 0), Visible = false };
@@ -21,6 +22,10 @@ public partial class DebugHud : CanvasLayer
         Label title = new() { Text = "DEVELOPER TOOLS — F8", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill }; title.AddThemeFontSizeOverride("font_size", 16); header.AddChild(title);
         Button drain = new() { Text = "Drain Energy" }; drain.Pressed += input.DebugDrainEnergy; header.AddChild(drain);
         Button m5 = new() { Name = "PrepareM5Acceptance", Text = "Prepare M5 Playtest" }; m5.Pressed += prepareM5Acceptance; header.AddChild(m5);
+        Button m7 = new() { Name = "OpenM7MaterialLab", Text = "M7 Material Lab" };
+        m7.TooltipText = "Opens the isolated T064 material-master art-direction fixture.";
+        m7.Pressed += openM7MaterialLab;
+        header.AddChild(m7);
         HFlowContainer actions = new() { Name = "PreparedPlaytestActions" }; box.AddChild(actions);
         Button prepareConstruction = new() { Name = "PrepareConstructionTest", Text = "Prepare construction test" };
         prepareConstruction.TooltipText = "Supplies resources, creates a progressing construction site, selects it and centers the camera.";

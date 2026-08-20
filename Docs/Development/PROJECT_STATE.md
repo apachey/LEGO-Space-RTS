@@ -5,9 +5,9 @@ authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M0–M6 are implemented, verified and game-director accepted. The complete M6
-integration state contains T058–T063 and the accepted post-M5 movement handoff.
-M7 T064 is the next approved implementation task.**
+**M0–M6 are implemented, verified and game-director accepted. M7 T064 material
+masters are implemented on the current branch and await game-director visual
+review before acceptance.**
 
 - The branch includes the verified post-M5 movement handoff from `44e2caf`
   plus T058–T063.
@@ -104,6 +104,24 @@ The headless dedicated-server entry remains:
 - The ENet acceptance delivered a 666,891-byte server log and reproduced the
   authoritative final hash.
 
+## M7 T064 material-master implementation
+
+- The Godot client owns one centralized PBR material family for molded polymer,
+  tool metal, rubber, transparent polymer, Crystal and terrain. It uses the
+  engine's built-in `StandardMaterial3D`; no dependency or custom shader was
+  added.
+- Existing terrain and placeholder entity presentation now consume the same
+  masters. Authoritative simulation, content, networking and gameplay formats
+  are unchanged.
+- The isolated **M7 Material Lab** presents all six families, five canonical
+  source-palette lineages, separate team Identification Tiles and polymer
+  roughness 0.32 / 0.40 / 0.50 under the same fixed neutral lighting.
+- A normal exported build exposes the fixture through `F8` → **M7 Material
+  Lab** and provides **RETURN TO PROTOTYPE**. The command-line smoke is
+  `--m7-material-lab --m7-material-smoke`.
+- Exact RGB matching and subjective material response are explicitly draft.
+  Game-director review is required for highlight width, black lift, white
+  retention, transparent tint and Crystal emission.
 ## Integration format boundary
 
 - authoritative snapshot format **20**;
@@ -117,15 +135,20 @@ The headless dedicated-server entry remains:
 
 ## Verification state
 
-The complete T060–T063 code passed `./tools/verify.sh --full` on 2026-08-20
-with 278 NUnit tests, 24/24 representative movement acceptance, every T058–T063
-ENet smoke, 100-repeat determinism, replay record/playback, snapshot
-continuation, compiled-content regeneration and macOS export. Exact summary:
-`Artifacts/Verification/20260820T174836Z-full-summary.txt`.
+The current T064 branch passed `./tools/verify.sh --full` on 2026-08-20 with
+278 NUnit tests, 24/24 representative mover acceptance, every T058–T063 ENet
+smoke, the T064 material-master smoke, 100-repeat determinism, replay
+record/playback, snapshot continuation, compiled-content regeneration and
+macOS export. Exact summary:
+`Artifacts/Verification/20260820T183634Z-full-summary.txt`.
 
-The preceding `./tools/verify.sh` fast run also passed all 278 tests and every
-T058–T063 network gate. Exact summary:
-`Artifacts/Verification/20260820T171352Z-fast-summary.txt`.
+The preceding `./tools/verify.sh` fast run passed the same blocking build/test,
+content, Godot, networking and T064 material gates. Exact summary:
+`Artifacts/Verification/20260820T183433Z-fast-summary.txt`.
+
+The exported app was then launched fresh and the exact `F8` → **M7 Material
+Lab** → **RETURN TO PROTOTYPE** path was executed successfully. Evidence:
+`Artifacts/Screenshots/t064-exported-f8-material-lab.jpg`.
 
 Stress60 remained the expected diagnostic failure with phase completion
 **4/60, 5/60 and 2/60**. The exported macOS debug build is:
@@ -144,7 +167,8 @@ blocking only when M9 must prove its stable-large-battle exit.
 
 ## Next approved action
 
-1. Begin M7 T064 from the accepted post-M6 baseline.
-2. Keep Stress60 visible without starting an unreviewed third movement attempt;
+1. Complete game-director Material Lab review.
+2. Apply any directed material/palette refinements, then record T064 acceptance.
+3. Keep Stress60 visible without starting an unreviewed third movement attempt;
    revisit it for M9 or earlier only if a catastrophic movement regression
    appears.

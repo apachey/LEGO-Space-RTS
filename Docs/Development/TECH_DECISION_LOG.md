@@ -749,3 +749,26 @@ canon or the authoritative 20-Hz simulation.
 
 This is an explicitly approved technical-canon gate reclassification. It does
 not change gameplay, movement behavior, thresholds or performance targets.
+
+---
+
+## 2026-08-20 — M7 T064 Godot-native LEGO material masters
+
+- The Unity/URP task label is implemented on the approved Godot host as a small
+  centralized `StandardMaterial3D` family: molded polymer, tool metal, rubber,
+  transparent polymer, Crystal and terrain.
+- Built-in Godot PBR is the baseline because it already provides the required
+  albedo, metallic, roughness, transparency and emission controls. A custom
+  shader is deferred until a measured visual or performance need justifies it.
+- Faction body colors are parameters. Team identity remains a separate small
+  Identification Tile material rather than a body recolor.
+- A fixed presentation-only Material Lab displays all six families,
+  five source-palette swatches and the complete canonical polymer roughness
+  range under one fixed neutral lighting rig. Its automated smoke validates
+  configuration, not subjective art quality.
+- The existing prototype terrain and placeholder entity materials now consume
+  the same centralized family. SimCore, content formats, gameplay and network
+  state remain unchanged.
+
+The exact palette match, highlight width, dark-value lift, transparency and
+emission remain game-director art-direction gates before T064 is accepted.

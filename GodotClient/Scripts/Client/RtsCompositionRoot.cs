@@ -7,12 +7,22 @@ namespace LegoSpaceRTS.Client;
 
 public partial class RtsCompositionRoot : Node3D
 {
+    private static bool _forceM7MaterialLab;
+
     public override void _Ready()
     {
         Engine.MaxFps = 60;
+        string[] commandLineArgs = OS.GetCmdlineUserArgs();
+        if (_forceM7MaterialLab || commandLineArgs.Contains("--m7-material-lab"))
+        {
+            M7MaterialLab lab = new();
+            AddChild(lab);
+            lab.Configure(ReturnFromM7MaterialLab, commandLineArgs);
+            return;
+        }
+
         InputBindings.ConfigureDefaults();
         LoadedScenario scenario = RuntimeScenarioLoader.LoadActive();
-        string[] commandLineArgs = OS.GetCmdlineUserArgs();
         SimulationWorld world = scenario.World;
 
         GodotSimBridge bridge = new() { Name = "SimulationBridge" }; AddChild(bridge); bridge.Configure(world, scenario.GameplayContentHash);
@@ -25,7 +35,7 @@ public partial class RtsCompositionRoot : Node3D
         FogPresenter fog = new() { Name = "FogPresentation" }; AddChild(fog); fog.Configure(bridge);
         DebugRenderer debug = new() { Name = "DebugVisualization" }; AddChild(debug); debug.Configure(bridge);
         BasicHud hud = new(); AddChild(hud); hud.Configure(bridge, selection, input);
-        DebugHud developerHud = new(); AddChild(developerHud); developerHud.Configure(bridge, input, debug, fog, PrepareM5Acceptance);
+        DebugHud developerHud = new(); AddChild(developerHud); developerHud.Configure(bridge, input, debug, fog, PrepareM5Acceptance, OpenM7MaterialLab);
         if (scenario.IsM5Acceptance)
         {
             bool pauseInitially = !commandLineArgs.Contains("--smoke") && !commandLineArgs.Contains("--capture-smoke");
@@ -33,8 +43,7 @@ public partial class RtsCompositionRoot : Node3D
         }
         GD.Print($"Prototype content source: {(scenario.LoadedFromCompiledData ? "compiled runtime data" : "built-in deterministic fallback")}, content hash={scenario.GameplayContentHash:X16}");
 
-        DirectionalLight3D sun = new() { Name = "Sun", RotationDegrees = new Vector3(-58f, -35f, 0f), LightEnergy = 1.2f, ShadowEnabled = true }; AddChild(sun);
-        WorldEnvironment environment = new() { Name = "WorldEnvironment", Environment = new Godot.Environment { BackgroundMode = Godot.Environment.BGMode.Color, BackgroundColor = new Color(0.035f, 0.04f, 0.05f), AmbientLightSource = Godot.Environment.AmbientSource.Color, AmbientLightColor = new Color(0.64f, 0.64f, 0.68f), AmbientLightEnergy = 0.72f } }; AddChild(environment);
+        M7LightingRig.AddNeutralGameplayRig(this);
 
         if (commandLineArgs.Contains("--smoke") || commandLineArgs.Contains("--capture-smoke"))
         {
@@ -53,6 +62,23 @@ public partial class RtsCompositionRoot : Node3D
     private void RestartM5Acceptance()
     {
         RuntimeScenarioLoader.ForceM5Acceptance = true;
+        Callable.From(() => GetTree().ReloadCurrentScene()).CallDeferred();
+    }
+
+    private void OpenM7MaterialLab()
+    {
+        _forceM7MaterialLab = true;
+        Callable.From(() => GetTree().ReloadCurrentScene()).CallDeferred();
+    }
+
+    private void ReturnFromM7MaterialLab()
+    {
+        _forceM7MaterialLab = false;
+        if (OS.GetCmdlineUserArgs().Contains("--m7-material-lab"))
+        {
+            GetTree().Quit();
+            return;
+        }
         Callable.From(() => GetTree().ReloadCurrentScene()).CallDeferred();
     }
 
