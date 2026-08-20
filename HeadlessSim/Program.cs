@@ -40,7 +40,7 @@ string? compiledDir = Arg(args, "--compiled-dir");
 bool benchmark = Has(args, "--benchmark");
 bool pathBenchmark = Has(args, "--path-benchmark");
 bool enforceGates = Has(args, "--enforce-performance-gates");
-if (pathBenchmark) { scenario = "stress60"; benchmark = true; if (Arg(args, "--ticks") is null) ticks = 3000; }
+if (pathBenchmark) { scenario = "stress60"; benchmark = true; if (Arg(args, "--ticks") is null) ticks = ScenarioFactory.Stress60FinalEvaluationTick; }
 
 PrototypeContentCatalog builtInContent=PrototypeContentFactory.CreateM2Catalog();
 PrototypeContentCatalog runtimeContent=builtInContent;
@@ -88,10 +88,14 @@ for (int run = 0; run < repeat; run++)
 
     Dictionary<EntityId, FixVec2>? initialPositions = null;
     Dictionary<EntityId, int>? motionDelayTicks = null;
+    Dictionary<EntityId, FixVec2>? stressPhaseTargets = null;
+    List<(int Tick, int Completed, int Movers)>? stressPhaseResults = null;
     if (pathBenchmark)
     {
         initialPositions = new Dictionary<EntityId, FixVec2>();
         motionDelayTicks = new Dictionary<EntityId, int>();
+        stressPhaseTargets = new Dictionary<EntityId, FixVec2>();
+        stressPhaseResults = new List<(int Tick, int Completed, int Movers)>(3);
         EntityId[] ids = ScenarioFactory.OwnedIds(runner.World, 0);
         for (int i = 0; i < ids.Length; i++) initialPositions[ids[i]] = runner.World.Entities.Transform.Get(ids[i]).Position;
     }
@@ -118,6 +122,21 @@ for (int run = 0; run < repeat; run++)
         }
         else runner.StepOneTick();
 
+        if (stressPhaseTargets is not null &&
+            (runner.World.Tick.Value == ScenarioFactory.Stress60FirstMoveTick ||
+             runner.World.Tick.Value == ScenarioFactory.Stress60SecondMoveTick ||
+             runner.World.Tick.Value == ScenarioFactory.Stress60ThirdMoveTick))
+        {
+            stressPhaseTargets.Clear();
+            EntityId[] commandedIds = ScenarioFactory.OwnedIds(runner.World, 0);
+            for (int targetIndex = 0; targetIndex < commandedIds.Length; targetIndex++)
+            {
+                EntityId commandedId = commandedIds[targetIndex];
+                NavigationAgent commandedNavigation = runner.World.Entities.Navigation.Get(commandedId);
+                if (commandedNavigation.HasTarget) stressPhaseTargets[commandedId] = commandedNavigation.Target;
+            }
+        }
+
         if (motionDelayTicks is not null && initialPositions is not null && runner.World.Tick.Value <= 30)
         {
             foreach (KeyValuePair<EntityId, FixVec2> pair in initialPositions)
@@ -126,6 +145,23 @@ for (int run = 0; run < repeat; run++)
                 FixVec2 now = runner.World.Entities.Transform.Get(pair.Key).Position;
                 if (FixVec2.DistanceSquared(now, pair.Value) > Fix32.FromRatio(1, 100) * Fix32.FromRatio(1, 100)) motionDelayTicks[pair.Key] = runner.World.Tick.Value;
             }
+        }
+        if (stressPhaseResults is not null &&
+            (runner.World.Tick.Value == ScenarioFactory.Stress60SecondMoveTick - 1 ||
+             runner.World.Tick.Value == ScenarioFactory.Stress60TopologyOpenTick - 1 ||
+             runner.World.Tick.Value == ScenarioFactory.Stress60FinalEvaluationTick))
+        {
+            int phaseCompleted = 0, phaseMovers = 0;
+            EntityId[] phaseIds = ScenarioFactory.OwnedIds(runner.World, 0);
+            for (int phaseIndex = 0; phaseIndex < phaseIds.Length; phaseIndex++)
+            {
+                phaseMovers++;
+                EntityId phaseId = phaseIds[phaseIndex];
+                SimTransform phaseTransform = runner.World.Entities.Transform.Get(phaseId);
+                if (stressPhaseTargets!.TryGetValue(phaseId, out FixVec2 assignedTarget) &&
+                    FixVec2.Distance(phaseTransform.Position, assignedTarget) <= Fix32.One) phaseCompleted++;
+            }
+            stressPhaseResults.Add((runner.World.Tick.Value, phaseCompleted, phaseMovers));
         }
         bool checkpoint=false;
         for(int g=0;g<defaultGoldenCheckpoints.Length;g++)if(runner.World.Tick.Value==defaultGoldenCheckpoints[g]){checkpoint=true;break;}
@@ -158,14 +194,23 @@ for (int run = 0; run < repeat; run++)
         PrintSystemMean("command",commandSamples!);PrintSystemMean("movementIntent",movementSamples!);PrintSystemMean("localSeparation",separationSamples!);PrintSystemMean("transform",transformSamples!);PrintSystemMean("spatial",spatialSamples!);PrintSystemMean("fogLoS",visionSamples!);
         if (pathBenchmark)
         {
+            for (int phaseIndex = 0; phaseIndex < stressPhaseResults!.Count; phaseIndex++)
+            {
+                (int phaseTick, int phaseCompleted, int phaseMovers) = stressPhaseResults[phaseIndex];
+                double phaseCompletionRate = phaseMovers == 0 ? 1.0 : (double)phaseCompleted / phaseMovers;
+                Console.WriteLine($"stressPhaseTick={phaseTick} completion={phaseCompleted}/{phaseMovers} completionRate={phaseCompletionRate:P2}");
+                if (enforceGates && phaseCompletionRate < 0.98) Environment.ExitCode = 6;
+            }
+            if (enforceGates && stressPhaseResults.Count != 3) Environment.ExitCode = 6;
             int completed = 0, movers = 0;
             EntityId[] ids = ScenarioFactory.OwnedIds(runner.World, 0);
             for (int i = 0; i < ids.Length; i++)
             {
                 movers++;
-                NavigationAgent nav = runner.World.Entities.Navigation.Get(ids[i]);
-                SimTransform transform = runner.World.Entities.Transform.Get(ids[i]);
-                if (!nav.HasTarget || FixVec2.Distance(transform.Position, nav.Target) <= Fix32.One) completed++;
+                EntityId id = ids[i];
+                SimTransform transform = runner.World.Entities.Transform.Get(id);
+                if (stressPhaseTargets!.TryGetValue(id, out FixVec2 assignedTarget) &&
+                    FixVec2.Distance(transform.Position, assignedTarget) <= Fix32.One) completed++;
             }
             int delayMax = motionDelayTicks!.Count == 0 ? ticks : motionDelayTicks.Values.Max();
             double delayAverage = motionDelayTicks.Count == 0 ? ticks : motionDelayTicks.Values.Average();

@@ -5,18 +5,20 @@ authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M4 and M5 are implemented and game-director accepted. Their combined
-integration is being finalized on `codex/m4-m5-integration`.**
+**M4 and M5 are implemented, game-director accepted, integrated, and merged to
+`origin/main` through PR #12 (`85b02f2`). M6 implementation may begin; the
+preserved 60-mover scale gate must pass before M6 networked 1v1 acceptance.**
 
 - M3 is merged and human-accepted.
 - M4 T040–T048 combat, repair, transport and tactical transformation are merged
   to `origin/main` and human-accepted.
 - M5 T049–T057 four-faction system proof and its six-part executable acceptance
   handoff are implemented and human-accepted.
-- The integration branch combines both accepted milestones and has passed full
-  repository verification. It is ready for the user's merge to `main`.
-- The 60-mover diagnostic is permitted to remain diagnostic for M5, but becomes
-  `BLOCKING_NOW` before M6 begins.
+- The integrated post-M5 baseline has passed full repository verification.
+- The preserved 60-mover stress is `BLOCKING_LATER — M6 acceptance`; it does
+  not block starting M6 implementation.
+- `codex/60-mover-fix` is preserved pre-M5 research and is not a merge-ready
+  fix. Production work continues from the integrated post-M5 baseline.
 
 ## Locked technical foundation
 
@@ -73,14 +75,69 @@ export. The exact summary is
 `Artifacts/Verification/20260815T154942Z-full-summary.txt`.
 
 The permitted 60-mover diagnostic remained red: 31/60 movers completed, with
-51.67% completion and 4.17× realtime throughput. This remains the explicit
-blocking-later gate before M6. A snapshot produced directly by merged M4 format
+51.67% completion and 4.17× realtime throughput. It is the explicit
+`BLOCKING_LATER` gate for M6 networked 1v1 acceptance. It does not block M6
+implementation from starting. A snapshot produced directly by merged M4 format
 19 / protocol 17 was also loaded and advanced by the combined format-20 reader.
+
+Pre-M6 investigation found that the old completion signal was not trustworthy:
+formation reflow could replace a unit's assigned destination with its current
+position and `HasTarget == false` was then counted as arrival. Removing that
+false completion exposes the same defect in the representative M2 movement
+scenario: 7 of 24 movers remain short of reachable, valid endpoints, usually
+behind already-arrived friendly units. This does not reopen M3–M5 gameplay, but
+the movement correction must preserve the accepted post-M5 baseline.
+
+The game director approved a bounded deterministic formation-arrival sequencer.
+Its prototype preserves immutable endpoints, routes later rows through temporary
+arrival points only near the destination, and restores the honest representative
+M2 acceptance to PASS (24/24).
+
+The 60-mover fixture itself was also invalid: mixed Large/Huge units were spawned
+two build cells apart despite collision diameters up to 3.2. The corrected fixture
+uses legal four-cell spacing and now has explicit passability/non-overlap coverage.
+With legal starts, the first honest stress phase reaches only 4/60 endpoints.
+The remaining units form mid-route clusters around constrained central passages,
+so the unresolved defect is corridor traffic/local yield rather than arrival or
+endpoint legality.
+
+The game director then approved one final bounded clean-room recovery experiment
+inside the existing local-separation scorer. Stuck movers received deterministic
+neighbor-pressure scoring and an explicitly wider but still bounded corridor
+window; motion still used ordinary kinematics and preserved Heavy priority. It
+did not improve physical completion (4/60 remained 4/60) and worsened the first-
+phase diagnostics from 43 to 47 deadlocks and from 3,504 to 12,831 oscillations.
+The failed experiment was removed rather than tuned or stacked with more patches.
+After cleanup, `./tools/verify.sh` passed all normal blocking stages with 256
+tests, the honest 24/24 M2 movement acceptance, compiled-content validation,
+HeadlessSim smoke and Godot headless smoke. The exact summary is
+`Artifacts/Verification/20260820T142908Z-fast-summary.txt`.
+
+The corrected `./tools/verify.sh --full` classification also passed on
+2026-08-20: every current blocking stage, 100-repeat determinism, replay,
+snapshot continuation, compiled-content regeneration and macOS export were
+green. Stress60 remained an explicit `BLOCKING_LATER` diagnostic failure with
+phase completion 4/60, 5/60 and 2/60. The exact summary is
+`Artifacts/Verification/20260820T144335Z-full-summary.txt`.
 
 ## Next approved action
 
-1. Complete and verify the M4+M5 integration branch.
-2. Hand the branch to the game director for the final merge to `main`.
-3. Before any M6 implementation, promote and satisfy the 60-mover gate.
+The approved arrival sequencer fixes the representative arrival wall but does
+not clear the distinct 60-mover mid-route traffic blocker. The preserved pre-M5
+portal-flow/traffic-controller experiment already failed to satisfy the gate;
+do not resurrect or stack it as another patch.
 
-Do not begin M6 merely because the integration compiles.
+The exact Phase 09B wording makes this gate blocking **before M6 networked 1v1
+acceptance**, not before M6 implementation starts. Therefore:
+
+1. integrate the verified immutable-endpoint, arrival-sequencing and honest
+   stress-fixture work;
+2. begin M6 with its first approved implementation task from the accepted
+   post-M5 baseline;
+3. keep stress60 `BLOCKING_LATER` throughout M6 development and require it to
+   pass before M6 acceptance.
+
+`ARCHITECTURE REVIEW REQUIRED` only before another movement attempt that adds a
+traffic coordinator/solver or otherwise expands movement architecture. The
+failed local-pressure experiment is not a reason to hold T058 or other bounded
+M6 implementation work.

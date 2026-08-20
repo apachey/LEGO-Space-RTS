@@ -266,15 +266,16 @@ public sealed class CommandExecutionSystem : ISimSystem
             _formationComparer.World = world;
             world.ScratchEntities.Sort(_formationComparer);
             int columns = FormationPlanner.EstimateColumns(world, command.TargetPosition, world.ScratchEntities.Count, spacingClass);
+            FixVec2[] slotCloud = FormationPlanner.GetSlotCloud(world, command.TargetPosition, world.ScratchEntities.Count, spacingClass, heading, columns);
+            int[] assignedSlots = FormationPlanner.AssignSlots(world, world.ScratchEntities, slotCloud);
             for (int i = 0; i < world.ScratchEntities.Count; i++)
             {
                 EntityId id = world.ScratchEntities[i];
-                FixVec2 desiredSlot = FormationPlanner.GetSlot(command.TargetPosition, i, world.ScratchEntities.Count, spacingClass, heading, columns);
-                NavigationAgent slotNav = world.Entities.Navigation.Get(id);
-                FixVec2 slotTarget = FormationPlanner.ResolvePassableSlot(world, desiredSlot, slotNav.Footprint);
+                int slotIndex = assignedSlots[i];
+                FixVec2 slotTarget = slotCloud[slotIndex];
                 FormationIntent formation = world.ScratchEntities.Count > 1 ? new FormationIntent
                 {
-                    CohortId=command.Sequence,Anchor=command.TargetPosition,Heading=heading,SlotIndex=i,MemberCount=world.ScratchEntities.Count,
+                    CohortId=command.Sequence,Anchor=command.TargetPosition,Heading=heading,SlotIndex=slotIndex,MemberCount=world.ScratchEntities.Count,
                     Columns=columns,SpacingFootprint=spacingClass,LastReflowTick=-1
                 } : default;
                 bool queued = (command.Modifiers & CommandModifiers.Queue) != 0;
@@ -638,6 +639,42 @@ public static class FormationPlanner
         return result;
     }
 
+    public static int[] AssignSlots(SimulationWorld world, IReadOnlyList<EntityId> roleOrderedIds, FixVec2[] slotCloud)
+    {
+        if (world == null) throw new ArgumentNullException(nameof(world));
+        if (roleOrderedIds == null) throw new ArgumentNullException(nameof(roleOrderedIds));
+        if (slotCloud == null) throw new ArgumentNullException(nameof(slotCloud));
+        int count = roleOrderedIds.Count;
+        if (slotCloud.Length != count) throw new ArgumentException("Slot cloud size must match the commanded cohort.", nameof(slotCloud));
+        int[] assignedSlotByMember = new int[count];
+        if (count <= 1) return assignedSlotByMember;
+
+        // Canonical role order still defines the formation bands. Within each
+        // band, globally minimize travel distance so same-role movers do not
+        // cross merely because of EntityId order.
+        int bandStart = 0;
+        while (bandStart < count)
+        {
+            int role = RoleRank(world, roleOrderedIds[bandStart]);
+            int bandEnd = bandStart + 1;
+            while (bandEnd < count && RoleRank(world, roleOrderedIds[bandEnd]) == role) bandEnd++;
+            int bandCount = bandEnd - bandStart;
+            long[,] costs = new long[bandCount, bandCount];
+            for (int memberOffset = 0; memberOffset < bandCount; memberOffset++)
+            {
+                EntityId id = roleOrderedIds[bandStart + memberOffset];
+                FixVec2 memberPosition = world.Entities.Transform.Get(id).Position;
+                for (int slotOffset = 0; slotOffset < bandCount; slotOffset++)
+                    costs[memberOffset, slotOffset] = FixVec2.Distance(memberPosition, slotCloud[bandStart + slotOffset]).Raw;
+            }
+            int[] assignment = FormationSlotAssignment.Solve(costs);
+            for (int memberOffset = 0; memberOffset < bandCount; memberOffset++)
+                assignedSlotByMember[bandStart + memberOffset] = bandStart + assignment[memberOffset];
+            bandStart = bandEnd;
+        }
+        return assignedSlotByMember;
+    }
+
     public static int EstimateColumns(SimulationWorld world, FixVec2 destination, int count, FootprintClass footprint)
     {
         int preferred = count <= 9 ? 3 : count <= 25 ? 5 : 8;
@@ -678,13 +715,110 @@ for (int y = center.Y + 1; y < MapGrid.NavHeight && world.Pathfinder.IsPassable(
         return center + right * lateral + forward * longitudinal;
     }
 
-    public static Fix32 SettlingRadius(int memberCount,FootprintClass footprint)
+    public static FixVec2[] GetSlotCloud(SimulationWorld world, FixVec2 center, int count, FootprintClass footprint, FixVec2 heading, int columns)
     {
-        if(memberCount<=1)return FootprintRules.CollisionRadiusBuild(footprint)+Fix32.FromRatio(35,100);
-        Fix32 legacySpacing=Fix32.FromRatio(11+(int)footprint*4,10);
-        Fix32 collisionSpacing=FootprintRules.CollisionRadiusBuild(footprint)*Fix32.FromInt(2)+Fix32.FromRatio(35,100);
-        Fix32 spacing=Fix32.Max(legacySpacing,collisionSpacing);
-        return spacing*Fix32.FromRatio(memberCount-1,2)+FootprintRules.CollisionRadiusBuild(footprint)+Fix32.FromRatio(35,100);
+        if (world == null) throw new ArgumentNullException(nameof(world));
+        if (count < 0 || count > 128) throw new ArgumentOutOfRangeException(nameof(count));
+        FixVec2[] slots = new FixVec2[count];
+        Fix32 minimumSpacing = GetSlotSpacing(footprint);
+        for (int i = 0; i < count; i++)
+        {
+            FixVec2 desired = GetSlot(center, i, count, footprint, heading, columns);
+            slots[i] = FindLegalCloudSlot(world, desired, footprint, minimumSpacing, slots, i);
+        }
+        return slots;
+    }
+
+    public static bool IsInsideArrivalZone(FixVec2 position, FormationIntent intent)
+    {
+        int columns = Math.Max(1, intent.Columns);
+        int rows = Math.Max(1, (intent.MemberCount + columns - 1) / columns);
+        Fix32 spacing = GetSlotSpacing(intent.SpacingFootprint);
+        Fix32 halfWidth = Fix32.FromRatio(columns - 1, 2) * spacing;
+        Fix32 halfDepth = Fix32.FromRatio(rows - 1, 2) * spacing;
+        Fix32 radius = Fix32.Max(halfWidth, halfDepth) + spacing * Fix32.FromInt(3);
+        return FixVec2.Distance(position, intent.Anchor) <= radius;
+    }
+
+    public static FixVec2 GetArrivalStagingTarget(SimulationWorld world, NavigationAgent navigation)
+    {
+        FormationIntent intent = navigation.Formation;
+        int columns = Math.Max(1, intent.Columns);
+        int rows = Math.Max(1, (intent.MemberCount + columns - 1) / columns);
+        int row = intent.SlotIndex / columns;
+        int column = intent.SlotIndex % columns;
+        Fix32 spacing = GetSlotSpacing(intent.SpacingFootprint);
+        Fix32 halfWidth = Fix32.FromRatio(columns - 1, 2) * spacing;
+        Fix32 rearExtent = Fix32.FromRatio(rows - 1, 2) * spacing;
+        int split = columns / 2;
+        bool negativeWing = column < split;
+        int wingLane = negativeWing ? split - 1 - column : column - split;
+        Fix32 lateralMagnitude = halfWidth + spacing * Fix32.FromInt(wingLane + 1);
+        Fix32 lateral = negativeWing ? -lateralMagnitude : lateralMagnitude;
+        Fix32 longitudinal = -(rearExtent + spacing * Fix32.FromInt(row + 1));
+        FixVec2 forward = intent.Heading.NormalizeSafe();
+        if (forward.Equals(FixVec2.Zero)) forward = new FixVec2(Fix32.One, Fix32.Zero);
+        FixVec2 right = new(-forward.Y, forward.X);
+        FixVec2 desired = intent.Anchor + right * lateral + forward * longitudinal;
+        return ResolvePassableSlot(world, desired, navigation.Footprint);
+    }
+
+    private static Fix32 GetSlotSpacing(FootprintClass footprint)
+    {
+        Fix32 legacySpacing = Fix32.FromRatio(11 + (int)footprint * 4, 10);
+        Fix32 collisionSpacing = FootprintRules.CollisionRadiusBuild(footprint) * Fix32.FromInt(2) + Fix32.FromRatio(35, 100);
+        return Fix32.Max(legacySpacing, collisionSpacing);
+    }
+
+    private static FixVec2 FindLegalCloudSlot(SimulationWorld world, FixVec2 desired, FootprintClass footprint, Fix32 minimumSpacing, FixVec2[] accepted, int acceptedCount)
+    {
+        NavCell desiredCell = MapGrid.BuildToNav(desired);
+        if (world.Pathfinder.IsPassable(desiredCell, footprint) && HasCloudClearance(desired, minimumSpacing, accepted, acceptedCount)) return desired;
+
+        const int LocalSearchRadiusNav = 64;
+        for (int radius = 0; radius <= LocalSearchRadiusNav; radius++)
+        {
+            bool found = false; FixVec2 best = default; long bestDistance = long.MaxValue; int bestY = int.MaxValue, bestX = int.MaxValue;
+            int minX = desiredCell.X - radius, maxX = desiredCell.X + radius, minY = desiredCell.Y - radius, maxY = desiredCell.Y + radius;
+            for (int x = minX; x <= maxX; x++)
+            {
+                ConsiderCloudCandidate(world, x, minY, desired, footprint, minimumSpacing, accepted, acceptedCount, ref found, ref best, ref bestDistance, ref bestY, ref bestX);
+                if (maxY != minY) ConsiderCloudCandidate(world, x, maxY, desired, footprint, minimumSpacing, accepted, acceptedCount, ref found, ref best, ref bestDistance, ref bestY, ref bestX);
+            }
+            for (int y = minY + 1; y < maxY; y++)
+            {
+                ConsiderCloudCandidate(world, minX, y, desired, footprint, minimumSpacing, accepted, acceptedCount, ref found, ref best, ref bestDistance, ref bestY, ref bestX);
+                if (maxX != minX) ConsiderCloudCandidate(world, maxX, y, desired, footprint, minimumSpacing, accepted, acceptedCount, ref found, ref best, ref bestDistance, ref bestY, ref bestX);
+            }
+            if (found) return best;
+        }
+
+        bool fallbackFound = false; FixVec2 fallback = default; long fallbackDistance = long.MaxValue; int fallbackY = int.MaxValue, fallbackX = int.MaxValue;
+        for (int y = 0; y < MapGrid.NavHeight; y++)
+            for (int x = 0; x < MapGrid.NavWidth; x++)
+                ConsiderCloudCandidate(world, x, y, desired, footprint, minimumSpacing, accepted, acceptedCount, ref fallbackFound, ref fallback, ref fallbackDistance, ref fallbackY, ref fallbackX);
+        if (!fallbackFound) throw new InvalidOperationException("No legal non-overlapping destination exists for the commanded formation.");
+        return fallback;
+    }
+
+    private static void ConsiderCloudCandidate(SimulationWorld world, int x, int y, FixVec2 desired, FootprintClass footprint, Fix32 minimumSpacing,
+        FixVec2[] accepted, int acceptedCount, ref bool found, ref FixVec2 best, ref long bestDistance, ref int bestY, ref int bestX)
+    {
+        if ((uint)x >= MapGrid.NavWidth || (uint)y >= MapGrid.NavHeight) return;
+        NavCell cell = new(checked((short)x), checked((short)y));
+        if (!world.Pathfinder.IsPassable(cell, footprint)) return;
+        FixVec2 candidate = MapGrid.NavCellCenterToBuild(cell);
+        if (!HasCloudClearance(candidate, minimumSpacing, accepted, acceptedCount)) return;
+        long dx = (long)candidate.X.Raw - desired.X.Raw, dy = (long)candidate.Y.Raw - desired.Y.Raw;
+        long distance = dx * dx + dy * dy;
+        if (!found || distance < bestDistance || (distance == bestDistance && (y < bestY || (y == bestY && x < bestX))))
+        { found = true; best = candidate; bestDistance = distance; bestY = y; bestX = x; }
+    }
+
+    private static bool HasCloudClearance(FixVec2 candidate, Fix32 minimumSpacing, FixVec2[] accepted, int acceptedCount)
+    {
+        for (int i = 0; i < acceptedCount; i++) if (FixVec2.Distance(candidate, accepted[i]) < minimumSpacing) return false;
+        return true;
     }
 
     public static FixVec2 ResolvePassableSlot(SimulationWorld world, FixVec2 desired, FootprintClass footprint)
@@ -731,24 +865,12 @@ for (int y = center.Y + 1; y < MapGrid.NavHeight && world.Pathfinder.IsPassable(
         }
         world.ScratchEntities.Sort(EntityIdComparer.Instance);
         if(world.ScratchEntities.Count==0)return false;
-        int nextColumns=Math.Max(1,triggerIntent.Columns-1);
-        bool release=triggerIntent.Columns<=1;
         for(int i=0;i<world.ScratchEntities.Count;i++)
         {
             EntityId id=world.ScratchEntities[i];ref NavigationAgent nav=ref world.Entities.Navigation.Get(id);ref Movement move=ref world.Entities.Movement.Get(id);
-            FormationIntent intent=nav.Formation;intent.LastReflowTick=world.Tick.Value;
-            if(release)
-            {
-                nav.Formation=default;
-                SimTransform transform=world.Entities.Transform.Get(id);
-                if(FixVec2.Distance(transform.Position,intent.Anchor)<=SettlingRadius(intent.MemberCount,intent.SpacingFootprint))nav.Target=transform.Position;
-            }
-            else
-            {
-                intent.Columns=nextColumns;
-                FixVec2 desired=GetSlot(intent.Anchor,intent.SlotIndex,intent.MemberCount,intent.SpacingFootprint,intent.Heading,nextColumns);
-                nav.Target=ResolvePassableSlot(world,desired,nav.Footprint);nav.Formation=intent;
-            }
+            FormationIntent intent=nav.Formation;intent.LastReflowTick=world.Tick.Value;nav.Formation=intent;
+            // Recovery refreshes the route while the endpoint and arrival row remain
+            // immutable. Transit stalls must never become successful current-position arrivals.
             nav.PathDirty=true;nav.RequestAge=Math.Max(nav.RequestAge,20);move.PathIndex=0;move.State=MovementState.StuckRecovery;
         }
         world.FormationReflowDiagnostics++;
@@ -771,6 +893,67 @@ for (int y = center.Y + 1; y < MapGrid.NavHeight && world.Pathfinder.IsPassable(
         buildPosition = MapGrid.NavCellCenterToBuild(cell);
         return true;
     }
+}
+
+public sealed class FormationArrivalSystem : ISimSystem
+{
+    private readonly Dictionary<ulong, int> _minimumActiveRow = new();
+
+    public void Step(SimulationWorld world)
+    {
+        world.FormationArrivalTargets.Clear();
+        _minimumActiveRow.Clear();
+        IReadOnlyList<EntityId> alive = world.Entities.Alive;
+
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (!world.Entities.Navigation.TryGet(id, out NavigationAgent navigation) || !navigation.HasTarget || !navigation.Formation.IsActive ||
+                !world.Entities.Ownership.TryGet(id, out Ownership ownership)) continue;
+            int row = navigation.Formation.SlotIndex / Math.Max(1, navigation.Formation.Columns);
+            ulong key = CohortKey(ownership.PlayerSlot, navigation.Formation.CohortId);
+            if (!_minimumActiveRow.TryGetValue(key, out int minimum) || row < minimum) _minimumActiveRow[key] = row;
+        }
+
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (!world.Entities.Navigation.TryGet(id, out NavigationAgent navigation) || !navigation.HasTarget || !navigation.Formation.IsActive ||
+                !world.Entities.Ownership.TryGet(id, out Ownership ownership)) continue;
+            int row = navigation.Formation.SlotIndex / Math.Max(1, navigation.Formation.Columns);
+            ulong key = CohortKey(ownership.PlayerSlot, navigation.Formation.CohortId);
+            FixVec2 routeTarget = navigation.Target;
+            if (_minimumActiveRow.TryGetValue(key, out int minimum) && row > minimum &&
+                (navigation.Formation.LastReflowTick >= 0 || FormationPlanner.IsInsideArrivalZone(world.Entities.Transform.Get(id).Position, navigation.Formation)))
+            {
+                if (navigation.Formation.LastReflowTick < 0)
+                {
+                    ref NavigationAgent stored = ref world.Entities.Navigation.Get(id);
+                    FormationIntent activated = stored.Formation;activated.LastReflowTick = world.Tick.Value;stored.Formation = activated;
+                    world.FormationReflowDiagnostics++;
+                }
+                routeTarget = FormationPlanner.GetArrivalStagingTarget(world, navigation);
+                world.FormationArrivalTargets[id.Value] = routeTarget;
+            }
+            EnsureRouteGoal(world, id, routeTarget);
+        }
+    }
+
+    private static void EnsureRouteGoal(SimulationWorld world, EntityId id, FixVec2 routeTarget)
+    {
+        ref NavigationAgent navigation = ref world.Entities.Navigation.Get(id);
+        if (navigation.PathDirty) return;
+        bool matches = world.Corridors.TryGetValue(id.Value, out RouteCorridor corridor) && corridor.Cells.Count > 0 &&
+            corridor.Cells[corridor.Cells.Count - 1].Equals(MapGrid.BuildToNav(routeTarget));
+        if (matches) return;
+        ref Movement movement = ref world.Entities.Movement.Get(id);
+        navigation.PathDirty = true;
+        navigation.RequestAge = Math.Max(navigation.RequestAge, 20);
+        movement.PathIndex = 0;
+        movement.State = MovementState.WaitingForPath;
+    }
+
+    private static ulong CohortKey(byte playerSlot, uint cohortId) => ((ulong)playerSlot << 32) | cohortId;
 }
 
 public sealed class NavigationRequestSystem : ISimSystem
@@ -800,7 +983,8 @@ public sealed class NavigationRequestSystem : ISimSystem
             SimTransform transform = world.Entities.Transform.Get(id);
             RouteCorridor corridor;
             if (!world.Corridors.TryGetValue(id.Value, out corridor)) { corridor = new RouteCorridor(); world.Corridors[id.Value] = corridor; }
-            world.Pathfinder.FindCorridor(MapGrid.BuildToNav(transform.Position), MapGrid.BuildToNav(nav.Target), nav.Footprint, corridor, nav.Layer);
+            FixVec2 routeTarget = world.FormationArrivalTargets.TryGetValue(id.Value, out FixVec2 arrivalTarget) ? arrivalTarget : nav.Target;
+            world.Pathfinder.FindCorridor(MapGrid.BuildToNav(transform.Position), MapGrid.BuildToNav(routeTarget), nav.Footprint, corridor, nav.Layer);
             world.PathRequestsProcessed++;
             nav.PathDirty = false; nav.PathTopologyVersion = world.Map.TopologyVersion; nav.RequestAge = 0;
             ref Movement move = ref world.Entities.Movement.Get(id);
@@ -1142,8 +1326,9 @@ public sealed class TransformMovementSystem : ISimSystem
         {
             EntityId id = alive[i]; if (!world.Entities.Transform.Has(id) || !world.Entities.Movement.Has(id) || !world.Entities.Navigation.Has(id)) continue;
             ref SimTransform transform = ref world.Entities.Transform.Get(id); ref Movement move = ref world.Entities.Movement.Get(id); ref NavigationAgent nav = ref world.Entities.Navigation.Get(id);
-            int pathIndexBefore=move.PathIndex;FixVec2 progressTarget=nav.Target;
-            if(world.Corridors.TryGetValue(id.Value,out RouteCorridor progressPath)&&move.PathIndex<progressPath.Cells.Count)progressTarget=MapGrid.NavCellCenterToBuild(progressPath.Cells[move.PathIndex]);
+            bool hasArrivalTarget=world.FormationArrivalTargets.TryGetValue(id.Value,out FixVec2 arrivalTarget);
+            int pathIndexBefore=move.PathIndex;FixVec2 progressTarget=hasArrivalTarget?arrivalTarget:nav.Target;
+            if(!hasArrivalTarget&&world.Corridors.TryGetValue(id.Value,out RouteCorridor progressPath)&&move.PathIndex<progressPath.Cells.Count)progressTarget=MapGrid.NavCellCenterToBuild(progressPath.Cells[move.PathIndex]);
             FixVec2 desiredStep = world.PendingVelocity.TryGetValue(id.Value, out FixVec2 pending) ? pending : FixVec2.Zero;
             bool mayAdvance = !desiredStep.Equals(FixVec2.Zero);
             move.CurrentSpeed=MovementKinematics.NextSpeed(move,desiredStep);
@@ -1189,7 +1374,9 @@ public sealed class TransformMovementSystem : ISimSystem
             }
             Fix32 accumulatedProgress=FixVec2.Distance(move.LastPosition,progressTarget)-FixVec2.Distance(transform.Position,progressTarget);
             bool meaningfulProgress=move.PathIndex>pathIndexBefore||accumulatedProgress>=MeaningfulProgressDistance;
-            if(nav.HasTarget&&!meaningfulProgress)move.StuckTicks++;
+            bool intentionalArrivalHold=hasArrivalTarget&&FixVec2.Distance(transform.Position,arrivalTarget)<=Fix32.FromRatio(2,5);
+            if(intentionalArrivalHold){move.StuckTicks=0;move.LastPosition=transform.Position;}
+            else if(nav.HasTarget&&!meaningfulProgress)move.StuckTicks++;
             else
             {
                 move.StuckTicks=0;
@@ -1207,7 +1394,11 @@ public sealed class TransformMovementSystem : ISimSystem
             }
             else if (move.StuckTicks >= 60 && move.StuckTicks % (SimClock.TicksPerSecond * 3) == 0)
             {
-                if(!FormationPlanner.ReflowCohort(world,id))
+                if(nav.Formation.IsActive)
+                {
+                    nav.PathDirty = true; nav.RequestAge = Math.Max(nav.RequestAge, 20); move.State = MovementState.StuckRecovery;
+                }
+                else if(!FormationPlanner.ReflowCohort(world,id))
                 {
                     nav.PathDirty = true; nav.RequestAge = Math.Max(nav.RequestAge, 20); move.State = MovementState.StuckRecovery;
                 }

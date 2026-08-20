@@ -544,3 +544,55 @@ do not change gameplay canon.
 
 This is an approved serialization/protocol integration decision. It does not
 change gameplay canon.
+
+---
+
+## 2026-08-20 — Pre-M6 immutable endpoints and bounded formation arrival
+
+- The game director approved the StarCraft-like command model in which one
+  multi-unit Move creates a legal endpoint cloud and assigns every selected
+  unit one immutable final endpoint immediately.
+- Canonical role bands remain intact. Within a role band, deterministic
+  minimum-total-distance matching chooses endpoints with Entity ID as the final
+  tie-break.
+- The approved formation-arrival sequencer is limited to the destination zone.
+  Later rows may use deterministic temporary route goals until earlier rows
+  complete, but `NavigationAgent.Target` remains the final endpoint and is never
+  replaced by a staging or current-position value.
+- Temporary arrival goals are derived from serialized FormationIntent every
+  tick. They add no persistent manager state and require no snapshot, protocol,
+  replay or content-format change.
+- This decision does not approve a portal-flow controller, passage scheduler,
+  direct authoritative position pushing, or an external movement dependency.
+- The sequencer restores the honest representative 24-mover M2 scenario to
+  PASS, but it does not satisfy the separate legal 60-mover mid-route traffic
+  gate. That remaining architecture is not approved by this entry.
+
+This is an approved bounded movement-architecture decision. It does not change
+gameplay canon.
+
+---
+
+## 2026-08-20 — Pre-M6 bounded local-pressure experiment rejected
+
+- After the legal 60-mover fixture isolated a mid-route traffic/yield failure,
+  the game director approved one final clean-room experiment inside the existing
+  local-separation candidate scorer.
+- The experiment added no persistent state or subsystem: stuck movers weighted
+  existing legal candidates by nearby friendly pressure and could use at most a
+  two-times local corridor-deviation window. Normal movement integration,
+  terrain legality and Heavy priority remained authoritative.
+- Release build, focused movement regressions and the honest representative M2
+  acceptance remained green, but first-phase stress completion stayed 4/60.
+  Deadlocks increased from 43 to 47 and oscillations from 3,504 to 12,831.
+- The experiment was rejected and removed. It is not an accepted architecture
+  and must not be resurrected by tuning weights or widening the corridor again.
+- Current canon makes the preserved 60-mover stress blocking before **M6
+  networked 1v1 acceptance**, not before M6 implementation starts. The verified
+  endpoint/arrival work may be integrated and M6 development may begin.
+- A further traffic-coordination architecture still requires separate approval.
+  Accepting M6 while the stress remains red would instead require an explicit
+  canon amendment to the gate classification.
+
+This records a rejected technical experiment and the resulting stop boundary.
+It does not change gameplay canon.

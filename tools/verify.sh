@@ -9,8 +9,10 @@ ROOT="$(repo_root)"
 setup_dotnet_environment
 
 MODE="fast"
-if [[ "${1:-}" == "--full" ]]; then MODE="full"; shift; fi
-if (( $# > 0 )); then printf 'Usage: %s [--full]\n' "$0" >&2; exit 2; fi
+if [[ "${1:-}" == "--full" ]]; then MODE="full"; shift
+elif [[ "${1:-}" == "--m6-acceptance" ]]; then MODE="m6-acceptance"; shift
+fi
+if (( $# > 0 )); then printf 'Usage: %s [--full|--m6-acceptance]\n' "$0" >&2; exit 2; fi
 
 ARTIFACT_DIR="${ROOT}/Artifacts/Verification"
 mkdir -p "${ARTIFACT_DIR}"
@@ -159,11 +161,15 @@ run_stage "[BLOCKING_NOW] Content compilation and tracked-binary validation" "co
 run_stage "[BLOCKING_NOW] HeadlessSim compiled-content smoke" "headless" dotnet "$(headless_dll)" --scenario first --compiled-dir "${ROOT}/GodotClient/Compiled" --ticks 1200 --hash-every 200
 run_stage "[BLOCKING_NOW] Godot C# PrototypeRTS headless smoke" "godot" godot_smoke
 
-if [[ "${MODE}" == "full" ]]; then
+if [[ "${MODE}" != "fast" ]]; then
   run_stage "[BLOCKING_NOW] 100-repeat deterministic golden run" "golden100" dotnet "$(headless_dll)" --scenario golden --ticks 3200 --repeat 100
   run_stage "[BLOCKING_NOW] Replay record/final-hash verification" "replay" verify_replay_hash
   run_stage "[BLOCKING_NOW] Snapshot restore/continuation verification" "snapshot" verify_snapshot_continuation
-  run_diagnostic_stage "[DIAGNOSTIC M2-M5; BLOCKING_LATER PRE-M6] 60-mover navigation/performance stress" "stress60" dotnet "$(headless_dll)" --scenario stress60 --ticks 3000 --benchmark --path-benchmark --enforce-performance-gates
+  if [[ "${MODE}" == "m6-acceptance" ]]; then
+    run_stage "[BLOCKING_NOW M6 ACCEPTANCE] 60-mover navigation/performance stress" "stress60" dotnet "$(headless_dll)" --scenario stress60 --ticks 26000 --benchmark --path-benchmark --enforce-performance-gates
+  else
+    run_diagnostic_stage "[BLOCKING_LATER M6 ACCEPTANCE] 60-mover navigation/performance stress" "stress60" dotnet "$(headless_dll)" --scenario stress60 --ticks 26000 --benchmark --path-benchmark --enforce-performance-gates
+  fi
   run_stage "[BLOCKING_NOW] Compiled-content regeneration" "content-regenerate" regenerate_tracked_content
   run_stage "[BLOCKING_NOW] macOS debug export smoke" "macos-export" "${ROOT}/tools/build-mac.sh" --verify
 fi
