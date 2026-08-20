@@ -194,19 +194,22 @@ public sealed class ServerCommandSession
     private int _rateLimitTick = -1;
     private int _commandsThisTick;
 
-    public ServerCommandSession(int peerId, byte playerSlot, ulong sessionToken)
+    public ServerCommandSession(int peerId, byte playerSlot, ulong sessionToken, uint lastProcessedSequence = 0)
     {
         if (peerId <= 0) throw new ArgumentOutOfRangeException(nameof(peerId));
         if (sessionToken == 0) throw new ArgumentOutOfRangeException(nameof(sessionToken));
         PeerId = peerId;
         PlayerSlot = playerSlot;
         SessionToken = sessionToken;
+        LastProcessedSequence = lastProcessedSequence;
     }
 
     public int PeerId { get; }
     public byte PlayerSlot { get; }
     public ulong SessionToken { get; }
     public uint LastProcessedSequence { get; private set; }
+
+    public ServerCommandSession Rebind(int peerId) => new(peerId, PlayerSlot, SessionToken, LastProcessedSequence);
 
     internal bool TryConsumeSequence(uint sequence)
     {

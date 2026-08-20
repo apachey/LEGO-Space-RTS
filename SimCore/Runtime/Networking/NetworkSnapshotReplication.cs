@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 
 namespace LegoSpaceRTS.SimCore
 {
@@ -185,7 +186,7 @@ public readonly struct NetworkSnapshotAcknowledgment
 /// <summary>Project-owned T060 snapshot/delta packet format. ENet only carries these bytes.</summary>
 public static class NetworkSnapshotProtocol
 {
-    public const ushort FormatVersion = 1;
+    public const ushort FormatVersion = 2;
     public const int MaximumPacketBytes = 64 * 1024;
     private const uint SnapshotMagic = 0x504E534C; // LSNP
     private const uint AcknowledgmentMagic = 0x414E534C; // LSNA
@@ -483,14 +484,39 @@ public static class NetworkSnapshotProtocol
     {
         w.Write(bytes is not null);
         if (bytes is null) return;
-        w.Write(bytes.Length); w.Write(bytes);
+        byte[] compressed = Compress(bytes);
+        bool useCompressed = compressed.Length < bytes.Length;
+        w.Write(bytes.Length); w.Write(useCompressed); w.Write(useCompressed ? compressed.Length : bytes.Length);
+        w.Write(useCompressed ? compressed : bytes);
     }
 
     private static byte[]? ReadOptionalBytes(BinaryReader r)
     {
         if (!r.ReadBoolean()) return null;
-        int length = r.ReadInt32(); if (length < 0 || length > FogState.Width * FogState.Height) throw new InvalidDataException("Invalid knowledge bitset size.");
-        byte[] bytes = r.ReadBytes(length); if (bytes.Length != length) throw new EndOfStreamException(); return bytes;
+        int length = r.ReadInt32(); bool compressed = r.ReadBoolean(); int storedLength = r.ReadInt32();
+        if (length < 0 || length > FogState.Width * FogState.Height || storedLength < 0 || storedLength > FogState.Width * FogState.Height)
+            throw new InvalidDataException("Invalid knowledge bitset size.");
+        byte[] stored = r.ReadBytes(storedLength); if (stored.Length != storedLength) throw new EndOfStreamException();
+        if (!compressed)
+        {
+            if (storedLength != length) throw new InvalidDataException("Raw knowledge bitset length mismatch.");
+            return stored;
+        }
+        using MemoryStream input = new(stored, false); using DeflateStream inflater = new(input, CompressionMode.Decompress);
+        byte[] bytes = new byte[length]; int offset = 0;
+        while (offset < length)
+        {
+            int read = inflater.Read(bytes, offset, length - offset); if (read == 0) throw new InvalidDataException("Compressed knowledge bitset ended early."); offset += read;
+        }
+        if (inflater.ReadByte() != -1) throw new InvalidDataException("Compressed knowledge bitset exceeded its declared length.");
+        return bytes;
+    }
+
+    private static byte[] Compress(byte[] bytes)
+    {
+        using MemoryStream output = new();
+        using (DeflateStream deflater = new(output, CompressionLevel.Fastest, true)) deflater.Write(bytes, 0, bytes.Length);
+        return output.ToArray();
     }
 }
 
