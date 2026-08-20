@@ -795,3 +795,26 @@ emission remain game-director art-direction gates before T064 is accepted.
 
 This changes presentation direction only. SimCore, gameplay, networking,
 formats, Phase 07 functional UX and deterministic architecture are unchanged.
+
+---
+
+## 2026-08-21 — Palette massing correction and explicit faction light language
+
+- Inventory part counts are rejected as a color-ratio proxy. Palette candidates
+  must be weighted by assembled visible surface area; small pins and connectors
+  cannot outweigh large hull panels.
+- Rock Raiders earth brown is restored as a major 18% vehicle surface. The 7316
+  Excavation Searcher is corrected to a dominant 42% tan/beige surface.
+- Two identical abstract 3D carriers use exactly 100 equal visible panels per
+  model so one panel equals one percentage point and color massing can be
+  reviewed on an object rather than only in bars.
+- Emission is role-bound, not hue-bound. The implemented light map is Rock
+  Raiders neon orange/lime; Mars Mission astronauts blue; Mars Mission aliens
+  neon lime; Life on Mars astronauts red plus warm light through clear lenses;
+  and Life on Mars Martians red/orange/lime/blue.
+- The first four-style review selected no direction. Material realism and
+  graphic toon remain weak candidates; clean PBR and hand-painted/retro are
+  retained only as comparison anchors.
+
+This is non-canonical art-direction exploration. No visual style or palette is
+locked, and gameplay, SimCore and network architecture remain unchanged.

@@ -23,18 +23,29 @@ From a normal launch:
 
 1. press `F8`;
 2. select **M7 Style Lab** or **M7 Palette Lab**;
-3. use `1`–`4` to switch rendering styles, or `1`–`3` to switch palette pages;
+3. use `1`–`4` to switch rendering styles, or `1`–`6` to switch palette pages;
 4. press `Escape` to return to the prototype.
 
 The Style Lab keeps one unit, camera, animation and composition invariant while
 switching clean PBR, real-material, graphic-toon and hand-painted/retro
 treatments. The Palette Lab shows:
 
-- candidate visible-area ratios for Rock Raiders, Astronaut Field, Astronaut
-  Mission, Aliens and the aggregate Martian range;
+- candidate visible-area ratios for Rock Raiders, Life on Mars astronauts, Mars
+  Mission astronauts, Mars Mission aliens and the aggregate Martian range;
 - separate 7311, 7313, 7314, 7316 and 7317 Martian families;
+- identical 100-panel abstract models where each panel equals one percent of
+  visible frontal surface area;
 - transparent materials on split light/dark backing;
-- work-lamp and energy-resource emission classified by function.
+- generic work-lamp and energy-resource emission classified by function;
+- the explicit luminous-color language for every faction group.
+
+Rock Raiders now includes earth brown as a major 18% vehicle surface. The 7316
+Excavation Searcher now treats tan/beige as the dominant 42% visible surface;
+these are corrections to the earlier invalid part-count-biased read.
+
+The first style review selected no direction. Material realism and graphic toon
+remain weak candidates; clean PBR and hand-painted/retro remain only as
+comparison anchors. Visual canon is still open.
 
 The first equal-swatch fixture remains as **Old Material Lab** for engineering
 comparison. It is not the current art-direction review path.

@@ -27,7 +27,7 @@ public partial class DebugHud : CanvasLayer
         m7.Pressed += openM7StyleLab;
         header.AddChild(m7);
         Button palette = new() { Name = "OpenM7PaletteLab", Text = "M7 Palette Lab" };
-        palette.TooltipText = "Shows color ratios, Martian source families and transparent-versus-emissive semantics. Use 1–3; Escape returns.";
+        palette.TooltipText = "Shows ratios, 100-panel abstract models, optics and faction light language. Use 1–6; Escape returns.";
         palette.Pressed += openM7PaletteLab;
         header.AddChild(palette);
         Button oldM7 = new() { Name = "OpenM7MaterialLab", Text = "Old Material Lab" };

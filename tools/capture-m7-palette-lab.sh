@@ -12,8 +12,8 @@ OUTPUT="${2:-${ROOT}/Artifacts/Screenshots/m7-palette-${PAGE}.png}"
 CAPTURE_LOG="${TMPDIR:-/tmp}/lego-space-rts-m7-palette-${PAGE}.log"
 
 case "${PAGE}" in
-  factions|martian-sources|transparency) ;;
-  *) printf 'Usage: %s [factions|martian-sources|transparency] [output.png]\n' "$0" >&2; exit 2 ;;
+  factions|martian-sources|faction-models|martian-models|transparency|light-language) ;;
+  *) printf 'Usage: %s [factions|martian-sources|faction-models|martian-models|transparency|light-language] [output.png]\n' "$0" >&2; exit 2 ;;
 esac
 
 if [[ -z "${GODOT}" ]] || ! godot_is_required_mono "${GODOT}"; then

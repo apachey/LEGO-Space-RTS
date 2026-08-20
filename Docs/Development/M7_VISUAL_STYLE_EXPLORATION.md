@@ -30,6 +30,14 @@ Initial implementable range:
 3. graphic toon shading;
 4. hand-painted/retro RTS treatment.
 
+First review outcome:
+
+- none of the four treatments is an accepted direction;
+- material realism and graphic toon remain weak candidates worth comparing;
+- clean PBR and hand-painted/retro are retained as comparison anchors, not as
+  forward art-direction candidates;
+- no visual canon is inferred from this ranking.
+
 The physical-diorama ImageGen result is not included: it is both outside the
 desired direction and a poor proxy for achievable realtime rendering.
 
@@ -71,24 +79,29 @@ ratios rather than equal swatches and keeps player/team color disabled.
 Required groups:
 
 - Rock Raiders;
-- Astronaut Field;
-- Astronaut Mission;
-- Aliens;
+- Life on Mars astronauts;
+- Mars Mission astronauts;
+- Mars Mission aliens;
 - Martian 7311, 7313, 7314, 7316 and 7317-derived infrastructure.
 
-The percentages are **candidate visible-area targets**, not claims that every
-source inventory contains that percentage of plastic by volume. Inventory and
-instruction evidence determines dominant families, unusual accents and which
-colors coexist. The targets then deliberately discount hidden pins, axles and
-other small connector parts that would otherwise distort an RTS silhouette.
+The percentages are **candidate visible-area targets**, not inventory part-count
+ratios and not claims that every source inventory contains that percentage of
+plastic by volume. Part count alone is invalid because one large hull or panel
+can dominate the image while many pins and connectors barely contribute visible
+area. Inventory and instruction evidence identifies which colors coexist; the
+assembled model's visible surfaces determine dominance.
 
 | Review group | Candidate visible-area ratio |
 |---|---|
-| Rock Raiders | dark turquoise 34 / dark industrial gray 27 / black 19 / light gray and metal 11 / hazard yellow 6 / trans-neon green 3 |
-| Astronaut Field | blue and medium blue 30 / white 22 / gray 21 / black 13 / tan and earth orange 7 / red and yellow 4 / trans-smoke and red 3 |
-| Astronaut Mission | white 43 / orange 20 / black 13 / light blue-gray 13 / dark blue-gray 6 / transparent signals 5 |
-| Aliens | black 43 / lime shell 21 / trans-neon green 14 / dark red and blue 9 / pearl and dark gray 9 / signals 4 |
-| Martian aggregate | black 18 / grays 18 / tan 14 / sand families 22 / set-specific primaries 17 / earth orange 5 / transparent accents 6 |
+| Rock Raiders | dark turquoise 28 / dark industrial gray 22 / earth brown 18 / black 12 / light gray and metal 9 / hazard yellow 5 / luminous neon orange 3 / luminous neon lime 3 |
+| Life on Mars astronauts | blue and medium blue 29 / white 22 / gray 20 / black 13 / tan and earth orange 7 / luminous red signals 4 / clear warm lamps 2 / trans-smoke 3 |
+| Mars Mission astronauts | white 43 / orange 20 / black 13 / light blue-gray 13 / dark blue-gray 6 / luminous blue signals 5 |
+| Mars Mission aliens | black 43 / lime shell 21 / luminous neon lime 14 / dark red and blue 9 / pearl and dark gray 9 / signals 4 |
+| Martian aggregate | black 18 / grays 18 / tan 14 / sand families 22 / set-specific primaries 17 / earth orange 5 / luminous red 1 / luminous neon orange 2 / luminous neon lime 2 / luminous blue 1 |
+
+The Rock Raiders correction makes earth brown a major vehicle surface rather
+than misclassifying it as background terrain. The prior version omitted this
+faction-defining mass and was rejected.
 
 The Martian aggregate is only an overview. The lab's second page preserves five
 incompatible source families rather than flattening them into one faction blue:
@@ -98,7 +111,7 @@ incompatible source families rather than flattening them into one faction blue:
 | 7311 | sand green 34 / dark green 23 / tan 15 / black 12 / gray 9 / trans-neon orange 7 |
 | 7313 | bright blue 30 / sand blue 25 / grays 17 / black 14 / trans-neon orange 8 / white and tan 6 |
 | 7314 | bright red 33 / sand red 25 / black 15 / grays 14 / trans green 8 / tan 5 |
-| 7316 | black 27 / tan 20 / grays 20 / earth orange 13 / sand red and purple 12 / trans-neon green 8 |
+| 7316 | tan and beige 42 / black 17 / grays 15 / earth orange 10 / sand red and purple 8 / luminous neon lime 8 |
 | 7317 | tan 22 / light gray 20 / black 16 / sand purple 13 / sand red 10 / trans-smoke brown 10 / trans green and red 9 |
 
 Research anchors are the BrickLink inventories/instructions for
@@ -113,12 +126,37 @@ and the Life on Mars source sets
 [7316](https://www.bricklink.com/v2/catalog/catalogitem.page?S=7316-1) and
 [7317](https://www.bricklink.com/catalogItemInv.asp?S=7317-1).
 
+The 7316 correction is intentionally large: beige/tan is the assembled
+Excavation Searcher's dominant visible hull area. The discarded ratio was too
+close to an inventory-count reading and over-weighted numerous smaller black and
+gray elements.
+
+The lab adds two abstract-model pages. Every model uses the same relief
+silhouette made from exactly 100 equal front-facing panels. One panel therefore
+represents one percent of visible frontal area. Colors grow from core to edge in
+the same segment order as the ratio pages, allowing massing to be judged on an
+object instead of only as a bar chart.
+
 Transparent samples are shown on light and dark backings. Their semantics are:
 
 - tinted canopy/tube/window: transmission only, no emission;
 - status lamp: optional local emission;
 - energy channel/resource Crystal: authored emission;
 - opaque fluorescent color: never automatically emissive.
+
+Faction light assignments are a separate authored layer:
+
+| Group | Luminous roles |
+|---|---|
+| Rock Raiders | neon orange / neon lime |
+| Mars Mission astronauts | blue |
+| Mars Mission aliens | neon lime |
+| Life on Mars astronauts | red / warm light through a colorless transparent lens |
+| Life on Mars Martians | red / neon orange / neon lime / blue |
+
+These assignments do not make every object of the same hue luminous. The Mars
+Mission orange glass remains non-emissive; a bright red Martian hull remains
+non-emissive unless a separate signal/light role is assigned.
 
 ## Evidence and review
 
@@ -130,7 +168,9 @@ changes between styles.
 Implemented controls:
 
 - `F8` → **M7 Style Lab**, then `1`–`4` and `Escape`;
-- `F8` → **M7 Palette Lab**, then `1`–`3` and `Escape`;
+- `F8` → **M7 Palette Lab**, then `1`–`6` and `Escape`;
+- pages `3` and `4` are the faction and Martian 100-panel abstract models;
+- page `5` tests non-emissive transparency and page `6` the faction light map;
 - all four styles contain no HUD/GUI `CanvasLayer`;
 - palette labels are `Label3D` content inside the isolated review scene;
 - exported-build smoke captures verify both labs outside the editor.

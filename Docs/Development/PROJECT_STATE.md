@@ -5,10 +5,10 @@ authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M0–M6 are implemented, verified and game-director accepted. M7 now has a
-verified code-native Style Lab and Palette Ratio Lab awaiting game-director art
-review. Visual canon remains deliberately open until that review selects or
-requests a refinement of a direction.**
+**M0–M6 are implemented, verified and game-director accepted. The first M7
+Style Lab review selected no direction; material realism and graphic toon remain
+weak candidates. The corrected six-page Palette Ratio Lab awaits game-director
+review. Visual canon remains deliberately open.**
 
 - The branch includes the verified post-M5 movement handoff from `44e2caf`
   plus T058–T063.
@@ -140,18 +140,29 @@ stylized-PBR premise is not an accepted visual target.
   7,776 rendered triangles. The same camera, geometry, animation and scene expose
   four switchable treatments: clean PBR, real-material, graphic toon and
   hand-painted/retro. Only materials, shaders, lighting, VFX and terrain change.
-- The separate **Palette Ratio Lab** is implemented with three switchable pages:
-  faction visible-area candidates, five distinct Martian source families, and
-  transparent-versus-emissive semantics. Every displayed ratio group totals
-  100%; no common player blue is injected.
+- The separate **Palette Ratio Lab** is implemented with six switchable pages:
+  faction visible-area candidates, five distinct Martian source families, two
+  identical-silhouette 100-panel abstract-model comparisons, transparency
+  semantics and the explicit faction light language. Every displayed ratio
+  group totals 100%; no common player blue is injected.
+- Rock Raiders now gives earth brown 18% of visible vehicle surface. The 7316
+  Excavation Searcher now gives tan/beige the dominant 42%, correcting the prior
+  part-count-biased read of both palettes.
 - Transparent colors are classified semantically. Tinted transparent polymer
   and glass do not emit merely because they are saturated; only authored energy,
   lamps and resources receive emission.
+- Authored faction emission is: Rock Raiders neon orange/lime; Mars Mission
+  astronauts blue; Mars Mission aliens neon lime; Life on Mars astronauts red
+  plus a colorless warm lamp; and Life on Mars Martians red/orange/lime/blue.
 - Team/player color remains valuable but is deferred to model-level ownership
   tests and is excluded from faction palette analysis.
 
+The first style review did not select a direction. Material realism and graphic
+toon are weak candidates; clean PBR and hand-painted/retro are now only
+comparison anchors. Visual canon remains deliberately unlocked.
+
 From a normal build, press `F8` and choose **M7 Style Lab** or **M7 Palette
-Lab**. Style controls are `1`–`4`; palette-page controls are `1`–`3`; `Escape`
+Lab**. Style controls are `1`–`4`; palette-page controls are `1`–`6`; `Escape`
 returns to the playable prototype. The rejected first fixture remains available
 as **Old Material Lab** for engineering comparison only.
 
@@ -169,21 +180,17 @@ as **Old Material Lab** for engineering comparison only.
 ## Verification state
 
 The current M7 exploration branch passed `./tools/verify.sh --full` on
-2026-08-20 with 278 NUnit tests, 24/24 representative mover acceptance, every
-T058–T063 ENet smoke, the four-style Godot smoke, the Palette Ratio Lab semantic
-smoke, 100-repeat determinism, replay record/playback, snapshot continuation,
+2026-08-21 with 278 NUnit tests, 24/24 representative mover acceptance, every
+T058–T063 ENet smoke, the four-style Godot smoke, all six Palette Ratio Lab
+pages, 100-repeat determinism, replay record/playback, snapshot continuation,
 compiled-content regeneration and macOS export. Exact summary:
-`Artifacts/Verification/20260820T200616Z-full-summary.txt`.
+`Artifacts/Verification/20260820T211429Z-full-summary.txt`.
 
-The preceding `./tools/verify.sh` fast run passed all blocking build/test,
-content, Godot, networking and M7 exploration gates. Exact summary:
-`Artifacts/Verification/20260820T201455Z-fast-summary.txt`.
-
-The freshly exported app was launched directly into both the graphic-toon
-Style Lab and transparent-semantics Palette Lab. Both captured and emitted their
-PASS markers from the exported build. Evidence:
-`Artifacts/Screenshots/m7-exported-style-graphic-toon.png` and
-`Artifacts/Screenshots/m7-exported-palette-transparency.png`.
+The freshly exported app was launched directly into the 500-panel faction
+abstract-model page and the ten-role faction light-language page. Both captured
+and emitted their PASS markers from the exported build. Evidence:
+`Artifacts/Screenshots/m7-exported-palette-faction-models.png` and
+`Artifacts/Screenshots/m7-exported-palette-light-language.png`.
 
 Stress60 remained the expected diagnostic failure with phase completion
 **4/60, 5/60 and 2/60**. The exported macOS debug build is:
@@ -202,10 +209,11 @@ blocking only when M9 must prove its stable-large-battle exit.
 
 ## Next approved action
 
-1. Game director reviews the four live Style Lab treatments and three Palette
-   Ratio Lab pages for material appeal, readability, animation/effect language,
-   terrain treatment and faction color massing.
-2. Narrow, combine or request a new implementable style branch; do not record
+1. Game director reviews the corrected six-page Palette Ratio Lab, especially
+   Rock Raiders brown, 7316 beige/tan massing, the two abstract-model pages and
+   faction light semantics.
+2. Continue style search from the weak material-realism and graphic-toon
+   candidates, or request a new implementable style branch; do not record
    T064 acceptance until the selected direction is explicitly locked.
 3. Keep Stress60 visible without starting an unreviewed third movement attempt;
    revisit it for M9 or earlier only if a catastrophic movement regression
