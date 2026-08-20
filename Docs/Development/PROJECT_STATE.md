@@ -5,9 +5,10 @@ authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M0–M6 are implemented, verified and game-director accepted. M7 T064 material
-masters are implemented on the current branch and await game-director visual
-review before acceptance.**
+**M0–M6 are implemented, verified and game-director accepted. M7 now has a
+verified code-native Style Lab and Palette Ratio Lab awaiting game-director art
+review. Visual canon remains deliberately open until that review selects or
+requests a refinement of a direction.**
 
 - The branch includes the verified post-M5 movement handoff from `44e2caf`
   plus T058–T063.
@@ -106,6 +107,9 @@ The headless dedicated-server entry remains:
 
 ## M7 T064 material-master implementation
 
+The implementation below remains useful infrastructure, but its single
+stylized-PBR premise is not an accepted visual target.
+
 - The Godot client owns one centralized PBR material family for molded polymer,
   tool metal, rubber, transparent polymer, Crystal and terrain. It uses the
   engine's built-in `StandardMaterial3D`; no dependency or custom shader was
@@ -122,6 +126,35 @@ The headless dedicated-server entry remains:
 - Exact RGB matching and subjective material response are explicitly draft.
   Game-director review is required for highlight width, black lift, white
   retention, transparent tint and Crystal emission.
+
+## M7 visual-style exploration decision
+
+- By explicit game-director direction, Phase 08 rendering, material, lighting,
+  palette and general style conclusions are suspended. No replacement visual
+  canon exists during exploration.
+- Image generation is rejected as representative evidence: it did not preserve
+  scene invariants, produced infeasible detail, and collapsed distinct prompts
+  into near-identical polished imagery.
+- The code-native **M7 Style Lab** is implemented in Godot using one reproducible
+  Blender-authored drill rig: 57 Blender objects, 48 imported mesh nodes and
+  7,776 rendered triangles. The same camera, geometry, animation and scene expose
+  four switchable treatments: clean PBR, real-material, graphic toon and
+  hand-painted/retro. Only materials, shaders, lighting, VFX and terrain change.
+- The separate **Palette Ratio Lab** is implemented with three switchable pages:
+  faction visible-area candidates, five distinct Martian source families, and
+  transparent-versus-emissive semantics. Every displayed ratio group totals
+  100%; no common player blue is injected.
+- Transparent colors are classified semantically. Tinted transparent polymer
+  and glass do not emit merely because they are saturated; only authored energy,
+  lamps and resources receive emission.
+- Team/player color remains valuable but is deferred to model-level ownership
+  tests and is excluded from faction palette analysis.
+
+From a normal build, press `F8` and choose **M7 Style Lab** or **M7 Palette
+Lab**. Style controls are `1`–`4`; palette-page controls are `1`–`3`; `Escape`
+returns to the playable prototype. The rejected first fixture remains available
+as **Old Material Lab** for engineering comparison only.
+
 ## Integration format boundary
 
 - authoritative snapshot format **20**;
@@ -135,20 +168,22 @@ The headless dedicated-server entry remains:
 
 ## Verification state
 
-The current T064 branch passed `./tools/verify.sh --full` on 2026-08-20 with
-278 NUnit tests, 24/24 representative mover acceptance, every T058–T063 ENet
-smoke, the T064 material-master smoke, 100-repeat determinism, replay
-record/playback, snapshot continuation, compiled-content regeneration and
-macOS export. Exact summary:
-`Artifacts/Verification/20260820T183634Z-full-summary.txt`.
+The current M7 exploration branch passed `./tools/verify.sh --full` on
+2026-08-20 with 278 NUnit tests, 24/24 representative mover acceptance, every
+T058–T063 ENet smoke, the four-style Godot smoke, the Palette Ratio Lab semantic
+smoke, 100-repeat determinism, replay record/playback, snapshot continuation,
+compiled-content regeneration and macOS export. Exact summary:
+`Artifacts/Verification/20260820T200616Z-full-summary.txt`.
 
-The preceding `./tools/verify.sh` fast run passed the same blocking build/test,
-content, Godot, networking and T064 material gates. Exact summary:
-`Artifacts/Verification/20260820T183433Z-fast-summary.txt`.
+The preceding `./tools/verify.sh` fast run passed all blocking build/test,
+content, Godot, networking and M7 exploration gates. Exact summary:
+`Artifacts/Verification/20260820T201455Z-fast-summary.txt`.
 
-The exported app was then launched fresh and the exact `F8` → **M7 Material
-Lab** → **RETURN TO PROTOTYPE** path was executed successfully. Evidence:
-`Artifacts/Screenshots/t064-exported-f8-material-lab.jpg`.
+The freshly exported app was launched directly into both the graphic-toon
+Style Lab and transparent-semantics Palette Lab. Both captured and emitted their
+PASS markers from the exported build. Evidence:
+`Artifacts/Screenshots/m7-exported-style-graphic-toon.png` and
+`Artifacts/Screenshots/m7-exported-palette-transparency.png`.
 
 Stress60 remained the expected diagnostic failure with phase completion
 **4/60, 5/60 and 2/60**. The exported macOS debug build is:
@@ -167,8 +202,11 @@ blocking only when M9 must prove its stable-large-battle exit.
 
 ## Next approved action
 
-1. Complete game-director Material Lab review.
-2. Apply any directed material/palette refinements, then record T064 acceptance.
+1. Game director reviews the four live Style Lab treatments and three Palette
+   Ratio Lab pages for material appeal, readability, animation/effect language,
+   terrain treatment and faction color massing.
+2. Narrow, combine or request a new implementable style branch; do not record
+   T064 acceptance until the selected direction is explicitly locked.
 3. Keep Stress60 visible without starting an unreviewed third movement attempt;
    revisit it for M9 or earlier only if a catastrophic movement regression
    appears.

@@ -241,6 +241,40 @@ godot_m7_material_smoke() {
   fi
 }
 
+godot_m7_style_smoke() {
+  local godot import_output output status
+  godot="$(discover_godot 2>/dev/null || true)"
+  if [[ -z "${godot}" ]]; then printf 'Godot executable not found.\n' >&2; return 1; fi
+  if ! godot_is_required_mono "${godot}"; then printf 'Godot is not the required 4.7.1 .NET build: %s\n' "${godot}" >&2; return 1; fi
+  import_output="$("${godot}" --headless --import --path "${ROOT}/GodotClient" 2>&1)"
+  status=$?
+  printf '%s\n' "${import_output}"
+  if (( status != 0 )); then return "${status}"; fi
+  output="$("${godot}" --headless --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-style-lab --m7-style-smoke --m7-style graphic-toon 2>&1)"
+  status=$?
+  printf '%s\n' "${output}"
+  if (( status != 0 )); then return "${status}"; fi
+  if ! printf '%s\n' "${output}" | grep -q 'M7 STYLE LAB: PASS styles=4'; then
+    printf 'Godot exited without the required controlled M7 Style Lab PASS marker.\n' >&2
+    return 1
+  fi
+}
+
+godot_m7_palette_smoke() {
+  local godot output status
+  godot="$(discover_godot 2>/dev/null || true)"
+  if [[ -z "${godot}" ]]; then printf 'Godot executable not found.\n' >&2; return 1; fi
+  if ! godot_is_required_mono "${godot}"; then printf 'Godot is not the required 4.7.1 .NET build: %s\n' "${godot}" >&2; return 1; fi
+  output="$("${godot}" --headless --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-palette-lab --m7-palette-smoke --m7-palette-page transparency 2>&1)"
+  status=$?
+  printf '%s\n' "${output}"
+  if (( status != 0 )); then return "${status}"; fi
+  if ! printf '%s\n' "${output}" | grep -q 'M7 PALETTE LAB: PASS factionGroups=5 martianGroups=5 nonEmissiveTransparent=5 emissiveByFunction=2'; then
+    printf 'Godot exited without the required M7 Palette Ratio Lab PASS marker.\n' >&2
+    return 1
+  fi
+}
+
 run_stage "[BLOCKING_NOW] Static/source validation" "static" python3 "${ROOT}/tools/Validation/validate_phase10.py"
 run_stage "[BLOCKING_NOW] .NET restore" "restore" dotnet restore "${ROOT}/LEGO.SpaceRTS.Phase10.sln"
 run_stage "[BLOCKING_NOW] .NET solution build (warnings as errors)" "build" dotnet build "${ROOT}/LEGO.SpaceRTS.Phase10.sln" -c Release --no-restore --disable-build-servers -m:1
@@ -255,7 +289,8 @@ run_stage "[BLOCKING_NOW T059] Godot server command authority over ENet" "m6-com
 run_stage "[BLOCKING_NOW T060/T061] Godot 10 Hz delta snapshots without hidden data" "m6-snapshot" godot_m6_snapshot_smoke
 run_stage "[BLOCKING_NOW T062] Godot reconnect restore over ENet" "m6-reconnect" godot_m6_reconnect_smoke
 run_stage "[BLOCKING_NOW T063] Godot authoritative server-log replay" "m6-replay" godot_m6_replay_smoke
-run_stage "[BLOCKING_NOW T064] Godot LEGO material-master fixture" "m7-material" godot_m7_material_smoke
+run_stage "[BLOCKING_NOW M7 VISUAL EXPLORATION] Controlled Godot Style Lab" "m7-style" godot_m7_style_smoke
+run_stage "[BLOCKING_NOW M7 VISUAL EXPLORATION] Faction Palette Ratio Lab" "m7-palette" godot_m7_palette_smoke
 
 if [[ "${MODE}" != "fast" ]]; then
   run_stage "[BLOCKING_NOW] 100-repeat deterministic golden run" "golden100" dotnet "$(headless_dll)" --scenario golden --ticks 3200 --repeat 100

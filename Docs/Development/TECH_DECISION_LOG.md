@@ -772,3 +772,26 @@ not change gameplay, movement behavior, thresholds or performance targets.
 
 The exact palette match, highlight width, dark-value lift, transparency and
 emission remain game-director art-direction gates before T064 is accepted.
+
+---
+
+## 2026-08-20 — Reopen visual art direction and replace generated comparisons
+
+- The game director explicitly suspended Phase 08 rendering, material,
+  lighting, palette and general visual-style authority. The document remains a
+  historical/source-research reference; no replacement visual canon exists
+  during M7 exploration.
+- The first T064 Material Lab remains useful engineering infrastructure but is
+  not accepted as the art-direction method or final material system.
+- Image-generated style comparisons are rejected as representative evidence
+  because they did not preserve scene invariants, used infeasible detail and
+  collapsed distinct prompts into near-identical results.
+- M7 now uses one code-native Style Lab: the same optimized Blender test model,
+  animation, camera and composition under genuinely different Godot materials,
+  shaders, light rigs, effects and terrain treatments.
+- Palette ratios and transparent-material semantics are reviewed separately.
+  Saturated transparent elements are non-emissive unless their authored
+  function is energy, lighting or a luminous resource.
+
+This changes presentation direction only. SimCore, gameplay, networking,
+formats, Phase 07 functional UX and deterministic architecture are unchanged.

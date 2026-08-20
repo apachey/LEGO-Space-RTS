@@ -14,7 +14,13 @@ Normal implementation agents may READ these files but may not modify them withou
 - `05_WORLD_MAP_BIBLE.md` — Phase 05, World & Map Bible.
 - `06_COMBAT_DAMAGE_BALANCE.md` — Phase 06, Combat, Damage & Balance Framework.
 - `07_CONTROLS_CAMERA_UX_INTERFACE.md` — Phase 07, Controls, Camera, UX & Interface.
-- `08_VISUAL_BIBLE_UI_ART_DIRECTION.md` — Phase 08, Visual Bible & UI Art Direction.
+- `08_VISUAL_BIBLE_UI_ART_DIRECTION.md` — Phase 08, Visual Bible & UI Art
+  Direction. **VISUAL AUTHORITY SUSPENDED:** by explicit game-director decision
+  on 2026-08-20, its rendering, material, lighting, palette and stylistic
+  conclusions are historical research only while M7 performs a new art-direction
+  search. Phase 07 functional UX requirements and non-visual gameplay canon are
+  unaffected. No replacement visual canon exists until the game director locks
+  one after the code-native Style Lab.
 - `09_TECHNICAL_ARCHITECTURE.md` — Phase 09, deterministic technical architecture. **Engine-specific Unity host decisions in this file are superseded by Phase 09A.**
 - `09A_GODOT_ENGINE_AMENDMENT.md` — authoritative Godot 4.7.x .NET engine-host amendment.
 - `09B_MOVEMENT_ARCHITECTURE_AND_PROTOTYPE_GATE_AMENDMENT.md` — authoritative Movement Architecture v2 and prototype-gate amendment.

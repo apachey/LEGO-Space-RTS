@@ -8,11 +8,27 @@ namespace LegoSpaceRTS.Client;
 public partial class RtsCompositionRoot : Node3D
 {
     private static bool _forceM7MaterialLab;
+    private static bool _forceM7StyleLab;
+    private static bool _forceM7PaletteLab;
 
     public override void _Ready()
     {
         Engine.MaxFps = 60;
         string[] commandLineArgs = OS.GetCmdlineUserArgs();
+        if (_forceM7PaletteLab || commandLineArgs.Contains("--m7-palette-lab"))
+        {
+            M7PaletteRatioLab lab = new();
+            AddChild(lab);
+            lab.Configure(ReturnFromM7PaletteLab, commandLineArgs);
+            return;
+        }
+        if (_forceM7StyleLab || commandLineArgs.Contains("--m7-style-lab"))
+        {
+            M7VisualStyleLab lab = new();
+            AddChild(lab);
+            lab.Configure(ReturnFromM7StyleLab, commandLineArgs);
+            return;
+        }
         if (_forceM7MaterialLab || commandLineArgs.Contains("--m7-material-lab"))
         {
             M7MaterialLab lab = new();
@@ -35,7 +51,7 @@ public partial class RtsCompositionRoot : Node3D
         FogPresenter fog = new() { Name = "FogPresentation" }; AddChild(fog); fog.Configure(bridge);
         DebugRenderer debug = new() { Name = "DebugVisualization" }; AddChild(debug); debug.Configure(bridge);
         BasicHud hud = new(); AddChild(hud); hud.Configure(bridge, selection, input);
-        DebugHud developerHud = new(); AddChild(developerHud); developerHud.Configure(bridge, input, debug, fog, PrepareM5Acceptance, OpenM7MaterialLab);
+        DebugHud developerHud = new(); AddChild(developerHud); developerHud.Configure(bridge, input, debug, fog, PrepareM5Acceptance, OpenM7StyleLab, OpenM7PaletteLab, OpenM7MaterialLab);
         if (scenario.IsM5Acceptance)
         {
             bool pauseInitially = !commandLineArgs.Contains("--smoke") && !commandLineArgs.Contains("--capture-smoke");
@@ -68,6 +84,40 @@ public partial class RtsCompositionRoot : Node3D
     private void OpenM7MaterialLab()
     {
         _forceM7MaterialLab = true;
+        Callable.From(() => GetTree().ReloadCurrentScene()).CallDeferred();
+    }
+
+    private void OpenM7StyleLab()
+    {
+        _forceM7StyleLab = true;
+        Callable.From(() => GetTree().ReloadCurrentScene()).CallDeferred();
+    }
+
+    private void OpenM7PaletteLab()
+    {
+        _forceM7PaletteLab = true;
+        Callable.From(() => GetTree().ReloadCurrentScene()).CallDeferred();
+    }
+
+    private void ReturnFromM7PaletteLab()
+    {
+        _forceM7PaletteLab = false;
+        if (OS.GetCmdlineUserArgs().Contains("--m7-palette-lab"))
+        {
+            GetTree().Quit();
+            return;
+        }
+        Callable.From(() => GetTree().ReloadCurrentScene()).CallDeferred();
+    }
+
+    private void ReturnFromM7StyleLab()
+    {
+        _forceM7StyleLab = false;
+        if (OS.GetCmdlineUserArgs().Contains("--m7-style-lab"))
+        {
+            GetTree().Quit();
+            return;
+        }
         Callable.From(() => GetTree().ReloadCurrentScene()).CallDeferred();
     }
 

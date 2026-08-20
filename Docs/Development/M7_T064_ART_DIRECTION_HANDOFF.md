@@ -2,56 +2,50 @@
 
 ## Status
 
-The Godot material-master foundation and isolated Material Lab are implemented.
-The values shown in the lab are engineering look-development defaults inside the
-canonical Phase 08 ranges. They are not final art-direction acceptance.
+The first Godot material-master foundation and isolated Material Lab are
+implemented, but the game director rejected a single-material-first workflow as
+the art-direction method. The fixture is retained as engineering infrastructure;
+it is not accepted T064 art direction.
 
 The game director owns the final visual choices. Implementation agents own the
 material code, asset import, rendering integration, automated smoke and build.
 
-## Canon already fixed
+## Visual canon status
 
-- materials are stylized PBR rather than photographed toys;
-- molded polymer roughness remains approximately 0.32–0.50;
-- tool metal roughness remains approximately 0.22–0.40;
-- rubber is visibly softer and rougher than black polymer;
-- transparent polymer is strongly tinted without expensive realistic refraction;
-- Crystal remains faceted and readable without bloom, with a restrained core;
-- terrain stays quieter than playable factions;
-- faction/source palette dominates the body;
-- team identity stays on small Identification Tiles, rings and UI rather than
-  recoloring the body.
+Phase 08 rendering, material, lighting, palette and general style conclusions
+are suspended by explicit game-director decision. No replacement visual canon
+exists while the Style Lab is under review. The Phase 07 functional UX contract
+and non-visual gameplay canon remain unchanged.
 
-## Prepared fixture
+## Prepared fixtures
 
 From a normal launch:
 
 1. press `F8`;
-2. select **M7 Material Lab**;
-3. the prototype reloads directly into the isolated look-development stage;
-4. select **RETURN TO PROTOTYPE** to return.
+2. select **M7 Style Lab** or **M7 Palette Lab**;
+3. use `1`–`4` to switch rendering styles, or `1`–`3` to switch palette pages;
+4. press `Escape` to return to the prototype.
 
-The lab shows:
+The Style Lab keeps one unit, camera, animation and composition invariant while
+switching clean PBR, real-material, graphic-toon and hand-painted/retro
+treatments. The Palette Lab shows:
 
-- five source-palette swatches: Rock Raiders, Astronaut Field, Astronaut Mission,
-  Aliens and Martians;
-- the six T064 material families;
-- team Identification Tiles separated from body color;
-- molded-polymer roughness at 0.32, 0.40 and 0.50 under the same fixed light.
+- candidate visible-area ratios for Rock Raiders, Astronaut Field, Astronaut
+  Mission, Aliens and the aggregate Martian range;
+- separate 7311, 7313, 7314, 7316 and 7317 Martian families;
+- transparent materials on split light/dark backing;
+- work-lamp and energy-resource emission classified by function.
 
-Exact swatch RGB values are deliberately labeled draft. Source-set color matching
-and subjective material response require game-director review.
+The first equal-swatch fixture remains as **Old Material Lab** for engineering
+comparison. It is not the current art-direction review path.
 
 ## Art-direction response requested
 
-The shortest useful response is:
-
-1. polymer: `0.32`, `0.40`, `0.50`, or “between X and Y”;
-2. Alien black: too crushed / correct / too lifted;
-3. Astronaut white: too gray / correct / too bright;
-4. transparent brown: too opaque / correct / too clear;
-5. Crystal: too flat / correct / too emissive;
-6. named faction swatches requiring adjustment.
+Review the four styles as genuinely separate directions first. Useful feedback
+names the treatment, then calls out model readability, material credibility,
+ground, lighting, animation and VFX separately. Palette review is independent:
+adjust individual group percentages or semantic categories without assuming
+that the preferred rendering style has already been chosen.
 
 ## Texture policy
 
@@ -67,22 +61,11 @@ Image generation can produce useful look-development boards and albedo concepts.
 It does not by itself prove seamless tiling or generate production-trustworthy
 normal/ORM data. Every generated candidate must be checked at real gameplay scale.
 
-## ImageGen prompt — Basalt Highlands look-development tile
+## Image-generation decision
 
-```text
-Use case: stylized-concept
-Asset type: tileable game texture look-development preview
-Primary request: seamless Basalt Highlands ground macro-texture for a premium stylized LEGO science-fiction RTS
-Scene/backdrop: orthographic top-down surface only, edge-to-edge texture
-Subject: broad dark basalt planes, clean angular fracture transitions, very restrained warm mineral variation
-Style/medium: stylized PBR-inspired game texture concept, authored and graphic rather than photoreal scanned rock
-Composition/framing: square seamless tile, low-frequency forms suitable beneath RTS combat units
-Lighting/mood: neutral flat material-reference lighting with no directional cast shadows and no baked highlights
-Color palette: charcoal, neutral dark gray, muted brown undertones; low saturation
-Materials/textures: matte basalt, subtle planar value changes, minimal micro-noise
-Constraints: seamless edges; no focal object; no visible grid; no LEGO studs; no bricks; no units; no UI; no text; no logos; no watermark; environment must stay quieter than playable faction colors
-Avoid: photogrammetry, realistic gravel, dense cracks, lava glow, moss, rust, high-frequency noise, dramatic lighting
-```
+Image generation is no longer used to compare implementable rendering styles.
+It produced excessive geometry, failed to preserve the invariant scene and made
+materially different prompts converge on the same polished image. Future use is
+limited to non-authoritative mood or texture thumbnails when specifically useful.
 
-Any generated result remains preview-only and must not be connected to the
-project until the game director accepts its direction.
+The representative art-direction evidence is now the real Godot Style Lab.

@@ -13,7 +13,7 @@ public partial class DebugHud : CanvasLayer
     private double _nextUpdate;
 
     public void Configure(GodotSimBridge bridge, RtsInputController input, DebugRenderer debug, FogPresenter fog,
-        Action prepareM5Acceptance, Action openM7MaterialLab)
+        Action prepareM5Acceptance, Action openM7StyleLab, Action openM7PaletteLab, Action openM7MaterialLab)
     {
         _bridge = bridge; _input = input; Name = "DeveloperHUD"; Layer = 20; ProcessPriority = 210;
         _panel = new PanelContainer { Name = "DeveloperPanel", Position = new Vector2(12, 90), CustomMinimumSize = new Vector2(760, 0), Visible = false };
@@ -22,10 +22,18 @@ public partial class DebugHud : CanvasLayer
         Label title = new() { Text = "DEVELOPER TOOLS — F8", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill }; title.AddThemeFontSizeOverride("font_size", 16); header.AddChild(title);
         Button drain = new() { Text = "Drain Energy" }; drain.Pressed += input.DebugDrainEnergy; header.AddChild(drain);
         Button m5 = new() { Name = "PrepareM5Acceptance", Text = "Prepare M5 Playtest" }; m5.Pressed += prepareM5Acceptance; header.AddChild(m5);
-        Button m7 = new() { Name = "OpenM7MaterialLab", Text = "M7 Material Lab" };
-        m7.TooltipText = "Opens the isolated T064 material-master art-direction fixture.";
-        m7.Pressed += openM7MaterialLab;
+        Button m7 = new() { Name = "OpenM7StyleLab", Text = "M7 Style Lab" };
+        m7.TooltipText = "Opens the controlled code-native visual-style comparison. Use 1–4; Escape returns.";
+        m7.Pressed += openM7StyleLab;
         header.AddChild(m7);
+        Button palette = new() { Name = "OpenM7PaletteLab", Text = "M7 Palette Lab" };
+        palette.TooltipText = "Shows color ratios, Martian source families and transparent-versus-emissive semantics. Use 1–3; Escape returns.";
+        palette.Pressed += openM7PaletteLab;
+        header.AddChild(palette);
+        Button oldM7 = new() { Name = "OpenM7MaterialLab", Text = "Old Material Lab" };
+        oldM7.TooltipText = "Retained engineering fixture; not accepted art direction.";
+        oldM7.Pressed += openM7MaterialLab;
+        header.AddChild(oldM7);
         HFlowContainer actions = new() { Name = "PreparedPlaytestActions" }; box.AddChild(actions);
         Button prepareConstruction = new() { Name = "PrepareConstructionTest", Text = "Prepare construction test" };
         prepareConstruction.TooltipText = "Supplies resources, creates a progressing construction site, selects it and centers the camera.";
