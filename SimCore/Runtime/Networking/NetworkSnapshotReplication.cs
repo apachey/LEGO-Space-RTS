@@ -71,6 +71,7 @@ public readonly struct NetworkReplicatedProjectile
 /// <summary>A recipient-specific, presentation-only state. It can never recreate SimulationWorld.</summary>
 public sealed class NetworkSnapshotState
 {
+    public const int KnowledgeBitsetBytes = (FogState.Width * FogState.Height + 7) / 8;
     public NetworkSnapshotState(SimTick tick, byte playerSlot, NetworkOwnPlayerState ownPlayer,
         NetworkReplicatedEntity[] entities, NetworkReplicatedProjectile[] projectiles, byte[] exploredBits, byte[] visibleBits)
     {
@@ -114,9 +115,27 @@ public sealed class NetworkSnapshotState
         NetworkOwnPlayerState own = new(world.GetProcessedResourceTotal(playerSlot, ResourceType.Ore),
             world.GetProcessedResourceTotal(playerSlot, ResourceType.Crystal), operations, charge);
 
-        // T061 fills these recipient-only bitsets. Reserving them in the T060 format
-        // keeps the snapshot wire version stable across the two dependent tasks.
-        return new NetworkSnapshotState(world.Tick, playerSlot, own, entities, projectiles, Array.Empty<byte>(), Array.Empty<byte>());
+        byte[] explored = new byte[KnowledgeBitsetBytes];
+        byte[] visible = new byte[KnowledgeBitsetBytes];
+        for (int y = 0; y < FogState.Height; y++)
+        for (int x = 0; x < FogState.Width; x++)
+        {
+            int cell = y * FogState.Width + x;
+            int mask = 1 << (cell & 7);
+            if (world.Fog.IsExplored(playerSlot, x, y)) explored[cell >> 3] |= checked((byte)mask);
+            if (world.Fog.IsVisible(playerSlot, x, y)) visible[cell >> 3] |= checked((byte)mask);
+        }
+        return new NetworkSnapshotState(world.Tick, playerSlot, own, entities, projectiles, explored, visible);
+    }
+
+    public VisibilityState GetKnowledge(int x, int y)
+    {
+        if ((uint)x >= FogState.Width || (uint)y >= FogState.Height || ExploredBits.Length != KnowledgeBitsetBytes || VisibleBits.Length != KnowledgeBitsetBytes)
+            throw new ArgumentOutOfRangeException(nameof(x));
+        int cell = y * FogState.Width + x;
+        int mask = 1 << (cell & 7);
+        if ((VisibleBits[cell >> 3] & mask) != 0) return VisibilityState.Visible;
+        return (ExploredBits[cell >> 3] & mask) != 0 ? VisibilityState.Explored : VisibilityState.Unseen;
     }
 
     private void ValidateStableOrder()
@@ -482,6 +501,7 @@ public sealed class NetworkSnapshotClientBuffer
 
     public uint LatestSequence { get; private set; }
     public NetworkSnapshotState? Latest { get; private set; }
+    public PresentationEntity[] LastVisibilityLosses { get; private set; } = Array.Empty<PresentationEntity>();
 
     public bool TryApply(NetworkSnapshotFrame frame, out NetworkSnapshotState state)
     {
@@ -490,6 +510,8 @@ public sealed class NetworkSnapshotClientBuffer
         NetworkSnapshotState? baseline = null;
         if (!frame.IsFull && !_history.TryGetValue(frame.BaselineSequence, out baseline)) return false;
         if (baseline is not null && baseline.PlayerSlot != frame.PlayerSlot) return false;
+
+        LastVisibilityLosses = CaptureVisibilityLosses(baseline, frame);
 
         NetworkReplicatedEntity[] entities = ApplyEntities(baseline?.Entities, frame.EntityUpserts, frame.EntityRemovals);
         NetworkReplicatedProjectile[] projectiles = ApplyProjectiles(baseline?.Projectiles, frame.ProjectileUpserts, frame.ProjectileRemovals);
@@ -501,6 +523,21 @@ public sealed class NetworkSnapshotClientBuffer
         _history.Add(frame.Sequence, state);
         while (_history.Count > HistoryLimit) _history.Remove(FirstKey(_history));
         return true;
+    }
+
+    private static PresentationEntity[] CaptureVisibilityLosses(NetworkSnapshotState? baseline, NetworkSnapshotFrame frame)
+    {
+        if (baseline is null || frame.EntityRemovals.Length == 0) return Array.Empty<PresentationEntity>();
+        HashSet<uint> removals = new();
+        for (int i = 0; i < frame.EntityRemovals.Length; i++) removals.Add(frame.EntityRemovals[i].Value);
+        List<PresentationEntity> losses = new();
+        for (int i = 0; i < baseline.Entities.Length; i++)
+        {
+            if (!removals.Contains(baseline.Entities[i].EntityId.Value)) continue;
+            PresentationEntity previous = baseline.Entities[i].Decode();
+            if (previous.Owner != frame.PlayerSlot) losses.Add(previous);
+        }
+        return losses.ToArray();
     }
 
     private static NetworkReplicatedEntity[] ApplyEntities(NetworkReplicatedEntity[]? baseline, NetworkReplicatedEntity[] upserts, EntityId[] removals)
