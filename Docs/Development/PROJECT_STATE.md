@@ -132,8 +132,12 @@ acceptance**, not before M6 implementation starts. Therefore:
 
 1. integrate the verified immutable-endpoint, arrival-sequencing and honest
    stress-fixture work;
-2. begin M6 with its first approved implementation task from the accepted
-   post-M5 baseline;
+2. begin **M6 T058 — network transport host foundation** from the accepted
+   post-M5 baseline. Phase 09A supersedes T058's old Unity wording: inspect the
+   current Godot host and official Godot packet/ENet APIs, then implement the
+   smallest project-owned dedicated-server/two-connection carrier slice. Keep
+   command semantics in SimCore and do not pull T059 command validation or T060
+   snapshot replication into T058;
 3. keep stress60 `BLOCKING_LATER` throughout M6 development and require it to
    pass before M6 acceptance.
 
@@ -141,3 +145,15 @@ acceptance**, not before M6 implementation starts. Therefore:
 traffic coordinator/solver or otherwise expands movement architecture. The
 failed local-pressure experiment is not a reason to hold T058 or other bounded
 M6 implementation work.
+
+## New-thread M6 bootstrap
+
+A fresh Codex task should start with:
+
+> Read AGENTS.md and the current repository state. Start M6 T058 from the
+> accepted post-M5 movement foundation. Treat stress60 as BLOCKING_LATER for M6
+> acceptance, not as a blocker for starting T058.
+
+The task must verify that commit `44e2caf` (or its eventual merged descendant)
+is present before planning T058. If it is not on the accepted base, stop and
+integrate that movement handoff first rather than reconstructing it from chat.
