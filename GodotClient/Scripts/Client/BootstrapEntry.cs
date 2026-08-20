@@ -18,9 +18,19 @@ public partial class BootstrapEntry : Node
             AddChild(new M6CommandAuthoritySmokeRunner { Name = "M6CommandAuthoritySmokeRunner" });
             return;
         }
+        if (arguments.Contains("--m6-snapshot-smoke"))
+        {
+            AddChild(new M6SnapshotSmokeRunner { Name = "M6SnapshotSmokeRunner" });
+            return;
+        }
         if (arguments.Contains("--m6-reconnect-smoke"))
         {
             AddChild(new M6ReconnectSmokeRunner { Name = "M6ReconnectSmokeRunner" });
+            return;
+        }
+        if (arguments.Contains("--m6-replay-smoke"))
+        {
+            AddChild(new M6ReplaySmokeRunner { Name = "M6ReplaySmokeRunner" });
             return;
         }
         if (arguments.Contains("--dedicated-server"))

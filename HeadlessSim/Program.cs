@@ -267,6 +267,7 @@ for (int run = 0; run < repeat; run++)
     if (replayOut is not null && sourceReplay is not null && run == repeat - 1)
     {
         sourceReplay.ExpectedFinalHash = finalHash;
+        sourceReplay.FinalTick = runner.World.Tick.Value;
         File.WriteAllBytes(replayOut, sourceReplay.Serialize());
     }
     if (sourceReplay is not null && sourceReplay.ExpectedFinalHash != 0 && sourceReplay.ExpectedFinalHash != finalHash)

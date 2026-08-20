@@ -234,7 +234,11 @@ public sealed class ServerCommandSession
 public sealed class ServerCommandAuthority
 {
     public NetworkCommandAcknowledgment Process(SimulationWorld world, ServerCommandSession session, byte[] packet)
+        => Process(world, session, packet, out _);
+
+    public NetworkCommandAcknowledgment Process(SimulationWorld world, ServerCommandSession session, byte[] packet, out CommandEnvelope acceptedCommand)
     {
+        acceptedCommand = default;
         if (world == null) throw new ArgumentNullException(nameof(world));
         if (session == null) throw new ArgumentNullException(nameof(session));
         if (!NetworkCommandProtocol.TryDecodeRequest(packet, out ulong token, out CommandEnvelope request, out NetworkCommandRejection rejection))
@@ -253,6 +257,7 @@ public sealed class ServerCommandAuthority
             request.TargetPosition, request.Modifiers, request.TargetEntity, request.DebugFeatureId, request.ContentType,
             request.Orientation, request.EnergyPriority, request.MissionConfiguration, request.DesiredResonanceCommitment);
         world.Commands.Enqueue(accepted);
+        acceptedCommand = accepted;
         return new NetworkCommandAcknowledgment(request.Sequence, NetworkCommandRejection.None, executionTick);
     }
 

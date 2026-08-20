@@ -5,131 +5,148 @@ authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M4 and M5 are implemented, game-director accepted and merged to
-`origin/main` through PR #12 (`85b02f2`). M6 T058 — network transport host —
-and T059 — server command validation — are implemented on stacked task
-branches through `codex/m6-t059-command-validation`.**
+**M0–M5 are implemented, game-director accepted and merged to `origin/main`
+through PR #12 (`85b02f2`). M6 T058–T063 are implemented and verified on the
+stacked task branch `codex/m6-t060-t063-network-stack`, but M6 itself is not
+yet accepted because the preserved 60-mover gate remains red.**
 
-- The task branch includes the verified post-M5 movement handoff from
-  `44e2caf`.
-- The preserved 60-mover stress is `BLOCKING_LATER — M6 acceptance`; it does
-  not block bounded M6 implementation.
-- The old `codex/60-mover-fix` work is preserved as failed research through
+- The branch includes the verified post-M5 movement handoff from `44e2caf`
+  plus T058–T063.
+- The old `codex/60-mover-fix` work remains preserved failed research through
   commits `6105cf0` and `f896b01`; it is not merge-ready production code.
+- Stress60 is `BLOCKING_LATER — M6 acceptance`: it did not block bounded M6
+  implementation, but it must pass or receive an explicit canon reclassification
+  before M6 can be accepted.
 
 ## Locked technical foundation
 
 - Godot 4.7.1-stable .NET host with C#.
 - Engine-independent deterministic SimCore at fixed 20 Hz.
 - Fix32, FixVec2 and Angle16 authoritative numerics.
-- Deterministic command execution, snapshots, replay and state hashing.
 - Project-owned deterministic navigation and movement.
-- Dedicated-server authoritative multiplayer; Godot networking is packet
-  transport only and does not own gameplay truth.
+- Dedicated-server authoritative multiplayer. Godot ENet carries project-owned
+  packets and never owns gameplay truth.
 
 ## Accepted gameplay baseline
 
 - M2 selection, controls, camera, fog/vision and deterministic movement.
-- M3 resources, construction, production, Operations Capacity, Energy Domains,
+- M3 economy, construction, production, Operations Capacity, Energy Domains,
   brownouts and Basic HUD.
 - M4 combat, armor, destruction, repair, Rapid Rider transport and MX-41
   tactical transformation.
 - M5 Worksites, excavation topology, forward service, Mission Refit, Alien
-  Charge/Surge and tubes, displacement/stability and clamp passage.
-- Repeatable developer-prepared M4/M5 acceptance controls remain available.
+  Charge/Surge, tubes and displacement/stability.
 
-## M6 T058–T059 server authority foundation
+## M6 T058–T063 implementation
 
-The Godot host now supports a headless dedicated-server entry:
+The headless dedicated-server entry remains:
 
 `--dedicated-server --network-bind <address> --network-port <port>`
 
-T058 provides:
+### T058–T059 transport and command authority
 
-- `ENetMultiplayerPeer` over UDP as a raw packet carrier;
-- a hard maximum of two connected clients;
-- explicit peer connection/disconnection tracking and targeted sends;
-- reliable-ordered, unreliable-sequenced and reliable-bulk logical channels;
-- a 64 KiB carrier packet ceiling;
-- a normal blocking loopback smoke that connects two clients and exchanges
-  targeted packets through all three channels.
+- ENet/UDP accepts at most two clients and exposes reliable-ordered,
+  unreliable-sequenced and reliable-bulk logical channels.
+- Server-created cryptographic tokens bind peers to player slots.
+- Reliable intent commands use exact-next sequence processing, rate limits,
+  canonical payload shapes and authoritative ownership/fog/resource/placement/
+  technology/state checks.
+- Accepted commands are rebuilt with the server player slot and next legal
+  simulation tick. Debug commands are never accepted from network sessions.
 
-T059 now layers project-owned command authority over that carrier:
+### T060 snapshot replication
 
-- the dedicated entry loads the authoritative scenario and advances SimCore at
-  a fixed 20 Hz;
-- each connected peer receives a server-created player slot and cryptographically
-  random session token;
-- reliable command packets carry intent only and use explicit packet format and
-  simulation-protocol versions with a 4096-byte request bound;
-- the server enforces token/player binding, exactly-next sequence processing,
-  a bounded per-tick rate limit, sorted unique entity IDs, ownership, entity and
-  command eligibility, fog/legal target knowledge and the currently implemented
-  resource, Energy/Charge, technology, placement and service checks;
-- accepted intent is rebuilt with the server player slot and next legal
-  simulation tick, then enters the existing deterministic `CommandBuffer`;
-- every decodable request receives an accepted/rejected acknowledgment with the
-  client sequence, execution tick and deterministic rejection code;
-- debug/developer command families are never accepted from a network session.
+- The 20-Hz server publishes recipient snapshots every two ticks: canonical
+  10-Hz state delivery on unreliable-sequenced transport.
+- The server delta-encodes only against a retained baseline that the client
+  explicitly acknowledged. Both sides keep bounded baseline history.
+- Stable-ID upserts/removals cover presentation entities and projectiles; own
+  economy/capacity/charge and recipient fog knowledge are included.
+- Sparse fog bitsets use standard-library Deflate compression. The real
+  two-client acceptance observed a largest initial packet of 620 bytes, below
+  ENet's default MTU.
+- Client helpers reconstruct full state and interpolate position/orientation
+  without changing simulation authority.
 
-T059 does **not** publish snapshots, delta baselines or client state. Fog-filtered
-replication, reconnect and network replay remain T060–T063.
+### T061 fog filtering
+
+- A recipient snapshot cannot recreate `SimulationWorld` and contains only
+  owned, neutral or currently visible presentation state.
+- Hidden opponents are absent. Loss of visibility is an entity removal; the
+  prior presentation is exposed only as client-side last-known state.
+- Hidden target IDs are removed from weapon and repair presentation references.
+- Per-player fog and economy data are captured independently; a compromised
+  client does not receive the other player's private state.
+
+### T062 reconnect
+
+- Disconnected sessions retain token, player slot and last command sequence for
+  60 authoritative seconds.
+- Reconnect requires exact simulation protocol, gameplay content and initial map
+  hashes.
+- Reliable-bulk restore sends a current full legal recipient snapshot plus the
+  player's pending accepted commands, unit orders and production queues, then
+  resumes regular snapshot streaming from a new baseline.
+- The ENet acceptance disconnects player 0 while player 1 stays connected,
+  restores sequence 1 on a replacement peer and executes sequence 2.
+
+### T063 network replay
+
+- The server records the initial authoritative snapshot, accepted command log,
+  gameplay/map hashes, deterministic seed field, state hashes every 20 ticks
+  and seek snapshots every 200 ticks.
+- Replay format 16 stores final tick/hash and remains backward-readable for
+  replay format 15.
+- Playback seeks from the nearest snapshot and fails on hash mismatch.
+- Full authoritative replay is unavailable during an active match so it cannot
+  bypass fog filtering. After explicit match completion, authenticated clients
+  receive it as hash-verified 48-KiB reliable-bulk chunks.
+- The ENet acceptance delivered a 666,891-byte server log and reproduced the
+  authoritative final hash.
 
 ## Integration format boundary
 
-The accepted post-M5 baseline remains:
-
-- snapshot format **20**;
+- authoritative snapshot format **20**;
 - simulation protocol **18**;
-- replay format **15**;
-- compiled content format **16** / source schema **15**.
-
-T059 adds network command packet format **1** without changing offline
-`CommandEnvelope`, snapshot, replay or content formats.
+- replay format **16** (backward reader for 15);
+- compiled content format **16** / source schema **15**;
+- command packet format **1**;
+- recipient snapshot packet format **2**;
+- reconnect packet format **1**;
+- network replay chunk format **1**.
 
 ## Verification state
 
-The accepted combined M4/M5 baseline passed `./tools/verify.sh --full` with 247
-tests, determinism/replay/snapshot gates, Godot smoke and macOS export. The
-pre-M6 movement handoff then passed the corrected full harness with 256 tests;
-stress60 remained the classified diagnostic failure at 4/60, 5/60 and 2/60
-phase completion.
+The complete T060–T063 code passed `./tools/verify.sh --full` on 2026-08-20
+with 277 NUnit tests, 24/24 representative movement acceptance, T058/T059/T062/
+T063 ENet smokes, 100-repeat determinism, replay record/playback, snapshot
+continuation, compiled-content regeneration and macOS export. Exact summary:
+`Artifacts/Verification/20260820T165832Z-full-summary.txt`.
 
-T058 passed `./tools/verify.sh --full` on 2026-08-20 with every current
-blocking stage green: 256 NUnit tests, honest 24/24 movement acceptance, the
-new two-client ENet transport smoke, 100-repeat determinism, replay, snapshot
-continuation, compiled-content regeneration and macOS export. The exact summary
-is `Artifacts/Verification/20260820T153920Z-full-summary.txt`.
+After adding the explicit T060/T061 two-client cadence/privacy smoke, the final
+`./tools/verify.sh` fast run passed all 277 tests and every T058–T063 network
+gate. Exact summary:
+`Artifacts/Verification/20260820T170609Z-fast-summary.txt`.
 
-T059 passed `./tools/verify.sh --full` on 2026-08-20 with every current blocking
-stage green: 263 NUnit tests, honest 24/24 movement acceptance, both two-client
-ENet smokes, 100-repeat determinism, replay, snapshot continuation, compiled
-content regeneration and macOS export. The authority smoke proves three legal
-commands execute and six hostile/invalid inputs are rejected across real ENet
-connections. The exact summary is
-`Artifacts/Verification/20260820T162113Z-full-summary.txt`.
-
-Stress60 remained the expected `BLOCKING_LATER` diagnostic failure at 4/60,
-5/60 and 2/60 phase completion. The exported macOS debug build is
+Stress60 remained the expected diagnostic failure with phase completion
+**4/60, 5/60 and 2/60**. The exported macOS debug build is:
 `Builds/macOS/LEGO Space RTS.app`.
 
-## Movement acceptance blocker
+## M6 acceptance blocker
 
 The legal stress60 fixture still exposes mid-route corridor traffic/yield
-deadlock. The approved immutable endpoints and bounded arrival sequencer fix the
-representative 24-mover arrival wall, but do not solve this distinct scale case.
+deadlock. The approved immutable endpoints and bounded arrival sequencer solve
+the representative 24-mover arrival wall but not this distinct scale case.
 
-Do not resurrect or stack the failed portal-flow/local-pressure experiments.
-Another movement coordinator/solver attempt requires `ARCHITECTURE REVIEW
-REQUIRED`. Stress60 must pass before M6 networked 1v1 acceptance unless canon
-explicitly changes the gate.
+Do not resurrect or stack the rejected portal-flow/local-pressure experiments.
+Another traffic coordinator/solver attempt requires **ARCHITECTURE REVIEW
+REQUIRED**. Accepting M6 while stress60 remains red would instead require an
+explicit canon amendment to its gate classification.
 
 ## Next approved action
 
-1. Hand the verified stacked T059 branch to the game director for review and
-   merge with its T058 dependency.
-2. After T059 is accepted on the project baseline, begin **T060 — snapshot
-   replication** at the canonical 10 Hz. Preserve the T059 authority boundary;
-   do not pull fog filtering (T061) or reconnect (T062) into T060.
-3. Keep stress60 visible as `BLOCKING_LATER` throughout M6 development and
-   promote it to `BLOCKING_NOW` for M6 acceptance.
+1. Game-director review and merge of the stacked T058–T063 implementation.
+2. Before declaring M6 accepted, choose one reviewed path for the preserved
+   stress60 gate: approve a new movement architecture task, or explicitly amend
+   the gate classification in canon.
+3. Do not begin an unreviewed third movement-fix approach from this branch.

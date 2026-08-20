@@ -7,7 +7,7 @@ public class SnapshotReplayTests
     {
         Assert.That(SnapshotSerializer.FormatVersion,Is.EqualTo(20));
         Assert.That(SnapshotSerializer.SimulationProtocolVersion,Is.EqualTo(18));
-        Assert.That(ReplayLog.Version,Is.EqualTo(15));
+        Assert.That(ReplayLog.Version,Is.EqualTo(16));
     });
     [Test] public void SnapshotRoundTripPreservesHash()
     {

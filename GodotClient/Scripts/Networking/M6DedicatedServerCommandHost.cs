@@ -31,6 +31,10 @@ public partial class M6DedicatedServerCommandHost : Node
     private readonly ServerCommandAuthority _authority = new();
     private M6DedicatedServerTransportHost? _transport;
     private SimulationRunner? _runner;
+    private ServerReplayRecorder? _replayRecorder;
+    private byte[]? _completedReplay;
+    private uint _nextReplayTransferId = 1;
+    private bool _matchCompleted;
     private double _accumulator;
 
     public event Action<int, byte>? SessionOpened;
@@ -44,6 +48,8 @@ public partial class M6DedicatedServerCommandHost : Node
     public ulong GameplayContentHash { get; private set; }
     public ulong MapHash { get; private set; }
     public NetworkMatchManifest MatchManifest => new(GameplayContentHash, MapHash);
+    public bool MatchCompleted => _matchCompleted;
+    public bool ReplayAvailable => _completedReplay is not null;
 
     public Error Listen(M6TransportHostOptions options, SimulationWorld world, ulong gameplayContentHash)
     {
@@ -55,6 +61,7 @@ public partial class M6DedicatedServerCommandHost : Node
         _runner = new SimulationRunner(world);
         GameplayContentHash = gameplayContentHash;
         MapHash = NetworkMatchManifest.ComputeMapHash(world.Map);
+        _replayRecorder = new ServerReplayRecorder(world, MatchManifest);
         M6DedicatedServerTransportHost transport = new() { Name = "M6DedicatedServerTransportHost" };
         transport.ClientConnected += OnClientConnected;
         transport.ClientDisconnected += OnClientDisconnected;
@@ -71,6 +78,7 @@ public partial class M6DedicatedServerCommandHost : Node
             _runner = null;
             GameplayContentHash = 0;
             MapHash = 0;
+            _replayRecorder = null;
             return result;
         }
 
@@ -82,12 +90,13 @@ public partial class M6DedicatedServerCommandHost : Node
 
     public override void _Process(double delta)
     {
-        if (_runner is null) return;
+        if (_runner is null || _matchCompleted) return;
         _accumulator += delta;
         int steps = 0;
         while (_accumulator >= TickSeconds && steps < MaximumCatchUpTicksPerFrame)
         {
             _runner.StepOneTick();
+            _replayRecorder?.AfterTick(_runner.World);
             ExpireRetainedSessions();
             if ((_runner.World.Tick.Value & 1) == 0) PublishSnapshots();
             _accumulator -= TickSeconds;
@@ -102,6 +111,10 @@ public partial class M6DedicatedServerCommandHost : Node
         M6DedicatedServerTransportHost? transport = _transport;
         _transport = null;
         _runner = null;
+        _replayRecorder = null;
+        _completedReplay = null;
+        _matchCompleted = false;
+        _nextReplayTransferId = 1;
         _sessions.Clear();
         _snapshotSessions.Clear();
         _retainedSessions.Clear();
@@ -169,6 +182,12 @@ public partial class M6DedicatedServerCommandHost : Node
         }
         if (!_sessions.TryGetValue(packet.PeerId, out ServerCommandSession? session)) return;
         if (packet.Channel == M6TransportChannel.ReliableOrdered && packet.TransferMode == MultiplayerPeer.TransferModeEnum.Reliable &&
+            NetworkReplayProtocol.TryDecodeRequest(packet.Payload, out NetworkReplayRequest replayRequest))
+        {
+            if (replayRequest.SessionToken == session.SessionToken && _completedReplay is not null) SendReplay(packet.PeerId, _completedReplay);
+            return;
+        }
+        if (packet.Channel == M6TransportChannel.ReliableOrdered && packet.TransferMode == MultiplayerPeer.TransferModeEnum.Reliable &&
             NetworkSnapshotProtocol.TryDecodeAcknowledgment(packet.Payload, out NetworkSnapshotAcknowledgment snapshotAck))
         {
             if (snapshotAck.SessionToken == session.SessionToken && _snapshotSessions.TryGetValue(packet.PeerId, out ServerSnapshotSession? snapshots))
@@ -178,13 +197,45 @@ public partial class M6DedicatedServerCommandHost : Node
         NetworkCommandAcknowledgment acknowledgment;
         if (packet.Channel != M6TransportChannel.ReliableOrdered || packet.TransferMode != MultiplayerPeer.TransferModeEnum.Reliable)
             acknowledgment = new NetworkCommandAcknowledgment(0, NetworkCommandRejection.MalformedPacket, new SimTick(-1));
+        else if (_matchCompleted)
+            acknowledgment = new NetworkCommandAcknowledgment(0, NetworkCommandRejection.StateBlocked, new SimTick(-1));
         else
-            acknowledgment = _authority.Process(_runner.World, session, packet.Payload);
+        {
+            acknowledgment = _authority.Process(_runner.World, session, packet.Payload, out CommandEnvelope accepted);
+            if (acknowledgment.Accepted) _replayRecorder?.RecordAcceptedCommand(accepted);
+        }
 
         Error result = _transport.Send(packet.PeerId, M6TransportChannel.ReliableOrdered,
             NetworkCommandProtocol.EncodeAcknowledgment(acknowledgment));
         if (result != Error.Ok) GD.PrintErr($"M6 command acknowledgment failed peer={packet.PeerId} error={result}");
         CommandAcknowledged?.Invoke(packet.PeerId, acknowledgment);
+    }
+
+    public void CompleteMatch()
+    {
+        if (_runner is null || _replayRecorder is null) throw new InvalidOperationException("The dedicated command host is not configured.");
+        if (_matchCompleted) return;
+        _completedReplay = _replayRecorder.FinalizeAndSerialize(_runner.World);
+        _matchCompleted = true;
+        _accumulator = 0;
+        GD.Print($"M6 match replay finalized tick={_runner.World.Tick.Value} bytes={_completedReplay.Length} hash={StateHasher.Hash(_runner.World):X16}");
+    }
+
+    private void SendReplay(int peerId, byte[] replayBytes)
+    {
+        if (_transport is null) return;
+        uint transferId = _nextReplayTransferId++;
+        if (transferId == 0) { transferId = _nextReplayTransferId++; }
+        NetworkReplayChunk[] chunks = NetworkReplayProtocol.CreateChunks(transferId, replayBytes);
+        for (int i = 0; i < chunks.Length; i++)
+        {
+            Error result = _transport.Send(peerId, M6TransportChannel.ReliableBulk, NetworkReplayProtocol.EncodeChunk(chunks[i]));
+            if (result != Error.Ok)
+            {
+                GD.PrintErr($"M6 replay chunk send failed peer={peerId} chunk={i}/{chunks.Length} error={result}");
+                return;
+            }
+        }
     }
 
     private void HandleReconnect(int peerId, NetworkReconnectRequest request)

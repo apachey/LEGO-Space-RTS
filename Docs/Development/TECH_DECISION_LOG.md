@@ -654,3 +654,74 @@ gameplay canon or SimCore command semantics.
 
 This implements approved T059 authority and security requirements. It changes
 no gameplay canon and deliberately leaves state replication to T060.
+
+---
+
+## 2026-08-20 — M6 T060–T061 acknowledged snapshots and recipient knowledge
+
+- The authoritative 20-Hz host publishes state every two ticks on the
+  unreliable-sequenced channel. Each client acknowledges the newest applied
+  snapshot on reliable-ordered transport; the server only delta-encodes against
+  a retained, explicitly acknowledged baseline.
+- Structural deltas contain stable-ID entity/projectile upserts and removals.
+  Client reconstruction retains a bounded baseline history, so a delta remains
+  valid when its acknowledged baseline is older than the latest rendered frame.
+- Replication is presentation-only and cannot recreate `SimulationWorld`.
+  Recipient snapshots include legal visible presentation, own economy/capacity/
+  charge, and recipient fog bitsets. Deflate compression from the standard .NET
+  library keeps the initial two-player smoke payload below ENet's MTU without a
+  new dependency.
+- Hidden enemy entities are absent rather than marked hidden. Loss of visibility
+  is a removal transition; last-known presentation remains client-side. Entity
+  references embedded in visible weapon/repair presentation are cleared when
+  their target is neither owned nor currently visible to the recipient.
+- Fixed-point interpolation helpers expose position and shortest-arc orientation
+  sampling without changing authoritative simulation state.
+
+This implements the canonical 10-Hz delta and no-hidden-data boundary. It does
+not change fog gameplay, simulation authority or gameplay canon.
+
+---
+
+## 2026-08-20 — M6 T062 retained-session reconnect
+
+- A disconnected authenticated session is retained for 60 authoritative seconds
+  with its cryptographic token, player slot and last processed command sequence.
+  Reserved slots cannot be claimed by a fresh session during that window.
+- Reconnect requires exact simulation protocol, gameplay content and initial map
+  hashes. A valid new peer is rebound to the retained identity; invalid, expired
+  or mismatched requests receive no authoritative state.
+- The server responds on reliable-bulk transport with a current full legal
+  recipient snapshot plus the player's pending accepted commands, unit order
+  queues and production queues. Regular acknowledged snapshot streaming then
+  resumes from a new full baseline.
+- The loopback acceptance disconnects player 0 while player 1 remains connected,
+  restores sequence 1 on a replacement ENet peer and proves sequence 2 executes
+  exactly once after the rebind.
+
+This adds reconnect state restoration without host migration, gameplay changes
+or hidden-state disclosure.
+
+---
+
+## 2026-08-20 — M6 T063 post-match authoritative network replay
+
+- The dedicated server records only commands accepted by T059 authority, along
+  with the initial authoritative snapshot, gameplay/map hashes and deterministic
+  seed field. Development state hashes are stored every 20 ticks and full seek
+  snapshots every 200 ticks.
+- Replay format 16 adds ordered hash/seek checkpoints and the authoritative final
+  tick/hash while retaining a tested reader for replay format 15.
+- Playback can start from the nearest seek checkpoint, verifies its snapshot
+  hash, replays later commands and stops immediately on a scheduled hash mismatch.
+- Authoritative replay bytes are unavailable during an active match so replay
+  delivery cannot bypass T061 fog filtering. After explicit match completion,
+  an authenticated client may request the finalized log on reliable-bulk
+  transport.
+- Replays are divided into independently bounded 48-KiB chunks with transfer
+  metadata and a whole-file deterministic hash. The client assembler accepts
+  out-of-order chunks, rejects inconsistent metadata and publishes bytes only
+  after the complete hash verifies.
+
+This implements server-log playback and seekability without changing gameplay
+canon or the authoritative 20-Hz simulation.
