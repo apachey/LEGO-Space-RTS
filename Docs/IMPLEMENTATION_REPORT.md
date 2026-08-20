@@ -142,7 +142,10 @@ Still preserved:
 - explicit protocol versions;
 - replay-compatible command semantics.
 
-Godot ENet/packet networking is the default transport candidate for M6 because it exposes packet peer/channel/reliability primitives. No M6 networking is implemented in Phase 10.
+M6 T058 now uses Godot ENet/raw packet networking as the transport carrier. It
+provides a headless two-client host and three logical delivery channels while
+leaving project-owned command validation and snapshot replication to T059 and
+T060.
 
 ## What was actually verified in this artifact environment
 

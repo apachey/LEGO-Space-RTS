@@ -151,6 +151,21 @@ godot_smoke() {
   fi
 }
 
+godot_m6_transport_smoke() {
+  local godot output status
+  godot="$(discover_godot 2>/dev/null || true)"
+  if [[ -z "${godot}" ]]; then printf 'Godot executable not found.\n' >&2; return 1; fi
+  if ! godot_is_required_mono "${godot}"; then printf 'Godot is not the required 4.7.1 .NET build: %s\n' "${godot}" >&2; return 1; fi
+  output="$("${godot}" --headless --quit-after 600 --path "${ROOT}/GodotClient" -- --m6-transport-smoke 2>&1)"
+  status=$?
+  printf '%s\n' "${output}"
+  if (( status != 0 )); then return "${status}"; fi
+  if ! printf '%s\n' "${output}" | grep -q 'M6 TRANSPORT SMOKE: PASS serverConnections=2'; then
+    printf 'Godot exited without the required two-connection M6 transport PASS marker.\n' >&2
+    return 1
+  fi
+}
+
 run_stage "[BLOCKING_NOW] Static/source validation" "static" python3 "${ROOT}/tools/Validation/validate_phase10.py"
 run_stage "[BLOCKING_NOW] .NET restore" "restore" dotnet restore "${ROOT}/LEGO.SpaceRTS.Phase10.sln"
 run_stage "[BLOCKING_NOW] .NET solution build (warnings as errors)" "build" dotnet build "${ROOT}/LEGO.SpaceRTS.Phase10.sln" -c Release --no-restore --disable-build-servers -m:1
@@ -160,6 +175,7 @@ run_stage "[BLOCKING_NOW] Representative 24-mover Movement Architecture v2 accep
 run_stage "[BLOCKING_NOW] Content compilation and tracked-binary validation" "content" compile_and_compare_content
 run_stage "[BLOCKING_NOW] HeadlessSim compiled-content smoke" "headless" dotnet "$(headless_dll)" --scenario first --compiled-dir "${ROOT}/GodotClient/Compiled" --ticks 1200 --hash-every 200
 run_stage "[BLOCKING_NOW] Godot C# PrototypeRTS headless smoke" "godot" godot_smoke
+run_stage "[BLOCKING_NOW T058] Godot ENet dedicated host with two clients" "m6-transport" godot_m6_transport_smoke
 
 if [[ "${MODE}" != "fast" ]]; then
   run_stage "[BLOCKING_NOW] 100-repeat deterministic golden run" "golden100" dotnet "$(headless_dll)" --scenario golden --ticks 3200 --repeat 100

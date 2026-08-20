@@ -5,20 +5,17 @@ authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M4 and M5 are implemented, game-director accepted, integrated, and merged to
-`origin/main` through PR #12 (`85b02f2`). M6 implementation may begin; the
-preserved 60-mover scale gate must pass before M6 networked 1v1 acceptance.**
+**M4 and M5 are implemented, game-director accepted and merged to
+`origin/main` through PR #12 (`85b02f2`). M6 T058 — network transport host
+foundation — is implemented and verified on
+`codex/m6-t058-network-transport`.**
 
-- M3 is merged and human-accepted.
-- M4 T040–T048 combat, repair, transport and tactical transformation are merged
-  to `origin/main` and human-accepted.
-- M5 T049–T057 four-faction system proof and its six-part executable acceptance
-  handoff are implemented and human-accepted.
-- The integrated post-M5 baseline has passed full repository verification.
+- The task branch includes the verified post-M5 movement handoff from
+  `44e2caf`.
 - The preserved 60-mover stress is `BLOCKING_LATER — M6 acceptance`; it does
-  not block starting M6 implementation.
-- `codex/60-mover-fix` is preserved pre-M5 research and is not a merge-ready
-  fix. Production work continues from the integrated post-M5 baseline.
+  not block bounded M6 implementation.
+- The old `codex/60-mover-fix` work is preserved as failed research through
+  commits `6105cf0` and `f896b01`; it is not merge-ready production code.
 
 ## Locked technical foundation
 
@@ -26,134 +23,85 @@ preserved 60-mover scale gate must pass before M6 networked 1v1 acceptance.**
 - Engine-independent deterministic SimCore at fixed 20 Hz.
 - Fix32, FixVec2 and Angle16 authoritative numerics.
 - Deterministic command execution, snapshots, replay and state hashing.
-- Project-owned HPA/local-A* navigation with persistent route corridors,
-  deterministic local separation, formation intent and bounded recovery.
-- Godot owns presentation, input and UI; it does not own gameplay truth.
+- Project-owned deterministic navigation and movement.
+- Dedicated-server authoritative multiplayer; Godot networking is packet
+  transport only and does not own gameplay truth.
 
-## Accepted playable systems
+## Accepted gameplay baseline
 
 - M2 selection, controls, camera, fog/vision and deterministic movement.
-- M3 finite resources, harvesting, local banks, construction, production,
-  Operations Capacity, Energy Domains, brownouts and Basic HUD.
-- M4 deterministic targeting, ranged/contact weapons, projectiles, damage,
-  armor, destruction, Crew repair, Rapid Rider transport and MX-41 tactical
-  transformation including rollback.
-- M5 Worksite graphs, authored excavation topology, forward service and Mission
-  Refit, Alien tube graphs/transfers, Resonance Core commitments, Alien Charge
-  Surge, displacement/stability and Excavation Searcher clamp passage.
-- Developer-prepared acceptance controls remain available for repeatable M4 and
-  M5 visual checks.
+- M3 resources, construction, production, Operations Capacity, Energy Domains,
+  brownouts and Basic HUD.
+- M4 combat, armor, destruction, repair, Rapid Rider transport and MX-41
+  tactical transformation.
+- M5 Worksites, excavation topology, forward service, Mission Refit, Alien
+  Charge/Surge and tubes, displacement/stability and clamp passage.
+- Repeatable developer-prepared M4/M5 acceptance controls remain available.
+
+## M6 T058 transport foundation
+
+The Godot host now supports a transport-only dedicated-server entry:
+
+`--dedicated-server --network-bind <address> --network-port <port>`
+
+T058 provides:
+
+- `ENetMultiplayerPeer` over UDP as a raw packet carrier;
+- a hard maximum of two connected clients;
+- explicit peer connection/disconnection tracking and targeted sends;
+- reliable-ordered, unreliable-sequenced and reliable-bulk logical channels;
+- a 64 KiB carrier packet ceiling;
+- a normal blocking loopback smoke that connects two clients and exchanges
+  targeted packets through all three channels.
+
+T058 does **not** deserialize or validate player commands, publish snapshots,
+filter fog, reconnect clients or define replay delivery. Those remain T059–T063.
 
 ## Integration format boundary
 
-M4 and M5 were developed in parallel and both independently used snapshot
-format 19 / simulation protocol 17 for incompatible layouts. The game director
-approved the combined boundary:
+The accepted post-M5 baseline remains:
 
 - snapshot format **20**;
 - simulation protocol **18**;
 - replay format **15**;
-- compiled prototype content format **16** / source schema **15**;
-- read compatibility with the merged M4 snapshot **19 / 17**;
-- no compatibility guarantee for the unmerged branch-only M5 snapshot-19 or
-  replay-7–14 layouts.
+- compiled content format **16** / source schema **15**.
 
-M4 command IDs 11–15 remain stable. M5 commands use IDs 16–18. The combined
-snapshot uses a 64-bit component mask so both milestones have non-overlapping
-authoritative state.
+T058 changes no authoritative command, snapshot, replay or content format.
 
 ## Verification state
 
-Before integration, M4 and M5 each passed their own automated and human gates.
-The latest accepted M5 full run contained 177 passing tests and produced the
-macOS debug build at `Builds/macOS/LEGO Space RTS.app`.
+The accepted combined M4/M5 baseline passed `./tools/verify.sh --full` with 247
+tests, determinism/replay/snapshot gates, Godot smoke and macOS export. The
+pre-M6 movement handoff then passed the corrected full harness with 256 tests;
+stress60 remained the classified diagnostic failure at 4/60, 5/60 and 2/60
+phase completion.
 
-The combined branch passed `./tools/verify.sh --full` on 2026-08-15 with all
-blocking stages green, including 247 NUnit tests, 100-repeat determinism,
-replay/final-hash verification, snapshot continuation, Godot smoke and macOS
-export. The exact summary is
-`Artifacts/Verification/20260815T154942Z-full-summary.txt`.
+T058 passed `./tools/verify.sh --full` on 2026-08-20 with every current
+blocking stage green: 256 NUnit tests, honest 24/24 movement acceptance, the
+new two-client ENet transport smoke, 100-repeat determinism, replay, snapshot
+continuation, compiled-content regeneration and macOS export. The exact summary
+is `Artifacts/Verification/20260820T153920Z-full-summary.txt`.
 
-The permitted 60-mover diagnostic remained red: 31/60 movers completed, with
-51.67% completion and 4.17× realtime throughput. It is the explicit
-`BLOCKING_LATER` gate for M6 networked 1v1 acceptance. It does not block M6
-implementation from starting. A snapshot produced directly by merged M4 format
-19 / protocol 17 was also loaded and advanced by the combined format-20 reader.
+Stress60 remained the expected `BLOCKING_LATER` diagnostic failure at 4/60,
+5/60 and 2/60 phase completion. The exported macOS debug build is
+`Builds/macOS/LEGO Space RTS.app`.
 
-Pre-M6 investigation found that the old completion signal was not trustworthy:
-formation reflow could replace a unit's assigned destination with its current
-position and `HasTarget == false` was then counted as arrival. Removing that
-false completion exposes the same defect in the representative M2 movement
-scenario: 7 of 24 movers remain short of reachable, valid endpoints, usually
-behind already-arrived friendly units. This does not reopen M3–M5 gameplay, but
-the movement correction must preserve the accepted post-M5 baseline.
+## Movement acceptance blocker
 
-The game director approved a bounded deterministic formation-arrival sequencer.
-Its prototype preserves immutable endpoints, routes later rows through temporary
-arrival points only near the destination, and restores the honest representative
-M2 acceptance to PASS (24/24).
+The legal stress60 fixture still exposes mid-route corridor traffic/yield
+deadlock. The approved immutable endpoints and bounded arrival sequencer fix the
+representative 24-mover arrival wall, but do not solve this distinct scale case.
 
-The 60-mover fixture itself was also invalid: mixed Large/Huge units were spawned
-two build cells apart despite collision diameters up to 3.2. The corrected fixture
-uses legal four-cell spacing and now has explicit passability/non-overlap coverage.
-With legal starts, the first honest stress phase reaches only 4/60 endpoints.
-The remaining units form mid-route clusters around constrained central passages,
-so the unresolved defect is corridor traffic/local yield rather than arrival or
-endpoint legality.
-
-The game director then approved one final bounded clean-room recovery experiment
-inside the existing local-separation scorer. Stuck movers received deterministic
-neighbor-pressure scoring and an explicitly wider but still bounded corridor
-window; motion still used ordinary kinematics and preserved Heavy priority. It
-did not improve physical completion (4/60 remained 4/60) and worsened the first-
-phase diagnostics from 43 to 47 deadlocks and from 3,504 to 12,831 oscillations.
-The failed experiment was removed rather than tuned or stacked with more patches.
-After cleanup, `./tools/verify.sh` passed all normal blocking stages with 256
-tests, the honest 24/24 M2 movement acceptance, compiled-content validation,
-HeadlessSim smoke and Godot headless smoke. The exact summary is
-`Artifacts/Verification/20260820T142908Z-fast-summary.txt`.
-
-The corrected `./tools/verify.sh --full` classification also passed on
-2026-08-20: every current blocking stage, 100-repeat determinism, replay,
-snapshot continuation, compiled-content regeneration and macOS export were
-green. Stress60 remained an explicit `BLOCKING_LATER` diagnostic failure with
-phase completion 4/60, 5/60 and 2/60. The exact summary is
-`Artifacts/Verification/20260820T144335Z-full-summary.txt`.
+Do not resurrect or stack the failed portal-flow/local-pressure experiments.
+Another movement coordinator/solver attempt requires `ARCHITECTURE REVIEW
+REQUIRED`. Stress60 must pass before M6 networked 1v1 acceptance unless canon
+explicitly changes the gate.
 
 ## Next approved action
 
-The approved arrival sequencer fixes the representative arrival wall but does
-not clear the distinct 60-mover mid-route traffic blocker. The preserved pre-M5
-portal-flow/traffic-controller experiment already failed to satisfy the gate;
-do not resurrect or stack it as another patch.
-
-The exact Phase 09B wording makes this gate blocking **before M6 networked 1v1
-acceptance**, not before M6 implementation starts. Therefore:
-
-1. integrate the verified immutable-endpoint, arrival-sequencing and honest
-   stress-fixture work;
-2. begin **M6 T058 — network transport host foundation** from the accepted
-   post-M5 baseline. Phase 09A supersedes T058's old Unity wording: inspect the
-   current Godot host and official Godot packet/ENet APIs, then implement the
-   smallest project-owned dedicated-server/two-connection carrier slice. Keep
-   command semantics in SimCore and do not pull T059 command validation or T060
-   snapshot replication into T058;
-3. keep stress60 `BLOCKING_LATER` throughout M6 development and require it to
-   pass before M6 acceptance.
-
-`ARCHITECTURE REVIEW REQUIRED` only before another movement attempt that adds a
-traffic coordinator/solver or otherwise expands movement architecture. The
-failed local-pressure experiment is not a reason to hold T058 or other bounded
-M6 implementation work.
-
-## New-thread M6 bootstrap
-
-A fresh Codex task should start with:
-
-> Read AGENTS.md and the current repository state. Start M6 T058 from the
-> accepted post-M5 movement foundation. Treat stress60 as BLOCKING_LATER for M6
-> acceptance, not as a blocker for starting T058.
-
-The task must verify that commit `44e2caf` (or its eventual merged descendant)
-is present before planning T058. If it is not on the accepted base, stop and
-integrate that movement handoff first rather than reconstructing it from chat.
+1. Hand the verified T058 branch to the game director for review and merge.
+2. After T058 is accepted on the project baseline, begin **T059 — server command
+   validation**. Preserve offline `CommandEnvelope` semantics and do not pull
+   T060 snapshot replication into T059.
+3. Keep stress60 visible as `BLOCKING_LATER` throughout M6 development and
+   promote it to `BLOCKING_NOW` for M6 acceptance.

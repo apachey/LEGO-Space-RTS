@@ -596,3 +596,26 @@ gameplay canon.
 
 This records a rejected technical experiment and the resulting stop boundary.
 It does not change gameplay canon.
+
+---
+
+## 2026-08-20 — M6 T058 Godot ENet raw-packet carrier
+
+- Phase 09A replaces T058's obsolete Unity Transport wording with a Godot
+  packet carrier. Godot 4.7.1 `ENetMultiplayerPeer` is used directly for raw
+  packets; the project does not use node RPCs as gameplay authority.
+- The T058 server carrier accepts at most two clients. The two-connection limit
+  is configured at ENet host creation and new connections are refused while
+  both slots are occupied.
+- Three logical channels preserve the canonical transport separation:
+  reliable ordered for future commands/control, unreliable sequenced for future
+  regular snapshots and reliable bulk for future manifests/reconnect payloads.
+  T058 carries opaque byte arrays only and assigns no gameplay meaning to them.
+- The normal verification harness starts the production dedicated host on a
+  loopback UDP port, connects two ENet clients, validates distinct peer IDs and
+  exchanges targeted packets through every logical channel.
+- T059 owns command decoding/validation/authority. T060 owns snapshot cadence,
+  deltas and acknowledgment baselines. Neither is implemented by this carrier.
+
+This implements the approved Godot transport boundary without changing
+gameplay canon or SimCore command semantics.

@@ -147,4 +147,12 @@ Godot PhysicsServer, physics bodies, collisions and NavigationServer are not aut
 
 ## M6 compatibility
 
-The future server protocol remains a custom deterministic command/snapshot protocol. Godot packet networking is a transport carrier only. ENet is the baseline candidate because it exposes packet-based channels/reliability appropriate to this architecture; no Godot RPC node tree becomes authoritative simulation state.
+The server protocol remains a custom deterministic command/snapshot protocol.
+T058 implements Godot ENet as a raw packet carrier with a headless dedicated
+host, a maximum of two client connections and three logical channels:
+reliable ordered, unreliable sequenced and reliable bulk. No Godot RPC node
+tree becomes authoritative simulation state.
+
+The carrier does not deserialize commands, validate player authority or publish
+snapshots. Those responsibilities remain project-owned and begin in T059 and
+T060 respectively.
