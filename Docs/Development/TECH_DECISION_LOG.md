@@ -667,10 +667,11 @@ no gameplay canon and deliberately leaves state replication to T060.
   Client reconstruction retains a bounded baseline history, so a delta remains
   valid when its acknowledged baseline is older than the latest rendered frame.
 - Replication is presentation-only and cannot recreate `SimulationWorld`.
-  Recipient snapshots include legal visible presentation, own economy/capacity/
-  charge, and recipient fog bitsets. Deflate compression from the standard .NET
-  library keeps the initial two-player smoke payload below ENet's MTU without a
-  new dependency.
+  Recipient snapshots include legal visible presentation, recipient fog bitsets
+  and only that player's economy/capacity/charge, production queues, unit orders,
+  Energy Domains, Worksites and Tube-network summaries. Deflate compression from
+  the standard .NET library keeps the initial two-player smoke payload below
+  ENet's MTU without a new dependency.
 - Hidden enemy entities are absent rather than marked hidden. Loss of visibility
   is a removal transition; last-known presentation remains client-side. Entity
   references embedded in visible weapon/repair presentation are cleared when

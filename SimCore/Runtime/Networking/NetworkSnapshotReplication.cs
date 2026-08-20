@@ -74,13 +74,14 @@ public sealed class NetworkSnapshotState
 {
     public const int KnowledgeBitsetBytes = (FogState.Width * FogState.Height + 7) / 8;
     public NetworkSnapshotState(SimTick tick, byte playerSlot, NetworkOwnPlayerState ownPlayer,
-        NetworkReplicatedEntity[] entities, NetworkReplicatedProjectile[] projectiles, byte[] exploredBits, byte[] visibleBits)
+        NetworkReplicatedEntity[] entities, NetworkReplicatedProjectile[] projectiles, byte[] ownSystems, byte[] exploredBits, byte[] visibleBits)
     {
         Tick = tick;
         PlayerSlot = playerSlot;
         OwnPlayer = ownPlayer;
         Entities = entities ?? throw new ArgumentNullException(nameof(entities));
         Projectiles = projectiles ?? throw new ArgumentNullException(nameof(projectiles));
+        OwnSystems = ownSystems ?? throw new ArgumentNullException(nameof(ownSystems));
         ExploredBits = exploredBits ?? throw new ArgumentNullException(nameof(exploredBits));
         VisibleBits = visibleBits ?? throw new ArgumentNullException(nameof(visibleBits));
         ValidateStableOrder();
@@ -91,6 +92,7 @@ public sealed class NetworkSnapshotState
     public NetworkOwnPlayerState OwnPlayer { get; }
     public NetworkReplicatedEntity[] Entities { get; }
     public NetworkReplicatedProjectile[] Projectiles { get; }
+    public byte[] OwnSystems { get; }
     public byte[] ExploredBits { get; }
     public byte[] VisibleBits { get; }
 
@@ -126,8 +128,11 @@ public sealed class NetworkSnapshotState
             if (world.Fog.IsExplored(playerSlot, x, y)) explored[cell >> 3] |= checked((byte)mask);
             if (world.Fog.IsVisible(playerSlot, x, y)) visible[cell >> 3] |= checked((byte)mask);
         }
-        return new NetworkSnapshotState(world.Tick, playerSlot, own, entities, projectiles, explored, visible);
+        byte[] ownSystems = NetworkOwnSystemsState.Capture(world, playerSlot).Serialize();
+        return new NetworkSnapshotState(world.Tick, playerSlot, own, entities, projectiles, ownSystems, explored, visible);
     }
+
+    public NetworkOwnSystemsState DecodeOwnSystems() => NetworkOwnSystemsState.Deserialize(OwnSystems);
 
     public VisibilityState GetKnowledge(int x, int y)
     {
@@ -167,6 +172,7 @@ public sealed class NetworkSnapshotFrame
     public EntityId[] EntityRemovals { get; set; } = Array.Empty<EntityId>();
     public NetworkReplicatedProjectile[] ProjectileUpserts { get; set; } = Array.Empty<NetworkReplicatedProjectile>();
     public ProjectileId[] ProjectileRemovals { get; set; } = Array.Empty<ProjectileId>();
+    public byte[]? OwnSystems { get; set; }
     public byte[]? ExploredBits { get; set; }
     public byte[]? VisibleBits { get; set; }
     public bool IsFull => BaselineSequence == 0;
@@ -186,7 +192,7 @@ public readonly struct NetworkSnapshotAcknowledgment
 /// <summary>Project-owned T060 snapshot/delta packet format. ENet only carries these bytes.</summary>
 public static class NetworkSnapshotProtocol
 {
-    public const ushort FormatVersion = 2;
+    public const ushort FormatVersion = 3;
     public const int MaximumPacketBytes = 64 * 1024;
     private const uint SnapshotMagic = 0x504E534C; // LSNP
     private const uint AcknowledgmentMagic = 0x414E534C; // LSNA
@@ -209,6 +215,7 @@ public static class NetworkSnapshotProtocol
             EntityRemovals = baseline is null ? Array.Empty<EntityId>() : RemovedEntities(current.Entities, baseline.Entities),
             ProjectileUpserts = baseline is null ? current.Projectiles : ChangedProjectiles(current.Projectiles, baseline.Projectiles),
             ProjectileRemovals = baseline is null ? Array.Empty<ProjectileId>() : RemovedProjectiles(current.Projectiles, baseline.Projectiles),
+            OwnSystems = baseline is null || !BytesEqual(current.OwnSystems, baseline.OwnSystems) ? current.OwnSystems : null,
             ExploredBits = baseline is null || !BytesEqual(current.ExploredBits, baseline.ExploredBits) ? current.ExploredBits : null,
             VisibleBits = baseline is null || !BytesEqual(current.VisibleBits, baseline.VisibleBits) ? current.VisibleBits : null
         };
@@ -232,6 +239,7 @@ public static class NetworkSnapshotProtocol
         WriteProjectiles(writer, frame.ProjectileUpserts);
         writer.Write(frame.ProjectileRemovals.Length);
         for (int i = 0; i < frame.ProjectileRemovals.Length; i++) writer.Write(frame.ProjectileRemovals[i].Value);
+        WriteOptionalBytes(writer, frame.OwnSystems);
         WriteOptionalBytes(writer, frame.ExploredBits);
         WriteOptionalBytes(writer, frame.VisibleBits);
         writer.Flush();
@@ -265,6 +273,7 @@ public static class NetworkSnapshotProtocol
                 EntityRemovals = ReadEntityIds(reader),
                 ProjectileUpserts = ReadProjectiles(reader),
                 ProjectileRemovals = ReadProjectileIds(reader),
+                OwnSystems = ReadOptionalBytes(reader),
                 ExploredBits = ReadOptionalBytes(reader),
                 VisibleBits = ReadOptionalBytes(reader)
             };
@@ -494,21 +503,21 @@ public static class NetworkSnapshotProtocol
     {
         if (!r.ReadBoolean()) return null;
         int length = r.ReadInt32(); bool compressed = r.ReadBoolean(); int storedLength = r.ReadInt32();
-        if (length < 0 || length > FogState.Width * FogState.Height || storedLength < 0 || storedLength > FogState.Width * FogState.Height)
-            throw new InvalidDataException("Invalid knowledge bitset size.");
+        if (length < 0 || length > MaximumPacketBytes || storedLength < 0 || storedLength > MaximumPacketBytes)
+            throw new InvalidDataException("Invalid optional snapshot payload size.");
         byte[] stored = r.ReadBytes(storedLength); if (stored.Length != storedLength) throw new EndOfStreamException();
         if (!compressed)
         {
-            if (storedLength != length) throw new InvalidDataException("Raw knowledge bitset length mismatch.");
+            if (storedLength != length) throw new InvalidDataException("Raw optional snapshot payload length mismatch.");
             return stored;
         }
         using MemoryStream input = new(stored, false); using DeflateStream inflater = new(input, CompressionMode.Decompress);
         byte[] bytes = new byte[length]; int offset = 0;
         while (offset < length)
         {
-            int read = inflater.Read(bytes, offset, length - offset); if (read == 0) throw new InvalidDataException("Compressed knowledge bitset ended early."); offset += read;
+            int read = inflater.Read(bytes, offset, length - offset); if (read == 0) throw new InvalidDataException("Compressed optional snapshot payload ended early."); offset += read;
         }
-        if (inflater.ReadByte() != -1) throw new InvalidDataException("Compressed knowledge bitset exceeded its declared length.");
+        if (inflater.ReadByte() != -1) throw new InvalidDataException("Compressed optional snapshot payload exceeded its declared length.");
         return bytes;
     }
 
@@ -541,9 +550,10 @@ public sealed class NetworkSnapshotClientBuffer
 
         NetworkReplicatedEntity[] entities = ApplyEntities(baseline?.Entities, frame.EntityUpserts, frame.EntityRemovals);
         NetworkReplicatedProjectile[] projectiles = ApplyProjectiles(baseline?.Projectiles, frame.ProjectileUpserts, frame.ProjectileRemovals);
+        byte[] ownSystems = frame.OwnSystems ?? baseline?.OwnSystems ?? Array.Empty<byte>();
         byte[] explored = frame.ExploredBits ?? baseline?.ExploredBits ?? Array.Empty<byte>();
         byte[] visible = frame.VisibleBits ?? baseline?.VisibleBits ?? Array.Empty<byte>();
-        state = new NetworkSnapshotState(frame.Tick, frame.PlayerSlot, frame.OwnPlayer, entities, projectiles, explored, visible);
+        state = new NetworkSnapshotState(frame.Tick, frame.PlayerSlot, frame.OwnPlayer, entities, projectiles, ownSystems, explored, visible);
         LatestSequence = frame.Sequence;
         Latest = state;
         _history.Add(frame.Sequence, state);

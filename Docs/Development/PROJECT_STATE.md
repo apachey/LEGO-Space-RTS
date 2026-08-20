@@ -60,10 +60,11 @@ The headless dedicated-server entry remains:
   10-Hz state delivery on unreliable-sequenced transport.
 - The server delta-encodes only against a retained baseline that the client
   explicitly acknowledged. Both sides keep bounded baseline history.
-- Stable-ID upserts/removals cover presentation entities and projectiles; own
-  economy/capacity/charge and recipient fog knowledge are included.
+- Stable-ID upserts/removals cover presentation entities and projectiles. Each
+  recipient also receives only their own economy/capacity/charge, production,
+  queued orders, Energy Domain, Worksite and Tube summaries.
 - Sparse fog bitsets use standard-library Deflate compression. The real
-  two-client acceptance observed a largest initial packet of 620 bytes, below
+  two-client acceptance observed a largest initial packet of 665 bytes, below
   ENet's default MTU.
 - Client helpers reconstruct full state and interpolate position/orientation
   without changing simulation authority.
@@ -111,22 +112,21 @@ The headless dedicated-server entry remains:
 - replay format **16** (backward reader for 15);
 - compiled content format **16** / source schema **15**;
 - command packet format **1**;
-- recipient snapshot packet format **2**;
+- recipient snapshot packet format **3**;
 - reconnect packet format **1**;
 - network replay chunk format **1**.
 
 ## Verification state
 
 The complete T060–T063 code passed `./tools/verify.sh --full` on 2026-08-20
-with 277 NUnit tests, 24/24 representative movement acceptance, T058/T059/T062/
-T063 ENet smokes, 100-repeat determinism, replay record/playback, snapshot
+with 278 NUnit tests, 24/24 representative movement acceptance, every T058–T063
+ENet smoke, 100-repeat determinism, replay record/playback, snapshot
 continuation, compiled-content regeneration and macOS export. Exact summary:
-`Artifacts/Verification/20260820T165832Z-full-summary.txt`.
+`Artifacts/Verification/20260820T173108Z-full-summary.txt`.
 
-After adding the explicit T060/T061 two-client cadence/privacy smoke, the final
-`./tools/verify.sh` fast run passed all 277 tests and every T058–T063 network
-gate. Exact summary:
-`Artifacts/Verification/20260820T170609Z-fast-summary.txt`.
+The preceding `./tools/verify.sh` fast run also passed all 278 tests and every
+T058–T063 network gate. Exact summary:
+`Artifacts/Verification/20260820T171352Z-fast-summary.txt`.
 
 Stress60 remained the expected diagnostic failure with phase completion
 **4/60, 5/60 and 2/60**. The exported macOS debug build is:

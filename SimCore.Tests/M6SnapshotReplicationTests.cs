@@ -93,6 +93,50 @@ public class M6SnapshotReplicationTests
         });
     }
 
+    [Test]
+    public void RegularSnapshotCarriesOnlyTheRecipientsProductionOrdersAndFactionNetworks()
+    {
+        SimulationWorld world = ScenarioFactory.CreateFirstControllable(1);
+        EntityId playerZeroRoot = world.Entities.Create();
+        world.Entities.Ownership.Set(playerZeroRoot, new Ownership { PlayerSlot = 0 });
+        world.Entities.EnergyDomain.Set(playerZeroRoot, new EnergyDomain { Reserve = Fix32.FromInt(77), ReserveCapacity = Fix32.FromInt(100), GenerationPerSecond = 9 });
+        world.Entities.WorksiteComponent.Set(playerZeroRoot, new WorksiteComponent { NodeCount = 3, MemberCount = 5, TopologyRevision = 11 });
+        world.Entities.TubeComponent.Set(playerZeroRoot, new TubeComponent { StationCount = 4, OperationalLinkCount = 2, TopologyRevision = 12 });
+        Production production = new();
+        production.TryEnqueue(new ProductionQueueItem { UnitType = StableId.FromKey("unit.test.snapshot.production"), TotalTicks = 90, RemainingTicks = 45 });
+        world.Entities.Production.Set(playerZeroRoot, production);
+        world.GetQueue(playerZeroRoot).Enqueue(new UnitOrder(UnitOrderType.Move, FixVec2.FromInts(50, 50)));
+
+        EntityId playerOneSecret = world.Entities.Create();
+        world.Entities.Ownership.Set(playerOneSecret, new Ownership { PlayerSlot = 1 });
+        world.Entities.EnergyDomain.Set(playerOneSecret, new EnergyDomain { Reserve = Fix32.FromInt(999), ReserveCapacity = Fix32.FromInt(999) });
+        world.Entities.Production.Set(playerOneSecret, production);
+
+        NetworkSnapshotState captured = NetworkSnapshotState.Capture(world, 0);
+        NetworkSnapshotFrame full = RoundTrip(NetworkSnapshotProtocol.BuildFrame(1, captured));
+        NetworkSnapshotClientBuffer client = new();
+        Assert.That(client.TryApply(full, out NetworkSnapshotState applied), Is.True);
+        NetworkOwnSystemsState own = applied.DecodeOwnSystems();
+        Assert.Multiple(() =>
+        {
+            Assert.That(own.OrderQueues.Select(value => value.EntityId), Does.Contain(playerZeroRoot));
+            Assert.That(own.ProductionQueues.Select(value => value.Producer), Does.Contain(playerZeroRoot));
+            Assert.That(own.EnergyDomains.Select(value => value.Root), Does.Contain(playerZeroRoot));
+            Assert.That(own.Worksites.Select(value => value.Root), Does.Contain(playerZeroRoot));
+            Assert.That(own.TubeNetworks.Select(value => value.Root), Does.Contain(playerZeroRoot));
+            Assert.That(own.ProductionQueues.Select(value => value.Producer), Does.Not.Contain(playerOneSecret));
+            Assert.That(own.EnergyDomains.Select(value => value.Root), Does.Not.Contain(playerOneSecret));
+        });
+
+        ref Production changedProduction = ref world.Entities.Production.Get(playerZeroRoot);
+        ProductionQueueItem item = changedProduction.Get(0); item.RemainingTicks = 44; changedProduction.Set(0, item);
+        NetworkSnapshotState changed = NetworkSnapshotState.Capture(world, 0);
+        NetworkSnapshotFrame delta = RoundTrip(NetworkSnapshotProtocol.BuildFrame(2, changed, 1, captured));
+        Assert.That(delta.OwnSystems, Is.Not.Null);
+        Assert.That(client.TryApply(delta, out NetworkSnapshotState updated), Is.True);
+        Assert.That(updated.DecodeOwnSystems().ProductionQueues.Single(value => value.Producer == playerZeroRoot).Items[0].RemainingTicks, Is.EqualTo(44));
+    }
+
     private static NetworkSnapshotFrame RoundTrip(NetworkSnapshotFrame frame) => Decode(NetworkSnapshotProtocol.EncodeFrame(frame));
 
     private static NetworkSnapshotFrame Decode(byte[] packet)
