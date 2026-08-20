@@ -9,8 +9,10 @@ ROOT="$(repo_root)"
 setup_dotnet_environment
 
 MODE="fast"
-if [[ "${1:-}" == "--full" ]]; then MODE="full"; shift; fi
-if (( $# > 0 )); then printf 'Usage: %s [--full]\n' "$0" >&2; exit 2; fi
+if [[ "${1:-}" == "--full" ]]; then MODE="full"; shift
+elif [[ "${1:-}" == "--m9-acceptance" ]]; then MODE="m9-acceptance"; shift
+fi
+if (( $# > 0 )); then printf 'Usage: %s [--full|--m9-acceptance]\n' "$0" >&2; exit 2; fi
 
 ARTIFACT_DIR="${ROOT}/Artifacts/Verification"
 mkdir -p "${ARTIFACT_DIR}"
@@ -149,6 +151,81 @@ godot_smoke() {
   fi
 }
 
+godot_m6_transport_smoke() {
+  local godot output status
+  godot="$(discover_godot 2>/dev/null || true)"
+  if [[ -z "${godot}" ]]; then printf 'Godot executable not found.\n' >&2; return 1; fi
+  if ! godot_is_required_mono "${godot}"; then printf 'Godot is not the required 4.7.1 .NET build: %s\n' "${godot}" >&2; return 1; fi
+  output="$("${godot}" --headless --quit-after 600 --path "${ROOT}/GodotClient" -- --m6-transport-smoke 2>&1)"
+  status=$?
+  printf '%s\n' "${output}"
+  if (( status != 0 )); then return "${status}"; fi
+  if ! printf '%s\n' "${output}" | grep -q 'M6 TRANSPORT SMOKE: PASS serverConnections=2'; then
+    printf 'Godot exited without the required two-connection M6 transport PASS marker.\n' >&2
+    return 1
+  fi
+}
+
+godot_m6_command_smoke() {
+  local godot output status
+  godot="$(discover_godot 2>/dev/null || true)"
+  if [[ -z "${godot}" ]]; then printf 'Godot executable not found.\n' >&2; return 1; fi
+  if ! godot_is_required_mono "${godot}"; then printf 'Godot is not the required 4.7.1 .NET build: %s\n' "${godot}" >&2; return 1; fi
+  output="$("${godot}" --headless --quit-after 600 --path "${ROOT}/GodotClient" -- --m6-command-smoke 2>&1)"
+  status=$?
+  printf '%s\n' "${output}"
+  if (( status != 0 )); then return "${status}"; fi
+  if ! printf '%s\n' "${output}" | grep -q 'M6 COMMAND AUTHORITY SMOKE: PASS sessions=2 accepted=3 rejected=6'; then
+    printf 'Godot exited without the required T059 authority PASS marker.\n' >&2
+    return 1
+  fi
+}
+
+godot_m6_snapshot_smoke() {
+  local godot output status
+  godot="$(discover_godot 2>/dev/null || true)"
+  if [[ -z "${godot}" ]]; then printf 'Godot executable not found.\n' >&2; return 1; fi
+  if ! godot_is_required_mono "${godot}"; then printf 'Godot is not the required 4.7.1 .NET build: %s\n' "${godot}" >&2; return 1; fi
+  output="$("${godot}" --headless --quit-after 600 --path "${ROOT}/GodotClient" -- --m6-snapshot-smoke 2>&1)"
+  status=$?
+  printf '%s\n' "${output}"
+  if (( status != 0 )); then return "${status}"; fi
+  if ! printf '%s\n' "${output}" | grep -q 'M6 SNAPSHOT FOG SMOKE: PASS clients=2 cadenceHz=10 acknowledgedDeltas=2 hiddenEntities=0'; then
+    printf 'Godot exited without the required T060/T061 snapshot/fog PASS marker.\n' >&2
+    return 1
+  fi
+}
+
+godot_m6_reconnect_smoke() {
+  local godot output status
+  godot="$(discover_godot 2>/dev/null || true)"
+  if [[ -z "${godot}" ]]; then printf 'Godot executable not found.\n' >&2; return 1; fi
+  if ! godot_is_required_mono "${godot}"; then printf 'Godot is not the required 4.7.1 .NET build: %s\n' "${godot}" >&2; return 1; fi
+  output="$("${godot}" --headless --quit-after 600 --path "${ROOT}/GodotClient" -- --m6-reconnect-smoke 2>&1)"
+  status=$?
+  printf '%s\n' "${output}"
+  if (( status != 0 )); then return "${status}"; fi
+  if ! printf '%s\n' "${output}" | grep -q 'M6 RECONNECT SMOKE: PASS player=0 lastSequence=1'; then
+    printf 'Godot exited without the required T062 reconnect PASS marker.\n' >&2
+    return 1
+  fi
+}
+
+godot_m6_replay_smoke() {
+  local godot output status
+  godot="$(discover_godot 2>/dev/null || true)"
+  if [[ -z "${godot}" ]]; then printf 'Godot executable not found.\n' >&2; return 1; fi
+  if ! godot_is_required_mono "${godot}"; then printf 'Godot is not the required 4.7.1 .NET build: %s\n' "${godot}" >&2; return 1; fi
+  output="$("${godot}" --headless --quit-after 600 --path "${ROOT}/GodotClient" -- --m6-replay-smoke 2>&1)"
+  status=$?
+  printf '%s\n' "${output}"
+  if (( status != 0 )); then return "${status}"; fi
+  if ! printf '%s\n' "${output}" | grep -q 'M6 NETWORK REPLAY SMOKE: PASS commands=1'; then
+    printf 'Godot exited without the required T063 server-log playback PASS marker.\n' >&2
+    return 1
+  fi
+}
+
 run_stage "[BLOCKING_NOW] Static/source validation" "static" python3 "${ROOT}/tools/Validation/validate_phase10.py"
 run_stage "[BLOCKING_NOW] .NET restore" "restore" dotnet restore "${ROOT}/LEGO.SpaceRTS.Phase10.sln"
 run_stage "[BLOCKING_NOW] .NET solution build (warnings as errors)" "build" dotnet build "${ROOT}/LEGO.SpaceRTS.Phase10.sln" -c Release --no-restore --disable-build-servers -m:1
@@ -158,12 +235,21 @@ run_stage "[BLOCKING_NOW] Representative 24-mover Movement Architecture v2 accep
 run_stage "[BLOCKING_NOW] Content compilation and tracked-binary validation" "content" compile_and_compare_content
 run_stage "[BLOCKING_NOW] HeadlessSim compiled-content smoke" "headless" dotnet "$(headless_dll)" --scenario first --compiled-dir "${ROOT}/GodotClient/Compiled" --ticks 1200 --hash-every 200
 run_stage "[BLOCKING_NOW] Godot C# PrototypeRTS headless smoke" "godot" godot_smoke
+run_stage "[BLOCKING_NOW T058] Godot ENet dedicated host with two clients" "m6-transport" godot_m6_transport_smoke
+run_stage "[BLOCKING_NOW T059] Godot server command authority over ENet" "m6-command" godot_m6_command_smoke
+run_stage "[BLOCKING_NOW T060/T061] Godot 10 Hz delta snapshots without hidden data" "m6-snapshot" godot_m6_snapshot_smoke
+run_stage "[BLOCKING_NOW T062] Godot reconnect restore over ENet" "m6-reconnect" godot_m6_reconnect_smoke
+run_stage "[BLOCKING_NOW T063] Godot authoritative server-log replay" "m6-replay" godot_m6_replay_smoke
 
-if [[ "${MODE}" == "full" ]]; then
+if [[ "${MODE}" != "fast" ]]; then
   run_stage "[BLOCKING_NOW] 100-repeat deterministic golden run" "golden100" dotnet "$(headless_dll)" --scenario golden --ticks 3200 --repeat 100
   run_stage "[BLOCKING_NOW] Replay record/final-hash verification" "replay" verify_replay_hash
   run_stage "[BLOCKING_NOW] Snapshot restore/continuation verification" "snapshot" verify_snapshot_continuation
-  run_diagnostic_stage "[DIAGNOSTIC M2-M5; BLOCKING_LATER PRE-M6] 60-mover navigation/performance stress" "stress60" dotnet "$(headless_dll)" --scenario stress60 --ticks 3000 --benchmark --path-benchmark --enforce-performance-gates
+  if [[ "${MODE}" == "m9-acceptance" ]]; then
+    run_stage "[BLOCKING_NOW M9 LARGE-BATTLE ACCEPTANCE] 60-mover navigation/performance stress" "stress60" dotnet "$(headless_dll)" --scenario stress60 --ticks 26000 --benchmark --path-benchmark --enforce-performance-gates
+  else
+    run_diagnostic_stage "[BLOCKING_LATER M9 LARGE-BATTLE ACCEPTANCE] 60-mover navigation/performance stress" "stress60" dotnet "$(headless_dll)" --scenario stress60 --ticks 26000 --benchmark --path-benchmark --enforce-performance-gates
+  fi
   run_stage "[BLOCKING_NOW] Compiled-content regeneration" "content-regenerate" regenerate_tracked_content
   run_stage "[BLOCKING_NOW] macOS debug export smoke" "macos-export" "${ROOT}/tools/build-mac.sh" --verify
 fi

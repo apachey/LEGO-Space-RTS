@@ -130,7 +130,7 @@ public sealed class PresentationSnapshot
             uint fireSequence = 0; EntityId fireTarget = EntityId.None; WeaponDeliveryKind weaponDelivery = WeaponDeliveryKind.Projectile;
             if (world.Entities.Weapon.TryGet(id, out WeaponState weapon))
             {
-                fireSequence = weapon.FireSequence; fireTarget = weapon.LastFiredTarget;
+                fireSequence = weapon.FireSequence; fireTarget = LegalReferenceOrNone(world, viewerPlayer, weapon.LastFiredTarget);
                 if (world.Content.TryGetWeapon(weapon.WeaponProfile, out WeaponDefinition definition)) weaponDelivery = definition.DeliveryKind;
             }
             bool hasUnitHealth = world.Entities.Health.TryGet(id, out Health unitHealth);
@@ -142,7 +142,7 @@ public sealed class PresentationSnapshot
                 weaponFireSequence: fireSequence, weaponFireTarget: fireTarget, weaponDelivery: weaponDelivery, hasHealth: hasUnitHealth,
                 currentHitPointsRaw: hasUnitHealth ? unitHealth.Current.Raw : 0, maximumHitPointsRaw: hasUnitHealth ? unitHealth.Maximum.Raw : 0,
                 armorRating: hasUnitHealth ? unitHealth.ArmorRating : (byte)0, lastDamageTick: hasUnitHealth ? unitHealth.LastDamageTick : -1,
-                isRepairing: isRepairing, repairTarget: isRepairing ? repairBuilder.RepairTarget : EntityId.None,
+                isRepairing: isRepairing, repairTarget: isRepairing ? LegalReferenceOrNone(world, viewerPlayer, repairBuilder.RepairTarget) : EntityId.None,
                 isTransport: isTransport, transportOccupiedPoints: isTransport ? transport.OccupiedPoints : (byte)0,
                 transportCapacityPoints: isTransport ? transport.CapacityPoints : (byte)0, transportPassengerCount: isTransport ? transport.PassengerCount : (byte)0,
                 transportJobState: isTransport ? transport.JobState : TransportJobState.Idle, transportUnloadBlocked: isTransport && transport.UnloadBlocked,
@@ -161,6 +161,15 @@ public sealed class PresentationSnapshot
             projectiles.Add(new PresentationProjectile(projectile.Id, projectile.Owner, projectile.Position));
         }
         return new PresentationSnapshot(world.Tick, list, projectiles);
+    }
+
+    private static EntityId LegalReferenceOrNone(SimulationWorld world, byte viewerPlayer, EntityId target)
+    {
+        if (target == EntityId.None || !world.Entities.Exists(target)) return EntityId.None;
+        if (world.Entities.Ownership.TryGet(target, out Ownership owner) && owner.PlayerSlot == viewerPlayer) return target;
+        if (!world.Entities.Transform.TryGet(target, out SimTransform transform)) return EntityId.None;
+        int x = transform.Position.X.FloorToInt(), y = transform.Position.Y.FloorToInt();
+        return (uint)x < FogState.Width && (uint)y < FogState.Height && world.Fog.IsVisible(viewerPlayer, x, y) ? target : EntityId.None;
     }
 }
 }

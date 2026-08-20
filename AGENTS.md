@@ -25,10 +25,18 @@ understand code for routine decisions.
 Before planning, answering project-state questions, or changing code:
 
 1. inspect the current Git branch, status, and recent history;
-2. read `Docs/Development/PROJECT_STATE.md`;
-3. read `Docs/Canon/INDEX.md`;
-4. read only the canon directly relevant to the task;
-5. inspect the current implementation and tests relevant to the task.
+2. refresh or otherwise verify the configured upstream refs when network access
+   is available, then compare the task branch with the accepted upstream base;
+3. read `Docs/Development/PROJECT_STATE.md` from the accepted upstream state as
+   well as the task branch when the task branch may predate newer integration;
+4. read `Docs/Canon/INDEX.md`;
+5. read only the canon directly relevant to the task;
+6. inspect the current implementation and tests relevant to the task.
+
+A stale task branch must never redefine the current milestone. If its
+`PROJECT_STATE.md` predates accepted work visible on the configured upstream or
+an approved integration branch, preserve the old work for reference and move
+the task to a branch based on the accepted state before implementation.
 
 Repository evidence newer than conversation memory wins. Do not rely on
 remembered ChatGPT or Codex conversation state when the repository can answer
@@ -627,14 +635,14 @@ make code literacy a prerequisite for ordinary project management.
 
 ## 21. CURRENT PROJECT PHASE
 
-The project is currently completing:
+Phase 10 M0–M6 are implemented, verified, and game-director accepted. M7 may
+begin from the accepted post-M6 baseline.
 
-Phase 10 — First Playable Prototype, M0–M2.
+The preserved 60-mover stress scenario is `BLOCKING_LATER — M9 large-battle
+acceptance`. It remains visible as a diagnostic during M7–M8 and does not block
+M6 acceptance or M7/M8 work. Another movement architecture attempt still
+requires explicit architecture review.
 
-Do NOT begin M3 merely because M2 code exists.
-
-M2 must first achieve an accepted executable baseline including the required
-technical and human-playtest gates.
-
-The imported v0.4 state is explicitly UNVERIFIED until executable acceptance
-has been completed on the local toolchain.
+M0–M6 references in older task branches are historical context, not the current
+milestone. Always verify the accepted upstream state before reporting project
+status or choosing the next task.

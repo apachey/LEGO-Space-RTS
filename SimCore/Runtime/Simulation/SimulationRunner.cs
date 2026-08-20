@@ -54,6 +54,7 @@ public sealed class SimulationRunner
             new TransportSystem(),
             new RepairSystem(),
             new ContactApproachSystem(),
+            new FormationArrivalSystem(),
             new NavigationRequestSystem(),
             new MovementIntentSystem(),
             new LocalSeparationSystem(),
@@ -103,7 +104,7 @@ public sealed class SimulationRunner
             long start=Stopwatch.GetTimestamp();_systems[i].Step(World);long elapsed=Stopwatch.GetTimestamp()-start;
             ISimSystem system=_systems[i];
             if(system is CommandExecutionSystem)c+=elapsed;
-            else if(system is ContactApproachSystem||system is NavigationRequestSystem)n+=elapsed;
+            else if(system is ContactApproachSystem||system is FormationArrivalSystem||system is NavigationRequestSystem)n+=elapsed;
             else if(system is MovementIntentSystem)m+=elapsed;
             else if(system is LocalSeparationSystem)l+=elapsed;
             else if(system is TransformationSystem||system is TransportSystem||system is RepairSystem||system is TransformMovementSystem||system is TubeTransferSystem)t+=elapsed;

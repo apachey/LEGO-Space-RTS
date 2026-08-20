@@ -1,8 +1,9 @@
-# M0–M2 Acceptance Gates — Godot amendment
+# Phase 10 Acceptance Gates — Godot amendment
 
-Phase 10 v0.4 is complete only when all `BLOCKING_NOW` executable gates below
-pass on the pinned toolchain. `DIAGNOSTIC` gates still run and report their full
-measurements, but do not solely block the current milestone.
+Each Phase 10 milestone is complete only when its applicable `BLOCKING_NOW`
+executable gates below pass on the pinned toolchain. `DIAGNOSTIC` gates still
+run and report their full measurements, but do not solely block the current
+milestone.
 
 Gate classifications:
 
@@ -86,7 +87,7 @@ M2 also requires the Phase 09B human movement pass covering responsiveness,
 group readability, formation reflow, Heavy movement character, chokepoints,
 jitter/dancing, command feedback, and camera/readability.
 
-## Legacy 60-mover stress (`BLOCKING_LATER` — PRE-M6; `DIAGNOSTIC` — M2–M5)
+## Legacy 60-mover stress (`BLOCKING_LATER` — M9 large-battle acceptance)
 
 For the 60-mover designated stress scenario:
 
@@ -97,11 +98,25 @@ For the 60-mover designated stress scenario:
 - five clearance families are exercised, with Huge marked engineering-only rather than a new gameplay unit.
 
 The benchmark is preserved with the same measurements and thresholds. During
-M2–M5, `./tools/verify.sh --full` reports a failure of this stage as diagnostic
-rather than failing M2 solely for that result. It becomes blocking again before
-M6 movement/network-scale acceptance. A catastrophic regression still requires
-investigation, but this single torture benchmark may not silently dictate a
-major architecture rewrite.
+M7–M8 development, `./tools/verify.sh --full` records failure as
+`BLOCKING_LATER`. For M9 Skirmish Alpha large-battle acceptance,
+`./tools/verify.sh --m9-acceptance` makes the same gate `BLOCKING_NOW`. A
+catastrophic regression still requires investigation, but this single torture
+benchmark may not silently dictate a major architecture rewrite. It does not
+block accepted M6 networking or M7/M8 production.
+
+## M6 T058 transport gate (`BLOCKING_NOW`)
+
+- a Godot 4.7.1 headless dedicated transport host listens through ENet/UDP;
+- exactly two independent clients connect and receive distinct peer IDs;
+- targeted raw packets cross reliable-ordered, unreliable-sequenced and
+  reliable-bulk logical channels;
+- the ENet host capacity is configured and exposed as exactly two clients;
+- the smoke uses the production carrier and dedicated-host classes;
+- no Godot RPC, command validation or snapshot replication is introduced.
+
+The executable gate is the `M6 TRANSPORT SMOKE: PASS serverConnections=2`
+marker run by `./tools/verify.sh`.
 
 ## Data gate
 

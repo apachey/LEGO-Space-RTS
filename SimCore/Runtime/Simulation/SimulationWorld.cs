@@ -32,6 +32,9 @@ public sealed class SimulationWorld
     internal readonly Dictionary<uint, TubeTransitRoute> TubeTransitRoutes = new();
     internal readonly Dictionary<uint, UnitCommandQueue> Queues = new();
     internal readonly Dictionary<uint, FixVec2> PendingVelocity = new();
+    // Rebuilt deterministically every tick. These temporary route goals never
+    // replace the authoritative final Move endpoints stored in NavigationAgent.
+    internal readonly Dictionary<uint, FixVec2> FormationArrivalTargets = new();
     internal readonly Dictionary<uint, bool> CompressionUsed = new();
     internal readonly List<EntityId> ScratchEntities = new(128);
     internal readonly List<CommandEnvelope> ScratchCommands = new(32);

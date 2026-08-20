@@ -61,19 +61,19 @@ is `M2MovementAcceptanceTests`; it remains in the suite as regression coverage.
 starting Ore per side, clamped depletion/model states, and snapshot/state-hash
 continuation for heterogeneous mover/resource-node entities.
 
-## Performance / 60 movers (`BLOCKING_LATER` — PRE-M6; `DIAGNOSTIC` — M2–M5)
+## Performance / 60 movers (`BLOCKING_LATER` — M9 large-battle acceptance)
 
 ```powershell
-dotnet run --project HeadlessSim -- --scenario stress60 --ticks 3000 --benchmark --path-benchmark --enforce-performance-gates
+dotnet run --project HeadlessSim -- --scenario stress60 --ticks 26000 --benchmark --path-benchmark --enforce-performance-gates
 ```
 
 The runner reports wall time, ticks/second, realtime multiplier, tick/path p95/p99/max, per-system means, motion-delay diagnostics, mover completion, stuck recovery, deadlock and oscillation counters.
 
-The command, measurements and thresholds are unchanged. During M2–M5 the full
-verification harness records a red result from this stage as diagnostic, so it
-does not fail M2 solely on that legacy stress result. The stage becomes blocking
-again before M6 movement/network-scale acceptance and remains available for
-regression trending throughout M2–M5.
+The measurements and thresholds are unchanged. During M7–M8 development,
+`./tools/verify.sh --full` records a red result from this stage as
+`BLOCKING_LATER`; `./tools/verify.sh --m9-acceptance` promotes it to
+`BLOCKING_NOW`. The gate does not block accepted M6 networking or M7/M8 work;
+it must pass before M9 can claim its stable-large-battle exit.
 
 Phase 09 targets retained by the engine amendment:
 
@@ -90,3 +90,24 @@ Godot_v4.7.1-stable_mono_win64.exe --headless --path GodotClient -- --smoke
 ```
 
 This checks that the native Godot C# host loads, constructs the composition root, advances the shared simulation and exposes a valid presentation snapshot/hash. It is a host-integration smoke, not the deterministic benchmark runner.
+
+## M6 T058 ENet transport smoke
+
+```powershell
+Godot_v4.7.1-stable_mono_win64.exe --headless --path GodotClient -- --m6-transport-smoke
+```
+
+The smoke starts the production T058 dedicated transport host on an ephemeral
+loopback UDP port, connects two independent ENet clients, verifies distinct
+peer IDs and sends targeted raw packets through all three logical channels. A
+pass prints `M6 TRANSPORT SMOKE: PASS serverConnections=2`. The gate is
+`BLOCKING_NOW` in the normal verification harness.
+
+The same bootstrap can run as a transport-only dedicated host:
+
+```powershell
+Godot_v4.7.1-stable_mono_win64.exe --headless --path GodotClient -- --dedicated-server --network-bind 127.0.0.1 --network-port 24567
+```
+
+T058 intentionally does not implement command validation or snapshot
+replication.

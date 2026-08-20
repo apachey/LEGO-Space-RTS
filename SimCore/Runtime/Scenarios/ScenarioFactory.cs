@@ -6,6 +6,12 @@ namespace LegoSpaceRTS.SimCore
 public static class ScenarioFactory
 {
     private const int CanonicalStartingCrewPerPlayer = 6;
+    public const int Stress60FirstMoveTick = 1;
+    public const int Stress60SecondMoveTick = 7000;
+    public const int Stress60TopologyOpenTick = 16000;
+    public const int Stress60ThirdMoveTick = 16001;
+    public const int Stress60FinalEvaluationTick = 26000;
+    public const int Stress60TravelAllowanceMultiplier = 2;
 
     public static SimulationWorld CreateFirstControllable(int count = 18)
         => CreateFirstControllable(DevMapFactory.CreateDefinition(), PrototypeContentFactory.CreateM2Catalog(), count);
@@ -57,13 +63,13 @@ public static class ScenarioFactory
     {
         SimulationWorld world = new(DevMapFactory.Create(), 2);
         PrototypeContentCatalog content = PrototypeContentFactory.CreateM2Catalog();
-        SpawnGrid(world, content, 0, 60, 20, 58, 10);
+        SpawnGrid(world, content, 0, 60, 20, 58, 10, 4);
         FinalizeScenario(world);
         EntityId[] ids = OwnedIds(world, 0);
-        world.Commands.Enqueue(new CommandEnvelope(new SimTick(1), 0, 1, SimCommandType.Move, ids, FixVec2.FromInts(138, 80)));
-        world.Commands.Enqueue(new CommandEnvelope(new SimTick(700), 0, 2, SimCommandType.Move, ids, FixVec2.FromInts(20, 112)));
-        world.Commands.Enqueue(new CommandEnvelope(new SimTick(1200), 0, 3, SimCommandType.DebugOpenExcavatable, Array.Empty<EntityId>(), FixVec2.Zero, debugFeatureId: DevMapFactory.ExcavatableFeatureId));
-        world.Commands.Enqueue(new CommandEnvelope(new SimTick(1201), 0, 4, SimCommandType.Move, ids, FixVec2.FromInts(138, 135)));
+        world.Commands.Enqueue(new CommandEnvelope(new SimTick(Stress60FirstMoveTick), 0, 1, SimCommandType.Move, ids, FixVec2.FromInts(138, 80)));
+        world.Commands.Enqueue(new CommandEnvelope(new SimTick(Stress60SecondMoveTick), 0, 2, SimCommandType.Move, ids, FixVec2.FromInts(20, 112)));
+        world.Commands.Enqueue(new CommandEnvelope(new SimTick(Stress60TopologyOpenTick), 0, 3, SimCommandType.DebugOpenExcavatable, Array.Empty<EntityId>(), FixVec2.Zero, debugFeatureId: DevMapFactory.ExcavatableFeatureId));
+        world.Commands.Enqueue(new CommandEnvelope(new SimTick(Stress60ThirdMoveTick), 0, 4, SimCommandType.Move, ids, FixVec2.FromInts(138, 135)));
         return world;
     }
 
@@ -174,11 +180,11 @@ public static class ScenarioFactory
         });
     }
 
-    private static void SpawnGrid(SimulationWorld world, PrototypeContentCatalog content, byte player, int count, int originX, int originY, int columns)
+    private static void SpawnGrid(SimulationWorld world, PrototypeContentCatalog content, byte player, int count, int originX, int originY, int columns, int spacing)
     {
         for (int i = 0; i < count; i++)
         {
-            int x = originX + (i % columns) * 2; int y = originY + (i / columns) * 2;
+            int x = originX + (i % columns) * spacing; int y = originY + (i / columns) * spacing;
             SpawnPrototypeMover(world,content,player,(FootprintClass)(i%5),FixVec2.FromInts(x,y));
         }
     }

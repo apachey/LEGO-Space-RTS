@@ -544,3 +544,208 @@ do not change gameplay canon.
 
 This is an approved serialization/protocol integration decision. It does not
 change gameplay canon.
+
+---
+
+## 2026-08-20 — Pre-M6 immutable endpoints and bounded formation arrival
+
+- The game director approved the StarCraft-like command model in which one
+  multi-unit Move creates a legal endpoint cloud and assigns every selected
+  unit one immutable final endpoint immediately.
+- Canonical role bands remain intact. Within a role band, deterministic
+  minimum-total-distance matching chooses endpoints with Entity ID as the final
+  tie-break.
+- The approved formation-arrival sequencer is limited to the destination zone.
+  Later rows may use deterministic temporary route goals until earlier rows
+  complete, but `NavigationAgent.Target` remains the final endpoint and is never
+  replaced by a staging or current-position value.
+- Temporary arrival goals are derived from serialized FormationIntent every
+  tick. They add no persistent manager state and require no snapshot, protocol,
+  replay or content-format change.
+- This decision does not approve a portal-flow controller, passage scheduler,
+  direct authoritative position pushing, or an external movement dependency.
+- The sequencer restores the honest representative 24-mover M2 scenario to
+  PASS, but it does not satisfy the separate legal 60-mover mid-route traffic
+  gate. That remaining architecture is not approved by this entry.
+
+This is an approved bounded movement-architecture decision. It does not change
+gameplay canon.
+
+---
+
+## 2026-08-20 — Pre-M6 bounded local-pressure experiment rejected
+
+- After the legal 60-mover fixture isolated a mid-route traffic/yield failure,
+  the game director approved one final clean-room experiment inside the existing
+  local-separation candidate scorer.
+- The experiment added no persistent state or subsystem: stuck movers weighted
+  existing legal candidates by nearby friendly pressure and could use at most a
+  two-times local corridor-deviation window. Normal movement integration,
+  terrain legality and Heavy priority remained authoritative.
+- Release build, focused movement regressions and the honest representative M2
+  acceptance remained green, but first-phase stress completion stayed 4/60.
+  Deadlocks increased from 43 to 47 and oscillations from 3,504 to 12,831.
+- The experiment was rejected and removed. It is not an accepted architecture
+  and must not be resurrected by tuning weights or widening the corridor again.
+- Canon at the time made the preserved 60-mover stress blocking before **M6
+  networked 1v1 acceptance**, not before M6 implementation started. The
+  verified endpoint/arrival work could therefore be integrated and M6
+  development begin. The later M6 closeout entry supersedes that milestone
+  assignment.
+- A further traffic-coordination architecture still requires separate approval.
+  Accepting M6 while the stress remains red would instead require an explicit
+  canon amendment to the gate classification.
+
+This records a rejected technical experiment and the resulting stop boundary.
+It does not change gameplay canon.
+
+---
+
+## 2026-08-20 — M6 T058 Godot ENet raw-packet carrier
+
+- Phase 09A replaces T058's obsolete Unity Transport wording with a Godot
+  packet carrier. Godot 4.7.1 `ENetMultiplayerPeer` is used directly for raw
+  packets; the project does not use node RPCs as gameplay authority.
+- The T058 server carrier accepts at most two clients. The two-connection limit
+  is configured at ENet host creation and new connections are refused while
+  both slots are occupied.
+- Three logical channels preserve the canonical transport separation:
+  reliable ordered for future commands/control, unreliable sequenced for future
+  regular snapshots and reliable bulk for future manifests/reconnect payloads.
+  T058 carries opaque byte arrays only and assigns no gameplay meaning to them.
+- The normal verification harness starts the production dedicated host on a
+  loopback UDP port, connects two ENet clients, validates distinct peer IDs and
+  exchanges targeted packets through every logical channel.
+- T059 owns command decoding/validation/authority. T060 owns snapshot cadence,
+  deltas and acknowledgment baselines. Neither is implemented by this carrier.
+
+This implements the approved Godot transport boundary without changing
+gameplay canon or SimCore command semantics.
+
+---
+
+## 2026-08-20 — M6 T059 project-owned server command authority
+
+- A versioned project-owned command protocol now rides T058's reliable-ordered
+  ENet channel. It defines a server session welcome, bounded command request and
+  deterministic accepted/rejected acknowledgment; ENet still has no gameplay
+  authority and T060 snapshot packets remain separate.
+- The server assigns the first two peers distinct player slots and
+  cryptographically random nonzero session tokens. Client-supplied player slots
+  and execution ticks are never authoritative.
+- A fresh session begins at client sequence 1 and accepts exactly the next
+  sequence. Authenticated rejected commands consume their sequence, duplicates
+  cannot execute twice, and a new session token resets the sequence boundary.
+- Security rate limiting is bounded at 64 authenticated command attempts per
+  authoritative simulation tick per session. This is a transport-abuse ceiling,
+  not a gameplay balance rule.
+- Validation rejects malformed/version-incompatible/oversized packets, debug
+  commands, unsorted or duplicate Entity IDs, missing or foreign entities,
+  ineligible command sources, hidden or illegal targets and the implemented
+  resource, Energy/Charge, technology, state, placement and Forward Service
+  failures. Authoritative gameplay systems still revalidate mutable legality
+  when the accepted command executes.
+- A valid request is reconstructed with the bound server player slot and the
+  next legal 20-Hz simulation tick before entering the existing deterministic
+  `CommandBuffer`. Offline `CommandEnvelope`, snapshot format 20, simulation
+  protocol 18, replay format 15 and content format 16 remain unchanged.
+- The dedicated-server entry now loads compiled authoritative gameplay data and
+  advances SimCore without rendering. The normal verification harness exercises
+  the real carrier with two clients, three accepted commands and six rejected
+  forgery/replay/malformed/debug cases.
+
+This implements approved T059 authority and security requirements. It changes
+no gameplay canon and deliberately leaves state replication to T060.
+
+---
+
+## 2026-08-20 — M6 T060–T061 acknowledged snapshots and recipient knowledge
+
+- The authoritative 20-Hz host publishes state every two ticks on the
+  unreliable-sequenced channel. Each client acknowledges the newest applied
+  snapshot on reliable-ordered transport; the server only delta-encodes against
+  a retained, explicitly acknowledged baseline.
+- Structural deltas contain stable-ID entity/projectile upserts and removals.
+  Client reconstruction retains a bounded baseline history, so a delta remains
+  valid when its acknowledged baseline is older than the latest rendered frame.
+- Replication is presentation-only and cannot recreate `SimulationWorld`.
+  Recipient snapshots include legal visible presentation, recipient fog bitsets
+  and only that player's economy/capacity/charge, production queues, unit orders,
+  Energy Domains, Worksites and Tube-network summaries. Deflate compression from
+  the standard .NET library keeps the initial two-player smoke payload below
+  ENet's MTU without a new dependency.
+- Hidden enemy entities are absent rather than marked hidden. Loss of visibility
+  is a removal transition; last-known presentation remains client-side. Entity
+  references embedded in visible weapon/repair presentation are cleared when
+  their target is neither owned nor currently visible to the recipient.
+- Fixed-point interpolation helpers expose position and shortest-arc orientation
+  sampling without changing authoritative simulation state.
+
+This implements the canonical 10-Hz delta and no-hidden-data boundary. It does
+not change fog gameplay, simulation authority or gameplay canon.
+
+---
+
+## 2026-08-20 — M6 T062 retained-session reconnect
+
+- A disconnected authenticated session is retained for 60 authoritative seconds
+  with its cryptographic token, player slot and last processed command sequence.
+  Reserved slots cannot be claimed by a fresh session during that window.
+- Reconnect requires exact simulation protocol, gameplay content and initial map
+  hashes. A valid new peer is rebound to the retained identity; invalid, expired
+  or mismatched requests receive no authoritative state.
+- The server responds on reliable-bulk transport with a current full legal
+  recipient snapshot plus the player's pending accepted commands, unit order
+  queues and production queues. Regular acknowledged snapshot streaming then
+  resumes from a new full baseline.
+- The loopback acceptance disconnects player 0 while player 1 remains connected,
+  restores sequence 1 on a replacement ENet peer and proves sequence 2 executes
+  exactly once after the rebind.
+
+This adds reconnect state restoration without host migration, gameplay changes
+or hidden-state disclosure.
+
+---
+
+## 2026-08-20 — M6 T063 post-match authoritative network replay
+
+- The dedicated server records only commands accepted by T059 authority, along
+  with the initial authoritative snapshot, gameplay/map hashes and deterministic
+  seed field. Development state hashes are stored every 20 ticks and full seek
+  snapshots every 200 ticks.
+- Replay format 16 adds ordered hash/seek checkpoints and the authoritative final
+  tick/hash while retaining a tested reader for replay format 15.
+- Playback can start from the nearest seek checkpoint, verifies its snapshot
+  hash, replays later commands and stops immediately on a scheduled hash mismatch.
+- Authoritative replay bytes are unavailable during an active match so replay
+  delivery cannot bypass T061 fog filtering. After explicit match completion,
+  an authenticated client may request the finalized log on reliable-bulk
+  transport.
+- Replays are divided into independently bounded 48-KiB chunks with transfer
+  metadata and a whole-file deterministic hash. The client assembler accepts
+  out-of-order chunks, rejects inconsistent metadata and publishes bytes only
+  after the complete hash verifies.
+
+This implements server-log playback and seekability without changing gameplay
+canon or the authoritative 20-Hz simulation.
+
+---
+
+## 2026-08-20 — M6 accepted; 60-mover scale gate deferred to M9
+
+- The game director accepted the complete verified M6 T058–T063 network stack.
+- The preserved Stress60 failure is isolated to large-scale mid-route friendly
+  traffic/yield behavior. It does not invalidate the green representative
+  24-mover movement gate or the real two-client M6 transport, command, snapshot,
+  privacy, reconnect and replay acceptances.
+- Stress60 remains unchanged and continuously visible as
+  `BLOCKING_LATER — M9 large-battle acceptance` during M7–M8. The verification
+  mode that promotes it to blocking is `./tools/verify.sh --m9-acceptance`.
+- This matches M9's canonical stable-large-battle exit and Phase 09B's rule that
+  one torture fixture must not silently force a broad architecture rewrite.
+- Any earlier third movement-architecture attempt still requires explicit
+  architecture review; a catastrophic regression in accepted normal movement
+  remains blocking immediately.
+
+This is an explicitly approved technical-canon gate reclassification. It does
+not change gameplay, movement behavior, thresholds or performance targets.

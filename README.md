@@ -1,9 +1,12 @@
-# LEGO Space RTS — FIRST PLAYABLE PROTOTYPE IMPLEMENTATION v0.4
+# LEGO Space RTS — DETERMINISTIC RTS PROTOTYPE
 
-**Phase:** 10 — M0–M2 Implementation  
-**Engine amendment:** Godot **4.7.1-stable .NET**, C#  
-**Primary platform:** Windows 11 x86-64  
-**Status:** M0–M2 implementation package + macOS runtime-feedback patches; executable acceptance gates still require the pinned local toolchain
+**Phase:** 10 — M7 Visual Vertical Slice
+
+**Engine amendment:** Godot **4.7.1-stable .NET**, C#
+
+**Primary platform:** Windows 11 x86-64
+
+**Status:** M0–M6 implemented, verified and game-director accepted; M7 is next
 
 This repository replaces only the Unity-specific host from the original Phase 10 package. The authoritative gameplay simulation remains the engine-independent `SimCore` library. Godot owns presentation, input, camera, debug visualization and UI; it does not own gameplay truth.
 
@@ -27,7 +30,9 @@ The first macOS playtest exposed presentation and movement issues that static va
 - CPU-authoritative fog/LoS;
 - authored dynamic Excavatable topology;
 - 60-mover stress scenario and deterministic golden-run foundation;
-- future multiplayer remains custom command/snapshot protocol; Godot transport is only a carrier when M6 begins.
+- multiplayer remains a custom command/snapshot protocol over the Godot ENet
+  carrier; M6 command authority, snapshots, fog privacy, reconnect and replay
+  are implemented and verified.
 
 ## Godot-specific replacement decisions
 
@@ -37,7 +42,8 @@ The first macOS playtest exposed presentation and movement issues that static va
 - world overlays/debug: `MeshInstance3D`, `MultiMeshInstance3D`, `ImmediateMesh`;
 - camera: `Camera3D`, preserving Phase 07 perspective/FOV/pitch/yaw/zoom constraints;
 - Godot physics: presentation-only/non-authoritative;
-- future network carrier: Godot ENet/packet APIs are the default candidate, but M6 protocol semantics remain project-owned and are not implemented here.
+- network carrier: Godot ENet/raw packet APIs with a two-client dedicated host and three project-owned logical channels;
+- T059 command validation and T060 snapshot replication remain separate from the carrier.
 
 ## Repository layout
 
@@ -90,6 +96,19 @@ PHASE10 GODOT HEADLESS SMOKE: PASS ...
 
 This smoke confirms the Godot host can instantiate and advance the simulation; it does not replace pure deterministic regression/benchmark tests.
 
+## M6 dedicated networking
+
+Run the transport-only dedicated host locally with:
+
+```bash
+Godot --headless --path GodotClient -- --dedicated-server --network-bind 127.0.0.1 --network-port 24567
+```
+
+The automated two-client ENet loopback gates are part of `./tools/verify.sh`.
+They cover transport, server command authority, 10-Hz fog-safe snapshots,
+reconnect and authoritative post-match replay without giving Godot RPC gameplay
+authority.
+
 ## Headless deterministic runner
 
 ```powershell
@@ -118,12 +137,17 @@ Snapshot/replay capabilities include `--snapshot-in`, `--snapshot-out`, `--repla
 
 ## Verification status
 
-This package was statically audited in the artifact environment. That environment does **not** contain a functioning Godot 4.7.1 .NET editor or `dotnet` SDK/runtime, so this package does not falsely claim that compilation, NUnit, Godot headless smoke, 100-run golden validation, or benchmark gates passed here.
+The accepted M6 stack passed the pinned Godot/.NET full verification: build,
+278 NUnit tests, 24-mover acceptance, all T058–T063 ENet smokes, 100-run
+determinism, replay/snapshot continuation, content regeneration and macOS
+export. The preserved 60-mover scenario remains a visible
+`BLOCKING_LATER — M9 large-battle acceptance` diagnostic.
 
 Run:
 
 ```bash
-python3 tools/Validation/validate_phase10.py
+./tools/verify.sh --full
 ```
 
-then complete the executable gates in `Docs/ACCEPTANCE_GATES.md` before beginning M3.
+The current executable state and next task are recorded in
+`Docs/Development/PROJECT_STATE.md`.

@@ -89,7 +89,15 @@ public class M2MovementAcceptanceTests
             if(!nav.HasTarget)continue;
             SimTransform transform=world.Entities.Transform.Get(id);Movement movement=world.Entities.Movement.Get(id);
             RouteCorridor? corridor=world.GetCorridor(id);
-            result.Append($"{id}:foot={nav.Footprint},pos={transform.Position},target={nav.Target},stuck={movement.StuckTicks},compression={movement.CompressionTicks},cohort={nav.Formation.CohortId},slot={nav.Formation.SlotIndex}/{nav.Formation.MemberCount},cols={nav.Formation.Columns},path={movement.PathIndex}/{corridor?.Cells.Count ?? 0},valid={corridor?.IsValid}; ");
+            EntityId nearest=EntityId.None;Fix32 nearestDistance=Fix32.MaxValue;
+            for(int otherIndex=0;otherIndex<ids.Length;otherIndex++)
+            {
+                EntityId other=ids[otherIndex];if(other==id)continue;
+                Fix32 distance=FixVec2.Distance(transform.Position,world.Entities.Transform.Get(other).Position);
+                if(distance<nearestDistance){nearest=other;nearestDistance=distance;}
+            }
+            bool nearestMoving=nearest!=EntityId.None&&world.Entities.Navigation.Get(nearest).HasTarget;
+            result.Append($"{id}:foot={nav.Footprint},pos={transform.Position},target={nav.Target},stuck={movement.StuckTicks},compression={movement.CompressionTicks},cohort={nav.Formation.CohortId},slot={nav.Formation.SlotIndex}/{nav.Formation.MemberCount},cols={nav.Formation.Columns},path={movement.PathIndex}/{corridor?.Cells.Count ?? 0},valid={corridor?.IsValid},nearest={nearest}@{nearestDistance}/moving={nearestMoving}; ");
         }
         return result.ToString();
     }

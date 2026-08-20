@@ -108,8 +108,8 @@ Implemented:
 - immediate move acknowledgement marker;
 - map/unit placeholder rendering without gameplay physics;
 - debug overlays for navigation, HPA, portals, paths, reservations, spatial buckets, vision and Excavatable topology;
-- legacy 60-mover stress scenario (preserved; `DIAGNOSTIC` during M2–M5 and
-  `BLOCKING_LATER` before M6 under Phase 09B).
+- legacy 60-mover stress scenario (preserved; `DIAGNOSTIC` during M2–M8 and
+  `BLOCKING_LATER` before M9 under Phase 09B).
 
 ## Content/data status
 
@@ -142,7 +142,10 @@ Still preserved:
 - explicit protocol versions;
 - replay-compatible command semantics.
 
-Godot ENet/packet networking is the default transport candidate for M6 because it exposes packet peer/channel/reliability primitives. No M6 networking is implemented in Phase 10.
+M6 T058 now uses Godot ENet/raw packet networking as the transport carrier. It
+provides a headless two-client host and three logical delivery channels while
+leaving project-owned command validation and snapshot replication to T059 and
+T060.
 
 ## What was actually verified in this artifact environment
 
@@ -174,7 +177,7 @@ Those are explicit local/CI acceptance requirements, not deferred implementation
 M3 economy/base-building work should begin only after the amended M0–M2
 `BLOCKING_NOW` executable gates and the Phase 09B human M2 playtest pass in the
 pinned Godot/.NET environment. The legacy 60-mover result remains diagnostic
-during M2–M5 and becomes blocking again before M6.
+during M2–M8 and becomes blocking again before M9.
 
 ## Canon changes
 
@@ -196,8 +199,8 @@ Amended by Phase 09B:
 - Movement Architecture v2 replaces the former reservation-centered movement
   direction;
 - the representative 24-mover scenario is the `BLOCKING_NOW` M2 movement gate;
-- the preserved 60-mover stress scenario is `DIAGNOSTIC` during M2–M5 and
-  `BLOCKING_LATER` before M6.
+- the preserved 60-mover stress scenario is `DIAGNOSTIC` during M2–M8 and
+  `BLOCKING_LATER` before M9.
 
 
 ## v0.4 runtime-feedback amendment
