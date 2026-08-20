@@ -587,9 +587,11 @@ gameplay canon.
   Deadlocks increased from 43 to 47 and oscillations from 3,504 to 12,831.
 - The experiment was rejected and removed. It is not an accepted architecture
   and must not be resurrected by tuning weights or widening the corridor again.
-- Current canon makes the preserved 60-mover stress blocking before **M6
-  networked 1v1 acceptance**, not before M6 implementation starts. The verified
-  endpoint/arrival work may be integrated and M6 development may begin.
+- Canon at the time made the preserved 60-mover stress blocking before **M6
+  networked 1v1 acceptance**, not before M6 implementation started. The
+  verified endpoint/arrival work could therefore be integrated and M6
+  development begin. The later M6 closeout entry supersedes that milestone
+  assignment.
 - A further traffic-coordination architecture still requires separate approval.
   Accepting M6 while the stress remains red would instead require an explicit
   canon amendment to the gate classification.
@@ -726,3 +728,24 @@ or hidden-state disclosure.
 
 This implements server-log playback and seekability without changing gameplay
 canon or the authoritative 20-Hz simulation.
+
+---
+
+## 2026-08-20 — M6 accepted; 60-mover scale gate deferred to M9
+
+- The game director accepted the complete verified M6 T058–T063 network stack.
+- The preserved Stress60 failure is isolated to large-scale mid-route friendly
+  traffic/yield behavior. It does not invalidate the green representative
+  24-mover movement gate or the real two-client M6 transport, command, snapshot,
+  privacy, reconnect and replay acceptances.
+- Stress60 remains unchanged and continuously visible as
+  `BLOCKING_LATER — M9 large-battle acceptance` during M7–M8. The verification
+  mode that promotes it to blocking is `./tools/verify.sh --m9-acceptance`.
+- This matches M9's canonical stable-large-battle exit and Phase 09B's rule that
+  one torture fixture must not silently force a broad architecture rewrite.
+- Any earlier third movement-architecture attempt still requires explicit
+  architecture review; a catastrophic regression in accepted normal movement
+  remains blocking immediately.
+
+This is an explicitly approved technical-canon gate reclassification. It does
+not change gameplay, movement behavior, thresholds or performance targets.

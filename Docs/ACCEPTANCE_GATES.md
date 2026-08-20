@@ -1,8 +1,9 @@
-# M0–M2 Acceptance Gates — Godot amendment
+# Phase 10 Acceptance Gates — Godot amendment
 
-Phase 10 v0.4 is complete only when all `BLOCKING_NOW` executable gates below
-pass on the pinned toolchain. `DIAGNOSTIC` gates still run and report their full
-measurements, but do not solely block the current milestone.
+Each Phase 10 milestone is complete only when its applicable `BLOCKING_NOW`
+executable gates below pass on the pinned toolchain. `DIAGNOSTIC` gates still
+run and report their full measurements, but do not solely block the current
+milestone.
 
 Gate classifications:
 
@@ -86,7 +87,7 @@ M2 also requires the Phase 09B human movement pass covering responsiveness,
 group readability, formation reflow, Heavy movement character, chokepoints,
 jitter/dancing, command feedback, and camera/readability.
 
-## Legacy 60-mover stress (`BLOCKING_LATER` — M6 acceptance)
+## Legacy 60-mover stress (`BLOCKING_LATER` — M9 large-battle acceptance)
 
 For the 60-mover designated stress scenario:
 
@@ -97,11 +98,12 @@ For the 60-mover designated stress scenario:
 - five clearance families are exercised, with Huge marked engineering-only rather than a new gameplay unit.
 
 The benchmark is preserved with the same measurements and thresholds. During
-M6 development, `./tools/verify.sh --full` records failure as
-`BLOCKING_LATER`. For M6 networked 1v1 acceptance,
-`./tools/verify.sh --m6-acceptance` makes the same gate `BLOCKING_NOW`. A
+M7–M8 development, `./tools/verify.sh --full` records failure as
+`BLOCKING_LATER`. For M9 Skirmish Alpha large-battle acceptance,
+`./tools/verify.sh --m9-acceptance` makes the same gate `BLOCKING_NOW`. A
 catastrophic regression still requires investigation, but this single torture
-benchmark may not silently dictate a major architecture rewrite.
+benchmark may not silently dictate a major architecture rewrite. It does not
+block accepted M6 networking or M7/M8 production.
 
 ## M6 T058 transport gate (`BLOCKING_NOW`)
 

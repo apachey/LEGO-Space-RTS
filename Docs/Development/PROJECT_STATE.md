@@ -5,18 +5,17 @@ authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M0–M5 are implemented, game-director accepted and merged to `origin/main`
-through PR #12 (`85b02f2`). M6 T058–T063 are implemented and verified on the
-stacked task branch `codex/m6-t060-t063-network-stack`, but M6 itself is not
-yet accepted because the preserved 60-mover gate remains red.**
+**M0–M6 are implemented, verified and game-director accepted. The complete M6
+integration state contains T058–T063 and the accepted post-M5 movement handoff.
+M7 T064 is the next approved implementation task.**
 
 - The branch includes the verified post-M5 movement handoff from `44e2caf`
   plus T058–T063.
 - The old `codex/60-mover-fix` work remains preserved failed research through
   commits `6105cf0` and `f896b01`; it is not merge-ready production code.
-- Stress60 is `BLOCKING_LATER — M6 acceptance`: it did not block bounded M6
-  implementation, but it must pass or receive an explicit canon reclassification
-  before M6 can be accepted.
+- By explicit game-director decision, Stress60 is now `BLOCKING_LATER — M9
+  large-battle acceptance`. It remains visible during M7–M8 but does not block
+  M6 acceptance or subsequent production work.
 
 ## Locked technical foundation
 
@@ -122,7 +121,7 @@ The complete T060–T063 code passed `./tools/verify.sh --full` on 2026-08-20
 with 278 NUnit tests, 24/24 representative movement acceptance, every T058–T063
 ENet smoke, 100-repeat determinism, replay record/playback, snapshot
 continuation, compiled-content regeneration and macOS export. Exact summary:
-`Artifacts/Verification/20260820T173108Z-full-summary.txt`.
+`Artifacts/Verification/20260820T174836Z-full-summary.txt`.
 
 The preceding `./tools/verify.sh` fast run also passed all 278 tests and every
 T058–T063 network gate. Exact summary:
@@ -132,7 +131,7 @@ Stress60 remained the expected diagnostic failure with phase completion
 **4/60, 5/60 and 2/60**. The exported macOS debug build is:
 `Builds/macOS/LEGO Space RTS.app`.
 
-## M6 acceptance blocker
+## Deferred M9 large-battle gate
 
 The legal stress60 fixture still exposes mid-route corridor traffic/yield
 deadlock. The approved immutable endpoints and bounded arrival sequencer solve
@@ -140,13 +139,12 @@ the representative 24-mover arrival wall but not this distinct scale case.
 
 Do not resurrect or stack the rejected portal-flow/local-pressure experiments.
 Another traffic coordinator/solver attempt requires **ARCHITECTURE REVIEW
-REQUIRED**. Accepting M6 while stress60 remains red would instead require an
-explicit canon amendment to its gate classification.
+REQUIRED**. The benchmark remains a diagnostic through M7–M8 and becomes
+blocking only when M9 must prove its stable-large-battle exit.
 
 ## Next approved action
 
-1. Game-director review and merge of the stacked T058–T063 implementation.
-2. Before declaring M6 accepted, choose one reviewed path for the preserved
-   stress60 gate: approve a new movement architecture task, or explicitly amend
-   the gate classification in canon.
-3. Do not begin an unreviewed third movement-fix approach from this branch.
+1. Begin M7 T064 from the accepted post-M6 baseline.
+2. Keep Stress60 visible without starting an unreviewed third movement attempt;
+   revisit it for M9 or earlier only if a catastrophic movement regression
+   appears.

@@ -635,13 +635,14 @@ make code literacy a prerequisite for ordinary project management.
 
 ## 21. CURRENT PROJECT PHASE
 
-Phase 10 M0–M5 are implemented, merged, and game-director accepted. M6 may
-begin from the accepted post-M5 baseline.
+Phase 10 M0–M6 are implemented, verified, and game-director accepted. M7 may
+begin from the accepted post-M6 baseline.
 
-The preserved 60-mover stress scenario is `BLOCKING_LATER — M6 networked 1v1
-acceptance`. It does not block starting M6 implementation, but M6 may not be
-accepted until the gate passes or canon explicitly changes its classification.
+The preserved 60-mover stress scenario is `BLOCKING_LATER — M9 large-battle
+acceptance`. It remains visible as a diagnostic during M7–M8 and does not block
+M6 acceptance or M7/M8 work. Another movement architecture attempt still
+requires explicit architecture review.
 
-M0–M5 references in older task branches are historical context, not the current
+M0–M6 references in older task branches are historical context, not the current
 milestone. Always verify the accepted upstream state before reporting project
 status or choosing the next task.

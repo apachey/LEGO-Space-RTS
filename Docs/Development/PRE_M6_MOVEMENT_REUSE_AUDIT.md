@@ -5,6 +5,11 @@ architecture review is required only before further movement-architecture
 expansion**. No external dependency or third-party source code has been added
 or approved.
 
+M6 closeout supersedes the original milestone assignment in this historical
+audit: the game director accepted M6 and moved Stress60 to
+`BLOCKING_LATER — M9 large-battle acceptance`. The measurements and rejected
+experiments below remain valid evidence; they no longer block M6, M7 or M8.
+
 ## Decision
 
 Do not replace the project-owned deterministic movement stack and do not add a
@@ -130,7 +135,7 @@ explicit travel-time-feasibility requirement and makes the current completion
 signal ambiguous.
 
 Fixing the fixture is not weakening the gate. The 60-mover scenario remains
-`BLOCKING_LATER — M6 networked 1v1 acceptance`; each phase must receive a
+`BLOCKING_LATER — M9 large-battle acceptance`; each phase must receive a
 justified generous deadline, and the fixture must assert that its timing is
 feasible for the slowest member.
 
@@ -313,13 +318,13 @@ failed pressure/window experiment remains.
 After removing it, the repository's normal `./tools/verify.sh` run passed all
 stages: 256 NUnit tests, the honest 24/24 M2 movement acceptance, both Release
 and Godot Debug builds, compiled-content checks, HeadlessSim smoke and Godot
-headless smoke. The unresolved failure is therefore isolated to the canonical
-pre-M6 60-mover scale gate rather than a general accepted-game regression.
+headless smoke. The unresolved failure is therefore isolated to the preserved
+60-mover scale gate rather than a general accepted-game regression.
 
 The subsequent 26,000-tick `./tools/verify.sh --full` run passed every current
 blocking stage, including 100-repeat determinism, replay, snapshot continuation,
 content regeneration and a launchable macOS export. The honestly classified
-`BLOCKING_LATER — M6 acceptance` stress produced:
+`BLOCKING_LATER — M9 large-battle acceptance` stress produced:
 
 - phase completion: 4/60, 5/60, then 2/60;
 - realtime multiplier: 16.21×;
@@ -329,19 +334,18 @@ content regeneration and a launchable macOS export. The honestly classified
 - oscillation incidents: 34,750.
 
 The full development verification therefore passes with one visible diagnostic
-failure; `--m6-acceptance` promotes the same stress to a real blocking stage.
+failure; `--m9-acceptance` promotes the same stress to a real blocking stage.
 
 There is no evidence-based third local-scoring patch to apply.
 
-The exact Phase 09B language says the stress becomes blocking **before M6
-networked 1v1 acceptance**. It does not say that M6 implementation cannot start.
-No canon rewrite is required to integrate the verified immutable-endpoint and
-arrival work, carry the documented 60-mover limitation into M6, and begin the
-first bounded M6 task.
+The current Phase 09B language makes the stress blocking **before M9
+large-battle acceptance**. The verified immutable-endpoint and arrival work is
+accepted, M6 is closed, and M7–M8 may proceed with the limitation continuously
+visible.
 
 `ARCHITECTURE REVIEW REQUIRED` before any further movement attempt that adds a
 traffic coordinator/solver or otherwise expands the movement architecture. If
-the gate still fails when M6 acceptance is being prepared, it must either pass
+the gate still fails when M9 acceptance is being prepared, it must either pass
 through an approved movement architecture or receive an explicit canon
 reclassification; merely weakening the harness remains prohibited.
 

@@ -1,12 +1,12 @@
 # LEGO Space RTS — DETERMINISTIC RTS PROTOTYPE
 
-**Phase:** 10 — M6 Networked 1v1 implementation
+**Phase:** 10 — M7 Visual Vertical Slice
 
 **Engine amendment:** Godot **4.7.1-stable .NET**, C#
 
 **Primary platform:** Windows 11 x86-64
 
-**Status:** M0–M5 accepted and merged; M6 T058 dedicated-server transport foundation implemented on its task branch
+**Status:** M0–M6 implemented, verified and game-director accepted; M7 is next
 
 This repository replaces only the Unity-specific host from the original Phase 10 package. The authoritative gameplay simulation remains the engine-independent `SimCore` library. Godot owns presentation, input, camera, debug visualization and UI; it does not own gameplay truth.
 
@@ -30,7 +30,9 @@ The first macOS playtest exposed presentation and movement issues that static va
 - CPU-authoritative fog/LoS;
 - authored dynamic Excavatable topology;
 - 60-mover stress scenario and deterministic golden-run foundation;
-- multiplayer remains a custom command/snapshot protocol; the T058 Godot ENet layer is packet transport only.
+- multiplayer remains a custom command/snapshot protocol over the Godot ENet
+  carrier; M6 command authority, snapshots, fog privacy, reconnect and replay
+  are implemented and verified.
 
 ## Godot-specific replacement decisions
 
@@ -94,7 +96,7 @@ PHASE10 GODOT HEADLESS SMOKE: PASS ...
 
 This smoke confirms the Godot host can instantiate and advance the simulation; it does not replace pure deterministic regression/benchmark tests.
 
-## M6 T058 dedicated transport
+## M6 dedicated networking
 
 Run the transport-only dedicated host locally with:
 
@@ -102,10 +104,10 @@ Run the transport-only dedicated host locally with:
 Godot --headless --path GodotClient -- --dedicated-server --network-bind 127.0.0.1 --network-port 24567
 ```
 
-The automated two-client ENet loopback gate is part of `./tools/verify.sh` and
-can also be run directly with `--m6-transport-smoke`. It proves raw packet
-targeting and the reliable-ordered, unreliable-sequenced and reliable-bulk
-channels without introducing Godot RPC gameplay authority.
+The automated two-client ENet loopback gates are part of `./tools/verify.sh`.
+They cover transport, server command authority, 10-Hz fog-safe snapshots,
+reconnect and authoritative post-match replay without giving Godot RPC gameplay
+authority.
 
 ## Headless deterministic runner
 
@@ -135,12 +137,16 @@ Snapshot/replay capabilities include `--snapshot-in`, `--snapshot-out`, `--repla
 
 ## Verification status
 
-This package was statically audited in the artifact environment. That environment does **not** contain a functioning Godot 4.7.1 .NET editor or `dotnet` SDK/runtime, so this package does not falsely claim that compilation, NUnit, Godot headless smoke, 100-run golden validation, or benchmark gates passed here.
+The accepted M6 stack passed the pinned Godot/.NET full verification: build,
+278 NUnit tests, 24-mover acceptance, all T058–T063 ENet smokes, 100-run
+determinism, replay/snapshot continuation, content regeneration and macOS
+export. The preserved 60-mover scenario remains a visible
+`BLOCKING_LATER — M9 large-battle acceptance` diagnostic.
 
 Run:
 
 ```bash
-python3 tools/Validation/validate_phase10.py
+./tools/verify.sh --full
 ```
 
 The current executable state and next task are recorded in

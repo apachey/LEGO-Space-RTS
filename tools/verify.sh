@@ -10,9 +10,9 @@ setup_dotnet_environment
 
 MODE="fast"
 if [[ "${1:-}" == "--full" ]]; then MODE="full"; shift
-elif [[ "${1:-}" == "--m6-acceptance" ]]; then MODE="m6-acceptance"; shift
+elif [[ "${1:-}" == "--m9-acceptance" ]]; then MODE="m9-acceptance"; shift
 fi
-if (( $# > 0 )); then printf 'Usage: %s [--full|--m6-acceptance]\n' "$0" >&2; exit 2; fi
+if (( $# > 0 )); then printf 'Usage: %s [--full|--m9-acceptance]\n' "$0" >&2; exit 2; fi
 
 ARTIFACT_DIR="${ROOT}/Artifacts/Verification"
 mkdir -p "${ARTIFACT_DIR}"
@@ -245,10 +245,10 @@ if [[ "${MODE}" != "fast" ]]; then
   run_stage "[BLOCKING_NOW] 100-repeat deterministic golden run" "golden100" dotnet "$(headless_dll)" --scenario golden --ticks 3200 --repeat 100
   run_stage "[BLOCKING_NOW] Replay record/final-hash verification" "replay" verify_replay_hash
   run_stage "[BLOCKING_NOW] Snapshot restore/continuation verification" "snapshot" verify_snapshot_continuation
-  if [[ "${MODE}" == "m6-acceptance" ]]; then
-    run_stage "[BLOCKING_NOW M6 ACCEPTANCE] 60-mover navigation/performance stress" "stress60" dotnet "$(headless_dll)" --scenario stress60 --ticks 26000 --benchmark --path-benchmark --enforce-performance-gates
+  if [[ "${MODE}" == "m9-acceptance" ]]; then
+    run_stage "[BLOCKING_NOW M9 LARGE-BATTLE ACCEPTANCE] 60-mover navigation/performance stress" "stress60" dotnet "$(headless_dll)" --scenario stress60 --ticks 26000 --benchmark --path-benchmark --enforce-performance-gates
   else
-    run_diagnostic_stage "[BLOCKING_LATER M6 ACCEPTANCE] 60-mover navigation/performance stress" "stress60" dotnet "$(headless_dll)" --scenario stress60 --ticks 26000 --benchmark --path-benchmark --enforce-performance-gates
+    run_diagnostic_stage "[BLOCKING_LATER M9 LARGE-BATTLE ACCEPTANCE] 60-mover navigation/performance stress" "stress60" dotnet "$(headless_dll)" --scenario stress60 --ticks 26000 --benchmark --path-benchmark --enforce-performance-gates
   fi
   run_stage "[BLOCKING_NOW] Compiled-content regeneration" "content-regenerate" regenerate_tracked_content
   run_stage "[BLOCKING_NOW] macOS debug export smoke" "macos-export" "${ROOT}/tools/build-mac.sh" --verify

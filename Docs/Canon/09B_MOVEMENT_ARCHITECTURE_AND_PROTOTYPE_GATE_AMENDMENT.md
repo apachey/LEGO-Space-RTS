@@ -432,15 +432,17 @@ Its classification changes from:
 
 to:
 
-# BLOCKING_LATER — PRE-M6 MOVEMENT / NETWORK SCALE GATE
+# BLOCKING_LATER — M9 LARGE-BATTLE SCALE GATE
 
-During M2–M5 it is:
+During M2–M8 it is:
 
 **DIAGNOSTIC / REGRESSION-STRESS**
 
 It must remain runnable and should trend better as movement matures.
 
-It becomes blocking before M6 networked 1v1 acceptance, when the project must prove that medium/large combined gameplay load is robust enough for synchronized multiplayer.
+It becomes blocking before M9 Skirmish Alpha acceptance, when the project must
+prove the canonical stable-large-battle exit and substantially meet the retained
+performance targets.
 
 The stress fixture may evolve to remain physically feasible and representative, but may not be hard-coded around one implementation.
 
@@ -462,7 +464,7 @@ For M2:
 - the representative 24-mover blocking scenario must meet normal budgets;
 - the 60-mover stress metrics are diagnostic unless a catastrophic regression occurs.
 
-Before M6:
+Before M9:
 
 - the applicable stress budgets become blocking again.
 
@@ -577,7 +579,7 @@ Phase 09 Parts XVIII–XIX and related M2 acceptance assumptions are amended as 
 3. Normal crowd movement uses deterministic local separation/yield/soft-push rather than general space-time scheduling.
 4. Reservations are narrowed primarily to discrete spawn/exit/unload placement and optional bounded local safety support.
 5. Existing stuck timing anchors remain, but recovery actions are rewritten around corridor repair, formation reflow and deterministic repath.
-6. The 60+ mover test is reclassified from M2 blocker to pre-M6 blocking stress gate / M2–M5 diagnostic.
+6. The 60+ mover test is reclassified from M2 blocker to M9 large-battle blocking stress gate / M2–M8 diagnostic.
 7. M2 receives a new representative 24-mover blocking scenario plus mandatory human movement-feel acceptance.
 8. Development-complexity guardrails become authoritative technical policy.
 
