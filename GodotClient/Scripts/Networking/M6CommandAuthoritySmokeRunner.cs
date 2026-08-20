@@ -108,6 +108,9 @@ public partial class M6CommandAuthoritySmokeRunner : Node
 
     private void OnClientPacket(SmokeClient client, M6TransportPacket packet)
     {
+        if (packet.Channel == M6TransportChannel.UnreliableSequenced &&
+            packet.TransferMode == MultiplayerPeer.TransferModeEnum.UnreliableOrdered &&
+            NetworkSnapshotProtocol.TryDecodeFrame(packet.Payload, out _)) return;
         if (packet.PeerId != MultiplayerPeer.TargetPeerServer || packet.Channel != M6TransportChannel.ReliableOrdered ||
             packet.TransferMode != MultiplayerPeer.TransferModeEnum.Reliable)
         {

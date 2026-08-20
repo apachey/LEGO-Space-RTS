@@ -5,15 +5,16 @@ using CryptographicRandomNumberGenerator = System.Security.Cryptography.RandomNu
 namespace LegoSpaceRTS.Networking;
 
 /// <summary>
-/// T059 dedicated-server authority. It binds ENet peers to server-created
-/// sessions, validates intent packets and advances only the 20 Hz SimCore.
-/// Snapshot replication intentionally remains T060.
+/// M6 dedicated-server authority. It binds ENet peers to server-created
+/// sessions, validates intent packets, advances the 20 Hz SimCore and publishes
+/// recipient-specific T060 snapshots at 10 Hz.
 /// </summary>
 public partial class M6DedicatedServerCommandHost : Node
 {
     private const double TickSeconds = 0.05;
     private const int MaximumCatchUpTicksPerFrame = 8;
     private readonly SortedDictionary<int, ServerCommandSession> _sessions = new();
+    private readonly SortedDictionary<int, ServerSnapshotSession> _snapshotSessions = new();
     private readonly ServerCommandAuthority _authority = new();
     private M6DedicatedServerTransportHost? _transport;
     private SimulationRunner? _runner;
@@ -21,6 +22,7 @@ public partial class M6DedicatedServerCommandHost : Node
 
     public event Action<int, byte>? SessionOpened;
     public event Action<int, NetworkCommandAcknowledgment>? CommandAcknowledged;
+    public event Action<int, uint, int>? SnapshotSent;
 
     public bool IsListening => _transport?.IsListening == true;
     public int ConnectedClientCount => _transport?.ConnectedClientCount ?? 0;
@@ -68,6 +70,7 @@ public partial class M6DedicatedServerCommandHost : Node
         while (_accumulator >= TickSeconds && steps < MaximumCatchUpTicksPerFrame)
         {
             _runner.StepOneTick();
+            if ((_runner.World.Tick.Value & 1) == 0) PublishSnapshots();
             _accumulator -= TickSeconds;
             steps++;
         }
@@ -81,6 +84,7 @@ public partial class M6DedicatedServerCommandHost : Node
         _transport = null;
         _runner = null;
         _sessions.Clear();
+        _snapshotSessions.Clear();
         _accumulator = 0;
         if (transport is null) return;
         transport.ClientConnected -= OnClientConnected;
@@ -96,11 +100,13 @@ public partial class M6DedicatedServerCommandHost : Node
         ulong token = CreateUniqueSessionToken();
         ServerCommandSession session = new(peerId, playerSlot, token);
         _sessions.Add(peerId, session);
+        _snapshotSessions.Add(peerId, new ServerSnapshotSession());
         Error result = _transport.Send(peerId, M6TransportChannel.ReliableOrdered,
             NetworkCommandProtocol.EncodeWelcome(new NetworkCommandSessionWelcome(token, playerSlot)));
         if (result != Error.Ok)
         {
             _sessions.Remove(peerId);
+            _snapshotSessions.Remove(peerId);
             GD.PrintErr($"M6 command session welcome failed peer={peerId} error={result}");
             return;
         }
@@ -110,12 +116,20 @@ public partial class M6DedicatedServerCommandHost : Node
 
     private void OnClientDisconnected(int peerId)
     {
+        _snapshotSessions.Remove(peerId);
         if (_sessions.Remove(peerId)) GD.Print($"M6 command session closed peer={peerId}");
     }
 
     private void OnPacketReceived(M6TransportPacket packet)
     {
         if (_transport is null || _runner is null || !_sessions.TryGetValue(packet.PeerId, out ServerCommandSession? session)) return;
+        if (packet.Channel == M6TransportChannel.ReliableOrdered && packet.TransferMode == MultiplayerPeer.TransferModeEnum.Reliable &&
+            NetworkSnapshotProtocol.TryDecodeAcknowledgment(packet.Payload, out NetworkSnapshotAcknowledgment snapshotAck))
+        {
+            if (snapshotAck.SessionToken == session.SessionToken && _snapshotSessions.TryGetValue(packet.PeerId, out ServerSnapshotSession? snapshots))
+                snapshots.TryAcknowledge(snapshotAck.SnapshotSequence);
+            return;
+        }
         NetworkCommandAcknowledgment acknowledgment;
         if (packet.Channel != M6TransportChannel.ReliableOrdered || packet.TransferMode != MultiplayerPeer.TransferModeEnum.Reliable)
             acknowledgment = new NetworkCommandAcknowledgment(0, NetworkCommandRejection.MalformedPacket, new SimTick(-1));
@@ -126,6 +140,24 @@ public partial class M6DedicatedServerCommandHost : Node
             NetworkCommandProtocol.EncodeAcknowledgment(acknowledgment));
         if (result != Error.Ok) GD.PrintErr($"M6 command acknowledgment failed peer={packet.PeerId} error={result}");
         CommandAcknowledged?.Invoke(packet.PeerId, acknowledgment);
+    }
+
+    private void PublishSnapshots()
+    {
+        if (_transport is null || _runner is null) return;
+        foreach (KeyValuePair<int, ServerCommandSession> pair in _sessions)
+        {
+            if (!_snapshotSessions.TryGetValue(pair.Key, out ServerSnapshotSession? snapshots)) continue;
+            byte[] payload = snapshots.CreatePacket(_runner.World, pair.Value.PlayerSlot);
+            Error result = _transport.Send(pair.Key, M6TransportChannel.UnreliableSequenced, payload);
+            if (result != Error.Ok)
+            {
+                GD.PrintErr($"M6 snapshot send failed peer={pair.Key} error={result}");
+                continue;
+            }
+            if (NetworkSnapshotProtocol.TryDecodeFrame(payload, out NetworkSnapshotFrame frame))
+                SnapshotSent?.Invoke(pair.Key, frame.Sequence, payload.Length);
+        }
     }
 
     private byte FindAvailablePlayerSlot()
