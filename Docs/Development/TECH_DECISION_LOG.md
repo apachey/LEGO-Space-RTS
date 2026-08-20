@@ -619,3 +619,38 @@ It does not change gameplay canon.
 
 This implements the approved Godot transport boundary without changing
 gameplay canon or SimCore command semantics.
+
+---
+
+## 2026-08-20 — M6 T059 project-owned server command authority
+
+- A versioned project-owned command protocol now rides T058's reliable-ordered
+  ENet channel. It defines a server session welcome, bounded command request and
+  deterministic accepted/rejected acknowledgment; ENet still has no gameplay
+  authority and T060 snapshot packets remain separate.
+- The server assigns the first two peers distinct player slots and
+  cryptographically random nonzero session tokens. Client-supplied player slots
+  and execution ticks are never authoritative.
+- A fresh session begins at client sequence 1 and accepts exactly the next
+  sequence. Authenticated rejected commands consume their sequence, duplicates
+  cannot execute twice, and a new session token resets the sequence boundary.
+- Security rate limiting is bounded at 64 authenticated command attempts per
+  authoritative simulation tick per session. This is a transport-abuse ceiling,
+  not a gameplay balance rule.
+- Validation rejects malformed/version-incompatible/oversized packets, debug
+  commands, unsorted or duplicate Entity IDs, missing or foreign entities,
+  ineligible command sources, hidden or illegal targets and the implemented
+  resource, Energy/Charge, technology, state, placement and Forward Service
+  failures. Authoritative gameplay systems still revalidate mutable legality
+  when the accepted command executes.
+- A valid request is reconstructed with the bound server player slot and the
+  next legal 20-Hz simulation tick before entering the existing deterministic
+  `CommandBuffer`. Offline `CommandEnvelope`, snapshot format 20, simulation
+  protocol 18, replay format 15 and content format 16 remain unchanged.
+- The dedicated-server entry now loads compiled authoritative gameplay data and
+  advances SimCore without rendering. The normal verification harness exercises
+  the real carrier with two clients, three accepted commands and six rejected
+  forgery/replay/malformed/debug cases.
+
+This implements approved T059 authority and security requirements. It changes
+no gameplay canon and deliberately leaves state replication to T060.

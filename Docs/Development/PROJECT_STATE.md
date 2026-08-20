@@ -6,9 +6,9 @@ authoritative when anything here becomes stale.
 ## Current milestone
 
 **M4 and M5 are implemented, game-director accepted and merged to
-`origin/main` through PR #12 (`85b02f2`). M6 T058 — network transport host
-foundation — is implemented and verified on
-`codex/m6-t058-network-transport`.**
+`origin/main` through PR #12 (`85b02f2`). M6 T058 — network transport host —
+and T059 — server command validation — are implemented on stacked task
+branches through `codex/m6-t059-command-validation`.**
 
 - The task branch includes the verified post-M5 movement handoff from
   `44e2caf`.
@@ -38,9 +38,9 @@ foundation — is implemented and verified on
   Charge/Surge and tubes, displacement/stability and clamp passage.
 - Repeatable developer-prepared M4/M5 acceptance controls remain available.
 
-## M6 T058 transport foundation
+## M6 T058–T059 server authority foundation
 
-The Godot host now supports a transport-only dedicated-server entry:
+The Godot host now supports a headless dedicated-server entry:
 
 `--dedicated-server --network-bind <address> --network-port <port>`
 
@@ -54,8 +54,26 @@ T058 provides:
 - a normal blocking loopback smoke that connects two clients and exchanges
   targeted packets through all three channels.
 
-T058 does **not** deserialize or validate player commands, publish snapshots,
-filter fog, reconnect clients or define replay delivery. Those remain T059–T063.
+T059 now layers project-owned command authority over that carrier:
+
+- the dedicated entry loads the authoritative scenario and advances SimCore at
+  a fixed 20 Hz;
+- each connected peer receives a server-created player slot and cryptographically
+  random session token;
+- reliable command packets carry intent only and use explicit packet format and
+  simulation-protocol versions with a 4096-byte request bound;
+- the server enforces token/player binding, exactly-next sequence processing,
+  a bounded per-tick rate limit, sorted unique entity IDs, ownership, entity and
+  command eligibility, fog/legal target knowledge and the currently implemented
+  resource, Energy/Charge, technology, placement and service checks;
+- accepted intent is rebuilt with the server player slot and next legal
+  simulation tick, then enters the existing deterministic `CommandBuffer`;
+- every decodable request receives an accepted/rejected acknowledgment with the
+  client sequence, execution tick and deterministic rejection code;
+- debug/developer command families are never accepted from a network session.
+
+T059 does **not** publish snapshots, delta baselines or client state. Fog-filtered
+replication, reconnect and network replay remain T060–T063.
 
 ## Integration format boundary
 
@@ -66,7 +84,8 @@ The accepted post-M5 baseline remains:
 - replay format **15**;
 - compiled content format **16** / source schema **15**.
 
-T058 changes no authoritative command, snapshot, replay or content format.
+T059 adds network command packet format **1** without changing offline
+`CommandEnvelope`, snapshot, replay or content formats.
 
 ## Verification state
 
@@ -81,6 +100,14 @@ blocking stage green: 256 NUnit tests, honest 24/24 movement acceptance, the
 new two-client ENet transport smoke, 100-repeat determinism, replay, snapshot
 continuation, compiled-content regeneration and macOS export. The exact summary
 is `Artifacts/Verification/20260820T153920Z-full-summary.txt`.
+
+T059 passed `./tools/verify.sh --full` on 2026-08-20 with every current blocking
+stage green: 263 NUnit tests, honest 24/24 movement acceptance, both two-client
+ENet smokes, 100-repeat determinism, replay, snapshot continuation, compiled
+content regeneration and macOS export. The authority smoke proves three legal
+commands execute and six hostile/invalid inputs are rejected across real ENet
+connections. The exact summary is
+`Artifacts/Verification/20260820T162113Z-full-summary.txt`.
 
 Stress60 remained the expected `BLOCKING_LATER` diagnostic failure at 4/60,
 5/60 and 2/60 phase completion. The exported macOS debug build is
@@ -99,9 +126,10 @@ explicitly changes the gate.
 
 ## Next approved action
 
-1. Hand the verified T058 branch to the game director for review and merge.
-2. After T058 is accepted on the project baseline, begin **T059 — server command
-   validation**. Preserve offline `CommandEnvelope` semantics and do not pull
-   T060 snapshot replication into T059.
+1. Hand the verified stacked T059 branch to the game director for review and
+   merge with its T058 dependency.
+2. After T059 is accepted on the project baseline, begin **T060 — snapshot
+   replication** at the canonical 10 Hz. Preserve the T059 authority boundary;
+   do not pull fog filtering (T061) or reconnect (T062) into T060.
 3. Keep stress60 visible as `BLOCKING_LATER` throughout M6 development and
    promote it to `BLOCKING_NOW` for M6 acceptance.

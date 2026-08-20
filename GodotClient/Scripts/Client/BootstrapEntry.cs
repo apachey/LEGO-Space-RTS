@@ -13,6 +13,11 @@ public partial class BootstrapEntry : Node
             AddChild(new M6TransportSmokeRunner { Name = "M6TransportSmokeRunner" });
             return;
         }
+        if (arguments.Contains("--m6-command-smoke"))
+        {
+            AddChild(new M6CommandAuthoritySmokeRunner { Name = "M6CommandAuthoritySmokeRunner" });
+            return;
+        }
         if (arguments.Contains("--dedicated-server"))
         {
             StartDedicatedServer(arguments);
@@ -29,15 +34,16 @@ public partial class BootstrapEntry : Node
         try
         {
             M6TransportHostOptions options = M6TransportHostOptions.Parse(arguments);
-            M6DedicatedServerTransportHost host = new() { Name = "M6DedicatedServerTransportHost" };
+            LoadedScenario scenario = RuntimeScenarioLoader.LoadCanonicalOpening();
+            M6DedicatedServerCommandHost host = new() { Name = "M6DedicatedServerCommandHost" };
             AddChild(host);
-            Error result = host.Listen(options);
+            Error result = host.Listen(options, scenario.World, scenario.GameplayContentHash);
             if (result == Error.Ok) return;
-            GD.PrintErr($"M6 dedicated transport failed to listen: {result}");
+            GD.PrintErr($"M6 dedicated command authority failed to listen: {result}");
         }
         catch (Exception exception)
         {
-            GD.PrintErr($"M6 dedicated transport configuration failed: {exception.Message}");
+            GD.PrintErr($"M6 dedicated command authority configuration failed: {exception.Message}");
         }
         GetTree().Quit(2);
     }
