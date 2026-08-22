@@ -12,8 +12,9 @@ camera control, generated material-detail textures, repaired emission/VFX,
 sim-driven animation controls, bounded VFX-pool budgets/telemetry, static post
 patterns, depth-tested tracks, bounded LEGO-destruction controls and complete
 JSON copy/paste. T068 now provides a separate responsive full-HUD framework and
-schema-1 HUD Lab; its visual language remains explicitly non-canonical. HUD and
-health visuals remain excluded from the world Look Lab. The
+T069 replaces its minimap placeholder with a client-legal north-up tactical map;
+the HUD Lab is now schema 2 and its visual language remains explicitly
+non-canonical. HUD and health visuals remain excluded from the world Look Lab. The
 six-page Palette Ratio Lab is game-director accepted. The revised Look Lab
 awaits game-director profile exploration and review.**
 
@@ -245,7 +246,7 @@ fixtures; the Palette Lab remains the accepted palette review fixture.
   state projection from retained view/layout code.
 - The canonical Phase 07 anchors now exist: top global status, bottom-left
   minimap/alert access, bottom-center selection, bottom-right 3×4 command/queue
-  interaction. The minimap itself remains T069 and is explicitly a placeholder.
+  interaction. T069 now owns the implemented minimap inside this retained slot.
 - Mixed selections aggregate up to 128 selected entities by gameplay type and
   bind to eight reusable cards rather than generating portrait walls.
 - The skeleton supports 90–100% safe area, 96% default, independent UI/text
@@ -253,11 +254,35 @@ fixtures; the Palette Lab remains the accepted palette review fixture.
   families.
 - `F8` → **M7 HUD Lab** provides eight information-density fixtures, four
   aspect previews, live layout/type/surface/content/color tokens and complete
-  schema-1 JSON copy/paste. Details are in
+  schema-2 JSON copy/paste, including schema-1 migration. Details are in
   `Docs/Development/M7_HUD_LAB.md`.
 - T068 does not approve HUD art direction. Authored icons, portraits,
   typography, faction framing, alert motion/audio and health-bar visuals remain
   game-director review work. T073 still owns the complete command catalog.
+
+## M7 T069 fog-correct minimap
+
+- The production HUD and HUD Lab share a retained, permanently north-up
+  minimap. Terrain is cached by topology revision; viewer fog and bounded
+  strategic markers refresh at 10 Hz while marker motion is interpolated.
+- Current contacts come from the viewer-filtered presentation snapshot. Hidden
+  mobile/air enemies are absent; only last-observed enemy structures and
+  resources may remain under explored fog and are removed when disproved by
+  renewed visibility.
+- Mobile, true-air, structure and resource shapes render through four bounded
+  `MultiMeshInstance2D` channels. Owned Tube links, remembered enemy Tube
+  segments, visible Surge pulses, alerts and the render-frame camera polygon
+  are independent layers.
+- Left-click/drag controls the camera. Right-click reuses the existing exact
+  build-cell Move/rally path and `Shift` queues Move. Attack-move targeting and
+  networked team pings remain T073 because their command/target-mode path does
+  not yet exist.
+- HUD schema 2 exposes minimap fog, marker, interpolation, viewport, network,
+  alert and color tokens. Eight legal-knowledge fixtures and four responsive
+  aspect smokes exercise the shared implementation. Details are in
+  `Docs/Development/M7_MINIMAP.md`.
+- No gameplay, SimCore, deterministic rule, network packet, replay format or
+  visual canon changed.
 
 ## Integration format boundary
 
@@ -333,6 +358,17 @@ for the critical-tooltip fixture at 21:9 after the final one-line alert fix.
 Evidence:
 `Artifacts/Screenshots/m7-t068-exported-hud-critical-21-9.png`.
 
+The T069 minimap integration passed the complete full suite with zero blocking
+failures at
+`Artifacts/Verification/20260822T180629Z-full-summary.txt`: 278 NUnit tests,
+all retained Godot/M6/M7 smokes, 100-repeat determinism, replay/snapshot checks,
+content regeneration and macOS export. HUD Lab evidence is
+`Artifacts/Screenshots/m7-t069-hud-minimap-mixed-army.png`; the production HUD
+capture is `Artifacts/Screenshots/m7-t069-production-minimap.png`. The freshly
+exported app also emitted the schema-2 minimap PASS marker for the Martian Tube
+fixture; evidence is
+`Artifacts/Screenshots/m7-t069-exported-minimap-martian.png`.
+
 The latest Stress60 run remained the expected diagnostic failure with phase
 completion **4/60, 5/60 and 2/60**. The exported macOS debug build is:
 `Builds/macOS/LEGO Space RTS.app`.
@@ -350,11 +386,11 @@ blocking only when M9 must prove its stable-large-battle exit.
 
 ## Next approved action
 
-1. Begin M7 T069: implement the real north-up, fog-correct minimap inside the
-   reserved bottom-left HUD slot using only client-legal knowledge.
+1. Begin M8 T070: import all 35 canonical unit definitions without inventing or
+   rebalancing roster content.
 2. The game director may independently explore `F8` → **M7 HUD Lab** and return
    its **COPY JSON** profile later; no HUD visual canon is required to begin
-   T069.
+   T070.
 3. The gameplay-scale **M7 Look Lab** remains available for world-style review;
    do not record T064 acceptance until the game director explicitly locks a
    direction.

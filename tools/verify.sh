@@ -324,8 +324,8 @@ godot_m7_hud_smoke() {
       printf 'M7 HUD Lab emitted a script or runtime error.\n' >&2
       return 1
     fi
-    if ! printf '%s\n' "${output}" | grep -q "M7 HUD LAB: PASS scenarios=8 commands=12.*schema=1 active=${scenario}"; then
-      printf 'Godot exited without the required T068 HUD Lab PASS marker for scenario=%s aspect=%s.\n' "${scenario}" "${aspect}" >&2
+    if ! printf '%s\n' "${output}" | grep -q "M7 HUD LAB: PASS scenarios=8 commands=12 minimap=legal.*schema=2 active=${scenario}"; then
+      printf 'Godot exited without the required T068/T069 HUD Lab PASS marker for scenario=%s aspect=%s.\n' "${scenario}" "${aspect}" >&2
       return 1
     fi
   done
@@ -348,7 +348,7 @@ run_stage "[BLOCKING_NOW T063] Godot authoritative server-log replay" "m6-replay
 run_stage "[BLOCKING_NOW M7 VISUAL EXPLORATION] Controlled Godot Style Lab" "m7-style" godot_m7_style_smoke
 run_stage "[BLOCKING_NOW M7 VISUAL EXPLORATION] Six-page Palette Ratio Lab" "m7-palette" godot_m7_palette_smoke
 run_stage "[BLOCKING_NOW M7 VISUAL EXPLORATION] Realtime gameplay-scale Look Lab" "m7-look" godot_m7_look_smoke
-run_stage "[BLOCKING_NOW T068] Responsive full HUD framework and lab" "m7-hud" godot_m7_hud_smoke
+run_stage "[BLOCKING_NOW T068/T069] Responsive HUD and fog-correct minimap lab" "m7-hud" godot_m7_hud_smoke
 
 if [[ "${MODE}" != "fast" ]]; then
   run_stage "[BLOCKING_NOW] 100-repeat deterministic golden run" "golden100" dotnet "$(headless_dll)" --scenario golden --ticks 3200 --repeat 100

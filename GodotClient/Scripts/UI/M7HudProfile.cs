@@ -5,7 +5,7 @@ namespace LegoSpaceRTS.UI;
 
 public sealed class M7HudProfile
 {
-    public const int CurrentSchemaVersion = 1;
+    public const int CurrentSchemaVersion = 2;
 
     public int SchemaVersion { get; set; } = CurrentSchemaVersion;
     public HudLayoutProfile Layout { get; set; } = new();
@@ -13,6 +13,7 @@ public sealed class M7HudProfile
     public HudSurfaceProfile Surface { get; set; } = new();
     public HudColorProfile Colors { get; set; } = new();
     public HudContentProfile Content { get; set; } = new();
+    public HudMinimapProfile Minimap { get; set; } = new();
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -42,7 +43,7 @@ public sealed class M7HudProfile
                 error = "Clipboard does not contain an M7 HUD profile.";
                 return false;
             }
-            if (parsed.SchemaVersion != CurrentSchemaVersion)
+            if (parsed.SchemaVersion is not 1 and not CurrentSchemaVersion)
             {
                 profile = CreateDefault();
                 error = $"HUD schema {parsed.SchemaVersion} is not supported; expected {CurrentSchemaVersion}.";
@@ -75,6 +76,7 @@ public sealed class M7HudProfile
         Surface ??= new HudSurfaceProfile();
         Colors ??= new HudColorProfile();
         Content ??= new HudContentProfile();
+        Minimap ??= new HudMinimapProfile();
         Layout.SafeAreaPercent = Clamp(Layout.SafeAreaPercent, 90f, 100f);
         Layout.UiScale = Clamp(Layout.UiScale, 0.8f, 1.35f);
         Layout.TopStripHeight = Clamp(Layout.TopStripHeight, 44f, 78f);
@@ -92,6 +94,14 @@ public sealed class M7HudProfile
         Surface.CornerRadius = Clamp(Surface.CornerRadius, 0, 20);
         Surface.InnerPadding = Clamp(Surface.InnerPadding, 4, 24);
         Surface.Separation = Clamp(Surface.Separation, 2, 18);
+        Minimap.MarkerScale = Clamp(Minimap.MarkerScale, 0.6f, 2.0f);
+        Minimap.InterpolationSeconds = Clamp(Minimap.InterpolationSeconds, 0f, 0.30f);
+        Minimap.ExploredFogOpacity = Clamp(Minimap.ExploredFogOpacity, 0.15f, 0.90f);
+        Minimap.UnseenFogOpacity = Clamp(Minimap.UnseenFogOpacity, 0.55f, 1f);
+        Minimap.RememberedOpacity = Clamp(Minimap.RememberedOpacity, 0.15f, 0.85f);
+        Minimap.GridOpacity = Clamp(Minimap.GridOpacity, 0f, 0.30f);
+        Minimap.ViewportLineWidth = Clamp(Minimap.ViewportLineWidth, 1f, 5f);
+        Minimap.AlertPulseScale = Clamp(Minimap.AlertPulseScale, 0.5f, 2.5f);
     }
 
     private static float Clamp(float value, float min, float max) => Math.Clamp(value, min, max);
@@ -152,4 +162,30 @@ public sealed class HudContentProfile
     public bool ShowObjectiveTracker { get; set; } = true;
     public bool ShowMinimapLegend { get; set; } = true;
     public bool ShowCommandCosts { get; set; } = true;
+}
+
+public sealed class HudMinimapProfile
+{
+    public float MarkerScale { get; set; } = 1f;
+    public float InterpolationSeconds { get; set; } = 0.10f;
+    public float ExploredFogOpacity { get; set; } = 0.56f;
+    public float UnseenFogOpacity { get; set; } = 0.92f;
+    public float RememberedOpacity { get; set; } = 0.48f;
+    public float GridOpacity { get; set; } = 0.08f;
+    public float ViewportLineWidth { get; set; } = 1.5f;
+    public float AlertPulseScale { get; set; } = 1f;
+    public bool ShowViewport { get; set; } = true;
+    public bool ShowAlerts { get; set; } = true;
+    public bool ShowNetworkLines { get; set; } = true;
+    public string GroundColor { get; set; } = "#35403d";
+    public string RoughColor { get; set; } = "#594735";
+    public string BlockedColor { get; set; } = "#1b2225";
+    public string ExcavatableColor { get; set; } = "#71512f";
+    public string OwnedColor { get; set; } = "#e6ad28";
+    public string AlliedColor { get; set; } = "#65c987";
+    public string EnemyColor { get; set; } = "#ff6b45";
+    public string NeutralColor { get; set; } = "#b4bec1";
+    public string ResourceColor { get; set; } = "#d9f24b";
+    public string ViewportColor { get; set; } = "#f2eee3";
+    public string AlertColor { get; set; } = "#ff8a4d";
 }

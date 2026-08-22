@@ -1,6 +1,6 @@
 # M7 HUD Lab
 
-Status: implementation and art-direction laboratory for T068. It is not visual
+Status: implementation and art-direction laboratory for T068/T069. It is not visual
 canon.
 
 ## Purpose
@@ -28,15 +28,18 @@ Open it from `F8` → **M7 HUD Lab**, or launch:
 
 - top: Ore, Energy, spendable Crystals, Operations Capacity, faction mechanic
   and match state;
-- bottom-left: north-up minimap slot and actionable alert access;
+- bottom-left: fog-correct north-up minimap and actionable alert access;
 - bottom-center: entity or type-group selection information;
 - bottom-right: canonical 3×4 command grid and local queue;
 - temporary layers: compact objective tracker, event feed, Energy Domain
   popover and quick/expanded tooltip.
 
-The minimap surface is deliberately labeled as a T069 placeholder. It proves
-size and ownership of the bottom-left region but does not claim fog correctness,
-world conversion, marker instancing or minimap commands.
+The minimap is now the retained T069 implementation. It uses the same bounded
+view in the laboratory and production: baked terrain, viewer knowledge mask,
+batched shape markers, remembered static contacts, alerts/network lines and a
+camera viewport polygon. Left-click/drag moves the camera; right-click issues a
+ground move or rally point; `Shift` + right-click queues a unit move. The lab
+turns those gestures into visible synthetic feedback without writing gameplay.
 
 ## Scenario fixtures
 
@@ -70,14 +73,21 @@ presets:
   command-cost density;
 - background, raised, recessed, accent, primary/muted text, good, warning,
   danger and selection colors.
+- minimap marker scale and 10-Hz motion smoothing;
+- separate explored/unseen fog opacity and remembered-contact opacity;
+- grid, viewport line and alert-pulse strength;
+- independent viewport, alert and network visibility toggles;
+- terrain-family, owned/allied/enemy/neutral/resource, viewport and alert
+  colors.
 
 `Tab` hides the laboratory controls for a clean evaluation.
 
 ## JSON handoff
 
-**COPY JSON** places the complete schema-1 `M7HudProfile` in the clipboard.
+**COPY JSON** places the complete schema-2 `M7HudProfile` in the clipboard.
 **PASTE JSON** accepts the same profile, normalizes all values and applies it
-live. Unknown fields are ignored; unsupported schema versions fail visibly.
+live. Schema 1 profiles migrate to schema 2 defaults for the new minimap
+section. Unknown fields are ignored; unsupported schema versions fail visibly.
 
 The profile is intentionally independent from `M7LookProfile`: world rendering
 and interface art direction can be reviewed and versioned separately.
@@ -102,15 +112,17 @@ Capture helper:
 
 The main verification suite exercises mixed selection, production, brownout and
 critical-tooltip fixtures across four aspect ratios. The smoke also verifies all
-eight fixture contracts, the 12-slot command bound, required retained nodes and
-JSON round-trip.
+eight fixture contracts, client-legal minimap knowledge, remembered-static
+rules, pixel/cell command conversion, the 12-slot command bound, required
+retained nodes, schema-1 migration and schema-2 JSON round-trip.
 
 ## Deliberately deferred
 
 - final HUD visual canon and faction framing;
 - icons, portraits, authored typography and localization assets;
-- T069 fog-correct minimap rendering and interaction;
 - T073 complete command catalog and every target-mode button path;
+- attack-move-on-minimap and networked `G` team pings, because their target-mode
+  and command transport belong to T073 rather than being invented in T069;
 - final alert animation/audio, health-bar art and accessibility settings menu.
 
 Disabled command slots in the current production prototype identify T073

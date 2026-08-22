@@ -958,3 +958,33 @@ gameplay change, SimCore mutation, network-format change or visual-canon choice.
 
 This changes Godot presentation architecture only. SimCore, commands, gameplay,
 networking and serialization formats are unchanged.
+
+## 2026-08-22 — T069 client-legal retained minimap layers
+
+- The production HUD and HUD Lab share one retained `HudMinimapView`; T069 does
+  not create a separate debug renderer that could drift from player behavior.
+- Static terrain is cached by topology revision. Viewer fog and bounded marker,
+  line and ping frames update at the HUD's 10-Hz cadence; marker positions are
+  visually interpolated while the camera viewport polygon updates every render
+  frame.
+- Current contacts come from the existing viewer-filtered
+  `PresentationSnapshot`. Presentation memory retains only last-observed enemy
+  structures and resources under explored fog. Hidden enemy mobiles and true
+  air are never reconstructed from `SimulationWorld`.
+- Enemy Tube memory is segment-based: adjacent route cells are learned only
+  while visible, remain as known infrastructure under explored fog and are
+  removed when renewed visibility disproves them. Visible enemy Surge anchors
+  likewise originate only from the filtered presentation snapshot.
+- Four bounded `MultiMeshInstance2D` channels encode mobile, true-air,
+  structure and resource symbol shapes. This avoids a `Control`/node per marker
+  while leaving all readability colors and opacities in schema-2
+  `M7HudProfile`.
+- Minimap left-click/drag uses the presentation camera. Right-click reuses the
+  existing Move/rally commands and queued modifier after converting the pixel
+  to the exact canonical build-cell center.
+- Attack-move targeting and networked team pings remain T073 work because no
+  current target-mode/ping command path exists. T069 does not change the command
+  packet, recipient snapshot or replay format to approximate them.
+
+This changes Godot presentation/input integration only. SimCore, gameplay
+rules, network formats, replay formats and visual canon are unchanged.

@@ -1,6 +1,7 @@
 using Godot;
 using LegoSpaceRTS.Presentation;
 using LegoSpaceRTS.SimCore;
+using LegoSpaceRTS.UI;
 
 namespace LegoSpaceRTS.Client;
 
@@ -100,9 +101,13 @@ public partial class GodotSmokeRunner : Node
         if (_captureTransformationRollback) { requiredTick = 0; requiredFrames = 0; }
         if (_bridge.World.Tick.Value < requiredTick || _frames < requiredFrames) return;
         Node? hud = GetTree().Root.FindChild("BasicHUD", true, false);
+        HudMinimapView? minimap = hud?.FindChild("MinimapSlot", true, false) as HudMinimapView;
+        bool minimapKnowledgeOk = minimap is not null && minimap.Frame.ValidateClientKnowledge(0, out _);
+        bool minimapOk = minimap is not null && minimap.IsConfigured && minimap.IsNorthUp && minimap.MarkerCount > 0 &&
+            minimap.VisibleFogCells > 0 && minimapKnowledgeOk;
         bool hudOk = hud is not null && hud.FindChild("ResourceStrip", true, false) is not null &&
             hud.FindChild("SelectionPanel", true, false) is not null && hud.FindChild("PortraitSlot", true, false) is not null &&
-            hud.FindChild("MinimapSlot", true, false) is not null && hud.FindChild("CommandGrid", true, false) is not null &&
+            minimapOk && hud.FindChild("CommandGrid", true, false) is not null &&
             hud.FindChild("SelectionTypeGroups", true, false) is not null && hud.FindChild("EventFeed", true, false) is not null;
         Node? focusedView = _captureFocus == EntityId.None ? null : GetTree().Root.FindChild($"SimEntity_{_captureFocus.Value}_*", true, false);
         Node? damagedView = _damagedFocus == EntityId.None ? null : GetTree().Root.FindChild($"SimEntity_{_damagedFocus.Value}_*", true, false);
@@ -211,7 +216,7 @@ public partial class GodotSmokeRunner : Node
             GD.Print($"PHASE10 VISUAL SMOKE CAPTURE: PASS path={_capturePath}");
         }
         if (!ok)
-            GD.PrintErr($"PHASE10 GODOT HEADLESS SMOKE DETAIL: hud={hudOk} construction={constructionOk} health={healthBarOk} controls={controlsOk} destruction={destructionOk} destructionPresentation={destructionPresentationOk} heroDebrisSpawned={_views?.HeroDebrisPoolStats.Spawned ?? 0} destructionDustSpawned={_views?.DestructionDustPoolStats.Spawned ?? 0} activeHeroFragments={_views?.ActiveHeroDebrisFragments ?? 0} preparedTitle={preparedTitleOk} preparedEdgePick={preparedEdgePickOk} scoutDamage={scoutDamageOk} repair={repairOk} transport={transportOk} transformation={transformationOk} presentationDrivers={presentationDriversOk} excavation={excavationOk} m5={m5Ok} standardWreck={standardWreck is MeshInstance3D} collapseId={_collapseUnit.Value} collapseActive={_collapseUnit != EntityId.None && _bridge.World.Entities.Destruction.Has(_collapseUnit)} collapseView={activeCollapse is MeshInstance3D} contact={contactImpact is MeshInstance3D}");
+            GD.PrintErr($"PHASE10 GODOT HEADLESS SMOKE DETAIL: hud={hudOk} minimap={minimapOk} markers={minimap?.MarkerCount ?? 0} fogVisible={minimap?.VisibleFogCells ?? 0} construction={constructionOk} health={healthBarOk} controls={controlsOk} destruction={destructionOk} destructionPresentation={destructionPresentationOk} heroDebrisSpawned={_views?.HeroDebrisPoolStats.Spawned ?? 0} destructionDustSpawned={_views?.DestructionDustPoolStats.Spawned ?? 0} activeHeroFragments={_views?.ActiveHeroDebrisFragments ?? 0} preparedTitle={preparedTitleOk} preparedEdgePick={preparedEdgePickOk} scoutDamage={scoutDamageOk} repair={repairOk} transport={transportOk} transformation={transformationOk} presentationDrivers={presentationDriversOk} excavation={excavationOk} m5={m5Ok} standardWreck={standardWreck is MeshInstance3D} collapseId={_collapseUnit.Value} collapseActive={_collapseUnit != EntityId.None && _bridge.World.Entities.Destruction.Has(_collapseUnit)} collapseView={activeCollapse is MeshInstance3D} contact={contactImpact is MeshInstance3D}");
         _finished = true;
         GD.Print(ok ? $"PHASE10 GODOT HEADLESS SMOKE: PASS tick={_bridge.World.Tick.Value} hash={_bridge.StateHashHex()}" : "PHASE10 GODOT HEADLESS SMOKE: FAIL");
         GetTree().Quit(ok ? 0 : 2);

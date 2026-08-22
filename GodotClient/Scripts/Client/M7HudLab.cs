@@ -1,4 +1,6 @@
 using Godot;
+using LegoSpaceRTS.Presentation;
+using LegoSpaceRTS.SimCore;
 using LegoSpaceRTS.UI;
 
 namespace LegoSpaceRTS.Client;
@@ -18,6 +20,7 @@ public partial class M7HudLab : Node3D
     private bool _finished;
     private int _frames;
     private string? _capturePath;
+    private Vector2 _labCameraCenter = new(83f, 80f);
 
     public void Configure(Action returnToPrototype, string[] arguments)
     {
@@ -52,7 +55,7 @@ public partial class M7HudLab : Node3D
         if (valid && _capturePath is not null) valid = CaptureViewport(_capturePath);
         _finished = true;
         if (valid)
-            GD.Print($"M7 HUD LAB: PASS scenarios=8 commands=12 safeArea={_profile.Layout.SafeAreaPercent:0.#} uiScale={_profile.Layout.UiScale:0.00} aspect={_aspect} schema={M7HudProfile.CurrentSchemaVersion} active={M7HudFixtures.Slug(_scenario)}");
+            GD.Print($"M7 HUD LAB: PASS scenarios=8 commands=12 minimap=legal markers=11 remembered=2 safeArea={_profile.Layout.SafeAreaPercent:0.#} uiScale={_profile.Layout.UiScale:0.00} aspect={_aspect} schema={M7HudProfile.CurrentSchemaVersion} active={M7HudFixtures.Slug(_scenario)}");
         else GD.PrintErr("M7 HUD LAB: FAIL");
         GetTree().Quit(valid ? 0 : 2);
     }
@@ -113,6 +116,26 @@ public partial class M7HudLab : Node3D
         _hud = new HudView();
         _previewFrame.AddChild(_hud);
         _hud.Configure(_profile);
+        _hud.MinimapCameraRequested += cell =>
+        {
+            _labCameraCenter = new Vector2(cell.X + 0.5f, cell.Y + 0.5f);
+            ApplySyntheticCameraPolygon();
+            SetStatus($"Camera centered at {cell.X}, {cell.Y}");
+        };
+        _hud.MinimapGroundCommandRequested += (cell, queued) =>
+        {
+            if (_hud is null) return;
+            HudFrame frame = _hud.Frame;
+            frame.Minimap.Pings.Clear();
+            frame.Minimap.Pings.Add(new HudMinimapPingFrame
+            {
+                StableId = 9001, BuildX = cell.X + 0.5f, BuildY = cell.Y + 0.5f,
+                Priority = HudAlertPriority.Normal, Phase = 0f
+            });
+            _hud.ApplyFrame(frame, true);
+            ApplySyntheticCameraPolygon();
+            SetStatus($"{(queued ? "Queued move" : "Move")} at {cell.X}, {cell.Y}");
+        };
     }
 
     private void BuildControls()
@@ -132,7 +155,7 @@ public partial class M7HudLab : Node3D
         VBoxContainer box = new() { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
         box.AddThemeConstantOverride("separation", 7); scroll.AddChild(box);
         Label title = LabLabel("M7 HUD LAB · FUNCTION FIRST", 20, new Color("e6ad28")); box.AddChild(title);
-        Label note = LabLabel("Ніякий стиль не затверджено. 1–8 — функціональні стани; Tab ховає контролі. Minimap — лише контракт T069.", 13, new Color("b7c0c5"));
+        Label note = LabLabel("Ніякий стиль не затверджено. 1–8 — функціональні стани; Tab ховає контролі. Мінікарта показує туман, розвіддані, типи цілей, мережі, alerts і поворотну область камери.", 13, new Color("b7c0c5"));
         note.AutowrapMode = TextServer.AutowrapMode.WordSmart; box.AddChild(note);
 
         AddSection(box, "SCENARIO FIXTURES");
@@ -183,6 +206,30 @@ public partial class M7HudLab : Node3D
         AddToggle(box, "Minimap legend", () => _profile.Content.ShowMinimapLegend, value => _profile.Content.ShowMinimapLegend = value);
         AddToggle(box, "Command costs", () => _profile.Content.ShowCommandCosts, value => _profile.Content.ShowCommandCosts = value);
 
+        AddSection(box, "MINIMAP · FUNCTION & READABILITY");
+        AddSlider(box, "Marker scale", 0.6, 2.0, 0.01, () => _profile.Minimap.MarkerScale, value => _profile.Minimap.MarkerScale = (float)value);
+        AddSlider(box, "Motion smoothing", 0, 0.30, 0.01, () => _profile.Minimap.InterpolationSeconds, value => _profile.Minimap.InterpolationSeconds = (float)value);
+        AddSlider(box, "Explored fog", 0.15, 0.90, 0.01, () => _profile.Minimap.ExploredFogOpacity, value => _profile.Minimap.ExploredFogOpacity = (float)value);
+        AddSlider(box, "Unseen fog", 0.55, 1.0, 0.01, () => _profile.Minimap.UnseenFogOpacity, value => _profile.Minimap.UnseenFogOpacity = (float)value);
+        AddSlider(box, "Remembered opacity", 0.15, 0.85, 0.01, () => _profile.Minimap.RememberedOpacity, value => _profile.Minimap.RememberedOpacity = (float)value);
+        AddSlider(box, "Grid opacity", 0, 0.30, 0.01, () => _profile.Minimap.GridOpacity, value => _profile.Minimap.GridOpacity = (float)value);
+        AddSlider(box, "Viewport line", 1, 5, 0.1, () => _profile.Minimap.ViewportLineWidth, value => _profile.Minimap.ViewportLineWidth = (float)value);
+        AddSlider(box, "Alert pulse", 0.5, 2.5, 0.05, () => _profile.Minimap.AlertPulseScale, value => _profile.Minimap.AlertPulseScale = (float)value);
+        AddToggle(box, "Camera viewport", () => _profile.Minimap.ShowViewport, value => _profile.Minimap.ShowViewport = value);
+        AddToggle(box, "Alert pings", () => _profile.Minimap.ShowAlerts, value => _profile.Minimap.ShowAlerts = value);
+        AddToggle(box, "Network lines", () => _profile.Minimap.ShowNetworkLines, value => _profile.Minimap.ShowNetworkLines = value);
+        AddColor(box, "Map ground", () => _profile.Minimap.GroundColor, value => _profile.Minimap.GroundColor = value);
+        AddColor(box, "Map rough", () => _profile.Minimap.RoughColor, value => _profile.Minimap.RoughColor = value);
+        AddColor(box, "Map blocked", () => _profile.Minimap.BlockedColor, value => _profile.Minimap.BlockedColor = value);
+        AddColor(box, "Map excavatable", () => _profile.Minimap.ExcavatableColor, value => _profile.Minimap.ExcavatableColor = value);
+        AddColor(box, "Owned markers", () => _profile.Minimap.OwnedColor, value => _profile.Minimap.OwnedColor = value);
+        AddColor(box, "Allied markers", () => _profile.Minimap.AlliedColor, value => _profile.Minimap.AlliedColor = value);
+        AddColor(box, "Enemy markers", () => _profile.Minimap.EnemyColor, value => _profile.Minimap.EnemyColor = value);
+        AddColor(box, "Neutral markers", () => _profile.Minimap.NeutralColor, value => _profile.Minimap.NeutralColor = value);
+        AddColor(box, "Resources", () => _profile.Minimap.ResourceColor, value => _profile.Minimap.ResourceColor = value);
+        AddColor(box, "Camera viewport", () => _profile.Minimap.ViewportColor, value => _profile.Minimap.ViewportColor = value);
+        AddColor(box, "Alerts", () => _profile.Minimap.AlertColor, value => _profile.Minimap.AlertColor = value);
+
         AddSection(box, "COLOR TOKENS");
         AddColor(box, "Background", () => _profile.Colors.Background, value => _profile.Colors.Background = value);
         AddColor(box, "Raised", () => _profile.Colors.Raised, value => _profile.Colors.Raised = value);
@@ -209,6 +256,7 @@ public partial class M7HudLab : Node3D
         _profile.Normalize();
         _hud?.ApplyProfile(_profile);
         _hud?.ApplyFrame(M7HudFixtures.Create(_scenario), true);
+        ApplySyntheticCameraPolygon();
         ApplyPreviewAspect();
     }
 
@@ -216,6 +264,7 @@ public partial class M7HudLab : Node3D
     {
         _scenario = scenario;
         _hud?.ApplyFrame(M7HudFixtures.Create(_scenario), true);
+        ApplySyntheticCameraPolygon();
         SetStatus($"Scenario {M7HudFixtures.Slug(scenario)}");
     }
 
@@ -235,7 +284,8 @@ public partial class M7HudLab : Node3D
         bool fixtures = Enum.GetValues<M7HudScenario>().All(scenario =>
         {
             HudFrame frame = M7HudFixtures.Create(scenario);
-            return frame.ContentSignature().Length > 80 && frame.Commands.Count <= 12;
+            return frame.ContentSignature().Length > 80 && frame.Commands.Count <= 12 &&
+                frame.Minimap.ValidateClientKnowledge(0, out _);
         });
         HudFrame mixed = M7HudFixtures.Create(M7HudScenario.MixedArmy);
         HudFrame production = M7HudFixtures.Create(M7HudScenario.Production);
@@ -244,15 +294,102 @@ public partial class M7HudLab : Node3D
         string json = _profile.ToJson();
         bool roundTrip = M7HudProfile.TryFromJson(json, out M7HudProfile parsed, out _) && parsed.SchemaVersion == M7HudProfile.CurrentSchemaVersion &&
             Math.Abs(parsed.Layout.SafeAreaPercent - _profile.Layout.SafeAreaPercent) < 0.001f;
-        bool tree = _hud?.FindChild("ResourceStrip", true, false) is PanelContainer && _hud.FindChild("MinimapSlot", true, false) is HudMinimapPlaceholder &&
+        bool migration = M7HudProfile.TryFromJson("{\"schemaVersion\":1}", out M7HudProfile migrated, out _) &&
+            migrated.SchemaVersion == M7HudProfile.CurrentSchemaVersion;
+        bool mapping = HudMinimapView.PixelToBuildCell(Vector2.Zero, new Vector2(206, 206)) == Vector2I.Zero &&
+            HudMinimapView.PixelToBuildCell(new Vector2(205.9f, 205.9f), new Vector2(206, 206)) == new Vector2I(159, 159);
+        FixVec2 commandTarget = RtsInputController.MinimapBuildCellCenter(new Vector2I(12, 34));
+        mapping = mapping && commandTarget.X == Fix32.FromRatio(25, 2) && commandTarget.Y == Fix32.FromRatio(69, 2);
+        bool tree = _hud?.FindChild("ResourceStrip", true, false) is PanelContainer && _hud.FindChild("MinimapSlot", true, false) is HudMinimapView &&
             _hud.FindChild("SelectionPanel", true, false) is PanelContainer && _hud.FindChild("CommandGrid", true, false) is GridContainer &&
             _hud.FindChild("EventFeed", true, false) is PanelContainer && _hud.FindChild("HudTooltip", true, false) is PanelContainer;
         bool states = mixed.Selection.Groups.Count == 5 && mixed.Selection.Count == 45 && production.Queue.Count == 3 &&
             brownout.Alert.Priority == HudAlertPriority.High && brownout.EnergyPopoverVisible && critical.ExpandedTooltip;
-        if (_hud?.FindChild("CommandPanel", true, false) is Control commandPanel && _hud.FindChild("EventFeed", true, false) is Control eventPanel)
-            GD.Print($"M7 HUD LAB LAYOUT: command={commandPanel.Position}/{commandPanel.Size} events={eventPanel.Position}/{eventPanel.Size} preview={_previewFrame?.Size}");
-        if (!(fixtures && roundTrip && tree && states)) GD.PrintErr($"M7 HUD LAB DETAIL: fixtures={fixtures} roundTrip={roundTrip} tree={tree} states={states}");
-        return fixtures && roundTrip && tree && states;
+        bool objectiveBounded = _hud?.FindChild("ObjectiveTracker", true, false) is Control objective &&
+            objective.Size.Y <= 100f * _profile.Layout.UiScale;
+        bool productionKnowledge = ValidateProductionMinimapKnowledge();
+        if (_hud?.FindChild("CommandPanel", true, false) is Control commandPanel && _hud.FindChild("EventFeed", true, false) is Control eventPanel &&
+            _hud.FindChild("ObjectiveTracker", true, false) is Control objectivePanel)
+        {
+            Label? objectiveLabel = objectivePanel.GetChildCount() > 0 ? objectivePanel.GetChild(0) as Label : null;
+            GD.Print($"M7 HUD LAB LAYOUT: command={commandPanel.Position}/{commandPanel.Size} events={eventPanel.Position}/{eventPanel.Size} objective={objectivePanel.Position}/{objectivePanel.Size} label={objectiveLabel?.Position}/{objectiveLabel?.Size} text={objectiveLabel?.Text.Length ?? 0} anchors={objectivePanel.AnchorTop:0.#}-{objectivePanel.AnchorBottom:0.#} preview={_previewFrame?.Size}");
+        }
+        bool minimap = _hud?.FindChild("MinimapSlot", true, false) is HudMinimapView view && view.IsConfigured && view.IsNorthUp &&
+            view.MarkerCount == 11 && view.RememberedMarkerCount == 2 && view.VisibleFogCells > 0 && view.ExploredFogCells > 0;
+        HudMinimapFrame illegal = M7HudFixtures.Create(M7HudScenario.MixedArmy).Minimap;
+        illegal.Markers.Add(new HudMinimapMarkerFrame
+        {
+            StableId = 9999, Owner = 1, BuildX = 20, BuildY = 20,
+            Kind = HudMinimapMarkerKind.GroundMobile, Relation = HudMinimapRelation.Enemy
+        });
+        bool leakGuard = !illegal.ValidateClientKnowledge(0, out _);
+        if (!(fixtures && roundTrip && migration && mapping && tree && states && objectiveBounded && minimap && leakGuard && productionKnowledge))
+            GD.PrintErr($"M7 HUD LAB DETAIL: fixtures={fixtures} roundTrip={roundTrip} migration={migration} mapping={mapping} tree={tree} states={states} objectiveBounded={objectiveBounded} minimap={minimap} leakGuard={leakGuard} productionKnowledge={productionKnowledge}");
+        return fixtures && roundTrip && migration && mapping && tree && states && objectiveBounded && minimap && leakGuard && productionKnowledge;
+    }
+
+    private static bool ValidateProductionMinimapKnowledge()
+    {
+        SimulationWorld world = M5AcceptanceScenarioFactory.Create();
+        EntityId linkEntity = EntityId.None;
+        IReadOnlyList<EntityId> alive = world.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+            if (world.Entities.TubeLink.Has(alive[i])) { linkEntity = alive[i]; break; }
+        if (linkEntity == EntityId.None || !world.Entities.TubeLink.TryGet(linkEntity, out TubeLink link) ||
+            world.GetTubeRoute(linkEntity) is not TubeRoute route) return false;
+
+        world.Entities.Ownership.Get(linkEntity).PlayerSlot = 1;
+        world.Entities.Ownership.Get(link.EndpointA).PlayerSlot = 1;
+        world.Entities.Ownership.Get(link.EndpointB).PlayerSlot = 1;
+        world.Fog.ClearCurrent();
+        RevealTubeRoute(world, route, link);
+
+        IReadOnlyList<EntityId> currentAlive = world.Entities.Alive;
+        for (int i = 0; i < currentAlive.Count; i++)
+            if (world.Entities.SurgeZone.TryGet(currentAlive[i], out SurgeZone zone))
+            {
+                zone.BuildupRemainingTicks = 0;
+                zone.ActiveRemainingTicks = 60;
+                world.Entities.SurgeZone.Set(currentAlive[i], zone);
+                break;
+            }
+
+        MinimapPresentationSource source = new();
+        HudMinimapFrame visible = source.Capture(world, PresentationSnapshot.Capture(world, 0), Array.Empty<EntityId>());
+        bool discovered = visible.Lines.Any(lineFrame => lineFrame.Kind == HudMinimapLineKind.KnownEnemyNetwork) &&
+            visible.Pings.Count > 0 && visible.ValidateClientKnowledge(0, out _);
+
+        world.Fog.ClearCurrent();
+        HudMinimapFrame remembered = source.Capture(world, PresentationSnapshot.Capture(world, 0), Array.Empty<EntityId>());
+        bool retained = remembered.Lines.Any(lineFrame => lineFrame.Kind == HudMinimapLineKind.KnownEnemyNetwork) &&
+            remembered.ValidateClientKnowledge(0, out _);
+
+        world.Fog.ClearCurrent();
+        RevealTubeRoute(world, route, link);
+        if (!TubeGraphSystem.TryRemoveLink(world, 1, linkEntity)) return false;
+        HudMinimapFrame disproved = source.Capture(world, PresentationSnapshot.Capture(world, 0), Array.Empty<EntityId>());
+        bool removed = disproved.Lines.All(lineFrame => lineFrame.Kind != HudMinimapLineKind.KnownEnemyNetwork) &&
+            disproved.ValidateClientKnowledge(0, out _);
+        return discovered && retained && removed;
+    }
+
+    private static void RevealTubeRoute(SimulationWorld world, TubeRoute route, TubeLink link)
+    {
+        for (int i = 0; i < route.Cells.Count; i++) world.Fog.AddVisible(0, route.Cells[i].X, route.Cells[i].Y);
+        if (world.Entities.Transform.TryGet(link.EndpointA, out SimTransform from))
+            world.Fog.AddVisible(0, from.Position.X.FloorToInt(), from.Position.Y.FloorToInt());
+        if (world.Entities.Transform.TryGet(link.EndpointB, out SimTransform to))
+            world.Fog.AddVisible(0, to.Position.X.FloorToInt(), to.Position.Y.FloorToInt());
+    }
+
+    private void ApplySyntheticCameraPolygon()
+    {
+        Vector2 center = _labCameraCenter;
+        _hud?.UpdateMinimapCamera(new[]
+        {
+            center + new Vector2(-28, -12), center + new Vector2(10, -29),
+            center + new Vector2(29, 11), center + new Vector2(-11, 29)
+        });
     }
 
     private bool CaptureViewport(string path)

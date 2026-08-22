@@ -251,6 +251,18 @@ public partial class RtsInputController : Node
     public void StateChangeSelected() => IssueSimple(SimCommandType.StateChange);
     public void StopSelected() => IssueSimple(SimCommandType.Stop);
 
+    public void IssueMinimapGroundCommand(Vector2I cell, bool queued)
+    {
+        if (_bridge is null || _selection is null || _buildMode || _selection.Selected.Count == 0) return;
+        FixVec2 target = MinimapBuildCellCenter(cell);
+        if (HasSelectedProduction()) IssueRally(target, EntityId.None);
+        else IssueMove(target, queued);
+    }
+
+    public static FixVec2 MinimapBuildCellCenter(Vector2I cell) => new(
+            Fix32.FromRatio(cell.X * 2 + 1, 2),
+            Fix32.FromRatio(cell.Y * 2 + 1, 2));
+
     public void DebugMoveVisibleEnemies()
     {
         if (_bridge is null) return;
@@ -538,13 +550,16 @@ public partial class RtsInputController : Node
     }
 
     private void IssueRally(Vector3 worldPoint, EntityId resource)
+        => IssueRally(worldPoint.ToFixedBuild(), resource);
+
+    private void IssueRally(FixVec2 groundTarget, EntityId resource)
     {
         if (_bridge is null || _selection is null) return;
         List<EntityId> facilities = new();
         for (int i = 0; i < _selection.Selected.Count; i++) if (_bridge.World.Entities.Production.Has(_selection.Selected[i])) facilities.Add(_selection.Selected[i]);
         if (facilities.Count == 0) return;
         FixVec2 target = resource != EntityId.None && _bridge.World.Entities.Transform.TryGet(resource, out SimTransform resourceTransform)
-            ? resourceTransform.Position : worldPoint.ToFixedBuild();
+            ? resourceTransform.Position : groundTarget;
         _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, _sequence++, SimCommandType.SetRallyPoint,
             facilities.ToArray(), target, targetEntity: resource));
         ClearMovePreviews();
@@ -620,10 +635,11 @@ public partial class RtsInputController : Node
         if (modifiers == CommandModifiers.None) ClearMovePreviews();
     }
 
-    private void IssueMove(Vector3 world)
+    private void IssueMove(Vector3 world) => IssueMove(world.ToFixedBuild(), Input.IsKeyPressed(Key.Shift));
+
+    private void IssueMove(FixVec2 target, bool queued)
     {
         if (_bridge is null || _selection is null) return;
-        FixVec2 target = world.ToFixedBuild();
         if (target.X < Fix32.Zero || target.Y < Fix32.Zero || target.X >= Fix32.FromInt(MapGrid.BuildWidth) || target.Y >= Fix32.FromInt(MapGrid.BuildHeight)) return;
         EntityId[] ids = SelectionArray();
         FootprintClass largest = FootprintClass.Tiny; bool hasGround = false;
@@ -631,7 +647,6 @@ public partial class RtsInputController : Node
             if (_bridge.World.Entities.Navigation.TryGet(ids[i], out NavigationAgent nav) && nav.Layer != MovementLayer.TrueAir)
             { hasGround = true; if (nav.Footprint > largest) largest = nav.Footprint; }
         if (hasGround && !_bridge.World.Pathfinder.IsPassable(MapGrid.BuildToNav(target), largest)) return;
-        bool queued = Input.IsKeyPressed(Key.Shift);
         CommandModifiers modifiers = queued ? CommandModifiers.Queue : CommandModifiers.None;
         _bridge.Enqueue(new CommandEnvelope(_bridge.World.Tick.Next(), 0, _sequence++, SimCommandType.Move, ids, target, modifiers));
 

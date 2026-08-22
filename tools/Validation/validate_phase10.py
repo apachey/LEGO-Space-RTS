@@ -96,6 +96,10 @@ check('M5AcceptanceScenarioFactory.Create' in loader and 'PrepareM5Acceptance' i
 basic_hud = (ROOT/'GodotClient/Scripts/UI/BasicHud.cs').read_text()
 hud_view = (ROOT/'GodotClient/Scripts/UI/HudView.cs').read_text()
 hud_profile = (ROOT/'GodotClient/Scripts/UI/M7HudProfile.cs').read_text()
+hud_minimap = (ROOT/'GodotClient/Scripts/UI/HudMinimapView.cs').read_text()
+minimap_source = (ROOT/'GodotClient/Scripts/Presentation/MinimapPresentationSource.cs').read_text()
+input_controller = (ROOT/'GodotClient/Scripts/Presentation/RtsInputController.cs').read_text()
+camera_controller = (ROOT/'GodotClient/Scripts/Presentation/RtsCameraController.cs').read_text()
 for token in ['ResourceStrip','SelectionPanel','PortraitSlot','ContextualEnergyPriority','EnergyDomainPopover','MinimapSlot','CommandPanel','CommandGrid','SelectionTypeGroups','EventFeed']:
     check(token in hud_view, f'T068 retained HUD element missing: {token}')
 for token in ['HudFrame','BuildGroupedSelection','BuildCommands','CanQueueProduction','QueueProduction']:
@@ -104,13 +108,22 @@ for token in ['SafeAreaPercent { get; set; } = 96f','UiScale','TextScale','Comma
     check(token in hud_profile, f'T068 responsive HUD profile missing: {token}')
 check('CommandCapacity = 12' in hud_view and 'GroupCapacity = 8' in hud_view,
       'T068 retained command/type-card pools are not bounded')
+for token in ['HudMinimapView','SetCameraPolygon','PixelToBuildCell','IssueMinimapGroundCommand','GetGroundViewportPolygon']:
+    check(token in hud_view + basic_hud + hud_minimap + input_controller + camera_controller,
+          f'T069 minimap integration missing: {token}')
+for token in ['MultiMeshInstance2D','MarkerCapacity','IsNorthUp => true','CameraRequested','GroundCommandRequested']:
+    check(token in hud_minimap, f'T069 bounded north-up minimap view missing: {token}')
+for token in ['PresentationSnapshot snapshot','_rememberedStatic','VisibilityState.Explored','CaptureLegalNetworkLines','KnownEnemyNetwork','confirmedVisibleSegments','SurgeZone','CaptureLegalPings']:
+    check(token in minimap_source, f'T069 client-legal minimap source missing: {token}')
+check('HudMinimapPlaceholder' not in hud_view, 'T069 placeholder minimap remains in the production HUD')
 debug_hud = (ROOT/'GodotClient/Scripts/UI/DebugHud.cs').read_text()
 check('Visible = false' in debug_hud and 'Drain Energy' in debug_hud, 'developer tools must remain available but hidden by default')
 debug_renderer = (ROOT/'GodotClient/Scripts/Presentation/DebugRenderer.cs').read_text()
 for token in ['DrawNavigation { get; set; } = true','DrawClusters { get; set; } = true','DrawPaths { get; set; } = true','DrawExcavatable { get; set; } = true']:
     check(token not in debug_renderer, f'developer visualization leaks into normal play: {token}')
-input_controller = (ROOT/'GodotClient/Scripts/Presentation/RtsInputController.cs').read_text()
 check('OrderNumber' not in input_controller and 'DestinationRing' in input_controller, 'move feedback must use an unnumbered restrained destination marker')
+check('IssueMinimapGroundCommand' in input_controller and 'CommandModifiers.Queue' in input_controller,
+      'T069 minimap move/queued-move command binding is missing')
 unit_view = (ROOT/'GodotClient/Scripts/Presentation/UnitViewManager.cs').read_text()
 check('ConstructionProgressLabel' not in unit_view and 'ConstructionProgressBar' in unit_view, 'construction progress must use a restrained world bar rather than a fixed-size billboard label')
 animation_driver = (ROOT/'GodotClient/Scripts/Presentation/PresentationAnimationDriver.cs').read_text()

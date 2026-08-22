@@ -66,7 +66,7 @@ public partial class RtsCompositionRoot : Node3D
         UnitViewManager views = new() { Name = "UnitViews" }; AddChild(views); views.Configure(bridge, selection, input.Groups);
         FogPresenter fog = new() { Name = "FogPresentation" }; AddChild(fog); fog.Configure(bridge);
         DebugRenderer debug = new() { Name = "DebugVisualization" }; AddChild(debug); debug.Configure(bridge);
-        BasicHud hud = new(); AddChild(hud); hud.Configure(bridge, selection, input);
+        BasicHud hud = new(); AddChild(hud); hud.Configure(bridge, selection, input, camera);
         DebugHud developerHud = new(); AddChild(developerHud); developerHud.Configure(bridge, input, debug, fog, PrepareM5Acceptance, OpenM7LookLab, OpenM7HudLab, OpenM7PaletteLab, OpenM7MaterialLab);
         if (scenario.IsM5Acceptance)
         {

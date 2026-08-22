@@ -16,17 +16,21 @@ public partial class BasicHud : CanvasLayer
     private GodotSimBridge? _bridge;
     private SelectionController? _selection;
     private RtsInputController? _input;
+    private RtsCameraController? _camera;
+    private MinimapPresentationSource? _minimapSource;
     private HudView? _view;
     private bool _energyPopoverVisible;
     private double _nextRefresh;
 
     public HudView? View => _view;
 
-    public void Configure(GodotSimBridge bridge, SelectionController selection, RtsInputController input)
+    public void Configure(GodotSimBridge bridge, SelectionController selection, RtsInputController input, RtsCameraController camera)
     {
         _bridge = bridge;
         _selection = selection;
         _input = input;
+        _camera = camera;
+        _minimapSource = new MinimapPresentationSource();
         Name = "BasicHUD";
         Layer = 10;
         ProcessPriority = 200;
@@ -37,12 +41,15 @@ public partial class BasicHud : CanvasLayer
         _view.PowerPriorityRequested += priority => _input.SetSelectedEnergyPriority((EnergyPriority)priority);
         _view.EnergyDetailsRequested += () => { _energyPopoverVisible = !_energyPopoverVisible; RefreshNow(); };
         _view.SelectionGroupRequested += NarrowSelectionToGroup;
+        _view.MinimapCameraRequested += HandleMinimapCamera;
+        _view.MinimapGroundCommandRequested += _input.IssueMinimapGroundCommand;
         RefreshNow();
     }
 
     public override void _Process(double delta)
     {
         if (_bridge is null || _selection is null || _view is null) return;
+        if (_camera is not null) _view.UpdateMinimapCamera(_camera.GetGroundViewportPolygon());
         double now = Time.GetTicksMsec() / 1000.0;
         if (now < _nextRefresh) return;
         _nextRefresh = now + 0.10;
@@ -65,7 +72,16 @@ public partial class BasicHud : CanvasLayer
         frame.Events = BuildEventFeed(frame);
         frame.Commands = BuildCommands();
         frame.EnergyPopoverVisible = _energyPopoverVisible;
+        if (_minimapSource is not null && _bridge.Current is not null)
+            frame.Minimap = _minimapSource.Capture(_bridge.World, _bridge.Current, _selection!.Selected);
         return frame;
+    }
+
+    private void HandleMinimapCamera(Vector2I cell)
+    {
+        if (_camera is null) return;
+        float scale = GodotConversions.WorldUnitsPerBuildCell;
+        _camera.CenterOn(new Vector3((cell.X + 0.5f) * scale, 0f, (cell.Y + 0.5f) * scale));
     }
 
     private void BuildResourceFrame(HudFrame frame)

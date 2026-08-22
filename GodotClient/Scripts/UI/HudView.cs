@@ -68,7 +68,7 @@ public partial class HudView : Control
     private Label? _tooltipTitle;
     private Label? _tooltipBody;
     private Label? _energyPopoverLabel;
-    private HudMinimapPlaceholder? _minimap;
+    private HudMinimapView? _minimap;
     private bool _treeBuilt;
 
     public event Action<string, bool>? CommandRequested;
@@ -76,9 +76,13 @@ public partial class HudView : Control
     public event Action<int>? PowerPriorityRequested;
     public event Action? EnergyDetailsRequested;
     public event Action? AlertRequested;
+    public event Action<Vector2I>? MinimapCameraRequested;
+    public event Action<Vector2I, bool>? MinimapGroundCommandRequested;
 
     public M7HudProfile Profile => _profile;
     public HudFrame Frame => _frame;
+
+    public void UpdateMinimapCamera(IReadOnlyList<Vector2> buildPoints) => _minimap?.SetCameraPolygon(buildPoints);
 
     public void Configure(M7HudProfile profile)
     {
@@ -159,7 +163,7 @@ public partial class HudView : Control
         ApplyCommands(frame.Commands);
         ApplyQueue(frame.Queue);
         ApplyEvents(frame.Events);
-        _minimap?.SetFaction(frame.Faction);
+        _minimap?.SetFrame(frame.Minimap);
     }
 
     private void BuildTree()
@@ -208,8 +212,11 @@ public partial class HudView : Control
         HBoxContainer header = new(); box.AddChild(header);
         Label title = Label("TACTICAL MAP", TextRole.Heading); title.SizeFlagsHorizontal = SizeFlags.ExpandFill; header.AddChild(title);
         Label north = Label("N ↑", TextRole.Micro); header.AddChild(north);
-        _minimap = new HudMinimapPlaceholder { Name = "MinimapSlot", SizeFlagsVertical = SizeFlags.ExpandFill, MouseFilter = MouseFilterEnum.Stop };
-        _minimap.TooltipText = "T069 reserved: fog-correct north-up minimap, markers, viewport polygon and commands.";
+        _minimap = new HudMinimapView { Name = "MinimapSlot", SizeFlagsVertical = SizeFlags.ExpandFill };
+        _minimap.Configure(_profile);
+        _minimap.CameraRequested += cell => MinimapCameraRequested?.Invoke(cell);
+        _minimap.GroundCommandRequested += (cell, queued) => MinimapGroundCommandRequested?.Invoke(cell, queued);
+        _minimap.TooltipText = "North-up tactical map. Left-click or drag: camera. Right-click: move/rally. Shift + right-click: queue.";
         box.AddChild(_minimap);
         Label legend = Label("● MOBILE   ■ STRUCTURE   ▲ AIR", TextRole.Micro);
         legend.Name = "MinimapLegend"; legend.HorizontalAlignment = HorizontalAlignment.Center; box.AddChild(legend);
@@ -343,7 +350,15 @@ public partial class HudView : Control
         }
 
         _objectivePanel = SurfacePanel("ObjectiveTracker", false); _safeArea.AddChild(_objectivePanel);
-        _objectiveLabel = Label(string.Empty, TextRole.Body); _objectiveLabel.AutowrapMode = TextServer.AutowrapMode.WordSmart; _objectivePanel.AddChild(_objectiveLabel);
+        _objectiveLabel = Label(string.Empty, TextRole.Body);
+        _objectiveLabel.AutowrapMode = TextServer.AutowrapMode.WordSmart;
+        _objectiveLabel.CustomMinimumSize = new Vector2(320, 0);
+        _objectiveLabel.SizeFlagsVertical = SizeFlags.ExpandFill;
+        _objectiveLabel.VerticalAlignment = VerticalAlignment.Center;
+        _objectiveLabel.MaxLinesVisible = 3;
+        _objectiveLabel.TextOverrunBehavior = TextServer.OverrunBehavior.TrimEllipsis;
+        _objectiveLabel.ClipText = true;
+        _objectivePanel.AddChild(_objectiveLabel);
 
         _tooltipPanel = SurfacePanel("HudTooltip", true); _safeArea.AddChild(_tooltipPanel);
         VBoxContainer tooltipBox = new(); _tooltipPanel.AddChild(tooltipBox);
@@ -645,36 +660,4 @@ public partial class HudView : Control
     private static Color Parse(string html, Color fallback) => Color.HtmlIsValid(html) ? new Color(html) : fallback;
 
     private enum TextRole { Heading, Body, Micro }
-}
-
-public partial class HudMinimapPlaceholder : Control
-{
-    private M7HudProfile _profile = M7HudProfile.CreateDefault();
-    private HudFaction _faction;
-
-    public void ApplyProfile(M7HudProfile profile) { _profile = profile; QueueRedraw(); }
-    public void SetFaction(HudFaction faction) { if (_faction == faction) return; _faction = faction; QueueRedraw(); }
-
-    public override void _Draw()
-    {
-        Color recessed = Color.HtmlIsValid(_profile.Colors.Recessed) ? new Color(_profile.Colors.Recessed) : new Color("0b1016");
-        Color muted = Color.HtmlIsValid(_profile.Colors.TextMuted) ? new Color(_profile.Colors.TextMuted) : Colors.Gray;
-        Color accent = Color.HtmlIsValid(_profile.Colors.Accent) ? new Color(_profile.Colors.Accent) : Colors.Yellow;
-        DrawRect(new Rect2(Vector2.Zero, Size), recessed);
-        for (int i = 1; i < 6; i++)
-        {
-            float x = Size.X * i / 6f, y = Size.Y * i / 6f;
-            DrawLine(new Vector2(x, 0f), new Vector2(x, Size.Y), new Color(muted, 0.13f), 1f);
-            DrawLine(new Vector2(0f, y), new Vector2(Size.X, y), new Color(muted, 0.13f), 1f);
-        }
-        DrawColoredPolygon(new[] { new Vector2(0f, Size.Y * 0.58f), new Vector2(Size.X * 0.35f, Size.Y * 0.36f), new Vector2(Size.X * 0.68f, Size.Y * 0.52f), new Vector2(Size.X, Size.Y * 0.28f), new Vector2(Size.X, Size.Y), new Vector2(0f, Size.Y) }, new Color("26323b"));
-        DrawRect(new Rect2(Size * new Vector2(0.12f, 0.60f), new Vector2(7f, 7f)), accent);
-        DrawRect(new Rect2(Size * new Vector2(0.21f, 0.68f), new Vector2(5f, 5f)), accent);
-        DrawCircle(Size * new Vector2(0.34f, 0.57f), 3.5f, accent);
-        DrawCircle(Size * new Vector2(0.67f, 0.40f), 3.5f, new Color("ff6b45"));
-        DrawCircle(Size * new Vector2(0.73f, 0.37f), 3.5f, new Color("ff6b45"));
-        DrawPolyline(new[] { Size * new Vector2(0.29f, 0.73f), Size * new Vector2(0.52f, 0.61f), Size * new Vector2(0.65f, 0.69f), Size * new Vector2(0.42f, 0.82f), Size * new Vector2(0.29f, 0.73f) }, new Color("f2eee3"), 1.5f);
-        if (_faction == HudFaction.Martians) DrawLine(Size * new Vector2(0.12f, 0.60f), Size * new Vector2(0.34f, 0.57f), new Color(accent, 0.75f), 2f);
-        DrawString(ThemeDB.FallbackFont, new Vector2(8f, 17f), "T069 PLACEHOLDER", HorizontalAlignment.Left, -1f, 10, new Color(muted, 0.7f));
-    }
 }

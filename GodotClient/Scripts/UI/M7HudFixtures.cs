@@ -47,22 +47,27 @@ public static class M7HudFixtures
         _ => M7HudScenario.RockRaiderUnit
     };
 
-    private static HudFrame Base(HudFaction faction, string mechanic) => new()
+    private static HudFrame Base(HudFaction faction, string mechanic)
     {
-        Faction = faction,
-        MatchState = "18:42  •  PLAYER 1",
-        Ore = "1,480",
-        Energy = "86 / 250  |  18↑  15↓  |  +3/s",
-        Crystals = "7",
-        Operations = "72 / 100",
-        FactionMechanic = mechanic,
-        Events =
+        HudFrame frame = new()
         {
-            new HudEventFrame { Priority = HudAlertPriority.Normal, Time = "18:31", Text = "Ore Processing Plant complete" },
-            new HudEventFrame { Priority = HudAlertPriority.Informational, Time = "18:18", Text = "Hover Scout ready" }
-        },
-        EnergyPopover = "HQ DOMAIN\nReserve  86 / 250\nGeneration  +18 E/s\nDemand  -15 E/s\nNet  +3 E/s\nState  STABLE"
-    };
+            Faction = faction,
+            MatchState = "18:42  •  PLAYER 1",
+            Ore = "1,480",
+            Energy = "86 / 250  |  18↑  15↓  |  +3/s",
+            Crystals = "7",
+            Operations = "72 / 100",
+            FactionMechanic = mechanic,
+            Events =
+            {
+                new HudEventFrame { Priority = HudAlertPriority.Normal, Time = "18:31", Text = "Ore Processing Plant complete" },
+                new HudEventFrame { Priority = HudAlertPriority.Informational, Time = "18:18", Text = "Hover Scout ready" }
+            },
+            EnergyPopover = "HQ DOMAIN\nReserve  86 / 250\nGeneration  +18 E/s\nDemand  -15 E/s\nNet  +3 E/s\nState  STABLE"
+        };
+        frame.Minimap = BuildMinimap(faction);
+        return frame;
+    }
 
     private static HudFrame RockRaiderUnit()
     {
@@ -140,6 +145,7 @@ public static class M7HudFixtures
         frame.Commands = StandardCommands();
         frame.EnergyPopoverVisible = true;
         frame.EnergyPopover = "HQ DOMAIN\nReserve  12 / 250\nGeneration  +18 E/s\nDemand  -27 E/s\nNet  −9 E/s\nState  BROWNOUT\nLow-priority structures disabled";
+        frame.Minimap.Pings.Add(new HudMinimapPingFrame { StableId = 3, BuildX = 73, BuildY = 91, Priority = HudAlertPriority.High, Phase = 0.28f });
         return frame;
     }
 
@@ -183,6 +189,13 @@ public static class M7HudFixtures
         };
         frame.Commands = StandardCommands("TUBE TRANSFER", "E");
         frame.Objective = "NETWORK STATUS\nAll owned Stations connected";
+        frame.Minimap.Lines.AddRange(new[]
+        {
+            new HudMinimapLineFrame { StableId = 701, FromBuildX = 60, FromBuildY = 96, ToBuildX = 75, ToBuildY = 88, Kind = HudMinimapLineKind.OwnedNetwork },
+            new HudMinimapLineFrame { StableId = 702, FromBuildX = 75, FromBuildY = 88, ToBuildX = 88, ToBuildY = 101, Kind = HudMinimapLineKind.OwnedNetwork },
+            new HudMinimapLineFrame { StableId = 703, FromBuildX = 75, FromBuildY = 88, ToBuildX = 93, ToBuildY = 72, Kind = HudMinimapLineKind.OwnedNetwork, Operational = false },
+            new HudMinimapLineFrame { StableId = 704, FromBuildX = 130.5f, FromBuildY = 82.5f, ToBuildX = 136.5f, ToBuildY = 82.5f, Kind = HudMinimapLineKind.KnownEnemyNetwork }
+        });
         return frame;
     }
 
@@ -202,6 +215,53 @@ public static class M7HudFixtures
         frame.TooltipQuick = "Restore a damaged owned target.\nCost: Ore per HP restored.";
         frame.TooltipExpanded = "Counters attrition and preserves expensive infrastructure. Repairers must reach service range; brownout can disable supporting structures. Valid layers: ground structures and grounded units.";
         frame.ExpandedTooltip = true;
+        frame.Minimap.Pings.Add(new HudMinimapPingFrame { StableId = 2, BuildX = 69, BuildY = 84, Priority = HudAlertPriority.Critical, Phase = 0.62f });
+        return frame;
+    }
+
+    private static HudMinimapFrame BuildMinimap(HudFaction faction)
+    {
+        byte[] terrain = new byte[HudMinimapFrame.CellCount];
+        byte[] knowledge = new byte[HudMinimapFrame.CellCount];
+        for (int y = 0; y < HudMinimapFrame.Height; y++)
+        for (int x = 0; x < HudMinimapFrame.Width; x++)
+        {
+            int index = y * HudMinimapFrame.Width + x;
+            HudMinimapTerrain terrainKind = HudMinimapTerrain.Ground;
+            if ((x > 17 && x < 46 && y > 18 && y < 39) || (x > 118 && x < 151 && y > 113 && y < 145))
+                terrainKind = HudMinimapTerrain.Rough;
+            if ((x - 126) * (x - 126) + (y - 38) * (y - 38) < 15 * 15 || (x > 12 && x < 27 && y > 70 && y < 109))
+                terrainKind = HudMinimapTerrain.Blocked;
+            if (x > 116 && x < 146 && y > 52 && y < 69)
+                terrainKind = HudMinimapTerrain.Excavatable;
+            terrain[index] = (byte)terrainKind;
+
+            if (x >= 9 && x <= 150 && y >= 9 && y <= 150) knowledge[index] = 1;
+            if (x >= 45 && x <= 121 && y >= 44 && y <= 120) knowledge[index] = 2;
+        }
+
+        byte owned = 0;
+        HudMinimapFrame frame = new()
+        {
+            Revision = 11240 + (int)faction,
+            TerrainRevision = 7,
+            Terrain = terrain,
+            Knowledge = knowledge,
+            Markers =
+            {
+                new HudMinimapMarkerFrame { StableId = 1, Owner = owned, BuildX = 61, BuildY = 96, Kind = HudMinimapMarkerKind.Structure, Relation = HudMinimapRelation.Owned },
+                new HudMinimapMarkerFrame { StableId = 2, Owner = owned, BuildX = 69, BuildY = 84, Kind = HudMinimapMarkerKind.Structure, Relation = HudMinimapRelation.Owned, Selected = true },
+                new HudMinimapMarkerFrame { StableId = 3, Owner = owned, BuildX = 73, BuildY = 91, Kind = HudMinimapMarkerKind.GroundMobile, Relation = HudMinimapRelation.Owned, Selected = true },
+                new HudMinimapMarkerFrame { StableId = 4, Owner = owned, BuildX = 78, BuildY = 94, Kind = HudMinimapMarkerKind.GroundMobile, Relation = HudMinimapRelation.Owned },
+                new HudMinimapMarkerFrame { StableId = 5, Owner = owned, BuildX = 82, BuildY = 88, Kind = HudMinimapMarkerKind.TrueAir, Relation = HudMinimapRelation.Owned },
+                new HudMinimapMarkerFrame { StableId = 101, Owner = 1, BuildX = 106, BuildY = 82, Kind = HudMinimapMarkerKind.GroundMobile, Relation = HudMinimapRelation.Enemy },
+                new HudMinimapMarkerFrame { StableId = 102, Owner = 1, BuildX = 111, BuildY = 77, Kind = HudMinimapMarkerKind.TrueAir, Relation = HudMinimapRelation.Enemy },
+                new HudMinimapMarkerFrame { StableId = 103, Owner = 1, BuildX = 115, BuildY = 91, Kind = HudMinimapMarkerKind.Structure, Relation = HudMinimapRelation.Enemy },
+                new HudMinimapMarkerFrame { StableId = 201, Owner = byte.MaxValue, BuildX = 92, BuildY = 109, Kind = HudMinimapMarkerKind.Resource, Relation = HudMinimapRelation.Neutral },
+                new HudMinimapMarkerFrame { StableId = 301, Owner = 1, BuildX = 134, BuildY = 82, Kind = HudMinimapMarkerKind.Structure, Relation = HudMinimapRelation.Enemy, Remembered = true },
+                new HudMinimapMarkerFrame { StableId = 302, Owner = byte.MaxValue, BuildX = 31, BuildY = 117, Kind = HudMinimapMarkerKind.Resource, Relation = HudMinimapRelation.Neutral, Remembered = true }
+            }
+        };
         return frame;
     }
 
