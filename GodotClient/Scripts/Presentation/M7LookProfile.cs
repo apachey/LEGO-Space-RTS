@@ -5,7 +5,7 @@ namespace LegoSpaceRTS.Presentation;
 
 public sealed class M7LookProfile
 {
-    public const int CurrentSchemaVersion = 1;
+    public const int CurrentSchemaVersion = 2;
 
     public int SchemaVersion { get; set; } = CurrentSchemaVersion;
     public CameraLook Camera { get; set; } = new();
@@ -19,7 +19,6 @@ public sealed class M7LookProfile
     public OutlineLook Outline { get; set; } = new();
     public VfxLook Vfx { get; set; } = new();
     public GroundLook Ground { get; set; } = new();
-    public HudLook Hud { get; set; } = new();
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -49,13 +48,20 @@ public sealed class M7LookProfile
                 error = "Clipboard does not contain an M7 Look profile.";
                 return false;
             }
-            if (parsed.SchemaVersion != CurrentSchemaVersion)
+            if (parsed.SchemaVersion is not (1 or CurrentSchemaVersion))
             {
                 profile = CreateDefault();
-                error = $"Profile schema {parsed.SchemaVersion} is not supported; expected {CurrentSchemaVersion}.";
+                error = $"Profile schema {parsed.SchemaVersion} is not supported; expected 1 or {CurrentSchemaVersion}.";
                 return false;
             }
+            // Schema 1 was the first review fixture. Schema 2 removes the
+            // deferred HUD/scorch controls and adds free-camera, texture and
+            // emissive-response controls. Missing values intentionally inherit
+            // the reviewed schema-2 baseline, so old copied profiles remain usable.
+            int sourceSchemaVersion = parsed.SchemaVersion;
+            parsed.SchemaVersion = CurrentSchemaVersion;
             parsed.Normalize();
+            if (sourceSchemaVersion == 1) ApplySchemaOneMigration(parsed);
             profile = parsed;
             error = string.Empty;
             return true;
@@ -75,6 +81,25 @@ public sealed class M7LookProfile
         return clone;
     }
 
+    private static void ApplySchemaOneMigration(M7LookProfile profile)
+    {
+        MaterialCollection defaults = CreateDefault().Materials;
+        CopyTextureDefaults(profile.Materials.PaintedHull, defaults.PaintedHull);
+        CopyTextureDefaults(profile.Materials.StructuralEarth, defaults.StructuralEarth);
+        CopyTextureDefaults(profile.Materials.Accent, defaults.Accent);
+        CopyTextureDefaults(profile.Materials.DarkMechanic, defaults.DarkMechanic);
+        CopyTextureDefaults(profile.Materials.ToolSteel, defaults.ToolSteel);
+        CopyTextureDefaults(profile.Materials.Rubber, defaults.Rubber);
+        CopyTextureDefaults(profile.Materials.BuildingShell, defaults.BuildingShell);
+        CopyTextureDefaults(profile.Materials.GroundRock, defaults.GroundRock);
+    }
+
+    private static void CopyTextureDefaults(MaterialLook destination, MaterialLook source)
+    {
+        destination.TextureStrength = source.TextureStrength;
+        destination.TextureScale = source.TextureScale;
+    }
+
     public void Normalize()
     {
         SchemaVersion = CurrentSchemaVersion;
@@ -89,11 +114,12 @@ public sealed class M7LookProfile
         Outline ??= new OutlineLook();
         Vfx ??= new VfxLook();
         Ground ??= new GroundLook();
-        Hud ??= new HudLook();
 
         Camera.ZoomCells = Clamp(Camera.ZoomCells, 24f, 72f);
-        Camera.PitchDegrees = Clamp(Camera.PitchDegrees, 52f, 64f);
-        Camera.YawDegrees = NormalizeYaw(Camera.YawDegrees);
+        Camera.PitchDegrees = Clamp(Camera.PitchDegrees, 30f, 80f);
+        Camera.YawDegrees = WrapDegrees(Camera.YawDegrees);
+        Camera.FocusX = Clamp(Camera.FocusX, -42f, 42f);
+        Camera.FocusZ = Clamp(Camera.FocusZ, -42f, 42f);
         Scene.AnimationSpeed = Clamp(Scene.AnimationSpeed, 0f, 2f);
 
         Shading.DiffuseWrap = Clamp01(Shading.DiffuseWrap);
@@ -115,6 +141,11 @@ public sealed class M7LookProfile
         Emission.CrystalEnergy = Clamp(Emission.CrystalEnergy, 0f, 12f);
         Emission.PulseAmount = Clamp01(Emission.PulseAmount);
         Emission.PulseSpeed = Clamp(Emission.PulseSpeed, 0f, 8f);
+        Emission.HaloIntensity = Clamp(Emission.HaloIntensity, 0f, 3f);
+        Emission.HaloSize = Clamp(Emission.HaloSize, 0.5f, 4f);
+        Emission.EdgeDarkening = Clamp01(Emission.EdgeDarkening);
+        Emission.LocalLightEnergy = Clamp(Emission.LocalLightEnergy, 0f, 4f);
+        Emission.LocalLightRange = Clamp(Emission.LocalLightRange, 0.5f, 8f);
 
         Lighting.KeyAzimuth = WrapDegrees(Lighting.KeyAzimuth);
         Lighting.KeyElevation = Clamp(Lighting.KeyElevation, 10f, 85f);
@@ -127,6 +158,7 @@ public sealed class M7LookProfile
         Lighting.AmbientEnergy = Clamp(Lighting.AmbientEnergy, 0f, 4f);
         Lighting.RimEnergy = Clamp(Lighting.RimEnergy, 0f, 8f);
         Lighting.ShadowOpacity = Clamp01(Lighting.ShadowOpacity);
+        Lighting.BackgroundInfluence = Clamp01(Lighting.BackgroundInfluence);
 
         Post.Exposure = Clamp(Post.Exposure, -2f, 2f);
         Post.Brightness = Clamp(Post.Brightness, 0.4f, 1.8f);
@@ -140,6 +172,7 @@ public sealed class M7LookProfile
         Post.BloomSpread = Clamp(Post.BloomSpread, 0f, 1f);
         Post.Vignette = Clamp01(Post.Vignette);
         Post.FilmGrain = Clamp(Post.FilmGrain, 0f, 0.3f);
+        Post.GrainScale = Clamp(Post.GrainScale, 0.5f, 4f);
         Post.Sharpen = Clamp(Post.Sharpen, 0f, 1.5f);
         Post.PosterizeLevels = Clamp(Post.PosterizeLevels, 0, 32);
         Post.Dither = Clamp01(Post.Dither);
@@ -167,41 +200,16 @@ public sealed class M7LookProfile
         Vfx.FireSize = Clamp(Vfx.FireSize, 0.1f, 4f);
         Vfx.FireEnergy = Clamp(Vfx.FireEnergy, 0f, 12f);
         Vfx.FireFlicker = Clamp01(Vfx.FireFlicker);
-        Vfx.ScorchSize = Clamp(Vfx.ScorchSize, 0f, 6f);
 
         Ground.MacroAmount = Clamp01(Ground.MacroAmount);
         Ground.MacroScale = Clamp(Ground.MacroScale, 0.01f, 2f);
         Ground.MicroAmount = Clamp01(Ground.MicroAmount);
         Ground.MicroScale = Clamp(Ground.MicroScale, 0.1f, 20f);
-        Ground.NormalStrength = Clamp(Ground.NormalStrength, 0f, 2f);
         Ground.TracksOpacity = Clamp01(Ground.TracksOpacity);
-        Ground.ScorchOpacity = Clamp01(Ground.ScorchOpacity);
+        Ground.TracksWidth = Clamp(Ground.TracksWidth, 0.2f, 2f);
+        Ground.TracksLength = Clamp(Ground.TracksLength, 1f, 16f);
+        Ground.TrackTreadScale = Clamp(Ground.TrackTreadScale, 1f, 24f);
         Ground.UnitSeparation = Clamp(Ground.UnitSeparation, 4f, 14f);
-
-        Hud.Scale = Clamp(Hud.Scale, 0.7f, 1.5f);
-        Hud.PanelOpacity = Clamp01(Hud.PanelOpacity);
-        Hud.Brightness = Clamp(Hud.Brightness, 0.3f, 2f);
-        Hud.Saturation = Clamp(Hud.Saturation, 0f, 2f);
-        Hud.MinimapContrast = Clamp(Hud.MinimapContrast, 0.4f, 2f);
-        Hud.HealthBarWidth = Clamp(Hud.HealthBarWidth, 24f, 120f);
-        Hud.HealthBarHeight = Clamp(Hud.HealthBarHeight, 2f, 14f);
-        Hud.HealthBarOpacity = Clamp01(Hud.HealthBarOpacity);
-        Hud.SelectionRingWidth = Clamp(Hud.SelectionRingWidth, 0.02f, 0.5f);
-        Hud.SelectionBrightness = Clamp(Hud.SelectionBrightness, 0f, 5f);
-        Hud.SelectionPulse = Clamp01(Hud.SelectionPulse);
-        Hud.TargetMarkerBrightness = Clamp(Hud.TargetMarkerBrightness, 0f, 5f);
-        Hud.IndicatorScale = Clamp(Hud.IndicatorScale, 0.5f, 2f);
-    }
-
-    private static float NormalizeYaw(float yaw)
-    {
-        float wrapped = WrapDegrees(yaw);
-        return MathF.Round((wrapped - 45f) / 90f) * 90f + 45f switch
-        {
-            >= 360f => 45f,
-            < 0f => 315f,
-            float value => value
-        };
     }
 
     private static float WrapDegrees(float value) => ((value % 360f) + 360f) % 360f;
@@ -212,9 +220,11 @@ public sealed class M7LookProfile
 
 public sealed class CameraLook
 {
-    public float ZoomCells { get; set; } = 44f;
-    public float PitchDegrees { get; set; } = 58f;
+    public float ZoomCells { get; set; } = 35f;
+    public float PitchDegrees { get; set; } = 56.5f;
     public float YawDegrees { get; set; } = 45f;
+    public float FocusX { get; set; }
+    public float FocusZ { get; set; }
 }
 
 public sealed class SceneLook
@@ -224,34 +234,32 @@ public sealed class SceneLook
     public bool BurningEnabled { get; set; } = true;
     public bool DustEnabled { get; set; } = true;
     public bool FogPreviewEnabled { get; set; } = true;
-    public bool HudEnabled { get; set; } = true;
-    public bool SelectionEnabled { get; set; } = true;
     public bool Paused { get; set; }
 }
 
 public sealed class ShadingLook
 {
-    public float DiffuseWrap { get; set; } = 0.18f;
-    public float ShadowFloor { get; set; } = 0.16f;
+    public float DiffuseWrap { get; set; }
+    public float ShadowFloor { get; set; }
     public int LightBands { get; set; }
-    public float BandSoftness { get; set; } = 0.35f;
-    public float GlobalSpecular { get; set; } = 1f;
-    public float RimStrength { get; set; } = 0.16f;
-    public float RimWidth { get; set; } = 0.34f;
+    public float BandSoftness { get; set; }
+    public float GlobalSpecular { get; set; } = 0.83f;
+    public float RimStrength { get; set; } = 0.55f;
+    public float RimWidth { get; set; } = 0.05f;
     public string ShadowTint { get; set; } = "#253246";
     public string HighlightTint { get; set; } = "#fff4df";
 }
 
 public sealed class MaterialCollection
 {
-    public MaterialLook PaintedHull { get; set; } = new("#07867e", 0.06f, 0.38f, 0.60f, 0.24f, 0.12f, 0.05f);
-    public MaterialLook StructuralEarth { get; set; } = new("#71432d", 0.00f, 0.74f, 0.25f, 0.02f, 0.22f, 0.18f);
-    public MaterialLook Accent { get; set; } = new("#e8a21b", 0.02f, 0.32f, 0.58f, 0.20f, 0.08f, 0.04f);
-    public MaterialLook DarkMechanic { get; set; } = new("#253039", 0.64f, 0.30f, 0.72f, 0.05f, 0.10f, 0.08f);
-    public MaterialLook ToolSteel { get; set; } = new("#aebbc2", 0.94f, 0.20f, 0.95f, 0.03f, 0.22f, 0.04f) { BrushedAmount = 0.42f };
-    public MaterialLook Rubber { get; set; } = new("#101418", 0.00f, 0.92f, 0.10f, 0.00f, 0.04f, 0.16f) { MicroStrength = 0.26f, MicroScale = 11f };
-    public MaterialLook BuildingShell { get; set; } = new("#596b73", 0.24f, 0.54f, 0.46f, 0.08f, 0.18f, 0.14f);
-    public MaterialLook GroundRock { get; set; } = new("#565b5d", 0.00f, 0.92f, 0.14f, 0.00f, 0.24f, 0.16f) { MicroStrength = 0.20f, MicroScale = 7f };
+    public MaterialLook PaintedHull { get; set; } = new("#07867e", 0.42f, 0.38f, 0.60f, 0.24f, 0.12f, 0.05f) { MicroScale = 0.8f, TextureStrength = 0.22f, TextureScale = 1.4f };
+    public MaterialLook StructuralEarth { get; set; } = new("#71432d", 0.00f, 0.74f, 0.25f, 0.02f, 0.22f, 0.18f) { TextureStrength = 0.18f, TextureScale = 1.8f };
+    public MaterialLook Accent { get; set; } = new("#e8a21b", 0.02f, 0.32f, 0.58f, 0.20f, 0.08f, 0.04f) { TextureStrength = 0.10f, TextureScale = 1.6f };
+    public MaterialLook DarkMechanic { get; set; } = new("#253039", 0.64f, 0.30f, 0.72f, 0.05f, 0.10f, 0.08f) { TextureStrength = 0.18f, TextureScale = 2.2f };
+    public MaterialLook ToolSteel { get; set; } = new("#aebbc2", 0.94f, 0.20f, 0.95f, 0.03f, 0.22f, 0.04f) { BrushedAmount = 0.42f, TextureStrength = 0.30f, TextureScale = 2.4f };
+    public MaterialLook Rubber { get; set; } = new("#101418", 0.00f, 0.92f, 0.10f, 0.00f, 0.04f, 0.16f) { MicroStrength = 0.26f, MicroScale = 11f, TextureStrength = 0.34f, TextureScale = 2.8f };
+    public MaterialLook BuildingShell { get; set; } = new("#596b73", 0.24f, 0.54f, 0.46f, 0.08f, 0.18f, 0.14f) { TextureStrength = 0.26f, TextureScale = 1.2f };
+    public MaterialLook GroundRock { get; set; } = new("#565b5d", 0.00f, 0.92f, 0.14f, 0.00f, 0.24f, 0.16f) { MicroStrength = 0.20f, MicroScale = 7f, TextureStrength = 0.42f, TextureScale = 0.055f };
 
     public void Normalize()
     {
@@ -291,6 +299,8 @@ public sealed class MaterialLook
     public float EdgeWear { get; set; } = 0.06f;
     public float DustAmount { get; set; } = 0.06f;
     public float BrushedAmount { get; set; }
+    public float TextureStrength { get; set; }
+    public float TextureScale { get; set; } = 1f;
 
     public void Normalize()
     {
@@ -300,137 +310,127 @@ public sealed class MaterialLook
         MicroStrength = Math.Clamp(MicroStrength, 0f, 1f); MicroScale = Math.Clamp(MicroScale, 0.1f, 20f);
         MacroVariation = Math.Clamp(MacroVariation, 0f, 1f); EdgeWear = Math.Clamp(EdgeWear, 0f, 1f);
         DustAmount = Math.Clamp(DustAmount, 0f, 1f); BrushedAmount = Math.Clamp(BrushedAmount, 0f, 1f);
+        TextureStrength = Math.Clamp(TextureStrength, 0f, 1f); TextureScale = Math.Clamp(TextureScale, 0.05f, 12f);
     }
 }
 
 public sealed class GlassLook
 {
     public string Tint { get; set; } = "#31595b";
-    public float Opacity { get; set; } = 0.42f;
-    public float Roughness { get; set; } = 0.16f;
-    public float Ior { get; set; } = 1.46f;
-    public float RefractionStrength { get; set; } = 0.12f;
-    public float EdgeBrightness { get; set; } = 0.52f;
+    public float Opacity { get; set; } = 0.76f;
+    public float Roughness { get; set; } = 0.41f;
+    public float Ior { get; set; } = 1.35f;
+    public float RefractionStrength { get; set; }
+    public float EdgeBrightness { get; set; } = 2f;
 }
 
 public sealed class EmissionLook
 {
     public string SignalColor { get; set; } = "#ef4515";
-    public float SignalEnergy { get; set; } = 3.2f;
+    public float SignalEnergy { get; set; } = 4.6f;
     public string LampColor { get; set; } = "#7dff4c";
-    public float LampEnergy { get; set; } = 4.0f;
+    public float LampEnergy { get; set; } = 8.1f;
     public string CrystalColor { get; set; } = "#55d9ff";
-    public float CrystalEnergy { get; set; } = 4.4f;
-    public float PulseAmount { get; set; } = 0.16f;
-    public float PulseSpeed { get; set; } = 2.2f;
+    public float CrystalEnergy { get; set; } = 6.3f;
+    public float PulseAmount { get; set; } = 0.30f;
+    public float PulseSpeed { get; set; } = 2.5f;
+    public float HaloIntensity { get; set; } = 1.15f;
+    public float HaloSize { get; set; } = 1.65f;
+    public float EdgeDarkening { get; set; } = 0.48f;
+    public float LocalLightEnergy { get; set; } = 0.55f;
+    public float LocalLightRange { get; set; } = 2.8f;
 }
 
 public sealed class LightingLook
 {
-    public float KeyAzimuth { get; set; } = 315f;
-    public float KeyElevation { get; set; } = 54f;
+    public float KeyAzimuth { get; set; } = 129f;
+    public float KeyElevation { get; set; } = 41f;
     public string KeyColor { get; set; } = "#fff4e5";
-    public float KeyEnergy { get; set; } = 0.92f;
+    public float KeyEnergy { get; set; } = 1.9f;
     public float KeyAngularSize { get; set; } = 1.2f;
-    public float ShadowBlur { get; set; } = 1.5f;
-    public float FillAzimuth { get; set; } = 120f;
-    public float FillElevation { get; set; } = 32f;
+    public float ShadowBlur { get; set; } = 1.6f;
+    public float FillAzimuth { get; set; } = 196f;
+    public float FillElevation { get; set; } = 36f;
     public string FillColor { get; set; } = "#7caee6";
-    public float FillEnergy { get; set; } = 0.20f;
+    public float FillEnergy { get; set; } = 0.05f;
     public string AmbientColor { get; set; } = "#8ca1b5";
-    public float AmbientEnergy { get; set; } = 0.44f;
+    public float AmbientEnergy { get; set; } = 0.20f;
     public bool RimLightEnabled { get; set; } = true;
     public string RimColor { get; set; } = "#74a9ff";
-    public float RimEnergy { get; set; } = 0.34f;
-    public float ShadowOpacity { get; set; } = 0.86f;
+    public float RimEnergy { get; set; } = 0.10f;
+    public float ShadowOpacity { get; set; } = 0.96f;
     public string BackgroundColor { get; set; } = "#151d25";
+    public float BackgroundInfluence { get; set; } = 0.16f;
 }
 
 public sealed class PostLook
 {
     public bool Enabled { get; set; } = true;
-    public float Exposure { get; set; }
-    public float Brightness { get; set; } = 1f;
+    public float Exposure { get; set; } = -0.55f;
+    public float Brightness { get; set; } = 1.31f;
     public float Contrast { get; set; } = 1f;
-    public float Saturation { get; set; } = 1.04f;
-    public float Temperature { get; set; }
-    public float Tint { get; set; }
+    public float Saturation { get; set; } = 1.40f;
+    public float Temperature { get; set; } = 0.45f;
+    public float Tint { get; set; } = 0.52f;
     public int Tonemapper { get; set; } = 3;
     public bool BloomEnabled { get; set; } = true;
-    public float BloomIntensity { get; set; } = 0.30f;
-    public float BloomThreshold { get; set; } = 1.15f;
+    public float BloomIntensity { get; set; } = 0.39f;
+    public float BloomThreshold { get; set; }
     public float BloomSpread { get; set; } = 0.28f;
-    public float Vignette { get; set; } = 0.08f;
+    public float Vignette { get; set; } = 0.32f;
     public float FilmGrain { get; set; }
-    public float Sharpen { get; set; } = 0.12f;
+    public float GrainScale { get; set; } = 1.5f;
+    public float Sharpen { get; set; } = 0.38f;
     public int PosterizeLevels { get; set; }
     public float Dither { get; set; }
 }
 
 public sealed class OutlineLook
 {
-    public bool Enabled { get; set; }
+    public bool Enabled { get; set; } = true;
     public string Color { get; set; } = "#101820";
-    public float WidthPixels { get; set; } = 2.2f;
-    public float Opacity { get; set; } = 0.78f;
-    public float DepthThreshold { get; set; } = 0.003f;
-    public float NormalThreshold { get; set; } = 0.22f;
-    public float SilhouetteStrength { get; set; } = 1.20f;
-    public float CreaseStrength { get; set; } = 0.62f;
-    public float DistanceFade { get; set; } = 0.06f;
+    public float WidthPixels { get; set; } = 3.1f;
+    public float Opacity { get; set; } = 1f;
+    public float DepthThreshold { get; set; } = 0.0021f;
+    public float NormalThreshold { get; set; } = 0.50f;
+    public float SilhouetteStrength { get; set; } = 1.15f;
+    public float CreaseStrength { get; set; } = 0.38f;
+    public float DistanceFade { get; set; }
 }
 
 public sealed class VfxLook
 {
-    public string TracerColor { get; set; } = "#ffb02e";
-    public float TracerWidth { get; set; } = 0.10f;
-    public float TracerLength { get; set; } = 1.5f;
-    public float TracerSpeed { get; set; } = 15f;
-    public float TracerEnergy { get; set; } = 5f;
-    public float MuzzleSize { get; set; } = 0.38f;
+    public string TracerColor { get; set; } = "#4bff2e";
+    public float TracerWidth { get; set; } = 0.08f;
+    public float TracerLength { get; set; } = 3f;
+    public float TracerSpeed { get; set; } = 31.5f;
+    public float TracerEnergy { get; set; } = 12f;
+    public float MuzzleSize { get; set; } = 1.26f;
     public float ImpactSize { get; set; } = 0.56f;
     public int SparkCount { get; set; } = 8;
     public float SparkSize { get; set; } = 0.06f;
-    public int SmokeAmount { get; set; } = 9;
+    public int SmokeAmount { get; set; } = 20;
     public string SmokeColor { get; set; } = "#252a2d";
-    public float SmokeOpacity { get; set; } = 0.54f;
-    public float SmokeSize { get; set; } = 1.15f;
-    public float SmokeRise { get; set; } = 1.5f;
+    public float SmokeOpacity { get; set; } = 0.60f;
+    public float SmokeSize { get; set; } = 1.95f;
+    public float SmokeRise { get; set; } = 2.5f;
     public string FireColor { get; set; } = "#ff6a16";
-    public float FireSize { get; set; } = 1.1f;
-    public float FireEnergy { get; set; } = 5f;
-    public float FireFlicker { get; set; } = 0.38f;
-    public float ScorchSize { get; set; } = 2.1f;
+    public float FireSize { get; set; } = 3.15f;
+    public float FireEnergy { get; set; } = 12f;
+    public float FireFlicker { get; set; } = 1f;
 }
 
 public sealed class GroundLook
 {
     public string SecondaryColor { get; set; } = "#353d41";
-    public float MacroAmount { get; set; } = 0.28f;
-    public float MacroScale { get; set; } = 0.13f;
-    public float MicroAmount { get; set; } = 0.18f;
-    public float MicroScale { get; set; } = 6.5f;
-    public float NormalStrength { get; set; } = 0.42f;
+    public float MacroAmount { get; set; } = 0.36f;
+    public float MacroScale { get; set; } = 0.09f;
+    public float MicroAmount { get; set; }
+    public float MicroScale { get; set; } = 1.6f;
     public string DustTint { get; set; } = "#78644d";
     public float TracksOpacity { get; set; } = 0.34f;
-    public float ScorchOpacity { get; set; } = 0.60f;
-    public float UnitSeparation { get; set; } = 7.2f;
-}
-
-public sealed class HudLook
-{
-    public float Scale { get; set; } = 1f;
-    public float PanelOpacity { get; set; } = 0.88f;
-    public float Brightness { get; set; } = 1f;
-    public float Saturation { get; set; } = 1f;
-    public string AccentColor { get; set; } = "#e6a81f";
-    public float MinimapContrast { get; set; } = 1f;
-    public float HealthBarWidth { get; set; } = 54f;
-    public float HealthBarHeight { get; set; } = 6f;
-    public float HealthBarOpacity { get; set; } = 0.88f;
-    public float SelectionRingWidth { get; set; } = 0.10f;
-    public float SelectionBrightness { get; set; } = 1.9f;
-    public float SelectionPulse { get; set; } = 0.12f;
-    public float TargetMarkerBrightness { get; set; } = 1.6f;
-    public float IndicatorScale { get; set; } = 1f;
+    public float TracksWidth { get; set; } = 0.72f;
+    public float TracksLength { get; set; } = 7.5f;
+    public float TrackTreadScale { get; set; } = 10f;
+    public float UnitSeparation { get; set; } = 6.5f;
 }

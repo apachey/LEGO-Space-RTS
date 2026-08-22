@@ -885,3 +885,28 @@ changes no gameplay, SimCore, networking, formats or deterministic behavior.
 
 This is non-canonical presentation tooling. It adds no dependency and changes no
 gameplay, SimCore authority, networking, format or deterministic behavior.
+
+---
+
+## 2026-08-22 — Repair the Look Lab around observable controls
+
+- The game director's schema-1 profile becomes the schema-2 review baseline,
+  except for a bright-blue background selected while that control was not
+  observable. Schema 1 remains paste-compatible and migrates forward.
+- HUD, health, selection and target fixtures are removed because interface art
+  direction is a separate phase. The arbitrary scorch overlay is removed rather
+  than polished without an accepted damage language.
+- Every emissive role now writes HDR emission and may drive same-hue edge/halo
+  and local-light response. Tracer and fire use the same observable energy
+  language; muzzle/impact/fire move to GPU particles.
+- Film grain and posterization dither are static. Ground tracks use depth-tested
+  tread geometry. Impact position is derived from the target's exterior face.
+- Four generated grayscale detail maps are accepted only as non-canonical
+  look-development inputs for paint, brushed metal, rubber and quarry ground.
+  They do not establish a production texture or normal/ORM pipeline.
+- A live ground normal-strength control is not shipped after two materially
+  different shader implementations produced invalid terrain rendering. A later
+  normal/ORM pipeline requires a separately reviewed implementation task.
+
+This changes presentation tooling only. It changes no gameplay, SimCore,
+networking, serialization format, dependency or visual canon.

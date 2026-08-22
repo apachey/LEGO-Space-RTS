@@ -8,19 +8,14 @@ public partial class M7LookLab : Node3D
     private const string ModelPath = "res://Assets/M7/raider_drill_rig.glb";
     private static readonly string[] Categories =
     {
-        "SCENE & CAMERA", "SHADING", "MATERIALS", "GLASS & EMISSION", "LIGHTING", "POST FX", "OUTLINE", "VFX", "GROUND", "HUD"
+        "SCENE & CAMERA", "SHADING", "MATERIALS", "GLASS & EMISSION", "LIGHTING", "POST FX", "OUTLINE", "VFX", "GROUND"
     };
 
     private readonly List<Node3D> _units = new();
     private readonly List<Node3D> _drills = new();
     private readonly List<MeshInstance3D> _unitMeshes = new();
     private readonly List<(MeshInstance3D Mesh, M7LookMaterialRole Role)> _roleMeshes = new();
-    private readonly List<MeshInstance3D> _fireFlames = new();
-    private readonly List<MeshInstance3D> _smokePuffs = new();
-    private readonly List<MeshInstance3D> _sparks = new();
-    private readonly List<(Control Root, ColorRect Fill, Vector3 World, float Health)> _healthBars = new();
-    private readonly List<(MeshInstance3D Background, MeshInstance3D Fill, float Health)> _worldHealthBars = new();
-    private readonly List<(Label3D Label, float Health, bool Selected)> _worldHealthLabels = new();
+    private readonly List<(OmniLight3D Light, M7LookMaterialRole Role)> _emissionLights = new();
     private readonly List<MeshInstance3D> _tracks = new();
     private Action? _returnToPrototype;
     private M7LookProfile _profile = M7LookProfile.CreateDefault();
@@ -32,17 +27,15 @@ public partial class M7LookLab : Node3D
     private Godot.Environment? _environment;
     private MeshInstance3D? _ground;
     private MeshInstance3D? _fogPreview;
-    private MeshInstance3D? _selectionRing;
-    private MeshInstance3D? _targetMarker;
     private MeshInstance3D? _tracer;
-    private MeshInstance3D? _muzzle;
-    private MeshInstance3D? _impact;
-    private MeshInstance3D? _scorch;
+    private GpuParticles3D? _muzzleParticles;
+    private GpuParticles3D? _impactParticles;
+    private GpuParticles3D? _fireParticles;
+    private GpuParticles3D? _smokeParticles;
+    private OmniLight3D? _impactLight;
+    private OmniLight3D? _fireLight;
     private MeshInstance3D? _postQuad;
     private ShaderMaterial? _postMaterial;
-    private CanvasLayer? _fakeHudLayer;
-    private Control? _fakeHudRoot;
-    private ColorRect? _minimapGround;
     private CanvasLayer? _controlsLayer;
     private PanelContainer? _controlPanel;
     private VBoxContainer? _settingsBox;
@@ -55,6 +48,10 @@ public partial class M7LookLab : Node3D
     private bool _finished;
     private int _frames;
     private double _time;
+    private int _lastWeaponCycle = -1;
+    private int _lastImpactCycle = -1;
+    private MouseButton _cameraDragButton = MouseButton.None;
+    private Vector2 _lastDragPosition;
     private string? _capturePath;
     private Vector3 _shooterMuzzle = new(2.4f, 1.45f, 4.8f);
     private Vector3 _targetPoint = new(11.4f, 1.6f, -6.6f);
@@ -69,24 +66,27 @@ public partial class M7LookLab : Node3D
         if (float.TryParse(ParseString(commandLineArgs, "--m7-look-zoom"), System.Globalization.NumberStyles.Float,
             System.Globalization.CultureInfo.InvariantCulture, out float zoom))
             _profile.Camera.ZoomCells = zoom;
-        if (ParseString(commandLineArgs, "--m7-look-post") == "off") _profile.Post.Enabled = false;
-        if (ParseString(commandLineArgs, "--m7-look-outline") == "on") _profile.Outline.Enabled = true;
+        string? postOverride = ParseString(commandLineArgs, "--m7-look-post");
+        if (postOverride == "off") _profile.Post.Enabled = false;
+        else if (postOverride == "on") _profile.Post.Enabled = true;
+        string? outlineOverride = ParseString(commandLineArgs, "--m7-look-outline");
+        if (outlineOverride == "off") _profile.Outline.Enabled = false;
+        else if (outlineOverride == "on") _profile.Outline.Enabled = true;
         _profile.Normalize();
         _defaults = _profile.Clone();
 
         BuildScene();
-        BuildFakeHud();
         BuildControls();
         ApplyProfile(rebuildMaterials: true);
         ProcessPriority = 1000;
-        GD.Print($"M7 LOOK LAB: active schema={_profile.SchemaVersion} zoom={_profile.Camera.ZoomCells:0.##} controls={(_controlsVisible ? "visible" : "hidden")} Tab=controls wheel=zoom Escape=return");
+        GD.Print($"M7 LOOK LAB: active schema={_profile.SchemaVersion} zoom={_profile.Camera.ZoomCells:0.##} controls={(_controlsVisible ? "visible" : "hidden")} post={(_profile.Post.Enabled ? "on" : "off")} outline={(_profile.Outline.Enabled ? "on" : "off")} Tab=controls wheel=zoom RMB=orbit MMB=pan WASD=pan F=reset Escape=return");
     }
 
     public override void _Process(double delta)
     {
         if (!_profile.Scene.Paused) _time += delta * _profile.Scene.AnimationSpeed;
+        UpdateFreeCamera((float)delta);
         AnimateScene();
-        UpdateWorldHud();
 
         if (!_smoke || _finished) return;
         _frames++;
@@ -95,7 +95,7 @@ public partial class M7LookLab : Node3D
         if (valid && _capturePath is not null) valid = CaptureViewport(_capturePath);
         _finished = true;
         if (valid)
-            GD.Print($"M7 LOOK LAB: PASS schema={_profile.SchemaVersion} units={_units.Count} meshes={_unitMeshes.Count} triangles={triangles} buildings=2 firing=1 burning=1 controls={(_controlsVisible ? "visible" : "hidden")} zoom={_profile.Camera.ZoomCells:0.##}");
+            GD.Print($"M7 LOOK LAB: PASS schema={_profile.SchemaVersion} units={_units.Count} meshes={_unitMeshes.Count} triangles={triangles} buildings=2 firing=1 burning=1 controls={(_controlsVisible ? "visible" : "hidden")} zoom={_profile.Camera.ZoomCells:0.##} post={(_profile.Post.Enabled ? "on" : "off")} outline={(_profile.Outline.Enabled ? "on" : "off")}");
         else
             GD.PrintErr($"M7 LOOK LAB: FAIL units={_units.Count} meshes={_unitMeshes.Count} triangles={triangles}");
         GetTree().Quit(valid ? 0 : 2);
@@ -103,10 +103,32 @@ public partial class M7LookLab : Node3D
 
     public override void _UnhandledInput(InputEvent @event)
     {
-        if (@event is InputEventMouseButton { Pressed: true } mouse)
+        if (@event is InputEventMouseButton mouse)
         {
-            if (mouse.ButtonIndex == MouseButton.WheelUp) AdjustZoom(0.92f);
-            if (mouse.ButtonIndex == MouseButton.WheelDown) AdjustZoom(1.08f);
+            if (mouse.Pressed && mouse.ButtonIndex == MouseButton.WheelUp) AdjustZoom(0.92f);
+            if (mouse.Pressed && mouse.ButtonIndex == MouseButton.WheelDown) AdjustZoom(1.08f);
+            if (mouse.ButtonIndex is MouseButton.Right or MouseButton.Middle)
+            {
+                _cameraDragButton = mouse.Pressed ? mouse.ButtonIndex : MouseButton.None;
+                _lastDragPosition = mouse.Position;
+                GetViewport().SetInputAsHandled();
+            }
+        }
+        if (@event is InputEventMouseMotion motion && _cameraDragButton != MouseButton.None)
+        {
+            Vector2 delta = motion.Position - _lastDragPosition;
+            _lastDragPosition = motion.Position;
+            if (_cameraDragButton == MouseButton.Right)
+            {
+                _profile.Camera.YawDegrees = Mathf.PosMod(_profile.Camera.YawDegrees - delta.X * 0.24f, 360f);
+                _profile.Camera.PitchDegrees = Mathf.Clamp(_profile.Camera.PitchDegrees + delta.Y * 0.18f, 30f, 80f);
+            }
+            else
+            {
+                PanCamera(delta);
+            }
+            ApplyCamera();
+            GetViewport().SetInputAsHandled();
         }
         if (@event is not InputEventKey { Pressed: true, Echo: false } key) return;
         if (key.Keycode == Key.Tab)
@@ -117,6 +139,11 @@ public partial class M7LookLab : Node3D
         else if (key.Keycode == Key.Escape)
         {
             _returnToPrototype?.Invoke();
+            GetViewport().SetInputAsHandled();
+        }
+        else if (key.Keycode == Key.F)
+        {
+            ResetView();
             GetViewport().SetInputAsHandled();
         }
     }
@@ -155,15 +182,18 @@ public partial class M7LookLab : Node3D
         CreateUnit("FacingSouthWest", new Vector3(0.88f * spacing, 0.08f, -0.25f * spacing), 225f);
         CreateUnit("FacingSouthEast", new Vector3(-0.34f * spacing, 0.08f, -0.86f * spacing), 315f);
 
-        Node3D intact = BuildBuilding("IntactBuilding", new Vector3(11.4f, 0f, -6.6f), new Vector3(6.4f, 3.2f, 5.0f), false);
+        Vector3 intactSize = new(6.4f, 3.2f, 5.0f);
+        Node3D intact = BuildBuilding("IntactBuilding", new Vector3(11.4f, 0f, -6.6f), intactSize, false);
         Node3D burning = BuildBuilding("BurningBuilding", new Vector3(-10.5f, 0f, -8.7f), new Vector3(4.1f, 2.2f, 3.8f), true);
         AddChild(intact); AddChild(burning);
-        _targetPoint = intact.GlobalPosition + new Vector3(0f, 1.55f, 0f);
+        _targetPoint = SurfaceImpactPoint(intact.GlobalPosition + new Vector3(0f, 1.55f, 0f), intactSize, _shooterMuzzle);
+        _units[0].LookAt(new Vector3(_targetPoint.X, _units[0].GlobalPosition.Y, _targetPoint.Z), Vector3.Up);
+        _shooterMuzzle = _units[0].GlobalPosition + _units[0].GlobalBasis * new Vector3(0.85f, 1.38f, -3.35f);
 
         BuildGroundDetails();
         BuildCrystalCluster(new Vector3(10.2f, 0f, 6.8f));
         BuildCombatEffects();
-        BuildBurningEffects(burning.GlobalPosition + new Vector3(0f, 2.1f, 0f));
+        BuildBurningEffects(burning.GlobalPosition + new Vector3(0f, 1.9f, 0f));
         BuildPostProcess();
     }
 
@@ -245,13 +275,15 @@ public partial class M7LookLab : Node3D
 
     private void BuildGroundDetails()
     {
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < 2; i++)
         {
+            float x = -6.55f + i * 1.15f;
+            float z = 5.4f;
             MeshInstance3D track = new()
             {
                 Name = $"TrackMark_{i}",
-                Mesh = new PlaneMesh { Size = new Vector2(0.52f, 5.2f) },
-                Position = new Vector3(-6.8f + i * 0.44f, 0.045f, 5.4f),
+                Mesh = new PlaneMesh { Size = new Vector2(_profile.Ground.TracksWidth, _profile.Ground.TracksLength) },
+                Position = new Vector3(x, GroundHeight(x, z) + 0.026f, z),
                 RotationDegrees = new Vector3(0f, 28f, 0f),
                 CastShadow = GeometryInstance3D.ShadowCastingSetting.Off
             };
@@ -266,14 +298,6 @@ public partial class M7LookLab : Node3D
             CastShadow = GeometryInstance3D.ShadowCastingSetting.Off
         };
         AddChild(_fogPreview);
-        _scorch = new MeshInstance3D
-        {
-            Name = "ScorchMark",
-            Mesh = new PlaneMesh { Size = new Vector2(2.1f, 2.1f) },
-            Position = new Vector3(-10.5f, 0.06f, -8.7f),
-            CastShadow = GeometryInstance3D.ShadowCastingSetting.Off
-        };
-        AddChild(_scorch);
     }
 
     private void BuildCrystalCluster(Vector3 origin)
@@ -297,44 +321,61 @@ public partial class M7LookLab : Node3D
     private void BuildCombatEffects()
     {
         _tracer = new MeshInstance3D { Name = "WeaponTracer", Mesh = new BoxMesh { Size = new Vector3(0.1f, 0.1f, 1.5f) }, CastShadow = GeometryInstance3D.ShadowCastingSetting.Off };
-        _muzzle = new MeshInstance3D { Name = "MuzzleFlash", Mesh = new SphereMesh { Radius = 0.38f, Height = 0.76f, RadialSegments = 12, Rings = 6 }, CastShadow = GeometryInstance3D.ShadowCastingSetting.Off };
-        _impact = new MeshInstance3D { Name = "ImpactFlash", Mesh = new SphereMesh { Radius = 0.56f, Height = 1.12f, RadialSegments = 12, Rings = 6 }, CastShadow = GeometryInstance3D.ShadowCastingSetting.Off };
-        AddChild(_tracer); AddChild(_muzzle); AddChild(_impact);
-        for (int i = 0; i < 12; i++)
-        {
-            MeshInstance3D spark = new()
-            {
-                Name = $"ImpactSpark_{i}",
-                Mesh = new BoxMesh { Size = new Vector3(0.045f, 0.045f, 0.38f) },
-                CastShadow = GeometryInstance3D.ShadowCastingSetting.Off
-            };
-            AddChild(spark); _sparks.Add(spark);
-        }
+        AddChild(_tracer);
+
+        _muzzleParticles = CreateBurstParticles("MuzzleParticles", 18, 0.16f, 28f, 2.5f, 7.5f, Vector3.Zero);
+        _impactParticles = CreateBurstParticles("ImpactParticles", 20, 0.34f, 78f, 2.0f, 8.0f, new Vector3(0f, -4.2f, 0f));
+        AddChild(_muzzleParticles);
+        AddChild(_impactParticles);
+
+        _impactLight = new OmniLight3D { Name = "ImpactLight", OmniRange = 3.2f, ShadowEnabled = false, Visible = false };
+        AddChild(_impactLight);
     }
 
     private void BuildBurningEffects(Vector3 origin)
     {
-        for (int i = 0; i < 7; i++)
+        ParticleProcessMaterial fireProcess = new()
         {
-            MeshInstance3D flame = new()
-            {
-                Name = $"FireFlame_{i}",
-                Mesh = new SphereMesh { Radius = 0.35f, Height = 0.9f, RadialSegments = 10, Rings = 5 },
-                Position = origin + new Vector3((i - 3) * 0.26f, 0f, (i % 2) * 0.24f),
-                CastShadow = GeometryInstance3D.ShadowCastingSetting.Off
-            };
-            AddChild(flame); _fireFlames.Add(flame);
-        }
-        for (int i = 0; i < 14; i++)
+            Direction = Vector3.Up,
+            Spread = 24f,
+            Gravity = new Vector3(0f, 1.8f, 0f),
+            InitialVelocityMin = 0.7f,
+            InitialVelocityMax = 2.2f,
+            ScaleMin = 0.28f,
+            ScaleMax = 0.82f,
+            EmissionShape = ParticleProcessMaterial.EmissionShapeEnum.Box,
+            EmissionBoxExtents = new Vector3(1.25f, 0.10f, 0.80f)
+        };
+        _fireParticles = new GpuParticles3D
         {
-            MeshInstance3D puff = new()
-            {
-                Name = $"FireSmoke_{i}",
-                Mesh = new SphereMesh { Radius = 0.42f, Height = 0.74f, RadialSegments = 8, Rings = 4 },
-                CastShadow = GeometryInstance3D.ShadowCastingSetting.Off
-            };
-            AddChild(puff); _smokePuffs.Add(puff);
-        }
+            Name = "FireParticles", Position = origin, Amount = 28, Lifetime = 1.05, Randomness = 0.52f,
+            ProcessMaterial = fireProcess, LocalCoords = true, Emitting = true,
+            DrawPass1 = new QuadMesh { Size = new Vector2(0.62f, 1.18f) }
+        };
+        AddChild(_fireParticles);
+
+        ParticleProcessMaterial smokeProcess = new()
+        {
+            Direction = Vector3.Up,
+            Spread = 19f,
+            Gravity = new Vector3(0f, 0.7f, 0f),
+            InitialVelocityMin = 0.35f,
+            InitialVelocityMax = 1.1f,
+            ScaleMin = 0.30f,
+            ScaleMax = 1.15f,
+            EmissionShape = ParticleProcessMaterial.EmissionShapeEnum.Box,
+            EmissionBoxExtents = new Vector3(1.0f, 0.12f, 0.65f)
+        };
+        _smokeParticles = new GpuParticles3D
+        {
+            Name = "SmokeParticles", Position = origin + Vector3.Up * 0.7f, Amount = 20, Lifetime = 2.8,
+            Randomness = 0.64f, ProcessMaterial = smokeProcess, LocalCoords = true, Emitting = true,
+            DrawPass1 = new QuadMesh { Size = new Vector2(0.92f, 0.92f) }
+        };
+        AddChild(_smokeParticles);
+
+        _fireLight = new OmniLight3D { Name = "FireLight", Position = origin + Vector3.Up * 0.4f, ShadowEnabled = false };
+        AddChild(_fireLight);
     }
 
     private void BuildPostProcess()
@@ -349,116 +390,6 @@ public partial class M7LookLab : Node3D
             CastShadow = GeometryInstance3D.ShadowCastingSetting.Off
         };
         AddChild(_postQuad);
-    }
-
-    private void BuildFakeHud()
-    {
-        _fakeHudLayer = new CanvasLayer { Name = "FakeGameplayHUD", Layer = 10 };
-        AddChild(_fakeHudLayer);
-        Control root = new() { Name = "HudRoot", MouseFilter = Control.MouseFilterEnum.Ignore };
-        _fakeHudLayer.AddChild(root);
-        root.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);
-        _fakeHudRoot = root;
-
-        Panel minimap = new() { Name = "Minimap", AnchorTop = 1f, AnchorBottom = 1f, OffsetLeft = 18f, OffsetTop = -208f, OffsetRight = 208f, OffsetBottom = -18f };
-        minimap.AddThemeStyleboxOverride("panel", FlatPanel(new Color("17212a"), 0.92f, new Color("7c8d98")));
-        root.AddChild(minimap);
-        _minimapGround = new ColorRect { Position = new Vector2(10f, 10f), Size = new Vector2(170f, 170f), Color = new Color("34423f") };
-        minimap.AddChild(_minimapGround);
-        for (int i = 0; i < 7; i++)
-        {
-            ColorRect dot = new() { Position = new Vector2(24 + i * 17, 54 + (i % 3) * 22), Size = new Vector2(5, 5), Color = i < 4 ? new Color("e6a81f") : new Color("dd594b") };
-            minimap.AddChild(dot);
-        }
-
-        Panel bottom = new() { Name = "SelectionPanel", AnchorLeft = 0.5f, AnchorRight = 0.5f, AnchorTop = 1f, AnchorBottom = 1f, OffsetLeft = -310f, OffsetRight = 310f, OffsetTop = -126f, OffsetBottom = -18f };
-        bottom.AddThemeStyleboxOverride("panel", FlatPanel(new Color("18232d"), 0.92f, new Color("8799a5")));
-        root.AddChild(bottom);
-        Label selection = new() { Text = "RAIDER DRILL RIG     742 / 800\nHEAVY EXCAVATION VEHICLE\n● SELECTED    ◇ ATTACKING STRUCTURE", Position = new Vector2(22f, 18f), Size = new Vector2(570f, 76f) };
-        selection.AddThemeColorOverride("font_color", new Color("dce7ea")); selection.AddThemeFontSizeOverride("font_size", 16); bottom.AddChild(selection);
-
-        Panel resources = new() { AnchorLeft = 1f, AnchorRight = 1f, OffsetLeft = -390f, OffsetRight = -18f, OffsetTop = 18f, OffsetBottom = 64f };
-        resources.AddThemeStyleboxOverride("panel", FlatPanel(new Color("15202a"), 0.88f, new Color("657986")));
-        root.AddChild(resources);
-        Label resourceText = new() { Text = "CRYSTALS  1 240      ENERGY  680      CAP  38/64", Position = new Vector2(14f, 11f), Size = new Vector2(345f, 24f) };
-        resourceText.AddThemeColorOverride("font_color", new Color("e3eef0")); resources.AddChild(resourceText);
-
-        Vector3[] anchors = _units.Select(unit => unit.GlobalPosition + Vector3.Up * 3.3f).ToArray();
-        float[] health = { 0.93f, 0.68f, 1f, 0.46f };
-        for (int i = 0; i < anchors.Length; i++)
-        {
-            CreateHealthBar(root, anchors[i], health[i], i == 0);
-            CreateWorldHealthBar(anchors[i], health[i], i == 0);
-        }
-
-        _selectionRing = new MeshInstance3D
-        {
-            Name = "SelectionRing",
-            Mesh = new TorusMesh { InnerRadius = 2.65f, OuterRadius = 2.78f, Rings = 32, RingSegments = 8 },
-            Position = _units[0].GlobalPosition + Vector3.Up * 0.07f,
-            CastShadow = GeometryInstance3D.ShadowCastingSetting.Off
-        };
-        AddChild(_selectionRing);
-        _targetMarker = new MeshInstance3D
-        {
-            Name = "TargetMarker",
-            Mesh = new TorusMesh { InnerRadius = 1.05f, OuterRadius = 1.16f, Rings = 24, RingSegments = 6 },
-            Position = new Vector3(_targetPoint.X, 0.09f, _targetPoint.Z),
-            CastShadow = GeometryInstance3D.ShadowCastingSetting.Off
-        };
-        AddChild(_targetMarker);
-    }
-
-    private void CreateHealthBar(Control root, Vector3 world, float health, bool selected)
-    {
-        Control bar = new() { CustomMinimumSize = new Vector2(58f, 9f), Size = new Vector2(58f, 9f), MouseFilter = Control.MouseFilterEnum.Ignore, ZIndex = 20 };
-        ColorRect background = new() { Color = new Color(0.02f, 0.03f, 0.035f, 0.88f), Size = new Vector2(58f, 9f), MouseFilter = Control.MouseFilterEnum.Ignore };
-        ColorRect fill = new() { Color = selected ? new Color("5ddd7b") : health < 0.55f ? new Color("e6783d") : new Color("8ed957"), Position = new Vector2(2f, 2f), Size = new Vector2(54f * health, 5f), MouseFilter = Control.MouseFilterEnum.Ignore };
-        bar.AddChild(background); bar.AddChild(fill);
-        if (_fakeHudLayer is not null) _fakeHudLayer.AddChild(bar); else root.AddChild(bar);
-        _healthBars.Add((bar, fill, world, health));
-    }
-
-    private void CreateWorldHealthBar(Vector3 world, float health, bool selected)
-    {
-        MeshInstance3D background = new()
-        {
-            Name = "WorldHealthBackground",
-            Mesh = new QuadMesh { Size = new Vector2(1.55f, 0.18f) },
-            Position = world,
-            CastShadow = GeometryInstance3D.ShadowCastingSetting.Off
-        };
-        MeshInstance3D fill = new()
-        {
-            Name = "WorldHealthFill",
-            Mesh = new QuadMesh { Size = new Vector2(1.46f * health, 0.11f) },
-            Position = world + Vector3.Up * 0.003f,
-            CastShadow = GeometryInstance3D.ShadowCastingSetting.Off
-        };
-        background.MaterialOverride = BillboardMaterial(new Color(0.015f, 0.02f, 0.025f, 0.88f));
-        fill.MaterialOverride = BillboardMaterial(selected ? new Color("5ddd7b") : health < 0.55f ? new Color("e6783d") : new Color("8ed957"));
-        AddChild(background); AddChild(fill);
-        _worldHealthBars.Add((background, fill, health));
-        int filled = Mathf.Clamp(Mathf.RoundToInt(health * 8f), 1, 8);
-        Label3D label = new()
-        {
-            Name = "HealthReadabilityLabel",
-            Text = new string('█', filled) + new string('░', 8 - filled),
-            Position = world + Vector3.Up * 0.18f,
-            FontSize = 30,
-            PixelSize = 0.010f,
-            Billboard = BaseMaterial3D.BillboardModeEnum.Enabled,
-            NoDepthTest = true,
-            Shaded = false,
-            DoubleSided = true,
-            OutlineSize = 7,
-            OutlineModulate = new Color(0.01f, 0.015f, 0.02f, 0.96f),
-            Modulate = selected ? new Color("5ddd7b") : health < 0.55f ? new Color("e6783d") : new Color("8ed957"),
-            RenderPriority = 126,
-            OutlineRenderPriority = 125
-        };
-        AddChild(label);
-        _worldHealthLabels.Add((label, health, selected));
     }
 
     private void BuildControls()
@@ -479,6 +410,7 @@ public partial class M7LookLab : Node3D
         AddAction(actions, "PASTE & APPLY", PasteProfile, "Applies a complete versioned M7 Look profile from the clipboard.");
         AddAction(actions, "RESET SECTION", ResetCurrentSection);
         AddAction(actions, "RESET ALL", ResetAll);
+        AddAction(actions, "RESET VIEW · F", ResetView);
         _pauseButton = AddAction(actions, "PAUSE", TogglePause);
         AddAction(actions, "HIDE · TAB", () => SetControlsVisible(false));
 
@@ -512,23 +444,22 @@ public partial class M7LookLab : Node3D
             case 6: BuildOutlineSettings(); break;
             case 7: BuildVfxSettings(); break;
             case 8: BuildGroundSettings(); break;
-            case 9: BuildHudSettings(); break;
         }
     }
 
     private void BuildSceneSettings()
     {
-        AddNote("Actual gameplay camera: 36° FOV, canonical 24–72 build-cell zoom. Mouse wheel works over the scene.");
+        AddNote("Free inspection camera: RMB drag orbits, MMB drag pans, wheel zooms, WASD pans, Q/E rotates, F resets. The copied profile includes the exact view.");
         AddSlider("Zoom · build cells", 24, 72, 0.5, () => _profile.Camera.ZoomCells, v => _profile.Camera.ZoomCells = v, false);
-        AddSlider("Pitch · degrees", 52, 64, 0.5, () => _profile.Camera.PitchDegrees, v => _profile.Camera.PitchDegrees = v, false);
-        AddOption("Yaw", new[] { "45°", "135°", "225°", "315°" }, YawIndex(), index => _profile.Camera.YawDegrees = 45f + index * 90f, false);
+        AddSlider("Pitch · degrees", 30, 80, 0.5, () => _profile.Camera.PitchDegrees, v => _profile.Camera.PitchDegrees = v, false);
+        AddSlider("Yaw · degrees", 0, 359, 1, () => _profile.Camera.YawDegrees, v => _profile.Camera.YawDegrees = v, false);
+        AddSlider("Focus X", -42, 42, 0.25, () => _profile.Camera.FocusX, v => _profile.Camera.FocusX = v, false);
+        AddSlider("Focus Z", -42, 42, 0.25, () => _profile.Camera.FocusZ, v => _profile.Camera.FocusZ = v, false);
         AddSlider("Animation speed", 0, 2, 0.05, () => _profile.Scene.AnimationSpeed, v => _profile.Scene.AnimationSpeed = v, false);
         AddCheck("Weapon firing", () => _profile.Scene.FiringEnabled, v => _profile.Scene.FiringEnabled = v, false);
         AddCheck("Burning building", () => _profile.Scene.BurningEnabled, v => _profile.Scene.BurningEnabled = v, false);
         AddCheck("Dust / smoke", () => _profile.Scene.DustEnabled, v => _profile.Scene.DustEnabled = v, false);
         AddCheck("Fog-of-war preview", () => _profile.Scene.FogPreviewEnabled, v => _profile.Scene.FogPreviewEnabled = v, false);
-        AddCheck("Fake gameplay HUD", () => _profile.Scene.HudEnabled, v => _profile.Scene.HudEnabled = v, false);
-        AddCheck("Selection language", () => _profile.Scene.SelectionEnabled, v => _profile.Scene.SelectionEnabled = v);
     }
 
     private void BuildShadingSettings()
@@ -546,6 +477,7 @@ public partial class M7LookLab : Node3D
 
     private void BuildMaterialSettings()
     {
+        AddNote("Generated grayscale detail maps preserve the selected base color. Texture strength 0 disables the asset completely; scale changes its physical frequency.");
         string[] families = { "Painted hull", "Structural earth", "Accent", "Dark mechanic", "Tool steel", "Rubber", "Building shell", "Ground rock" };
         AddOption("Material family", families, _materialFamily, index => { _materialFamily = index; BuildCurrentSettings(); }, rebuildMaterials: false, applyProfile: false);
         MaterialLook look = SelectedMaterial();
@@ -562,6 +494,8 @@ public partial class M7LookLab : Node3D
         AddSlider("Edge wear", 0, 1, 0.01, () => look.EdgeWear, v => look.EdgeWear = v);
         AddSlider("Dust amount", 0, 1, 0.01, () => look.DustAmount, v => look.DustAmount = v);
         AddSlider("Brushed directionality", 0, 1, 0.01, () => look.BrushedAmount, v => look.BrushedAmount = v);
+        AddSlider("Texture strength", 0, 1, 0.01, () => look.TextureStrength, v => look.TextureStrength = v);
+        AddSlider("Texture scale", 0.05, 12, 0.05, () => look.TextureScale, v => look.TextureScale = v);
     }
 
     private void BuildGlassEmissionSettings()
@@ -582,6 +516,11 @@ public partial class M7LookLab : Node3D
         AddSlider("Crystal energy", 0, 12, 0.1, () => _profile.Emission.CrystalEnergy, v => _profile.Emission.CrystalEnergy = v);
         AddSlider("Emission pulse", 0, 1, 0.01, () => _profile.Emission.PulseAmount, v => _profile.Emission.PulseAmount = v);
         AddSlider("Pulse speed", 0, 8, 0.1, () => _profile.Emission.PulseSpeed, v => _profile.Emission.PulseSpeed = v);
+        AddSlider("Halo intensity", 0, 3, 0.01, () => _profile.Emission.HaloIntensity, v => _profile.Emission.HaloIntensity = v);
+        AddSlider("Halo size", 0.5, 4, 0.05, () => _profile.Emission.HaloSize, v => _profile.Emission.HaloSize = v);
+        AddSlider("Darker luminous edge", 0, 1, 0.01, () => _profile.Emission.EdgeDarkening, v => _profile.Emission.EdgeDarkening = v);
+        AddSlider("Local light energy", 0, 4, 0.02, () => _profile.Emission.LocalLightEnergy, v => _profile.Emission.LocalLightEnergy = v);
+        AddSlider("Local light range", 0.5, 8, 0.1, () => _profile.Emission.LocalLightRange, v => _profile.Emission.LocalLightRange = v);
     }
 
     private void BuildLightingSettings()
@@ -604,7 +543,9 @@ public partial class M7LookLab : Node3D
         AddCheck("Rim light enabled", () => _profile.Lighting.RimLightEnabled, v => _profile.Lighting.RimLightEnabled = v, false);
         AddColor("Rim color", () => _profile.Lighting.RimColor, v => _profile.Lighting.RimColor = v);
         AddSlider("Rim energy", 0, 8, 0.05, () => _profile.Lighting.RimEnergy, v => _profile.Lighting.RimEnergy = v, false);
-        AddColor("Background", () => _profile.Lighting.BackgroundColor, v => _profile.Lighting.BackgroundColor = v);
+        AddNote("Far-field background affects both the clear color and distant terrain, so it remains visible in the overhead test.");
+        AddColor("Far-field background", () => _profile.Lighting.BackgroundColor, v => _profile.Lighting.BackgroundColor = v);
+        AddSlider("Background influence", 0, 1, 0.01, () => _profile.Lighting.BackgroundInfluence, v => _profile.Lighting.BackgroundInfluence = v);
     }
 
     private void BuildPostSettings()
@@ -622,7 +563,9 @@ public partial class M7LookLab : Node3D
         AddSlider("Bloom threshold", 0, 8, 0.05, () => _profile.Post.BloomThreshold, v => _profile.Post.BloomThreshold = v, false);
         AddSlider("Bloom spread", 0, 1, 0.01, () => _profile.Post.BloomSpread, v => _profile.Post.BloomSpread = v, false);
         AddSlider("Vignette", 0, 1, 0.01, () => _profile.Post.Vignette, v => _profile.Post.Vignette = v, false);
+        AddNote("Film grain and dither are static screen patterns. Dither is only used with posterization; neither swims over the image.");
         AddSlider("Film grain", 0, 0.3, 0.005, () => _profile.Post.FilmGrain, v => _profile.Post.FilmGrain = v, false);
+        AddSlider("Film grain scale", 0.5, 4, 0.05, () => _profile.Post.GrainScale, v => _profile.Post.GrainScale = v, false);
         AddSlider("Sharpen", 0, 1.5, 0.01, () => _profile.Post.Sharpen, v => _profile.Post.Sharpen = v, false);
         AddSlider("Posterize levels · 0=off", 0, 32, 1, () => _profile.Post.PosterizeLevels, v => _profile.Post.PosterizeLevels = (int)v, false);
         AddSlider("Dither", 0, 1, 0.01, () => _profile.Post.Dither, v => _profile.Post.Dither = v, false);
@@ -664,7 +607,6 @@ public partial class M7LookLab : Node3D
         AddSlider("Smoke opacity", 0, 1, 0.01, () => _profile.Vfx.SmokeOpacity, v => _profile.Vfx.SmokeOpacity = v);
         AddSlider("Smoke size", 0.1, 4, 0.05, () => _profile.Vfx.SmokeSize, v => _profile.Vfx.SmokeSize = v);
         AddSlider("Smoke rise", 0, 6, 0.05, () => _profile.Vfx.SmokeRise, v => _profile.Vfx.SmokeRise = v);
-        AddSlider("Scorch size", 0, 6, 0.05, () => _profile.Vfx.ScorchSize, v => _profile.Vfx.ScorchSize = v);
     }
 
     private void BuildGroundSettings()
@@ -674,29 +616,12 @@ public partial class M7LookLab : Node3D
         AddSlider("Macro scale", 0.01, 2, 0.01, () => _profile.Ground.MacroScale, v => _profile.Ground.MacroScale = v);
         AddSlider("Micro variation", 0, 1, 0.01, () => _profile.Ground.MicroAmount, v => _profile.Ground.MicroAmount = v);
         AddSlider("Micro scale", 0.1, 20, 0.1, () => _profile.Ground.MicroScale, v => _profile.Ground.MicroScale = v);
-        AddSlider("Normal strength", 0, 2, 0.01, () => _profile.Ground.NormalStrength, v => _profile.Ground.NormalStrength = v);
         AddColor("Dust / track tint", () => _profile.Ground.DustTint, v => _profile.Ground.DustTint = v);
         AddSlider("Track opacity", 0, 1, 0.01, () => _profile.Ground.TracksOpacity, v => _profile.Ground.TracksOpacity = v);
-        AddSlider("Scorch opacity", 0, 1, 0.01, () => _profile.Ground.ScorchOpacity, v => _profile.Ground.ScorchOpacity = v);
+        AddSlider("Track width", 0.2, 2, 0.02, () => _profile.Ground.TracksWidth, v => _profile.Ground.TracksWidth = v);
+        AddSlider("Track length", 1, 16, 0.1, () => _profile.Ground.TracksLength, v => _profile.Ground.TracksLength = v);
+        AddSlider("Track tread scale", 1, 24, 0.5, () => _profile.Ground.TrackTreadScale, v => _profile.Ground.TrackTreadScale = v);
         AddSlider("Unit spacing", 4, 14, 0.1, () => _profile.Ground.UnitSeparation, v => _profile.Ground.UnitSeparation = v, false);
-    }
-
-    private void BuildHudSettings()
-    {
-        AddSlider("HUD scale", 0.7, 1.5, 0.01, () => _profile.Hud.Scale, v => _profile.Hud.Scale = v, false);
-        AddSlider("Panel opacity", 0, 1, 0.01, () => _profile.Hud.PanelOpacity, v => _profile.Hud.PanelOpacity = v, false);
-        AddSlider("HUD brightness", 0.3, 2, 0.01, () => _profile.Hud.Brightness, v => _profile.Hud.Brightness = v, false);
-        AddSlider("HUD saturation", 0, 2, 0.01, () => _profile.Hud.Saturation, v => _profile.Hud.Saturation = v, false);
-        AddColor("HUD accent", () => _profile.Hud.AccentColor, v => _profile.Hud.AccentColor = v, false);
-        AddSlider("Minimap contrast", 0.4, 2, 0.01, () => _profile.Hud.MinimapContrast, v => _profile.Hud.MinimapContrast = v, false);
-        AddSlider("Health bar width", 24, 120, 1, () => _profile.Hud.HealthBarWidth, v => _profile.Hud.HealthBarWidth = v, false);
-        AddSlider("Health bar height", 2, 14, 0.5, () => _profile.Hud.HealthBarHeight, v => _profile.Hud.HealthBarHeight = v, false);
-        AddSlider("Health bar opacity", 0, 1, 0.01, () => _profile.Hud.HealthBarOpacity, v => _profile.Hud.HealthBarOpacity = v, false);
-        AddSlider("Selection ring width", 0.02, 0.5, 0.01, () => _profile.Hud.SelectionRingWidth, v => _profile.Hud.SelectionRingWidth = v, false);
-        AddSlider("Selection brightness", 0, 5, 0.05, () => _profile.Hud.SelectionBrightness, v => _profile.Hud.SelectionBrightness = v, false);
-        AddSlider("Selection pulse", 0, 1, 0.01, () => _profile.Hud.SelectionPulse, v => _profile.Hud.SelectionPulse = v, false);
-        AddSlider("Target marker", 0, 5, 0.05, () => _profile.Hud.TargetMarkerBrightness, v => _profile.Hud.TargetMarkerBrightness = v, false);
-        AddSlider("Indicator scale", 0.5, 2, 0.01, () => _profile.Hud.IndicatorScale, v => _profile.Hud.IndicatorScale = v, false);
     }
 
     private void ApplyProfile(bool rebuildMaterials)
@@ -709,7 +634,6 @@ public partial class M7LookLab : Node3D
         ApplyPost();
         ApplyVfxAppearance();
         ApplySceneVisibility();
-        ApplyHudAppearance();
     }
 
     private void ApplyUnitLayout()
@@ -729,21 +653,6 @@ public partial class M7LookLab : Node3D
         _units[2].RotationDegrees = new Vector3(0f, 225f, 0f);
         _units[3].RotationDegrees = new Vector3(0f, 315f, 0f);
         _shooterMuzzle = _units[0].GlobalPosition + _units[0].GlobalBasis * new Vector3(0.85f, 1.38f, -3.35f);
-        if (_selectionRing is not null) _selectionRing.Position = _units[0].GlobalPosition + Vector3.Up * 0.07f;
-        for (int i = 0; i < _healthBars.Count; i++)
-        {
-            Vector3 world = _units[i].GlobalPosition + Vector3.Up * 3.3f;
-            (Control root, ColorRect fill, _, float health) = _healthBars[i];
-            _healthBars[i] = (root, fill, world, health);
-            if (i < _worldHealthBars.Count)
-            {
-                (MeshInstance3D background, MeshInstance3D fillMesh, float worldHealth) = _worldHealthBars[i];
-                background.Position = world;
-                fillMesh.Position = world + Vector3.Up * 0.003f;
-                _worldHealthBars[i] = (background, fillMesh, worldHealth);
-            }
-            if (i < _worldHealthLabels.Count) _worldHealthLabels[i].Label.Position = world + Vector3.Up * 0.18f;
-        }
     }
 
     private void ApplyCamera()
@@ -755,7 +664,7 @@ public partial class M7LookLab : Node3D
         float distance = halfWidthWorld / Mathf.Max(0.1f, Mathf.Tan(Mathf.DegToRad(_camera.Fov * 0.5f)) * aspect);
         float yaw = Mathf.DegToRad(_profile.Camera.YawDegrees);
         float pitch = Mathf.DegToRad(_profile.Camera.PitchDegrees);
-        Vector3 focus = new(0f, 0f, 0f);
+        Vector3 focus = new(_profile.Camera.FocusX, 0f, _profile.Camera.FocusZ);
         Vector3 offset = new(Mathf.Sin(yaw) * Mathf.Cos(pitch), Mathf.Sin(pitch), Mathf.Cos(yaw) * Mathf.Cos(pitch));
         _camera.GlobalPosition = focus + offset * distance;
         _camera.LookAt(focus, Vector3.Up);
@@ -804,9 +713,18 @@ public partial class M7LookLab : Node3D
         _environment.TonemapMode = (Godot.Environment.ToneMapper)_profile.Post.Tonemapper;
         _environment.TonemapExposure = Mathf.Pow(2f, _profile.Post.Exposure);
         _environment.GlowEnabled = _profile.Post.BloomEnabled;
+        _environment.GlowNormalized = false;
         _environment.GlowIntensity = _profile.Post.BloomIntensity;
+        _environment.GlowStrength = 1.35f;
         _environment.GlowBloom = _profile.Post.BloomSpread;
         _environment.GlowHdrThreshold = _profile.Post.BloomThreshold;
+        _environment.GlowHdrScale = 2.0f;
+        if (_ground?.MaterialOverride is ShaderMaterial groundMaterial)
+        {
+            groundMaterial.SetShaderParameter("background_color", M7LookMaterialFactory.ParseColor(_profile.Lighting.BackgroundColor));
+            groundMaterial.SetShaderParameter("background_influence", _profile.Lighting.BackgroundInfluence);
+            groundMaterial.SetShaderParameter("ambient_floor", _profile.Lighting.AmbientEnergy * 0.55f);
+        }
     }
 
     private void ApplyMaterials()
@@ -814,6 +732,7 @@ public partial class M7LookLab : Node3D
         Dictionary<M7LookMaterialRole, Material> materials = M7LookMaterialFactory.BuildSharedMaterials(_profile);
         foreach ((MeshInstance3D mesh, M7LookMaterialRole role) in _roleMeshes)
             mesh.MaterialOverride = materials[role];
+        EnsureEmissionLights();
     }
 
     private void ApplyPost()
@@ -827,9 +746,15 @@ public partial class M7LookLab : Node3D
         _postMaterial.SetShaderParameter("tint", _profile.Post.Tint);
         _postMaterial.SetShaderParameter("vignette", _profile.Post.Vignette);
         _postMaterial.SetShaderParameter("film_grain", _profile.Post.FilmGrain);
+        _postMaterial.SetShaderParameter("grain_scale", _profile.Post.GrainScale);
         _postMaterial.SetShaderParameter("sharpen", _profile.Post.Sharpen);
         _postMaterial.SetShaderParameter("posterize_levels", (float)_profile.Post.PosterizeLevels);
         _postMaterial.SetShaderParameter("dither_amount", _profile.Post.Dither);
+        _postMaterial.SetShaderParameter("halo_intensity", _profile.Emission.HaloIntensity);
+        _postMaterial.SetShaderParameter("halo_size", _profile.Emission.HaloSize);
+        _postMaterial.SetShaderParameter("emissive_edge_darkening", _profile.Emission.EdgeDarkening);
+        _postMaterial.SetShaderParameter("bloom_threshold", _profile.Post.BloomThreshold);
+        _postMaterial.SetShaderParameter("bloom_enabled", _profile.Post.BloomEnabled);
         _postMaterial.SetShaderParameter("outline_enabled", _profile.Outline.Enabled);
         _postMaterial.SetShaderParameter("outline_color", M7LookMaterialFactory.ParseColor(_profile.Outline.Color));
         _postMaterial.SetShaderParameter("outline_width", _profile.Outline.WidthPixels);
@@ -844,110 +769,64 @@ public partial class M7LookLab : Node3D
     private void ApplyVfxAppearance()
     {
         Color tracerColor = M7LookMaterialFactory.ParseColor(_profile.Vfx.TracerColor);
-        Material tracerMaterial = M7LookMaterialFactory.Emissive(tracerColor, _profile.Vfx.TracerEnergy, 0.92f);
+        Material tracerMaterial = M7LookMaterialFactory.Emissive(tracerColor, _profile.Vfx.TracerEnergy, 0.92f, _profile.Emission.EdgeDarkening);
         if (_tracer?.Mesh is BoxMesh box)
         {
             box.Size = new Vector3(_profile.Vfx.TracerWidth, _profile.Vfx.TracerWidth, _profile.Vfx.TracerLength);
             _tracer.MaterialOverride = tracerMaterial;
         }
-        if (_muzzle is not null) _muzzle.MaterialOverride = tracerMaterial;
-        if (_impact is not null) _impact.MaterialOverride = tracerMaterial;
-        foreach (MeshInstance3D spark in _sparks) spark.MaterialOverride = tracerMaterial;
-        Material fire = M7LookMaterialFactory.Emissive(M7LookMaterialFactory.ParseColor(_profile.Vfx.FireColor), _profile.Vfx.FireEnergy, 0.82f);
-        foreach (MeshInstance3D flame in _fireFlames) flame.MaterialOverride = fire;
-        Material smoke = M7LookMaterialFactory.Transparent(WithAlpha(M7LookMaterialFactory.ParseColor(_profile.Vfx.SmokeColor), _profile.Vfx.SmokeOpacity));
-        foreach (MeshInstance3D puff in _smokePuffs) puff.MaterialOverride = smoke;
-        Color trackColor = WithAlpha(M7LookMaterialFactory.ParseColor(_profile.Ground.DustTint), _profile.Ground.TracksOpacity);
-        foreach (MeshInstance3D track in _tracks) track.MaterialOverride = M7LookMaterialFactory.Transparent(trackColor);
-        if (_scorch is not null)
+        ApplyParticleDrawMaterial(_muzzleParticles, ParticleBillboardMaterial(tracerColor, _profile.Vfx.TracerEnergy, additive: true));
+        ApplyParticleDrawMaterial(_impactParticles, ParticleBillboardMaterial(tracerColor, _profile.Vfx.TracerEnergy, additive: true));
+        Color fireColor = M7LookMaterialFactory.ParseColor(_profile.Vfx.FireColor);
+        ApplyParticleDrawMaterial(_fireParticles, ParticleBillboardMaterial(fireColor, _profile.Vfx.FireEnergy, additive: true));
+        ApplyParticleDrawMaterial(_smokeParticles, ParticleBillboardMaterial(WithAlpha(M7LookMaterialFactory.ParseColor(_profile.Vfx.SmokeColor), _profile.Vfx.SmokeOpacity), 0f, additive: false));
+        if (_muzzleParticles?.DrawPass1 is QuadMesh muzzleMesh) muzzleMesh.Size = new Vector2(0.28f, 0.52f) * _profile.Vfx.MuzzleSize;
+        if (_impactParticles?.DrawPass1 is QuadMesh impactMesh) impactMesh.Size = new Vector2(0.18f, 0.62f) * _profile.Vfx.ImpactSize;
+        if (_impactParticles is not null)
         {
-            _scorch.MaterialOverride = M7LookMaterialFactory.Transparent(new Color(0.025f, 0.018f, 0.014f, _profile.Ground.ScorchOpacity));
-            _scorch.Scale = Vector3.One * _profile.Vfx.ScorchSize / 2.1f;
+            _impactParticles.Amount = Mathf.Max(1, _profile.Vfx.SparkCount);
+            _impactParticles.AmountRatio = _profile.Vfx.SparkCount == 0 ? 0f : 1f;
         }
-        ApplySelectionMaterials();
-    }
-
-    private void ApplySelectionMaterials()
-    {
-        float pulse = 1f + Mathf.Sin((float)_time * 2.4f) * _profile.Hud.SelectionPulse;
-        if (_selectionRing is not null)
+        if (_fireParticles?.DrawPass1 is QuadMesh fireMesh) fireMesh.Size = new Vector2(0.24f, 0.46f) * _profile.Vfx.FireSize;
+        if (_smokeParticles?.DrawPass1 is QuadMesh smokeMesh) smokeMesh.Size = Vector2.One * _profile.Vfx.SmokeSize;
+        if (_smokeParticles is not null)
         {
-            if (_selectionRing.Mesh is TorusMesh ringMesh) ringMesh.OuterRadius = ringMesh.InnerRadius + _profile.Hud.SelectionRingWidth;
-            _selectionRing.MaterialOverride = M7LookMaterialFactory.Emissive(M7LookMaterialFactory.ParseColor(_profile.Hud.AccentColor), _profile.Hud.SelectionBrightness * pulse, 0.90f);
-            _selectionRing.Scale = Vector3.One * _profile.Hud.IndicatorScale;
+            _smokeParticles.Amount = Mathf.Max(1, _profile.Vfx.SmokeAmount);
+            _smokeParticles.AmountRatio = _profile.Vfx.SmokeAmount == 0 ? 0f : 1f;
         }
-        if (_targetMarker is not null)
+        if (_smokeParticles?.ProcessMaterial is ParticleProcessMaterial smokeProcess)
         {
-            _targetMarker.MaterialOverride = M7LookMaterialFactory.Emissive(new Color("e35e42"), _profile.Hud.TargetMarkerBrightness, 0.86f);
-            _targetMarker.Scale = Vector3.One * _profile.Hud.IndicatorScale;
+            smokeProcess.Gravity = Vector3.Up * (0.25f + _profile.Vfx.SmokeRise * 0.32f);
+            smokeProcess.InitialVelocityMin = 0.20f + _profile.Vfx.SmokeRise * 0.16f;
+            smokeProcess.InitialVelocityMax = 0.55f + _profile.Vfx.SmokeRise * 0.34f;
+        }
+        if (_fireLight is not null)
+        {
+            _fireLight.LightColor = fireColor;
+            _fireLight.LightEnergy = _profile.Vfx.FireEnergy * 0.22f;
+            _fireLight.OmniRange = 3.0f + _profile.Vfx.FireSize * 1.1f;
+        }
+        if (_impactLight is not null)
+        {
+            _impactLight.LightColor = tracerColor;
+            _impactLight.OmniRange = 2.2f + _profile.Vfx.ImpactSize;
+        }
+        foreach (MeshInstance3D track in _tracks)
+        {
+            if (track.Mesh is PlaneMesh trackMesh) trackMesh.Size = new Vector2(_profile.Ground.TracksWidth, _profile.Ground.TracksLength);
+            track.MaterialOverride = TrackMaterial(M7LookMaterialFactory.ParseColor(_profile.Ground.DustTint), _profile.Ground.TracksOpacity, _profile.Ground.TrackTreadScale);
         }
     }
 
     private void ApplySceneVisibility()
     {
-        if (_fakeHudLayer is not null) _fakeHudLayer.Visible = _profile.Scene.HudEnabled;
         if (_fogPreview is not null) _fogPreview.Visible = _profile.Scene.FogPreviewEnabled;
-        if (_selectionRing is not null) _selectionRing.Visible = _profile.Scene.SelectionEnabled;
-        if (_targetMarker is not null) _targetMarker.Visible = _profile.Scene.SelectionEnabled;
         if (_tracer is not null) _tracer.Visible = _profile.Scene.FiringEnabled;
-        if (_muzzle is not null) _muzzle.Visible = _profile.Scene.FiringEnabled;
-        if (_impact is not null) _impact.Visible = _profile.Scene.FiringEnabled;
-        foreach (MeshInstance3D spark in _sparks) spark.Visible = _profile.Scene.FiringEnabled;
-        foreach (MeshInstance3D flame in _fireFlames) flame.Visible = _profile.Scene.BurningEnabled;
-        foreach (MeshInstance3D puff in _smokePuffs) puff.Visible = _profile.Scene.BurningEnabled && _profile.Scene.DustEnabled;
-    }
-
-    private void ApplyHudAppearance()
-    {
-        if (_fakeHudRoot is null) return;
-        Color modulation = M7LookMaterialFactory.ParseColor(_profile.Hud.AccentColor);
-        float luminance = _profile.Hud.Brightness;
-        _fakeHudRoot.Modulate = new Color(
-            Mathf.Lerp(luminance, modulation.R * luminance, _profile.Hud.Saturation * 0.12f),
-            Mathf.Lerp(luminance, modulation.G * luminance, _profile.Hud.Saturation * 0.12f),
-            Mathf.Lerp(luminance, modulation.B * luminance, _profile.Hud.Saturation * 0.12f),
-            _profile.Hud.PanelOpacity);
-        _fakeHudRoot.Scale = Vector2.One * _profile.Hud.Scale;
-        if (_minimapGround is not null)
-        {
-            float contrast = _profile.Hud.MinimapContrast;
-            Color baseColor = new("34423f");
-            _minimapGround.Color = new Color(
-                Mathf.Clamp((baseColor.R - 0.5f) * contrast + 0.5f, 0f, 1f),
-                Mathf.Clamp((baseColor.G - 0.5f) * contrast + 0.5f, 0f, 1f),
-                Mathf.Clamp((baseColor.B - 0.5f) * contrast + 0.5f, 0f, 1f), 1f);
-        }
-        foreach ((Control root, ColorRect fill, _, float health) in _healthBars)
-        {
-            root.Size = new Vector2(_profile.Hud.HealthBarWidth, _profile.Hud.HealthBarHeight);
-            fill.Position = new Vector2(2f, 2f);
-            fill.Size = new Vector2(Mathf.Max(1f, (_profile.Hud.HealthBarWidth - 4f) * health), Mathf.Max(1f, _profile.Hud.HealthBarHeight - 4f));
-            root.Modulate = new Color(1f, 1f, 1f, _profile.Hud.HealthBarOpacity);
-            root.Scale = Vector2.One * _profile.Hud.Scale;
-        }
-        foreach ((MeshInstance3D background, MeshInstance3D fill, float health) in _worldHealthBars)
-        {
-            float width = _profile.Hud.HealthBarWidth / 35f;
-            float height = _profile.Hud.HealthBarHeight / 34f;
-            if (background.Mesh is QuadMesh backgroundMesh) backgroundMesh.Size = new Vector2(width, height);
-            if (fill.Mesh is QuadMesh fillMesh) fillMesh.Size = new Vector2(Mathf.Max(0.04f, (width - 0.10f) * health), Mathf.Max(0.04f, height - 0.07f));
-            if (background.MaterialOverride is StandardMaterial3D backgroundMaterial)
-                backgroundMaterial.AlbedoColor = WithAlpha(backgroundMaterial.AlbedoColor, _profile.Hud.HealthBarOpacity);
-            if (fill.MaterialOverride is StandardMaterial3D fillMaterial)
-                fillMaterial.AlbedoColor = WithAlpha(fillMaterial.AlbedoColor, _profile.Hud.HealthBarOpacity);
-            background.Scale = Vector3.One * _profile.Hud.Scale;
-            fill.Scale = Vector3.One * _profile.Hud.Scale;
-            background.Visible = _profile.Scene.HudEnabled;
-            fill.Visible = _profile.Scene.HudEnabled;
-        }
-        foreach ((Label3D label, float health, bool selected) in _worldHealthLabels)
-        {
-            Color baseColor = selected ? new Color("5ddd7b") : health < 0.55f ? new Color("e6783d") : new Color("8ed957");
-            label.Modulate = WithAlpha(baseColor, _profile.Hud.HealthBarOpacity);
-            label.PixelSize = 0.010f * (_profile.Hud.HealthBarWidth / 54f) * _profile.Hud.Scale;
-            label.FontSize = Mathf.RoundToInt(30f * (_profile.Hud.HealthBarHeight / 6f));
-            label.Visible = _profile.Scene.HudEnabled;
-        }
+        if (_muzzleParticles is not null) _muzzleParticles.Visible = _profile.Scene.FiringEnabled;
+        if (_impactParticles is not null) _impactParticles.Visible = _profile.Scene.FiringEnabled;
+        if (_fireParticles is not null) _fireParticles.Visible = _profile.Scene.BurningEnabled;
+        if (_smokeParticles is not null) _smokeParticles.Visible = _profile.Scene.BurningEnabled && _profile.Scene.DustEnabled;
+        if (_fireLight is not null) _fireLight.Visible = _profile.Scene.BurningEnabled;
     }
 
     private void AnimateScene()
@@ -971,70 +850,246 @@ public partial class M7LookLab : Node3D
                 M7LookMaterialRole.Lamp => M7LookMaterialFactory.ParseColor(_profile.Emission.LampColor),
                 _ => M7LookMaterialFactory.ParseColor(_profile.Emission.CrystalColor)
             };
-            if (mesh.MaterialOverride is StandardMaterial3D material)
+            if (mesh.MaterialOverride is ShaderMaterial material)
             {
-                material.Emission = color;
-                material.EmissionEnergyMultiplier = energy * pulse;
+                material.SetShaderParameter("emission_color", color);
+                material.SetShaderParameter("emission_energy", energy * pulse);
+                material.SetShaderParameter("edge_darkening", _profile.Emission.EdgeDarkening);
             }
+        }
+        foreach ((OmniLight3D light, M7LookMaterialRole role) in _emissionLights)
+        {
+            Color color = role switch
+            {
+                M7LookMaterialRole.Signal => M7LookMaterialFactory.ParseColor(_profile.Emission.SignalColor),
+                M7LookMaterialRole.Lamp => M7LookMaterialFactory.ParseColor(_profile.Emission.LampColor),
+                _ => M7LookMaterialFactory.ParseColor(_profile.Emission.CrystalColor)
+            };
+            float energy = role switch
+            {
+                M7LookMaterialRole.Signal => _profile.Emission.SignalEnergy,
+                M7LookMaterialRole.Lamp => _profile.Emission.LampEnergy,
+                _ => _profile.Emission.CrystalEnergy
+            };
+            light.LightColor = color;
+            light.LightEnergy = _profile.Emission.LocalLightEnergy * energy / 6f * pulse;
+            light.OmniRange = _profile.Emission.LocalLightRange;
         }
         AnimateWeapon();
         AnimateFire();
-        ApplySelectionMaterials();
     }
 
     private void AnimateWeapon()
     {
-        if (_tracer is null || _muzzle is null || _impact is null) return;
+        if (_tracer is null || _muzzleParticles is null || _impactParticles is null) return;
         float distance = _shooterMuzzle.DistanceTo(_targetPoint);
         float cycleSeconds = Mathf.Max(0.65f, distance / _profile.Vfx.TracerSpeed + 0.44f);
+        int cycle = Mathf.FloorToInt((float)_time / cycleSeconds);
         float phase = Mathf.PosMod((float)_time, cycleSeconds) / cycleSeconds;
         float travel = Mathf.Clamp(phase * cycleSeconds * _profile.Vfx.TracerSpeed / Mathf.Max(0.01f, distance), 0f, 1f);
         _tracer.GlobalPosition = _shooterMuzzle.Lerp(_targetPoint, travel);
-        _tracer.LookAt(_targetPoint, Vector3.Up);
-        float muzzlePulse = Mathf.Clamp(1f - phase * 14f, 0f, 1f);
+        if (travel < 0.985f) _tracer.LookAt(_targetPoint, Vector3.Up);
         float impactPulse = Mathf.Clamp(1f - Mathf.Abs(travel - 1f) * 18f, 0f, 1f);
-        _muzzle.GlobalPosition = _shooterMuzzle;
-        _muzzle.Scale = Vector3.One * _profile.Vfx.MuzzleSize * muzzlePulse;
-        _impact.GlobalPosition = _targetPoint;
-        _impact.Scale = Vector3.One * _profile.Vfx.ImpactSize * impactPulse;
-        for (int i = 0; i < _sparks.Count; i++)
+        _tracer.Visible = _profile.Scene.FiringEnabled && travel < 0.985f;
+
+        if (cycle != _lastWeaponCycle && _profile.Scene.FiringEnabled)
         {
-            float local = Mathf.PosMod((float)_time * 2.3f + i * 0.127f, 1f);
-            float angle = i * 2.399f;
-            _sparks[i].GlobalPosition = _targetPoint + new Vector3(Mathf.Cos(angle) * local, 0.15f + local * 1.7f, Mathf.Sin(angle) * local) * _profile.Vfx.ImpactSize;
-            _sparks[i].Scale = Vector3.One * _profile.Vfx.SparkSize * (1f - local) * 4f;
-            _sparks[i].Visible = _profile.Scene.FiringEnabled && i < _profile.Vfx.SparkCount && impactPulse > 0.01f;
+            _lastWeaponCycle = cycle;
+            _muzzleParticles.GlobalPosition = _shooterMuzzle;
+            _muzzleParticles.LookAt(_targetPoint, Vector3.Up);
+            _muzzleParticles.Restart();
+            _muzzleParticles.Emitting = true;
+        }
+        if (travel > 0.985f && cycle != _lastImpactCycle && _profile.Scene.FiringEnabled)
+        {
+            _lastImpactCycle = cycle;
+            _impactParticles.GlobalPosition = _targetPoint;
+            _impactParticles.LookAt(_shooterMuzzle, Vector3.Up);
+            _impactParticles.Restart();
+            _impactParticles.Emitting = true;
+        }
+        if (_impactLight is not null)
+        {
+            _impactLight.GlobalPosition = _targetPoint + (_shooterMuzzle - _targetPoint).Normalized() * 0.10f;
+            _impactLight.Visible = _profile.Scene.FiringEnabled && impactPulse > 0.01f;
+            _impactLight.LightEnergy = _profile.Vfx.TracerEnergy * impactPulse * 0.22f;
         }
     }
 
     private void AnimateFire()
     {
-        Vector3 origin = new(-10.5f, 2.1f, -8.7f);
-        for (int i = 0; i < _fireFlames.Count; i++)
+        float flicker = 1f + Mathf.Sin((float)_time * 7.7f) * _profile.Vfx.FireFlicker * 0.22f
+            + Mathf.Sin((float)_time * 13.1f + 1.7f) * _profile.Vfx.FireFlicker * 0.12f;
+        if (_fireLight is not null)
+            _fireLight.LightEnergy = _profile.Vfx.FireEnergy * 0.22f * Mathf.Max(0.25f, flicker);
+        if (_fireParticles is not null)
         {
-            float wobble = Mathf.Sin((float)_time * (4.3f + i * 0.17f) + i) * _profile.Vfx.FireFlicker;
-            _fireFlames[i].Position = origin + new Vector3((i - 3) * 0.26f + wobble * 0.18f, 0.25f + (i % 3) * 0.28f, (i % 2) * 0.24f);
-            _fireFlames[i].Scale = new Vector3(0.72f, 1.15f + wobble * 0.35f, 0.72f) * _profile.Vfx.FireSize;
+            _fireParticles.SpeedScale = _profile.Scene.Paused ? 0f : _profile.Scene.AnimationSpeed;
+            _fireParticles.AmountRatio = Mathf.Clamp(flicker, 0.35f, 1f);
         }
-        for (int i = 0; i < _smokePuffs.Count; i++)
+        if (_smokeParticles is not null)
+            _smokeParticles.SpeedScale = _profile.Scene.Paused ? 0f : _profile.Scene.AnimationSpeed;
+    }
+
+    private void UpdateFreeCamera(float delta)
+    {
+        if (GetViewport().GuiGetFocusOwner() is LineEdit) return;
+        float yaw = Mathf.DegToRad(_profile.Camera.YawDegrees);
+        Vector3 screenForward = new(-Mathf.Sin(yaw), 0f, -Mathf.Cos(yaw));
+        Vector3 right = new(Mathf.Cos(yaw), 0f, -Mathf.Sin(yaw));
+        Vector3 pan = Vector3.Zero;
+        if (Input.IsKeyPressed(Key.W) || Input.IsKeyPressed(Key.Up)) pan += screenForward;
+        if (Input.IsKeyPressed(Key.S) || Input.IsKeyPressed(Key.Down)) pan -= screenForward;
+        if (Input.IsKeyPressed(Key.A) || Input.IsKeyPressed(Key.Left)) pan -= right;
+        if (Input.IsKeyPressed(Key.D) || Input.IsKeyPressed(Key.Right)) pan += right;
+        bool changed = false;
+        if (pan.LengthSquared() > 0.0001f)
         {
-            float phase = Mathf.PosMod((float)_time * 0.24f + i / (float)_smokePuffs.Count, 1f);
-            float angle = i * 1.89f;
-            _smokePuffs[i].Position = origin + new Vector3(Mathf.Cos(angle) * phase * 0.72f, 0.8f + phase * _profile.Vfx.SmokeRise * 3f, Mathf.Sin(angle) * phase * 0.72f);
-            _smokePuffs[i].Scale = Vector3.One * _profile.Vfx.SmokeSize * (0.25f + phase * 0.75f);
-            _smokePuffs[i].Visible = _profile.Scene.BurningEnabled && _profile.Scene.DustEnabled && i < _profile.Vfx.SmokeAmount;
+            float speed = Mathf.Lerp(8f, 24f, Mathf.InverseLerp(24f, 72f, _profile.Camera.ZoomCells));
+            Vector3 focus = new(_profile.Camera.FocusX, 0f, _profile.Camera.FocusZ);
+            focus += pan.Normalized() * speed * delta;
+            _profile.Camera.FocusX = Mathf.Clamp(focus.X, -42f, 42f);
+            _profile.Camera.FocusZ = Mathf.Clamp(focus.Z, -42f, 42f);
+            changed = true;
+        }
+        float rotate = 0f;
+        if (Input.IsKeyPressed(Key.Q)) rotate -= 1f;
+        if (Input.IsKeyPressed(Key.E)) rotate += 1f;
+        if (rotate != 0f)
+        {
+            _profile.Camera.YawDegrees = Mathf.PosMod(_profile.Camera.YawDegrees + rotate * 58f * delta, 360f);
+            changed = true;
+        }
+        if (changed) ApplyCamera();
+    }
+
+    private void PanCamera(Vector2 drag)
+    {
+        float yaw = Mathf.DegToRad(_profile.Camera.YawDegrees);
+        Vector3 screenForward = new(-Mathf.Sin(yaw), 0f, -Mathf.Cos(yaw));
+        Vector3 right = new(Mathf.Cos(yaw), 0f, -Mathf.Sin(yaw));
+        float scale = 0.022f * _profile.Camera.ZoomCells / 35f;
+        Vector3 shift = (-right * drag.X + screenForward * drag.Y) * scale;
+        _profile.Camera.FocusX = Mathf.Clamp(_profile.Camera.FocusX + shift.X, -42f, 42f);
+        _profile.Camera.FocusZ = Mathf.Clamp(_profile.Camera.FocusZ + shift.Z, -42f, 42f);
+    }
+
+    private void ResetView()
+    {
+        _profile.Camera = new CameraLook
+        {
+            ZoomCells = _defaults.Camera.ZoomCells,
+            PitchDegrees = _defaults.Camera.PitchDegrees,
+            YawDegrees = _defaults.Camera.YawDegrees,
+            FocusX = _defaults.Camera.FocusX,
+            FocusZ = _defaults.Camera.FocusZ
+        };
+        ApplyCamera();
+        BuildCurrentSettings();
+        SetStatus("Camera view reset");
+    }
+
+    private void EnsureEmissionLights()
+    {
+        if (_emissionLights.Count > 0) return;
+        foreach ((MeshInstance3D mesh, M7LookMaterialRole role) in _roleMeshes)
+        {
+            if (role is not (M7LookMaterialRole.Signal or M7LookMaterialRole.Lamp or M7LookMaterialRole.Crystal)) continue;
+            OmniLight3D light = new()
+            {
+                Name = $"{mesh.Name}_LocalLight",
+                Position = mesh.Mesh?.GetAabb().GetCenter() ?? Vector3.Zero,
+                ShadowEnabled = false,
+                OmniAttenuation = 2.4f
+            };
+            mesh.AddChild(light);
+            _emissionLights.Add((light, role));
         }
     }
 
-    private void UpdateWorldHud()
+    private static GpuParticles3D CreateBurstParticles(string name, int amount, float lifetime, float spread,
+        float minVelocity, float maxVelocity, Vector3 gravity)
     {
-        if (_camera is null) return;
-        foreach ((Control root, _, Vector3 world, _) in _healthBars)
+        ParticleProcessMaterial process = new()
         {
-            Vector2 point = _camera.UnprojectPosition(world);
-            root.Position = point - new Vector2(root.Size.X * 0.5f, root.Size.Y);
-            root.Visible = true;
-        }
+            Direction = Vector3.Forward,
+            Spread = spread,
+            Gravity = gravity,
+            InitialVelocityMin = minVelocity,
+            InitialVelocityMax = maxVelocity,
+            ScaleMin = 0.35f,
+            ScaleMax = 1f
+        };
+        return new GpuParticles3D
+        {
+            Name = name,
+            Amount = amount,
+            Lifetime = lifetime,
+            OneShot = true,
+            Explosiveness = 1f,
+            Randomness = 0.45f,
+            LocalCoords = true,
+            Emitting = false,
+            ProcessMaterial = process,
+            DrawPass1 = new QuadMesh { Size = new Vector2(0.22f, 0.52f) }
+        };
+    }
+
+    private static void ApplyParticleDrawMaterial(GpuParticles3D? particles, Material material)
+    {
+        if (particles?.DrawPass1 is QuadMesh quad) quad.Material = material;
+    }
+
+    private static StandardMaterial3D ParticleBillboardMaterial(Color color, float energy, bool additive)
+    {
+        Color visible = new(color.R, color.G, color.B, Mathf.Clamp(color.A, 0f, 1f));
+        Gradient gradient = new();
+        gradient.SetColor(0, Colors.White);
+        gradient.SetColor(1, new Color(1f, 1f, 1f, 0f));
+        GradientTexture2D softDisc = new()
+        {
+            Gradient = gradient,
+            Width = 64,
+            Height = 64,
+            Fill = GradientTexture2D.FillEnum.Radial,
+            FillFrom = new Vector2(0.5f, 0.5f),
+            FillTo = new Vector2(1f, 0.5f),
+            UseHdr = true
+        };
+        return new StandardMaterial3D
+        {
+            AlbedoColor = visible,
+            AlbedoTexture = softDisc,
+            EmissionEnabled = energy > 0f,
+            Emission = new Color(color.R, color.G, color.B),
+            EmissionTexture = energy > 0f ? softDisc : null,
+            EmissionEnergyMultiplier = energy,
+            ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
+            Transparency = BaseMaterial3D.TransparencyEnum.Alpha,
+            BlendMode = additive ? BaseMaterial3D.BlendModeEnum.Add : BaseMaterial3D.BlendModeEnum.Mix,
+            BillboardMode = BaseMaterial3D.BillboardModeEnum.Enabled,
+            CullMode = BaseMaterial3D.CullModeEnum.Disabled,
+            NoDepthTest = false
+        };
+    }
+
+    private static ShaderMaterial TrackMaterial(Color color, float opacity, float treadScale)
+    {
+        ShaderMaterial material = new() { Shader = new Shader { Code = TrackShader } };
+        material.SetShaderParameter("track_color", color);
+        material.SetShaderParameter("track_opacity", opacity);
+        material.SetShaderParameter("tread_scale", treadScale);
+        return material;
+    }
+
+    private static Vector3 SurfaceImpactPoint(Vector3 center, Vector3 size, Vector3 shooter)
+    {
+        Vector3 direction = shooter - center;
+        direction.Y = 0f;
+        direction = direction.LengthSquared() < 0.001f ? Vector3.Forward : direction.Normalized();
+        float tx = Mathf.Abs(direction.X) < 0.001f ? float.PositiveInfinity : size.X * 0.5f / Mathf.Abs(direction.X);
+        float tz = Mathf.Abs(direction.Z) < 0.001f ? float.PositiveInfinity : size.Z * 0.5f / Mathf.Abs(direction.Z);
+        return center + direction * Mathf.Min(tx, tz) + direction * 0.10f;
     }
 
     private void AdjustZoom(float multiplier)
@@ -1083,7 +1138,7 @@ public partial class M7LookLab : Node3D
         _profile = _defaults.Clone();
         ApplyProfile(rebuildMaterials: true);
         BuildCurrentSettings();
-        SetStatus("All settings reset to neutral lab baseline");
+        SetStatus("All settings reset to the reviewed profile baseline");
     }
 
     private void ResetCurrentSection()
@@ -1100,7 +1155,6 @@ public partial class M7LookLab : Node3D
             case 6: _profile.Outline = defaults.Outline; break;
             case 7: _profile.Vfx = defaults.Vfx; break;
             case 8: _profile.Ground = defaults.Ground; break;
-            case 9: _profile.Hud = defaults.Hud; break;
         }
         ApplyProfile(rebuildMaterials: true);
         BuildCurrentSettings();
@@ -1184,8 +1238,6 @@ public partial class M7LookLab : Node3D
         _ => _profile.Materials.GroundRock
     };
 
-    private int YawIndex() => Mathf.Clamp(Mathf.RoundToInt((_profile.Camera.YawDegrees - 45f) / 90f), 0, 3);
-
     private void SetStatus(string text, bool errorState = false)
     {
         if (_statusLabel is null) return;
@@ -1200,12 +1252,23 @@ public partial class M7LookLab : Node3D
             if (mesh.Mesh is Mesh source) triangles += source.GetFaces().Length / 3;
         string json = _profile.ToJson();
         bool roundTrip = M7LookProfile.TryFromJson(json, out M7LookProfile parsed, out _) && parsed.Camera.ZoomCells == _profile.Camera.ZoomCells;
+        const string schemaOneFixture = "{\"schemaVersion\":1,\"camera\":{\"zoomCells\":35},\"materials\":{\"paintedHull\":{\"baseColor\":\"#07867e\"}},\"hud\":{\"enabled\":true},\"vfx\":{\"scorchSize\":2}}";
+        bool schemaOneMigration = M7LookProfile.TryFromJson(schemaOneFixture, out M7LookProfile migrated, out _) &&
+            migrated.SchemaVersion == M7LookProfile.CurrentSchemaVersion && migrated.Camera.ZoomCells == 35f &&
+            Mathf.IsEqualApprox(migrated.Materials.PaintedHull.TextureStrength, M7LookProfile.CreateDefault().Materials.PaintedHull.TextureStrength);
         bool roles = Enum.GetValues<M7LookMaterialRole>().All(role => _roleMeshes.Any(entry => entry.Role == role));
-        if (_healthBars.Count > 0)
-            GD.Print($"M7 LOOK LAB HUD: projectedHealth={_healthBars[0].Root.Position} worldHealth={_healthBars[0].World} billboardHealth={_worldHealthBars.Count}");
+        bool emissiveBindings = _roleMeshes.Where(entry => entry.Role is M7LookMaterialRole.Signal or M7LookMaterialRole.Lamp or M7LookMaterialRole.Crystal)
+            .All(entry => entry.Mesh.MaterialOverride is ShaderMaterial);
+        Vector3 intactCenter = new(11.4f, 1.55f, -6.6f);
+        bool exteriorImpact = Mathf.Abs(_targetPoint.X - intactCenter.X) >= 3.15f || Mathf.Abs(_targetPoint.Z - intactCenter.Z) >= 2.45f;
         return _camera is { Fov: 36f } && _units.Count == 4 && _unitMeshes.Count >= 180 && triangles >= 30_000 &&
-            _drills.Count == 4 && roles && _ground is not null && _tracer is not null && _fireFlames.Count >= 5 &&
-            _fakeHudLayer is not null && _controlsLayer is not null && _postMaterial is not null && roundTrip &&
+            _drills.Count == 4 && roles && _ground is not null && _tracer is not null && _fireParticles is not null &&
+            _muzzleParticles is not null && _impactParticles is not null && _controlsLayer is not null && _postMaterial is not null &&
+            _emissionLights.Count > 0 && emissiveBindings && exteriorImpact && roundTrip && schemaOneMigration &&
+            ResourceLoader.Exists("res://Assets/M7/Textures/painted_shell_detail.png") &&
+            ResourceLoader.Exists("res://Assets/M7/Textures/brushed_metal_detail.png") &&
+            ResourceLoader.Exists("res://Assets/M7/Textures/rubber_detail.png") &&
+            ResourceLoader.Exists("res://Assets/M7/Textures/quarry_ground_detail.png") &&
             _profile.Camera.ZoomCells is >= 24f and <= 72f;
     }
 
@@ -1247,16 +1310,6 @@ void fragment() {
         return new ShaderMaterial { Shader = shader, RenderPriority = 32 };
     }
 
-    private static StandardMaterial3D BillboardMaterial(Color color) => new()
-    {
-        AlbedoColor = color,
-        ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
-        Transparency = BaseMaterial3D.TransparencyEnum.Alpha,
-        BillboardMode = BaseMaterial3D.BillboardModeEnum.Enabled,
-        NoDepthTest = true,
-        CullMode = BaseMaterial3D.CullModeEnum.Disabled
-    };
-
     private static StyleBoxFlat FlatPanel(Color color, float alpha, Color border) => new()
     {
         BgColor = WithAlpha(color, alpha), BorderColor = border,
@@ -1289,8 +1342,27 @@ void fragment() {
     private static void AddTriangle(SurfaceTool surface, Vector3 a, Vector3 b, Vector3 c)
     {
         Vector3 normal = (b - a).Cross(c - a).Normalized();
-        surface.SetNormal(normal); surface.AddVertex(a); surface.SetNormal(normal); surface.AddVertex(b); surface.SetNormal(normal); surface.AddVertex(c);
+        surface.SetNormal(normal); surface.AddVertex(a);
+        surface.SetNormal(normal); surface.AddVertex(b);
+        surface.SetNormal(normal); surface.AddVertex(c);
     }
+
+    private const string TrackShader = """
+shader_type spatial;
+render_mode unshaded, blend_mix, depth_draw_never, cull_disabled;
+uniform vec4 track_color : source_color = vec4(0.35, 0.28, 0.20, 1.0);
+uniform float track_opacity = 0.35;
+uniform float tread_scale = 10.0;
+void fragment() {
+    float side_fade = smoothstep(0.0, 0.16, min(UV.x, 1.0 - UV.x));
+    float end_fade = smoothstep(0.0, 0.12, min(UV.y, 1.0 - UV.y));
+    float tread_phase = fract(UV.y * tread_scale + UV.x * 0.42);
+    float tread = smoothstep(0.14, 0.28, tread_phase) * (1.0 - smoothstep(0.68, 0.86, tread_phase));
+    float broken = smoothstep(0.18, 0.42, fract(UV.y * 3.7 + sin(UV.x * 11.0) * 0.08));
+    ALBEDO = track_color.rgb;
+    ALPHA = track_opacity * side_fade * end_fade * tread * mix(0.55, 1.0, broken);
+}
+""";
 
     private const string PostShader = """
 shader_type spatial;
@@ -1305,9 +1377,15 @@ uniform float temperature = 0.0;
 uniform float tint = 0.0;
 uniform float vignette = 0.0;
 uniform float film_grain = 0.0;
+uniform float grain_scale = 1.5;
 uniform float sharpen = 0.0;
 uniform float posterize_levels = 0.0;
 uniform float dither_amount = 0.0;
+uniform bool bloom_enabled = true;
+uniform float bloom_threshold = 1.0;
+uniform float halo_intensity = 1.0;
+uniform float halo_size = 1.5;
+uniform float emissive_edge_darkening = 0.45;
 uniform bool outline_enabled = false;
 uniform vec4 outline_color : source_color = vec4(0.04, 0.07, 0.1, 1.0);
 uniform float outline_width = 1.5;
@@ -1337,16 +1415,33 @@ void fragment() {
     vec3 east = texture(screen_texture, SCREEN_UV + vec2(pixel.x, 0.0)).rgb;
     vec3 west = texture(screen_texture, SCREEN_UV - vec2(pixel.x, 0.0)).rgb;
     vec3 color = center + (center * 4.0 - north - south - east - west) * sharpen;
+    if (bloom_enabled && halo_intensity > 0.001) {
+        vec2 halo_pixel = halo_size * 2.4 / vec2(textureSize(screen_texture, 0));
+        vec2 directions[8] = vec2[8](
+            vec2(1.0, 0.0), vec2(-1.0, 0.0), vec2(0.0, 1.0), vec2(0.0, -1.0),
+            vec2(0.707, 0.707), vec2(-0.707, 0.707), vec2(0.707, -0.707), vec2(-0.707, -0.707));
+        vec3 halo = vec3(0.0);
+        float threshold = max(1.0, bloom_threshold);
+        for (int i = 0; i < 8; i++) {
+            vec3 sample_color = texture(screen_texture, SCREEN_UV + directions[i] * halo_pixel).rgb;
+            float bright = max(max(sample_color.r, max(sample_color.g, sample_color.b)) - threshold, 0.0);
+            halo += sample_color * bright;
+        }
+        color += halo * (halo_intensity * 0.022);
+    }
     color *= brightness;
     color = (color - 0.5) * contrast + 0.5;
     float luminance = dot(color, vec3(0.2126, 0.7152, 0.0722));
     color = mix(vec3(luminance), color, saturation);
     color *= vec3(1.0 + temperature * 0.13, 1.0 + tint * 0.08, 1.0 - temperature * 0.13);
     color.g *= 1.0 + tint * 0.08;
-    if (posterize_levels > 1.5) color = floor(color * posterize_levels + 0.5) / posterize_levels;
-    float grain = hash21(FRAGCOORD.xy + vec2(TIME * 17.0, TIME * 31.0)) - 0.5;
+    float grain = hash21(floor(FRAGCOORD.xy / max(0.5, grain_scale))) - 0.5;
     color += grain * film_grain;
-    color += grain * dither_amount / max(2.0, posterize_levels);
+    if (posterize_levels > 1.5) {
+        float ordered = fract(dot(floor(FRAGCOORD.xy), vec2(0.754877666, 0.569840296))) - 0.5;
+        color += ordered * dither_amount / posterize_levels;
+        color = floor(color * posterize_levels + 0.5) / posterize_levels;
+    }
     vec2 centered = SCREEN_UV * 2.0 - 1.0;
     color *= 1.0 - vignette * smoothstep(0.25, 1.35, dot(centered, centered));
 
@@ -1368,7 +1463,16 @@ void fragment() {
         float crease = smoothstep(normal_threshold, normal_threshold * 1.8, normal_edge) * crease_strength * smooth_surface;
         float fade = 1.0 / (1.0 + dc * distance_fade * 0.025);
         float edge = clamp(max(silhouette, crease) * fade * outline_opacity, 0.0, 1.0);
-        color = mix(color, outline_color.rgb, edge);
+        vec3 luminous_reference = center;
+        if (max(north.r, max(north.g, north.b)) > max(luminous_reference.r, max(luminous_reference.g, luminous_reference.b))) luminous_reference = north;
+        if (max(south.r, max(south.g, south.b)) > max(luminous_reference.r, max(luminous_reference.g, luminous_reference.b))) luminous_reference = south;
+        if (max(east.r, max(east.g, east.b)) > max(luminous_reference.r, max(luminous_reference.g, luminous_reference.b))) luminous_reference = east;
+        if (max(west.r, max(west.g, west.b)) > max(luminous_reference.r, max(luminous_reference.g, luminous_reference.b))) luminous_reference = west;
+        float luminous_peak = max(luminous_reference.r, max(luminous_reference.g, luminous_reference.b));
+        float luminous_mask = smoothstep(1.0, 1.8, luminous_peak);
+        vec3 luminous_outline = luminous_reference / max(1.0, luminous_peak) * mix(0.72, 0.28, emissive_edge_darkening);
+        vec3 resolved_outline = mix(outline_color.rgb, luminous_outline, luminous_mask);
+        color = mix(color, resolved_outline, edge);
     }
     ALBEDO = clamp(color, vec3(0.0), vec3(16.0));
 }

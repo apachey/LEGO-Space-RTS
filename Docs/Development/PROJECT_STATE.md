@@ -7,10 +7,12 @@ authoritative when anything here becomes stale.
 
 **M0–M6 are implemented, verified and game-director accepted. M7 visual canon
 remains deliberately open. Preset-style comparisons are retired as the primary
-workflow; a gameplay-scale realtime Look Lab now exposes independent materials,
-lighting, post, outline, VFX, ground, HUD and camera controls with complete JSON
-copy/paste. The six-page Palette Ratio Lab is game-director accepted. The new
-Look Lab awaits game-director profile exploration and review.**
+workflow; the gameplay-scale realtime Look Lab is now at schema 2 with free
+camera control, generated material-detail textures, repaired emission/VFX,
+static post patterns, depth-tested tracks and complete JSON copy/paste. HUD and
+health visuals are deliberately removed for their own future design phase. The
+six-page Palette Ratio Lab is game-director accepted. The revised Look Lab
+awaits game-director profile exploration and review.**
 
 - The branch includes the verified post-M5 movement handoff from `44e2caf`
   plus T058–T063.
@@ -179,14 +181,17 @@ Preset comparison did not yield a selected direction, and the game director
 rejected continuing with bundled variants. The primary path is now `F8` →
 **M7 Look Lab**, documented in `Docs/Development/M7_LOOK_LAB.md`. It uses the
 actual 36-degree gameplay camera and 24–72 build-cell zoom, four identical units,
-two buildings, live combat/fire evidence, ground, fog preview and fake RTS HUD.
-Ten independent control sections feed a complete versioned JSON profile.
+two buildings, live combat/fire evidence, ground and fog preview. Nine
+independent control sections feed a complete schema-2 JSON profile; schema 1 is
+migrated. Temporary HUD, selection and health visuals are excluded.
 
 The old inverted-hull outline is retired. The Look Lab uses a real Forward+
 depth and normal/roughness pass, separates silhouette from crease strength and
-suppresses rough-terrain crease noise. Outline remains off by default. The old
-Style and Material labs remain reproducible engineering fixtures; the Palette
-Lab remains the accepted palette review fixture.
+suppresses rough-terrain crease noise. Emissive surfaces now provide real HDR
+output, a darker same-hue edge, a separate halo and optional local lights. Four
+generated grayscale detail maps distinguish paint, brushed metal, rubber and
+quarry ground. The old Style and Material labs remain reproducible engineering
+fixtures; the Palette Lab remains the accepted palette review fixture.
 
 ## Integration format boundary
 
@@ -204,10 +209,13 @@ Lab remains the accepted palette review fixture.
 The current M7 exploration branch passed `./tools/verify.sh --full` on
 2026-08-22 with 278 NUnit tests, 24/24 representative mover acceptance, every
 T058–T063 ENet smoke, the legacy four-style smoke, all six Palette Ratio Lab
-pages, the new Look Lab at zoom 44/72 with visible/hidden controls, 100-repeat
-determinism, replay record/playback, snapshot continuation, compiled-content
-regeneration and macOS export. Exact summary:
-`Artifacts/Verification/20260822T100418Z-full-summary.txt`.
+pages, schema-2 Look Lab smoke at zoom 35/72 with explicit outline on/off,
+100-repeat determinism, replay record/playback, snapshot continuation,
+compiled-content regeneration and macOS export. Exact summary:
+`Artifacts/Verification/20260822T123634Z-full-summary.txt`.
+The final zero-count VFX correction then passed the complete fast suite at
+`Artifacts/Verification/20260822T124347Z-fast-summary.txt` and was included in
+a fresh verified macOS export.
 
 The freshly exported app was launched directly into the 500-panel faction
 abstract-model page and the ten-role faction light-language page. Both captured
@@ -227,12 +235,12 @@ fixture emitted PASS markers with outline both off and on; evidence is
 `Artifacts/Screenshots/m7-exported-heroic-rts-outline-off.png` and
 `m7-exported-heroic-rts-outline-on.png` in the same directory.
 
-The newly exported application was launched directly into the realtime Look
-Lab at zoom 44 with controls visible and hidden. Both emitted the required PASS
-marker with four units, 192 unit meshes, 31,104 unit triangles and two
-buildings. Evidence:
-`Artifacts/Screenshots/m7-exported-look-lab-controls.png` and
-`Artifacts/Screenshots/m7-exported-look-lab-game-view.png`.
+The newly exported application was launched directly into the schema-2 Look Lab
+at zoom 35 with controls/outline visible and with both hidden. Both emitted the
+required PASS marker with four units, 192 unit meshes, 31,104 unit triangles and
+two buildings. Evidence:
+`Artifacts/Screenshots/m7-exported-look-lab-v2-controls.png` and
+`Artifacts/Screenshots/m7-exported-look-lab-v2-outline-off.png`.
 
 Stress60 remained the expected diagnostic failure with phase completion
 **4/60, 5/60 and 2/60**. The exported macOS debug build is:

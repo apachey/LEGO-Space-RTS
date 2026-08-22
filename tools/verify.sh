@@ -288,13 +288,13 @@ godot_m7_palette_smoke() {
 }
 
 godot_m7_look_smoke() {
-  local godot output status controls zoom
+  local godot output status controls zoom outline fixture
   godot="$(discover_godot 2>/dev/null || true)"
   if [[ -z "${godot}" ]]; then printf 'Godot executable not found.\n' >&2; return 1; fi
   if ! godot_is_required_mono "${godot}"; then printf 'Godot is not the required 4.7.1 .NET build: %s\n' "${godot}" >&2; return 1; fi
-  for controls in visible hidden; do
-    if [[ "${controls}" == visible ]]; then zoom=44; else zoom=72; fi
-    output="$("${godot}" --headless --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-look-lab --m7-look-smoke --m7-look-controls "${controls}" --m7-look-zoom "${zoom}" 2>&1)"
+  for fixture in "visible 35 on" "hidden 35 off" "hidden 72 on"; do
+    read -r controls zoom outline <<< "${fixture}"
+    output="$("${godot}" --headless --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-look-lab --m7-look-smoke --m7-look-controls "${controls}" --m7-look-zoom "${zoom}" --m7-look-post on --m7-look-outline "${outline}" 2>&1)"
     status=$?
     printf '%s\n' "${output}"
     if (( status != 0 )); then return "${status}"; fi
@@ -302,15 +302,15 @@ godot_m7_look_smoke() {
       printf 'M7 Look Lab emitted a shader or script error.\n' >&2
       return 1
     fi
-    if ! printf '%s\n' "${output}" | grep -q "M7 LOOK LAB: PASS schema=1 units=4 meshes=192 triangles=31104 buildings=2 firing=1 burning=1 controls=${controls} zoom=${zoom}"; then
-      printf 'Godot exited without the required M7 Look Lab PASS marker for controls=%s zoom=%s.\n' "${controls}" "${zoom}" >&2
+    if ! printf '%s\n' "${output}" | grep -q "M7 LOOK LAB: PASS schema=2 units=4 meshes=192 triangles=31104 buildings=2 firing=1 burning=1 controls=${controls} zoom=${zoom} post=on outline=${outline}"; then
+      printf 'Godot exited without the required M7 Look Lab PASS marker for controls=%s zoom=%s outline=%s.\n' "${controls}" "${zoom}" "${outline}" >&2
       return 1
     fi
   done
 }
 
 run_stage "[BLOCKING_NOW] Static/source validation" "static" python3 "${ROOT}/tools/Validation/validate_phase10.py"
-run_stage "[BLOCKING_NOW] .NET restore" "restore" dotnet restore "${ROOT}/LEGO.SpaceRTS.Phase10.sln"
+run_stage "[BLOCKING_NOW] .NET restore" "restore" dotnet restore "${ROOT}/LEGO.SpaceRTS.Phase10.sln" --disable-build-servers
 run_stage "[BLOCKING_NOW] .NET solution build (warnings as errors)" "build" dotnet build "${ROOT}/LEGO.SpaceRTS.Phase10.sln" -c Release --no-restore --disable-build-servers -m:1
 run_stage "[BLOCKING_NOW] Godot C# Debug host build" "godot-build" dotnet build "${ROOT}/GodotClient/LEGO.SpaceRTS.Godot.csproj" -c Debug --no-restore --disable-build-servers -m:1
 run_stage "[BLOCKING_NOW] NUnit deterministic/snapshot/replay/stress suite" "tests" dotnet test "${ROOT}/SimCore.Tests/SimCore.Tests.csproj" -c Release --no-build --no-restore --disable-build-servers --verbosity minimal

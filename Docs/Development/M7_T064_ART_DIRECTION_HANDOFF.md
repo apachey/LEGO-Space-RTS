@@ -24,7 +24,8 @@ From a normal launch:
 1. press `F8`;
 2. select **M7 Look Lab**;
 3. adjust independent sections in the left panel at gameplay zoom;
-4. use the mouse wheel or exact 24–72 build-cell zoom slider;
+4. right-drag to orbit, middle-drag or use `WASD` to pan, use the wheel to zoom,
+   `Q/E` to rotate and `F` to reset the view;
 5. use **HIDE · TAB** for an unobstructed game view;
 6. use **COPY ALL JSON** and paste the complete result back to the implementation
    agent;
@@ -73,7 +74,7 @@ when useful, compare outline off/on independently, hide the controls for the
 clean composition, then copy the complete JSON profile. Palette review is
 already accepted and remains independent from the open rendering decision.
 
-## Texture policy
+## Texture policy and current review assets
 
 Clean molded polymer does not need a photographic albedo texture. Its baseline
 comes from geometry, color, roughness and lighting. Texture work is reserved for:
@@ -83,18 +84,35 @@ comes from geometry, color, roughness and lighting. Texture work is reserved for
 - terrain low-frequency variation;
 - optional normal/ORM support after a material is visually accepted.
 
-Image generation can produce useful look-development boards and albedo concepts.
-It does not by itself prove seamless tiling or generate production-trustworthy
-normal/ORM data. Every generated candidate must be checked at real gameplay scale.
+The schema-2 Look Lab now includes four generated grayscale detail maps for
+painted shell, brushed metal, rubber and quarry ground. Each material family has
+independent texture strength and triplanar scale. These assets are restrained
+look-development evidence, not accepted production albedo, normal or ORM data.
+Every generated candidate is still judged at real gameplay scale.
 
 ## Image-generation decision
 
 Image generation is no longer used to compare implementable rendering styles.
 It produced excessive geometry, failed to preserve the invariant scene and made
 materially different prompts converge on the same polished image. Future use is
-limited to non-authoritative mood or texture thumbnails when specifically useful.
+limited to non-authoritative mood or texture work when specifically useful. The
+current grayscale tile candidates use that narrow texture role; the
+representative visual result remains the actual Godot scene.
 
-The representative art-direction evidence is now the real Godot Style Lab.
+The representative art-direction evidence is now the real Godot Look Lab.
+
+## Current Look Lab review
+
+Schema 2 adopts the game director's supplied settings as the reset baseline,
+except for the formerly nonfunctional bright-blue background value, which
+remains available through schema-1 migration for a valid fresh review. It
+removes the temporary HUD/health system and the unmotivated scorch overlay,
+adds a free camera, fixes static post patterns and depth-tested tracks, and
+rebuilds emission/VFX response around HDR surfaces, same-hue luminous edges,
+halos, local lights and GPU particles.
+
+The complete defect audit, generated-texture record and review recommendations
+are in `M7_LOOK_LAB_AUDIT.md`.
 
 ## Round 2 verification and build
 
@@ -117,14 +135,16 @@ The refined Heroic A/B evidence is:
 Full verification passed with no blocking failures:
 `Artifacts/Verification/20260822T085432Z-full-summary.txt`.
 
-The superseding realtime Look Lab passed the complete suite at
-`Artifacts/Verification/20260822T100418Z-full-summary.txt`. Direct launches of
-the exported macOS app produced
-`Artifacts/Screenshots/m7-exported-look-lab-controls.png` and
-`Artifacts/Screenshots/m7-exported-look-lab-game-view.png` with the required
-four-unit gameplay composition at zoom 44.
+Schema 2 passed the full suite with zero blocking failures at
+`Artifacts/Verification/20260822T123634Z-full-summary.txt`. Direct launches of
+the exported app produced
+`Artifacts/Screenshots/m7-exported-look-lab-v2-controls.png` and
+`Artifacts/Screenshots/m7-exported-look-lab-v2-outline-off.png` at zoom 35.
+The final follow-up fast suite passed at
+`Artifacts/Verification/20260822T124347Z-fast-summary.txt`, followed by a fresh
+macOS export and direct-capture launch.
 
 Playable build: `Builds/macOS/LEGO Space RTS.app`. The requested human task is
-only visual judgement: adjust the Look Lab, judge material credibility,
-mechanical readability, ground restraint, light hierarchy, animation and VFX,
+visual judgement: adjust the Look Lab, judge material credibility, mechanical
+readability, ground restraint, light hierarchy, animation, camera and VFX,
 then copy the full JSON. No style is accepted by the existence of this build.
