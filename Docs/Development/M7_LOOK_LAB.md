@@ -35,7 +35,7 @@ gameplay simulation.
 
 ## Live controls
 
-The left panel contains ten sections:
+The left panel contains eleven sections:
 
 1. **Scene & Camera** — zoom, pitch, yaw, animation speed and scene evidence
    visibility;
@@ -57,10 +57,13 @@ The left panel contains ten sections:
 8. **Animation** — sim-driven locomotion blend, wheel roll, suspension, body
    lean, functional drill, recoil, transformation pose, damage response and
    animation-significance tier preview;
-9. **VFX** — prewarmed tracer/muzzle/impact budgets and live pool telemetry,
+9. **Destruction** — independent body-collapse timing/shape, scale-banded hero
+   LEGO-module count and motion, secondary dust, fixed pool budgets, live
+   telemetry, manual trigger and unit/structure/alternating loop targets;
+10. **VFX** — prewarmed tracer/muzzle/impact budgets and live pool telemetry,
    load-preview emitter count, tracer, particle muzzle/impact, spark, luminous
    fire and smoke appearance;
-10. **Ground** — two-color macro/micro variation, depth-tested tread tracks and
+11. **Ground** — two-color macro/micro variation, depth-tested tread tracks and
    unit spacing.
 
 The surface families intentionally begin with distinct physical responses:
@@ -69,9 +72,9 @@ rubber, coated building shell and rough rock are not one material recolored.
 
 ## Profile workflow
 
-- **COPY ALL JSON** copies a complete `schemaVersion: 3` profile, including the
+- **COPY ALL JSON** copies a complete `schemaVersion: 4` profile, including the
   current zoom. It never copies only a diff.
-- **PASTE & APPLY** validates the schema, migrates schema 1 and 2, ignores the
+- **PASTE & APPLY** validates the schema, migrates schemas 1–3, ignores the
   removed HUD/scorch fields, clamps unsafe values and applies the complete
   profile live.
 - **RESET SECTION** restores the active section only.
@@ -141,11 +144,34 @@ views, 24 particle muzzle bursts and 32 particle impact bursts. Per-source
 weapon-fire high-watermarks prevent duplicate cosmetic events when the same
 snapshot or restored state is observed again.
 
+## T067 LEGO-destruction integration
+
+Gameplay destruction still becomes authoritative immediately at zero HP:
+selection, collision, navigation and gameplay function are removed by SimCore.
+The new visual phase begins only after that transition and cannot feed state
+back into simulation.
+
+The playable prototype and Look Lab share a bounded destruction driver and two
+prewarmed cosmetic pools. The driver collapses the source body into a readable
+wreck. A `MultiMesh` burst throws only scale-banded hero modules (3/5/7/10/14/
+18 for Tiny through Structure), split between plate/beam shapes and round
+mechanical parts. Their ballistic motion, bounce, settle and fade are local
+presentation calculations with no physics bodies or colliders. A second pooled
+GPU-particle burst supplies optional dust. Pool exhaustion drops only the
+cosmetic burst.
+
+The lab can target the fourth unit, the burning structure or alternate between
+them. Fire/smoke/light evidence follows the collapsing structure. Every timing,
+wreck ratio, fragment motion, count, lifetime, fade, dust value and active pool
+budget is independently editable and copied in schema 4. Existing schema 1–3
+profiles inherit the neutral destruction defaults.
+
 ## Decision boundary
 
-Automation validates scene structure, mesh/triangle counts, schema-3 round-trip,
-schema-1/schema-2 migration, animation state/tier response, six-wheel/drill/
-suspension rig binding, pool prewarm/reuse/drop behavior, zoom bounds,
+Automation validates scene structure, mesh/triangle counts, schema-4 round-trip,
+schema-1/schema-2/schema-3 migration, animation and destruction-driver state,
+six-wheel/drill/suspension rig binding, all five pool prewarm/spawn/reuse/drop
+behavior, zoom bounds,
 generated-texture presence, emissive material bindings, exterior impact
 placement, shader compilation and captures. It cannot accept visual style,
 material appeal, readability, animation feel, VFX feel or camera feel. Those
@@ -182,3 +208,9 @@ exported application itself emitted the schema-3 PASS marker and captured:
 
 Both paths reported four animation-driver bindings, three VFX pools and 144
 prewarmed VFX nodes in addition to the preserved scene counts.
+
+The schema-4 T067 destruction pass then passed the complete full suite at
+`Artifacts/Verification/20260822T142339Z-full-summary.txt`. The freshly
+exported application itself emitted the schema-4 PASS marker with five VFX
+pools, 168 prewarmed nodes and the 18-module Structure path active. Evidence:
+`Artifacts/Screenshots/m7-t067-exported-destruction-structure.png`.

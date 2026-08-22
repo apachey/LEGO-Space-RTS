@@ -1,4 +1,4 @@
-# M7 LOOK LAB — SCHEMA 2 AUDIT
+# M7 LOOK LAB — SCHEMA 4 AUDIT
 
 ## Status
 
@@ -134,3 +134,26 @@ controls-visible and clean-view fixtures; both reported four driver bindings,
 three pools and 144 prewarmed nodes. Captures are
 `Artifacts/Screenshots/m7-exported-look-lab-v3-controls.png` and
 `Artifacts/Screenshots/m7-exported-look-lab-v3-clean.png`.
+
+## T067 bounded destruction enrichment
+
+The schema-4 pass adds a fifth independent review domain without selecting its
+art direction. Destruction is split into a readable source-body collapse,
+scale-banded hero LEGO modules and secondary dust. Hero modules use two
+preallocated `MultiMesh` channels and local cosmetic ballistic motion; they are
+not individual rigid bodies, do not collide and never affect pathing or damage.
+The production view prewarms 16 hero and 16 dust bursts. The lab prewarms 12 of
+each, exposes lower active budgets and reports active bursts, visible modules,
+peak, reuse and drops.
+
+The unit/structure/alternating preview, manual trigger and copied parameters
+make the lab a useful art-direction fixture, not an accepted effect. Human
+review is still required for breakup rhythm, fragment scale/count, wreck
+silhouette, dust character and whether each faction eventually needs different
+destruction profiles.
+
+The complete full suite passed at
+`Artifacts/Verification/20260822T142339Z-full-summary.txt`. The freshly
+exported macOS app then ran the maximum 18-module Structure preview without
+runtime or shader errors and produced
+`Artifacts/Screenshots/m7-t067-exported-destruction-structure.png`.

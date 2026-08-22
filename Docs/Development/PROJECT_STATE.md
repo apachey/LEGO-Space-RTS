@@ -7,10 +7,11 @@ authoritative when anything here becomes stale.
 
 **M0–M6 are implemented, verified and game-director accepted. M7 visual canon
 remains deliberately open. Preset-style comparisons are retired as the primary
-workflow; the gameplay-scale realtime Look Lab is now at schema 3 with free
+workflow; the gameplay-scale realtime Look Lab is now at schema 4 with free
 camera control, generated material-detail textures, repaired emission/VFX,
 sim-driven animation controls, bounded VFX-pool budgets/telemetry, static post
-patterns, depth-tested tracks and complete JSON copy/paste. HUD and health
+patterns, depth-tested tracks, bounded LEGO-destruction controls and complete
+JSON copy/paste. HUD and health
 visuals are deliberately removed for their own future design phase. The
 six-page Palette Ratio Lab is game-director accepted. The revised Look Lab
 awaits game-director profile exploration and review.**
@@ -182,9 +183,9 @@ Preset comparison did not yield a selected direction, and the game director
 rejected continuing with bundled variants. The primary path is now `F8` →
 **M7 Look Lab**, documented in `Docs/Development/M7_LOOK_LAB.md`. It uses the
 actual 36-degree gameplay camera and 24–72 build-cell zoom, four identical units,
-two buildings, live combat/fire evidence, ground and fog preview. Ten
-independent control sections feed a complete schema-3 JSON profile; schema 1
-and 2 are migrated. Temporary HUD, selection and health visuals are excluded.
+two buildings, live combat/fire evidence, ground and fog preview. Eleven
+independent control sections feed a complete schema-4 JSON profile; schemas 1–3
+are migrated. Temporary HUD, selection and health visuals are excluded.
 
 The old inverted-hull outline is retired. The Look Lab uses a real Forward+
 depth and normal/roughness pass, separates silhouette from crease strength and
@@ -218,6 +219,23 @@ fixtures; the Palette Lab remains the accepted palette review fixture.
   mechanical pivots. Production state evaluation and significance are wired;
   the imported six-wheel Look Lab rig is the visible binding proof until
   roster-specific model import supplies production rig sockets.
+
+## M7 T067 bounded LEGO destruction
+
+- Authoritative zero-HP behavior is unchanged: SimCore removes gameplay
+  function, selection/navigation participation and collision before any visual
+  collapse is presented.
+- Production and lab views share a local destruction driver, scale-banded hero
+  fragment counts and fixed-capacity pools for LEGO modules and dust.
+- Hero modules use two preallocated `MultiMesh` channels with manually evaluated
+  cosmetic motion, bounce, settle and fade. No per-brick rigid bodies, colliders
+  or gameplay-relevant physics were introduced.
+- The Look Lab can destroy the fourth unit, the burning structure or alternate
+  them. It exposes body, fragment, dust and pool-budget controls with live
+  telemetry; schema-4 copy/paste retains the complete experiment.
+- The implementation does not select destruction art direction. Breakup rhythm,
+  wreck silhouette and eventual faction-specific profiles remain game-director
+  review gates.
 
 ## Integration format boundary
 
@@ -277,6 +295,13 @@ three VFX pools and 144 prewarmed VFX nodes. Evidence:
 `Artifacts/Screenshots/m7-exported-look-lab-v3-controls.png` and
 `Artifacts/Screenshots/m7-exported-look-lab-v3-clean.png`.
 
+The schema-4 T067 bounded-destruction integration passed the complete full
+suite with zero blocking failures at
+`Artifacts/Verification/20260822T142339Z-full-summary.txt`. The freshly
+exported application emitted the schema-4 PASS marker with five pools and 168
+prewarmed nodes while exercising the maximum 18-module Structure breakup.
+Evidence: `Artifacts/Screenshots/m7-t067-exported-destruction-structure.png`.
+
 Stress60 remained the expected diagnostic failure with phase completion
 **4/60, 5/60 and 2/60**. The exported macOS debug build is:
 `Builds/macOS/LEGO Space RTS.app`.
@@ -294,8 +319,9 @@ blocking only when M9 must prove its stable-large-battle exit.
 
 ## Next approved action
 
-1. Game director explores the gameplay-scale **M7 Look Lab**, hides controls to
-   judge the clean game view and returns the complete **COPY ALL JSON** profile.
+1. Game director explores the gameplay-scale **M7 Look Lab**, including the new
+   **DESTRUCTION** section, hides controls to judge the clean game view and
+   returns the complete **COPY ALL JSON** profile.
 2. Use that exact profile for the next narrowed implementation pass; do not
    record T064 acceptance until the game director explicitly locks a direction.
 3. Keep Stress60 visible without starting an unreviewed third movement attempt;

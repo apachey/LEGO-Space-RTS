@@ -293,10 +293,17 @@ public partial class PooledParticleBurst : Node3D, IPooledPresentationVfx
         AddChild(Particles);
     }
 
-    public void Configure(Vector3 position, Vector3 target, Material material, Vector2 size, int amount)
+    public void Configure(Vector3 position, Vector3 target, Material material, Vector2 size, int amount,
+        float particleLifetimeSeconds = -1f)
     {
         GlobalPosition = position;
-        if (!position.IsEqualApprox(target)) LookAt(target, Vector3.Up);
+        if (!position.IsEqualApprox(target))
+        {
+            Vector3 direction = (target - position).Normalized();
+            Vector3 up = MathF.Abs(direction.Dot(Vector3.Up)) > 0.98f ? Vector3.Forward : Vector3.Up;
+            LookAt(target, up);
+        }
+        if (particleLifetimeSeconds > 0f) Particles.Lifetime = particleLifetimeSeconds;
         Particles.Amount = Math.Max(1, amount);
         Particles.AmountRatio = amount <= 0 ? 0f : 1f;
         if (Particles.DrawPass1 is QuadMesh quad)

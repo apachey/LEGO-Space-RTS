@@ -5,7 +5,7 @@ namespace LegoSpaceRTS.Presentation;
 
 public sealed class M7LookProfile
 {
-    public const int CurrentSchemaVersion = 3;
+    public const int CurrentSchemaVersion = 4;
 
     public int SchemaVersion { get; set; } = CurrentSchemaVersion;
     public CameraLook Camera { get; set; } = new();
@@ -18,6 +18,7 @@ public sealed class M7LookProfile
     public PostLook Post { get; set; } = new();
     public OutlineLook Outline { get; set; } = new();
     public AnimationLook Animation { get; set; } = new();
+    public DestructionLook Destruction { get; set; } = new();
     public VfxLook Vfx { get; set; } = new();
     public VfxPoolLook VfxPool { get; set; } = new();
     public GroundLook Ground { get; set; } = new();
@@ -50,17 +51,18 @@ public sealed class M7LookProfile
                 error = "Clipboard does not contain an M7 Look profile.";
                 return false;
             }
-            if (parsed.SchemaVersion is not (1 or 2 or CurrentSchemaVersion))
+            if (parsed.SchemaVersion is not (1 or 2 or 3 or CurrentSchemaVersion))
             {
                 profile = CreateDefault();
-                error = $"Profile schema {parsed.SchemaVersion} is not supported; expected 1, 2 or {CurrentSchemaVersion}.";
+                error = $"Profile schema {parsed.SchemaVersion} is not supported; expected 1, 2, 3 or {CurrentSchemaVersion}.";
                 return false;
             }
             // Schema 1 was the first review fixture. Schema 2 removes the
             // deferred HUD/scorch controls and adds free-camera, texture and
             // emissive-response controls. Schema 3 adds animation and VFX-pool
-            // controls. Missing values intentionally inherit the current review
-            // baseline, so old copied profiles remain usable.
+            // controls. Schema 4 adds bounded LEGO destruction controls. Missing
+            // values intentionally inherit the current review baseline, so old
+            // copied profiles remain usable.
             int sourceSchemaVersion = parsed.SchemaVersion;
             parsed.SchemaVersion = CurrentSchemaVersion;
             parsed.Normalize();
@@ -116,6 +118,7 @@ public sealed class M7LookProfile
         Post ??= new PostLook();
         Outline ??= new OutlineLook();
         Animation ??= new AnimationLook();
+        Destruction ??= new DestructionLook();
         Vfx ??= new VfxLook();
         VfxPool ??= new VfxPoolLook();
         Ground ??= new GroundLook();
@@ -191,6 +194,7 @@ public sealed class M7LookProfile
         Outline.DistanceFade = Clamp(Outline.DistanceFade, 0f, 2f);
 
         Animation.Normalize();
+        Destruction.Normalize();
 
         Vfx.TracerWidth = Clamp(Vfx.TracerWidth, 0.01f, 0.8f);
         Vfx.TracerLength = Clamp(Vfx.TracerLength, 0.1f, 8f);
@@ -461,6 +465,87 @@ public sealed class AnimationLook
         TransformationTiltDegrees = TransformationTiltDegrees,
         DamageWobbleDegrees = DamageWobbleDegrees,
         TierOverride = TierOverride
+    };
+}
+
+public sealed class DestructionLook
+{
+    public bool Enabled { get; set; } = true;
+    public bool AutoPreview { get; set; } = true;
+    public int PreviewTarget { get; set; } = 2;
+    public float PreviewLoopSeconds { get; set; } = 5.5f;
+    public float PreviewHoldSeconds { get; set; } = 3.8f;
+    public int HeroPoolBudget { get; set; } = 6;
+    public int DustPoolBudget { get; set; } = 6;
+    public float CollapseSeconds { get; set; } = 0.72f;
+    public float SettleTiltDegrees { get; set; } = 9f;
+    public float WreckWidthRatio { get; set; } = 0.78f;
+    public float WreckHeightRatio { get; set; } = 0.15f;
+    public int HeroFragmentCount { get; set; } = PooledLegoDebrisBurst.MaxFragments;
+    public float FragmentScale { get; set; } = 0.85f;
+    public float OutwardSpeed { get; set; } = 3.8f;
+    public float UpwardSpeed { get; set; } = 4.6f;
+    public float Gravity { get; set; } = 9.5f;
+    public float Drag { get; set; } = 0.38f;
+    public float Bounce { get; set; } = 0.24f;
+    public float AngularSpeedDegrees { get; set; } = 260f;
+    public float DebrisLifetime { get; set; } = 4.2f;
+    public float FadeSeconds { get; set; } = 0.65f;
+    public int DustCount { get; set; } = 22;
+    public float DustSize { get; set; } = 0.55f;
+    public float DustLifetime { get; set; } = 1.15f;
+    public string DustColor { get; set; } = "#776657";
+    public float DustOpacity { get; set; } = 0.58f;
+
+    public void Normalize()
+    {
+        PreviewTarget = Math.Clamp(PreviewTarget, 0, 2);
+        PreviewLoopSeconds = Math.Clamp(PreviewLoopSeconds, 2f, 15f);
+        PreviewHoldSeconds = Math.Clamp(PreviewHoldSeconds, 0.2f, PreviewLoopSeconds - 0.2f);
+        HeroPoolBudget = Math.Clamp(HeroPoolBudget, 0, 12);
+        DustPoolBudget = Math.Clamp(DustPoolBudget, 0, 12);
+        DustOpacity = Math.Clamp(DustOpacity, 0f, 1f);
+        PresentationDestructionTuning tuning = ToTuning();
+        tuning.Normalize();
+        CollapseSeconds = tuning.CollapseSeconds;
+        SettleTiltDegrees = tuning.SettleTiltDegrees;
+        WreckWidthRatio = tuning.WreckWidthRatio;
+        WreckHeightRatio = tuning.WreckHeightRatio;
+        HeroFragmentCount = tuning.HeroFragmentCount;
+        FragmentScale = tuning.FragmentScale;
+        OutwardSpeed = tuning.OutwardSpeed;
+        UpwardSpeed = tuning.UpwardSpeed;
+        Gravity = tuning.Gravity;
+        Drag = tuning.Drag;
+        Bounce = tuning.Bounce;
+        AngularSpeedDegrees = tuning.AngularSpeedDegrees;
+        DebrisLifetime = tuning.DebrisLifetime;
+        FadeSeconds = tuning.FadeSeconds;
+        DustCount = tuning.DustCount;
+        DustSize = tuning.DustSize;
+        DustLifetime = tuning.DustLifetime;
+    }
+
+    public PresentationDestructionTuning ToTuning() => new()
+    {
+        Enabled = Enabled,
+        CollapseSeconds = CollapseSeconds,
+        SettleTiltDegrees = SettleTiltDegrees,
+        WreckWidthRatio = WreckWidthRatio,
+        WreckHeightRatio = WreckHeightRatio,
+        HeroFragmentCount = HeroFragmentCount,
+        FragmentScale = FragmentScale,
+        OutwardSpeed = OutwardSpeed,
+        UpwardSpeed = UpwardSpeed,
+        Gravity = Gravity,
+        Drag = Drag,
+        Bounce = Bounce,
+        AngularSpeedDegrees = AngularSpeedDegrees,
+        DebrisLifetime = DebrisLifetime,
+        FadeSeconds = FadeSeconds,
+        DustCount = DustCount,
+        DustSize = DustSize,
+        DustLifetime = DustLifetime
     };
 }
 

@@ -114,11 +114,20 @@ for token in ['PresentationEventDeduplicator','PresentationVfxPoolStats','TryAcq
     check(token in vfx_pool, f'T066 pooled VFX foundation missing: {token}')
 check('QueueFree()' not in vfx_pool, 'T066 pooled VFX nodes must be reused rather than freed per effect')
 look_profile = (ROOT/'GodotClient/Scripts/Presentation/M7LookProfile.cs').read_text()
-check('CurrentSchemaVersion = 3' in look_profile and 'AnimationLook Animation' in look_profile and 'VfxPoolLook VfxPool' in look_profile,
-      'M7 Look Profile schema 3 animation/VFX-pool controls missing')
+check('CurrentSchemaVersion = 4' in look_profile and 'AnimationLook Animation' in look_profile and
+      'DestructionLook Destruction' in look_profile and 'VfxPoolLook VfxPool' in look_profile,
+      'M7 Look Profile schema 4 animation/destruction/VFX-pool controls missing')
 look_lab = (ROOT/'GodotClient/Scripts/Client/M7LookLab.cs').read_text()
-for token in ['BuildAnimationSettings','PresentationAnimationDriver','PresentationVfxPool<PooledTracerEffect>','UpdatePoolStatsLabel','ValidatePoolReuse']:
-    check(token in look_lab, f'M7 Look Lab T065/T066 integration missing: {token}')
+for token in ['BuildAnimationSettings','PresentationAnimationDriver','BuildDestructionSettings',
+              'PresentationDestructionDriver','PresentationVfxPool<PooledLegoDebrisBurst>',
+              'PresentationVfxPool<PooledTracerEffect>','UpdatePoolStatsLabel','ValidatePoolReuse']:
+    check(token in look_lab, f'M7 Look Lab T065/T066/T067 integration missing: {token}')
+destruction_presentation = (ROOT/'GodotClient/Scripts/Presentation/PresentationDestruction.cs').read_text()
+for token in ['PresentationDestructionScaleBand','PresentationDestructionDriver','MaxFragments = 18',
+              'MultiMeshInstance3D','LegoDebrisBurstRequest']:
+    check(token in destruction_presentation, f'T067 bounded LEGO destruction foundation missing: {token}')
+check('RigidBody3D' not in destruction_presentation and 'CollisionShape3D' not in destruction_presentation,
+      'T067 cosmetic debris must not introduce physical bodies or colliders')
 
 clock = (ROOT/'SimCore/Runtime/Core/SimTime.cs').read_text()
 check('TicksPerSecond = 20' in clock, 'SimClock is not 20 Hz')

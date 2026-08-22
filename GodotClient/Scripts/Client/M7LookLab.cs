@@ -8,7 +8,7 @@ public partial class M7LookLab : Node3D
     private const string ModelPath = "res://Assets/M7/raider_drill_rig.glb";
     private static readonly string[] Categories =
     {
-        "SCENE & CAMERA", "SHADING", "MATERIALS", "GLASS & EMISSION", "LIGHTING", "POST FX", "OUTLINE", "ANIMATION", "VFX", "GROUND"
+        "SCENE & CAMERA", "SHADING", "MATERIALS", "GLASS & EMISSION", "LIGHTING", "POST FX", "OUTLINE", "ANIMATION", "DESTRUCTION", "VFX", "GROUND"
     };
 
     private readonly List<Node3D> _units = new();
@@ -28,12 +28,16 @@ public partial class M7LookLab : Node3D
     private MeshInstance3D? _ground;
     private MeshInstance3D? _fogPreview;
     private readonly PresentationAnimationDriver _animationDriver = new();
+    private readonly PresentationDestructionDriver _destructionDriver = new();
     private PresentationVfxPool<PooledTracerEffect>? _tracerPool;
     private PresentationVfxPool<PooledParticleBurst>? _muzzlePool;
     private PresentationVfxPool<PooledParticleBurst>? _impactPool;
+    private PresentationVfxPool<PooledLegoDebrisBurst>? _heroDebrisPool;
+    private PresentationVfxPool<PooledParticleBurst>? _destructionDustPool;
     private Material? _tracerVfxMaterial;
     private Material? _muzzleVfxMaterial;
     private Material? _impactVfxMaterial;
+    private Material? _destructionDustMaterial;
     private GpuParticles3D? _fireParticles;
     private GpuParticles3D? _smokeParticles;
     private OmniLight3D? _impactLight;
@@ -45,6 +49,7 @@ public partial class M7LookLab : Node3D
     private VBoxContainer? _settingsBox;
     private Label? _statusLabel;
     private Label? _poolStatsLabel;
+    private Label? _destructionStatsLabel;
     private Button? _pauseButton;
     private int _category;
     private int _materialFamily;
@@ -55,11 +60,16 @@ public partial class M7LookLab : Node3D
     private double _time;
     private int _lastWeaponCycle = -1;
     private int _lastImpactCycle = -1;
+    private int _lastDestructionCycle = -1;
+    private int _activeDestructionTarget = -1;
+    private float _destructionPreviewElapsed = float.MaxValue;
+    private uint _destructionSequence = 1u;
     private MouseButton _cameraDragButton = MouseButton.None;
     private Vector2 _lastDragPosition;
     private string? _capturePath;
     private Vector3 _shooterMuzzle = new(2.4f, 1.45f, 4.8f);
     private Vector3 _targetPoint = new(11.4f, 1.6f, -6.6f);
+    private Node3D? _burningBuilding;
 
     public void Configure(Action returnToPrototype, string[] commandLineArgs)
     {
@@ -93,6 +103,7 @@ public partial class M7LookLab : Node3D
         UpdateFreeCamera((float)delta);
         AnimateScene();
         UpdatePoolStatsLabel();
+        UpdateDestructionStatsLabel();
 
         if (!_smoke || _finished) return;
         _frames++;
@@ -101,7 +112,7 @@ public partial class M7LookLab : Node3D
         if (valid && _capturePath is not null) valid = CaptureViewport(_capturePath);
         _finished = true;
         if (valid)
-            GD.Print($"M7 LOOK LAB: PASS schema={_profile.SchemaVersion} units={_units.Count} meshes={_unitMeshes.Count} triangles={triangles} buildings=2 firing=1 burning=1 animationDrivers={_animationRigs.Count} vfxPools=3 prewarmed=144 controls={(_controlsVisible ? "visible" : "hidden")} zoom={_profile.Camera.ZoomCells:0.##} post={(_profile.Post.Enabled ? "on" : "off")} outline={(_profile.Outline.Enabled ? "on" : "off")}");
+            GD.Print($"M7 LOOK LAB: PASS schema={_profile.SchemaVersion} units={_units.Count} meshes={_unitMeshes.Count} triangles={triangles} buildings=2 firing=1 burning=1 animationDrivers={_animationRigs.Count} destructionDriver=1 vfxPools=5 prewarmed=168 controls={(_controlsVisible ? "visible" : "hidden")} zoom={_profile.Camera.ZoomCells:0.##} post={(_profile.Post.Enabled ? "on" : "off")} outline={(_profile.Outline.Enabled ? "on" : "off")}");
         else
             GD.PrintErr($"M7 LOOK LAB: FAIL units={_units.Count} meshes={_unitMeshes.Count} triangles={triangles}");
         GetTree().Quit(valid ? 0 : 2);
@@ -191,6 +202,7 @@ public partial class M7LookLab : Node3D
         Vector3 intactSize = new(6.4f, 3.2f, 5.0f);
         Node3D intact = BuildBuilding("IntactBuilding", new Vector3(11.4f, 0f, -6.6f), intactSize, false);
         Node3D burning = BuildBuilding("BurningBuilding", new Vector3(-10.5f, 0f, -8.7f), new Vector3(4.1f, 2.2f, 3.8f), true);
+        _burningBuilding = burning;
         AddChild(intact); AddChild(burning);
         _targetPoint = SurfaceImpactPoint(intact.GlobalPosition + new Vector3(0f, 1.55f, 0f), intactSize, _shooterMuzzle);
         _units[0].LookAt(new Vector3(_targetPoint.X, _units[0].GlobalPosition.Y, _targetPoint.Z), Vector3.Up);
@@ -330,6 +342,11 @@ public partial class M7LookLab : Node3D
             _ => new PooledParticleBurst(18, 0.16f, 28f, 2.5f, 7.5f, Vector3.Zero));
         _impactPool = new PresentationVfxPool<PooledParticleBurst>(this, "PooledImpact", 48,
             _ => new PooledParticleBurst(20, 0.34f, 78f, 2.0f, 8.0f, new Vector3(0f, -4.2f, 0f)));
+        StandardMaterial3D debrisMaterial = DestructionDebrisMaterial();
+        _heroDebrisPool = new PresentationVfxPool<PooledLegoDebrisBurst>(this, "PooledLegoDestruction", 12,
+            _ => new PooledLegoDebrisBurst(debrisMaterial));
+        _destructionDustPool = new PresentationVfxPool<PooledParticleBurst>(this, "PooledDestructionDust", 12,
+            _ => new PooledParticleBurst(64, 1.2f, 82f, 1.2f, 5.8f, new Vector3(0f, -3.8f, 0f)));
 
         _impactLight = new OmniLight3D { Name = "ImpactLight", OmniRange = 3.2f, ShadowEnabled = false, Visible = false };
         AddChild(_impactLight);
@@ -436,6 +453,7 @@ public partial class M7LookLab : Node3D
     {
         if (_settingsBox is null) return;
         _poolStatsLabel = null;
+        _destructionStatsLabel = null;
         foreach (Node child in _settingsBox.GetChildren()) { _settingsBox.RemoveChild(child); child.QueueFree(); }
         switch (_category)
         {
@@ -447,8 +465,9 @@ public partial class M7LookLab : Node3D
             case 5: BuildPostSettings(); break;
             case 6: BuildOutlineSettings(); break;
             case 7: BuildAnimationSettings(); break;
-            case 8: BuildVfxSettings(); break;
-            case 9: BuildGroundSettings(); break;
+            case 8: BuildDestructionSettings(); break;
+            case 9: BuildVfxSettings(); break;
+            case 10: BuildGroundSettings(); break;
         }
     }
 
@@ -612,6 +631,51 @@ public partial class M7LookLab : Node3D
         AddSlider("Damage wobble", 0, 12, 0.1, () => _profile.Animation.DamageWobbleDegrees, v => _profile.Animation.DamageWobbleDegrees = v, false);
         AddOption("Significance tier", new[] { "Auto", "A · every frame", "B · 30 Hz", "C · 15 Hz" },
             _profile.Animation.TierOverride, i => _profile.Animation.TierOverride = i, false);
+    }
+
+    private void BuildDestructionSettings()
+    {
+        AddNote("Presentation-only LEGO breakup. The source body stops being a gameplay object before this local animation begins; fragments never block movement, deal damage or become selectable.");
+        AddCheck("LEGO destruction enabled", () => _profile.Destruction.Enabled, v => _profile.Destruction.Enabled = v, false);
+        AddCheck("Automatic loop preview", () => _profile.Destruction.AutoPreview, v => _profile.Destruction.AutoPreview = v, false);
+        AddOption("Preview target", new[] { "Fourth unit", "Burning structure", "Alternate each cycle" },
+            _profile.Destruction.PreviewTarget, i => _profile.Destruction.PreviewTarget = i, false);
+        if (_settingsBox is not null)
+            AddAction(_settingsBox, "TRIGGER DESTRUCTION NOW", TriggerDestructionPreview,
+                "Runs one local presentation event even when automatic preview is disabled.");
+        AddSlider("Preview loop · seconds", 2, 15, 0.1, () => _profile.Destruction.PreviewLoopSeconds, v => _profile.Destruction.PreviewLoopSeconds = v, false);
+        AddSlider("Destroyed hold · seconds", 0.2, 10, 0.1, () => _profile.Destruction.PreviewHoldSeconds, v => _profile.Destruction.PreviewHoldSeconds = v, false);
+        AddHeading("BODY FAILURE");
+        AddSlider("Collapse duration", 0.05, 4, 0.05, () => _profile.Destruction.CollapseSeconds, v => _profile.Destruction.CollapseSeconds = v, false);
+        AddSlider("Settle tilt · degrees", 0, 45, 0.5, () => _profile.Destruction.SettleTiltDegrees, v => _profile.Destruction.SettleTiltDegrees = v, false);
+        AddSlider("Wreck horizontal ratio", 0.25, 1.5, 0.01, () => _profile.Destruction.WreckWidthRatio, v => _profile.Destruction.WreckWidthRatio = v, false);
+        AddSlider("Wreck height ratio", 0.03, 1, 0.01, () => _profile.Destruction.WreckHeightRatio, v => _profile.Destruction.WreckHeightRatio = v, false);
+        AddHeading("HERO LEGO MODULES");
+        AddSlider("Active burst budget", 0, 12, 1, () => _profile.Destruction.HeroPoolBudget, v => _profile.Destruction.HeroPoolBudget = (int)v, false);
+        AddSlider("Maximum hero fragments", 0, 18, 1, () => _profile.Destruction.HeroFragmentCount, v => _profile.Destruction.HeroFragmentCount = (int)v, false);
+        AddSlider("Fragment scale", 0.1, 3, 0.05, () => _profile.Destruction.FragmentScale, v => _profile.Destruction.FragmentScale = v, false);
+        AddSlider("Outward impulse", 0, 18, 0.1, () => _profile.Destruction.OutwardSpeed, v => _profile.Destruction.OutwardSpeed = v, false);
+        AddSlider("Upward impulse", 0, 18, 0.1, () => _profile.Destruction.UpwardSpeed, v => _profile.Destruction.UpwardSpeed = v, false);
+        AddSlider("Gravity", 0, 30, 0.1, () => _profile.Destruction.Gravity, v => _profile.Destruction.Gravity = v, false);
+        AddSlider("Air drag", 0, 6, 0.05, () => _profile.Destruction.Drag, v => _profile.Destruction.Drag = v, false);
+        AddSlider("Ground bounce", 0, 0.9, 0.01, () => _profile.Destruction.Bounce, v => _profile.Destruction.Bounce = v, false);
+        AddSlider("Angular speed · degrees/s", 0, 1080, 5, () => _profile.Destruction.AngularSpeedDegrees, v => _profile.Destruction.AngularSpeedDegrees = v, false);
+        AddSlider("Debris lifetime", 0.1, 15, 0.1, () => _profile.Destruction.DebrisLifetime, v => _profile.Destruction.DebrisLifetime = v, false);
+        AddSlider("Final fade duration", 0, 15, 0.05, () => _profile.Destruction.FadeSeconds, v => _profile.Destruction.FadeSeconds = v, false);
+        AddHeading("SECONDARY DUST");
+        AddSlider("Dust burst budget", 0, 12, 1, () => _profile.Destruction.DustPoolBudget, v => _profile.Destruction.DustPoolBudget = (int)v, false);
+        AddSlider("Dust particle count", 0, 64, 1, () => _profile.Destruction.DustCount, v => _profile.Destruction.DustCount = (int)v, false);
+        AddSlider("Dust size", 0.05, 4, 0.05, () => _profile.Destruction.DustSize, v => _profile.Destruction.DustSize = v, false);
+        AddSlider("Dust lifetime", 0.1, 5, 0.05, () => _profile.Destruction.DustLifetime, v => _profile.Destruction.DustLifetime = v, false);
+        AddColor("Dust color", () => _profile.Destruction.DustColor, v => _profile.Destruction.DustColor = v, false);
+        AddSlider("Dust opacity", 0, 1, 0.01, () => _profile.Destruction.DustOpacity, v => _profile.Destruction.DustOpacity = v, false);
+        if (_settingsBox is not null)
+        {
+            _destructionStatsLabel = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart, CustomMinimumSize = new Vector2(0f, 62f) };
+            _destructionStatsLabel.AddThemeColorOverride("font_color", new Color("e8b640"));
+            _settingsBox.AddChild(_destructionStatsLabel);
+            UpdateDestructionStatsLabel();
+        }
     }
 
     private void BuildVfxSettings()
@@ -817,9 +881,15 @@ public partial class M7LookLab : Node3D
         _tracerPool?.ForEachNode(effect => effect.SetMaterial(_tracerVfxMaterial));
         _muzzlePool?.ForEachNode(effect => effect.SetMaterial(_muzzleVfxMaterial));
         _impactPool?.ForEachNode(effect => effect.SetMaterial(_impactVfxMaterial));
+        Color destructionDustColor = WithAlpha(M7LookMaterialFactory.ParseColor(_profile.Destruction.DustColor),
+            _profile.Destruction.DustOpacity);
+        _destructionDustMaterial = ParticleBillboardMaterial(destructionDustColor, 0f, additive: false);
+        _destructionDustPool?.ForEachNode(effect => effect.SetMaterial(_destructionDustMaterial));
         if (_tracerPool is not null) _tracerPool.Budget = _profile.VfxPool.TracerBudget;
         if (_muzzlePool is not null) _muzzlePool.Budget = _profile.VfxPool.MuzzleBudget;
         if (_impactPool is not null) _impactPool.Budget = _profile.VfxPool.ImpactBudget;
+        if (_heroDebrisPool is not null) _heroDebrisPool.Budget = _profile.Destruction.HeroPoolBudget;
+        if (_destructionDustPool is not null) _destructionDustPool.Budget = _profile.Destruction.DustPoolBudget;
         Color fireColor = M7LookMaterialFactory.ParseColor(_profile.Vfx.FireColor);
         ApplyParticleDrawMaterial(_fireParticles, ParticleBillboardMaterial(fireColor, _profile.Vfx.FireEnergy, additive: true));
         ApplyParticleDrawMaterial(_smokeParticles, ParticleBillboardMaterial(WithAlpha(M7LookMaterialFactory.ParseColor(_profile.Vfx.SmokeColor), _profile.Vfx.SmokeOpacity), 0f, additive: false));
@@ -865,6 +935,12 @@ public partial class M7LookLab : Node3D
             _impactPool?.Clear();
             if (_impactLight is not null) _impactLight.Visible = false;
         }
+        if (!_profile.Destruction.Enabled)
+        {
+            _heroDebrisPool?.Clear();
+            _destructionDustPool?.Clear();
+            ResetDestructionPreview();
+        }
         if (_fireParticles is not null) _fireParticles.Visible = _profile.Scene.BurningEnabled;
         if (_smokeParticles is not null) _smokeParticles.Visible = _profile.Scene.BurningEnabled && _profile.Scene.DustEnabled;
         if (_fireLight is not null) _fireLight.Visible = _profile.Scene.BurningEnabled;
@@ -873,6 +949,7 @@ public partial class M7LookLab : Node3D
     private void AnimateScene()
     {
         AnimateUnits();
+        AnimateDestruction();
 
         float pulse = 1f + Mathf.Sin((float)_time * _profile.Emission.PulseSpeed) * _profile.Emission.PulseAmount;
         foreach ((MeshInstance3D mesh, M7LookMaterialRole role) in _roleMeshes)
@@ -921,6 +998,132 @@ public partial class M7LookLab : Node3D
         _tracerPool?.Update(vfxDelta);
         _muzzlePool?.Update(vfxDelta);
         _impactPool?.Update(vfxDelta);
+        _heroDebrisPool?.Update(vfxDelta);
+        _destructionDustPool?.Update(vfxDelta);
+    }
+
+    private void AnimateDestruction()
+    {
+        if (!_profile.Destruction.Enabled)
+        {
+            _lastDestructionCycle = -1;
+            ResetDestructionPreview();
+            return;
+        }
+
+        int cycle = Mathf.FloorToInt((float)_time / _profile.Destruction.PreviewLoopSeconds);
+        if (_profile.Destruction.AutoPreview && cycle != _lastDestructionCycle)
+        {
+            _lastDestructionCycle = cycle;
+            TriggerDestructionPreview();
+        }
+        if (_activeDestructionTarget < 0) return;
+
+        float delta = _profile.Scene.Paused ? 0f : (float)GetProcessDeltaTime() * _profile.Scene.AnimationSpeed;
+        _destructionPreviewElapsed += delta;
+        if (_destructionPreviewElapsed >= _profile.Destruction.PreviewHoldSeconds)
+        {
+            ResetDestructionPreview();
+            return;
+        }
+
+        uint entityKey = _activeDestructionTarget == 0 ? 1004u : 2001u;
+        Node3D? target = _activeDestructionTarget == 0
+            ? (_units.Count >= 4 ? _units[3] : null)
+            : _burningBuilding;
+        if (target is null) return;
+        PresentationDestructionFrame frame = _destructionDriver.Update(entityKey, true, Vector3.One,
+            delta, _profile.Destruction.ToTuning());
+        float yaw = target.RotationDegrees.Y;
+        target.Scale = frame.Scale;
+        target.RotationDegrees = new Vector3(frame.TiltDegrees.X, yaw, frame.TiltDegrees.Z);
+        UpdateBurningEffectTransform();
+    }
+
+    private void TriggerDestructionPreview()
+    {
+        if (!_profile.Destruction.Enabled) return;
+        ResetDestructionPreview();
+        int target = _profile.Destruction.PreviewTarget switch
+        {
+            0 => 0,
+            1 => 1,
+            _ => (int)(_destructionSequence & 1u)
+        };
+        _destructionSequence++;
+        _activeDestructionTarget = target;
+        _destructionPreviewElapsed = 0f;
+        uint entityKey = target == 0 ? 1004u : 2001u;
+        _destructionDriver.Begin(entityKey);
+        SpawnLabDestruction(target, entityKey);
+        SetStatus(target == 0 ? "Destruction preview · fourth unit" : "Destruction preview · burning structure");
+    }
+
+    private void SpawnLabDestruction(int targetIndex, uint entityKey)
+    {
+        Node3D? target = targetIndex == 0
+            ? (_units.Count >= 4 ? _units[3] : null)
+            : _burningBuilding;
+        if (target is null) return;
+        PresentationDestructionTuning tuning = _profile.Destruction.ToTuning();
+        tuning.Normalize();
+        PresentationDestructionScaleBand band = targetIndex == 0
+            ? PresentationDestructionScaleBand.Heavy
+            : PresentationDestructionScaleBand.Structure;
+        int fragments = tuning.ResolveHeroFragmentCount(band);
+        Vector3 sourceSize = targetIndex == 0
+            ? new Vector3(4.8f, 2.4f, 6.6f)
+            : new Vector3(4.1f, 2.2f, 3.8f);
+        Vector3 origin = target.GlobalPosition + Vector3.Up * (sourceSize.Y * 0.42f);
+        float groundY = GroundHeight(target.GlobalPosition.X, target.GlobalPosition.Z) + 0.04f;
+        if (fragments > 0 && _heroDebrisPool is not null &&
+            _heroDebrisPool.TryAcquire(tuning.DebrisLifetime, out PooledLegoDebrisBurst hero))
+        {
+            float fadeFraction = tuning.DebrisLifetime <= 0f ? 0f : tuning.FadeSeconds / tuning.DebrisLifetime;
+            hero.Configure(new LegoDebrisBurstRequest(origin, sourceSize, target.GlobalRotation.Y, groundY,
+                fragments, tuning.FragmentScale, tuning.OutwardSpeed, tuning.UpwardSpeed, tuning.Gravity,
+                tuning.Drag, tuning.Bounce, Mathf.DegToRad(tuning.AngularSpeedDegrees), fadeFraction,
+                unchecked(entityKey * 2_654_435_761u ^ _destructionSequence * 2_246_822_519u),
+                M7LookMaterialFactory.ParseColor(_profile.Materials.PaintedHull.BaseColor),
+                M7LookMaterialFactory.ParseColor(_profile.Materials.DarkMechanic.BaseColor),
+                M7LookMaterialFactory.ParseColor(_profile.Materials.Accent.BaseColor)));
+            _heroDebrisPool.Activate(hero);
+        }
+        if (tuning.DustCount <= 0 || _destructionDustPool is null || _destructionDustMaterial is null ||
+            !_destructionDustPool.TryAcquire(tuning.DustLifetime, out PooledParticleBurst dust)) return;
+        Vector3 dustOrigin = target.GlobalPosition + Vector3.Up * Math.Max(0.12f, sourceSize.Y * 0.15f);
+        dust.Configure(dustOrigin, dustOrigin + Vector3.Up, _destructionDustMaterial,
+            Vector2.One * tuning.DustSize, tuning.DustCount, tuning.DustLifetime);
+        _destructionDustPool.Activate(dust);
+    }
+
+    private void ResetDestructionPreview()
+    {
+        if (_units.Count >= 4)
+        {
+            _units[3].Scale = Vector3.One;
+            _units[3].RotationDegrees = new Vector3(0f, 315f, 0f);
+        }
+        if (_burningBuilding is not null)
+        {
+            _burningBuilding.Scale = Vector3.One;
+            _burningBuilding.RotationDegrees = Vector3.Zero;
+        }
+        if (_activeDestructionTarget == 0) _destructionDriver.Remove(1004u);
+        if (_activeDestructionTarget == 1) _destructionDriver.Remove(2001u);
+        _activeDestructionTarget = -1;
+        _destructionPreviewElapsed = float.MaxValue;
+        UpdateBurningEffectTransform();
+    }
+
+    private void UpdateBurningEffectTransform()
+    {
+        if (_burningBuilding is null) return;
+        float collapsedHeight = 2.2f * _burningBuilding.Scale.Y;
+        Vector3 fireOrigin = _burningBuilding.GlobalPosition + Vector3.Up * Math.Max(0.24f, collapsedHeight * 0.86f);
+        if (_fireParticles is not null) _fireParticles.GlobalPosition = fireOrigin;
+        if (_smokeParticles is not null) _smokeParticles.GlobalPosition = fireOrigin + Vector3.Up * 0.7f;
+        if (_fireLight is not null) _fireLight.GlobalPosition = fireOrigin + Vector3.Up * 0.4f;
     }
 
     private void AnimateUnits()
@@ -1114,6 +1317,14 @@ public partial class M7LookLab : Node3D
         if (particles?.DrawPass1 is QuadMesh quad) quad.Material = material;
     }
 
+    private static StandardMaterial3D DestructionDebrisMaterial() => new()
+    {
+        AlbedoColor = Colors.White,
+        VertexColorUseAsAlbedo = true,
+        Metallic = 0.08f,
+        Roughness = 0.48f
+    };
+
     private static StandardMaterial3D ParticleBillboardMaterial(Color color, float energy, bool additive)
     {
         Color visible = new(color.R, color.G, color.B, Mathf.Clamp(color.A, 0f, 1f));
@@ -1228,8 +1439,9 @@ public partial class M7LookLab : Node3D
             case 5: _profile.Post = defaults.Post; break;
             case 6: _profile.Outline = defaults.Outline; break;
             case 7: _profile.Animation = defaults.Animation; break;
-            case 8: _profile.Vfx = defaults.Vfx; _profile.VfxPool = defaults.VfxPool; break;
-            case 9: _profile.Ground = defaults.Ground; break;
+            case 8: _profile.Destruction = defaults.Destruction; break;
+            case 9: _profile.Vfx = defaults.Vfx; _profile.VfxPool = defaults.VfxPool; break;
+            case 10: _profile.Ground = defaults.Ground; break;
         }
         ApplyProfile(rebuildMaterials: true);
         BuildCurrentSettings();
@@ -1331,6 +1543,19 @@ public partial class M7LookLab : Node3D
             $"DROPPED {tracer.Dropped + muzzle.Dropped + impact.Dropped}";
     }
 
+    private void UpdateDestructionStatsLabel()
+    {
+        if (_destructionStatsLabel is null || _heroDebrisPool is null || _destructionDustPool is null) return;
+        PresentationVfxPoolStats hero = _heroDebrisPool.GetStats();
+        PresentationVfxPoolStats dust = _destructionDustPool.GetStats();
+        int fragments = 0;
+        _heroDebrisPool.ForEachNode(effect => fragments += effect.ActiveFragmentCount);
+        string target = _activeDestructionTarget switch { 0 => "UNIT", 1 => "STRUCTURE", _ => "READY" };
+        _destructionStatsLabel.Text = $"{target}  ·  PREWARMED {hero.Created + dust.Created}  ·  ACTIVE BURSTS {hero.Active}/{dust.Active}  ·  " +
+            $"VISIBLE MODULES {fragments}  ·  PEAK {hero.PeakActive}/{dust.PeakActive}  ·  " +
+            $"REUSED {hero.Reused + dust.Reused}  ·  DROPPED {hero.Dropped + dust.Dropped}";
+    }
+
     private bool ValidateLab(out int triangles)
     {
         triangles = 0;
@@ -1346,6 +1571,11 @@ public partial class M7LookLab : Node3D
         bool schemaTwoMigration = M7LookProfile.TryFromJson(schemaTwoFixture, out M7LookProfile migratedTwo, out _) &&
             migratedTwo.SchemaVersion == M7LookProfile.CurrentSchemaVersion && migratedTwo.Camera.ZoomCells == 72f &&
             Mathf.IsEqualApprox(migratedTwo.Vfx.TracerEnergy, 4.5f) && migratedTwo.Animation.Enabled;
+        const string schemaThreeFixture = "{\"schemaVersion\":3,\"animation\":{\"recoilDistance\":0.22},\"vfxPool\":{\"tracerBudget\":7}}";
+        bool schemaThreeMigration = M7LookProfile.TryFromJson(schemaThreeFixture, out M7LookProfile migratedThree, out _) &&
+            migratedThree.SchemaVersion == M7LookProfile.CurrentSchemaVersion &&
+            Mathf.IsEqualApprox(migratedThree.Animation.RecoilDistance, 0.22f) && migratedThree.VfxPool.TracerBudget == 7 &&
+            migratedThree.Destruction.Enabled;
         bool roles = Enum.GetValues<M7LookMaterialRole>().All(role => _roleMeshes.Any(entry => entry.Role == role));
         bool emissiveBindings = _roleMeshes.Where(entry => entry.Role is M7LookMaterialRole.Signal or M7LookMaterialRole.Lamp or M7LookMaterialRole.Crystal)
             .All(entry => entry.Mesh.MaterialOverride is ShaderMaterial);
@@ -1355,10 +1585,14 @@ public partial class M7LookLab : Node3D
             rig.WheelCount == 6 && rig.HasDrill && rig.HasSuspension) && ValidateAnimationDriver();
         bool vfxPools = _tracerPool is { Capacity: 64 } && _muzzlePool is { Capacity: 32 } &&
             _impactPool is { Capacity: 48 } && ValidatePoolReuse();
+        bool destruction = _heroDebrisPool is { Capacity: 12 } && _destructionDustPool is { Capacity: 12 } &&
+            _heroDebrisPool.GetStats().Spawned > 0 && _destructionDustPool.GetStats().Spawned > 0 &&
+            ValidateDestructionDriver();
         return _camera is { Fov: 36f } && _units.Count == 4 && _unitMeshes.Count >= 180 && triangles >= 30_000 &&
-            animationBindings && roles && _ground is not null && _fireParticles is not null && vfxPools &&
+            animationBindings && roles && _ground is not null && _fireParticles is not null && vfxPools && destruction &&
             _controlsLayer is not null && _postMaterial is not null &&
-            _emissionLights.Count > 0 && emissiveBindings && exteriorImpact && roundTrip && schemaOneMigration && schemaTwoMigration &&
+            _emissionLights.Count > 0 && emissiveBindings && exteriorImpact && roundTrip && schemaOneMigration &&
+            schemaTwoMigration && schemaThreeMigration &&
             ResourceLoader.Exists("res://Assets/M7/Textures/painted_shell_detail.png") &&
             ResourceLoader.Exists("res://Assets/M7/Textures/brushed_metal_detail.png") &&
             ResourceLoader.Exists("res://Assets/M7/Textures/rubber_detail.png") &&
@@ -1382,6 +1616,23 @@ public partial class M7LookLab : Node3D
             active.LocomotionBlend > 0f && active.OperationBlend > 0f && active.TransformationProgress == 0.65f &&
             active.DamageAmount > 0.5f && active.Recoil > 0f && distant.Tier == PresentationAnimationTier.Distant &&
             !distant.ParametersUpdated;
+    }
+
+    private static bool ValidateDestructionDriver()
+    {
+        PresentationDestructionDriver driver = new();
+        PresentationDestructionTuning tuning = new() { CollapseSeconds = 0.5f, WreckWidthRatio = 0.7f,
+            WreckHeightRatio = 0.12f, SettleTiltDegrees = 11f };
+        driver.Begin(17u);
+        PresentationDestructionFrame started = driver.Update(17u, true, Vector3.One, 0.05f, tuning);
+        PresentationDestructionFrame settled = started;
+        for (int i = 0; i < 12; i++) settled = driver.Update(17u, true, Vector3.One, 0.05f, tuning);
+        PresentationDestructionFrame restored = driver.Update(17u, false, Vector3.One, 0.05f, tuning);
+        PresentationDestructionFrame lateJoin = driver.Update(91u, true, Vector3.One, 0f, tuning);
+        return started.NormalizedProgress > 0f && started.NormalizedProgress < 1f &&
+            started.Scale.Y < 1f && started.TiltDegrees.LengthSquared() > 0f && settled.Settled &&
+            Mathf.IsEqualApprox(settled.Scale.Y, 0.12f) && restored.Scale.IsEqualApprox(Vector3.One) &&
+            !restored.Settled && lateJoin.Settled;
     }
 
     private bool ValidatePoolReuse()

@@ -15,12 +15,17 @@ public partial class UnitViewManager : Node3D
     private readonly PresentationAnimationDriver _animationDriver = new();
     private readonly PresentationAnimationTuning _animationTuning = new();
     private readonly Dictionary<uint, PresentationAnimationRigBinding> _animationRigs = new();
+    private readonly PresentationDestructionDriver _destructionDriver = new();
+    private readonly PresentationDestructionTuning _destructionTuning = new();
     private readonly PresentationEventDeduplicator _eventDeduplicator = new();
     private PresentationVfxPool<PooledMeshEffect>? _projectilePool;
     private PresentationVfxPool<PooledParticleBurst>? _muzzlePool;
     private PresentationVfxPool<PooledParticleBurst>? _impactPool;
+    private PresentationVfxPool<PooledLegoDebrisBurst>? _heroDebrisPool;
+    private PresentationVfxPool<PooledParticleBurst>? _destructionDustPool;
     private Material? _muzzleMaterial;
     private Material? _impactMaterial;
+    private Material? _destructionDustMaterial;
     private readonly Dictionary<uint, PooledMeshEffect> _projectileViews = new();
     private readonly HashSet<uint> _liveProjectiles = new();
     private readonly List<uint> _removeProjectiles = new();
@@ -54,6 +59,17 @@ public partial class UnitViewManager : Node3D
     internal PresentationVfxPoolStats ProjectilePoolStats => _projectilePool?.GetStats() ?? default;
     internal PresentationVfxPoolStats MuzzlePoolStats => _muzzlePool?.GetStats() ?? default;
     internal PresentationVfxPoolStats ImpactPoolStats => _impactPool?.GetStats() ?? default;
+    internal PresentationVfxPoolStats HeroDebrisPoolStats => _heroDebrisPool?.GetStats() ?? default;
+    internal PresentationVfxPoolStats DestructionDustPoolStats => _destructionDustPool?.GetStats() ?? default;
+    internal int ActiveHeroDebrisFragments
+    {
+        get
+        {
+            int active = 0;
+            _heroDebrisPool?.ForEachNode(effect => active += effect.ActiveFragmentCount);
+            return active;
+        }
+    }
 
     internal bool TryGetEntityView(EntityId id, out MeshInstance3D view)
     {
@@ -67,14 +83,21 @@ public partial class UnitViewManager : Node3D
         if (_projectilePool is not null) return;
         _muzzleMaterial = MakeParticleMaterial(new Color(1f, 0.70f, 0.16f), 5f);
         _impactMaterial = MakeParticleMaterial(new Color(1f, 0.46f, 0.08f), 4f);
+        _destructionDustMaterial = MakeDustMaterial(new Color(0.42f, 0.34f, 0.27f, 0.72f));
+        StandardMaterial3D debrisMaterial = MakeDebrisMaterial();
         _projectilePool = new PresentationVfxPool<PooledMeshEffect>(this, "PooledProjectile", 96,
             _ => new PooledMeshEffect(new SphereMesh { Radius = 0.16f, Height = 0.32f, RadialSegments = 10, Rings = 5 }, _projectile));
         _muzzlePool = new PresentationVfxPool<PooledParticleBurst>(this, "PooledWeaponMuzzle", 24,
             _ => new PooledParticleBurst(14, 0.14f, 25f, 2.2f, 6.5f, Vector3.Zero));
         _impactPool = new PresentationVfxPool<PooledParticleBurst>(this, "PooledWeaponImpact", 32,
             _ => new PooledParticleBurst(16, 0.26f, 70f, 1.8f, 7.2f, new Vector3(0f, -4f, 0f)));
+        _heroDebrisPool = new PresentationVfxPool<PooledLegoDebrisBurst>(this, "PooledHeroDebris", 16,
+            _ => new PooledLegoDebrisBurst(debrisMaterial));
+        _destructionDustPool = new PresentationVfxPool<PooledParticleBurst>(this, "PooledDestructionDust", 16,
+            _ => new PooledParticleBurst(64, 1.15f, 82f, 1.2f, 5.8f, new Vector3(0f, -3.8f, 0f)));
         _muzzlePool.ForEachNode(effect => effect.SetMaterial(_muzzleMaterial));
         _impactPool.ForEachNode(effect => effect.SetMaterial(_impactMaterial));
+        _destructionDustPool.ForEachNode(effect => effect.SetMaterial(_destructionDustMaterial));
     }
 
     public override void _Process(double delta)
@@ -95,6 +118,7 @@ public partial class UnitViewManager : Node3D
                 _animationRigs.Add(c.EntityId.Value, new PresentationAnimationRigBinding(view));
             }
             PresentationEntity p = FindPrevious(previous, c);
+            bool destructionStarted = ObserveDestructionEvent(current.Tick.Value, c, out PresentationEventId destructionEvent);
             Vector3 a = p.Position.ToWorld(0.5f), b = c.Position.ToWorld(0.5f);
             view.GlobalPosition = (c.Snap ? b : a.Lerp(b, alpha)) + Vector3.Up * TransformationElevation(c);
             float yawA = p.Orientation.Raw * (360f / 65536f), yawB = c.Orientation.Raw * (360f / 65536f);
@@ -123,7 +147,8 @@ public partial class UnitViewManager : Node3D
             if (c.IsDestroyed)
             {
                 HideWeaponFeedback(view);
-                UpdateDestructionView(view, c);
+                if (destructionStarted) SpawnDestructionFeedback(view, c, destructionEvent);
+                UpdateDestructionView(view, c, destructionStarted, (float)delta);
                 _pendingDebris[c.EntityId.Value] = new DebrisSeed(c.NonBlockingDebrisTicks / (float)SimClock.TicksPerSecond, DebrisScale(c), c.PersistentDebris);
             }
             else
@@ -164,6 +189,7 @@ public partial class UnitViewManager : Node3D
             _views.Remove(id);
             _animationRigs.Remove(id);
             _animationDriver.Remove(id);
+            _destructionDriver.Remove(id);
         }
         for (int i = 0; i < _remove.Count; i++) _pendingDebris.Remove(_remove[i]);
         UpdateProjectileViews(previous, current, alpha);
@@ -171,6 +197,8 @@ public partial class UnitViewManager : Node3D
         _projectilePool?.Update((float)delta);
         _muzzlePool?.Update((float)delta);
         _impactPool?.Update((float)delta);
+        _heroDebrisPool?.Update((float)delta);
+        _destructionDustPool?.Update((float)delta);
     }
 
     private void UpdateProjectileViews(PresentationSnapshot previous, PresentationSnapshot current, float alpha)
@@ -267,20 +295,65 @@ public partial class UnitViewManager : Node3D
         Node3D? contact = view.GetNodeOrNull<Node3D>("ContactImpact"); if (contact is not null) contact.Visible = false;
     }
 
-    private static void UpdateDestructionView(MeshInstance3D view, PresentationEntity entity)
+    private bool ObserveDestructionEvent(int observedTick, PresentationEntity entity,
+        out PresentationEventId eventId)
     {
-        // Placeholder primitives do not pretend to be final LEGO breakup animation.
-        // Gameplay timing is shown by the dark wreck state; actual flattening happens
-        // only when collision clears and the view transitions to cosmetic debris.
-        view.Scale = entity.DestructionProgressBasisPoints >= 10_000 ? DebrisScale(entity) : BaseVisualScale(entity);
+        uint ordinal = entity.IsDestroyed ? 1u : 0u;
+        return _eventDeduplicator.TryAccept(observedTick, entity.EntityId.Value, ordinal,
+            PresentationEventFamily.Destruction, out eventId);
+    }
+
+    private void SpawnDestructionFeedback(MeshInstance3D view, PresentationEntity entity,
+        PresentationEventId eventId)
+    {
+        _destructionTuning.Normalize();
+        if (!_destructionTuning.Enabled) return;
+        PresentationDestructionScaleBand band = PresentationDestructionTuning.BandFor(entity);
+        int fragments = _destructionTuning.ResolveHeroFragmentCount(band);
+        Vector3 sourceSize = BaseVisualScale(entity);
+        if (fragments > 0 && _heroDebrisPool is not null &&
+            _heroDebrisPool.TryAcquire(_destructionTuning.DebrisLifetime, out PooledLegoDebrisBurst hero))
+        {
+            Color primary = entity.Owner == 0 ? _friendly.AlbedoColor : _other.AlbedoColor;
+            uint seed = unchecked(entity.EntityId.Value * 2_654_435_761u ^
+                (uint)eventId.ObservedTick * 2_246_822_519u ^ entity.ContentType.Value);
+            float fadeFraction = _destructionTuning.DebrisLifetime <= 0f ? 0f :
+                _destructionTuning.FadeSeconds / _destructionTuning.DebrisLifetime;
+            hero.Configure(new LegoDebrisBurstRequest(view.GlobalPosition, sourceSize, view.GlobalRotation.Y, 0.04f,
+                fragments, _destructionTuning.FragmentScale, _destructionTuning.OutwardSpeed,
+                _destructionTuning.UpwardSpeed, _destructionTuning.Gravity, _destructionTuning.Drag,
+                _destructionTuning.Bounce, Mathf.DegToRad(_destructionTuning.AngularSpeedDegrees),
+                fadeFraction, seed, primary, _wreck.AlbedoColor, new Color(1f, 0.55f, 0.12f)));
+            _heroDebrisPool.Activate(hero);
+        }
+        if (_destructionTuning.DustCount <= 0 || _destructionDustPool is null ||
+            _destructionDustMaterial is null ||
+            !_destructionDustPool.TryAcquire(_destructionTuning.DustLifetime, out PooledParticleBurst dust)) return;
+        Vector3 dustOrigin = view.GlobalPosition + Vector3.Up * Math.Max(0.1f, sourceSize.Y * 0.16f);
+        dust.Configure(dustOrigin, dustOrigin + Vector3.Up, _destructionDustMaterial,
+            Vector2.One * _destructionTuning.DustSize, _destructionTuning.DustCount,
+            _destructionTuning.DustLifetime);
+        _destructionDustPool.Activate(dust);
+    }
+
+    private void UpdateDestructionView(MeshInstance3D view, PresentationEntity entity, bool destructionStarted,
+        float delta)
+    {
+        if (destructionStarted) _destructionDriver.Begin(entity.EntityId.Value);
+        Vector3 baseScale = BaseVisualScale(entity);
+        PresentationDestructionFrame frame = _destructionDriver.Update(entity.EntityId.Value, true,
+            baseScale, delta, _destructionTuning);
+        float yaw = view.RotationDegrees.Y;
+        view.Scale = frame.Scale;
+        view.RotationDegrees = new Vector3(frame.TiltDegrees.X, yaw, frame.TiltDegrees.Z);
     }
 
     internal static Vector3 DebrisScale(PresentationEntity entity)
     {
         Vector3 baseline = BaseVisualScale(entity);
-        float horizontal = entity.DestructionKind == DestructionKind.Structure ? 0.82f : 0.72f;
-        float vertical = entity.DestructionKind == DestructionKind.Structure ? 0.10f : 0.16f;
-        return new Vector3(baseline.X * horizontal, baseline.Y * vertical, baseline.Z * horizontal);
+        PresentationDestructionTuning tuning = new();
+        return new Vector3(baseline.X * tuning.WreckWidthRatio, baseline.Y * tuning.WreckHeightRatio,
+            baseline.Z * tuning.WreckWidthRatio);
     }
 
     internal static Vector3 BaseVisualScale(PresentationEntity entity)
@@ -738,6 +811,23 @@ public partial class UnitViewManager : Node3D
         ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
         Transparency = BaseMaterial3D.TransparencyEnum.Alpha,
         BlendMode = BaseMaterial3D.BlendModeEnum.Add,
+        BillboardMode = BaseMaterial3D.BillboardModeEnum.Enabled,
+        CullMode = BaseMaterial3D.CullModeEnum.Disabled,
+        NoDepthTest = false
+    };
+    private static StandardMaterial3D MakeDebrisMaterial() => new()
+    {
+        AlbedoColor = Colors.White,
+        VertexColorUseAsAlbedo = true,
+        Roughness = 0.48f,
+        Metallic = 0.08f
+    };
+    private static StandardMaterial3D MakeDustMaterial(Color color) => new()
+    {
+        AlbedoColor = color,
+        ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
+        Transparency = BaseMaterial3D.TransparencyEnum.Alpha,
+        BlendMode = BaseMaterial3D.BlendModeEnum.Mix,
         BillboardMode = BaseMaterial3D.BillboardModeEnum.Enabled,
         CullMode = BaseMaterial3D.CullModeEnum.Disabled,
         NoDepthTest = false
