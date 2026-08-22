@@ -8,8 +8,10 @@ authoritative when anything here becomes stale.
 **M0–M6 are implemented, verified and game-director accepted. The first M7
 Style Lab review selected no direction. A non-canonical research brief now
 defines the center for a second Style Lab round, which is implemented, rendered,
-fully verified and ready for game-director review. The six-page Palette Ratio
-Lab is game-director accepted. Visual canon remains deliberately open.**
+fully verified and through its first game-director review. Heroic RTS is the
+current preference but is not selected; a refined warm-light and independent
+outline A/B is ready for review. The six-page Palette Ratio Lab is game-director
+accepted. Visual canon remains deliberately open.**
 
 - The branch includes the verified post-M5 movement handoff from `44e2caf`
   plus T058–T063.
@@ -167,10 +169,17 @@ environmental noise and no photoreal/tabletop premise. Round 2 replaces the old
 forward candidates with Industrial Mass, Heroic RTS, Constructive LEGO and
 Graphic Volume. Visual canon remains deliberately unlocked.
 
+The first Round 2 review currently favors Heroic RTS, while retaining Industrial
+color depth and Constructive highlights as useful ingredients. It rejects the
+overt warm filtering in Industrial and Heroic. Their key lights are now close to
+neutral/subtly warm respectively, without removing Heroic bloom or cool fill.
+Outline is removed from Graphic Volume and exposed as an independent,
+off-by-default `O` toggle on all four styles.
+
 From a normal build, press `F8` and choose **M7 Style Lab** or **M7 Palette
-Lab**. Style controls are `1`–`4`; palette-page controls are `1`–`6`; `Escape`
-returns to the playable prototype. The rejected first fixture remains available
-as **Old Material Lab** for engineering comparison only.
+Lab**. Style controls are `1`–`4`, outline is `O`; palette-page controls are
+`1`–`6`; `Escape` returns to the playable prototype. The rejected first fixture
+remains available as **Old Material Lab** for engineering comparison only.
 
 ## Integration format boundary
 
@@ -190,7 +199,7 @@ The current M7 exploration branch passed `./tools/verify.sh --full` on
 T058–T063 ENet smoke, the four-style Godot smoke, all six Palette Ratio Lab
 pages, 100-repeat determinism, replay record/playback, snapshot continuation,
 compiled-content regeneration and macOS export. Exact summary:
-`Artifacts/Verification/20260822T083326Z-full-summary.txt`.
+`Artifacts/Verification/20260822T085432Z-full-summary.txt`.
 
 The freshly exported app was launched directly into the 500-panel faction
 abstract-model page and the ten-role faction light-language page. Both captured
@@ -203,6 +212,12 @@ each rendered a capture and emitted its PASS marker. Evidence is
 `Artifacts/Screenshots/m7-exported-style-industrial-mass.png`,
 `m7-exported-style-heroic-rts.png`, `m7-exported-style-constructive-lego.png`
 and `m7-exported-style-graphic-volume.png` in the same directory.
+
+The refined light and outline pass then passed the complete suite again at
+`Artifacts/Verification/20260822T085432Z-full-summary.txt`. The exported Heroic
+fixture emitted PASS markers with outline both off and on; evidence is
+`Artifacts/Screenshots/m7-exported-heroic-rts-outline-off.png` and
+`m7-exported-heroic-rts-outline-on.png` in the same directory.
 
 Stress60 remained the expected diagnostic failure with phase completion
 **4/60, 5/60 and 2/60**. The exported macOS debug build is:
@@ -221,11 +236,12 @@ blocking only when M9 must prove its stable-large-battle exit.
 
 ## Next approved action
 
-1. Game director reviews Industrial Mass, Heroic RTS, Constructive LEGO and
-   Graphic Volume; do not record T064 acceptance until one direction is
-   explicitly locked.
-2. Record the game director's keep/reject/hybrid feedback and implement only the
-   resulting narrowed visual branch.
+1. Game director reviews the neutralized Industrial/Heroic lighting and the
+   Heroic outline off/on A/B; do not record T064 acceptance until one direction
+   is explicitly locked.
+2. Record whether outline is rejected, retained or needs another width/language,
+   then build the next narrowed material/light combination around the selected
+   Heroic/Industrial/Constructive traits.
 3. Keep Stress60 visible without starting an unreviewed third movement attempt;
    revisit it for M9 or earlier only if a catastrophic movement regression
    appears.

@@ -842,3 +842,21 @@ locked, and gameplay, SimCore and network architecture remain unchanged.
 
 This is non-canonical presentation research. It changes no gameplay, SimCore,
 networking, format or deterministic architecture, and it locks no visual style.
+
+---
+
+## 2026-08-22 — Separate outline from M7 rendering direction
+
+- First Round 2 review currently favors Heroic RTS without accepting it. The
+  useful ingredients are Industrial color depth, Heroic color/bloom and
+  Constructive molded highlights.
+- Overt warm key lighting is rejected. Industrial is moved close to neutral and
+  Heroic retains only a restrained warm key against its cool fill.
+- Outline is no longer bundled with Graphic Volume. It is an independent,
+  off-by-default presentation toggle available on every treatment through `O`
+  or `--m7-outline off|on`.
+- Automated smoke covers all four styles with outline off and Heroic RTS with
+  outline on. Exported-build captures provide the same-style A/B evidence.
+
+This is non-canonical presentation refinement. It locks no rendering style and
+changes no gameplay, SimCore, networking, formats or deterministic behavior.

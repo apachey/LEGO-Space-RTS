@@ -24,7 +24,8 @@ From a normal launch:
 1. press `F8`;
 2. select **M7 Style Lab** or **M7 Palette Lab**;
 3. use `1`–`4` to switch rendering styles, or `1`–`6` to switch palette pages;
-4. press `Escape` to return to the prototype.
+4. in the Style Lab, press `O` to compare outline off/on independently;
+5. press `Escape` to return to the prototype.
 
 The Style Lab keeps one unit, camera, animation and composition invariant. Its
 research-driven second round switches Industrial Mass, Heroic RTS, Constructive
@@ -48,16 +49,22 @@ retired as forward candidates. Round 2 follows the game director's non-canonical
 research brief in `M7_ART_DIRECTION_RESEARCH_BRIEF.md`; visual canon is still
 open.
 
+The first Round 2 review does not select a direction, but it narrows the useful
+evidence: Heroic RTS is the current preference; Industrial Mass color depth,
+Heroic color/bloom and Constructive highlights are positive traits. The overt
+warm key in Industrial and Heroic was rejected and has been neutralized. Outline
+is no longer built into Graphic Volume; it is an independent off-by-default A/B
+toggle on every treatment.
+
 The first equal-swatch fixture remains as **Old Material Lab** for engineering
 comparison. It is not the current art-direction review path.
 
 ## Art-direction response requested
 
-Review the four styles as genuinely separate directions first. Useful feedback
-names the treatment, then calls out model readability, material credibility,
-ground, lighting, animation and VFX separately. Palette review is independent:
-adjust individual group percentages or semantic categories without assuming
-that the preferred rendering style has already been chosen.
+Review the refined Industrial and Heroic light balance, then compare Heroic with
+`O` off/on. Useful feedback separates color depth, bloom, highlights and outline
+rather than accepting the entire treatment as one bundle. Palette review is
+already accepted and remains independent from the open rendering decision.
 
 ## Texture policy
 
@@ -95,8 +102,13 @@ Evidence:
 - `Artifacts/Screenshots/m7-exported-style-constructive-lego.png`;
 - `Artifacts/Screenshots/m7-exported-style-graphic-volume.png`.
 
+The refined Heroic A/B evidence is:
+
+- `Artifacts/Screenshots/m7-exported-heroic-rts-outline-off.png`;
+- `Artifacts/Screenshots/m7-exported-heroic-rts-outline-on.png`.
+
 Full verification passed with no blocking failures:
-`Artifacts/Verification/20260822T083326Z-full-summary.txt`.
+`Artifacts/Verification/20260822T085432Z-full-summary.txt`.
 
 Playable build: `Builds/macOS/LEGO Space RTS.app`. The requested human task is
 only visual judgement: compare material credibility, mechanical readability,

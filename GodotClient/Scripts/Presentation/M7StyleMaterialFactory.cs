@@ -67,7 +67,7 @@ public static class M7StyleMaterialFactory
         _ => M7VisualStyle.IndustrialMass
     };
 
-    public static Material Create(M7VisualStyle style, M7SurfaceSemantic semantic)
+    public static Material Create(M7VisualStyle style, M7SurfaceSemantic semantic, bool outlineEnabled = false)
     {
         if (semantic == M7SurfaceSemantic.Terrain)
             return TerrainMaterial(style);
@@ -79,7 +79,7 @@ public static class M7StyleMaterialFactory
             return EmissiveStandard(style == M7VisualStyle.GraphicVolume ? new Color("ffd85a") : new Color("ff9d28"), style == M7VisualStyle.IndustrialMass ? 2.2f : 3.1f);
 
         (Color color, float metallic, float roughness) = Properties(style, semantic);
-        return style switch
+        Material material = style switch
         {
             M7VisualStyle.IndustrialMass => ProceduralIndustrialMaterial(color, metallic, roughness, semantic == M7SurfaceSemantic.Tool ? 0.22f : 0.07f),
             M7VisualStyle.HeroicRts => HeroicMaterial(color, semantic == M7SurfaceSemantic.Tool ? 0.62f : 0.14f),
@@ -87,6 +87,9 @@ public static class M7StyleMaterialFactory
             M7VisualStyle.GraphicVolume => GraphicVolumeMaterial(color, semantic == M7SurfaceSemantic.Tool ? 0.52f : 0.11f),
             _ => Standard(color, metallic, roughness, semantic == M7SurfaceSemantic.Terrain)
         };
+        if (outlineEnabled && IsOutlineEligible(semantic))
+            material.NextPass = OutlineMaterial();
+        return material;
     }
 
     public static bool IsIntentionallyEmissive(M7SurfaceSemantic semantic)
@@ -254,12 +257,17 @@ public static class M7StyleMaterialFactory
         ShaderMaterial material = new() { Shader = shader };
         material.SetShaderParameter("base_color", color);
         material.SetShaderParameter("metallic_value", metallic);
-        material.NextPass = new ShaderMaterial
-        {
-            Shader = new Shader { Code = GraphicOutlineShader }
-        };
         return material;
     }
+
+    private static bool IsOutlineEligible(M7SurfaceSemantic semantic)
+        => semantic is M7SurfaceSemantic.Body or M7SurfaceSemantic.Accent or M7SurfaceSemantic.Earth or
+            M7SurfaceSemantic.Neutral or M7SurfaceSemantic.Tool or M7SurfaceSemantic.Rubber;
+
+    private static ShaderMaterial OutlineMaterial() => new()
+    {
+        Shader = new Shader { Code = OutlineShader }
+    };
 
     private static StandardMaterial3D DustMaterial(M7VisualStyle style)
     {
@@ -398,12 +406,12 @@ void light() {
 }
 """;
 
-    private const string GraphicOutlineShader = """
+    private const string OutlineShader = """
 shader_type spatial;
 render_mode unshaded, cull_front;
 
 void vertex() {
-    VERTEX += NORMAL * 0.026;
+    VERTEX += NORMAL * 0.045;
 }
 
 void fragment() {

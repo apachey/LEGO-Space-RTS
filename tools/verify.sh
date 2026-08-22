@@ -251,15 +251,23 @@ godot_m7_style_smoke() {
   printf '%s\n' "${import_output}"
   if (( status != 0 )); then return "${status}"; fi
   for style in industrial-mass heroic-rts constructive-lego graphic-volume; do
-    output="$("${godot}" --headless --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-style-lab --m7-style-smoke --m7-style "${style}" 2>&1)"
+    output="$("${godot}" --headless --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-style-lab --m7-style-smoke --m7-style "${style}" --m7-outline off 2>&1)"
     status=$?
     printf '%s\n' "${output}"
     if (( status != 0 )); then return "${status}"; fi
-    if ! printf '%s\n' "${output}" | grep -q "M7 STYLE LAB: PASS styles=4.*active=${style}"; then
+    if ! printf '%s\n' "${output}" | grep -q "M7 STYLE LAB: PASS styles=4.*active=${style} outline=off"; then
       printf 'Godot exited without the required controlled M7 Style Lab PASS marker for %s.\n' "${style}" >&2
       return 1
     fi
   done
+  output="$("${godot}" --headless --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-style-lab --m7-style-smoke --m7-style heroic-rts --m7-outline on 2>&1)"
+  status=$?
+  printf '%s\n' "${output}"
+  if (( status != 0 )); then return "${status}"; fi
+  if ! printf '%s\n' "${output}" | grep -q 'M7 STYLE LAB: PASS styles=4.*active=heroic-rts outline=on'; then
+    printf 'Godot exited without the required independent outline-toggle PASS marker.\n' >&2
+    return 1
+  fi
 }
 
 godot_m7_palette_smoke() {

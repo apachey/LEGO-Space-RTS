@@ -123,6 +123,10 @@ Only material response, lighting, terrain treatment and VFX language change.
 The carrier uses the accepted Rock Raiders palette semantics, including a major
 earth-brown structural mass and role-bound neon-orange/neon-lime emission.
 
+Outline is an independent diagnostic parameter, not part of Graphic Volume or
+any other treatment. It is off by default so its effect can be compared without
+silently changing the selected material and lighting direction.
+
 ## Rejection guards
 
 Round 2 should be rejected or revised if it:

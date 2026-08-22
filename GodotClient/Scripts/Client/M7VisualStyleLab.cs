@@ -21,6 +21,7 @@ public partial class M7VisualStyleLab : Node3D
     private OmniLight3D? _workFill;
     private Godot.Environment? _environment;
     private M7VisualStyle _style;
+    private bool _outlineEnabled;
     private bool _smoke;
     private bool _finished;
     private int _frames;
@@ -33,13 +34,14 @@ public partial class M7VisualStyleLab : Node3D
         _returnToPrototype = returnToPrototype;
         _smoke = commandLineArgs.Contains("--m7-style-smoke");
         _style = ParseStyle(commandLineArgs);
+        _outlineEnabled = ParseOutline(commandLineArgs);
         for (int i = 0; i + 1 < commandLineArgs.Length; i++)
             if (commandLineArgs[i] == "--capture-path") _capturePath = commandLineArgs[i + 1];
 
         BuildScene();
         ApplyStyle(_style);
         ProcessPriority = 1000;
-        GD.Print($"M7 STYLE LAB: active={M7StyleMaterialFactory.Slug(_style)} controls=1..4/Escape");
+        GD.Print($"M7 STYLE LAB: active={M7StyleMaterialFactory.Slug(_style)} outline={OutlineSlug()} controls=1..4/O/Escape");
     }
 
     public override void _Process(double delta)
@@ -56,7 +58,7 @@ public partial class M7VisualStyleLab : Node3D
         if (valid && _capturePath is not null) valid = CaptureViewport(_capturePath);
         _finished = true;
         if (valid)
-            GD.Print($"M7 STYLE LAB: PASS styles={M7StyleMaterialFactory.Styles.Length} meshes={_modelMeshes.Count} triangles={triangles} canvasLayers=0 active={M7StyleMaterialFactory.Slug(_style)}");
+            GD.Print($"M7 STYLE LAB: PASS styles={M7StyleMaterialFactory.Styles.Length} meshes={_modelMeshes.Count} triangles={triangles} canvasLayers=0 active={M7StyleMaterialFactory.Slug(_style)} outline={OutlineSlug()}");
         else
             GD.PrintErr($"M7 STYLE LAB: FAIL styles={M7StyleMaterialFactory.Styles.Length} meshes={_modelMeshes.Count}");
         GetTree().Quit(valid ? 0 : 2);
@@ -76,6 +78,12 @@ public partial class M7VisualStyleLab : Node3D
         if (next.HasValue)
         {
             ApplyStyle(next.Value);
+            GetViewport().SetInputAsHandled();
+        }
+        else if (key.Keycode == Key.O)
+        {
+            _outlineEnabled = !_outlineEnabled;
+            ApplyStyle(_style);
             GetViewport().SetInputAsHandled();
         }
         else if (key.Keycode == Key.Escape)
@@ -184,12 +192,12 @@ public partial class M7VisualStyleLab : Node3D
     {
         _style = style;
         foreach (MeshInstance3D mesh in _modelMeshes)
-            mesh.MaterialOverride = M7StyleMaterialFactory.Create(style, InferSemantic(mesh.Name));
+            mesh.MaterialOverride = M7StyleMaterialFactory.Create(style, InferSemantic(mesh.Name), _outlineEnabled);
         if (_ground is not null) _ground.MaterialOverride = M7StyleMaterialFactory.Create(style, M7SurfaceSemantic.Terrain);
         foreach (MeshInstance3D puff in _dust) puff.MaterialOverride = M7StyleMaterialFactory.Create(style, M7SurfaceSemantic.Dust);
         foreach (MeshInstance3D spark in _sparks) spark.MaterialOverride = M7StyleMaterialFactory.Create(style, M7SurfaceSemantic.Spark);
         ApplyLightProfile(style);
-        GD.Print($"M7 STYLE LAB SWITCH: {M7StyleMaterialFactory.Slug(style)}");
+        GD.Print($"M7 STYLE LAB SWITCH: {M7StyleMaterialFactory.Slug(style)} outline={OutlineSlug()}");
     }
 
     private void ApplyLightProfile(M7VisualStyle style)
@@ -198,15 +206,15 @@ public partial class M7VisualStyleLab : Node3D
         switch (style)
         {
             case M7VisualStyle.IndustrialMass:
-                _sun.LightColor = new Color("ffe2b6"); _sun.LightEnergy = 1.72f;
+                _sun.LightColor = new Color("fff3e6"); _sun.LightEnergy = 1.68f;
                 _workFill.LightColor = new Color("89aed1"); _workFill.LightEnergy = 0.58f;
                 _environment.BackgroundColor = new Color("151b1f");
                 _environment.AmbientLightColor = new Color("9ba5aa"); _environment.AmbientLightEnergy = 0.67f;
                 _environment.GlowIntensity = 0.20f;
                 break;
             case M7VisualStyle.HeroicRts:
-                _sun.LightColor = new Color("ffc77d"); _sun.LightEnergy = 1.78f;
-                _workFill.LightColor = new Color("5e9fff"); _workFill.LightEnergy = 1.10f;
+                _sun.LightColor = new Color("ffe8c9"); _sun.LightEnergy = 1.72f;
+                _workFill.LightColor = new Color("72a8ff"); _workFill.LightEnergy = 1.06f;
                 _environment.BackgroundColor = new Color("111b2a");
                 _environment.AmbientLightColor = new Color("7897bd"); _environment.AmbientLightEnergy = 0.48f;
                 _environment.GlowIntensity = 0.34f;
@@ -277,6 +285,10 @@ public partial class M7VisualStyleLab : Node3D
             foreach (M7SurfaceSemantic semantic in Enum.GetValues<M7SurfaceSemantic>())
                 if (M7StyleMaterialFactory.Create(style, semantic) is null) return false;
 
+        Material outlinedBody = M7StyleMaterialFactory.Create(M7VisualStyle.HeroicRts, M7SurfaceSemantic.Body, outlineEnabled: true);
+        Material outlinedGlass = M7StyleMaterialFactory.Create(M7VisualStyle.HeroicRts, M7SurfaceSemantic.Glass, outlineEnabled: true);
+        if (outlinedBody.NextPass is null || outlinedGlass.NextPass is not null) return false;
+
         return _model is not null && _suspension is not null && _drill is not null &&
             _modelMeshes.Count >= 45 && triangles is >= 7_500 and <= 20_000 &&
             _wheelPivots.Count == 6 && semantics && _ground is not null &&
@@ -302,6 +314,16 @@ public partial class M7VisualStyleLab : Node3D
             if (arguments[i] == "--m7-style") return M7StyleMaterialFactory.Parse(arguments[i + 1]);
         return M7VisualStyle.IndustrialMass;
     }
+
+    private static bool ParseOutline(string[] arguments)
+    {
+        for (int i = 0; i + 1 < arguments.Length; i++)
+            if (arguments[i] == "--m7-outline")
+                return arguments[i + 1] is "on" or "true" or "1";
+        return false;
+    }
+
+    private string OutlineSlug() => _outlineEnabled ? "on" : "off";
 
     private static M7SurfaceSemantic InferSemantic(StringName nodeName)
     {

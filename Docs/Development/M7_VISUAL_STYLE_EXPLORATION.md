@@ -62,6 +62,22 @@ large chassis and rear housing form an earth-brown mass, while neon-orange
 signals and the neon-lime work light are authored emission. Canopy glass remains
 non-emissive.
 
+First Round 2 review outcome:
+
+- Heroic RTS is the strongest current direction, but is not accepted or locked;
+- Industrial Mass contributes desirable color depth;
+- Heroic RTS contributes the preferred color response and bloom;
+- Constructive LEGO contributes desirable molded-material highlights;
+- the overt warm filtering in Industrial Mass and Heroic RTS is rejected;
+- outline must be judged independently rather than being bundled into Graphic
+  Volume.
+
+The refinement pass keeps the four treatments stable, moves the Industrial key
+light close to neutral, makes the Heroic key only subtly warm and preserves its
+cool fill, saturation and bloom. Constructive highlights are retained. Outline
+is off by default and toggles with `O` on any treatment, allowing a same-style
+A/B comparison without changing terrain, material model or lighting.
+
 Industrial Annihilation is the strongest individual reference. Beyond All
 Reason contributes scale and mechanical weight; StarCraft II and Warcraft III
 contribute silhouette hierarchy and controlled exaggeration; Planetary
@@ -198,7 +214,7 @@ changes between styles.
 Implemented controls:
 
 - `F8` → **M7 Style Lab**, then `1` Industrial Mass, `2` Heroic RTS,
-  `3` Constructive LEGO, `4` Graphic Volume and `Escape`;
+  `3` Constructive LEGO, `4` Graphic Volume, `O` outline off/on and `Escape`;
 - `F8` → **M7 Palette Lab**, then `1`–`6` and `Escape`;
 - pages `3` and `4` are the faction and Martian 100-panel abstract models;
 - page `5` tests non-emissive transparency and page `6` the faction light map;
@@ -214,7 +230,11 @@ Round 2 evidence from the exported macOS build:
 - `Artifacts/Screenshots/m7-exported-style-graphic-volume.png`.
 
 All four paths preserve 48 imported meshes, 7,776 triangles, the shared camera
-and zero HUD/GUI canvas layers. Full automated verification passed on 2026-08-22
-at `Artifacts/Verification/20260822T083326Z-full-summary.txt`. This qualifies the
+and zero HUD/GUI canvas layers. The refined Heroic outline A/B was also captured
+from the exported application as
+`Artifacts/Screenshots/m7-exported-heroic-rts-outline-off.png` and
+`Artifacts/Screenshots/m7-exported-heroic-rts-outline-on.png`. Full automated
+verification passed on 2026-08-22 at
+`Artifacts/Verification/20260822T085432Z-full-summary.txt`. This qualifies the
 fixture for subjective art-direction review; it does not select or canonize a
 treatment.

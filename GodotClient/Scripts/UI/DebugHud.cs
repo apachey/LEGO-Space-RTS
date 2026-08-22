@@ -23,7 +23,7 @@ public partial class DebugHud : CanvasLayer
         Button drain = new() { Text = "Drain Energy" }; drain.Pressed += input.DebugDrainEnergy; header.AddChild(drain);
         Button m5 = new() { Name = "PrepareM5Acceptance", Text = "Prepare M5 Playtest" }; m5.Pressed += prepareM5Acceptance; header.AddChild(m5);
         Button m7 = new() { Name = "OpenM7StyleLab", Text = "M7 Style Lab" };
-        m7.TooltipText = "Round 2: 1 Industrial Mass, 2 Heroic RTS, 3 Constructive LEGO, 4 Graphic Volume; Escape returns.";
+        m7.TooltipText = "Round 2: 1 Industrial Mass, 2 Heroic RTS, 3 Constructive LEGO, 4 Graphic Volume; O toggles outline; Escape returns.";
         m7.Pressed += openM7StyleLab;
         header.AddChild(m7);
         Button palette = new() { Name = "OpenM7PaletteLab", Text = "M7 Palette Lab" };
