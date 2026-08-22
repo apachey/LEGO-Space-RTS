@@ -7,10 +7,11 @@ authoritative when anything here becomes stale.
 
 **M0–M6 are implemented, verified and game-director accepted. M7 visual canon
 remains deliberately open. Preset-style comparisons are retired as the primary
-workflow; the gameplay-scale realtime Look Lab is now at schema 2 with free
+workflow; the gameplay-scale realtime Look Lab is now at schema 3 with free
 camera control, generated material-detail textures, repaired emission/VFX,
-static post patterns, depth-tested tracks and complete JSON copy/paste. HUD and
-health visuals are deliberately removed for their own future design phase. The
+sim-driven animation controls, bounded VFX-pool budgets/telemetry, static post
+patterns, depth-tested tracks and complete JSON copy/paste. HUD and health
+visuals are deliberately removed for their own future design phase. The
 six-page Palette Ratio Lab is game-director accepted. The revised Look Lab
 awaits game-director profile exploration and review.**
 
@@ -181,9 +182,9 @@ Preset comparison did not yield a selected direction, and the game director
 rejected continuing with bundled variants. The primary path is now `F8` →
 **M7 Look Lab**, documented in `Docs/Development/M7_LOOK_LAB.md`. It uses the
 actual 36-degree gameplay camera and 24–72 build-cell zoom, four identical units,
-two buildings, live combat/fire evidence, ground and fog preview. Nine
-independent control sections feed a complete schema-2 JSON profile; schema 1 is
-migrated. Temporary HUD, selection and health visuals are excluded.
+two buildings, live combat/fire evidence, ground and fog preview. Ten
+independent control sections feed a complete schema-3 JSON profile; schema 1
+and 2 are migrated. Temporary HUD, selection and health visuals are excluded.
 
 The old inverted-hull outline is retired. The Look Lab uses a real Forward+
 depth and normal/roughness pass, separates silhouette from crease strength and
@@ -192,6 +193,31 @@ output, a darker same-hue edge, a separate halo and optional local lights. Four
 generated grayscale detail maps distinguish paint, brushed metal, rubber and
 quarry ground. The old Style and Material labs remain reproducible engineering
 fixtures; the Palette Lab remains the accepted palette review fixture.
+
+## M7 T065/T066 presentation implementation
+
+- A shared Godot presentation driver consumes immutable snapshot state for
+  locomotion, function, repair, fire recoil, normalized transformation, damage
+  and destruction. It drives named mechanical rig pivots but cannot mutate
+  authoritative simulation.
+- Animation significance implements Tier A every frame, Tier B at approximately
+  30 Hz and Tier C at approximately 15 Hz. The laboratory exposes the response
+  values and tier override through a four-state identical-rig choreography.
+- Generic fixed-capacity pools prewarm and reuse presentation nodes. The
+  playable prototype uses 96 projectile views, 24 particle muzzle bursts and 32
+  impact bursts; the Look Lab prewarms 64/32/48 tracer/muzzle/impact nodes and
+  exposes independent active budgets plus live active/peak/reused/dropped
+  telemetry.
+- Per-source weapon-fire high-watermarks suppress duplicate cosmetic events.
+  Pool exhaustion drops only VFX and never changes projectile, damage or other
+  gameplay truth.
+- T065/T066 add no dependency and do not change SimCore, gameplay or any network
+  or serialization format. Final animation character and VFX look remain
+  game-director review gates.
+- Current playable prototype bodies are primitive placeholders without named
+  mechanical pivots. Production state evaluation and significance are wired;
+  the imported six-wheel Look Lab rig is the visible binding proof until
+  roster-specific model import supplies production rig sockets.
 
 ## Integration format boundary
 
@@ -241,6 +267,15 @@ required PASS marker with four units, 192 unit meshes, 31,104 unit triangles and
 two buildings. Evidence:
 `Artifacts/Screenshots/m7-exported-look-lab-v2-controls.png` and
 `Artifacts/Screenshots/m7-exported-look-lab-v2-outline-off.png`.
+
+The schema-3 T065/T066 integration passed the complete full suite with zero
+blocking failures at
+`Artifacts/Verification/20260822T133654Z-full-summary.txt`. The freshly
+exported application then launched directly into the controls-visible and
+clean-view Look Lab fixtures; both emitted PASS with four driver bindings,
+three VFX pools and 144 prewarmed VFX nodes. Evidence:
+`Artifacts/Screenshots/m7-exported-look-lab-v3-controls.png` and
+`Artifacts/Screenshots/m7-exported-look-lab-v3-clean.png`.
 
 Stress60 remained the expected diagnostic failure with phase completion
 **4/60, 5/60 and 2/60**. The exported macOS debug build is:

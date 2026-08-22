@@ -5,7 +5,7 @@ namespace LegoSpaceRTS.Presentation;
 
 public sealed class M7LookProfile
 {
-    public const int CurrentSchemaVersion = 2;
+    public const int CurrentSchemaVersion = 3;
 
     public int SchemaVersion { get; set; } = CurrentSchemaVersion;
     public CameraLook Camera { get; set; } = new();
@@ -17,7 +17,9 @@ public sealed class M7LookProfile
     public LightingLook Lighting { get; set; } = new();
     public PostLook Post { get; set; } = new();
     public OutlineLook Outline { get; set; } = new();
+    public AnimationLook Animation { get; set; } = new();
     public VfxLook Vfx { get; set; } = new();
+    public VfxPoolLook VfxPool { get; set; } = new();
     public GroundLook Ground { get; set; } = new();
 
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -48,16 +50,17 @@ public sealed class M7LookProfile
                 error = "Clipboard does not contain an M7 Look profile.";
                 return false;
             }
-            if (parsed.SchemaVersion is not (1 or CurrentSchemaVersion))
+            if (parsed.SchemaVersion is not (1 or 2 or CurrentSchemaVersion))
             {
                 profile = CreateDefault();
-                error = $"Profile schema {parsed.SchemaVersion} is not supported; expected 1 or {CurrentSchemaVersion}.";
+                error = $"Profile schema {parsed.SchemaVersion} is not supported; expected 1, 2 or {CurrentSchemaVersion}.";
                 return false;
             }
             // Schema 1 was the first review fixture. Schema 2 removes the
             // deferred HUD/scorch controls and adds free-camera, texture and
-            // emissive-response controls. Missing values intentionally inherit
-            // the reviewed schema-2 baseline, so old copied profiles remain usable.
+            // emissive-response controls. Schema 3 adds animation and VFX-pool
+            // controls. Missing values intentionally inherit the current review
+            // baseline, so old copied profiles remain usable.
             int sourceSchemaVersion = parsed.SchemaVersion;
             parsed.SchemaVersion = CurrentSchemaVersion;
             parsed.Normalize();
@@ -112,7 +115,9 @@ public sealed class M7LookProfile
         Lighting ??= new LightingLook();
         Post ??= new PostLook();
         Outline ??= new OutlineLook();
+        Animation ??= new AnimationLook();
         Vfx ??= new VfxLook();
+        VfxPool ??= new VfxPoolLook();
         Ground ??= new GroundLook();
 
         Camera.ZoomCells = Clamp(Camera.ZoomCells, 24f, 72f);
@@ -185,6 +190,8 @@ public sealed class M7LookProfile
         Outline.CreaseStrength = Clamp(Outline.CreaseStrength, 0f, 3f);
         Outline.DistanceFade = Clamp(Outline.DistanceFade, 0f, 2f);
 
+        Animation.Normalize();
+
         Vfx.TracerWidth = Clamp(Vfx.TracerWidth, 0.01f, 0.8f);
         Vfx.TracerLength = Clamp(Vfx.TracerLength, 0.1f, 8f);
         Vfx.TracerSpeed = Clamp(Vfx.TracerSpeed, 1f, 50f);
@@ -200,6 +207,7 @@ public sealed class M7LookProfile
         Vfx.FireSize = Clamp(Vfx.FireSize, 0.1f, 4f);
         Vfx.FireEnergy = Clamp(Vfx.FireEnergy, 0f, 12f);
         Vfx.FireFlicker = Clamp01(Vfx.FireFlicker);
+        VfxPool.Normalize();
 
         Ground.MacroAmount = Clamp01(Ground.MacroAmount);
         Ground.MacroScale = Clamp(Ground.MacroScale, 0.01f, 2f);
@@ -398,6 +406,64 @@ public sealed class OutlineLook
     public float DistanceFade { get; set; }
 }
 
+public sealed class AnimationLook
+{
+    public bool Enabled { get; set; } = true;
+    public bool PreviewChoreography { get; set; } = true;
+    public float PreviewLocomotionSpeed { get; set; } = 2.6f;
+    public float LocomotionReferenceSpeed { get; set; } = 3f;
+    public float BlendResponse { get; set; } = 8f;
+    public float WheelTurnsPerWorldUnit { get; set; } = 0.34f;
+    public float SuspensionAmplitude { get; set; } = 0.035f;
+    public float SuspensionFrequency { get; set; } = 1.8f;
+    public float BodyLeanDegrees { get; set; } = 1.2f;
+    public float DrillTurnsPerSecond { get; set; } = 0.9f;
+    public float RecoilDistance { get; set; } = 0.12f;
+    public float RecoilRecovery { get; set; } = 7f;
+    public float TransformationLift { get; set; } = 0.18f;
+    public float TransformationTiltDegrees { get; set; } = 8f;
+    public float DamageWobbleDegrees { get; set; } = 0.8f;
+    public int TierOverride { get; set; }
+
+    public void Normalize()
+    {
+        PreviewLocomotionSpeed = Math.Clamp(PreviewLocomotionSpeed, 0f, 12f);
+        PresentationAnimationTuning tuning = ToTuning();
+        tuning.Normalize();
+        LocomotionReferenceSpeed = tuning.LocomotionReferenceSpeed;
+        BlendResponse = tuning.BlendResponse;
+        WheelTurnsPerWorldUnit = tuning.WheelTurnsPerWorldUnit;
+        SuspensionAmplitude = tuning.SuspensionAmplitude;
+        SuspensionFrequency = tuning.SuspensionFrequency;
+        BodyLeanDegrees = tuning.BodyLeanDegrees;
+        DrillTurnsPerSecond = tuning.DrillTurnsPerSecond;
+        RecoilDistance = tuning.RecoilDistance;
+        RecoilRecovery = tuning.RecoilRecovery;
+        TransformationLift = tuning.TransformationLift;
+        TransformationTiltDegrees = tuning.TransformationTiltDegrees;
+        DamageWobbleDegrees = tuning.DamageWobbleDegrees;
+        TierOverride = tuning.TierOverride;
+    }
+
+    public PresentationAnimationTuning ToTuning() => new()
+    {
+        Enabled = Enabled,
+        LocomotionReferenceSpeed = LocomotionReferenceSpeed,
+        BlendResponse = BlendResponse,
+        WheelTurnsPerWorldUnit = WheelTurnsPerWorldUnit,
+        SuspensionAmplitude = SuspensionAmplitude,
+        SuspensionFrequency = SuspensionFrequency,
+        BodyLeanDegrees = BodyLeanDegrees,
+        DrillTurnsPerSecond = DrillTurnsPerSecond,
+        RecoilDistance = RecoilDistance,
+        RecoilRecovery = RecoilRecovery,
+        TransformationLift = TransformationLift,
+        TransformationTiltDegrees = TransformationTiltDegrees,
+        DamageWobbleDegrees = DamageWobbleDegrees,
+        TierOverride = TierOverride
+    };
+}
+
 public sealed class VfxLook
 {
     public string TracerColor { get; set; } = "#4bff2e";
@@ -418,6 +484,22 @@ public sealed class VfxLook
     public float FireSize { get; set; } = 3.15f;
     public float FireEnergy { get; set; } = 12f;
     public float FireFlicker { get; set; } = 1f;
+}
+
+public sealed class VfxPoolLook
+{
+    public int TracerBudget { get; set; } = 24;
+    public int MuzzleBudget { get; set; } = 12;
+    public int ImpactBudget { get; set; } = 16;
+    public int PreviewEmitters { get; set; } = 1;
+
+    public void Normalize()
+    {
+        TracerBudget = Math.Clamp(TracerBudget, 0, 64);
+        MuzzleBudget = Math.Clamp(MuzzleBudget, 0, 32);
+        ImpactBudget = Math.Clamp(ImpactBudget, 0, 48);
+        PreviewEmitters = Math.Clamp(PreviewEmitters, 1, 4);
+    }
 }
 
 public sealed class GroundLook

@@ -25,6 +25,9 @@ required = [
     'GodotClient/Scripts/Presentation/GodotSimBridge.cs','GodotClient/Scripts/Presentation/RtsCameraController.cs',
     'GodotClient/Scripts/Presentation/SelectionController.cs','GodotClient/Scripts/Presentation/RtsInputController.cs',
     'GodotClient/Scripts/Presentation/FogPresenter.cs','GodotClient/Scripts/Presentation/DebugRenderer.cs',
+    'GodotClient/Scripts/Presentation/UnitViewManager.cs','GodotClient/Scripts/Presentation/PresentationAnimationDriver.cs',
+    'GodotClient/Scripts/Presentation/PresentationVfxPool.cs','GodotClient/Scripts/Presentation/M7LookProfile.cs',
+    'GodotClient/Scripts/Client/M7LookLab.cs',
     'GodotClient/Scripts/UI/BasicHud.cs','GodotClient/Scripts/UI/DebugHud.cs','GodotClient/Scripts/UI/M5PlaytestHud.cs',
     'SimCore/Runtime/Scenarios/M5AcceptanceScenarioFactory.cs','Docs/IMPLEMENTATION_REPORT.md',
     'tools/doctor.sh','tools/verify.sh','tools/run-game.sh','tools/build-mac.sh','tools/capture-visual-smoke.sh',
@@ -103,6 +106,19 @@ input_controller = (ROOT/'GodotClient/Scripts/Presentation/RtsInputController.cs
 check('OrderNumber' not in input_controller and 'DestinationRing' in input_controller, 'move feedback must use an unnumbered restrained destination marker')
 unit_view = (ROOT/'GodotClient/Scripts/Presentation/UnitViewManager.cs').read_text()
 check('ConstructionProgressLabel' not in unit_view and 'ConstructionProgressBar' in unit_view, 'construction progress must use a restrained world bar rather than a fixed-size billboard label')
+animation_driver = (ROOT/'GodotClient/Scripts/Presentation/PresentationAnimationDriver.cs').read_text()
+for token in ['static PresentationAnimationInput FromSnapshots','NormalInterval = 1f / 30f','DistantInterval = 1f / 15f','PresentationAnimationRigBinding']:
+    check(token in animation_driver, f'T065 animation presentation foundation missing: {token}')
+vfx_pool = (ROOT/'GodotClient/Scripts/Presentation/PresentationVfxPool.cs').read_text()
+for token in ['PresentationEventDeduplicator','PresentationVfxPoolStats','TryAcquire','_dropped++','IPooledPresentationVfx']:
+    check(token in vfx_pool, f'T066 pooled VFX foundation missing: {token}')
+check('QueueFree()' not in vfx_pool, 'T066 pooled VFX nodes must be reused rather than freed per effect')
+look_profile = (ROOT/'GodotClient/Scripts/Presentation/M7LookProfile.cs').read_text()
+check('CurrentSchemaVersion = 3' in look_profile and 'AnimationLook Animation' in look_profile and 'VfxPoolLook VfxPool' in look_profile,
+      'M7 Look Profile schema 3 animation/VFX-pool controls missing')
+look_lab = (ROOT/'GodotClient/Scripts/Client/M7LookLab.cs').read_text()
+for token in ['BuildAnimationSettings','PresentationAnimationDriver','PresentationVfxPool<PooledTracerEffect>','UpdatePoolStatsLabel','ValidatePoolReuse']:
+    check(token in look_lab, f'M7 Look Lab T065/T066 integration missing: {token}')
 
 clock = (ROOT/'SimCore/Runtime/Core/SimTime.cs').read_text()
 check('TicksPerSecond = 20' in clock, 'SimClock is not 20 Hz')

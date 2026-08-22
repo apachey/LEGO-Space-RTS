@@ -84,7 +84,7 @@ comes from geometry, color, roughness and lighting. Texture work is reserved for
 - terrain low-frequency variation;
 - optional normal/ORM support after a material is visually accepted.
 
-The schema-2 Look Lab now includes four generated grayscale detail maps for
+The schema-3 Look Lab includes four generated grayscale detail maps for
 painted shell, brushed metal, rubber and quarry ground. Each material family has
 independent texture strength and triplanar scale. These assets are restrained
 look-development evidence, not accepted production albedo, normal or ORM data.
@@ -103,13 +103,15 @@ The representative art-direction evidence is now the real Godot Look Lab.
 
 ## Current Look Lab review
 
-Schema 2 adopts the game director's supplied settings as the reset baseline,
+Schema 3 preserves the game director's supplied settings as the reset baseline,
 except for the formerly nonfunctional bright-blue background value, which
 remains available through schema-1 migration for a valid fresh review. It
 removes the temporary HUD/health system and the unmotivated scorch overlay,
 adds a free camera, fixes static post patterns and depth-tested tracks, and
 rebuilds emission/VFX response around HDR surfaces, same-hue luminous edges,
-halos, local lights and GPU particles.
+halos, local lights and GPU particles. It also adds shared sim-driven animation
+controls, significance-tier preview, prewarmed VFX budgets, load preview and
+live pool telemetry. Schema 1 and 2 profiles both migrate forward.
 
 The complete defect audit, generated-texture record and review recommendations
 are in `M7_LOOK_LAB_AUDIT.md`.

@@ -176,7 +176,10 @@ public partial class GodotSmokeRunner : Node
         bool m5Ok = !_m5Acceptance || (M5AcceptanceScenarioFactory.IsFreshHandoffReady(_bridge.World, out m5Reason) &&
             GetTree().Root.FindChild("M5AcceptancePanel", true, false) is not null && GetTree().Root.FindChild("M5AcceptanceStatus", true, false) is not null);
         if (!m5Ok && _m5Acceptance) GD.PrintErr($"M5 ACCEPTANCE SMOKE: FAIL {m5Reason}");
-        bool m4VisualOk = _captureExcavation || _m5Acceptance || (destructionOk && preparedUiOk && scoutDamageOk && repairOk && transportOk && transformationOk && contactImpact is MeshInstance3D && healthBarOk);
+        bool presentationDriversOk = _views is not null && _views.AnimationDriverCount > 0 &&
+            _views.ProjectilePoolStats.Created == 96 && _views.MuzzlePoolStats.Created == 24 &&
+            _views.ImpactPoolStats.Created == 32;
+        bool m4VisualOk = _captureExcavation || _m5Acceptance || (destructionOk && preparedUiOk && scoutDamageOk && repairOk && transportOk && transformationOk && contactImpact is MeshInstance3D && healthBarOk && presentationDriversOk);
         bool ok = _bridge.Current is not null && _bridge.World.Entities.Alive.Count >= minimumAlive && _bridge.GameplayContentHash != 0 &&
             hudOk && constructionOk && controlsOk && excavationOk && m5Ok && m4VisualOk;
         if (ok && _capturePath is not null)
@@ -201,7 +204,7 @@ public partial class GodotSmokeRunner : Node
             GD.Print($"PHASE10 VISUAL SMOKE CAPTURE: PASS path={_capturePath}");
         }
         if (!ok)
-            GD.PrintErr($"PHASE10 GODOT HEADLESS SMOKE DETAIL: hud={hudOk} construction={constructionOk} health={healthBarOk} controls={controlsOk} destruction={destructionOk} preparedTitle={preparedTitleOk} preparedEdgePick={preparedEdgePickOk} scoutDamage={scoutDamageOk} repair={repairOk} transport={transportOk} transformation={transformationOk} excavation={excavationOk} m5={m5Ok} standardWreck={standardWreck is MeshInstance3D} collapseId={_collapseUnit.Value} collapseActive={_collapseUnit != EntityId.None && _bridge.World.Entities.Destruction.Has(_collapseUnit)} collapseView={activeCollapse is MeshInstance3D} contact={contactImpact is MeshInstance3D}");
+            GD.PrintErr($"PHASE10 GODOT HEADLESS SMOKE DETAIL: hud={hudOk} construction={constructionOk} health={healthBarOk} controls={controlsOk} destruction={destructionOk} preparedTitle={preparedTitleOk} preparedEdgePick={preparedEdgePickOk} scoutDamage={scoutDamageOk} repair={repairOk} transport={transportOk} transformation={transformationOk} presentationDrivers={presentationDriversOk} excavation={excavationOk} m5={m5Ok} standardWreck={standardWreck is MeshInstance3D} collapseId={_collapseUnit.Value} collapseActive={_collapseUnit != EntityId.None && _bridge.World.Entities.Destruction.Has(_collapseUnit)} collapseView={activeCollapse is MeshInstance3D} contact={contactImpact is MeshInstance3D}");
         _finished = true;
         GD.Print(ok ? $"PHASE10 GODOT HEADLESS SMOKE: PASS tick={_bridge.World.Tick.Value} hash={_bridge.StateHashHex()}" : "PHASE10 GODOT HEADLESS SMOKE: FAIL");
         GetTree().Quit(ok ? 0 : 2);

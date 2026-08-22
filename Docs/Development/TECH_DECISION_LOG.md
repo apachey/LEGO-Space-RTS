@@ -910,3 +910,27 @@ gameplay, SimCore authority, networking, format or deterministic behavior.
 
 This changes presentation tooling only. It changes no gameplay, SimCore,
 networking, serialization format, dependency or visual canon.
+
+---
+
+## 2026-08-22 — T065/T066 shared animation drivers and bounded VFX pools
+
+- Godot presentation now owns a reusable animation-state driver and mechanical
+  rig binding. Inputs are immutable presentation state; output controls wheel,
+  suspension, functional tool, recoil, transformation and damage presentation
+  only and never writes authoritative state.
+- Animation parameter significance follows the preserved architecture: Tier A
+  every render frame, Tier B approximately 30 Hz and Tier C approximately 15
+  Hz. Transform interpolation and entity placement remain independent.
+- Weapon-fire effects use a per-source monotonic high-watermark so repeated
+  snapshots, reconnect restore or presentation rebuild do not replay already
+  observed cosmetic events.
+- The Godot host prewarms fixed-capacity generic pools. Projectile views,
+  particle muzzle bursts and contact impacts are reused; budget overflow drops
+  only cosmetic presentation and records telemetry.
+- The M7 Look Lab consumes the same implementations, advances to schema 3 and
+  exposes independent animation response, tier override, VFX budget, preview
+  load and live pool telemetry controls. Schema 1 and 2 remain paste-compatible.
+
+This implements T065/T066 presentation infrastructure without a new dependency,
+gameplay change, SimCore mutation, network-format change or visual-canon choice.

@@ -24,8 +24,8 @@ The lab evaluates the look at actual RTS scale rather than a close hero view:
 - one intact LEGO-construction-language building and one smaller burning
   building;
 - one unit continuously firing at the intact building;
-- particle muzzle flash, emissive tracer, exterior-face impact, sparks, luminous
-  fire and smoke evidence;
+- pooled particle muzzle flash, pooled emissive tracer, pooled exterior-face
+  impact, sparks, luminous fire and smoke evidence;
 - rough ground, tracks, a Crystal cluster and a soft fog-of-war preview;
 - no HUD, selection marker or health-bar fixture: interface art direction is a
   separate future review.
@@ -35,7 +35,7 @@ gameplay simulation.
 
 ## Live controls
 
-The left panel contains nine sections:
+The left panel contains ten sections:
 
 1. **Scene & Camera** — zoom, pitch, yaw, animation speed and scene evidence
    visibility;
@@ -54,9 +54,13 @@ The left panel contains nine sections:
    static grain and static posterization dither;
 7. **Outline** — independent master toggle, color, pixel width, opacity,
    depth/normal thresholds, silhouette/crease weights and distance fade;
-8. **VFX** — tracer, particle muzzle/impact, spark, luminous fire and smoke
-   appearance;
-9. **Ground** — two-color macro/micro variation, depth-tested tread tracks and
+8. **Animation** — sim-driven locomotion blend, wheel roll, suspension, body
+   lean, functional drill, recoil, transformation pose, damage response and
+   animation-significance tier preview;
+9. **VFX** — prewarmed tracer/muzzle/impact budgets and live pool telemetry,
+   load-preview emitter count, tracer, particle muzzle/impact, spark, luminous
+   fire and smoke appearance;
+10. **Ground** — two-color macro/micro variation, depth-tested tread tracks and
    unit spacing.
 
 The surface families intentionally begin with distinct physical responses:
@@ -65,10 +69,11 @@ rubber, coated building shell and rough rock are not one material recolored.
 
 ## Profile workflow
 
-- **COPY ALL JSON** copies a complete `schemaVersion: 2` profile, including the
+- **COPY ALL JSON** copies a complete `schemaVersion: 3` profile, including the
   current zoom. It never copies only a diff.
-- **PASTE & APPLY** validates the schema, migrates schema 1, ignores the removed
-  HUD/scorch fields, clamps unsafe values and applies the complete profile live.
+- **PASTE & APPLY** validates the schema, migrates schema 1 and 2, ignores the
+  removed HUD/scorch fields, clamps unsafe values and applies the complete
+  profile live.
 - **RESET SECTION** restores the active section only.
 - **RESET ALL** restores the neutral lab baseline.
 - **PAUSE / RESUME** freezes motion for comparisons.
@@ -107,14 +112,45 @@ terrain rendering in the Look Lab. In accordance with the two-attempt stop
 rule, that control is removed rather than left misleading. Normal/ORM authoring
 remains a later material-pipeline task if the texture direction is accepted.
 
+## T065 animation-driver integration
+
+The four imported rigs use the same `PresentationAnimationDriver` and
+`PresentationAnimationRigBinding` classes as the playable `UnitViewManager`.
+The driver reads presentation state, never mutates authoritative simulation and
+supports the canonical significance cadence: Tier A every render frame, Tier B
+at approximately 30 Hz and Tier C at approximately 15 Hz. Stable state inputs
+cover locomotion, functional operation, repair, weapon recoil, normalized
+transformation progress, damage and destruction.
+
+The laboratory's four-state choreography is synthetic presentation evidence
+only. It holds world positions fixed while showing locomotion mechanics,
+functional drill motion, combat recoil and transformation/damage response on
+separate identical rigs. Disabling choreography returns all rigs to normal idle
+except authored firing evidence.
+
+## T066 VFX-pool integration
+
+Tracer, muzzle and impact effects are prewarmed and reused rather than allocated
+per shot. The laboratory prewarms 64 tracer, 32 muzzle and 48 impact nodes and
+exposes smaller active budgets independently. When a budget is exhausted, only
+the cosmetic spawn is dropped; simulation, projectile travel and damage are not
+affected. The VFX panel reports active, peak, reused and dropped counts live.
+
+The playable prototype consumes the same pool implementation for 96 projectile
+views, 24 particle muzzle bursts and 32 particle impact bursts. Per-source
+weapon-fire high-watermarks prevent duplicate cosmetic events when the same
+snapshot or restored state is observed again.
+
 ## Decision boundary
 
-Automation validates scene structure, mesh/triangle counts, schema-2 round-trip,
-schema-1 migration, zoom bounds, generated-texture presence, emissive material
-bindings, particle fixtures, exterior impact placement, shader compilation and
-captures. It cannot accept visual style, material appeal, readability, VFX feel
-or camera feel. Those remain the game director's decision, and copied profile
-JSON is the exact handoff for the next implementation iteration.
+Automation validates scene structure, mesh/triangle counts, schema-3 round-trip,
+schema-1/schema-2 migration, animation state/tier response, six-wheel/drill/
+suspension rig binding, pool prewarm/reuse/drop behavior, zoom bounds,
+generated-texture presence, emissive material bindings, exterior impact
+placement, shader compilation and captures. It cannot accept visual style,
+material appeal, readability, animation feel, VFX feel or camera feel. Those
+remain the game director's decision, and copied profile JSON is the exact
+handoff for the next implementation iteration.
 
 The detailed defect audit and recommendations are in
 `M7_LOOK_LAB_AUDIT.md`.
@@ -134,3 +170,15 @@ triangles, two buildings and active firing/burning evidence.
 After the final zero-count smoke/spark control correction, the complete fast
 suite passed at `Artifacts/Verification/20260822T124347Z-fast-summary.txt` and
 the macOS app was exported and directly captured again.
+
+The schema-3 T065/T066 integration then passed the complete full suite at
+`Artifacts/Verification/20260822T133654Z-full-summary.txt`. The freshly
+exported application itself emitted the schema-3 PASS marker and captured:
+
+- `Artifacts/Screenshots/m7-exported-look-lab-v3-controls.png` — controls
+  visible, zoom 35, post on and outline on;
+- `Artifacts/Screenshots/m7-exported-look-lab-v3-clean.png` — clean RTS view,
+  zoom 35, post on and outline explicitly off.
+
+Both paths reported four animation-driver bindings, three VFX pools and 144
+prewarmed VFX nodes in addition to the preserved scene counts.

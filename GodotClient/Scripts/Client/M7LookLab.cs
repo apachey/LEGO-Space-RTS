@@ -8,11 +8,11 @@ public partial class M7LookLab : Node3D
     private const string ModelPath = "res://Assets/M7/raider_drill_rig.glb";
     private static readonly string[] Categories =
     {
-        "SCENE & CAMERA", "SHADING", "MATERIALS", "GLASS & EMISSION", "LIGHTING", "POST FX", "OUTLINE", "VFX", "GROUND"
+        "SCENE & CAMERA", "SHADING", "MATERIALS", "GLASS & EMISSION", "LIGHTING", "POST FX", "OUTLINE", "ANIMATION", "VFX", "GROUND"
     };
 
     private readonly List<Node3D> _units = new();
-    private readonly List<Node3D> _drills = new();
+    private readonly List<PresentationAnimationRigBinding> _animationRigs = new();
     private readonly List<MeshInstance3D> _unitMeshes = new();
     private readonly List<(MeshInstance3D Mesh, M7LookMaterialRole Role)> _roleMeshes = new();
     private readonly List<(OmniLight3D Light, M7LookMaterialRole Role)> _emissionLights = new();
@@ -27,9 +27,13 @@ public partial class M7LookLab : Node3D
     private Godot.Environment? _environment;
     private MeshInstance3D? _ground;
     private MeshInstance3D? _fogPreview;
-    private MeshInstance3D? _tracer;
-    private GpuParticles3D? _muzzleParticles;
-    private GpuParticles3D? _impactParticles;
+    private readonly PresentationAnimationDriver _animationDriver = new();
+    private PresentationVfxPool<PooledTracerEffect>? _tracerPool;
+    private PresentationVfxPool<PooledParticleBurst>? _muzzlePool;
+    private PresentationVfxPool<PooledParticleBurst>? _impactPool;
+    private Material? _tracerVfxMaterial;
+    private Material? _muzzleVfxMaterial;
+    private Material? _impactVfxMaterial;
     private GpuParticles3D? _fireParticles;
     private GpuParticles3D? _smokeParticles;
     private OmniLight3D? _impactLight;
@@ -40,6 +44,7 @@ public partial class M7LookLab : Node3D
     private PanelContainer? _controlPanel;
     private VBoxContainer? _settingsBox;
     private Label? _statusLabel;
+    private Label? _poolStatsLabel;
     private Button? _pauseButton;
     private int _category;
     private int _materialFamily;
@@ -87,6 +92,7 @@ public partial class M7LookLab : Node3D
         if (!_profile.Scene.Paused) _time += delta * _profile.Scene.AnimationSpeed;
         UpdateFreeCamera((float)delta);
         AnimateScene();
+        UpdatePoolStatsLabel();
 
         if (!_smoke || _finished) return;
         _frames++;
@@ -95,7 +101,7 @@ public partial class M7LookLab : Node3D
         if (valid && _capturePath is not null) valid = CaptureViewport(_capturePath);
         _finished = true;
         if (valid)
-            GD.Print($"M7 LOOK LAB: PASS schema={_profile.SchemaVersion} units={_units.Count} meshes={_unitMeshes.Count} triangles={triangles} buildings=2 firing=1 burning=1 controls={(_controlsVisible ? "visible" : "hidden")} zoom={_profile.Camera.ZoomCells:0.##} post={(_profile.Post.Enabled ? "on" : "off")} outline={(_profile.Outline.Enabled ? "on" : "off")}");
+            GD.Print($"M7 LOOK LAB: PASS schema={_profile.SchemaVersion} units={_units.Count} meshes={_unitMeshes.Count} triangles={triangles} buildings=2 firing=1 burning=1 animationDrivers={_animationRigs.Count} vfxPools=3 prewarmed=144 controls={(_controlsVisible ? "visible" : "hidden")} zoom={_profile.Camera.ZoomCells:0.##} post={(_profile.Post.Enabled ? "on" : "off")} outline={(_profile.Outline.Enabled ? "on" : "off")}");
         else
             GD.PrintErr($"M7 LOOK LAB: FAIL units={_units.Count} meshes={_unitMeshes.Count} triangles={triangles}");
         GetTree().Quit(valid ? 0 : 2);
@@ -220,8 +226,7 @@ public partial class M7LookLab : Node3D
     private void RegisterUnit(Node3D unit)
     {
         _units.Add(unit);
-        Node? drill = unit.FindChild("Pivot_Drill", true, false);
-        if (drill is Node3D drill3D) _drills.Add(drill3D);
+        _animationRigs.Add(new PresentationAnimationRigBinding(unit));
         CollectRoleMeshes(unit, unitMesh: true);
     }
 
@@ -320,13 +325,11 @@ public partial class M7LookLab : Node3D
 
     private void BuildCombatEffects()
     {
-        _tracer = new MeshInstance3D { Name = "WeaponTracer", Mesh = new BoxMesh { Size = new Vector3(0.1f, 0.1f, 1.5f) }, CastShadow = GeometryInstance3D.ShadowCastingSetting.Off };
-        AddChild(_tracer);
-
-        _muzzleParticles = CreateBurstParticles("MuzzleParticles", 18, 0.16f, 28f, 2.5f, 7.5f, Vector3.Zero);
-        _impactParticles = CreateBurstParticles("ImpactParticles", 20, 0.34f, 78f, 2.0f, 8.0f, new Vector3(0f, -4.2f, 0f));
-        AddChild(_muzzleParticles);
-        AddChild(_impactParticles);
+        _tracerPool = new PresentationVfxPool<PooledTracerEffect>(this, "PooledTracer", 64, _ => new PooledTracerEffect());
+        _muzzlePool = new PresentationVfxPool<PooledParticleBurst>(this, "PooledMuzzle", 32,
+            _ => new PooledParticleBurst(18, 0.16f, 28f, 2.5f, 7.5f, Vector3.Zero));
+        _impactPool = new PresentationVfxPool<PooledParticleBurst>(this, "PooledImpact", 48,
+            _ => new PooledParticleBurst(20, 0.34f, 78f, 2.0f, 8.0f, new Vector3(0f, -4.2f, 0f)));
 
         _impactLight = new OmniLight3D { Name = "ImpactLight", OmniRange = 3.2f, ShadowEnabled = false, Visible = false };
         AddChild(_impactLight);
@@ -432,6 +435,7 @@ public partial class M7LookLab : Node3D
     private void BuildCurrentSettings()
     {
         if (_settingsBox is null) return;
+        _poolStatsLabel = null;
         foreach (Node child in _settingsBox.GetChildren()) { _settingsBox.RemoveChild(child); child.QueueFree(); }
         switch (_category)
         {
@@ -442,8 +446,9 @@ public partial class M7LookLab : Node3D
             case 4: BuildLightingSettings(); break;
             case 5: BuildPostSettings(); break;
             case 6: BuildOutlineSettings(); break;
-            case 7: BuildVfxSettings(); break;
-            case 8: BuildGroundSettings(); break;
+            case 7: BuildAnimationSettings(); break;
+            case 8: BuildVfxSettings(); break;
+            case 9: BuildGroundSettings(); break;
         }
     }
 
@@ -585,8 +590,45 @@ public partial class M7LookLab : Node3D
         AddSlider("Distance fade", 0, 2, 0.01, () => _profile.Outline.DistanceFade, v => _profile.Outline.DistanceFade = v, false);
     }
 
+    private void BuildAnimationSettings()
+    {
+        AddNote("The same sim-driven presentation driver used by unit views controls this rig. Preview choreography exposes locomotion, work, recoil, transformation and damage without changing gameplay state.");
+        AddCheck("Animation drivers enabled", () => _profile.Animation.Enabled, v => _profile.Animation.Enabled = v, false);
+        AddCheck("Four-state preview choreography", () => _profile.Animation.PreviewChoreography, v => _profile.Animation.PreviewChoreography = v, false);
+        AddSlider("Preview locomotion speed", 0, 12, 0.1, () => _profile.Animation.PreviewLocomotionSpeed, v => _profile.Animation.PreviewLocomotionSpeed = v, false);
+        AddSlider("Reference speed · full blend", 0.1, 20, 0.1, () => _profile.Animation.LocomotionReferenceSpeed, v => _profile.Animation.LocomotionReferenceSpeed = v, false);
+        AddSlider("Blend response", 0.1, 30, 0.1, () => _profile.Animation.BlendResponse, v => _profile.Animation.BlendResponse = v, false);
+        AddHeading("LOCOMOTION MECHANICS");
+        AddSlider("Wheel turns / world unit", 0, 2, 0.01, () => _profile.Animation.WheelTurnsPerWorldUnit, v => _profile.Animation.WheelTurnsPerWorldUnit = v, false);
+        AddSlider("Suspension travel", 0, 0.3, 0.005, () => _profile.Animation.SuspensionAmplitude, v => _profile.Animation.SuspensionAmplitude = v, false);
+        AddSlider("Suspension frequency", 0, 8, 0.05, () => _profile.Animation.SuspensionFrequency, v => _profile.Animation.SuspensionFrequency = v, false);
+        AddSlider("Body lean · degrees", 0, 12, 0.1, () => _profile.Animation.BodyLeanDegrees, v => _profile.Animation.BodyLeanDegrees = v, false);
+        AddHeading("FUNCTION / STATE RESPONSE");
+        AddSlider("Drill turns / second", 0, 5, 0.05, () => _profile.Animation.DrillTurnsPerSecond, v => _profile.Animation.DrillTurnsPerSecond = v, false);
+        AddSlider("Weapon recoil distance", 0, 0.8, 0.01, () => _profile.Animation.RecoilDistance, v => _profile.Animation.RecoilDistance = v, false);
+        AddSlider("Recoil recovery", 0.1, 30, 0.1, () => _profile.Animation.RecoilRecovery, v => _profile.Animation.RecoilRecovery = v, false);
+        AddSlider("Transformation lift", 0, 1.5, 0.01, () => _profile.Animation.TransformationLift, v => _profile.Animation.TransformationLift = v, false);
+        AddSlider("Transformation tilt", -45, 45, 0.5, () => _profile.Animation.TransformationTiltDegrees, v => _profile.Animation.TransformationTiltDegrees = v, false);
+        AddSlider("Damage wobble", 0, 12, 0.1, () => _profile.Animation.DamageWobbleDegrees, v => _profile.Animation.DamageWobbleDegrees = v, false);
+        AddOption("Significance tier", new[] { "Auto", "A · every frame", "B · 30 Hz", "C · 15 Hz" },
+            _profile.Animation.TierOverride, i => _profile.Animation.TierOverride = i, false);
+    }
+
     private void BuildVfxSettings()
     {
+        AddNote("Weapon evidence is spawned through prewarmed production pools. Lower budgets visibly drop only cosmetic bursts; simulation and damage are unaffected.");
+        AddHeading("POOL BUDGET / LOAD");
+        AddSlider("Active tracer budget", 0, 64, 1, () => _profile.VfxPool.TracerBudget, v => _profile.VfxPool.TracerBudget = (int)v, false);
+        AddSlider("Active muzzle budget", 0, 32, 1, () => _profile.VfxPool.MuzzleBudget, v => _profile.VfxPool.MuzzleBudget = (int)v, false);
+        AddSlider("Active impact budget", 0, 48, 1, () => _profile.VfxPool.ImpactBudget, v => _profile.VfxPool.ImpactBudget = (int)v, false);
+        AddSlider("Preview firing units", 1, 4, 1, () => _profile.VfxPool.PreviewEmitters, v => _profile.VfxPool.PreviewEmitters = (int)v, false);
+        if (_settingsBox is not null)
+        {
+            _poolStatsLabel = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart, CustomMinimumSize = new Vector2(0f, 48f) };
+            _poolStatsLabel.AddThemeColorOverride("font_color", new Color("77d6c6"));
+            _settingsBox.AddChild(_poolStatsLabel);
+            UpdatePoolStatsLabel();
+        }
         AddHeading("WEAPON READABILITY");
         AddColor("Tracer color", () => _profile.Vfx.TracerColor, v => _profile.Vfx.TracerColor = v);
         AddSlider("Tracer width", 0.01, 0.8, 0.01, () => _profile.Vfx.TracerWidth, v => _profile.Vfx.TracerWidth = v);
@@ -769,24 +811,18 @@ public partial class M7LookLab : Node3D
     private void ApplyVfxAppearance()
     {
         Color tracerColor = M7LookMaterialFactory.ParseColor(_profile.Vfx.TracerColor);
-        Material tracerMaterial = M7LookMaterialFactory.Emissive(tracerColor, _profile.Vfx.TracerEnergy, 0.92f, _profile.Emission.EdgeDarkening);
-        if (_tracer?.Mesh is BoxMesh box)
-        {
-            box.Size = new Vector3(_profile.Vfx.TracerWidth, _profile.Vfx.TracerWidth, _profile.Vfx.TracerLength);
-            _tracer.MaterialOverride = tracerMaterial;
-        }
-        ApplyParticleDrawMaterial(_muzzleParticles, ParticleBillboardMaterial(tracerColor, _profile.Vfx.TracerEnergy, additive: true));
-        ApplyParticleDrawMaterial(_impactParticles, ParticleBillboardMaterial(tracerColor, _profile.Vfx.TracerEnergy, additive: true));
+        _tracerVfxMaterial = M7LookMaterialFactory.Emissive(tracerColor, _profile.Vfx.TracerEnergy, 0.92f, _profile.Emission.EdgeDarkening);
+        _muzzleVfxMaterial = ParticleBillboardMaterial(tracerColor, _profile.Vfx.TracerEnergy, additive: true);
+        _impactVfxMaterial = ParticleBillboardMaterial(tracerColor, _profile.Vfx.TracerEnergy, additive: true);
+        _tracerPool?.ForEachNode(effect => effect.SetMaterial(_tracerVfxMaterial));
+        _muzzlePool?.ForEachNode(effect => effect.SetMaterial(_muzzleVfxMaterial));
+        _impactPool?.ForEachNode(effect => effect.SetMaterial(_impactVfxMaterial));
+        if (_tracerPool is not null) _tracerPool.Budget = _profile.VfxPool.TracerBudget;
+        if (_muzzlePool is not null) _muzzlePool.Budget = _profile.VfxPool.MuzzleBudget;
+        if (_impactPool is not null) _impactPool.Budget = _profile.VfxPool.ImpactBudget;
         Color fireColor = M7LookMaterialFactory.ParseColor(_profile.Vfx.FireColor);
         ApplyParticleDrawMaterial(_fireParticles, ParticleBillboardMaterial(fireColor, _profile.Vfx.FireEnergy, additive: true));
         ApplyParticleDrawMaterial(_smokeParticles, ParticleBillboardMaterial(WithAlpha(M7LookMaterialFactory.ParseColor(_profile.Vfx.SmokeColor), _profile.Vfx.SmokeOpacity), 0f, additive: false));
-        if (_muzzleParticles?.DrawPass1 is QuadMesh muzzleMesh) muzzleMesh.Size = new Vector2(0.28f, 0.52f) * _profile.Vfx.MuzzleSize;
-        if (_impactParticles?.DrawPass1 is QuadMesh impactMesh) impactMesh.Size = new Vector2(0.18f, 0.62f) * _profile.Vfx.ImpactSize;
-        if (_impactParticles is not null)
-        {
-            _impactParticles.Amount = Mathf.Max(1, _profile.Vfx.SparkCount);
-            _impactParticles.AmountRatio = _profile.Vfx.SparkCount == 0 ? 0f : 1f;
-        }
         if (_fireParticles?.DrawPass1 is QuadMesh fireMesh) fireMesh.Size = new Vector2(0.24f, 0.46f) * _profile.Vfx.FireSize;
         if (_smokeParticles?.DrawPass1 is QuadMesh smokeMesh) smokeMesh.Size = Vector2.One * _profile.Vfx.SmokeSize;
         if (_smokeParticles is not null)
@@ -816,14 +852,19 @@ public partial class M7LookLab : Node3D
             if (track.Mesh is PlaneMesh trackMesh) trackMesh.Size = new Vector2(_profile.Ground.TracksWidth, _profile.Ground.TracksLength);
             track.MaterialOverride = TrackMaterial(M7LookMaterialFactory.ParseColor(_profile.Ground.DustTint), _profile.Ground.TracksOpacity, _profile.Ground.TrackTreadScale);
         }
+        UpdatePoolStatsLabel();
     }
 
     private void ApplySceneVisibility()
     {
         if (_fogPreview is not null) _fogPreview.Visible = _profile.Scene.FogPreviewEnabled;
-        if (_tracer is not null) _tracer.Visible = _profile.Scene.FiringEnabled;
-        if (_muzzleParticles is not null) _muzzleParticles.Visible = _profile.Scene.FiringEnabled;
-        if (_impactParticles is not null) _impactParticles.Visible = _profile.Scene.FiringEnabled;
+        if (!_profile.Scene.FiringEnabled)
+        {
+            _tracerPool?.Clear();
+            _muzzlePool?.Clear();
+            _impactPool?.Clear();
+            if (_impactLight is not null) _impactLight.Visible = false;
+        }
         if (_fireParticles is not null) _fireParticles.Visible = _profile.Scene.BurningEnabled;
         if (_smokeParticles is not null) _smokeParticles.Visible = _profile.Scene.BurningEnabled && _profile.Scene.DustEnabled;
         if (_fireLight is not null) _fireLight.Visible = _profile.Scene.BurningEnabled;
@@ -831,8 +872,7 @@ public partial class M7LookLab : Node3D
 
     private void AnimateScene()
     {
-        if (!_profile.Scene.Paused)
-            foreach (Node3D drill in _drills) drill.RotateObjectLocal(Vector3.Forward, 4.8f * (float)GetProcessDeltaTime() * _profile.Scene.AnimationSpeed);
+        AnimateUnits();
 
         float pulse = 1f + Mathf.Sin((float)_time * _profile.Emission.PulseSpeed) * _profile.Emission.PulseAmount;
         foreach ((MeshInstance3D mesh, M7LookMaterialRole role) in _roleMeshes)
@@ -877,36 +917,84 @@ public partial class M7LookLab : Node3D
         }
         AnimateWeapon();
         AnimateFire();
+        float vfxDelta = _profile.Scene.Paused ? 0f : (float)GetProcessDeltaTime() * _profile.Scene.AnimationSpeed;
+        _tracerPool?.Update(vfxDelta);
+        _muzzlePool?.Update(vfxDelta);
+        _impactPool?.Update(vfxDelta);
+    }
+
+    private void AnimateUnits()
+    {
+        if (_animationRigs.Count != _units.Count) return;
+        PresentationAnimationTuning tuning = _profile.Animation.ToTuning();
+        float delta = _profile.Scene.Paused ? 0f : (float)GetProcessDeltaTime() * _profile.Scene.AnimationSpeed;
+        int weaponCycle = CurrentWeaponCycle();
+        for (int i = 0; i < _animationRigs.Count; i++)
+        {
+            bool choreography = _profile.Animation.PreviewChoreography;
+            bool moving = choreography && i == 1;
+            bool operating = choreography && i == 2;
+            bool transforming = choreography && i == 3;
+            float transformProgress = transforming ? 0.5f - 0.5f * Mathf.Cos((float)_time * 1.25f) : 0f;
+            float health = choreography && i == 3 ? 0.42f : 1f;
+            uint fireSequence = i < _profile.VfxPool.PreviewEmitters && _profile.Scene.FiringEnabled
+                ? checked((uint)Math.Max(0, weaponCycle + 1))
+                : 0u;
+            float distanceCells = _camera is null ? 0f : _camera.GlobalPosition.DistanceTo(_units[i].GlobalPosition) /
+                GodotConversions.WorldUnitsPerBuildCell;
+            PresentationAnimationInput input = new((uint)(i + 1), moving ? _profile.Animation.PreviewLocomotionSpeed : 0f,
+                moving, operating, false, transforming, transformProgress, health, 0f, fireSequence,
+                i == 0 || operating || transforming, distanceCells);
+            PresentationAnimationFrame frame = _animationDriver.Update(input, delta, tuning);
+            _animationRigs[i].Apply(frame, tuning);
+        }
     }
 
     private void AnimateWeapon()
     {
-        if (_tracer is null || _muzzleParticles is null || _impactParticles is null) return;
+        if (_tracerPool is null || _muzzlePool is null || _impactPool is null ||
+            _tracerVfxMaterial is null || _muzzleVfxMaterial is null || _impactVfxMaterial is null) return;
         float distance = _shooterMuzzle.DistanceTo(_targetPoint);
         float cycleSeconds = Mathf.Max(0.65f, distance / _profile.Vfx.TracerSpeed + 0.44f);
-        int cycle = Mathf.FloorToInt((float)_time / cycleSeconds);
+        int cycle = CurrentWeaponCycle();
         float phase = Mathf.PosMod((float)_time, cycleSeconds) / cycleSeconds;
         float travel = Mathf.Clamp(phase * cycleSeconds * _profile.Vfx.TracerSpeed / Mathf.Max(0.01f, distance), 0f, 1f);
-        _tracer.GlobalPosition = _shooterMuzzle.Lerp(_targetPoint, travel);
-        if (travel < 0.985f) _tracer.LookAt(_targetPoint, Vector3.Up);
         float impactPulse = Mathf.Clamp(1f - Mathf.Abs(travel - 1f) * 18f, 0f, 1f);
-        _tracer.Visible = _profile.Scene.FiringEnabled && travel < 0.985f;
 
         if (cycle != _lastWeaponCycle && _profile.Scene.FiringEnabled)
         {
             _lastWeaponCycle = cycle;
-            _muzzleParticles.GlobalPosition = _shooterMuzzle;
-            _muzzleParticles.LookAt(_targetPoint, Vector3.Up);
-            _muzzleParticles.Restart();
-            _muzzleParticles.Emitting = true;
+            int emitters = Math.Min(_profile.VfxPool.PreviewEmitters, _units.Count);
+            for (int i = 0; i < emitters; i++)
+            {
+                Vector3 start = i == 0 ? _shooterMuzzle : UnitMuzzle(i);
+                if (_tracerPool.TryAcquire(Math.Max(0.02f, start.DistanceTo(_targetPoint) / _profile.Vfx.TracerSpeed), out PooledTracerEffect tracer))
+                {
+                    tracer.Configure(start, _targetPoint, _profile.Vfx.TracerWidth, _profile.Vfx.TracerLength, _tracerVfxMaterial);
+                    _tracerPool.Activate(tracer);
+                }
+                if (_muzzlePool.TryAcquire(0.18f, out PooledParticleBurst muzzle))
+                {
+                    muzzle.Configure(start, _targetPoint, _muzzleVfxMaterial,
+                        new Vector2(0.28f, 0.52f) * _profile.Vfx.MuzzleSize, 18);
+                    _muzzlePool.Activate(muzzle);
+                }
+            }
         }
         if (travel > 0.985f && cycle != _lastImpactCycle && _profile.Scene.FiringEnabled)
         {
             _lastImpactCycle = cycle;
-            _impactParticles.GlobalPosition = _targetPoint;
-            _impactParticles.LookAt(_shooterMuzzle, Vector3.Up);
-            _impactParticles.Restart();
-            _impactParticles.Emitting = true;
+            int emitters = Math.Min(_profile.VfxPool.PreviewEmitters, _units.Count);
+            for (int i = 0; i < emitters; i++)
+            {
+                Vector3 source = i == 0 ? _shooterMuzzle : UnitMuzzle(i);
+                if (!_impactPool.TryAcquire(0.38f, out PooledParticleBurst impact)) continue;
+                float sparkDiameter = Math.Max(0.02f, _profile.Vfx.SparkSize * 3f);
+                impact.Configure(_targetPoint, source, _impactVfxMaterial,
+                    new Vector2(sparkDiameter, sparkDiameter * 3.4f) * _profile.Vfx.ImpactSize,
+                    _profile.Vfx.SparkCount);
+                _impactPool.Activate(impact);
+            }
         }
         if (_impactLight is not null)
         {
@@ -914,6 +1002,20 @@ public partial class M7LookLab : Node3D
             _impactLight.Visible = _profile.Scene.FiringEnabled && impactPulse > 0.01f;
             _impactLight.LightEnergy = _profile.Vfx.TracerEnergy * impactPulse * 0.22f;
         }
+    }
+
+    private int CurrentWeaponCycle()
+    {
+        float distance = _shooterMuzzle.DistanceTo(_targetPoint);
+        float cycleSeconds = Mathf.Max(0.65f, distance / _profile.Vfx.TracerSpeed + 0.44f);
+        return Mathf.FloorToInt((float)_time / cycleSeconds);
+    }
+
+    private Vector3 UnitMuzzle(int unitIndex)
+    {
+        Node3D unit = _units[Math.Clamp(unitIndex, 0, _units.Count - 1)];
+        unit.LookAt(new Vector3(_targetPoint.X, unit.GlobalPosition.Y, _targetPoint.Z), Vector3.Up);
+        return unit.GlobalPosition + unit.GlobalBasis * new Vector3(0.85f, 1.38f, -3.35f);
     }
 
     private void AnimateFire()
@@ -1005,34 +1107,6 @@ public partial class M7LookLab : Node3D
             mesh.AddChild(light);
             _emissionLights.Add((light, role));
         }
-    }
-
-    private static GpuParticles3D CreateBurstParticles(string name, int amount, float lifetime, float spread,
-        float minVelocity, float maxVelocity, Vector3 gravity)
-    {
-        ParticleProcessMaterial process = new()
-        {
-            Direction = Vector3.Forward,
-            Spread = spread,
-            Gravity = gravity,
-            InitialVelocityMin = minVelocity,
-            InitialVelocityMax = maxVelocity,
-            ScaleMin = 0.35f,
-            ScaleMax = 1f
-        };
-        return new GpuParticles3D
-        {
-            Name = name,
-            Amount = amount,
-            Lifetime = lifetime,
-            OneShot = true,
-            Explosiveness = 1f,
-            Randomness = 0.45f,
-            LocalCoords = true,
-            Emitting = false,
-            ProcessMaterial = process,
-            DrawPass1 = new QuadMesh { Size = new Vector2(0.22f, 0.52f) }
-        };
     }
 
     private static void ApplyParticleDrawMaterial(GpuParticles3D? particles, Material material)
@@ -1153,8 +1227,9 @@ public partial class M7LookLab : Node3D
             case 4: _profile.Lighting = defaults.Lighting; break;
             case 5: _profile.Post = defaults.Post; break;
             case 6: _profile.Outline = defaults.Outline; break;
-            case 7: _profile.Vfx = defaults.Vfx; break;
-            case 8: _profile.Ground = defaults.Ground; break;
+            case 7: _profile.Animation = defaults.Animation; break;
+            case 8: _profile.Vfx = defaults.Vfx; _profile.VfxPool = defaults.VfxPool; break;
+            case 9: _profile.Ground = defaults.Ground; break;
         }
         ApplyProfile(rebuildMaterials: true);
         BuildCurrentSettings();
@@ -1245,6 +1320,17 @@ public partial class M7LookLab : Node3D
         _statusLabel.AddThemeColorOverride("font_color", errorState ? new Color("ff725f") : new Color("9fb2bc"));
     }
 
+    private void UpdatePoolStatsLabel()
+    {
+        if (_poolStatsLabel is null || _tracerPool is null || _muzzlePool is null || _impactPool is null) return;
+        PresentationVfxPoolStats tracer = _tracerPool.GetStats();
+        PresentationVfxPoolStats muzzle = _muzzlePool.GetStats();
+        PresentationVfxPoolStats impact = _impactPool.GetStats();
+        _poolStatsLabel.Text = $"PREWARMED {tracer.Created + muzzle.Created + impact.Created}  ·  ACTIVE {tracer.Active}/{muzzle.Active}/{impact.Active}  ·  " +
+            $"PEAK {tracer.PeakActive}/{muzzle.PeakActive}/{impact.PeakActive}  ·  REUSED {tracer.Reused + muzzle.Reused + impact.Reused}  ·  " +
+            $"DROPPED {tracer.Dropped + muzzle.Dropped + impact.Dropped}";
+    }
+
     private bool ValidateLab(out int triangles)
     {
         triangles = 0;
@@ -1256,20 +1342,62 @@ public partial class M7LookLab : Node3D
         bool schemaOneMigration = M7LookProfile.TryFromJson(schemaOneFixture, out M7LookProfile migrated, out _) &&
             migrated.SchemaVersion == M7LookProfile.CurrentSchemaVersion && migrated.Camera.ZoomCells == 35f &&
             Mathf.IsEqualApprox(migrated.Materials.PaintedHull.TextureStrength, M7LookProfile.CreateDefault().Materials.PaintedHull.TextureStrength);
+        const string schemaTwoFixture = "{\"schemaVersion\":2,\"camera\":{\"zoomCells\":72},\"vfx\":{\"tracerEnergy\":4.5}}";
+        bool schemaTwoMigration = M7LookProfile.TryFromJson(schemaTwoFixture, out M7LookProfile migratedTwo, out _) &&
+            migratedTwo.SchemaVersion == M7LookProfile.CurrentSchemaVersion && migratedTwo.Camera.ZoomCells == 72f &&
+            Mathf.IsEqualApprox(migratedTwo.Vfx.TracerEnergy, 4.5f) && migratedTwo.Animation.Enabled;
         bool roles = Enum.GetValues<M7LookMaterialRole>().All(role => _roleMeshes.Any(entry => entry.Role == role));
         bool emissiveBindings = _roleMeshes.Where(entry => entry.Role is M7LookMaterialRole.Signal or M7LookMaterialRole.Lamp or M7LookMaterialRole.Crystal)
             .All(entry => entry.Mesh.MaterialOverride is ShaderMaterial);
         Vector3 intactCenter = new(11.4f, 1.55f, -6.6f);
         bool exteriorImpact = Mathf.Abs(_targetPoint.X - intactCenter.X) >= 3.15f || Mathf.Abs(_targetPoint.Z - intactCenter.Z) >= 2.45f;
+        bool animationBindings = _animationRigs.Count == 4 && _animationRigs.All(rig =>
+            rig.WheelCount == 6 && rig.HasDrill && rig.HasSuspension) && ValidateAnimationDriver();
+        bool vfxPools = _tracerPool is { Capacity: 64 } && _muzzlePool is { Capacity: 32 } &&
+            _impactPool is { Capacity: 48 } && ValidatePoolReuse();
         return _camera is { Fov: 36f } && _units.Count == 4 && _unitMeshes.Count >= 180 && triangles >= 30_000 &&
-            _drills.Count == 4 && roles && _ground is not null && _tracer is not null && _fireParticles is not null &&
-            _muzzleParticles is not null && _impactParticles is not null && _controlsLayer is not null && _postMaterial is not null &&
-            _emissionLights.Count > 0 && emissiveBindings && exteriorImpact && roundTrip && schemaOneMigration &&
+            animationBindings && roles && _ground is not null && _fireParticles is not null && vfxPools &&
+            _controlsLayer is not null && _postMaterial is not null &&
+            _emissionLights.Count > 0 && emissiveBindings && exteriorImpact && roundTrip && schemaOneMigration && schemaTwoMigration &&
             ResourceLoader.Exists("res://Assets/M7/Textures/painted_shell_detail.png") &&
             ResourceLoader.Exists("res://Assets/M7/Textures/brushed_metal_detail.png") &&
             ResourceLoader.Exists("res://Assets/M7/Textures/rubber_detail.png") &&
             ResourceLoader.Exists("res://Assets/M7/Textures/quarry_ground_detail.png") &&
             _profile.Camera.ZoomCells is >= 24f and <= 72f;
+    }
+
+    private static bool ValidateAnimationDriver()
+    {
+        PresentationAnimationDriver driver = new();
+        PresentationAnimationTuning tuning = new();
+        PresentationAnimationFrame idle = driver.Update(new PresentationAnimationInput(1, 3f, false, false,
+            false, false, 0f, 1f, 0f, 0, false, 20f), 0.05f, tuning);
+        PresentationAnimationFrame active = driver.Update(new PresentationAnimationInput(1, 3f, true, true,
+            false, true, 0.65f, 0.40f, 0f, 1, true, 20f), 0.05f, tuning);
+        tuning.TierOverride = 3;
+        PresentationAnimationFrame distant = driver.Update(new PresentationAnimationInput(1, 3f, true, false,
+            false, false, 0f, 1f, 0f, 1, false, 72f), 0.01f, tuning);
+        return idle.Tier == PresentationAnimationTier.Normal && idle.WheelPhaseRadians == 0f &&
+            active.Tier == PresentationAnimationTier.Important && active.WheelPhaseRadians > 0f &&
+            active.LocomotionBlend > 0f && active.OperationBlend > 0f && active.TransformationProgress == 0.65f &&
+            active.DamageAmount > 0.5f && active.Recoil > 0f && distant.Tier == PresentationAnimationTier.Distant &&
+            !distant.ParametersUpdated;
+    }
+
+    private bool ValidatePoolReuse()
+    {
+        PresentationVfxPool<PooledMeshEffect> probe = new(this, "VfxPoolProbe", 1,
+            _ => new PooledMeshEffect(new BoxMesh(), M7LookMaterialFactory.Emissive(Colors.White, 1f, 1f, 0f)));
+        bool first = probe.TryAcquire(0.01f, out PooledMeshEffect firstNode);
+        if (first) probe.Activate(firstNode);
+        probe.Update(0.02f);
+        bool second = probe.TryAcquire(1f, out PooledMeshEffect secondNode);
+        if (second) probe.Activate(secondNode);
+        bool overflowDropped = !probe.TryAcquire(1f, out _);
+        PresentationVfxPoolStats stats = probe.GetStats();
+        probe.Clear();
+        return first && second && overflowDropped && stats.Created == 1 && stats.PeakActive == 1 &&
+            stats.Reused == 1 && stats.Dropped == 1;
     }
 
     private bool CaptureViewport(string path)

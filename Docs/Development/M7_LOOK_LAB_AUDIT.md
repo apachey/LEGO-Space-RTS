@@ -41,7 +41,7 @@ migrates and displays `#0785ff` correctly for a fresh judgement.
 
 Removed schema-1 HUD, scorch and ground-normal fields do not survive copy-back.
 The old profile remains paste-compatible and is automatically exported as
-schema 2 after application.
+the current schema after application.
 
 ## Texture generation record
 
@@ -97,3 +97,40 @@ The final follow-up fast suite, including schema migration and all three Look
 Lab fixtures, passed at
 `Artifacts/Verification/20260822T124347Z-fast-summary.txt` after confirming
 that zero smoke/spark counts emit zero particles.
+
+## T065/T066 technical enrichment
+
+The schema-3 pass adds production animation drivers and VFX pools without
+selecting an art direction:
+
+- all four lab units bind six wheel pivots, the suspension pivot and drill pivot
+  through the same reusable rig binding used by playable unit views;
+- the driver consumes presentation state for movement, function, repair,
+  weapon fire, transformation, damage and destruction, with A/every-frame,
+  B/30-Hz and C/15-Hz significance updates;
+- the lab exposes every new motion-response value independently and provides a
+  four-state choreography that does not move authoritative world positions;
+- tracer, muzzle and impact evidence uses fixed-capacity prewarmed pools with
+  independent live budgets and active/peak/reused/dropped telemetry;
+- a smoke probe verifies one-node prewarm, expiry, reuse and cosmetic overflow
+  dropping; separate checks verify state transitions, tier cadence, rig socket
+  counts and schema-1/schema-2 migration;
+- the playable prototype uses the same pool for authoritative projectile views
+  and event-deduplicated muzzle/contact-impact bursts.
+
+These checks prove that controls are wired and the systems remain
+presentation-only. Human review is still required for animation character,
+recoil feel, suspension appeal, effect timing and readable budget limits.
+The playable prototype still uses generic primitive placeholder bodies without
+named mechanical pivots: it exercises state evaluation, significance and pool
+integration, while the imported six-wheel Look Lab rig provides the visible
+mechanical proof. Roster-specific rig binding remains part of later content
+import, not this infrastructure task.
+
+Full verification passed at
+`Artifacts/Verification/20260822T133654Z-full-summary.txt` with zero blocking
+failures. The exported schema-3 application was launched directly for both the
+controls-visible and clean-view fixtures; both reported four driver bindings,
+three pools and 144 prewarmed nodes. Captures are
+`Artifacts/Screenshots/m7-exported-look-lab-v3-controls.png` and
+`Artifacts/Screenshots/m7-exported-look-lab-v3-clean.png`.
