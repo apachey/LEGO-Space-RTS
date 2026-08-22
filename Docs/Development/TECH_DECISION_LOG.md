@@ -860,3 +860,28 @@ networking, format or deterministic architecture, and it locks no visual style.
 
 This is non-canonical presentation refinement. It locks no rendering style and
 changes no gameplay, SimCore, networking, formats or deterministic behavior.
+
+---
+
+## 2026-08-22 — Replace preset-style selection with a realtime Look Profile
+
+- Bundled style variants are retired as the primary art-direction workflow.
+  They did not let the game director isolate material, light, post, outline and
+  VFX decisions or judge them in a representative gameplay composition.
+- The new M7 Look Lab is presentation-only and uses the Phase 07 camera contract:
+  36-degree perspective, 24–72 build-cell zoom and the normal 44-cell default.
+- One continuous `schemaVersion: 1` JSON profile owns independent camera, scene,
+  shading, material-family, glass, emission, lighting, post, outline, VFX,
+  ground and HUD parameters. Copy exports the full state, never a diff.
+- Material identity is semantic rather than a recolor: painted shell,
+  structural earth, accent, dark mechanisms, tool steel, rubber, building shell
+  and ground rock have separate physical responses.
+- Outline uses Forward+ depth and normal/roughness buffers. The old inverted-hull
+  pass is retired; silhouettes and creases are controlled independently, and
+  rough terrain is excluded from crease noise.
+- The legacy Style, Palette and Material labs remain preserved. The Palette Lab
+  stays accepted; no rendering profile becomes canon without explicit
+  game-director approval.
+
+This is non-canonical presentation tooling. It adds no dependency and changes no
+gameplay, SimCore authority, networking, format or deterministic behavior.

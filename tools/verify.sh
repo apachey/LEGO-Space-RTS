@@ -287,6 +287,28 @@ godot_m7_palette_smoke() {
   done
 }
 
+godot_m7_look_smoke() {
+  local godot output status controls zoom
+  godot="$(discover_godot 2>/dev/null || true)"
+  if [[ -z "${godot}" ]]; then printf 'Godot executable not found.\n' >&2; return 1; fi
+  if ! godot_is_required_mono "${godot}"; then printf 'Godot is not the required 4.7.1 .NET build: %s\n' "${godot}" >&2; return 1; fi
+  for controls in visible hidden; do
+    if [[ "${controls}" == visible ]]; then zoom=44; else zoom=72; fi
+    output="$("${godot}" --headless --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-look-lab --m7-look-smoke --m7-look-controls "${controls}" --m7-look-zoom "${zoom}" 2>&1)"
+    status=$?
+    printf '%s\n' "${output}"
+    if (( status != 0 )); then return "${status}"; fi
+    if printf '%s\n' "${output}" | grep -qE 'SHADER ERROR|SCRIPT ERROR|ERROR: Shader compilation failed'; then
+      printf 'M7 Look Lab emitted a shader or script error.\n' >&2
+      return 1
+    fi
+    if ! printf '%s\n' "${output}" | grep -q "M7 LOOK LAB: PASS schema=1 units=4 meshes=192 triangles=31104 buildings=2 firing=1 burning=1 controls=${controls} zoom=${zoom}"; then
+      printf 'Godot exited without the required M7 Look Lab PASS marker for controls=%s zoom=%s.\n' "${controls}" "${zoom}" >&2
+      return 1
+    fi
+  done
+}
+
 run_stage "[BLOCKING_NOW] Static/source validation" "static" python3 "${ROOT}/tools/Validation/validate_phase10.py"
 run_stage "[BLOCKING_NOW] .NET restore" "restore" dotnet restore "${ROOT}/LEGO.SpaceRTS.Phase10.sln"
 run_stage "[BLOCKING_NOW] .NET solution build (warnings as errors)" "build" dotnet build "${ROOT}/LEGO.SpaceRTS.Phase10.sln" -c Release --no-restore --disable-build-servers -m:1
@@ -303,6 +325,7 @@ run_stage "[BLOCKING_NOW T062] Godot reconnect restore over ENet" "m6-reconnect"
 run_stage "[BLOCKING_NOW T063] Godot authoritative server-log replay" "m6-replay" godot_m6_replay_smoke
 run_stage "[BLOCKING_NOW M7 VISUAL EXPLORATION] Controlled Godot Style Lab" "m7-style" godot_m7_style_smoke
 run_stage "[BLOCKING_NOW M7 VISUAL EXPLORATION] Six-page Palette Ratio Lab" "m7-palette" godot_m7_palette_smoke
+run_stage "[BLOCKING_NOW M7 VISUAL EXPLORATION] Realtime gameplay-scale Look Lab" "m7-look" godot_m7_look_smoke
 
 if [[ "${MODE}" != "fast" ]]; then
   run_stage "[BLOCKING_NOW] 100-repeat deterministic golden run" "golden100" dotnet "$(headless_dll)" --scenario golden --ticks 3200 --repeat 100

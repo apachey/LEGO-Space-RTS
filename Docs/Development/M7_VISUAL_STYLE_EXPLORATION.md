@@ -204,7 +204,25 @@ These assignments do not make every object of the same hue luminous. The Mars
 Mission orange glass remains non-emissive; a bright red Martian hull remains
 non-emissive unless a separate signal/light role is assigned.
 
-## Evidence and review
+## Realtime Look Lab pivot
+
+The game director rejected further preset-style comparison because differences
+were bundled, difficult to isolate and not representative of the final
+gameplay camera. The primary workflow is now the continuous **M7 Look Lab**
+documented in `Docs/Development/M7_LOOK_LAB.md`.
+
+It shows four identical units, two buildings, combat/fire evidence, ground,
+fog preview and a fake RTS HUD under the Phase 07 gameplay camera. Every
+meaningful art-direction variable is exposed independently and the complete
+versioned profile can be copied as JSON. The four Round 2 styles remain
+historical comparison fixtures, not presets inside the new lab and not current
+forward candidates.
+
+Outline has also changed implementation: the old inverted-hull pass is retired.
+The Look Lab uses scene depth and normal/roughness buffers, with separate
+silhouette and crease controls and rough-terrain suppression.
+
+## Legacy evidence and review
 
 Automated capture must render every style from the same fresh launch and record
 model/node counts. Human review decides material appeal, readability, style and

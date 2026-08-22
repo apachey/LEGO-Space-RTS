@@ -13,7 +13,7 @@ public partial class DebugHud : CanvasLayer
     private double _nextUpdate;
 
     public void Configure(GodotSimBridge bridge, RtsInputController input, DebugRenderer debug, FogPresenter fog,
-        Action prepareM5Acceptance, Action openM7StyleLab, Action openM7PaletteLab, Action openM7MaterialLab)
+        Action prepareM5Acceptance, Action openM7LookLab, Action openM7PaletteLab, Action openM7MaterialLab)
     {
         _bridge = bridge; _input = input; Name = "DeveloperHUD"; Layer = 20; ProcessPriority = 210;
         _panel = new PanelContainer { Name = "DeveloperPanel", Position = new Vector2(12, 90), CustomMinimumSize = new Vector2(760, 0), Visible = false };
@@ -22,9 +22,9 @@ public partial class DebugHud : CanvasLayer
         Label title = new() { Text = "DEVELOPER TOOLS — F8", SizeFlagsHorizontal = Control.SizeFlags.ExpandFill }; title.AddThemeFontSizeOverride("font_size", 16); header.AddChild(title);
         Button drain = new() { Text = "Drain Energy" }; drain.Pressed += input.DebugDrainEnergy; header.AddChild(drain);
         Button m5 = new() { Name = "PrepareM5Acceptance", Text = "Prepare M5 Playtest" }; m5.Pressed += prepareM5Acceptance; header.AddChild(m5);
-        Button m7 = new() { Name = "OpenM7StyleLab", Text = "M7 Style Lab" };
-        m7.TooltipText = "Round 2: 1 Industrial Mass, 2 Heroic RTS, 3 Constructive LEGO, 4 Graphic Volume; O toggles outline; Escape returns.";
-        m7.Pressed += openM7StyleLab;
+        Button m7 = new() { Name = "OpenM7LookLab", Text = "M7 Look Lab" };
+        m7.TooltipText = "Realtime art-direction lab: gameplay camera, material families, lighting, post FX, outline, VFX, ground and fake HUD. Tab hides controls; Escape returns.";
+        m7.Pressed += openM7LookLab;
         header.AddChild(m7);
         Button palette = new() { Name = "OpenM7PaletteLab", Text = "M7 Palette Lab" };
         palette.TooltipText = "Shows ratios, 100-panel abstract models, optics and faction light language. Use 1–6; Escape returns.";

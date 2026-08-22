@@ -10,11 +10,19 @@ public partial class RtsCompositionRoot : Node3D
     private static bool _forceM7MaterialLab;
     private static bool _forceM7StyleLab;
     private static bool _forceM7PaletteLab;
+    private static bool _forceM7LookLab;
 
     public override void _Ready()
     {
         Engine.MaxFps = 60;
         string[] commandLineArgs = OS.GetCmdlineUserArgs();
+        if (_forceM7LookLab || commandLineArgs.Contains("--m7-look-lab"))
+        {
+            M7LookLab lab = new();
+            AddChild(lab);
+            lab.Configure(ReturnFromM7LookLab, commandLineArgs);
+            return;
+        }
         if (_forceM7PaletteLab || commandLineArgs.Contains("--m7-palette-lab"))
         {
             M7PaletteRatioLab lab = new();
@@ -51,7 +59,7 @@ public partial class RtsCompositionRoot : Node3D
         FogPresenter fog = new() { Name = "FogPresentation" }; AddChild(fog); fog.Configure(bridge);
         DebugRenderer debug = new() { Name = "DebugVisualization" }; AddChild(debug); debug.Configure(bridge);
         BasicHud hud = new(); AddChild(hud); hud.Configure(bridge, selection, input);
-        DebugHud developerHud = new(); AddChild(developerHud); developerHud.Configure(bridge, input, debug, fog, PrepareM5Acceptance, OpenM7StyleLab, OpenM7PaletteLab, OpenM7MaterialLab);
+        DebugHud developerHud = new(); AddChild(developerHud); developerHud.Configure(bridge, input, debug, fog, PrepareM5Acceptance, OpenM7LookLab, OpenM7PaletteLab, OpenM7MaterialLab);
         if (scenario.IsM5Acceptance)
         {
             bool pauseInitially = !commandLineArgs.Contains("--smoke") && !commandLineArgs.Contains("--capture-smoke");
@@ -93,6 +101,12 @@ public partial class RtsCompositionRoot : Node3D
         Callable.From(() => GetTree().ReloadCurrentScene()).CallDeferred();
     }
 
+    private void OpenM7LookLab()
+    {
+        _forceM7LookLab = true;
+        Callable.From(() => GetTree().ReloadCurrentScene()).CallDeferred();
+    }
+
     private void OpenM7PaletteLab()
     {
         _forceM7PaletteLab = true;
@@ -103,6 +117,17 @@ public partial class RtsCompositionRoot : Node3D
     {
         _forceM7PaletteLab = false;
         if (OS.GetCmdlineUserArgs().Contains("--m7-palette-lab"))
+        {
+            GetTree().Quit();
+            return;
+        }
+        Callable.From(() => GetTree().ReloadCurrentScene()).CallDeferred();
+    }
+
+    private void ReturnFromM7LookLab()
+    {
+        _forceM7LookLab = false;
+        if (OS.GetCmdlineUserArgs().Contains("--m7-look-lab"))
         {
             GetTree().Quit();
             return;

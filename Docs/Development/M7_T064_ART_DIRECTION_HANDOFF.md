@@ -22,10 +22,17 @@ and non-visual gameplay canon remain unchanged.
 From a normal launch:
 
 1. press `F8`;
-2. select **M7 Style Lab** or **M7 Palette Lab**;
-3. use `1`–`4` to switch rendering styles, or `1`–`6` to switch palette pages;
-4. in the Style Lab, press `O` to compare outline off/on independently;
-5. press `Escape` to return to the prototype.
+2. select **M7 Look Lab**;
+3. adjust independent sections in the left panel at gameplay zoom;
+4. use the mouse wheel or exact 24–72 build-cell zoom slider;
+5. use **HIDE · TAB** for an unobstructed game view;
+6. use **COPY ALL JSON** and paste the complete result back to the implementation
+   agent;
+7. press `Escape` to return to the prototype.
+
+The full control and scene contract is in `M7_LOOK_LAB.md`. The Palette Lab
+remains available separately. The Style Lab remains command-line reproducible
+legacy evidence, but it is no longer offered as the main F8 art-direction path.
 
 The Style Lab keeps one unit, camera, animation and composition invariant. Its
 research-driven second round switches Industrial Mass, Heroic RTS, Constructive
@@ -61,9 +68,9 @@ comparison. It is not the current art-direction review path.
 
 ## Art-direction response requested
 
-Review the refined Industrial and Heroic light balance, then compare Heroic with
-`O` off/on. Useful feedback separates color depth, bloom, highlights and outline
-rather than accepting the entire treatment as one bundle. Palette review is
+Search at normal gameplay scale instead of choosing a bundled treatment. Pause
+when useful, compare outline off/on independently, hide the controls for the
+clean composition, then copy the complete JSON profile. Palette review is
 already accepted and remains independent from the open rendering decision.
 
 ## Texture policy
@@ -110,7 +117,14 @@ The refined Heroic A/B evidence is:
 Full verification passed with no blocking failures:
 `Artifacts/Verification/20260822T085432Z-full-summary.txt`.
 
+The superseding realtime Look Lab passed the complete suite at
+`Artifacts/Verification/20260822T100418Z-full-summary.txt`. Direct launches of
+the exported macOS app produced
+`Artifacts/Screenshots/m7-exported-look-lab-controls.png` and
+`Artifacts/Screenshots/m7-exported-look-lab-game-view.png` with the required
+four-unit gameplay composition at zoom 44.
+
 Playable build: `Builds/macOS/LEGO Space RTS.app`. The requested human task is
-only visual judgement: compare material credibility, mechanical readability,
-ground restraint, light hierarchy, animation and VFX. No style is accepted by
-the existence of this build.
+only visual judgement: adjust the Look Lab, judge material credibility,
+mechanical readability, ground restraint, light hierarchy, animation and VFX,
+then copy the full JSON. No style is accepted by the existence of this build.

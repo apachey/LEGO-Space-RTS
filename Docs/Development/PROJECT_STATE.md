@@ -5,13 +5,12 @@ authoritative when anything here becomes stale.
 
 ## Current milestone
 
-**M0–M6 are implemented, verified and game-director accepted. The first M7
-Style Lab review selected no direction. A non-canonical research brief now
-defines the center for a second Style Lab round, which is implemented, rendered,
-fully verified and through its first game-director review. Heroic RTS is the
-current preference but is not selected; a refined warm-light and independent
-outline A/B is ready for review. The six-page Palette Ratio Lab is game-director
-accepted. Visual canon remains deliberately open.**
+**M0–M6 are implemented, verified and game-director accepted. M7 visual canon
+remains deliberately open. Preset-style comparisons are retired as the primary
+workflow; a gameplay-scale realtime Look Lab now exposes independent materials,
+lighting, post, outline, VFX, ground, HUD and camera controls with complete JSON
+copy/paste. The six-page Palette Ratio Lab is game-director accepted. The new
+Look Lab awaits game-director profile exploration and review.**
 
 - The branch includes the verified post-M5 movement handoff from `44e2caf`
   plus T058–T063.
@@ -176,10 +175,18 @@ neutral/subtly warm respectively, without removing Heroic bloom or cool fill.
 Outline is removed from Graphic Volume and exposed as an independent,
 off-by-default `O` toggle on all four styles.
 
-From a normal build, press `F8` and choose **M7 Style Lab** or **M7 Palette
-Lab**. Style controls are `1`–`4`, outline is `O`; palette-page controls are
-`1`–`6`; `Escape` returns to the playable prototype. The rejected first fixture
-remains available as **Old Material Lab** for engineering comparison only.
+Preset comparison did not yield a selected direction, and the game director
+rejected continuing with bundled variants. The primary path is now `F8` →
+**M7 Look Lab**, documented in `Docs/Development/M7_LOOK_LAB.md`. It uses the
+actual 36-degree gameplay camera and 24–72 build-cell zoom, four identical units,
+two buildings, live combat/fire evidence, ground, fog preview and fake RTS HUD.
+Ten independent control sections feed a complete versioned JSON profile.
+
+The old inverted-hull outline is retired. The Look Lab uses a real Forward+
+depth and normal/roughness pass, separates silhouette from crease strength and
+suppresses rough-terrain crease noise. Outline remains off by default. The old
+Style and Material labs remain reproducible engineering fixtures; the Palette
+Lab remains the accepted palette review fixture.
 
 ## Integration format boundary
 
@@ -196,10 +203,11 @@ remains available as **Old Material Lab** for engineering comparison only.
 
 The current M7 exploration branch passed `./tools/verify.sh --full` on
 2026-08-22 with 278 NUnit tests, 24/24 representative mover acceptance, every
-T058–T063 ENet smoke, the four-style Godot smoke, all six Palette Ratio Lab
-pages, 100-repeat determinism, replay record/playback, snapshot continuation,
-compiled-content regeneration and macOS export. Exact summary:
-`Artifacts/Verification/20260822T085432Z-full-summary.txt`.
+T058–T063 ENet smoke, the legacy four-style smoke, all six Palette Ratio Lab
+pages, the new Look Lab at zoom 44/72 with visible/hidden controls, 100-repeat
+determinism, replay record/playback, snapshot continuation, compiled-content
+regeneration and macOS export. Exact summary:
+`Artifacts/Verification/20260822T100418Z-full-summary.txt`.
 
 The freshly exported app was launched directly into the 500-panel faction
 abstract-model page and the ten-role faction light-language page. Both captured
@@ -219,6 +227,13 @@ fixture emitted PASS markers with outline both off and on; evidence is
 `Artifacts/Screenshots/m7-exported-heroic-rts-outline-off.png` and
 `m7-exported-heroic-rts-outline-on.png` in the same directory.
 
+The newly exported application was launched directly into the realtime Look
+Lab at zoom 44 with controls visible and hidden. Both emitted the required PASS
+marker with four units, 192 unit meshes, 31,104 unit triangles and two
+buildings. Evidence:
+`Artifacts/Screenshots/m7-exported-look-lab-controls.png` and
+`Artifacts/Screenshots/m7-exported-look-lab-game-view.png`.
+
 Stress60 remained the expected diagnostic failure with phase completion
 **4/60, 5/60 and 2/60**. The exported macOS debug build is:
 `Builds/macOS/LEGO Space RTS.app`.
@@ -236,12 +251,10 @@ blocking only when M9 must prove its stable-large-battle exit.
 
 ## Next approved action
 
-1. Game director reviews the neutralized Industrial/Heroic lighting and the
-   Heroic outline off/on A/B; do not record T064 acceptance until one direction
-   is explicitly locked.
-2. Record whether outline is rejected, retained or needs another width/language,
-   then build the next narrowed material/light combination around the selected
-   Heroic/Industrial/Constructive traits.
+1. Game director explores the gameplay-scale **M7 Look Lab**, hides controls to
+   judge the clean game view and returns the complete **COPY ALL JSON** profile.
+2. Use that exact profile for the next narrowed implementation pass; do not
+   record T064 acceptance until the game director explicitly locks a direction.
 3. Keep Stress60 visible without starting an unreviewed third movement attempt;
    revisit it for M9 or earlier only if a catastrophic movement regression
    appears.
