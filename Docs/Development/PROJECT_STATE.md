@@ -6,9 +6,10 @@ authoritative when anything here becomes stale.
 ## Current milestone
 
 **M0–M6 are implemented, verified and game-director accepted. The first M7
-Style Lab review selected no direction; material realism and graphic toon remain
-weak candidates. The corrected six-page Palette Ratio Lab awaits game-director
-review. Visual canon remains deliberately open.**
+Style Lab review selected no direction. A non-canonical research brief now
+defines the center for a second Style Lab round, which is implemented, rendered,
+fully verified and ready for game-director review. The six-page Palette Ratio
+Lab is game-director accepted. Visual canon remains deliberately open.**
 
 - The branch includes the verified post-M5 movement handoff from `44e2caf`
   plus T058–T063.
@@ -138,8 +139,9 @@ stylized-PBR premise is not an accepted visual target.
 - The code-native **M7 Style Lab** is implemented in Godot using one reproducible
   Blender-authored drill rig: 57 Blender objects, 48 imported mesh nodes and
   7,776 rendered triangles. The same camera, geometry, animation and scene expose
-  four switchable treatments: clean PBR, real-material, graphic toon and
-  hand-painted/retro. Only materials, shaders, lighting, VFX and terrain change.
+  four switchable Round 2 treatments: Industrial Mass, Heroic RTS, Constructive
+  LEGO and Graphic Volume. Only materials, shaders, lighting, VFX and terrain
+  change.
 - The separate **Palette Ratio Lab** is implemented with six switchable pages:
   faction visible-area candidates, five distinct Martian source families, two
   identical-silhouette 100-panel abstract-model comparisons, transparency
@@ -157,9 +159,13 @@ stylized-PBR premise is not an accepted visual target.
 - Team/player color remains valuable but is deferred to model-level ownership
   tests and is excluded from faction palette analysis.
 
-The first style review did not select a direction. Material realism and graphic
-toon are weak candidates; clean PBR and hand-painted/retro are now only
-comparison anchors. Visual canon remains deliberately unlocked.
+The first style review did not select a direction. The game director then
+supplied `Docs/Development/M7_ART_DIRECTION_RESEARCH_BRIEF.md`, explicitly as
+non-canonical development research. Its center is a volumetric mechanical 3D RTS
+with broad readable forms, visible LEGO construction logic, restrained
+environmental noise and no photoreal/tabletop premise. Round 2 replaces the old
+forward candidates with Industrial Mass, Heroic RTS, Constructive LEGO and
+Graphic Volume. Visual canon remains deliberately unlocked.
 
 From a normal build, press `F8` and choose **M7 Style Lab** or **M7 Palette
 Lab**. Style controls are `1`–`4`; palette-page controls are `1`–`6`; `Escape`
@@ -180,17 +186,23 @@ as **Old Material Lab** for engineering comparison only.
 ## Verification state
 
 The current M7 exploration branch passed `./tools/verify.sh --full` on
-2026-08-21 with 278 NUnit tests, 24/24 representative mover acceptance, every
+2026-08-22 with 278 NUnit tests, 24/24 representative mover acceptance, every
 T058–T063 ENet smoke, the four-style Godot smoke, all six Palette Ratio Lab
 pages, 100-repeat determinism, replay record/playback, snapshot continuation,
 compiled-content regeneration and macOS export. Exact summary:
-`Artifacts/Verification/20260820T211429Z-full-summary.txt`.
+`Artifacts/Verification/20260822T083326Z-full-summary.txt`.
 
 The freshly exported app was launched directly into the 500-panel faction
 abstract-model page and the ten-role faction light-language page. Both captured
 and emitted their PASS markers from the exported build. Evidence:
 `Artifacts/Screenshots/m7-exported-palette-faction-models.png` and
 `Artifacts/Screenshots/m7-exported-palette-light-language.png`.
+
+The exported build was also launched directly into all four Round 2 treatments;
+each rendered a capture and emitted its PASS marker. Evidence is
+`Artifacts/Screenshots/m7-exported-style-industrial-mass.png`,
+`m7-exported-style-heroic-rts.png`, `m7-exported-style-constructive-lego.png`
+and `m7-exported-style-graphic-volume.png` in the same directory.
 
 Stress60 remained the expected diagnostic failure with phase completion
 **4/60, 5/60 and 2/60**. The exported macOS debug build is:
@@ -209,12 +221,11 @@ blocking only when M9 must prove its stable-large-battle exit.
 
 ## Next approved action
 
-1. Game director reviews the corrected six-page Palette Ratio Lab, especially
-   Rock Raiders brown, 7316 beige/tan massing, the two abstract-model pages and
-   faction light semantics.
-2. Continue style search from the weak material-realism and graphic-toon
-   candidates, or request a new implementable style branch; do not record
-   T064 acceptance until the selected direction is explicitly locked.
+1. Game director reviews Industrial Mass, Heroic RTS, Constructive LEGO and
+   Graphic Volume; do not record T064 acceptance until one direction is
+   explicitly locked.
+2. Record the game director's keep/reject/hybrid feedback and implement only the
+   resulting narrowed visual branch.
 3. Keep Stress60 visible without starting an unreviewed third movement attempt;
    revisit it for M9 or earlier only if a catastrophic movement regression
    appears.

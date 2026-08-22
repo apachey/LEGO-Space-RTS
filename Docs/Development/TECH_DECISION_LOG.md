@@ -818,3 +818,27 @@ formats, Phase 07 functional UX and deterministic architecture are unchanged.
 
 This is non-canonical art-direction exploration. No visual style or palette is
 locked, and gameplay, SimCore and network architecture remain unchanged.
+
+---
+
+## 2026-08-22 — Research-driven M7 Style Lab round 2
+
+- Round 1's clean PBR, material realism, graphic toon and hand-painted/retro
+  categories are retired as forward candidates after selecting no direction.
+- The game director's new visual research is stored as a non-canonical
+  development brief. It centers the search on volumetric mechanical 3D,
+  readable broad forms, visible LEGO construction logic and clean RTS-scale
+  presentation without photoreal or tabletop premises.
+- One invariant Raider carrier now compares Industrial Mass, Heroic RTS,
+  Constructive LEGO and Graphic Volume. Geometry, camera, animation, semantic
+  palette and timing remain fixed; only materials, shaders, lighting, terrain
+  and VFX rendering vary.
+- The carrier uses the accepted Rock Raiders massing and semantic light roles:
+  earth brown is structural, orange/lime signals are emissive, and canopy glass
+  is not emissive.
+- All four treatments passed the real Godot renderer, full regression and direct
+  exported-build capture. This makes them valid review evidence, not accepted
+  art direction.
+
+This is non-canonical presentation research. It changes no gameplay, SimCore,
+networking, format or deterministic architecture, and it locks no visual style.

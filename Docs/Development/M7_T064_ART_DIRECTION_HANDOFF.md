@@ -26,9 +26,9 @@ From a normal launch:
 3. use `1`–`4` to switch rendering styles, or `1`–`6` to switch palette pages;
 4. press `Escape` to return to the prototype.
 
-The Style Lab keeps one unit, camera, animation and composition invariant while
-switching clean PBR, real-material, graphic-toon and hand-painted/retro
-treatments. The Palette Lab shows:
+The Style Lab keeps one unit, camera, animation and composition invariant. Its
+research-driven second round switches Industrial Mass, Heroic RTS, Constructive
+LEGO and Graphic Volume treatments. The Palette Lab shows:
 
 - candidate visible-area ratios for Rock Raiders, Life on Mars astronauts, Mars
   Mission astronauts, Mars Mission aliens and the aggregate Martian range;
@@ -43,9 +43,10 @@ Rock Raiders now includes earth brown as a major 18% vehicle surface. The 7316
 Excavation Searcher now treats tan/beige as the dominant 42% visible surface;
 these are corrections to the earlier invalid part-count-biased read.
 
-The first style review selected no direction. Material realism and graphic toon
-remain weak candidates; clean PBR and hand-painted/retro remain only as
-comparison anchors. Visual canon is still open.
+The first style review selected no direction. Its four broad categories are
+retired as forward candidates. Round 2 follows the game director's non-canonical
+research brief in `M7_ART_DIRECTION_RESEARCH_BRIEF.md`; visual canon is still
+open.
 
 The first equal-swatch fixture remains as **Old Material Lab** for engineering
 comparison. It is not the current art-direction review path.
@@ -80,3 +81,24 @@ materially different prompts converge on the same polished image. Future use is
 limited to non-authoritative mood or texture thumbnails when specifically useful.
 
 The representative art-direction evidence is now the real Godot Style Lab.
+
+## Round 2 verification and build
+
+The four treatments have been rendered both from the source project and from
+the exported macOS application. Each exported path preserved the controlled
+fixture at 48 meshes, 7,776 triangles and zero HUD/GUI canvas layers.
+
+Evidence:
+
+- `Artifacts/Screenshots/m7-exported-style-industrial-mass.png`;
+- `Artifacts/Screenshots/m7-exported-style-heroic-rts.png`;
+- `Artifacts/Screenshots/m7-exported-style-constructive-lego.png`;
+- `Artifacts/Screenshots/m7-exported-style-graphic-volume.png`.
+
+Full verification passed with no blocking failures:
+`Artifacts/Verification/20260822T083326Z-full-summary.txt`.
+
+Playable build: `Builds/macOS/LEGO Space RTS.app`. The requested human task is
+only visual judgement: compare material credibility, mechanical readability,
+ground restraint, light hierarchy, animation and VFX. No style is accepted by
+the existence of this build.

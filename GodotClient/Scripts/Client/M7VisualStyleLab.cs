@@ -67,10 +67,10 @@ public partial class M7VisualStyleLab : Node3D
         if (@event is not InputEventKey { Pressed: true, Echo: false } key) return;
         M7VisualStyle? next = key.Keycode switch
         {
-            Key.Key1 => M7VisualStyle.CleanPbr,
-            Key.Key2 => M7VisualStyle.MaterialRealism,
-            Key.Key3 => M7VisualStyle.GraphicToon,
-            Key.Key4 => M7VisualStyle.HandPaintedRetro,
+            Key.Key1 => M7VisualStyle.IndustrialMass,
+            Key.Key2 => M7VisualStyle.HeroicRts,
+            Key.Key3 => M7VisualStyle.ConstructiveLego,
+            Key.Key4 => M7VisualStyle.GraphicVolume,
             _ => null
         };
         if (next.HasValue)
@@ -197,33 +197,33 @@ public partial class M7VisualStyleLab : Node3D
         if (_sun is null || _workFill is null || _environment is null) return;
         switch (style)
         {
-            case M7VisualStyle.CleanPbr:
-                _sun.LightColor = new Color("fff2dc"); _sun.LightEnergy = 1.18f;
-                _workFill.LightColor = new Color("b8d8ff"); _workFill.LightEnergy = 0.52f;
-                _environment.BackgroundColor = new Color("191d22");
-                _environment.AmbientLightColor = new Color("a8afbb"); _environment.AmbientLightEnergy = 0.68f;
+            case M7VisualStyle.IndustrialMass:
+                _sun.LightColor = new Color("ffe2b6"); _sun.LightEnergy = 1.72f;
+                _workFill.LightColor = new Color("89aed1"); _workFill.LightEnergy = 0.58f;
+                _environment.BackgroundColor = new Color("151b1f");
+                _environment.AmbientLightColor = new Color("9ba5aa"); _environment.AmbientLightEnergy = 0.67f;
                 _environment.GlowIntensity = 0.20f;
                 break;
-            case M7VisualStyle.MaterialRealism:
-                _sun.LightColor = new Color("fff9ed"); _sun.LightEnergy = 1.62f;
-                _workFill.LightColor = new Color("96b8db"); _workFill.LightEnergy = 0.34f;
-                _environment.BackgroundColor = new Color("101315");
-                _environment.AmbientLightColor = new Color("8b939b"); _environment.AmbientLightEnergy = 0.42f;
-                _environment.GlowIntensity = 0.10f;
+            case M7VisualStyle.HeroicRts:
+                _sun.LightColor = new Color("ffc77d"); _sun.LightEnergy = 1.78f;
+                _workFill.LightColor = new Color("5e9fff"); _workFill.LightEnergy = 1.10f;
+                _environment.BackgroundColor = new Color("111b2a");
+                _environment.AmbientLightColor = new Color("7897bd"); _environment.AmbientLightEnergy = 0.48f;
+                _environment.GlowIntensity = 0.34f;
                 break;
-            case M7VisualStyle.GraphicToon:
-                _sun.LightColor = new Color("ffe3a8"); _sun.LightEnergy = 1.34f;
-                _workFill.LightColor = new Color("7db5ff"); _workFill.LightEnergy = 0.70f;
-                _environment.BackgroundColor = new Color("1e2633");
-                _environment.AmbientLightColor = new Color("819ac0"); _environment.AmbientLightEnergy = 0.76f;
-                _environment.GlowIntensity = 0.25f;
+            case M7VisualStyle.ConstructiveLego:
+                _sun.LightColor = new Color("fff4df"); _sun.LightEnergy = 1.58f;
+                _workFill.LightColor = new Color("c4ddf2"); _workFill.LightEnergy = 0.64f;
+                _environment.BackgroundColor = new Color("222a30");
+                _environment.AmbientLightColor = new Color("bec5ca"); _environment.AmbientLightEnergy = 0.78f;
+                _environment.GlowIntensity = 0.20f;
                 break;
-            case M7VisualStyle.HandPaintedRetro:
-                _sun.LightColor = new Color("f6ca8a"); _sun.LightEnergy = 0.42f;
-                _workFill.LightColor = new Color("9aa5b4"); _workFill.LightEnergy = 0.18f;
-                _environment.BackgroundColor = new Color("211d1a");
-                _environment.AmbientLightColor = new Color("aa8d72"); _environment.AmbientLightEnergy = 0.42f;
-                _environment.GlowIntensity = 0.14f;
+            case M7VisualStyle.GraphicVolume:
+                _sun.LightColor = new Color("ffdc9a"); _sun.LightEnergy = 1.62f;
+                _workFill.LightColor = new Color("70a9ff"); _workFill.LightEnergy = 0.88f;
+                _environment.BackgroundColor = new Color("152132");
+                _environment.AmbientLightColor = new Color("829bb7"); _environment.AmbientLightEnergy = 0.48f;
+                _environment.GlowIntensity = 0.28f;
                 break;
         }
     }
@@ -266,6 +266,7 @@ public partial class M7VisualStyleLab : Node3D
             if (mesh.Mesh is Mesh source) triangles += source.GetFaces().Length / 3;
 
         bool semantics = _semanticCounts.GetValueOrDefault(M7SurfaceSemantic.Body) >= 3 &&
+            _semanticCounts.GetValueOrDefault(M7SurfaceSemantic.Earth) >= 2 &&
             _semanticCounts.GetValueOrDefault(M7SurfaceSemantic.Tool) >= 6 &&
             _semanticCounts.GetValueOrDefault(M7SurfaceSemantic.Rubber) >= 4 &&
             _semanticCounts.GetValueOrDefault(M7SurfaceSemantic.Glass) >= 1 &&
@@ -299,12 +300,13 @@ public partial class M7VisualStyleLab : Node3D
     {
         for (int i = 0; i + 1 < arguments.Length; i++)
             if (arguments[i] == "--m7-style") return M7StyleMaterialFactory.Parse(arguments[i + 1]);
-        return M7VisualStyle.CleanPbr;
+        return M7VisualStyle.IndustrialMass;
     }
 
     private static M7SurfaceSemantic InferSemantic(StringName nodeName)
     {
         string name = nodeName.ToString();
+        if (name is "Neutral_Chassis" or "Body_RearHousing") return M7SurfaceSemantic.Earth;
         if (name.StartsWith("Body_", StringComparison.Ordinal)) return M7SurfaceSemantic.Body;
         if (name.StartsWith("Accent_", StringComparison.Ordinal)) return M7SurfaceSemantic.Accent;
         if (name.StartsWith("Tool_", StringComparison.Ordinal)) return M7SurfaceSemantic.Tool;

@@ -7,13 +7,13 @@ source "${SCRIPT_DIR}/lib/common.sh"
 ROOT="$(repo_root)"
 setup_dotnet_environment
 GODOT="$(discover_godot 2>/dev/null || true)"
-STYLE="${1:-clean-pbr}"
+STYLE="${1:-industrial-mass}"
 OUTPUT="${2:-${ROOT}/Artifacts/Screenshots/m7-style-${STYLE}.png}"
 CAPTURE_LOG="${TMPDIR:-/tmp}/lego-space-rts-m7-style-${STYLE}.log"
 
 case "${STYLE}" in
-  clean-pbr|material-realism|graphic-toon|hand-painted-retro) ;;
-  *) printf 'Usage: %s [clean-pbr|material-realism|graphic-toon|hand-painted-retro] [output.png]\n' "$0" >&2; exit 2 ;;
+  industrial-mass|heroic-rts|constructive-lego|graphic-volume) ;;
+  *) printf 'Usage: %s [industrial-mass|heroic-rts|constructive-lego|graphic-volume] [output.png]\n' "$0" >&2; exit 2 ;;
 esac
 
 if [[ -z "${GODOT}" ]] || ! godot_is_required_mono "${GODOT}"; then

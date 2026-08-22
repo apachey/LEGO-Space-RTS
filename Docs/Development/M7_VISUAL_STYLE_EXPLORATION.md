@@ -38,6 +38,36 @@ First review outcome:
   forward art-direction candidates;
 - no visual canon is inferred from this ranking.
 
+## Round 2 research-driven range
+
+The game director supplied a non-canonical research brief centered on full 3D
+mechanical readability, visible construction, broad functional forms and clean
+RTS presentation. The full source brief and reference classification are kept
+in `Docs/Development/M7_ART_DIRECTION_RESEARCH_BRIEF.md`.
+
+Round 2 no longer compares unrelated rendering categories. It tests four
+interpretations inside the desired center:
+
+1. **Industrial Mass** — grounded weight, restrained painted/metal response and
+   low-noise terrain;
+2. **Heroic RTS** — stronger silhouette separation, saturation and shaped
+   warm/cool lighting;
+3. **Constructive LEGO** — molded polymer plus exposed mechanisms, without a
+   physical-toy or tabletop premise;
+4. **Graphic Volume** — controlled light bands and broad values while retaining
+   full 3D volume.
+
+The Round 2 Raider carrier also consumes the accepted palette semantics: its
+large chassis and rear housing form an earth-brown mass, while neon-orange
+signals and the neon-lime work light are authored emission. Canopy glass remains
+non-emissive.
+
+Industrial Annihilation is the strongest individual reference. Beyond All
+Reason contributes scale and mechanical weight; StarCraft II and Warcraft III
+contribute silhouette hierarchy and controlled exaggeration; Planetary
+Annihilation contributes clean volumetric graphic treatment. These are analysis
+axes, not instructions to copy another game's assets or formula.
+
 The physical-diorama ImageGen result is not included: it is both outside the
 desired direction and a poor proxy for achievable realtime rendering.
 
@@ -167,10 +197,24 @@ changes between styles.
 
 Implemented controls:
 
-- `F8` → **M7 Style Lab**, then `1`–`4` and `Escape`;
+- `F8` → **M7 Style Lab**, then `1` Industrial Mass, `2` Heroic RTS,
+  `3` Constructive LEGO, `4` Graphic Volume and `Escape`;
 - `F8` → **M7 Palette Lab**, then `1`–`6` and `Escape`;
 - pages `3` and `4` are the faction and Martian 100-panel abstract models;
 - page `5` tests non-emissive transparency and page `6` the faction light map;
 - all four styles contain no HUD/GUI `CanvasLayer`;
 - palette labels are `Label3D` content inside the isolated review scene;
 - exported-build smoke captures verify both labs outside the editor.
+
+Round 2 evidence from the exported macOS build:
+
+- `Artifacts/Screenshots/m7-exported-style-industrial-mass.png`;
+- `Artifacts/Screenshots/m7-exported-style-heroic-rts.png`;
+- `Artifacts/Screenshots/m7-exported-style-constructive-lego.png`;
+- `Artifacts/Screenshots/m7-exported-style-graphic-volume.png`.
+
+All four paths preserve 48 imported meshes, 7,776 triangles, the shared camera
+and zero HUD/GUI canvas layers. Full automated verification passed on 2026-08-22
+at `Artifacts/Verification/20260822T083326Z-full-summary.txt`. This qualifies the
+fixture for subjective art-direction review; it does not select or canonize a
+treatment.

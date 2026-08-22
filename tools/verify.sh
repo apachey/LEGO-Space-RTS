@@ -242,7 +242,7 @@ godot_m7_material_smoke() {
 }
 
 godot_m7_style_smoke() {
-  local godot import_output output status
+  local godot import_output output status style
   godot="$(discover_godot 2>/dev/null || true)"
   if [[ -z "${godot}" ]]; then printf 'Godot executable not found.\n' >&2; return 1; fi
   if ! godot_is_required_mono "${godot}"; then printf 'Godot is not the required 4.7.1 .NET build: %s\n' "${godot}" >&2; return 1; fi
@@ -250,14 +250,16 @@ godot_m7_style_smoke() {
   status=$?
   printf '%s\n' "${import_output}"
   if (( status != 0 )); then return "${status}"; fi
-  output="$("${godot}" --headless --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-style-lab --m7-style-smoke --m7-style graphic-toon 2>&1)"
-  status=$?
-  printf '%s\n' "${output}"
-  if (( status != 0 )); then return "${status}"; fi
-  if ! printf '%s\n' "${output}" | grep -q 'M7 STYLE LAB: PASS styles=4'; then
-    printf 'Godot exited without the required controlled M7 Style Lab PASS marker.\n' >&2
-    return 1
-  fi
+  for style in industrial-mass heroic-rts constructive-lego graphic-volume; do
+    output="$("${godot}" --headless --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-style-lab --m7-style-smoke --m7-style "${style}" 2>&1)"
+    status=$?
+    printf '%s\n' "${output}"
+    if (( status != 0 )); then return "${status}"; fi
+    if ! printf '%s\n' "${output}" | grep -q "M7 STYLE LAB: PASS styles=4.*active=${style}"; then
+      printf 'Godot exited without the required controlled M7 Style Lab PASS marker for %s.\n' "${style}" >&2
+      return 1
+    fi
+  done
 }
 
 godot_m7_palette_smoke() {
