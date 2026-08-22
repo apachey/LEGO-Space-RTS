@@ -102,7 +102,8 @@ public partial class GodotSmokeRunner : Node
         Node? hud = GetTree().Root.FindChild("BasicHUD", true, false);
         bool hudOk = hud is not null && hud.FindChild("ResourceStrip", true, false) is not null &&
             hud.FindChild("SelectionPanel", true, false) is not null && hud.FindChild("PortraitSlot", true, false) is not null &&
-            hud.FindChild("ContextualSlot", true, false) is not null && hud.FindChild("ContextualActions", true, false) is not null;
+            hud.FindChild("MinimapSlot", true, false) is not null && hud.FindChild("CommandGrid", true, false) is not null &&
+            hud.FindChild("SelectionTypeGroups", true, false) is not null && hud.FindChild("EventFeed", true, false) is not null;
         Node? focusedView = _captureFocus == EntityId.None ? null : GetTree().Root.FindChild($"SimEntity_{_captureFocus.Value}_*", true, false);
         Node? damagedView = _damagedFocus == EntityId.None ? null : GetTree().Root.FindChild($"SimEntity_{_damagedFocus.Value}_*", true, false);
         Node? constructionProgress = focusedView?.FindChild("ConstructionProgressBar", false, false);

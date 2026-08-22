@@ -94,9 +94,16 @@ check('PrototypeContentCodec.Read' in loader and 'CompiledMapCodec.ReadDefinitio
 check('requested ? LoadM5Acceptance() : LoadCanonicalOpening()' in loader, 'normal launch no longer defaults to the canonical opening')
 check('M5AcceptanceScenarioFactory.Create' in loader and 'PrepareM5Acceptance' in composition, 'M5 acceptance handoff is not wired to the runtime')
 basic_hud = (ROOT/'GodotClient/Scripts/UI/BasicHud.cs').read_text()
-for token in ['ResourceStrip','SelectionPanel','PortraitSlot','ContextualSlot','ContextualActions','ContextualEnergyPriority','EnergyDomainPopover','OPERATIONS','CRYSTALS']:
-    check(token in basic_hud, f'T039 Basic HUD element missing: {token}')
-check('CommandPanel' not in basic_hud, 'production must be contextual to selected facilities rather than a permanent separate panel')
+hud_view = (ROOT/'GodotClient/Scripts/UI/HudView.cs').read_text()
+hud_profile = (ROOT/'GodotClient/Scripts/UI/M7HudProfile.cs').read_text()
+for token in ['ResourceStrip','SelectionPanel','PortraitSlot','ContextualEnergyPriority','EnergyDomainPopover','MinimapSlot','CommandPanel','CommandGrid','SelectionTypeGroups','EventFeed']:
+    check(token in hud_view, f'T068 retained HUD element missing: {token}')
+for token in ['HudFrame','BuildGroupedSelection','BuildCommands','CanQueueProduction','QueueProduction']:
+    check(token in basic_hud, f'T068 production HUD binding missing: {token}')
+for token in ['SafeAreaPercent { get; set; } = 96f','UiScale','TextScale','CommandPanelWidth','SelectionMaxWidth']:
+    check(token in hud_profile, f'T068 responsive HUD profile missing: {token}')
+check('CommandCapacity = 12' in hud_view and 'GroupCapacity = 8' in hud_view,
+      'T068 retained command/type-card pools are not bounded')
 debug_hud = (ROOT/'GodotClient/Scripts/UI/DebugHud.cs').read_text()
 check('Visible = false' in debug_hud and 'Drain Energy' in debug_hud, 'developer tools must remain available but hidden by default')
 debug_renderer = (ROOT/'GodotClient/Scripts/Presentation/DebugRenderer.cs').read_text()

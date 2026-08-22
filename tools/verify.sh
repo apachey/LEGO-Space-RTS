@@ -309,6 +309,28 @@ godot_m7_look_smoke() {
   done
 }
 
+godot_m7_hud_smoke() {
+  local godot output status fixture scenario aspect
+  godot="$(discover_godot 2>/dev/null || true)"
+  if [[ -z "${godot}" ]]; then printf 'Godot executable not found.\n' >&2; return 1; fi
+  if ! godot_is_required_mono "${godot}"; then printf 'Godot is not the required 4.7.1 .NET build: %s\n' "${godot}" >&2; return 1; fi
+  for fixture in "mixed-army 16-9" "production 16-10" "brownout 21-9" "critical-tooltip 4-3"; do
+    read -r scenario aspect <<< "${fixture}"
+    output="$("${godot}" --headless --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-hud-lab --m7-hud-smoke --m7-hud-scenario "${scenario}" --m7-hud-aspect "${aspect}" 2>&1)"
+    status=$?
+    printf '%s\n' "${output}"
+    if (( status != 0 )); then return "${status}"; fi
+    if printf '%s\n' "${output}" | grep -qE 'SCRIPT ERROR|ERROR:'; then
+      printf 'M7 HUD Lab emitted a script or runtime error.\n' >&2
+      return 1
+    fi
+    if ! printf '%s\n' "${output}" | grep -q "M7 HUD LAB: PASS scenarios=8 commands=12.*schema=1 active=${scenario}"; then
+      printf 'Godot exited without the required T068 HUD Lab PASS marker for scenario=%s aspect=%s.\n' "${scenario}" "${aspect}" >&2
+      return 1
+    fi
+  done
+}
+
 run_stage "[BLOCKING_NOW] Static/source validation" "static" python3 "${ROOT}/tools/Validation/validate_phase10.py"
 run_stage "[BLOCKING_NOW] .NET restore" "restore" dotnet restore "${ROOT}/LEGO.SpaceRTS.Phase10.sln" --disable-build-servers
 run_stage "[BLOCKING_NOW] .NET solution build (warnings as errors)" "build" dotnet build "${ROOT}/LEGO.SpaceRTS.Phase10.sln" -c Release --no-restore --disable-build-servers -m:1
@@ -326,6 +348,7 @@ run_stage "[BLOCKING_NOW T063] Godot authoritative server-log replay" "m6-replay
 run_stage "[BLOCKING_NOW M7 VISUAL EXPLORATION] Controlled Godot Style Lab" "m7-style" godot_m7_style_smoke
 run_stage "[BLOCKING_NOW M7 VISUAL EXPLORATION] Six-page Palette Ratio Lab" "m7-palette" godot_m7_palette_smoke
 run_stage "[BLOCKING_NOW M7 VISUAL EXPLORATION] Realtime gameplay-scale Look Lab" "m7-look" godot_m7_look_smoke
+run_stage "[BLOCKING_NOW T068] Responsive full HUD framework and lab" "m7-hud" godot_m7_hud_smoke
 
 if [[ "${MODE}" != "fast" ]]; then
   run_stage "[BLOCKING_NOW] 100-repeat deterministic golden run" "golden100" dotnet "$(headless_dll)" --scenario golden --ticks 3200 --repeat 100

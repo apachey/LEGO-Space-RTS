@@ -934,3 +934,27 @@ networking, serialization format, dependency or visual canon.
 
 This implements T065/T066 presentation infrastructure without a new dependency,
 gameplay change, SimCore mutation, network-format change or visual-canon choice.
+
+## 2026-08-22 — T068 retained HUD frame and separate art-direction profile
+
+- Phase 09A supersedes the old Unity `UI Toolkit` name with Godot
+  `Control`/container UI in C#. T068 implements the intended architecture, not
+  the superseded host technology.
+- Production HUD state is projected into a one-way `HudFrame`. A retained
+  `HudView` owns layout and widgets and only updates when the frame signature
+  changes; it does not rebuild the visual tree per render frame.
+- Mixed selections are bounded to eight pooled type cards and commands to the
+  canonical 3×4 grid. The implementation never creates one elaborate portrait
+  per selected entity.
+- The view owns the Phase 07 anchors, 96% default safe area, independent UI/text
+  scaling and central-width bounds. Godot's project base remains 1920×1080 with
+  `canvas_items` stretch; HUD dimensions remain presentation-only.
+- HUD art direction uses its own schema-1 `M7HudProfile` and laboratory rather
+  than re-entering the world-rendering Look Lab. This keeps currently open
+  visual choices editable without weakening the canonical functional layout.
+- T069 owns the real minimap. T068 only reserves and labels its bottom-left
+  view contract. T073 still owns the complete command catalog; unavailable
+  target-mode slots remain explicit rather than silently inventing commands.
+
+This changes Godot presentation architecture only. SimCore, commands, gameplay,
+networking and serialization formats are unchanged.

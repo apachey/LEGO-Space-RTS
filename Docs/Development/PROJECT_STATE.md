@@ -11,8 +11,9 @@ workflow; the gameplay-scale realtime Look Lab is now at schema 4 with free
 camera control, generated material-detail textures, repaired emission/VFX,
 sim-driven animation controls, bounded VFX-pool budgets/telemetry, static post
 patterns, depth-tested tracks, bounded LEGO-destruction controls and complete
-JSON copy/paste. HUD and health
-visuals are deliberately removed for their own future design phase. The
+JSON copy/paste. T068 now provides a separate responsive full-HUD framework and
+schema-1 HUD Lab; its visual language remains explicitly non-canonical. HUD and
+health visuals remain excluded from the world Look Lab. The
 six-page Palette Ratio Lab is game-director accepted. The revised Look Lab
 awaits game-director profile exploration and review.**
 
@@ -237,6 +238,27 @@ fixtures; the Palette Lab remains the accepted palette review fixture.
   wreck silhouette and eventual faction-specific profiles remain game-director
   review gates.
 
+## M7 T068 responsive HUD framework
+
+- The superseded Unity `UI Toolkit` label is implemented through Phase 09A's
+  Godot `Control`/container host. A one-way `HudFrame` separates production
+  state projection from retained view/layout code.
+- The canonical Phase 07 anchors now exist: top global status, bottom-left
+  minimap/alert access, bottom-center selection, bottom-right 3×4 command/queue
+  interaction. The minimap itself remains T069 and is explicitly a placeholder.
+- Mixed selections aggregate up to 128 selected entities by gameplay type and
+  bind to eight reusable cards rather than generating portrait walls.
+- The skeleton supports 90–100% safe area, 96% default, independent UI/text
+  scale, bounded ultrawide center width and the required desktop aspect/resolution
+  families.
+- `F8` → **M7 HUD Lab** provides eight information-density fixtures, four
+  aspect previews, live layout/type/surface/content/color tokens and complete
+  schema-1 JSON copy/paste. Details are in
+  `Docs/Development/M7_HUD_LAB.md`.
+- T068 does not approve HUD art direction. Authored icons, portraits,
+  typography, faction framing, alert motion/audio and health-bar visuals remain
+  game-director review work. T073 still owns the complete command catalog.
+
 ## Integration format boundary
 
 - authoritative snapshot format **20**;
@@ -302,8 +324,17 @@ exported application emitted the schema-4 PASS marker with five pools and 168
 prewarmed nodes while exercising the maximum 18-module Structure breakup.
 Evidence: `Artifacts/Screenshots/m7-t067-exported-destruction-structure.png`.
 
-Stress60 remained the expected diagnostic failure with phase completion
-**4/60, 5/60 and 2/60**. The exported macOS debug build is:
+The T068 responsive HUD framework passed the complete full suite with zero
+blocking failures at
+`Artifacts/Verification/20260822T153853Z-full-summary.txt`. The suite exercised
+mixed selection at 16:9, production at 16:10, brownout at 21:9 and the critical
+tooltip at 4:3. The freshly exported application then emitted its PASS marker
+for the critical-tooltip fixture at 21:9 after the final one-line alert fix.
+Evidence:
+`Artifacts/Screenshots/m7-t068-exported-hud-critical-21-9.png`.
+
+The latest Stress60 run remained the expected diagnostic failure with phase
+completion **4/60, 5/60 and 2/60**. The exported macOS debug build is:
 `Builds/macOS/LEGO Space RTS.app`.
 
 ## Deferred M9 large-battle gate
@@ -319,11 +350,14 @@ blocking only when M9 must prove its stable-large-battle exit.
 
 ## Next approved action
 
-1. Game director explores the gameplay-scale **M7 Look Lab**, including the new
-   **DESTRUCTION** section, hides controls to judge the clean game view and
-   returns the complete **COPY ALL JSON** profile.
-2. Use that exact profile for the next narrowed implementation pass; do not
-   record T064 acceptance until the game director explicitly locks a direction.
-3. Keep Stress60 visible without starting an unreviewed third movement attempt;
+1. Begin M7 T069: implement the real north-up, fog-correct minimap inside the
+   reserved bottom-left HUD slot using only client-legal knowledge.
+2. The game director may independently explore `F8` → **M7 HUD Lab** and return
+   its **COPY JSON** profile later; no HUD visual canon is required to begin
+   T069.
+3. The gameplay-scale **M7 Look Lab** remains available for world-style review;
+   do not record T064 acceptance until the game director explicitly locks a
+   direction.
+4. Keep Stress60 visible without starting an unreviewed third movement attempt;
    revisit it for M9 or earlier only if a catastrophic movement regression
    appears.

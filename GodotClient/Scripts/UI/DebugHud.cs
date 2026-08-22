@@ -13,7 +13,7 @@ public partial class DebugHud : CanvasLayer
     private double _nextUpdate;
 
     public void Configure(GodotSimBridge bridge, RtsInputController input, DebugRenderer debug, FogPresenter fog,
-        Action prepareM5Acceptance, Action openM7LookLab, Action openM7PaletteLab, Action openM7MaterialLab)
+        Action prepareM5Acceptance, Action openM7LookLab, Action openM7HudLab, Action openM7PaletteLab, Action openM7MaterialLab)
     {
         _bridge = bridge; _input = input; Name = "DeveloperHUD"; Layer = 20; ProcessPriority = 210;
         _panel = new PanelContainer { Name = "DeveloperPanel", Position = new Vector2(12, 90), CustomMinimumSize = new Vector2(760, 0), Visible = false };
@@ -26,6 +26,10 @@ public partial class DebugHud : CanvasLayer
         m7.TooltipText = "Realtime art-direction lab: gameplay camera, material families, lighting, post FX, outline, VFX, ground and fake HUD. Tab hides controls; Escape returns.";
         m7.Pressed += openM7LookLab;
         header.AddChild(m7);
+        Button hud = new() { Name = "OpenM7HudLab", Text = "M7 HUD Lab" };
+        hud.TooltipText = "Separate functional HUD and art-direction lab: eight states, responsive preview, live tokens and JSON copy/paste.";
+        hud.Pressed += openM7HudLab;
+        header.AddChild(hud);
         Button palette = new() { Name = "OpenM7PaletteLab", Text = "M7 Palette Lab" };
         palette.TooltipText = "Shows ratios, 100-panel abstract models, optics and faction light language. Use 1–6; Escape returns.";
         palette.Pressed += openM7PaletteLab;
