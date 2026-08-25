@@ -181,8 +181,8 @@ and fixes defects revealed only after authored texture maps became visible:
   and only the correctly oriented unobstructed shooter fires;
 - destruction hides the intact source and emits bounded LEGO modules rather
   than shrinking it under the terrain;
-- the fog preview follows the camera as a distant band and is held above terrain
-  to prevent the previous oval/polygon intersection artifact;
+- the misleading fog proxy is removed from this material/lighting fixture;
+  production fog remains a separate gameplay/readability test;
 - a presentation-only World Light Cycle section covers Earth, Mars, Moon,
   authored Planet U and fixed Underground, including natural color transitions,
   authored light/dark duration ratios and explicit readability/local-light
@@ -219,3 +219,33 @@ determinism, replay/snapshot continuation and a launchable macOS export. The
 preserved Stress60 failure remains the expected `BLOCKING_LATER — M9`
 diagnostic. Exported-build visual evidence for the independent composite path
 is `Artifacts/Screenshots/m7-quality-revision-outline-without-post.png`.
+
+## Schema-6 art-director simplification
+
+The follow-up review identified two artifacts that looked related but had
+different causes. Large stepped black bands were low-sun lighting across the
+2.5-metre triangles of an overly wavy 600-metre terrain mesh; small grain around
+real unit shadows came from variable-penumbra sampling over a fixed 180-metre
+shadow distance. The terrain now uses broad low-amplitude relief and a neutral
+low-frequency height source. Directional shadows use four blended,
+camera-fitted cascades, stable filter blur and a technical near-horizon fade.
+
+The normal Materials workflow is now deliberately small: select a role and its
+base color. Painted coating, coated brown structure, accent coating, blackened
+mechanisms, tool steel, rubber and building panels own curated physical and
+texture recipes. The brown chassis no longer uses quarry stone detail, and the
+misleading generic surface presets/raw shader sliders are absent from the
+art-director UI. Automated captures retain internal inspection passes.
+
+Earth blue hour now spans the wider -18° to -4° solar-altitude band and golden
+hour runs from 3° to 24°; the same evaluator preserves each world's authored
+palette and light/dark ratio. Functional lamps transition on through civil
+twilight, are off at noon and remain enabled Underground. Signals and Crystals
+remain semantically emissive, while daytime local-light pools are suppressed.
+
+The complete full suite passed with zero blocking failures at
+`Artifacts/Verification/20260825T194320Z-full-summary.txt`. The expected
+Stress60 result remains the existing `BLOCKING_LATER — M9` diagnostic. Current
+visual evidence is `m7-authored-materials-earth-noon.png`,
+`m7-blue-hour-auto-lights.png`, `m7-golden-hour-extended.png` and
+`m7-shadow-fix-earth-0620.png` under `Artifacts/Screenshots/`.

@@ -27,7 +27,7 @@ The lab evaluates the look at actual RTS scale rather than a close hero view:
 - one unit continuously firing at the intact building;
 - pooled particle muzzle flash, pooled emissive tracer, pooled exterior-face
   impact, sparks, luminous fire and smoke evidence;
-- rough ground, tracks, a Crystal cluster and a soft fog-of-war preview;
+- textured rough ground, depressed tracks and a Crystal cluster;
 - no HUD, selection marker or health-bar fixture: interface art direction is a
   separate future review.
 
@@ -42,18 +42,22 @@ The left panel contains twelve sections:
    visibility;
 2. **Shading** — diffuse wrap, shadow floor, smooth/banded lighting, specular
    scale, material rim and light tints;
-3. **Materials** — separate editable families for painted hull, structural
-   earth, accent, dark mechanisms, tool steel, rubber, building shell and
-   ground rock, each with a named authored map, coherent starter characters,
-   color-texture strength, height-derived bump, gloss breakup and scale;
+3. **Materials** — color selection for seven role-authored families: painted
+   hull, coated structure, accent coating, blackened mechanisms, tool steel,
+   rubber and building shell. Their finish, texture, normal and roughness
+   response are curated together instead of exposed as interdependent shader
+   knobs; terrain remains in **Ground**;
 4. **Glass & Emission** — non-emissive optical glass separated from signal,
    lamp and Crystal emission, same-hue edge darkening, halo and local-light
-   response plus independent signal, steady-lamp and Crystal pulse behavior;
-5. **Lighting** — key, fill, ambient and rim color/direction/energy plus shadow
-   softness and opacity, plus far-field background influence;
+   response plus independent signal and Crystal pulse behavior. Work lamps are
+   steady and switch smoothly through dusk, remain off by day and stay on in
+   Underground;
+5. **Lighting** — key, fill, ambient and rim color/direction/energy plus stable
+   four-cascade, camera-fitted shadows and far-field background influence;
 6. **World Light Cycle** — presentation-only Earth, Mars, Moon, authored
    Planet U and fixed Underground profiles with clock animation, local time,
-   light/dark period lengths, night readability and local-light boost;
+   extended blue/golden-hour bands, light/dark period lengths, night
+   readability and local-light boost;
 7. **Post FX** — master enable, tonemapper, exposure, brightness, contrast,
    saturation, temperature/tint, bloom, vignette, grain, sharpen, posterize and
    static grain and static posterization dither;
@@ -113,14 +117,14 @@ outline toggle can be evaluated without switching any other look parameter.
 
 ## Texture scope
 
-Eight generated review assets are available: painted coating, brushed metal,
-rubber, quarry ground, anti-tiled regolith, bolted machine casing, modular
-building panels and an alpha glare sprite. Grayscale surface maps drive tinted
-albedo breakup, height-derived normals/bump and roughness independently; the
-glare sprite drives emissive particles. Fixed RTS-distance mip selection avoids
-sparkle/aliasing, and terrain combines rotated samples with non-repeating
-domain-warped broad breakup. These remain review assets, not accepted production
-normal/ORM maps.
+Nine generated review assets remain reproducible. The active stack uses painted
+coating, brushed metal, rubber, quarry detail, low-frequency anti-tiled regolith,
+modular building panels and an alpha glare sprite. The older photographic
+regolith-height and tiled machine-panel maps are retained for audit history but
+no longer drive the normal view because they produced repeated ridges and noisy
+small parts. Derivative-aware sampling avoids sparkle, and terrain combines
+rotated samples with non-repeating broad breakup. These are review assets, not
+accepted production normal/ORM maps.
 
 ## T065 animation-driver integration
 
@@ -170,14 +174,14 @@ cosmetic burst.
 The lab can target the fourth unit, the burning structure or alternate between
 them. Fire/smoke/light evidence follows the structure. Fragment motion, count,
 lifetime, fade, dust value and active pool budget are editable and copied in
-schema 5. Existing schema 1–4
+schema 6. Existing schema 1–5
 profiles inherit the neutral destruction defaults.
 
 ## Decision boundary
 
-Automation validates scene structure, mesh/triangle counts, schema-5 round-trip,
-schema-1/schema-2/schema-3/schema-4 migration, animation and destruction-driver state,
-six-wheel/drill/suspension rig binding, all five pool prewarm/spawn/reuse/drop
+Automation validates scene structure, mesh/triangle counts, schema-6 round-trip,
+schema-1 through schema-5 migration, animation and destruction-driver state,
+six-wheel/drill/suspension rig binding, all six pool prewarm/spawn/reuse/drop
 behavior, zoom bounds,
 generated-texture presence, emissive material bindings, exterior impact
 placement, shader compilation and captures. It cannot accept visual style,

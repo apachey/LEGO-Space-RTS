@@ -7,11 +7,13 @@ authoritative when anything here becomes stale.
 
 **M0–M6 are implemented, verified and game-director accepted. M7 visual canon
 remains deliberately open. Preset-style comparisons are retired as the primary
-workflow; the gameplay-scale realtime Look Lab is now at schema 5 with free
-camera control, eight authored surface/glare assets, height-derived normals,
-intuitive material controls, per-function emission, direct fire lighting, five
-presentation-only world-light cycles, planted-wheel animation, bounded
-VFX/destruction pools, depressed tracks and complete JSON copy/paste. T068 now
+workflow; the gameplay-scale realtime Look Lab is now at schema 6 with free
+camera control, nine reproducible surface/glare assets, role-authored material
+families with color-only art controls, per-function emission, automatic
+dusk/night work lamps, direct fire lighting, five presentation-only world-light
+cycles with extended blue/golden-hour bands, planted-wheel animation, bounded
+VFX/destruction pools, deterministic material-audit captures, a natural world-light gradient,
+depressed tracks and complete JSON copy/paste. T068 now
 provides a separate responsive full-HUD framework and
 T069 replaces its minimap placeholder with a client-legal north-up tactical map;
 the HUD Lab is now schema 4 with five generated faction frame families and its visual language remains explicitly
@@ -188,17 +190,17 @@ Preset comparison did not yield a selected direction, and the game director
 rejected continuing with bundled variants. The primary path is now `F8` →
 **M7 Look Lab**, documented in `Docs/Development/M7_LOOK_LAB.md`. It uses the
 actual 36-degree gameplay camera and 24–72 build-cell zoom, four identical units,
-two buildings, live combat/fire evidence, ground and fog preview. Twelve
-independent control sections feed a complete schema-5 JSON profile; schemas 1–4
+two buildings, live combat/fire evidence and expanded textured ground. Twelve
+independent control sections feed a complete schema-6 JSON profile; schemas 1–5
 are migrated. Temporary HUD, selection and health visuals are excluded.
 
 The old inverted-hull outline is retired. The Look Lab uses a real Forward+
 depth and normal/roughness pass, separates silhouette from crease strength and
 suppresses rough-terrain crease noise. Emissive surfaces now provide real HDR
 output, a darker same-hue edge, a separate halo and optional local lights.
-Signals, steady lamps and Crystals have independent pulse behavior. Eight
+Signals, steady lamps and Crystals have independent pulse behavior. Nine
 authored review assets distinguish paint, brushed metal, rubber, quarry ground,
-regolith, machine panels, building panels and emissive glare. The old Style and Material labs remain reproducible engineering
+two regolith layers, machine panels, building panels and emissive glare. The old Style and Material labs remain reproducible engineering
 fixtures; the Palette Lab remains the accepted palette review fixture.
 
 ## M7 T065/T066 presentation implementation
@@ -238,7 +240,7 @@ fixtures; the Palette Lab remains the accepted palette review fixture.
   or gameplay-relevant physics were introduced.
 - The Look Lab can destroy the fourth unit, the burning structure or alternate
   them. The intact source disappears into a module burst rather than sinking or
-  shrinking. Fragment, dust and pool-budget controls remain live; schema-5
+  shrinking. Fragment, flash, smoke, ring, dust and pool-budget controls remain live; schema-6
   copy/paste retains the complete experiment.
 - The implementation does not select destruction art direction. Breakup rhythm,
   wreck silhouette and eventual faction-specific profiles remain game-director
@@ -400,7 +402,17 @@ regression, 100-repeat determinism, replay/snapshot checks, content regeneration
 and a fresh launchable macOS export. Exported-build evidence is
 `Artifacts/Screenshots/m7-quality-revision-outline-without-post.png`.
 
-The schema-5 Look Lab/schema-4 faction-HUD revision passed the complete full
+The schema-6 Look Lab visual-quality and art-director simplification revision passed the complete full suite
+with zero blocking failures at
+`Artifacts/Verification/20260825T194320Z-full-summary.txt`: 278 NUnit tests,
+all retained M6/M7 Godot smokes, four Look Lab fixtures, 100-repeat
+determinism, replay/snapshot checks, content regeneration and a fresh
+launchable macOS export. Review captures include
+`Artifacts/Screenshots/m7-authored-materials-earth-noon.png`,
+`m7-blue-hour-auto-lights.png`, `m7-golden-hour-extended.png` and
+`m7-shadow-fix-earth-0620.png`.
+
+The earlier schema-5 Look Lab/schema-4 faction-HUD revision passed the complete full
 suite with zero blocking failures at
 `Artifacts/Verification/20260825T013546Z-full-summary.txt`: 278 NUnit tests,
 all retained M6/M7 Godot smokes, four Look Lab visibility/zoom/post/outline

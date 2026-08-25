@@ -153,7 +153,7 @@ public sealed class PresentationAnimationDriver
         float delta = Math.Clamp(renderDelta, 0f, 0.25f);
         if (!_states.TryGetValue(input.EntityKey, out DriverState? state))
         {
-            state = new DriverState { LastFireSequence = input.FireSequence };
+            state = new DriverState { LastFireSequence = input.FireSequence, RecoilElapsedSeconds = 1000f };
             _states.Add(input.EntityKey, state);
         }
 
@@ -167,10 +167,17 @@ public sealed class PresentationAnimationDriver
         state.ParameterAccumulator += delta;
         bool parameterUpdate = interval <= 0f || state.ParameterAccumulator >= interval;
 
-        if (input.FireSequence > state.LastFireSequence)
-            state.Recoil = tuning.Enabled ? 1f : 0f;
+        bool firedThisFrame = input.FireSequence > state.LastFireSequence;
+        if (firedThisFrame)
+            state.RecoilElapsedSeconds = 0f;
+        else
+            state.RecoilElapsedSeconds = Math.Min(1000f, state.RecoilElapsedSeconds + delta);
         state.LastFireSequence = Math.Max(state.LastFireSequence, input.FireSequence);
-        state.Recoil = Math.Max(0f, state.Recoil - delta * tuning.RecoilRecovery);
+        // Elapsed-time sampling guarantees a full peak on the event frame and
+        // keeps the curve stable across 30/60/144 Hz and hitch frames.
+        float recoil = tuning.Enabled
+            ? Math.Max(0f, 1f - state.RecoilElapsedSeconds * tuning.RecoilRecovery)
+            : 0f;
 
         if (parameterUpdate)
         {
@@ -202,12 +209,29 @@ public sealed class PresentationAnimationDriver
         float lean = MathF.Sin(state.SuspensionPhase * 0.5f) * Mathf.DegToRad(tuning.BodyLeanDegrees) *
             Math.Clamp(state.Locomotion, 0f, 1f);
         return new PresentationAnimationFrame(tier, parameterUpdate, state.Locomotion, state.Operation,
-            state.Repair, state.WheelPhase, state.DrillPhase, suspension, lean, state.Recoil,
+            state.Repair, state.WheelPhase, state.DrillPhase, suspension, lean, recoil,
             state.Transformation, state.Damage, state.Destruction);
     }
 
     public void Remove(uint entityKey) => _states.Remove(entityKey);
     public void Clear() => _states.Clear();
+
+    /// <summary>
+    /// Aligns an already-presented entity with the current fire stream without
+    /// creating a recoil event. This is used when a Look Lab preview emitter is
+    /// enabled between shots: the next real sequence increment still recoils,
+    /// but merely changing the emitter-count slider does not.
+    /// </summary>
+    public void SynchronizeFireSequence(uint entityKey, uint fireSequence)
+    {
+        if (!_states.TryGetValue(entityKey, out DriverState? state))
+        {
+            state = new DriverState { RecoilElapsedSeconds = 1000f };
+            _states.Add(entityKey, state);
+        }
+        state.LastFireSequence = fireSequence;
+        state.RecoilElapsedSeconds = 1000f;
+    }
 
     private static PresentationAnimationTier ResolveTier(PresentationAnimationInput input, int tierOverride)
     {
@@ -231,7 +255,7 @@ public sealed class PresentationAnimationDriver
         public float WheelPhase;
         public float DrillPhase;
         public float SuspensionPhase;
-        public float Recoil;
+        public float RecoilElapsedSeconds;
         public uint LastFireSequence;
     }
 }
@@ -273,7 +297,7 @@ public sealed class PresentationAnimationRigBinding
             float transformLift = frame.TransformationProgress * tuning.TransformationLift;
             float recoil = frame.Recoil * frame.Recoil * tuning.RecoilDistance;
             _suspension.Position = _suspensionBasePosition + Vector3.Up * (frame.SuspensionOffset + transformLift) +
-                Vector3.Back * recoil;
+                Vector3.Forward * recoil;
             _suspension.Rotation = _suspensionBaseRotation + new Vector3(
                 frame.BodyLeanRadians + Mathf.DegToRad(tuning.TransformationTiltDegrees) * frame.TransformationProgress,
                 0f, 0f);

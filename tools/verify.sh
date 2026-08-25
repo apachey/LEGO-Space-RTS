@@ -302,7 +302,7 @@ godot_m7_look_smoke() {
       printf 'M7 Look Lab emitted a shader or script error.\n' >&2
       return 1
     fi
-    if ! printf '%s\n' "${output}" | grep -q "M7 LOOK LAB: PASS schema=5 units=4 meshes=192 triangles=31104 buildings=2 firing=1 burning=1 animationDrivers=4 destructionDriver=1 vfxPools=5 prewarmed=168 controls=${controls} zoom=${zoom} post=${post} outline=${outline}"; then
+    if ! printf '%s\n' "${output}" | grep -q "M7 LOOK LAB: PASS schema=6 units=4 meshes=192 triangles=31104 buildings=2 firing=on burning=on animationDrivers=4 destructionDriver=1 vfxPools=6 prewarmed=180 controls=${controls} zoom=${zoom} post=${post} outline=${outline}.*materialView=combined audit=off"; then
       printf 'Godot exited without the required M7 Look Lab PASS marker for controls=%s zoom=%s post=%s outline=%s.\n' "${controls}" "${zoom}" "${post}" "${outline}" >&2
       return 1
     fi

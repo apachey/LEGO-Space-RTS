@@ -27,7 +27,11 @@ required = [
     'GodotClient/Scripts/Presentation/FogPresenter.cs','GodotClient/Scripts/Presentation/DebugRenderer.cs',
     'GodotClient/Scripts/Presentation/UnitViewManager.cs','GodotClient/Scripts/Presentation/PresentationAnimationDriver.cs',
     'GodotClient/Scripts/Presentation/PresentationVfxPool.cs','GodotClient/Scripts/Presentation/M7LookProfile.cs',
+    'GodotClient/Scripts/Presentation/M7LookMaterialFactory.cs',
+    'GodotClient/Scripts/Presentation/M7WorldLightingEvaluator.cs',
+    'GodotClient/Scripts/Presentation/PresentationDestruction.cs',
     'GodotClient/Scripts/Client/M7LookLab.cs',
+    'GodotClient/Assets/M7/Textures/regolith_surface_v2.png',
     'GodotClient/Scripts/UI/BasicHud.cs','GodotClient/Scripts/UI/DebugHud.cs','GodotClient/Scripts/UI/M5PlaytestHud.cs',
     'SimCore/Runtime/Scenarios/M5AcceptanceScenarioFactory.cs','Docs/IMPLEMENTATION_REPORT.md',
     'tools/doctor.sh','tools/verify.sh','tools/run-game.sh','tools/build-mac.sh','tools/capture-visual-smoke.sh',
@@ -136,21 +140,42 @@ for token in ['PresentationEventDeduplicator','PresentationVfxPoolStats','TryAcq
     check(token in vfx_pool, f'T066 pooled VFX foundation missing: {token}')
 check('QueueFree()' not in vfx_pool, 'T066 pooled VFX nodes must be reused rather than freed per effect')
 look_profile = (ROOT/'GodotClient/Scripts/Presentation/M7LookProfile.cs').read_text()
-check('CurrentSchemaVersion = 5' in look_profile and 'AnimationLook Animation' in look_profile and
+check('CurrentSchemaVersion = 6' in look_profile and 'AnimationLook Animation' in look_profile and
       'DestructionLook Destruction' in look_profile and 'VfxPoolLook VfxPool' in look_profile and
       'WorldCycleLook WorldCycle' in look_profile and 'SignalPulseAmount' in look_profile and
       'LampPulseAmount' in look_profile and 'CrystalPulseAmount' in look_profile and
-      'ReliefStrength' in look_profile and 'TextureBlendMode' in look_profile,
-      'M7 Look Profile schema 5 texture/emission/world-cycle controls missing')
+      'ReliefStrength' in look_profile and 'TextureBlendMode' in look_profile and
+      'InspectionPass' in look_profile and 'ApplySchemaSixMigration' in look_profile,
+      'M7 Look Profile schema 6 texture/emission/world-cycle controls missing')
+look_materials = (ROOT/'GodotClient/Scripts/Presentation/M7LookMaterialFactory.cs').read_text()
+for token in ['regolith_surface_v2.png','varying vec3 view_position','varying vec3 local_normal',
+              'ground_relief_normal','inspection_pass','anti_tiled_albedo','anti_tiled_height',
+              'AuthoredOpaque','OpaqueEmissiveShader','RegolithTexturePath = GroundAlbedoTexturePath']:
+    check(token in look_materials, f'M7 corrected material inspection pipeline missing: {token}')
+check('textureLod(detail_texture' not in look_materials and 'textureLod(albedo_texture' not in look_materials,
+      'M7 material pipeline must use derivative-aware texture sampling at RTS zoom')
+world_lighting = (ROOT/'GodotClient/Scripts/Presentation/M7WorldLightingEvaluator.cs').read_text()
+for token in ['signed solar altitude','M7WorldEnvironment.Underground','NightReadability is a floor/boost',
+              'ValidateDeterministic','Direct sun remained active below the horizon',
+              'FunctionalLightFactor','BlueHourAltitude = -18f','NeutralDayAltitude = 24f',
+              'resolvedShadowFactor']:
+    check(token in world_lighting, f'M7 deterministic world-light evaluator missing: {token}')
 look_lab = (ROOT/'GodotClient/Scripts/Client/M7LookLab.cs').read_text()
 for token in ['BuildAnimationSettings','PresentationAnimationDriver','BuildDestructionSettings',
               'PresentationDestructionDriver','PresentationVfxPool<PooledLegoDebrisBurst>',
               'PresentationVfxPool<PooledTracerEffect>','UpdatePoolStatsLabel','ValidatePoolReuse',
-              'BuildWorldCycleSettings','EvaluateWorldLighting','GlareTexturePath']:
+              'BuildWorldCycleSettings','M7WorldLightingEvaluator.Evaluate','GlareTexturePath',
+              'PresentationVfxPool<PooledExplosionBurst>','--m7-look-profile',
+              '--m7-look-material-view','--m7-look-material-audit','FormatCaptureFloat',
+              'DirectionalLight3D.ShadowMode.Parallel4Splits','_worldFunctionalLightFactor',
+              'float broadRelief']:
     check(token in look_lab, f'M7 Look Lab T065/T066/T067 integration missing: {token}')
+check('Start from surface character' not in look_lab and 'Physical surface depth' not in look_lab,
+      'M7 normal Materials UI must remain role-authored rather than exposing low-level shader controls')
 destruction_presentation = (ROOT/'GodotClient/Scripts/Presentation/PresentationDestruction.cs').read_text()
 for token in ['PresentationDestructionScaleBand','PresentationDestructionDriver','MaxFragments = 18',
-              'MultiMeshInstance3D','LegoDebrisBurstRequest']:
+              'MultiMeshInstance3D','LegoDebrisBurstRequest','PooledExplosionBurst',
+              'FireLobeCount','HotFragmentCount','SmokePuffCount','ValidateSmoke']:
     check(token in destruction_presentation, f'T067 bounded LEGO destruction foundation missing: {token}')
 check('RigidBody3D' not in destruction_presentation and 'CollisionShape3D' not in destruction_presentation,
       'T067 cosmetic debris must not introduce physical bodies or colliders')

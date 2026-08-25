@@ -7,17 +7,23 @@ public partial class M7LookLab : Node3D
 {
     private const string ModelPath = "res://Assets/M7/raider_drill_rig.glb";
     private const string GlareTexturePath = "res://Assets/M7/Textures/emissive_glare.png";
+    private const float GroundExtent = 300f;
+    private static Texture2D? _softDiscTexture;
     private static readonly string[] Categories =
     {
         "SCENE & CAMERA", "SHADING", "MATERIALS", "GLASS & EMISSION", "LIGHTING", "WORLD LIGHT CYCLE", "POST FX", "OUTLINE", "ANIMATION", "DESTRUCTION", "VFX", "GROUND"
     };
 
     private readonly List<Node3D> _units = new();
+    private readonly List<Node3D?> _unitMuzzleSockets = new();
     private readonly List<PresentationAnimationRigBinding> _animationRigs = new();
     private readonly List<MeshInstance3D> _unitMeshes = new();
     private readonly List<(MeshInstance3D Mesh, M7LookMaterialRole Role)> _roleMeshes = new();
+    private Dictionary<M7LookMaterialRole, Material> _sharedMaterials = new();
     private readonly List<(OmniLight3D Light, M7LookMaterialRole Role)> _emissionLights = new();
     private readonly List<MeshInstance3D> _tracks = new();
+    private readonly List<ColorRect> _worldGradientSwatches = new();
+    private (int Environment, float Daylight, float Darkness, float Readability)? _worldGradientKey;
     private Action? _returnToPrototype;
     private M7LookProfile _profile = M7LookProfile.CreateDefault();
     private M7LookProfile _defaults = M7LookProfile.CreateDefault();
@@ -27,14 +33,16 @@ public partial class M7LookLab : Node3D
     private DirectionalLight3D? _rimLight;
     private Godot.Environment? _environment;
     private MeshInstance3D? _ground;
-    private MeshInstance3D? _fogPreview;
     private readonly PresentationAnimationDriver _animationDriver = new();
     private readonly PresentationDestructionDriver _destructionDriver = new();
+    private PresentationAnimationTuning _animationTuning = new();
+    private PresentationDestructionTuning _destructionTuning = new();
     private PresentationVfxPool<PooledTracerEffect>? _tracerPool;
     private PresentationVfxPool<PooledParticleBurst>? _muzzlePool;
     private PresentationVfxPool<PooledParticleBurst>? _impactPool;
     private PresentationVfxPool<PooledLegoDebrisBurst>? _heroDebrisPool;
     private PresentationVfxPool<PooledParticleBurst>? _destructionDustPool;
+    private PresentationVfxPool<PooledExplosionBurst>? _explosionPool;
     private Material? _tracerVfxMaterial;
     private Material? _muzzleVfxMaterial;
     private Material? _impactVfxMaterial;
@@ -56,18 +64,30 @@ public partial class M7LookLab : Node3D
     private Label? _statusLabel;
     private Label? _poolStatsLabel;
     private Label? _destructionStatsLabel;
+    private Label? _worldPhaseLabel;
     private Button? _pauseButton;
     private int _category;
     private int _materialFamily;
     private bool _controlsVisible = true;
     private bool _smoke;
+    private bool _materialAudit;
     private bool _finished;
     private int _frames;
+    private int _captureFrame = 24;
     private double _time;
-    private float _worldNightFactor;
-    private int _lastWeaponCycle = -1;
-    private int _lastImpactCycle = -1;
-    private int _lastDestructionCycle = -1;
+    private float _worldLocalLightMultiplier = 1f;
+    private float _worldFunctionalLightFactor = 1f;
+    private readonly List<PendingWeaponImpact> _pendingWeaponImpacts = new();
+    private uint _previewShotSequence;
+    private float _previewShotAccumulator;
+    private bool _shotClockPrimed;
+    private bool _shotTriggeredThisFrame;
+    private int _previousPreviewEmitters;
+    private float _impactLightRemaining;
+    private float _telemetryUiElapsed;
+    // Preserve the four-unit comparison on entry. Auto-destruction starts on
+    // the first completed preview interval; the manual trigger remains instant.
+    private int _lastDestructionCycle;
     private int _activeDestructionTarget = -1;
     private float _destructionPreviewElapsed = float.MaxValue;
     private uint _destructionSequence = 1u;
@@ -85,6 +105,40 @@ public partial class M7LookLab : Node3D
         _smoke = commandLineArgs.Contains("--m7-look-smoke");
         _controlsVisible = ParseString(commandLineArgs, "--m7-look-controls") != "hidden";
         _capturePath = ParseString(commandLineArgs, "--capture-path");
+        string? profilePath = ParseString(commandLineArgs, "--m7-look-profile");
+        if (!string.IsNullOrWhiteSpace(profilePath))
+        {
+            if (!File.Exists(profilePath))
+                throw new FileNotFoundException("M7 Look Lab profile was not found.", profilePath);
+            if (!M7LookProfile.TryFromJson(File.ReadAllText(profilePath), out M7LookProfile imported, out string error))
+                throw new InvalidDataException($"M7 Look Lab profile is invalid: {error}");
+            _profile = imported;
+        }
+        if (int.TryParse(ParseString(commandLineArgs, "--m7-look-capture-frame"), out int captureFrame))
+            _captureFrame = Math.Clamp(captureFrame, 1, 600);
+        string? materialView = ParseString(commandLineArgs, "--m7-look-material-view");
+        _profile.Materials.InspectionPass = materialView switch
+        {
+            "combined" => 0,
+            "base" => 1,
+            "color" => 2,
+            "relief" => 3,
+            "reflection" => 4,
+            _ => _profile.Materials.InspectionPass
+        };
+        _materialAudit = commandLineArgs.Contains("--m7-look-material-audit");
+        if (_materialAudit)
+        {
+            _profile.Scene.FiringEnabled = false;
+            _profile.Scene.BurningEnabled = false;
+            _profile.Scene.DustEnabled = false;
+            _profile.Animation.Enabled = false;
+            _profile.Destruction.Enabled = false;
+            _profile.WorldCycle.AnimatePreview = false;
+            _profile.Emission.SignalPulseAmount = 0f;
+            _profile.Emission.LampPulseAmount = 0f;
+            _profile.Emission.CrystalPulseAmount = 0f;
+        }
         if (float.TryParse(ParseString(commandLineArgs, "--m7-look-zoom"), System.Globalization.NumberStyles.Float,
             System.Globalization.CultureInfo.InvariantCulture, out float zoom))
             _profile.Camera.ZoomCells = zoom;
@@ -95,6 +149,11 @@ public partial class M7LookLab : Node3D
         if (outlineOverride == "off") _profile.Outline.Enabled = false;
         else if (outlineOverride == "on") _profile.Outline.Enabled = true;
         string? worldOverride = ParseString(commandLineArgs, "--m7-look-world");
+        if (worldOverride == "manual")
+        {
+            _profile.WorldCycle.Enabled = false;
+            _profile.WorldCycle.AnimatePreview = false;
+        }
         int worldEnvironment = worldOverride switch
         {
             "earth" => 0,
@@ -117,10 +176,13 @@ public partial class M7LookLab : Node3D
         _defaults = _profile.Clone();
 
         BuildScene();
+        _previousPreviewEmitters = Math.Min(_profile.VfxPool.PreviewEmitters, _units.Count);
+        for (int i = 0; i < _units.Count; i++)
+            _animationDriver.SynchronizeFireSequence((uint)(i + 1), 0u);
         BuildControls();
         ApplyProfile(rebuildMaterials: true);
         ProcessPriority = 1000;
-        GD.Print($"M7 LOOK LAB: active schema={_profile.SchemaVersion} zoom={_profile.Camera.ZoomCells:0.##} controls={(_controlsVisible ? "visible" : "hidden")} post={(_profile.Post.Enabled ? "on" : "off")} outline={(_profile.Outline.Enabled ? "on" : "off")} Tab=controls wheel=zoom RMB=orbit MMB=pan WASD=pan F=reset Escape=return");
+        GD.Print($"M7 LOOK LAB: active schema={_profile.SchemaVersion} zoom={FormatCaptureFloat(_profile.Camera.ZoomCells)} controls={(_controlsVisible ? "visible" : "hidden")} post={(_profile.Post.Enabled ? "on" : "off")} outline={(_profile.Outline.Enabled ? "on" : "off")} world={CaptureWorldMarker()} time={CaptureTimeMarker()} phase={CapturePhaseMarker()} materialView={CaptureMaterialViewMarker()} audit={(_materialAudit ? "on" : "off")} Tab=controls wheel=zoom RMB=orbit MMB=pan WASD=pan F=reset Escape=return");
     }
 
     public override void _Process(double delta)
@@ -135,17 +197,22 @@ public partial class M7LookLab : Node3D
         }
         UpdateFreeCamera((float)delta);
         AnimateScene();
-        UpdatePoolStatsLabel();
-        UpdateDestructionStatsLabel();
+        _telemetryUiElapsed += (float)delta;
+        if (_telemetryUiElapsed >= 0.12f)
+        {
+            _telemetryUiElapsed = 0f;
+            UpdatePoolStatsLabel();
+            UpdateDestructionStatsLabel();
+        }
 
         if (!_smoke || _finished) return;
         _frames++;
-        if (_frames < 24) return;
+        if (_frames < _captureFrame) return;
         bool valid = ValidateLab(out int triangles);
         if (valid && _capturePath is not null) valid = CaptureViewport(_capturePath);
         _finished = true;
         if (valid)
-            GD.Print($"M7 LOOK LAB: PASS schema={_profile.SchemaVersion} units={_units.Count} meshes={_unitMeshes.Count} triangles={triangles} buildings=2 firing=1 burning=1 animationDrivers={_animationRigs.Count} destructionDriver=1 vfxPools=5 prewarmed=168 controls={(_controlsVisible ? "visible" : "hidden")} zoom={_profile.Camera.ZoomCells:0.##} post={(_profile.Post.Enabled ? "on" : "off")} outline={(_profile.Outline.Enabled ? "on" : "off")}");
+            GD.Print($"M7 LOOK LAB: PASS schema={_profile.SchemaVersion} units={_units.Count} meshes={_unitMeshes.Count} triangles={triangles} buildings=2 firing={(_profile.Scene.FiringEnabled ? "on" : "off")} burning={(_profile.Scene.BurningEnabled ? "on" : "off")} animationDrivers={_animationRigs.Count} destructionDriver=1 vfxPools=6 prewarmed=180 controls={(_controlsVisible ? "visible" : "hidden")} zoom={FormatCaptureFloat(_profile.Camera.ZoomCells)} post={(_profile.Post.Enabled ? "on" : "off")} outline={(_profile.Outline.Enabled ? "on" : "off")} world={CaptureWorldMarker()} time={CaptureTimeMarker()} phase={CapturePhaseMarker()} materialView={CaptureMaterialViewMarker()} audit={(_materialAudit ? "on" : "off")}");
         else
             GD.PrintErr($"M7 LOOK LAB: FAIL units={_units.Count} meshes={_unitMeshes.Count} triangles={triangles}");
         GetTree().Quit(valid ? 0 : 2);
@@ -203,7 +270,20 @@ public partial class M7LookLab : Node3D
         _camera = new Camera3D { Name = "LookLabCamera", Current = true, Fov = 36f, Near = 0.2f, Far = 400f };
         AddChild(_camera);
 
-        _keyLight = new DirectionalLight3D { Name = "KeyLight", ShadowEnabled = true, DirectionalShadowMaxDistance = 180f };
+        _keyLight = new DirectionalLight3D
+        {
+            Name = "KeyLight",
+            ShadowEnabled = true,
+            DirectionalShadowMode = DirectionalLight3D.ShadowMode.Parallel4Splits,
+            DirectionalShadowBlendSplits = true,
+            DirectionalShadowSplit1 = 0.12f,
+            DirectionalShadowSplit2 = 0.28f,
+            DirectionalShadowSplit3 = 0.55f,
+            DirectionalShadowFadeStart = 0.82f,
+            DirectionalShadowMaxDistance = 72f,
+            ShadowBias = 0.035f,
+            ShadowNormalBias = 0.75f
+        };
         _fillLight = new DirectionalLight3D { Name = "FillLight", ShadowEnabled = false };
         _rimLight = new DirectionalLight3D { Name = "RimLight", ShadowEnabled = false };
         AddChild(_keyLight); AddChild(_fillLight); AddChild(_rimLight);
@@ -220,9 +300,10 @@ public partial class M7LookLab : Node3D
         _ground = new MeshInstance3D
         {
             Name = "Ground",
-            // Keep the authored terrain under every supported orbit/zoom. The
-            // old 52-unit square exposed its corners as large dark wedges.
-            Mesh = BuildGroundMesh(112, 120f),
+            // Keep authored terrain under every legal focus/zoom/pitch. The
+            // expanded mesh preserves the prior cell density while covering
+            // the far ray at 72-cell zoom and a fully panned focus.
+            Mesh = BuildGroundMesh(240, GroundExtent),
             CastShadow = GeometryInstance3D.ShadowCastingSetting.Off
         };
         AddChild(_ground);
@@ -241,7 +322,7 @@ public partial class M7LookLab : Node3D
         AddChild(intact); AddChild(burning);
         _targetPoint = SurfaceImpactPoint(intact.GlobalPosition + new Vector3(0f, 1.55f, 0f), intactSize, _shooterMuzzle);
         FaceModelForwardAt(_units[0], _targetPoint);
-        _shooterMuzzle = ResolveUnitMuzzle(_units[0]);
+        _shooterMuzzle = ResolveUnitMuzzle(_units[0], _unitMuzzleSockets[0]);
 
         BuildGroundDetails();
         BuildCrystalCluster(new Vector3(10.2f, 0f, 6.8f));
@@ -264,6 +345,7 @@ public partial class M7LookLab : Node3D
     private void RegisterUnit(Node3D unit)
     {
         _units.Add(unit);
+        _unitMuzzleSockets.Add(unit.FindChild("Tool_DrillTip", true, false) as Node3D);
         _animationRigs.Add(new PresentationAnimationRigBinding(unit));
         CollectRoleMeshes(unit, unitMesh: true);
     }
@@ -275,6 +357,7 @@ public partial class M7LookLab : Node3D
             if (child is MeshInstance3D mesh)
             {
                 M7LookMaterialRole role = M7LookMaterialFactory.InferRole(mesh.Name);
+                if (unitMesh) mesh.CastShadow = GeometryInstance3D.ShadowCastingSetting.On;
                 _roleMeshes.Add((mesh, role));
                 if (unitMesh) _unitMeshes.Add(mesh);
             }
@@ -332,15 +415,6 @@ public partial class M7LookLab : Node3D
             };
             AddChild(track); _tracks.Add(track);
         }
-        _fogPreview = new MeshInstance3D
-        {
-            Name = "FogOfWarPreview",
-            Mesh = new PlaneMesh { Size = new Vector2(180f, 40f) },
-            Position = new Vector3(0f, 1.2f, -45f),
-            MaterialOverride = FogPreviewMaterial(),
-            CastShadow = GeometryInstance3D.ShadowCastingSetting.Off
-        };
-        AddChild(_fogPreview);
     }
 
     private void BuildCrystalCluster(Vector3 origin)
@@ -373,6 +447,8 @@ public partial class M7LookLab : Node3D
             _ => new PooledLegoDebrisBurst(debrisMaterial));
         _destructionDustPool = new PresentationVfxPool<PooledParticleBurst>(this, "PooledDestructionDust", 12,
             _ => new PooledParticleBurst(64, 1.2f, 82f, 1.2f, 5.8f, new Vector3(0f, -3.8f, 0f)));
+        _explosionPool = new PresentationVfxPool<PooledExplosionBurst>(this, "PooledExplosion", 12,
+            _ => new PooledExplosionBurst());
 
         _impactLight = new OmniLight3D { Name = "ImpactLight", OmniRange = 3.2f, ShadowEnabled = false, Visible = false };
         AddChild(_impactLight);
@@ -482,6 +558,9 @@ public partial class M7LookLab : Node3D
         if (_settingsBox is null) return;
         _poolStatsLabel = null;
         _destructionStatsLabel = null;
+        _worldPhaseLabel = null;
+        _worldGradientSwatches.Clear();
+        _worldGradientKey = null;
         foreach (Node child in _settingsBox.GetChildren()) { _settingsBox.RemoveChild(child); child.QueueFree(); }
         switch (_category)
         {
@@ -512,7 +591,7 @@ public partial class M7LookLab : Node3D
         AddCheck("Weapon firing", () => _profile.Scene.FiringEnabled, v => _profile.Scene.FiringEnabled = v, false);
         AddCheck("Burning building", () => _profile.Scene.BurningEnabled, v => _profile.Scene.BurningEnabled = v, false);
         AddCheck("Dust / smoke", () => _profile.Scene.DustEnabled, v => _profile.Scene.DustEnabled = v, false);
-        AddCheck("Fog-of-war preview", () => _profile.Scene.FogPreviewEnabled, v => _profile.Scene.FogPreviewEnabled = v, false);
+        AddNote("Fog-of-war framing is deferred to its gameplay visibility fixture. The old finite black plane was removed because its edges intersected the terrain during camera orbit.");
     }
 
     private void BuildShadingSettings()
@@ -530,35 +609,13 @@ public partial class M7LookLab : Node3D
 
     private void BuildMaterialSettings()
     {
-        AddNote("Pick the visual character first, then tune only what you can identify on screen. Each authored grayscale map independently drives tinted albedo breakup, bump normals and gloss variation; faction color stays editable.");
-        string[] families = { "Painted hull", "Structural earth", "Accent", "Dark mechanic", "Tool steel", "Rubber", "Building shell", "Ground rock" };
+        AddNote("Materials are now role-authored: paint, coated structure, blackened mechanism, bare tool steel, rubber and building panels each use their own restrained texture/normal/roughness response. This tab only changes identity color; Ground owns terrain materials. Internal map diagnostics remain available to automated captures.");
+        string[] families = { "Painted hull", "Coated structure", "Accent coating", "Blackened mechanism", "Tool steel", "Rubber", "Building shell" };
+        _materialFamily = Math.Clamp(_materialFamily, 0, families.Length - 1);
         AddOption("Material family", families, _materialFamily, index => { _materialFamily = index; BuildCurrentSettings(); }, rebuildMaterials: false, applyProfile: false);
         MaterialLook look = SelectedMaterial();
-        AddOption("Start from surface character", new[] { "Custom", "Powder-coated machine", "Gloss molded polymer", "Bare machined metal", "Aged industrial metal", "Dense rubber", "Dusty mineral" }, 0,
-            index => { if (index == 0) return; ApplyMaterialPreset(look, index); ApplyProfile(true); BuildCurrentSettings(); }, rebuildMaterials: false, applyProfile: false);
         AddNote(MaterialMapDescription(_materialFamily));
         AddColor("Base color", () => look.BaseColor, v => look.BaseColor = v);
-        AddHeading("LIGHT RESPONSE");
-        AddSlider("Metal character · coated → bare", 0, 1, 0.01, () => look.Metallic, v => look.Metallic = v);
-        AddSlider("Surface gloss · matte → glossy", 0, 1, 0.01, () => 1f - look.Roughness, v => look.Roughness = 1f - v);
-        AddSlider("Reflection strength", 0, 1, 0.01, () => look.Specular, v => look.Specular = v);
-        AddSlider("Protective topcoat", 0, 1, 0.01, () => look.Clearcoat, v => look.Clearcoat = v);
-        AddSlider("Topcoat gloss", 0, 1, 0.01, () => 1f - look.ClearcoatRoughness, v => look.ClearcoatRoughness = 1f - v);
-        AddSlider("Grazing-angle reflection", 0, 1, 0.01, () => look.Fresnel, v => look.Fresnel = v);
-        AddHeading("AUTHORED SURFACE");
-        AddOption("How texture changes color", new[] { "Gentle surface tint", "Darker recesses", "Graphic high contrast" }, look.TextureBlendMode,
-            index => look.TextureBlendMode = index);
-        AddSlider("Visible color texture", 0, 1, 0.01, () => look.TextureStrength, v => look.TextureStrength = v);
-        AddSlider("Texture feature size · broad → fine", 0.05, 12, 0.05, () => look.TextureScale, v => look.TextureScale = v);
-        AddSlider("Bump depth", 0, 1.5, 0.01, () => look.ReliefStrength, v => look.ReliefStrength = v);
-        AddSlider("Gloss variation", 0, 1, 0.01, () => look.RoughnessVariation, v => look.RoughnessVariation = v);
-        AddHeading("WEAR & SCALE");
-        AddSlider("Fine procedural grain", 0, 1, 0.01, () => look.MicroStrength, v => look.MicroStrength = v);
-        AddSlider("Grain size · broad → fine", 0.1, 20, 0.1, () => look.MicroScale, v => look.MicroScale = v);
-        AddSlider("Large color patches", 0, 1, 0.01, () => look.MacroVariation, v => look.MacroVariation = v);
-        AddSlider("Exposed edges", 0, 1, 0.01, () => look.EdgeWear, v => look.EdgeWear = v);
-        AddSlider("Dust coverage", 0, 1, 0.01, () => look.DustAmount, v => look.DustAmount = v);
-        AddSlider("Directional machining", 0, 1, 0.01, () => look.BrushedAmount, v => look.BrushedAmount = v);
     }
 
     private void BuildGlassEmissionSettings()
@@ -578,7 +635,7 @@ public partial class M7LookLab : Node3D
         AddColor("Crystal color", () => _profile.Emission.CrystalColor, v => _profile.Emission.CrystalColor = v, false);
         AddSlider("Crystal energy", 0, 12, 0.1, () => _profile.Emission.CrystalEnergy, v => _profile.Emission.CrystalEnergy = v, false);
         AddHeading("FUNCTION-SPECIFIC MOTION");
-        AddNote("Work lamps remain steady. Industrial status signals and resource crystals pulse independently so one behavior never contaminates every light source.");
+        AddNote("Work lamps remain steady and switch on automatically through dusk; they are off in daylight and always available Underground. Industrial status signals and resource crystals remain semantically independent.");
         AddSlider("Signal pulse amount", 0, 1, 0.01, () => _profile.Emission.SignalPulseAmount, v => _profile.Emission.SignalPulseAmount = v, false);
         AddSlider("Signal pulse speed", 0, 8, 0.1, () => _profile.Emission.SignalPulseSpeed, v => _profile.Emission.SignalPulseSpeed = v, false);
         AddSlider("Crystal pulse amount", 0, 1, 0.01, () => _profile.Emission.CrystalPulseAmount, v => _profile.Emission.CrystalPulseAmount = v, false);
@@ -610,35 +667,142 @@ public partial class M7LookLab : Node3D
         AddCheck("Rim light enabled", () => _profile.Lighting.RimLightEnabled, v => _profile.Lighting.RimLightEnabled = v, false);
         AddColor("Rim color", () => _profile.Lighting.RimColor, v => _profile.Lighting.RimColor = v, false);
         AddSlider("Rim energy", 0, 8, 0.05, () => _profile.Lighting.RimEnergy, v => _profile.Lighting.RimEnergy = v, false);
-        AddNote("Far-field background affects both the clear color and distant terrain, so it remains visible in the overhead test.");
+        AddNote("The backdrop also gives the terrain a restrained atmospheric tint, so changes remain visible from the overhead camera without darkening the map edges.");
         AddColor("Far-field background", () => _profile.Lighting.BackgroundColor, v => _profile.Lighting.BackgroundColor = v, false);
         AddSlider("Background influence", 0, 1, 0.01, () => _profile.Lighting.BackgroundInfluence, v => _profile.Lighting.BackgroundInfluence = v, false);
     }
 
     private void BuildWorldCycleSettings()
     {
-        AddNote("Presentation-only lighting study: it never advances SimCore or gameplay time. Earth, Mars and Moon start from physical day lengths; Planet U is explicitly an authored non-canon test profile. Underground disables the sun cycle and protects RTS readability with cool diffuse fill.");
+        AddNote("Presentation-only lighting study: it never advances SimCore or gameplay time. Light/dark values define each world's relative cycle ratio inside the 24-hour review clock; Planet U is an authored non-canon test. Underground disables the sun and protects RTS readability with cool diffuse fill.");
         AddCheck("Use world light profile", () => _profile.WorldCycle.Enabled, v => _profile.WorldCycle.Enabled = v, false);
         AddOption("World", new[] { "Earth", "Mars", "Moon", "Planet U · authored", "Underground · fixed" },
             _profile.WorldCycle.Environment,
             index => { ApplyWorldEnvironmentPreset(index); ApplyProfile(false); BuildCurrentSettings(); },
             rebuildMaterials: false, applyProfile: false);
+        _worldPhaseLabel = new Label
+        {
+            HorizontalAlignment = HorizontalAlignment.Center,
+            CustomMinimumSize = new Vector2(0f, 30f)
+        };
+        _worldPhaseLabel.AddThemeFontSizeOverride("font_size", 16);
+        _worldPhaseLabel.AddThemeColorOverride("font_color", new Color("e8b640"));
+        _settingsBox?.AddChild(_worldPhaseLabel);
+        BuildWorldGradientStrip();
+        if (_settingsBox is not null)
+        {
+            HFlowContainer phaseActions = new();
+            _settingsBox.AddChild(phaseActions);
+            AddAction(phaseActions, "NIGHT", () => SetWorldReviewTime(0f));
+            AddAction(phaseActions, "BLUE HOUR", () => SetWorldReviewPhase(M7WorldLightPhase.BlueHour, true));
+            AddAction(phaseActions, "DAWN", () => SetWorldReviewPhase(M7WorldLightPhase.SunriseSunset, true));
+            AddAction(phaseActions, "GOLDEN", () => SetWorldReviewPhase(M7WorldLightPhase.GoldenHour, true));
+            AddAction(phaseActions, "NOON", () => SetWorldReviewTime(12f));
+            AddAction(phaseActions, "SUNSET", () => SetWorldReviewPhase(M7WorldLightPhase.SunriseSunset, false));
+        }
         AddCheck("Animate laboratory clock", () => _profile.WorldCycle.AnimatePreview,
             v => _profile.WorldCycle.AnimatePreview = _profile.WorldCycle.Environment != 4 && v, false);
         AddSlider("Local time · hours", 0, 24, 0.05, () => _profile.WorldCycle.LocalTimeHours,
             v => _profile.WorldCycle.LocalTimeHours = v, false);
         AddSlider("Preview full day · seconds", 10, 600, 1, () => _profile.WorldCycle.PreviewDaySeconds,
             v => _profile.WorldCycle.PreviewDaySeconds = v, false);
-        AddHeading("AUTHORED PERIOD LENGTHS");
-        AddSlider("Light period · world hours", 0.1, 720, 0.1, () => _profile.WorldCycle.DaylightHours,
+        AddHeading("AUTHORED LIGHT / DARK RATIO");
+        AddSlider("Relative light duration", 0.1, 720, 0.1, () => _profile.WorldCycle.DaylightHours,
             v => _profile.WorldCycle.DaylightHours = v, false);
-        AddSlider("Dark period · world hours", 0.1, 720, 0.1, () => _profile.WorldCycle.DarknessHours,
+        AddSlider("Relative dark duration", 0.1, 720, 0.1, () => _profile.WorldCycle.DarknessHours,
             v => _profile.WorldCycle.DarknessHours = v, false);
         AddHeading("PLAYABILITY SAFEGUARDS");
         AddSlider("Night readability floor", 0.1, 1, 0.01, () => _profile.WorldCycle.NightReadability,
             v => _profile.WorldCycle.NightReadability = v, false);
         AddSlider("Local lights at night", 0.5, 4, 0.01, () => _profile.WorldCycle.LocalLightBoost,
             v => _profile.WorldCycle.LocalLightBoost = v, false);
+        ApplyLighting();
+    }
+
+    private void BuildWorldGradientStrip()
+    {
+        if (_settingsBox is null) return;
+        HBoxContainer strip = new() { CustomMinimumSize = new Vector2(0f, 22f) };
+        strip.AddThemeConstantOverride("separation", 0);
+        for (int hour = 0; hour < 24; hour++)
+        {
+            ColorRect swatch = new()
+            {
+                Color = Colors.Black,
+                CustomMinimumSize = new Vector2(8f, 20f),
+                SizeFlagsHorizontal = Control.SizeFlags.ExpandFill
+            };
+            strip.AddChild(swatch);
+            _worldGradientSwatches.Add(swatch);
+        }
+        _settingsBox.AddChild(strip);
+        RefreshWorldGradientStrip();
+    }
+
+    private void RefreshWorldGradientStrip()
+    {
+        if (_worldGradientSwatches.Count != 24) return;
+        var key = (_profile.WorldCycle.Environment, _profile.WorldCycle.DaylightHours,
+            _profile.WorldCycle.DarknessHours, _profile.WorldCycle.NightReadability);
+        if (_worldGradientKey == key) return;
+        _worldGradientKey = key;
+        for (int hour = 0; hour < _worldGradientSwatches.Count; hour++)
+        {
+            M7WorldLightingFrame sample = M7WorldLightingEvaluator.Evaluate(_profile.WorldCycle, hour + 0.5f);
+            _worldGradientSwatches[hour].Color = sample.BackgroundColor.Lerp(sample.AmbientColor, 0.42f);
+            _worldGradientSwatches[hour].TooltipText = $"{hour:00}:30 · {sample.PhaseName}";
+        }
+    }
+
+    private void SetWorldReviewTime(float hours)
+    {
+        _profile.WorldCycle.Enabled = true;
+        _profile.WorldCycle.AnimatePreview = false;
+        _profile.WorldCycle.LocalTimeHours = hours;
+        ApplyProfile(false);
+        BuildCurrentSettings();
+    }
+
+    private void SetWorldReviewPhase(M7WorldLightPhase requestedPhase, bool morning)
+    {
+        if (_profile.WorldCycle.Environment == (int)M7WorldEnvironment.Underground)
+        {
+            SetWorldReviewTime(12f);
+            return;
+        }
+
+        float daylightSpan = 24f * _profile.WorldCycle.DaylightHours /
+            (_profile.WorldCycle.DaylightHours + _profile.WorldCycle.DarknessHours);
+        float darknessSpan = 24f - daylightSpan;
+        float sunrise = 12f - daylightSpan * 0.5f;
+        float sunset = 12f + daylightSpan * 0.5f;
+        float targetAltitude = requestedPhase switch
+        {
+            M7WorldLightPhase.BlueHour => -8f,
+            M7WorldLightPhase.SunriseSunset => -0.5f,
+            M7WorldLightPhase.GoldenHour => 9f,
+            _ => 12f
+        };
+        float bestTime = 12f;
+        float bestScore = float.PositiveInfinity;
+        // Sample normalized daylight and darkness arcs independently. Fixed
+        // clock increments can entirely skip twilight when the authored
+        // light/dark ratio makes one arc only a few seconds long.
+        for (int arc = 0; arc < 2; arc++)
+        for (int i = 0; i <= 256; i++)
+        {
+            float progress = i / 256f;
+            float time = arc == 0
+                ? sunrise + progress * daylightSpan
+                : Mathf.PosMod(sunset + progress * darknessSpan, 24f);
+            M7WorldLightingFrame frame = M7WorldLightingEvaluator.Evaluate(_profile.WorldCycle, time);
+            if (frame.Phase != requestedPhase || frame.IsMorning != morning) continue;
+            float score = Mathf.Abs(frame.SolarAltitude - targetAltitude);
+            if (score >= bestScore) continue;
+            bestScore = score;
+            bestTime = time;
+        }
+        SetWorldReviewTime(float.IsFinite(bestScore) ? bestTime : 12f);
     }
 
     private void ApplyWorldEnvironmentPreset(int environment)
@@ -721,8 +885,8 @@ public partial class M7LookLab : Node3D
         AddSlider("Body lean · degrees", 0, 12, 0.1, () => _profile.Animation.BodyLeanDegrees, v => _profile.Animation.BodyLeanDegrees = v, false);
         AddHeading("FUNCTION / STATE RESPONSE");
         AddSlider("Drill turns / second", 0, 5, 0.05, () => _profile.Animation.DrillTurnsPerSecond, v => _profile.Animation.DrillTurnsPerSecond = v, false);
-        AddSlider("Weapon recoil distance", 0, 0.8, 0.01, () => _profile.Animation.RecoilDistance, v => _profile.Animation.RecoilDistance = v, false);
-        AddSlider("Recoil recovery", 0.1, 30, 0.1, () => _profile.Animation.RecoilRecovery, v => _profile.Animation.RecoilRecovery = v, false);
+        AddSlider("Weapon recoil travel", 0, 0.35, 0.005, () => _profile.Animation.RecoilDistance, v => _profile.Animation.RecoilDistance = v, false);
+        AddSlider("Recoil return speed", 1, 18, 0.1, () => _profile.Animation.RecoilRecovery, v => _profile.Animation.RecoilRecovery = v, false);
         AddSlider("Transformation lift", 0, 1.5, 0.01, () => _profile.Animation.TransformationLift, v => _profile.Animation.TransformationLift = v, false);
         AddSlider("Transformation tilt", -45, 45, 0.5, () => _profile.Animation.TransformationTiltDegrees, v => _profile.Animation.TransformationTiltDegrees = v, false);
         AddOption("Significance tier", new[] { "Auto", "A · every frame", "B · 30 Hz", "C · 15 Hz" },
@@ -740,7 +904,18 @@ public partial class M7LookLab : Node3D
             AddAction(_settingsBox, "TRIGGER DESTRUCTION NOW", TriggerDestructionPreview,
                 "Runs one local presentation event even when automatic preview is disabled.");
         AddSlider("Preview loop · seconds", 2, 15, 0.1, () => _profile.Destruction.PreviewLoopSeconds, v => _profile.Destruction.PreviewLoopSeconds = v, false);
-        AddSlider("Destroyed hold · seconds", 0.2, 10, 0.1, () => _profile.Destruction.PreviewHoldSeconds, v => _profile.Destruction.PreviewHoldSeconds = v, false);
+        AddSlider("Destroyed hold · seconds", 0.2, 14.6, 0.1, () => _profile.Destruction.PreviewHoldSeconds, v => _profile.Destruction.PreviewHoldSeconds = v, false);
+        AddHeading("INITIAL BLAST");
+        AddSlider("Active blast budget", 0, 12, 1, () => _profile.Destruction.BlastPoolBudget, v => _profile.Destruction.BlastPoolBudget = (int)v, false);
+        AddColor("Blast color", () => _profile.Destruction.BlastColor, v => _profile.Destruction.BlastColor = v, false);
+        AddSlider("Blast visual size", 0.1, 4, 0.05, () => _profile.Destruction.BlastVisualScale, v => _profile.Destruction.BlastVisualScale = v, false);
+        AddSlider("Hot core emission", 0, 24, 0.1, () => _profile.Destruction.BlastEmissionEnergy, v => _profile.Destruction.BlastEmissionEnergy = v, false);
+        AddSlider("Blast illumination", 0, 24, 0.1, () => _profile.Destruction.BlastLightEnergy, v => _profile.Destruction.BlastLightEnergy = v, false);
+        AddSlider("Blast light reach", 0.5, 8, 0.1, () => _profile.Destruction.BlastLightRangeMultiplier, v => _profile.Destruction.BlastLightRangeMultiplier = v, false);
+        AddSlider("Hot flash persistence", 0.5, 1.8, 0.01, () => _profile.Destruction.BlastFlashPersistence, v => _profile.Destruction.BlastFlashPersistence = v, false);
+        AddSlider("Smoke arrival delay", 0, 0.55, 0.01, () => _profile.Destruction.BlastSmokeDelay, v => _profile.Destruction.BlastSmokeDelay = v, false);
+        AddSlider("Blast smoke prominence", 0, 1, 0.01, () => _profile.Destruction.BlastSmokeProminence, v => _profile.Destruction.BlastSmokeProminence = v, false);
+        AddSlider("Ground shock visibility", 0, 1, 0.01, () => _profile.Destruction.BlastRingStrength, v => _profile.Destruction.BlastRingStrength = v, false);
         AddHeading("HERO LEGO MODULES");
         AddSlider("Active burst budget", 0, 12, 1, () => _profile.Destruction.HeroPoolBudget, v => _profile.Destruction.HeroPoolBudget = (int)v, false);
         AddSlider("Maximum hero fragments", 0, 18, 1, () => _profile.Destruction.HeroFragmentCount, v => _profile.Destruction.HeroFragmentCount = (int)v, false);
@@ -790,8 +965,11 @@ public partial class M7LookLab : Node3D
         AddSlider("Tracer length", 0.1, 8, 0.05, () => _profile.Vfx.TracerLength, v => _profile.Vfx.TracerLength = v, false);
         AddSlider("Tracer speed", 1, 50, 0.5, () => _profile.Vfx.TracerSpeed, v => _profile.Vfx.TracerSpeed = v, false);
         AddSlider("Tracer emission", 0, 12, 0.1, () => _profile.Vfx.TracerEnergy, v => _profile.Vfx.TracerEnergy = v, false);
+        AddSlider("Preview shot interval", 0.25, 6, 0.05, () => _profile.Vfx.PreviewShotInterval, v => _profile.Vfx.PreviewShotInterval = v, false);
         AddSlider("Muzzle size", 0.05, 2, 0.01, () => _profile.Vfx.MuzzleSize, v => _profile.Vfx.MuzzleSize = v, false);
         AddSlider("Impact size", 0.05, 3, 0.01, () => _profile.Vfx.ImpactSize, v => _profile.Vfx.ImpactSize = v, false);
+        AddSlider("Impact light energy", 0, 20, 0.1, () => _profile.Vfx.ImpactLightEnergy, v => _profile.Vfx.ImpactLightEnergy = v, false);
+        AddSlider("Impact flash duration", 0.02, 0.4, 0.01, () => _profile.Vfx.ImpactLightSeconds, v => _profile.Vfx.ImpactLightSeconds = v, false);
         AddSlider("Spark count", 0, 20, 1, () => _profile.Vfx.SparkCount, v => _profile.Vfx.SparkCount = (int)v, false);
         AddSlider("Spark size", 0.01, 0.4, 0.01, () => _profile.Vfx.SparkSize, v => _profile.Vfx.SparkSize = v, false);
         AddHeading("FIRE / SMOKE");
@@ -827,6 +1005,10 @@ public partial class M7LookLab : Node3D
     private void ApplyProfile(bool rebuildMaterials)
     {
         _profile.Normalize();
+        _animationTuning = _profile.Animation.ToTuning();
+        _animationTuning.Normalize();
+        _destructionTuning = _profile.Destruction.ToTuning();
+        _destructionTuning.Normalize();
         ApplyUnitLayout();
         ApplyCamera();
         if (rebuildMaterials) ApplyMaterials();
@@ -852,7 +1034,7 @@ public partial class M7LookLab : Node3D
         _units[1].RotationDegrees = new Vector3(0f, 135f, 0f);
         _units[2].RotationDegrees = new Vector3(0f, 225f, 0f);
         _units[3].RotationDegrees = new Vector3(0f, 315f, 0f);
-        _shooterMuzzle = ResolveUnitMuzzle(_units[0]);
+        _shooterMuzzle = ResolveUnitMuzzle(_units[0], _unitMuzzleSockets[0]);
     }
 
     private void ApplyCamera()
@@ -868,6 +1050,17 @@ public partial class M7LookLab : Node3D
         Vector3 offset = new(Mathf.Sin(yaw) * Mathf.Cos(pitch), Mathf.Sin(pitch), Mathf.Cos(yaw) * Mathf.Cos(pitch));
         _camera.GlobalPosition = focus + offset * distance;
         _camera.LookAt(focus, Vector3.Up);
+        if (_keyLight is not null)
+        {
+            // Fit cascades to what the RTS camera can actually see instead of
+            // spreading a fixed 180 m map across mostly empty terrain.
+            _keyLight.DirectionalShadowMaxDistance = Mathf.Clamp(distance * 1.4f, 55f, 140f);
+        }
+        // The rim is authored relative to the review camera. Keep it in sync
+        // during RMB/Q/E orbit so materials do not appear to change merely
+        // because the light was left behind in its old world direction.
+        if (_rimLight is not null)
+            _rimLight.RotationDegrees = new Vector3(-28f, _profile.Camera.YawDegrees + 180f, 0f);
 
         Vector2 desired = new(size.X * (_controlsVisible ? 0.63f : 0.5f), size.Y * 0.50f);
         if (TryProjectToGround(desired, out Vector3 groundAtDesired))
@@ -876,16 +1069,6 @@ public partial class M7LookLab : Node3D
             focus += new Vector3(translation.X, 0f, translation.Z);
             _camera.GlobalPosition = focus + offset * distance;
             _camera.LookAt(focus, Vector3.Up);
-        }
-        if (_fogPreview is not null)
-        {
-            // Keep the preview as a far, screen-wide frontier. A fixed world
-            // rectangle turned into a large black wedge after camera orbit.
-            Vector3 awayFromCamera = new(-Mathf.Sin(yaw), 0f, -Mathf.Cos(yaw));
-            // Far terrain rises by roughly half a unit; keep the translucent
-            // shroud safely above it so it cannot intersect into black shards.
-            _fogPreview.GlobalPosition = focus + awayFromCamera * 45f + Vector3.Up * 1.2f;
-            _fogPreview.RotationDegrees = new Vector3(0f, _profile.Camera.YawDegrees, 0f);
         }
     }
 
@@ -904,23 +1087,18 @@ public partial class M7LookLab : Node3D
     private void ApplyLighting()
     {
         if (_keyLight is null || _fillLight is null || _rimLight is null || _environment is null) return;
-        WorldLightingFrame frame = _profile.WorldCycle.Enabled
-            ? EvaluateWorldLighting()
-            : new WorldLightingFrame(
-                _profile.Lighting.KeyAzimuth, _profile.Lighting.KeyElevation,
-                M7LookMaterialFactory.ParseColor(_profile.Lighting.KeyColor), _profile.Lighting.KeyEnergy,
-                _profile.Lighting.FillAzimuth, _profile.Lighting.FillElevation,
-                M7LookMaterialFactory.ParseColor(_profile.Lighting.FillColor), _profile.Lighting.FillEnergy,
-                M7LookMaterialFactory.ParseColor(_profile.Lighting.AmbientColor), _profile.Lighting.AmbientEnergy,
-                _profile.Lighting.RimLightEnabled, M7LookMaterialFactory.ParseColor(_profile.Lighting.RimColor),
-                _profile.Lighting.RimEnergy, M7LookMaterialFactory.ParseColor(_profile.Lighting.BackgroundColor),
-                _profile.Lighting.KeyAngularSize, _profile.Lighting.ShadowBlur, _profile.Lighting.ShadowOpacity, 0f);
-        _worldNightFactor = frame.NightFactor;
+        M7WorldLightingFrame frame = _profile.WorldCycle.Enabled
+            ? M7WorldLightingEvaluator.Evaluate(_profile.WorldCycle)
+            : ManualLightingFrame();
+        _worldLocalLightMultiplier = frame.LocalLightMultiplier;
+        _worldFunctionalLightFactor = frame.FunctionalLightFactor;
         _keyLight.Visible = frame.KeyEnergy > 0.001f;
         _keyLight.RotationDegrees = new Vector3(-frame.KeyElevation, frame.KeyAzimuth, 0f);
         _keyLight.LightColor = frame.KeyColor;
         _keyLight.LightEnergy = frame.KeyEnergy;
-        _keyLight.LightAngularDistance = frame.KeyAngularSize;
+        // Godot's variable-penumbra sampler dithers at RTS scale. Stable PCF
+        // blur gives a cleaner soft shadow without crawling pixel clusters.
+        _keyLight.LightAngularDistance = 0f;
         _keyLight.ShadowBlur = frame.ShadowBlur;
         _keyLight.ShadowOpacity = frame.ShadowOpacity;
         _fillLight.RotationDegrees = new Vector3(-frame.FillElevation, frame.FillAzimuth, 0f);
@@ -947,117 +1125,39 @@ public partial class M7LookLab : Node3D
             groundMaterial.SetShaderParameter("background_color", frame.BackgroundColor);
             groundMaterial.SetShaderParameter("background_influence", _profile.Lighting.BackgroundInfluence);
         }
+        if (_worldPhaseLabel is not null)
+            _worldPhaseLabel.Text = _profile.WorldCycle.Enabled
+                ? $"{frame.PhaseName.ToUpperInvariant()}  ·  {frame.SolarAltitude:+0.0;-0.0;0.0}°  ·  {_profile.WorldCycle.LocalTimeHours:00.00}"
+                : "MANUAL LIGHTING PROFILE";
+        RefreshWorldGradientStrip();
     }
 
-    private WorldLightingFrame EvaluateWorldLighting()
+    private M7WorldLightingFrame ManualLightingFrame()
     {
-        if (_profile.WorldCycle.Environment == 4)
-        {
-            return new WorldLightingFrame(145f, 24f, new Color("536a88"), 0.08f,
-                320f, 58f, new Color("7e9ab5"), 0.16f,
-                new Color("63768b"), 0.34f * _profile.WorldCycle.NightReadability,
-                true, new Color("7ac4d8"), 0.08f, new Color("080d12"),
-                7f, 4.5f, 0.74f, 1f);
-        }
-
-        float hours = Mathf.PosMod(_profile.WorldCycle.LocalTimeHours, 24f);
-        float periodTotal = _profile.WorldCycle.DaylightHours + _profile.WorldCycle.DarknessHours;
-        float daylightSpan = 24f * _profile.WorldCycle.DaylightHours / periodTotal;
-        float darknessSpan = 24f - daylightSpan;
-        float sunrise = 12f - daylightSpan * 0.5f;
-        float sunset = 12f + daylightSpan * 0.5f;
-        float sunWave;
-        if (hours >= sunrise && hours <= sunset)
-        {
-            float dayProgress = (hours - sunrise) / Math.Max(0.001f, daylightSpan);
-            sunWave = Mathf.Sin(dayProgress * Mathf.Pi);
-        }
-        else
-        {
-            float nightProgress = hours > sunset
-                ? (hours - sunset) / Math.Max(0.001f, darknessSpan)
-                : (hours + 24f - sunset) / Math.Max(0.001f, darknessSpan);
-            sunWave = -Mathf.Sin(nightProgress * Mathf.Pi);
-        }
-        float daylight = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(-0.10f, 0.20f, sunWave));
-        float night = 1f - daylight;
-        float horizon = 1f - Mathf.Clamp(Mathf.Abs(sunWave) * 5f, 0f, 1f);
-        float dawnDusk = horizon * Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(-0.24f, 0.22f, sunWave));
-        float azimuth = Mathf.PosMod(hours / 24f * 360f - 90f, 360f);
-        float elevation = sunWave >= 0f
-            ? Mathf.Lerp(4f, 68f, Mathf.Pow(sunWave, 0.72f))
-            : Mathf.Lerp(7f, 24f, Mathf.Pow(-sunWave, 0.72f));
-
-        Color dayKey;
-        Color horizonKey;
-        Color nightKey;
-        Color dayAmbient;
-        Color nightAmbient;
-        Color dayBackground;
-        Color horizonBackground;
-        Color nightBackground;
-        Color rim;
-        float dayEnergy;
-        float nightEnergy;
-        float dayAmbientEnergy;
-        float nightAmbientEnergy;
-        float angularSize;
-        float shadowBlur;
-
-        switch (_profile.WorldCycle.Environment)
-        {
-            case 1: // Mars
-                dayKey = new Color("ffe0bd"); horizonKey = new Color("ff8150"); nightKey = new Color("5d76aa");
-                dayAmbient = new Color("c58b70"); nightAmbient = new Color("344b76");
-                dayBackground = new Color("784f42"); horizonBackground = new Color("9b4435"); nightBackground = new Color("0c1326");
-                rim = new Color("7ea9ff"); dayEnergy = 1.42f; nightEnergy = 0.035f;
-                dayAmbientEnergy = 0.34f; nightAmbientEnergy = 0.24f; angularSize = 0.75f; shadowBlur = 1.1f;
-                break;
-            case 2: // Moon
-                dayKey = new Color("fffdf4"); horizonKey = new Color("fff1d0"); nightKey = new Color("8094bd");
-                dayAmbient = new Color("8d96a3"); nightAmbient = new Color("34405b");
-                dayBackground = new Color("020305"); horizonBackground = new Color("040507"); nightBackground = new Color("000102");
-                rim = new Color("9ab5ef"); dayEnergy = 1.72f; nightEnergy = 0.015f;
-                dayAmbientEnergy = 0.18f; nightAmbientEnergy = 0.18f; angularSize = 0.08f; shadowBlur = 0.12f;
-                break;
-            case 3: // Planet U: authored visual experiment, not astronomical canon.
-                dayKey = new Color("e7f6ff"); horizonKey = new Color("f28cda"); nightKey = new Color("6674ff");
-                dayAmbient = new Color("70b5b2"); nightAmbient = new Color("433b78");
-                dayBackground = new Color("28535b"); horizonBackground = new Color("5e315f"); nightBackground = new Color("080a22");
-                rim = new Color("62f0d0"); dayEnergy = 1.28f; nightEnergy = 0.075f;
-                dayAmbientEnergy = 0.38f; nightAmbientEnergy = 0.28f; angularSize = 2.4f; shadowBlur = 2.2f;
-                break;
-            default: // Earth
-                dayKey = new Color("fff5df"); horizonKey = new Color("ffad72"); nightKey = new Color("7897d2");
-                dayAmbient = new Color("9bb4c8"); nightAmbient = new Color("354c70");
-                dayBackground = new Color("547990"); horizonBackground = new Color("60404b"); nightBackground = new Color("07111f");
-                rim = new Color("8ab7ee"); dayEnergy = 1.34f; nightEnergy = 0.045f;
-                dayAmbientEnergy = 0.36f; nightAmbientEnergy = 0.24f; angularSize = 1.1f; shadowBlur = 1.6f;
-                break;
-        }
-
-        Color keyColor = nightKey.Lerp(dayKey, daylight).Lerp(horizonKey, dawnDusk * 0.82f);
-        Color ambientColor = nightAmbient.Lerp(dayAmbient, daylight);
-        Color background = nightBackground.Lerp(dayBackground, daylight).Lerp(horizonBackground, dawnDusk * 0.72f);
-        float keyEnergy = Mathf.Lerp(nightEnergy, dayEnergy, daylight);
-        float ambientEnergy = Mathf.Lerp(nightAmbientEnergy * _profile.WorldCycle.NightReadability,
-            dayAmbientEnergy, daylight);
-        float fillEnergy = Mathf.Lerp(0.16f * _profile.WorldCycle.NightReadability, 0.08f, daylight);
-        return new WorldLightingFrame(azimuth, elevation, keyColor, keyEnergy,
-            Mathf.PosMod(azimuth + 155f, 360f), 38f, ambientColor, fillEnergy,
-            ambientColor, ambientEnergy, true, rim, Mathf.Lerp(0.16f, 0.06f, daylight),
-            background, angularSize, shadowBlur, Mathf.Lerp(0.84f, 0.96f, daylight), night);
+        return new M7WorldLightingFrame(M7WorldEnvironment.Earth, M7WorldLightPhase.NeutralDay,
+            "Manual", false, _profile.Lighting.KeyElevation,
+            _profile.Lighting.KeyAzimuth, _profile.Lighting.KeyElevation,
+            M7LookMaterialFactory.ParseColor(_profile.Lighting.KeyColor), _profile.Lighting.KeyEnergy,
+            _profile.Lighting.FillAzimuth, _profile.Lighting.FillElevation,
+            M7LookMaterialFactory.ParseColor(_profile.Lighting.FillColor), _profile.Lighting.FillEnergy,
+            M7LookMaterialFactory.ParseColor(_profile.Lighting.AmbientColor), _profile.Lighting.AmbientEnergy,
+            _profile.Lighting.RimLightEnabled, M7LookMaterialFactory.ParseColor(_profile.Lighting.RimColor),
+            _profile.Lighting.RimEnergy, M7LookMaterialFactory.ParseColor(_profile.Lighting.BackgroundColor),
+            _profile.Lighting.KeyAngularSize, _profile.Lighting.ShadowBlur, _profile.Lighting.ShadowOpacity,
+            1f, 0f, 0f, 1f, 1f);
     }
 
-    private float ResolveLocalLightBoost() => !_profile.WorldCycle.Enabled
-        ? 1f
-        : Mathf.Lerp(1f, _profile.WorldCycle.LocalLightBoost, _worldNightFactor);
+    private float ResolveLocalLightBoost() => _profile.WorldCycle.Enabled ? _worldLocalLightMultiplier : 1f;
 
     private void ApplyMaterials()
     {
-        Dictionary<M7LookMaterialRole, Material> materials = M7LookMaterialFactory.BuildSharedMaterials(_profile);
+        _sharedMaterials = M7LookMaterialFactory.BuildSharedMaterials(_profile);
         foreach ((MeshInstance3D mesh, M7LookMaterialRole role) in _roleMeshes)
-            mesh.MaterialOverride = materials[role];
+        {
+            mesh.MaterialOverride = _sharedMaterials[role];
+            if (role is M7LookMaterialRole.Signal or M7LookMaterialRole.Lamp or M7LookMaterialRole.Crystal)
+                mesh.CastShadow = GeometryInstance3D.ShadowCastingSetting.Off;
+        }
         EnsureEmissionLights();
     }
 
@@ -1071,7 +1171,12 @@ public partial class M7LookLab : Node3D
         _postMaterial.SetShaderParameter("brightness", _profile.Post.Brightness);
         _postMaterial.SetShaderParameter("contrast", _profile.Post.Contrast);
         _postMaterial.SetShaderParameter("saturation", _profile.Post.Saturation);
-        _postMaterial.SetShaderParameter("temperature", _profile.Post.Temperature);
+        // World palettes already author their own warm/cool transition. A
+        // global white-balance filter must not flatten that gradient.
+        float postTemperature = _profile.WorldCycle.Enabled
+            ? _profile.Post.Temperature * 0.25f
+            : _profile.Post.Temperature;
+        _postMaterial.SetShaderParameter("temperature", postTemperature);
         _postMaterial.SetShaderParameter("tint", _profile.Post.Tint);
         _postMaterial.SetShaderParameter("vignette", _profile.Post.Vignette);
         _postMaterial.SetShaderParameter("film_grain", _profile.Post.FilmGrain);
@@ -1110,7 +1215,8 @@ public partial class M7LookLab : Node3D
             Material sharedBurstMaterial = ParticleBillboardMaterial(tracerColor, _profile.Vfx.TracerEnergy,
                 additive: true, useAuthoredGlare: true);
             _muzzleVfxMaterial = sharedBurstMaterial;
-            _impactVfxMaterial = sharedBurstMaterial;
+            _impactVfxMaterial = ParticleBillboardMaterial(tracerColor.Lerp(Colors.White, 0.58f),
+                _profile.Vfx.TracerEnergy, additive: true, useAuthoredGlare: true);
             _tracerPool?.ForEachNode(effect => effect.SetMaterial(_tracerVfxMaterial));
             _muzzlePool?.ForEachNode(effect => effect.SetMaterial(_muzzleVfxMaterial));
             _impactPool?.ForEachNode(effect => effect.SetMaterial(_impactVfxMaterial));
@@ -1133,6 +1239,7 @@ public partial class M7LookLab : Node3D
         if (_impactPool is not null) _impactPool.Budget = _profile.VfxPool.ImpactBudget;
         if (_heroDebrisPool is not null) _heroDebrisPool.Budget = _profile.Destruction.HeroPoolBudget;
         if (_destructionDustPool is not null) _destructionDustPool.Budget = _profile.Destruction.DustPoolBudget;
+        if (_explosionPool is not null) _explosionPool.Budget = _profile.Destruction.BlastPoolBudget;
 
         Color fireColor = M7LookMaterialFactory.ParseColor(_profile.Vfx.FireColor);
         (string, float, string, float) continuousVfxKey = (_profile.Vfx.FireColor, _profile.Vfx.FireEnergy,
@@ -1199,60 +1306,51 @@ public partial class M7LookLab : Node3D
         if (_fireParticles is not null) _fireParticles.SpeedScale = particleSpeed;
         if (_smokeParticles is not null) _smokeParticles.SpeedScale = particleSpeed;
         if (_pauseButton is not null) _pauseButton.Text = _profile.Scene.Paused ? "RESUME" : "PAUSE";
-        if (_fogPreview is not null) _fogPreview.Visible = _profile.Scene.FogPreviewEnabled;
         if (!_profile.Scene.FiringEnabled)
         {
             _tracerPool?.Clear();
             _muzzlePool?.Clear();
             _impactPool?.Clear();
+            _pendingWeaponImpacts.Clear();
+            _impactLightRemaining = 0f;
             if (_impactLight is not null) _impactLight.Visible = false;
         }
         if (!_profile.Destruction.Enabled)
         {
             _heroDebrisPool?.Clear();
             _destructionDustPool?.Clear();
+            _explosionPool?.Clear();
             ResetDestructionPreview();
         }
-        if (_fireParticles is not null) _fireParticles.Visible = _profile.Scene.BurningEnabled;
-        if (_smokeParticles is not null) _smokeParticles.Visible = _profile.Scene.BurningEnabled && _profile.Scene.DustEnabled;
-        if (_fireLight is not null) _fireLight.Visible = _profile.Scene.BurningEnabled;
+        ApplyBurningEffectVisibility();
     }
 
     private void AnimateScene()
     {
+        float vfxDelta = _profile.Scene.Paused ? 0f : (float)GetProcessDeltaTime() * _profile.Scene.AnimationSpeed;
+        AdvancePreviewShotClock(vfxDelta);
         AnimateUnits();
         AnimateDestruction();
 
-        foreach ((MeshInstance3D mesh, M7LookMaterialRole role) in _roleMeshes)
-        {
-            if (role is not (M7LookMaterialRole.Signal or M7LookMaterialRole.Lamp or M7LookMaterialRole.Crystal)) continue;
-            float energy = role switch
-            {
-                M7LookMaterialRole.Signal => _profile.Emission.SignalEnergy,
-                M7LookMaterialRole.Lamp => _profile.Emission.LampEnergy,
-                _ => _profile.Emission.CrystalEnergy
-            };
-            float pulse = ResolveEmissionPulse(role);
-            Color color = role switch
-            {
-                M7LookMaterialRole.Signal => M7LookMaterialFactory.ParseColor(_profile.Emission.SignalColor),
-                M7LookMaterialRole.Lamp => M7LookMaterialFactory.ParseColor(_profile.Emission.LampColor),
-                _ => M7LookMaterialFactory.ParseColor(_profile.Emission.CrystalColor)
-            };
-            if (mesh.MaterialOverride is ShaderMaterial material)
-            {
-                material.SetShaderParameter("emission_color", color);
-                material.SetShaderParameter("emission_energy", energy * pulse);
-                material.SetShaderParameter("edge_darkening", _profile.Emission.EdgeDarkening);
-            }
-        }
+        Color signalColor = M7LookMaterialFactory.ParseColor(_profile.Emission.SignalColor);
+        Color lampColor = M7LookMaterialFactory.ParseColor(_profile.Emission.LampColor);
+        Color crystalColor = M7LookMaterialFactory.ParseColor(_profile.Emission.CrystalColor);
+        float signalPulse = ResolveEmissionPulse(M7LookMaterialRole.Signal);
+        float lampPulse = ResolveEmissionPulse(M7LookMaterialRole.Lamp);
+        float crystalPulse = ResolveEmissionPulse(M7LookMaterialRole.Crystal);
+        UpdateSharedEmissionMaterial(M7LookMaterialRole.Signal, signalColor,
+            _profile.Emission.SignalEnergy * signalPulse);
+        UpdateSharedEmissionMaterial(M7LookMaterialRole.Lamp, lampColor,
+            _profile.Emission.LampEnergy * lampPulse * _worldFunctionalLightFactor);
+        UpdateSharedEmissionMaterial(M7LookMaterialRole.Crystal, crystalColor,
+            _profile.Emission.CrystalEnergy * crystalPulse);
         foreach ((OmniLight3D light, M7LookMaterialRole role) in _emissionLights)
         {
             Color color = role switch
             {
-                M7LookMaterialRole.Signal => M7LookMaterialFactory.ParseColor(_profile.Emission.SignalColor),
-                M7LookMaterialRole.Lamp => M7LookMaterialFactory.ParseColor(_profile.Emission.LampColor),
-                _ => M7LookMaterialFactory.ParseColor(_profile.Emission.CrystalColor)
+                M7LookMaterialRole.Signal => signalColor,
+                M7LookMaterialRole.Lamp => lampColor,
+                _ => crystalColor
             };
             float energy = role switch
             {
@@ -1260,19 +1358,35 @@ public partial class M7LookLab : Node3D
                 M7LookMaterialRole.Lamp => _profile.Emission.LampEnergy,
                 _ => _profile.Emission.CrystalEnergy
             };
-            float pulse = ResolveEmissionPulse(role);
+            float pulse = role switch
+            {
+                M7LookMaterialRole.Signal => signalPulse,
+                M7LookMaterialRole.Lamp => lampPulse,
+                _ => crystalPulse
+            };
             light.LightColor = color;
-            light.LightEnergy = _profile.Emission.LocalLightEnergy * energy / 6f * pulse * ResolveLocalLightBoost();
+            float illuminationFactor = _profile.WorldCycle.Enabled ? _worldFunctionalLightFactor : 1f;
+            light.LightEnergy = _profile.Emission.LocalLightEnergy * energy / 6f * pulse * ResolveLocalLightBoost() * illuminationFactor;
+            light.Visible = light.LightEnergy > 0.001f;
             light.OmniRange = _profile.Emission.LocalLightRange;
         }
         AnimateWeapon();
         AnimateFire();
-        float vfxDelta = _profile.Scene.Paused ? 0f : (float)GetProcessDeltaTime() * _profile.Scene.AnimationSpeed;
         _tracerPool?.Update(vfxDelta);
         _muzzlePool?.Update(vfxDelta);
         _impactPool?.Update(vfxDelta);
         _heroDebrisPool?.Update(vfxDelta);
         _destructionDustPool?.Update(vfxDelta);
+        _explosionPool?.Update(vfxDelta);
+    }
+
+    private void UpdateSharedEmissionMaterial(M7LookMaterialRole role, Color color, float energy)
+    {
+        if (!_sharedMaterials.TryGetValue(role, out Material? shared) || shared is not ShaderMaterial material)
+            return;
+        material.SetShaderParameter("emission_color", color);
+        material.SetShaderParameter("emission_energy", energy);
+        material.SetShaderParameter("edge_darkening", _profile.Emission.EdgeDarkening);
     }
 
     private float ResolveEmissionPulse(M7LookMaterialRole role)
@@ -1317,10 +1431,14 @@ public partial class M7LookLab : Node3D
             : _burningBuilding;
         if (target is null) return;
         PresentationDestructionFrame frame = _destructionDriver.Update(entityKey, true, Vector3.One,
-            delta, _profile.Destruction.ToTuning());
+            delta, _destructionTuning);
         target.Scale = Vector3.One;
-        target.Visible = frame.NormalizedProgress < 0.08f;
+        // The source swap is atomic with the hot flash. Leaving the complete
+        // model visible for ~58 ms made the destruction read as a pop.
+        target.Visible = false;
+        _ = frame;
         UpdateBurningEffectTransform();
+        ApplyBurningEffectVisibility();
     }
 
     private void TriggerDestructionPreview()
@@ -1348,8 +1466,8 @@ public partial class M7LookLab : Node3D
             ? (_units.Count >= 4 ? _units[3] : null)
             : _burningBuilding;
         if (target is null) return;
-        PresentationDestructionTuning tuning = _profile.Destruction.ToTuning();
-        tuning.Normalize();
+        target.Visible = false;
+        PresentationDestructionTuning tuning = _destructionTuning;
         PresentationDestructionScaleBand band = targetIndex == 0
             ? PresentationDestructionScaleBand.Heavy
             : PresentationDestructionScaleBand.Structure;
@@ -1359,6 +1477,18 @@ public partial class M7LookLab : Node3D
             : new Vector3(4.1f, 2.2f, 3.8f);
         Vector3 origin = target.GlobalPosition + Vector3.Up * (sourceSize.Y * 0.42f);
         float groundY = GroundHeight(target.GlobalPosition.X, target.GlobalPosition.Z) + 0.04f;
+        if (_explosionPool is not null &&
+            _explosionPool.TryAcquire(PooledExplosionBurst.RecommendedLifetimeSeconds, out PooledExplosionBurst blast))
+        {
+            blast.Configure(new ExplosionBurstRequest(origin, sourceSize, groundY,
+                M7LookMaterialFactory.ParseColor(_profile.Destruction.BlastColor),
+                _profile.Destruction.BlastVisualScale, _profile.Destruction.BlastEmissionEnergy,
+                _profile.Destruction.BlastLightEnergy * ResolveLocalLightBoost(),
+                _profile.Destruction.BlastLightRangeMultiplier,
+                _profile.Destruction.BlastFlashPersistence, _profile.Destruction.BlastSmokeDelay,
+                _profile.Destruction.BlastSmokeProminence, _profile.Destruction.BlastRingStrength));
+            _explosionPool.Activate(blast);
+        }
         if (fragments > 0 && _heroDebrisPool is not null &&
             _heroDebrisPool.TryAcquire(tuning.DebrisLifetime, out PooledLegoDebrisBurst hero))
         {
@@ -1399,6 +1529,7 @@ public partial class M7LookLab : Node3D
         _activeDestructionTarget = -1;
         _destructionPreviewElapsed = float.MaxValue;
         UpdateBurningEffectTransform();
+        ApplyBurningEffectVisibility();
     }
 
     private void UpdateBurningEffectTransform()
@@ -1411,12 +1542,30 @@ public partial class M7LookLab : Node3D
         if (_fireLight is not null) _fireLight.GlobalPosition = fireOrigin + Vector3.Up * 0.4f;
     }
 
+    private void ApplyBurningEffectVisibility()
+    {
+        bool sourceAvailable = _activeDestructionTarget != 1;
+        if (_fireParticles is not null)
+            _fireParticles.Visible = sourceAvailable && _profile.Scene.BurningEnabled;
+        if (_smokeParticles is not null)
+            _smokeParticles.Visible = sourceAvailable && _profile.Scene.BurningEnabled && _profile.Scene.DustEnabled;
+        if (_fireLight is not null)
+            _fireLight.Visible = sourceAvailable && _profile.Scene.BurningEnabled;
+    }
+
     private void AnimateUnits()
     {
         if (_animationRigs.Count != _units.Count) return;
-        PresentationAnimationTuning tuning = _profile.Animation.ToTuning();
+        PresentationAnimationTuning tuning = _animationTuning;
         float delta = _profile.Scene.Paused ? 0f : (float)GetProcessDeltaTime() * _profile.Scene.AnimationSpeed;
-        int weaponCycle = CurrentWeaponCycle();
+        int currentEmitters = _profile.Scene.FiringEnabled
+            ? Math.Min(_profile.VfxPool.PreviewEmitters, _units.Count)
+            : 0;
+        if (!_shotTriggeredThisFrame && currentEmitters > _previousPreviewEmitters)
+        {
+            for (int i = _previousPreviewEmitters; i < currentEmitters; i++)
+                _animationDriver.SynchronizeFireSequence((uint)(i + 1), _previewShotSequence);
+        }
         for (int i = 0; i < _animationRigs.Count; i++)
         {
             bool choreography = _profile.Animation.PreviewChoreography;
@@ -1426,7 +1575,7 @@ public partial class M7LookLab : Node3D
             float transformProgress = transforming ? 0.5f - 0.5f * Mathf.Cos((float)_time * 1.25f) : 0f;
             float health = 1f;
             uint fireSequence = i < _profile.VfxPool.PreviewEmitters && _profile.Scene.FiringEnabled
-                ? checked((uint)Math.Max(0, weaponCycle + 1))
+                ? _previewShotSequence
                 : 0u;
             float distanceCells = _camera is null ? 0f : _camera.GlobalPosition.DistanceTo(_units[i].GlobalPosition) /
                 GodotConversions.WorldUnitsPerBuildCell;
@@ -1436,6 +1585,7 @@ public partial class M7LookLab : Node3D
             PresentationAnimationFrame frame = _animationDriver.Update(input, delta, tuning);
             _animationRigs[i].Apply(frame, tuning);
         }
+        _previousPreviewEmitters = currentEmitters;
     }
 
     private void AnimateWeapon()
@@ -1443,21 +1593,17 @@ public partial class M7LookLab : Node3D
         if (_tracerPool is null || _muzzlePool is null || _impactPool is null ||
             _tracerVfxMaterial is null || _muzzleVfxMaterial is null || _impactVfxMaterial is null) return;
         if (_units.Count > 0) _shooterMuzzle = UnitMuzzle(0);
-        float distance = _shooterMuzzle.DistanceTo(_targetPoint);
-        float cycleSeconds = Mathf.Max(0.65f, distance / _profile.Vfx.TracerSpeed + 0.44f);
-        int cycle = CurrentWeaponCycle();
-        float phase = Mathf.PosMod((float)_time, cycleSeconds) / cycleSeconds;
-        float travel = Mathf.Clamp(phase * cycleSeconds * _profile.Vfx.TracerSpeed / Mathf.Max(0.01f, distance), 0f, 1f);
-        float impactPulse = Mathf.Clamp(1f - Mathf.Abs(travel - 1f) * 18f, 0f, 1f);
+        float delta = _profile.Scene.Paused ? 0f : (float)GetProcessDeltaTime() * _profile.Scene.AnimationSpeed;
+        UpdatePendingWeaponImpacts(delta);
 
-        if (cycle != _lastWeaponCycle && _profile.Scene.FiringEnabled)
+        if (_shotTriggeredThisFrame && _profile.Scene.FiringEnabled)
         {
-            _lastWeaponCycle = cycle;
             int emitters = Math.Min(_profile.VfxPool.PreviewEmitters, _units.Count);
             for (int i = 0; i < emitters; i++)
             {
                 Vector3 start = i == 0 ? _shooterMuzzle : UnitMuzzle(i);
-                if (_tracerPool.TryAcquire(Math.Max(0.02f, start.DistanceTo(_targetPoint) / _profile.Vfx.TracerSpeed), out PooledTracerEffect tracer))
+                float travelSeconds = Math.Max(0.02f, start.DistanceTo(_targetPoint) / _profile.Vfx.TracerSpeed);
+                if (_tracerPool.TryAcquire(travelSeconds, out PooledTracerEffect tracer))
                 {
                     tracer.Configure(start, _targetPoint, _profile.Vfx.TracerWidth, _profile.Vfx.TracerLength, _tracerVfxMaterial);
                     _tracerPool.Activate(tracer);
@@ -1468,43 +1614,95 @@ public partial class M7LookLab : Node3D
                         new Vector2(0.28f, 0.52f) * _profile.Vfx.MuzzleSize, 18);
                     _muzzlePool.Activate(muzzle);
                 }
+                _pendingWeaponImpacts.Add(new PendingWeaponImpact(start, _targetPoint, travelSeconds));
             }
         }
-        if (travel > 0.985f && cycle != _lastImpactCycle && _profile.Scene.FiringEnabled)
-        {
-            _lastImpactCycle = cycle;
-            int emitters = Math.Min(_profile.VfxPool.PreviewEmitters, _units.Count);
-            for (int i = 0; i < emitters; i++)
-            {
-                Vector3 source = i == 0 ? _shooterMuzzle : UnitMuzzle(i);
-                if (!_impactPool.TryAcquire(0.38f, out PooledParticleBurst impact)) continue;
-                float sparkDiameter = Math.Max(0.02f, _profile.Vfx.SparkSize * 3f);
-                impact.Configure(_targetPoint, source, _impactVfxMaterial,
-                    new Vector2(sparkDiameter, sparkDiameter * 3.4f) * _profile.Vfx.ImpactSize,
-                    _profile.Vfx.SparkCount);
-                _impactPool.Activate(impact);
-            }
-        }
+
         if (_impactLight is not null)
         {
-            _impactLight.GlobalPosition = _targetPoint + (_shooterMuzzle - _targetPoint).Normalized() * 0.10f;
-            _impactLight.Visible = _profile.Scene.FiringEnabled && impactPulse > 0.01f;
-            _impactLight.LightEnergy = _profile.Vfx.TracerEnergy * impactPulse * 0.22f;
+            _impactLightRemaining = Math.Max(0f, _impactLightRemaining - delta);
+            float pulse = _profile.Vfx.ImpactLightSeconds <= 0f
+                ? 0f
+                : Mathf.Clamp(_impactLightRemaining / _profile.Vfx.ImpactLightSeconds, 0f, 1f);
+            _impactLight.Visible = _profile.Scene.FiringEnabled && pulse > 0.001f;
+            _impactLight.LightEnergy = _profile.Vfx.ImpactLightEnergy * pulse * pulse * ResolveLocalLightBoost();
         }
     }
 
-    private int CurrentWeaponCycle()
+    private void AdvancePreviewShotClock(float delta)
     {
-        float distance = _shooterMuzzle.DistanceTo(_targetPoint);
-        float cycleSeconds = Mathf.Max(0.65f, distance / _profile.Vfx.TracerSpeed + 0.44f);
-        return Mathf.FloorToInt((float)_time / cycleSeconds);
+        _shotTriggeredThisFrame = false;
+        if (!_profile.Scene.FiringEnabled)
+        {
+            _previewShotAccumulator = 0f;
+            _shotClockPrimed = false;
+            return;
+        }
+        if (!_shotClockPrimed)
+        {
+            _shotClockPrimed = true;
+            _previewShotAccumulator = 0f;
+            _previewShotSequence = checked(_previewShotSequence + 1u);
+            _shotTriggeredThisFrame = true;
+            return;
+        }
+        float interval = Math.Max(0.25f, _profile.Vfx.PreviewShotInterval);
+        int elapsedShots = ConsumePreviewShotIntervals(ref _previewShotAccumulator, delta, interval);
+        if (elapsedShots == 0) return;
+        _previewShotSequence = checked(_previewShotSequence + (uint)elapsedShots);
+        _shotTriggeredThisFrame = true;
+    }
+
+    private static int ConsumePreviewShotIntervals(ref float accumulator, float delta, float interval)
+    {
+        accumulator += Math.Max(0f, delta);
+        float safeInterval = Math.Max(0.001f, interval);
+        if (accumulator + 0.000001f < safeInterval) return 0;
+        int elapsedShots = Math.Max(1, Mathf.FloorToInt((accumulator + 0.000001f) / safeInterval));
+        accumulator = Math.Max(0f, accumulator - elapsedShots * safeInterval);
+        return elapsedShots;
+    }
+
+    private void UpdatePendingWeaponImpacts(float delta)
+    {
+        for (int i = _pendingWeaponImpacts.Count - 1; i >= 0; i--)
+        {
+            PendingWeaponImpact pending = _pendingWeaponImpacts[i];
+            pending.RemainingSeconds -= Math.Max(0f, delta);
+            if (pending.RemainingSeconds > 0f)
+            {
+                _pendingWeaponImpacts[i] = pending;
+                continue;
+            }
+            SpawnWeaponImpact(pending.Source, pending.Target);
+            _pendingWeaponImpacts.RemoveAt(i);
+        }
+    }
+
+    private void SpawnWeaponImpact(Vector3 source, Vector3 target)
+    {
+        if (_impactPool is not null && _impactVfxMaterial is not null &&
+            _impactPool.TryAcquire(0.34f, out PooledParticleBurst impact))
+        {
+            float sparkDiameter = Math.Max(0.08f, _profile.Vfx.SparkSize * 4.2f);
+            impact.Configure(target, source, _impactVfxMaterial,
+                new Vector2(sparkDiameter, sparkDiameter * 3.8f) * _profile.Vfx.ImpactSize,
+                _profile.Vfx.SparkCount);
+            _impactPool.Activate(impact);
+        }
+        if (_impactLight is null) return;
+        Vector3 incoming = source - target;
+        if (incoming.LengthSquared() < 0.0001f) incoming = Vector3.Up;
+        _impactLight.GlobalPosition = target + incoming.Normalized() * 0.12f;
+        _impactLightRemaining = _profile.Vfx.ImpactLightSeconds;
     }
 
     private Vector3 UnitMuzzle(int unitIndex)
     {
-        Node3D unit = _units[Math.Clamp(unitIndex, 0, _units.Count - 1)];
+        int safeIndex = Math.Clamp(unitIndex, 0, _units.Count - 1);
+        Node3D unit = _units[safeIndex];
         FaceModelForwardAt(unit, _targetPoint);
-        return ResolveUnitMuzzle(unit);
+        return ResolveUnitMuzzle(unit, _unitMuzzleSockets[safeIndex]);
     }
 
     private static void FaceModelForwardAt(Node3D unit, Vector3 target)
@@ -1516,11 +1714,25 @@ public partial class M7LookLab : Node3D
         unit.RotateY(Mathf.Pi);
     }
 
-    private static Vector3 ResolveUnitMuzzle(Node3D unit)
+    private static Vector3 ResolveUnitMuzzle(Node3D unit, Node3D? tip = null)
     {
-        if (unit.FindChild("Tool_DrillTip", true, false) is Node3D tip)
+        if (tip is not null)
             return tip.GlobalPosition + unit.GlobalBasis.Z * 0.34f;
         return unit.GlobalPosition + unit.GlobalBasis * new Vector3(0f, 1.12f, 5.15f);
+    }
+
+    private struct PendingWeaponImpact
+    {
+        public readonly Vector3 Source;
+        public readonly Vector3 Target;
+        public float RemainingSeconds;
+
+        public PendingWeaponImpact(Vector3 source, Vector3 target, float remainingSeconds)
+        {
+            Source = source;
+            Target = target;
+            RemainingSeconds = remainingSeconds;
+        }
     }
 
     private void AnimateFire()
@@ -1631,22 +1843,9 @@ public partial class M7LookLab : Node3D
         bool useAuthoredGlare = false)
     {
         Color visible = new(color.R, color.G, color.B, Mathf.Clamp(color.A, 0f, 1f));
-        Gradient gradient = new();
-        gradient.SetColor(0, Colors.White);
-        gradient.SetColor(1, new Color(1f, 1f, 1f, 0f));
-        GradientTexture2D softDisc = new()
-        {
-            Gradient = gradient,
-            Width = 64,
-            Height = 64,
-            Fill = GradientTexture2D.FillEnum.Radial,
-            FillFrom = new Vector2(0.5f, 0.5f),
-            FillTo = new Vector2(1f, 0.5f),
-            UseHdr = true
-        };
         Texture2D texture = useAuthoredGlare
             ? GD.Load<Texture2D>(GlareTexturePath)
-            : softDisc;
+            : SoftDiscTexture();
         return new StandardMaterial3D
         {
             AlbedoColor = visible,
@@ -1663,6 +1862,25 @@ public partial class M7LookLab : Node3D
             NoDepthTest = false,
             RenderPriority = energy > 0f ? 4 : -4
         };
+    }
+
+    private static Texture2D SoftDiscTexture()
+    {
+        if (_softDiscTexture is not null) return _softDiscTexture;
+        Gradient gradient = new();
+        gradient.SetColor(0, Colors.White);
+        gradient.SetColor(1, new Color(1f, 1f, 1f, 0f));
+        _softDiscTexture = new GradientTexture2D
+        {
+            Gradient = gradient,
+            Width = 64,
+            Height = 64,
+            Fill = GradientTexture2D.FillEnum.Radial,
+            FillFrom = new Vector2(0.5f, 0.5f),
+            FillTo = new Vector2(1f, 0.5f),
+            UseHdr = true
+        };
+        return _softDiscTexture;
     }
 
     private static ShaderMaterial TrackMaterial(Color color, float opacity, float treadScale)
@@ -1772,7 +1990,12 @@ public partial class M7LookLab : Node3D
         HSlider slider = new() { MinValue = min, MaxValue = max, Step = step, Value = getter(), CustomMinimumSize = new Vector2(0f, 20f) };
         slider.ValueChanged += changed =>
         {
-            setter((float)changed); value.Text = FormatValue((float)changed, step); ApplyProfile(rebuildMaterials); SetStatus($"{label}: {value.Text}");
+            setter((float)changed);
+            ApplyProfile(rebuildMaterials);
+            float normalized = getter();
+            slider.SetValueNoSignal(normalized);
+            value.Text = FormatValue(normalized, step);
+            SetStatus($"{label}: {value.Text}");
         };
         block.AddChild(slider);
     }
@@ -1835,54 +2058,14 @@ public partial class M7LookLab : Node3D
 
     private static string MaterialMapDescription(int family) => family switch
     {
-        0 or 2 => "Applied map: painted coating — mottled albedo, shallow bump and gloss breakup.",
-        1 => "Applied map: quarried mineral — rocky albedo variation, height-derived normals and roughness.",
-        3 => "Applied map: bolted machine casing — seams and fasteners become bump/normal detail.",
-        4 => "Applied map: brushed metal — directional machining affects color, bump and reflections.",
-        5 => "Applied map: dense rubber — fine pores affect bump and surface gloss.",
-        6 => "Applied map: modular building panels — panel seams drive albedo, bump and gloss.",
-        _ => "Applied map: anti-tiled regolith — mineral albedo, height-derived normals and gloss breakup."
+        0 => "Authored response: satin powder coating with nearly invisible color breakup and shallow roughness variation.",
+        1 => "Authored response: matte coated structure. Brown describes the faction palette, not a stone material.",
+        2 => "Authored response: clean accent coating with a tighter highlight than the main hull.",
+        3 => "Authored response: blackened mechanism steel with restrained directional roughness.",
+        4 => "Authored response: bare tool steel with a controlled brushed highlight.",
+        5 => "Authored response: genuinely matte rubber with only a very shallow pore normal.",
+        _ => "Authored response: coated building panels with shallow seams and no noisy full-surface tint."
     };
-
-    private static void ApplyMaterialPreset(MaterialLook look, int preset)
-    {
-        switch (preset)
-        {
-            case 1: // powder coat
-                look.Metallic = 0.18f; look.Roughness = 0.48f; look.Specular = 0.34f;
-                look.Clearcoat = 0.24f; look.ClearcoatRoughness = 0.34f; look.Fresnel = 0.32f;
-                look.ReliefStrength = 0.18f; look.RoughnessVariation = 0.24f; look.TextureBlendMode = 0;
-                break;
-            case 2: // molded polymer
-                look.Metallic = 0f; look.Roughness = 0.22f; look.Specular = 0.62f;
-                look.Clearcoat = 0.66f; look.ClearcoatRoughness = 0.12f; look.Fresnel = 0.58f;
-                look.ReliefStrength = 0.08f; look.RoughnessVariation = 0.10f; look.TextureBlendMode = 0;
-                break;
-            case 3: // bare metal
-                look.Metallic = 0.96f; look.Roughness = 0.27f; look.Specular = 0.90f;
-                look.Clearcoat = 0.03f; look.ClearcoatRoughness = 0.28f; look.Fresnel = 0.72f;
-                look.ReliefStrength = 0.24f; look.RoughnessVariation = 0.38f; look.BrushedAmount = 0.55f;
-                look.TextureBlendMode = 0;
-                break;
-            case 4: // aged industrial metal
-                look.Metallic = 0.72f; look.Roughness = 0.67f; look.Specular = 0.52f;
-                look.Clearcoat = 0.04f; look.ClearcoatRoughness = 0.65f; look.Fresnel = 0.44f;
-                look.ReliefStrength = 0.46f; look.RoughnessVariation = 0.58f; look.EdgeWear = 0.62f;
-                look.DustAmount = 0.24f; look.TextureBlendMode = 1;
-                break;
-            case 5: // rubber
-                look.Metallic = 0f; look.Roughness = 0.93f; look.Specular = 0.12f;
-                look.Clearcoat = 0f; look.Fresnel = 0.18f; look.ReliefStrength = 0.34f;
-                look.RoughnessVariation = 0.28f; look.MicroStrength = 0.32f; look.TextureBlendMode = 1;
-                break;
-            case 6: // mineral
-                look.Metallic = 0f; look.Roughness = 0.95f; look.Specular = 0.10f;
-                look.Clearcoat = 0f; look.Fresnel = 0.14f; look.ReliefStrength = 0.72f;
-                look.RoughnessVariation = 0.42f; look.MacroVariation = 0.38f; look.DustAmount = 0.28f;
-                look.TextureBlendMode = 1;
-                break;
-        }
-    }
 
     private void SetStatus(string text, bool errorState = false)
     {
@@ -1904,15 +2087,17 @@ public partial class M7LookLab : Node3D
 
     private void UpdateDestructionStatsLabel()
     {
-        if (_destructionStatsLabel is null || _heroDebrisPool is null || _destructionDustPool is null) return;
+        if (_destructionStatsLabel is null || _heroDebrisPool is null || _destructionDustPool is null ||
+            _explosionPool is null) return;
         PresentationVfxPoolStats hero = _heroDebrisPool.GetStats();
         PresentationVfxPoolStats dust = _destructionDustPool.GetStats();
+        PresentationVfxPoolStats blast = _explosionPool.GetStats();
         int fragments = 0;
         _heroDebrisPool.ForEachNode(effect => fragments += effect.ActiveFragmentCount);
         string target = _activeDestructionTarget switch { 0 => "UNIT", 1 => "STRUCTURE", _ => "READY" };
-        _destructionStatsLabel.Text = $"{target}  ·  PREWARMED {hero.Created + dust.Created}  ·  ACTIVE BURSTS {hero.Active}/{dust.Active}  ·  " +
-            $"VISIBLE MODULES {fragments}  ·  PEAK {hero.PeakActive}/{dust.PeakActive}  ·  " +
-            $"REUSED {hero.Reused + dust.Reused}  ·  DROPPED {hero.Dropped + dust.Dropped}";
+        _destructionStatsLabel.Text = $"{target}  ·  PREWARMED {hero.Created + dust.Created + blast.Created}  ·  ACTIVE BLAST/MODULE/DUST {blast.Active}/{hero.Active}/{dust.Active}  ·  " +
+            $"VISIBLE MODULES {fragments}  ·  PEAK {blast.PeakActive}/{hero.PeakActive}/{dust.PeakActive}  ·  " +
+            $"REUSED {blast.Reused + hero.Reused + dust.Reused}  ·  DROPPED {blast.Dropped + hero.Dropped + dust.Dropped}";
     }
 
     private bool ValidateLab(out int triangles)
@@ -1921,7 +2106,15 @@ public partial class M7LookLab : Node3D
         foreach (MeshInstance3D mesh in _unitMeshes)
             if (mesh.Mesh is Mesh source) triangles += source.GetFaces().Length / 3;
         string json = _profile.ToJson();
-        bool roundTrip = M7LookProfile.TryFromJson(json, out M7LookProfile parsed, out _) && parsed.Camera.ZoomCells == _profile.Camera.ZoomCells;
+        bool roundTrip = M7LookProfile.TryFromJson(json, out M7LookProfile parsed, out _) &&
+            parsed.Camera.ZoomCells == _profile.Camera.ZoomCells &&
+            parsed.Materials.InspectionPass == _profile.Materials.InspectionPass &&
+            Mathf.IsEqualApprox(parsed.Post.FilmGrain, _profile.Post.FilmGrain) &&
+            Mathf.IsEqualApprox(parsed.Destruction.BlastFlashPersistence,
+                _profile.Destruction.BlastFlashPersistence) &&
+            Mathf.IsEqualApprox(parsed.Destruction.BlastSmokeDelay, _profile.Destruction.BlastSmokeDelay) &&
+            parsed.WorldCycle.Environment == _profile.WorldCycle.Environment &&
+            Mathf.IsEqualApprox(parsed.WorldCycle.NightReadability, _profile.WorldCycle.NightReadability);
         const string schemaOneFixture = "{\"schemaVersion\":1,\"camera\":{\"zoomCells\":35},\"materials\":{\"paintedHull\":{\"baseColor\":\"#07867e\"}},\"hud\":{\"enabled\":true},\"vfx\":{\"scorchSize\":2}}";
         bool schemaOneMigration = M7LookProfile.TryFromJson(schemaOneFixture, out M7LookProfile migrated, out _) &&
             migrated.SchemaVersion == M7LookProfile.CurrentSchemaVersion && migrated.Camera.ZoomCells == 35f &&
@@ -1941,7 +2134,23 @@ public partial class M7LookLab : Node3D
             Mathf.IsEqualApprox(migratedFour.Emission.SignalPulseAmount, 0.31f) &&
             Mathf.IsEqualApprox(migratedFour.Emission.CrystalPulseAmount, 0.31f) &&
             Mathf.IsEqualApprox(migratedFour.Emission.SignalPulseSpeed, 4.2f) &&
-            Mathf.IsZeroApprox(migratedFour.Emission.LampPulseAmount) && migratedFour.WorldCycle is not null;
+            Mathf.IsZeroApprox(migratedFour.Emission.LampPulseAmount) && migratedFour.WorldCycle is not null &&
+            !migratedFour.WorldCycle.Enabled && !migratedFour.WorldCycle.AnimatePreview;
+        const string schemaFiveFixture = "{\"schemaVersion\":5,\"materials\":{\"paintedHull\":{\"reliefStrength\":0.9},\"groundRock\":{\"baseColor\":\"#9f732c\"}},\"ground\":{\"secondaryColor\":\"#3e3122\"},\"post\":{\"filmGrain\":0.2},\"destruction\":{\"blastVisualScale\":0.4}}";
+        bool schemaFiveMigration = M7LookProfile.TryFromJson(schemaFiveFixture,
+            out M7LookProfile migratedFive, out _) &&
+            migratedFive.SchemaVersion == M7LookProfile.CurrentSchemaVersion &&
+            Mathf.IsEqualApprox(migratedFive.Materials.PaintedHull.ReliefStrength, 0.05f) &&
+            Mathf.IsZeroApprox(migratedFive.Post.FilmGrain) &&
+            migratedFive.Materials.GroundRock.BaseColor == "#75684f" &&
+            migratedFive.Ground.SecondaryColor == "#444844" &&
+            Mathf.IsEqualApprox(migratedFive.Destruction.BlastVisualScale, 1.62f) &&
+            !migratedFive.WorldCycle.Enabled && !migratedFive.WorldCycle.AnimatePreview;
+        const string explicitSchemaFiveWorldFixture = "{\"schemaVersion\":5,\"worldCycle\":{\"enabled\":true,\"animatePreview\":false,\"environment\":3}}";
+        bool explicitSchemaFiveWorld = M7LookProfile.TryFromJson(explicitSchemaFiveWorldFixture,
+            out M7LookProfile migratedFiveWorld, out _) && migratedFiveWorld.WorldCycle.Enabled &&
+            !migratedFiveWorld.WorldCycle.AnimatePreview &&
+            migratedFiveWorld.WorldCycle.Environment == (int)M7WorldEnvironment.PlanetU;
         const string partialProfileFixture = "{\"schemaVersion\":4,\"materials\":{\"paintedHull\":{\"baseColor\":\"invalid\",\"metallic\":0.71}},\"lighting\":{\"keyColor\":\"not-a-color\"}}";
         bool profileSanitization = M7LookProfile.TryFromJson(partialProfileFixture,
             out M7LookProfile sanitized, out _) && sanitized.Materials.PaintedHull.BaseColor == "#07867e" &&
@@ -1954,12 +2163,19 @@ public partial class M7LookLab : Node3D
         Vector3 intactCenter = new(13f, 1.55f, -7f);
         bool exteriorImpact = Mathf.Abs(_targetPoint.X - intactCenter.X) >= 3.15f || Mathf.Abs(_targetPoint.Z - intactCenter.Z) >= 2.45f;
         bool animationBindings = _animationRigs.Count == 4 && _animationRigs.All(rig =>
-            rig.WheelCount == 6 && rig.HasDrill && rig.HasSuspension) && ValidateAnimationDriver();
+            rig.WheelCount == 6 && rig.HasDrill && rig.HasSuspension) && ValidateAnimationDriver() &&
+            ValidatePreviewShotClock();
+        bool previewFiringActivity = _materialAudit || !_profile.Scene.FiringEnabled ||
+            (_tracerPool?.GetStats().Spawned > 0 && _muzzlePool?.GetStats().Spawned > 0);
         bool vfxPools = _tracerPool is { Capacity: 64 } && _muzzlePool is { Capacity: 32 } &&
-            _impactPool is { Capacity: 48 } && ValidatePoolReuse();
+            _impactPool is { Capacity: 48 } && previewFiringActivity && ValidatePoolReuse();
+        bool destructionActivity = _materialAudit || _smoke ||
+            (_heroDebrisPool?.GetStats().Spawned > 0 && _destructionDustPool?.GetStats().Spawned > 0 &&
+             _explosionPool?.GetStats().Spawned > 0);
         bool destruction = _heroDebrisPool is { Capacity: 12 } && _destructionDustPool is { Capacity: 12 } &&
-            _heroDebrisPool.GetStats().Spawned > 0 && _destructionDustPool.GetStats().Spawned > 0 &&
-            ValidateDestructionDriver();
+            _explosionPool is { Capacity: 12 } && destructionActivity && ValidateDestructionDriver() &&
+            PooledExplosionBurst.ValidateSmoke(this) &&
+            M7WorldLightingEvaluator.ValidateDeterministic(out _);
         bool compositeExpected = _profile.Post.Enabled || _profile.Outline.Enabled ||
             (_profile.Post.BloomEnabled && _profile.Emission.HaloIntensity > 0.001f);
         bool postComposition = _postQuad is not null && _postQuad.Visible == compositeExpected;
@@ -1979,10 +2195,12 @@ public partial class M7LookLab : Node3D
             particlePauseState && pauseUiState && eventMemory &&
             _emissionLights.Count > 0 && emissiveBindings && exteriorImpact && roundTrip && schemaOneMigration &&
             schemaTwoMigration && schemaThreeMigration && schemaFourMigration && profileSanitization &&
+            schemaFiveMigration && explicitSchemaFiveWorld &&
             ResourceLoader.Exists("res://Assets/M7/Textures/painted_shell_detail.png") &&
             ResourceLoader.Exists("res://Assets/M7/Textures/brushed_metal_detail.png") &&
             ResourceLoader.Exists("res://Assets/M7/Textures/rubber_detail.png") &&
             ResourceLoader.Exists("res://Assets/M7/Textures/quarry_ground_detail.png") &&
+            ResourceLoader.Exists("res://Assets/M7/Textures/regolith_surface_v2.png") &&
             ResourceLoader.Exists("res://Assets/M7/Textures/regolith_height.png") &&
             ResourceLoader.Exists("res://Assets/M7/Textures/machine_panel_height.png") &&
             ResourceLoader.Exists("res://Assets/M7/Textures/building_panel_height.png") &&
@@ -1990,8 +2208,8 @@ public partial class M7LookLab : Node3D
             _profile.Camera.ZoomCells is >= 24f and <= 72f;
         if (!valid)
         {
-            GD.PrintErr($"M7 LOOK LAB AUDIT: roundTrip={roundTrip} migrations={schemaOneMigration}/{schemaTwoMigration}/{schemaThreeMigration}/{schemaFourMigration} " +
-                $"sanitization={profileSanitization} postComposition={postComposition} materialCache={materialCacheStable} " +
+            GD.PrintErr($"M7 LOOK LAB AUDIT: roundTrip={roundTrip} migrations={schemaOneMigration}/{schemaTwoMigration}/{schemaThreeMigration}/{schemaFourMigration}/{schemaFiveMigration} " +
+                $"schema5World={explicitSchemaFiveWorld} sanitization={profileSanitization} postComposition={postComposition} materialCache={materialCacheStable} " +
                 $"particlePause={particlePauseState} pauseUi={pauseUiState} eventMemory={eventMemory} roles={roles} " +
                 $"emission={emissiveBindings} impact={exteriorImpact} animation={animationBindings} pools={vfxPools} destruction={destruction}");
         }
@@ -2009,11 +2227,66 @@ public partial class M7LookLab : Node3D
         tuning.TierOverride = 3;
         PresentationAnimationFrame distant = driver.Update(new PresentationAnimationInput(1, 3f, true, false,
             false, false, 0f, 1f, 0f, 1, false, 72f), 0.01f, tuning);
+        PresentationAnimationDriver hitchDriver = new();
+        _ = hitchDriver.Update(new PresentationAnimationInput(7, 0f, false, false,
+            false, false, 0f, 1f, 0f, 0, false, 20f), 0f, tuning);
+        PresentationAnimationFrame hitchEvent = hitchDriver.Update(new PresentationAnimationInput(7, 0f, false, false,
+            false, false, 0f, 1f, 0f, 1, false, 20f), 0.25f, tuning);
+        float recoil30 = SampleRecoilAfter(1f / 30f, 0.10f, tuning);
+        float recoil60 = SampleRecoilAfter(1f / 60f, 0.10f, tuning);
+        float recoil144 = SampleRecoilAfter(1f / 144f, 0.10f, tuning);
+        PresentationAnimationDriver synchronizedDriver = new();
+        synchronizedDriver.SynchronizeFireSequence(15u, 7u);
+        PresentationAnimationFrame synchronized = synchronizedDriver.Update(new PresentationAnimationInput(15u,
+            0f, false, false, false, false, 0f, 1f, 0f, 7u, false, 20f), 0f, tuning);
+        PresentationAnimationFrame nextRealShot = synchronizedDriver.Update(new PresentationAnimationInput(15u,
+            0f, false, false, false, false, 0f, 1f, 0f, 8u, false, 20f), 0f, tuning);
         return idle.Tier == PresentationAnimationTier.Normal && idle.WheelPhaseRadians == 0f &&
             active.Tier == PresentationAnimationTier.Important && active.WheelPhaseRadians > 0f &&
             active.LocomotionBlend > 0f && active.OperationBlend > 0f && active.TransformationProgress == 0.65f &&
             active.DamageAmount > 0.5f && active.Recoil > 0f && distant.Tier == PresentationAnimationTier.Distant &&
-            !distant.ParametersUpdated;
+            !distant.ParametersUpdated && Mathf.IsEqualApprox(hitchEvent.Recoil, 1f) &&
+            Mathf.Abs(recoil30 - recoil60) < 0.0001f && Mathf.Abs(recoil60 - recoil144) < 0.0001f &&
+            Mathf.IsZeroApprox(synchronized.Recoil) && Mathf.IsEqualApprox(nextRealShot.Recoil, 1f);
+
+        static float SampleRecoilAfter(float step, float elapsed, PresentationAnimationTuning tuning)
+        {
+            PresentationAnimationDriver sample = new();
+            PresentationAnimationInput idleInput = new(9, 0f, false, false, false, false,
+                0f, 1f, 0f, 0, false, 20f);
+            PresentationAnimationInput firedInput = new(9, 0f, false, false, false, false,
+                0f, 1f, 0f, 1, false, 20f);
+            _ = sample.Update(idleInput, 0f, tuning);
+            PresentationAnimationFrame frame = sample.Update(firedInput, 0f, tuning);
+            float remaining = elapsed;
+            while (remaining > 0.000001f)
+            {
+                float delta = Math.Min(step, remaining);
+                frame = sample.Update(firedInput, delta, tuning);
+                remaining -= delta;
+            }
+            return frame.Recoil;
+        }
+    }
+
+    private static bool ValidatePreviewShotClock()
+    {
+        const float interval = 1.15f;
+        return Simulate(1f / 30f) == 8 && Simulate(1f / 60f) == 8 && Simulate(1f / 144f) == 8;
+
+        static int Simulate(float step)
+        {
+            float accumulator = 0f;
+            float remaining = 10f;
+            int shots = 0;
+            while (remaining > 0.000001f)
+            {
+                float delta = Math.Min(step, remaining);
+                shots += ConsumePreviewShotIntervals(ref accumulator, delta, interval);
+                remaining -= delta;
+            }
+            return shots;
+        }
     }
 
     private static bool ValidateDestructionDriver()
@@ -2079,34 +2352,56 @@ public partial class M7LookLab : Node3D
         return null;
     }
 
-    private static string FormatValue(float value, double step) => step >= 1d ? value.ToString("0") : step >= 0.1d ? value.ToString("0.0") : value.ToString("0.###");
-    private static Color WithAlpha(Color color, float alpha) => new(color.R, color.G, color.B, alpha);
-
-    private readonly record struct WorldLightingFrame(
-        float KeyAzimuth, float KeyElevation, Color KeyColor, float KeyEnergy,
-        float FillAzimuth, float FillElevation, Color FillColor, float FillEnergy,
-        Color AmbientColor, float AmbientEnergy, bool RimEnabled, Color RimColor, float RimEnergy,
-        Color BackgroundColor, float KeyAngularSize, float ShadowBlur, float ShadowOpacity,
-        float NightFactor);
-
-    private static ShaderMaterial FogPreviewMaterial()
+    private static string FormatValue(float value, double step)
     {
-        Shader shader = new()
-        {
-            Code = """
-shader_type spatial;
-render_mode blend_mix, depth_draw_never, cull_disabled, unshaded, fog_disabled;
-void fragment() {
-    float side_fade = smoothstep(0.0, 0.12, min(UV.x, 1.0 - UV.x));
-    float soft_front = (1.0 - UV.y) + sin(UV.x * 8.0) * 0.020 + sin(UV.x * 17.0 + 1.7) * 0.010;
-    float body = smoothstep(0.34, 0.86, soft_front);
-    ALBEDO = vec3(0.010, 0.020, 0.030);
-    ALPHA = side_fade * body * 0.30;
-}
-"""
-        };
-        return new ShaderMaterial { Shader = shader, RenderPriority = 32 };
+        int decimals = step >= 1d ? 0 : Math.Clamp((int)Math.Ceiling(-Math.Log10(step)), 1, 6);
+        string format = decimals == 0 ? "0" : $"0.{new string('#', decimals)}";
+        return value.ToString(format, System.Globalization.CultureInfo.InvariantCulture);
     }
+
+    private static string FormatCaptureFloat(float value) =>
+        value.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
+
+    private string CaptureWorldMarker()
+    {
+        if (!_profile.WorldCycle.Enabled) return "manual";
+        return (M7WorldEnvironment)_profile.WorldCycle.Environment switch
+        {
+            M7WorldEnvironment.Earth => "earth",
+            M7WorldEnvironment.Mars => "mars",
+            M7WorldEnvironment.Moon => "moon",
+            M7WorldEnvironment.PlanetU => "planet-u",
+            _ => "underground"
+        };
+    }
+
+    private string CaptureTimeMarker() => _profile.WorldCycle.Enabled
+        ? FormatCaptureFloat(_profile.WorldCycle.LocalTimeHours)
+        : "manual";
+
+    private string CapturePhaseMarker()
+    {
+        if (!_profile.WorldCycle.Enabled) return "manual";
+        return M7WorldLightingEvaluator.Evaluate(_profile.WorldCycle).Phase switch
+        {
+            M7WorldLightPhase.DeepNight => "deep-night",
+            M7WorldLightPhase.BlueHour => "blue-hour",
+            M7WorldLightPhase.SunriseSunset => "sunrise-sunset",
+            M7WorldLightPhase.GoldenHour => "golden-hour",
+            M7WorldLightPhase.NeutralDay => "neutral-day",
+            _ => "underground"
+        };
+    }
+
+    private string CaptureMaterialViewMarker() => _profile.Materials.InspectionPass switch
+    {
+        1 => "base",
+        2 => "color",
+        3 => "relief",
+        4 => "reflection",
+        _ => "combined"
+    };
+    private static Color WithAlpha(Color color, float alpha) => new(color.R, color.G, color.B, alpha);
 
     private static StyleBoxFlat FlatPanel(Color color, float alpha, Color border) => new()
     {
@@ -2118,36 +2413,47 @@ void fragment() {
 
     private static ArrayMesh BuildGroundMesh(int cells, float extent)
     {
-        SurfaceTool surface = new(); surface.Begin(Mesh.PrimitiveType.Triangles);
+        SurfaceTool surface = new();
+        surface.Begin(Mesh.PrimitiveType.Triangles);
+        int row = cells + 1;
+        for (int z = 0; z <= cells; z++)
+        for (int x = 0; x <= cells; x++)
+        {
+            float px = Mathf.Lerp(-extent, extent, x / (float)cells);
+            float pz = Mathf.Lerp(-extent, extent, z / (float)cells);
+            surface.SetUV(new Vector2(x / (float)cells, z / (float)cells));
+            surface.AddVertex(new Vector3(px, GroundHeight(px, pz), pz));
+        }
         for (int z = 0; z < cells; z++)
         for (int x = 0; x < cells; x++)
         {
-            float x0 = Mathf.Lerp(-extent, extent, x / (float)cells); float x1 = Mathf.Lerp(-extent, extent, (x + 1) / (float)cells);
-            float z0 = Mathf.Lerp(-extent, extent, z / (float)cells); float z1 = Mathf.Lerp(-extent, extent, (z + 1) / (float)cells);
-            Vector3 a = new(x0, GroundHeight(x0, z0), z0); Vector3 b = new(x1, GroundHeight(x1, z0), z0);
-            Vector3 c = new(x1, GroundHeight(x1, z1), z1); Vector3 d = new(x0, GroundHeight(x0, z1), z1);
-            AddTriangle(surface, a, c, b); AddTriangle(surface, a, d, c);
+            int a = z * row + x;
+            int b = a + 1;
+            int d = a + row;
+            int c = d + 1;
+            surface.AddIndex(a); surface.AddIndex(c); surface.AddIndex(b);
+            surface.AddIndex(a); surface.AddIndex(d); surface.AddIndex(c);
         }
+        surface.GenerateNormals();
         return surface.Commit();
     }
 
     private static float GroundHeight(float x, float z)
     {
-        float inner = Mathf.Clamp((new Vector2(x, z).Length() - 18f) / 22f, 0f, 1f);
-        return -0.05f + inner * (Mathf.Sin(x * 0.21f) * 0.38f + Mathf.Cos(z * 0.17f) * 0.31f + Mathf.Sin((x + z) * 0.09f) * 0.22f);
-    }
-
-    private static void AddTriangle(SurfaceTool surface, Vector3 a, Vector3 b, Vector3 c)
-    {
-        Vector3 normal = (b - a).Cross(c - a).Normalized();
-        surface.SetNormal(normal); surface.AddVertex(a);
-        surface.SetNormal(normal); surface.AddVertex(b);
-        surface.SetNormal(normal); surface.AddVertex(c);
+        float envelope = Mathf.Clamp((new Vector2(x, z).Length() - 22f) / 48f, 0f, 1f);
+        envelope = envelope * envelope * (3f - 2f * envelope);
+        // Broad, low-amplitude relief keeps the clean review ground alive
+        // without exposing the 2.5 m terrain tessellation as black stair-step
+        // bands under a low sun.
+        float broadRelief = Mathf.Sin(x * 0.045f) * 0.10f +
+            Mathf.Cos(z * 0.035f) * 0.07f +
+            Mathf.Sin((x + z) * 0.022f) * 0.04f;
+        return -0.05f + envelope * broadRelief;
     }
 
     private const string TrackShader = """
 shader_type spatial;
-render_mode unshaded, blend_mix, depth_draw_never, cull_disabled;
+render_mode blend_mix, depth_draw_never, cull_disabled, diffuse_burley, specular_schlick_ggx;
 uniform vec4 track_color : source_color = vec4(0.35, 0.28, 0.20, 1.0);
 uniform float track_opacity = 0.35;
 uniform float tread_scale = 10.0;

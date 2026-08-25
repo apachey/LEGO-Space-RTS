@@ -211,8 +211,9 @@ were bundled, difficult to isolate and not representative of the final
 gameplay camera. The primary workflow is now the continuous **M7 Look Lab**
 documented in `Docs/Development/M7_LOOK_LAB.md`.
 
-It shows four identical units, two buildings, combat/fire evidence, ground,
-fog preview and a fake RTS HUD under the Phase 07 gameplay camera. Every
+It shows four identical units, two buildings, combat/fire evidence and textured
+ground under the Phase 07 gameplay camera. HUD and fog presentation are tested
+separately rather than contaminating material review. Every
 meaningful art-direction variable is exposed independently and the complete
 versioned profile can be copied as JSON. The four Round 2 styles remain
 historical comparison fixtures, not presets inside the new lab and not current

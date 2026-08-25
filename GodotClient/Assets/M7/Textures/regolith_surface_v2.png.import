@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://mk35xrc4aktb"
-path="res://.godot/imported/emissive_glare.png-0281bf4880f58f216e6b431860513e01.ctex"
+uid="uid://dq86bdny6bco8"
+path="res://.godot/imported/regolith_surface_v2.png-ae8c882eabab05afd752d8a2be5e9db9.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/M7/Textures/emissive_glare.png"
-dest_files=["res://.godot/imported/emissive_glare.png-0281bf4880f58f216e6b431860513e01.ctex"]
+source_file="res://Assets/M7/Textures/regolith_surface_v2.png"
+dest_files=["res://.godot/imported/regolith_surface_v2.png-ae8c882eabab05afd752d8a2be5e9db9.ctex"]
 
 [params]
 
