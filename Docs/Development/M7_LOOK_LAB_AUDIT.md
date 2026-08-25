@@ -157,3 +157,32 @@ The complete full suite passed at
 exported macOS app then ran the maximum 18-module Structure preview without
 runtime or shader errors and produced
 `Artifacts/Screenshots/m7-t067-exported-destruction-structure.png`.
+
+## M7 quality revision
+
+The post-T069 review hardened the laboratories without changing any reviewed
+look values or selecting visual canon:
+
+- post styling can now be disabled while the independent depth/normal outline
+  and emissive halo remain active; the smoke matrix includes an explicit
+  `post=off, outline=on` regression fixture;
+- partial or malformed Look/HUD JSON inherits family-specific defaults and
+  invalid colors are normalized to safe canonical values instead of leaking
+  nulls or accidental fallback colors into shaders;
+- pause and animation speed now govern every GPU-particle path, and the pause
+  button is synchronized after paste/reset as well as direct toggling;
+- live camera, lighting, emission, track and VFX edits no longer rebuild
+  unrelated unit or effect materials; effect materials are shared and rebuilt
+  only when their actual inputs change;
+- per-entity VFX event memory is released when a presentation entity leaves the
+  view, keeping long matches bounded;
+- HUD actionable-alert state now participates in retained-view invalidation and
+  disabled alerts cannot emit an action request.
+
+The complete full suite passed with zero blocking failures at
+`Artifacts/Verification/20260822T194330Z-full-summary.txt`: 278 NUnit tests,
+all M6/M7 Godot smokes, four Look Lab post/outline/zoom fixtures, 100-repeat
+determinism, replay/snapshot continuation and a launchable macOS export. The
+preserved Stress60 failure remains the expected `BLOCKING_LATER — M9`
+diagnostic. Exported-build visual evidence for the independent composite path
+is `Artifacts/Screenshots/m7-quality-revision-outline-without-post.png`.

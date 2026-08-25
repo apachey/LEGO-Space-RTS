@@ -288,13 +288,13 @@ godot_m7_palette_smoke() {
 }
 
 godot_m7_look_smoke() {
-  local godot output status controls zoom outline fixture
+  local godot output status controls zoom outline post fixture
   godot="$(discover_godot 2>/dev/null || true)"
   if [[ -z "${godot}" ]]; then printf 'Godot executable not found.\n' >&2; return 1; fi
   if ! godot_is_required_mono "${godot}"; then printf 'Godot is not the required 4.7.1 .NET build: %s\n' "${godot}" >&2; return 1; fi
-  for fixture in "visible 35 on" "hidden 35 off" "hidden 72 on"; do
-    read -r controls zoom outline <<< "${fixture}"
-    output="$("${godot}" --headless --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-look-lab --m7-look-smoke --m7-look-controls "${controls}" --m7-look-zoom "${zoom}" --m7-look-post on --m7-look-outline "${outline}" 2>&1)"
+  for fixture in "visible 35 on on" "hidden 35 off on" "hidden 72 on on" "hidden 35 on off"; do
+    read -r controls zoom outline post <<< "${fixture}"
+    output="$("${godot}" --headless --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-look-lab --m7-look-smoke --m7-look-controls "${controls}" --m7-look-zoom "${zoom}" --m7-look-post "${post}" --m7-look-outline "${outline}" 2>&1)"
     status=$?
     printf '%s\n' "${output}"
     if (( status != 0 )); then return "${status}"; fi
@@ -302,8 +302,8 @@ godot_m7_look_smoke() {
       printf 'M7 Look Lab emitted a shader or script error.\n' >&2
       return 1
     fi
-    if ! printf '%s\n' "${output}" | grep -q "M7 LOOK LAB: PASS schema=4 units=4 meshes=192 triangles=31104 buildings=2 firing=1 burning=1 animationDrivers=4 destructionDriver=1 vfxPools=5 prewarmed=168 controls=${controls} zoom=${zoom} post=on outline=${outline}"; then
-      printf 'Godot exited without the required M7 Look Lab PASS marker for controls=%s zoom=%s outline=%s.\n' "${controls}" "${zoom}" "${outline}" >&2
+    if ! printf '%s\n' "${output}" | grep -q "M7 LOOK LAB: PASS schema=4 units=4 meshes=192 triangles=31104 buildings=2 firing=1 burning=1 animationDrivers=4 destructionDriver=1 vfxPools=5 prewarmed=168 controls=${controls} zoom=${zoom} post=${post} outline=${outline}"; then
+      printf 'Godot exited without the required M7 Look Lab PASS marker for controls=%s zoom=%s post=%s outline=%s.\n' "${controls}" "${zoom}" "${post}" "${outline}" >&2
       return 1
     fi
   done

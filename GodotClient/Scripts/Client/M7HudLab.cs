@@ -296,6 +296,10 @@ public partial class M7HudLab : Node3D
             Math.Abs(parsed.Layout.SafeAreaPercent - _profile.Layout.SafeAreaPercent) < 0.001f;
         bool migration = M7HudProfile.TryFromJson("{\"schemaVersion\":1}", out M7HudProfile migrated, out _) &&
             migrated.SchemaVersion == M7HudProfile.CurrentSchemaVersion;
+        const string malformedColors = "{\"schemaVersion\":2,\"colors\":{\"background\":\"invalid\",\"accent\":null},\"minimap\":{\"enemyColor\":\"not-a-color\"}}";
+        bool profileSanitization = M7HudProfile.TryFromJson(malformedColors, out M7HudProfile sanitized, out _) &&
+            sanitized.Colors.Background == "#111820" && sanitized.Colors.Accent == "#e6ad28" &&
+            sanitized.Minimap.EnemyColor == "#ff6b45";
         bool mapping = HudMinimapView.PixelToBuildCell(Vector2.Zero, new Vector2(206, 206)) == Vector2I.Zero &&
             HudMinimapView.PixelToBuildCell(new Vector2(205.9f, 205.9f), new Vector2(206, 206)) == new Vector2I(159, 159);
         FixVec2 commandTarget = RtsInputController.MinimapBuildCellCenter(new Vector2I(12, 34));
@@ -305,6 +309,9 @@ public partial class M7HudLab : Node3D
             _hud.FindChild("EventFeed", true, false) is PanelContainer && _hud.FindChild("HudTooltip", true, false) is PanelContainer;
         bool states = mixed.Selection.Groups.Count == 5 && mixed.Selection.Count == 45 && production.Queue.Count == 3 &&
             brownout.Alert.Priority == HudAlertPriority.High && brownout.EnergyPopoverVisible && critical.ExpandedTooltip;
+        string actionableSignature = brownout.ContentSignature();
+        brownout.Alert.Actionable = !brownout.Alert.Actionable;
+        bool actionableBinding = actionableSignature != brownout.ContentSignature();
         bool objectiveBounded = _hud?.FindChild("ObjectiveTracker", true, false) is Control objective &&
             objective.Size.Y <= 100f * _profile.Layout.UiScale;
         bool productionKnowledge = ValidateProductionMinimapKnowledge();
@@ -323,9 +330,11 @@ public partial class M7HudLab : Node3D
             Kind = HudMinimapMarkerKind.GroundMobile, Relation = HudMinimapRelation.Enemy
         });
         bool leakGuard = !illegal.ValidateClientKnowledge(0, out _);
-        if (!(fixtures && roundTrip && migration && mapping && tree && states && objectiveBounded && minimap && leakGuard && productionKnowledge))
-            GD.PrintErr($"M7 HUD LAB DETAIL: fixtures={fixtures} roundTrip={roundTrip} migration={migration} mapping={mapping} tree={tree} states={states} objectiveBounded={objectiveBounded} minimap={minimap} leakGuard={leakGuard} productionKnowledge={productionKnowledge}");
-        return fixtures && roundTrip && migration && mapping && tree && states && objectiveBounded && minimap && leakGuard && productionKnowledge;
+        if (!(fixtures && roundTrip && migration && profileSanitization && mapping && tree && states && actionableBinding &&
+              objectiveBounded && minimap && leakGuard && productionKnowledge))
+            GD.PrintErr($"M7 HUD LAB DETAIL: fixtures={fixtures} roundTrip={roundTrip} migration={migration} sanitization={profileSanitization} mapping={mapping} tree={tree} states={states} actionable={actionableBinding} objectiveBounded={objectiveBounded} minimap={minimap} leakGuard={leakGuard} productionKnowledge={productionKnowledge}");
+        return fixtures && roundTrip && migration && profileSanitization && mapping && tree && states && actionableBinding &&
+            objectiveBounded && minimap && leakGuard && productionKnowledge;
     }
 
     private static bool ValidateProductionMinimapKnowledge()
@@ -447,7 +456,7 @@ public partial class M7HudLab : Node3D
         HBoxContainer row = new(); parent.AddChild(row);
         Label label = LabLabel(name, 12, new Color("d7dde0")); label.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill; row.AddChild(label);
         ColorPickerButton picker = new() { Color = Color.HtmlIsValid(getter()) ? new Color(getter()) : Colors.White, CustomMinimumSize = new Vector2(74, 28) };
-        picker.ColorChanged += color => { setter(color.ToHtml(false)); ApplyAll(); };
+        picker.ColorChanged += color => { setter($"#{color.ToHtml(false)}"); ApplyAll(); };
         row.AddChild(picker);
     }
 

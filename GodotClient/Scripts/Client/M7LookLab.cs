@@ -38,6 +38,11 @@ public partial class M7LookLab : Node3D
     private Material? _muzzleVfxMaterial;
     private Material? _impactVfxMaterial;
     private Material? _destructionDustMaterial;
+    private (string Color, float Energy, float EdgeDarkening)? _weaponMaterialKey;
+    private (string Color, float Opacity)? _destructionDustMaterialKey;
+    private (string FireColor, float FireEnergy, string SmokeColor, float SmokeOpacity)? _continuousVfxMaterialKey;
+    private (string Color, float Opacity, float TreadScale)? _trackMaterialKey;
+    private int _vfxMaterialBuildCount;
     private GpuParticles3D? _fireParticles;
     private GpuParticles3D? _smokeParticles;
     private OmniLight3D? _impactLight;
@@ -532,44 +537,44 @@ public partial class M7LookLab : Node3D
         AddSlider("Refraction", 0, 1, 0.01, () => _profile.Glass.RefractionStrength, v => _profile.Glass.RefractionStrength = v);
         AddSlider("Edge brightness", 0, 2, 0.01, () => _profile.Glass.EdgeBrightness, v => _profile.Glass.EdgeBrightness = v);
         AddHeading("ACTUALLY EMISSIVE FUNCTIONS");
-        AddColor("Signal color", () => _profile.Emission.SignalColor, v => _profile.Emission.SignalColor = v);
-        AddSlider("Signal energy", 0, 12, 0.1, () => _profile.Emission.SignalEnergy, v => _profile.Emission.SignalEnergy = v);
-        AddColor("Lamp color", () => _profile.Emission.LampColor, v => _profile.Emission.LampColor = v);
-        AddSlider("Lamp energy", 0, 12, 0.1, () => _profile.Emission.LampEnergy, v => _profile.Emission.LampEnergy = v);
-        AddColor("Crystal color", () => _profile.Emission.CrystalColor, v => _profile.Emission.CrystalColor = v);
-        AddSlider("Crystal energy", 0, 12, 0.1, () => _profile.Emission.CrystalEnergy, v => _profile.Emission.CrystalEnergy = v);
-        AddSlider("Emission pulse", 0, 1, 0.01, () => _profile.Emission.PulseAmount, v => _profile.Emission.PulseAmount = v);
-        AddSlider("Pulse speed", 0, 8, 0.1, () => _profile.Emission.PulseSpeed, v => _profile.Emission.PulseSpeed = v);
-        AddSlider("Halo intensity", 0, 3, 0.01, () => _profile.Emission.HaloIntensity, v => _profile.Emission.HaloIntensity = v);
-        AddSlider("Halo size", 0.5, 4, 0.05, () => _profile.Emission.HaloSize, v => _profile.Emission.HaloSize = v);
-        AddSlider("Darker luminous edge", 0, 1, 0.01, () => _profile.Emission.EdgeDarkening, v => _profile.Emission.EdgeDarkening = v);
-        AddSlider("Local light energy", 0, 4, 0.02, () => _profile.Emission.LocalLightEnergy, v => _profile.Emission.LocalLightEnergy = v);
-        AddSlider("Local light range", 0.5, 8, 0.1, () => _profile.Emission.LocalLightRange, v => _profile.Emission.LocalLightRange = v);
+        AddColor("Signal color", () => _profile.Emission.SignalColor, v => _profile.Emission.SignalColor = v, false);
+        AddSlider("Signal energy", 0, 12, 0.1, () => _profile.Emission.SignalEnergy, v => _profile.Emission.SignalEnergy = v, false);
+        AddColor("Lamp color", () => _profile.Emission.LampColor, v => _profile.Emission.LampColor = v, false);
+        AddSlider("Lamp energy", 0, 12, 0.1, () => _profile.Emission.LampEnergy, v => _profile.Emission.LampEnergy = v, false);
+        AddColor("Crystal color", () => _profile.Emission.CrystalColor, v => _profile.Emission.CrystalColor = v, false);
+        AddSlider("Crystal energy", 0, 12, 0.1, () => _profile.Emission.CrystalEnergy, v => _profile.Emission.CrystalEnergy = v, false);
+        AddSlider("Emission pulse", 0, 1, 0.01, () => _profile.Emission.PulseAmount, v => _profile.Emission.PulseAmount = v, false);
+        AddSlider("Pulse speed", 0, 8, 0.1, () => _profile.Emission.PulseSpeed, v => _profile.Emission.PulseSpeed = v, false);
+        AddSlider("Halo intensity", 0, 3, 0.01, () => _profile.Emission.HaloIntensity, v => _profile.Emission.HaloIntensity = v, false);
+        AddSlider("Halo size", 0.5, 4, 0.05, () => _profile.Emission.HaloSize, v => _profile.Emission.HaloSize = v, false);
+        AddSlider("Darker luminous edge", 0, 1, 0.01, () => _profile.Emission.EdgeDarkening, v => _profile.Emission.EdgeDarkening = v, false);
+        AddSlider("Local light energy", 0, 4, 0.02, () => _profile.Emission.LocalLightEnergy, v => _profile.Emission.LocalLightEnergy = v, false);
+        AddSlider("Local light range", 0.5, 8, 0.1, () => _profile.Emission.LocalLightRange, v => _profile.Emission.LocalLightRange = v, false);
     }
 
     private void BuildLightingSettings()
     {
         AddHeading("KEY / SHADOW");
-        AddSlider("Key azimuth", 0, 359, 1, () => _profile.Lighting.KeyAzimuth, v => _profile.Lighting.KeyAzimuth = v);
-        AddSlider("Key elevation", 10, 85, 1, () => _profile.Lighting.KeyElevation, v => _profile.Lighting.KeyElevation = v);
-        AddColor("Key color", () => _profile.Lighting.KeyColor, v => _profile.Lighting.KeyColor = v);
+        AddSlider("Key azimuth", 0, 359, 1, () => _profile.Lighting.KeyAzimuth, v => _profile.Lighting.KeyAzimuth = v, false);
+        AddSlider("Key elevation", 10, 85, 1, () => _profile.Lighting.KeyElevation, v => _profile.Lighting.KeyElevation = v, false);
+        AddColor("Key color", () => _profile.Lighting.KeyColor, v => _profile.Lighting.KeyColor = v, false);
         AddSlider("Key energy", 0, 8, 0.05, () => _profile.Lighting.KeyEnergy, v => _profile.Lighting.KeyEnergy = v, false);
         AddSlider("Angular size", 0, 10, 0.1, () => _profile.Lighting.KeyAngularSize, v => _profile.Lighting.KeyAngularSize = v, false);
         AddSlider("Shadow blur", 0, 8, 0.1, () => _profile.Lighting.ShadowBlur, v => _profile.Lighting.ShadowBlur = v, false);
         AddSlider("Shadow opacity", 0, 1, 0.01, () => _profile.Lighting.ShadowOpacity, v => _profile.Lighting.ShadowOpacity = v, false);
         AddHeading("FILL / AMBIENT / RIM");
-        AddSlider("Fill azimuth", 0, 359, 1, () => _profile.Lighting.FillAzimuth, v => _profile.Lighting.FillAzimuth = v);
-        AddSlider("Fill elevation", 0, 85, 1, () => _profile.Lighting.FillElevation, v => _profile.Lighting.FillElevation = v);
-        AddColor("Fill color", () => _profile.Lighting.FillColor, v => _profile.Lighting.FillColor = v);
+        AddSlider("Fill azimuth", 0, 359, 1, () => _profile.Lighting.FillAzimuth, v => _profile.Lighting.FillAzimuth = v, false);
+        AddSlider("Fill elevation", 0, 85, 1, () => _profile.Lighting.FillElevation, v => _profile.Lighting.FillElevation = v, false);
+        AddColor("Fill color", () => _profile.Lighting.FillColor, v => _profile.Lighting.FillColor = v, false);
         AddSlider("Fill energy", 0, 8, 0.05, () => _profile.Lighting.FillEnergy, v => _profile.Lighting.FillEnergy = v, false);
-        AddColor("Ambient color", () => _profile.Lighting.AmbientColor, v => _profile.Lighting.AmbientColor = v);
+        AddColor("Ambient color", () => _profile.Lighting.AmbientColor, v => _profile.Lighting.AmbientColor = v, false);
         AddSlider("Ambient energy", 0, 4, 0.02, () => _profile.Lighting.AmbientEnergy, v => _profile.Lighting.AmbientEnergy = v, false);
         AddCheck("Rim light enabled", () => _profile.Lighting.RimLightEnabled, v => _profile.Lighting.RimLightEnabled = v, false);
-        AddColor("Rim color", () => _profile.Lighting.RimColor, v => _profile.Lighting.RimColor = v);
+        AddColor("Rim color", () => _profile.Lighting.RimColor, v => _profile.Lighting.RimColor = v, false);
         AddSlider("Rim energy", 0, 8, 0.05, () => _profile.Lighting.RimEnergy, v => _profile.Lighting.RimEnergy = v, false);
         AddNote("Far-field background affects both the clear color and distant terrain, so it remains visible in the overhead test.");
-        AddColor("Far-field background", () => _profile.Lighting.BackgroundColor, v => _profile.Lighting.BackgroundColor = v);
-        AddSlider("Background influence", 0, 1, 0.01, () => _profile.Lighting.BackgroundInfluence, v => _profile.Lighting.BackgroundInfluence = v);
+        AddColor("Far-field background", () => _profile.Lighting.BackgroundColor, v => _profile.Lighting.BackgroundColor = v, false);
+        AddSlider("Background influence", 0, 1, 0.01, () => _profile.Lighting.BackgroundInfluence, v => _profile.Lighting.BackgroundInfluence = v, false);
     }
 
     private void BuildPostSettings()
@@ -694,25 +699,25 @@ public partial class M7LookLab : Node3D
             UpdatePoolStatsLabel();
         }
         AddHeading("WEAPON READABILITY");
-        AddColor("Tracer color", () => _profile.Vfx.TracerColor, v => _profile.Vfx.TracerColor = v);
-        AddSlider("Tracer width", 0.01, 0.8, 0.01, () => _profile.Vfx.TracerWidth, v => _profile.Vfx.TracerWidth = v);
-        AddSlider("Tracer length", 0.1, 8, 0.05, () => _profile.Vfx.TracerLength, v => _profile.Vfx.TracerLength = v);
-        AddSlider("Tracer speed", 1, 50, 0.5, () => _profile.Vfx.TracerSpeed, v => _profile.Vfx.TracerSpeed = v);
-        AddSlider("Tracer emission", 0, 12, 0.1, () => _profile.Vfx.TracerEnergy, v => _profile.Vfx.TracerEnergy = v);
-        AddSlider("Muzzle size", 0.05, 2, 0.01, () => _profile.Vfx.MuzzleSize, v => _profile.Vfx.MuzzleSize = v);
-        AddSlider("Impact size", 0.05, 3, 0.01, () => _profile.Vfx.ImpactSize, v => _profile.Vfx.ImpactSize = v);
-        AddSlider("Spark count", 0, 20, 1, () => _profile.Vfx.SparkCount, v => _profile.Vfx.SparkCount = (int)v);
-        AddSlider("Spark size", 0.01, 0.4, 0.01, () => _profile.Vfx.SparkSize, v => _profile.Vfx.SparkSize = v);
+        AddColor("Tracer color", () => _profile.Vfx.TracerColor, v => _profile.Vfx.TracerColor = v, false);
+        AddSlider("Tracer width", 0.01, 0.8, 0.01, () => _profile.Vfx.TracerWidth, v => _profile.Vfx.TracerWidth = v, false);
+        AddSlider("Tracer length", 0.1, 8, 0.05, () => _profile.Vfx.TracerLength, v => _profile.Vfx.TracerLength = v, false);
+        AddSlider("Tracer speed", 1, 50, 0.5, () => _profile.Vfx.TracerSpeed, v => _profile.Vfx.TracerSpeed = v, false);
+        AddSlider("Tracer emission", 0, 12, 0.1, () => _profile.Vfx.TracerEnergy, v => _profile.Vfx.TracerEnergy = v, false);
+        AddSlider("Muzzle size", 0.05, 2, 0.01, () => _profile.Vfx.MuzzleSize, v => _profile.Vfx.MuzzleSize = v, false);
+        AddSlider("Impact size", 0.05, 3, 0.01, () => _profile.Vfx.ImpactSize, v => _profile.Vfx.ImpactSize = v, false);
+        AddSlider("Spark count", 0, 20, 1, () => _profile.Vfx.SparkCount, v => _profile.Vfx.SparkCount = (int)v, false);
+        AddSlider("Spark size", 0.01, 0.4, 0.01, () => _profile.Vfx.SparkSize, v => _profile.Vfx.SparkSize = v, false);
         AddHeading("FIRE / SMOKE");
-        AddColor("Fire color", () => _profile.Vfx.FireColor, v => _profile.Vfx.FireColor = v);
-        AddSlider("Fire size", 0.1, 4, 0.05, () => _profile.Vfx.FireSize, v => _profile.Vfx.FireSize = v);
-        AddSlider("Fire emission", 0, 12, 0.1, () => _profile.Vfx.FireEnergy, v => _profile.Vfx.FireEnergy = v);
-        AddSlider("Fire flicker", 0, 1, 0.01, () => _profile.Vfx.FireFlicker, v => _profile.Vfx.FireFlicker = v);
-        AddColor("Smoke color", () => _profile.Vfx.SmokeColor, v => _profile.Vfx.SmokeColor = v);
-        AddSlider("Smoke amount", 0, 20, 1, () => _profile.Vfx.SmokeAmount, v => _profile.Vfx.SmokeAmount = (int)v);
-        AddSlider("Smoke opacity", 0, 1, 0.01, () => _profile.Vfx.SmokeOpacity, v => _profile.Vfx.SmokeOpacity = v);
-        AddSlider("Smoke size", 0.1, 4, 0.05, () => _profile.Vfx.SmokeSize, v => _profile.Vfx.SmokeSize = v);
-        AddSlider("Smoke rise", 0, 6, 0.05, () => _profile.Vfx.SmokeRise, v => _profile.Vfx.SmokeRise = v);
+        AddColor("Fire color", () => _profile.Vfx.FireColor, v => _profile.Vfx.FireColor = v, false);
+        AddSlider("Fire size", 0.1, 4, 0.05, () => _profile.Vfx.FireSize, v => _profile.Vfx.FireSize = v, false);
+        AddSlider("Fire emission", 0, 12, 0.1, () => _profile.Vfx.FireEnergy, v => _profile.Vfx.FireEnergy = v, false);
+        AddSlider("Fire flicker", 0, 1, 0.01, () => _profile.Vfx.FireFlicker, v => _profile.Vfx.FireFlicker = v, false);
+        AddColor("Smoke color", () => _profile.Vfx.SmokeColor, v => _profile.Vfx.SmokeColor = v, false);
+        AddSlider("Smoke amount", 0, 20, 1, () => _profile.Vfx.SmokeAmount, v => _profile.Vfx.SmokeAmount = (int)v, false);
+        AddSlider("Smoke opacity", 0, 1, 0.01, () => _profile.Vfx.SmokeOpacity, v => _profile.Vfx.SmokeOpacity = v, false);
+        AddSlider("Smoke size", 0.1, 4, 0.05, () => _profile.Vfx.SmokeSize, v => _profile.Vfx.SmokeSize = v, false);
+        AddSlider("Smoke rise", 0, 6, 0.05, () => _profile.Vfx.SmokeRise, v => _profile.Vfx.SmokeRise = v, false);
     }
 
     private void BuildGroundSettings()
@@ -722,11 +727,11 @@ public partial class M7LookLab : Node3D
         AddSlider("Macro scale", 0.01, 2, 0.01, () => _profile.Ground.MacroScale, v => _profile.Ground.MacroScale = v);
         AddSlider("Micro variation", 0, 1, 0.01, () => _profile.Ground.MicroAmount, v => _profile.Ground.MicroAmount = v);
         AddSlider("Micro scale", 0.1, 20, 0.1, () => _profile.Ground.MicroScale, v => _profile.Ground.MicroScale = v);
-        AddColor("Dust / track tint", () => _profile.Ground.DustTint, v => _profile.Ground.DustTint = v);
-        AddSlider("Track opacity", 0, 1, 0.01, () => _profile.Ground.TracksOpacity, v => _profile.Ground.TracksOpacity = v);
-        AddSlider("Track width", 0.2, 2, 0.02, () => _profile.Ground.TracksWidth, v => _profile.Ground.TracksWidth = v);
-        AddSlider("Track length", 1, 16, 0.1, () => _profile.Ground.TracksLength, v => _profile.Ground.TracksLength = v);
-        AddSlider("Track tread scale", 1, 24, 0.5, () => _profile.Ground.TrackTreadScale, v => _profile.Ground.TrackTreadScale = v);
+        AddColor("Dust / track tint", () => _profile.Ground.DustTint, v => _profile.Ground.DustTint = v, false);
+        AddSlider("Track opacity", 0, 1, 0.01, () => _profile.Ground.TracksOpacity, v => _profile.Ground.TracksOpacity = v, false);
+        AddSlider("Track width", 0.2, 2, 0.02, () => _profile.Ground.TracksWidth, v => _profile.Ground.TracksWidth = v, false);
+        AddSlider("Track length", 1, 16, 0.1, () => _profile.Ground.TracksLength, v => _profile.Ground.TracksLength = v, false);
+        AddSlider("Track tread scale", 1, 24, 0.5, () => _profile.Ground.TrackTreadScale, v => _profile.Ground.TrackTreadScale = v, false);
         AddSlider("Unit spacing", 4, 14, 0.1, () => _profile.Ground.UnitSeparation, v => _profile.Ground.UnitSeparation = v, false);
     }
 
@@ -844,7 +849,10 @@ public partial class M7LookLab : Node3D
     private void ApplyPost()
     {
         if (_postMaterial is null) return;
-        if (_postQuad is not null) _postQuad.Visible = _profile.Post.Enabled;
+        bool haloEnabled = _profile.Post.BloomEnabled && _profile.Emission.HaloIntensity > 0.001f;
+        if (_postQuad is not null)
+            _postQuad.Visible = _profile.Post.Enabled || _profile.Outline.Enabled || haloEnabled;
+        _postMaterial.SetShaderParameter("post_enabled", _profile.Post.Enabled);
         _postMaterial.SetShaderParameter("brightness", _profile.Post.Brightness);
         _postMaterial.SetShaderParameter("contrast", _profile.Post.Contrast);
         _postMaterial.SetShaderParameter("saturation", _profile.Post.Saturation);
@@ -875,24 +883,52 @@ public partial class M7LookLab : Node3D
     private void ApplyVfxAppearance()
     {
         Color tracerColor = M7LookMaterialFactory.ParseColor(_profile.Vfx.TracerColor);
-        _tracerVfxMaterial = M7LookMaterialFactory.Emissive(tracerColor, _profile.Vfx.TracerEnergy, 0.92f, _profile.Emission.EdgeDarkening);
-        _muzzleVfxMaterial = ParticleBillboardMaterial(tracerColor, _profile.Vfx.TracerEnergy, additive: true);
-        _impactVfxMaterial = ParticleBillboardMaterial(tracerColor, _profile.Vfx.TracerEnergy, additive: true);
-        _tracerPool?.ForEachNode(effect => effect.SetMaterial(_tracerVfxMaterial));
-        _muzzlePool?.ForEachNode(effect => effect.SetMaterial(_muzzleVfxMaterial));
-        _impactPool?.ForEachNode(effect => effect.SetMaterial(_impactVfxMaterial));
-        Color destructionDustColor = WithAlpha(M7LookMaterialFactory.ParseColor(_profile.Destruction.DustColor),
-            _profile.Destruction.DustOpacity);
-        _destructionDustMaterial = ParticleBillboardMaterial(destructionDustColor, 0f, additive: false);
-        _destructionDustPool?.ForEachNode(effect => effect.SetMaterial(_destructionDustMaterial));
+        (string, float, float) weaponKey = (_profile.Vfx.TracerColor, _profile.Vfx.TracerEnergy,
+            _profile.Emission.EdgeDarkening);
+        if (_weaponMaterialKey != weaponKey)
+        {
+            _weaponMaterialKey = weaponKey;
+            _tracerVfxMaterial = M7LookMaterialFactory.Emissive(tracerColor, _profile.Vfx.TracerEnergy, 0.92f,
+                _profile.Emission.EdgeDarkening);
+            Material sharedBurstMaterial = ParticleBillboardMaterial(tracerColor, _profile.Vfx.TracerEnergy, additive: true);
+            _muzzleVfxMaterial = sharedBurstMaterial;
+            _impactVfxMaterial = sharedBurstMaterial;
+            _tracerPool?.ForEachNode(effect => effect.SetMaterial(_tracerVfxMaterial));
+            _muzzlePool?.ForEachNode(effect => effect.SetMaterial(_muzzleVfxMaterial));
+            _impactPool?.ForEachNode(effect => effect.SetMaterial(_impactVfxMaterial));
+            _vfxMaterialBuildCount++;
+        }
+
+        (string, float) destructionDustKey = (_profile.Destruction.DustColor, _profile.Destruction.DustOpacity);
+        if (_destructionDustMaterialKey != destructionDustKey)
+        {
+            _destructionDustMaterialKey = destructionDustKey;
+            Color destructionDustColor = WithAlpha(M7LookMaterialFactory.ParseColor(_profile.Destruction.DustColor),
+                _profile.Destruction.DustOpacity);
+            _destructionDustMaterial = ParticleBillboardMaterial(destructionDustColor, 0f, additive: false);
+            _destructionDustPool?.ForEachNode(effect => effect.SetMaterial(_destructionDustMaterial));
+            _vfxMaterialBuildCount++;
+        }
+
         if (_tracerPool is not null) _tracerPool.Budget = _profile.VfxPool.TracerBudget;
         if (_muzzlePool is not null) _muzzlePool.Budget = _profile.VfxPool.MuzzleBudget;
         if (_impactPool is not null) _impactPool.Budget = _profile.VfxPool.ImpactBudget;
         if (_heroDebrisPool is not null) _heroDebrisPool.Budget = _profile.Destruction.HeroPoolBudget;
         if (_destructionDustPool is not null) _destructionDustPool.Budget = _profile.Destruction.DustPoolBudget;
+
         Color fireColor = M7LookMaterialFactory.ParseColor(_profile.Vfx.FireColor);
-        ApplyParticleDrawMaterial(_fireParticles, ParticleBillboardMaterial(fireColor, _profile.Vfx.FireEnergy, additive: true));
-        ApplyParticleDrawMaterial(_smokeParticles, ParticleBillboardMaterial(WithAlpha(M7LookMaterialFactory.ParseColor(_profile.Vfx.SmokeColor), _profile.Vfx.SmokeOpacity), 0f, additive: false));
+        (string, float, string, float) continuousVfxKey = (_profile.Vfx.FireColor, _profile.Vfx.FireEnergy,
+            _profile.Vfx.SmokeColor, _profile.Vfx.SmokeOpacity);
+        if (_continuousVfxMaterialKey != continuousVfxKey)
+        {
+            _continuousVfxMaterialKey = continuousVfxKey;
+            ApplyParticleDrawMaterial(_fireParticles,
+                ParticleBillboardMaterial(fireColor, _profile.Vfx.FireEnergy, additive: true));
+            ApplyParticleDrawMaterial(_smokeParticles,
+                ParticleBillboardMaterial(WithAlpha(M7LookMaterialFactory.ParseColor(_profile.Vfx.SmokeColor),
+                    _profile.Vfx.SmokeOpacity), 0f, additive: false));
+            _vfxMaterialBuildCount++;
+        }
         if (_fireParticles?.DrawPass1 is QuadMesh fireMesh) fireMesh.Size = new Vector2(0.24f, 0.46f) * _profile.Vfx.FireSize;
         if (_smokeParticles?.DrawPass1 is QuadMesh smokeMesh) smokeMesh.Size = Vector2.One * _profile.Vfx.SmokeSize;
         if (_smokeParticles is not null)
@@ -917,16 +953,34 @@ public partial class M7LookLab : Node3D
             _impactLight.LightColor = tracerColor;
             _impactLight.OmniRange = 2.2f + _profile.Vfx.ImpactSize;
         }
+
+        (string, float, float) trackKey = (_profile.Ground.DustTint, _profile.Ground.TracksOpacity,
+            _profile.Ground.TrackTreadScale);
+        Material? sharedTrackMaterial = null;
+        if (_trackMaterialKey != trackKey)
+        {
+            _trackMaterialKey = trackKey;
+            sharedTrackMaterial = TrackMaterial(M7LookMaterialFactory.ParseColor(_profile.Ground.DustTint),
+                _profile.Ground.TracksOpacity, _profile.Ground.TrackTreadScale);
+            _vfxMaterialBuildCount++;
+        }
         foreach (MeshInstance3D track in _tracks)
         {
             if (track.Mesh is PlaneMesh trackMesh) trackMesh.Size = new Vector2(_profile.Ground.TracksWidth, _profile.Ground.TracksLength);
-            track.MaterialOverride = TrackMaterial(M7LookMaterialFactory.ParseColor(_profile.Ground.DustTint), _profile.Ground.TracksOpacity, _profile.Ground.TrackTreadScale);
+            if (sharedTrackMaterial is not null) track.MaterialOverride = sharedTrackMaterial;
         }
         UpdatePoolStatsLabel();
     }
 
     private void ApplySceneVisibility()
     {
+        float particleSpeed = _profile.Scene.Paused ? 0f : _profile.Scene.AnimationSpeed;
+        _muzzlePool?.ForEachNode(effect => effect.Particles.SpeedScale = particleSpeed);
+        _impactPool?.ForEachNode(effect => effect.Particles.SpeedScale = particleSpeed);
+        _destructionDustPool?.ForEachNode(effect => effect.Particles.SpeedScale = particleSpeed);
+        if (_fireParticles is not null) _fireParticles.SpeedScale = particleSpeed;
+        if (_smokeParticles is not null) _smokeParticles.SpeedScale = particleSpeed;
+        if (_pauseButton is not null) _pauseButton.Text = _profile.Scene.Paused ? "RESUME" : "PAUSE";
         if (_fogPreview is not null) _fogPreview.Visible = _profile.Scene.FogPreviewEnabled;
         if (!_profile.Scene.FiringEnabled)
         {
@@ -1414,7 +1468,7 @@ public partial class M7LookLab : Node3D
     private void TogglePause()
     {
         _profile.Scene.Paused = !_profile.Scene.Paused;
-        if (_pauseButton is not null) _pauseButton.Text = _profile.Scene.Paused ? "RESUME" : "PAUSE";
+        ApplySceneVisibility();
         SetStatus(_profile.Scene.Paused ? "Scene frozen for comparison" : "Scene animation resumed");
     }
 
@@ -1576,6 +1630,12 @@ public partial class M7LookLab : Node3D
             migratedThree.SchemaVersion == M7LookProfile.CurrentSchemaVersion &&
             Mathf.IsEqualApprox(migratedThree.Animation.RecoilDistance, 0.22f) && migratedThree.VfxPool.TracerBudget == 7 &&
             migratedThree.Destruction.Enabled;
+        const string partialProfileFixture = "{\"schemaVersion\":4,\"materials\":{\"paintedHull\":{\"baseColor\":\"invalid\",\"metallic\":0.71}},\"lighting\":{\"keyColor\":\"not-a-color\"}}";
+        bool profileSanitization = M7LookProfile.TryFromJson(partialProfileFixture,
+            out M7LookProfile sanitized, out _) && sanitized.Materials.PaintedHull.BaseColor == "#07867e" &&
+            Mathf.IsEqualApprox(sanitized.Materials.PaintedHull.Metallic, 0.71f) &&
+            Mathf.IsEqualApprox(sanitized.Materials.PaintedHull.Roughness, 0.38f) &&
+            sanitized.Lighting.KeyColor == "#fff4e5";
         bool roles = Enum.GetValues<M7LookMaterialRole>().All(role => _roleMeshes.Any(entry => entry.Role == role));
         bool emissiveBindings = _roleMeshes.Where(entry => entry.Role is M7LookMaterialRole.Signal or M7LookMaterialRole.Lamp or M7LookMaterialRole.Crystal)
             .All(entry => entry.Mesh.MaterialOverride is ShaderMaterial);
@@ -1588,16 +1648,38 @@ public partial class M7LookLab : Node3D
         bool destruction = _heroDebrisPool is { Capacity: 12 } && _destructionDustPool is { Capacity: 12 } &&
             _heroDebrisPool.GetStats().Spawned > 0 && _destructionDustPool.GetStats().Spawned > 0 &&
             ValidateDestructionDriver();
-        return _camera is { Fov: 36f } && _units.Count == 4 && _unitMeshes.Count >= 180 && triangles >= 30_000 &&
+        bool compositeExpected = _profile.Post.Enabled || _profile.Outline.Enabled ||
+            (_profile.Post.BloomEnabled && _profile.Emission.HaloIntensity > 0.001f);
+        bool postComposition = _postQuad is not null && _postQuad.Visible == compositeExpected;
+        int materialBuilds = _vfxMaterialBuildCount;
+        ApplyVfxAppearance();
+        bool materialCacheStable = _vfxMaterialBuildCount == materialBuilds;
+        float expectedParticleSpeed = _profile.Scene.Paused ? 0f : _profile.Scene.AnimationSpeed;
+        bool particlePauseState = true;
+        _muzzlePool?.ForEachNode(effect => particlePauseState &= Mathf.IsEqualApprox(effect.Particles.SpeedScale, expectedParticleSpeed));
+        _impactPool?.ForEachNode(effect => particlePauseState &= Mathf.IsEqualApprox(effect.Particles.SpeedScale, expectedParticleSpeed));
+        _destructionDustPool?.ForEachNode(effect => particlePauseState &= Mathf.IsEqualApprox(effect.Particles.SpeedScale, expectedParticleSpeed));
+        bool pauseUiState = _pauseButton is not null && _pauseButton.Text == (_profile.Scene.Paused ? "RESUME" : "PAUSE");
+        bool eventMemory = ValidateEventMemoryCleanup();
+        bool valid = _camera is { Fov: 36f } && _units.Count == 4 && _unitMeshes.Count >= 180 && triangles >= 30_000 &&
             animationBindings && roles && _ground is not null && _fireParticles is not null && vfxPools && destruction &&
-            _controlsLayer is not null && _postMaterial is not null &&
+            _controlsLayer is not null && _postMaterial is not null && postComposition && materialCacheStable &&
+            particlePauseState && pauseUiState && eventMemory &&
             _emissionLights.Count > 0 && emissiveBindings && exteriorImpact && roundTrip && schemaOneMigration &&
-            schemaTwoMigration && schemaThreeMigration &&
+            schemaTwoMigration && schemaThreeMigration && profileSanitization &&
             ResourceLoader.Exists("res://Assets/M7/Textures/painted_shell_detail.png") &&
             ResourceLoader.Exists("res://Assets/M7/Textures/brushed_metal_detail.png") &&
             ResourceLoader.Exists("res://Assets/M7/Textures/rubber_detail.png") &&
             ResourceLoader.Exists("res://Assets/M7/Textures/quarry_ground_detail.png") &&
             _profile.Camera.ZoomCells is >= 24f and <= 72f;
+        if (!valid)
+        {
+            GD.PrintErr($"M7 LOOK LAB AUDIT: roundTrip={roundTrip} migrations={schemaOneMigration}/{schemaTwoMigration}/{schemaThreeMigration} " +
+                $"sanitization={profileSanitization} postComposition={postComposition} materialCache={materialCacheStable} " +
+                $"particlePause={particlePauseState} pauseUi={pauseUiState} eventMemory={eventMemory} roles={roles} " +
+                $"emission={emissiveBindings} impact={exteriorImpact} animation={animationBindings} pools={vfxPools} destruction={destruction}");
+        }
+        return valid;
     }
 
     private static bool ValidateAnimationDriver()
@@ -1649,6 +1731,20 @@ public partial class M7LookLab : Node3D
         probe.Clear();
         return first && second && overflowDropped && stats.Created == 1 && stats.PeakActive == 1 &&
             stats.Reused == 1 && stats.Dropped == 1;
+    }
+
+    private static bool ValidateEventMemoryCleanup()
+    {
+        PresentationEventDeduplicator deduplicator = new();
+        bool seed = !deduplicator.TryAccept(10, 77u, 5u, PresentationEventFamily.WeaponFire, out _);
+        bool nextAccepted = deduplicator.TryAccept(11, 77u, 6u, PresentationEventFamily.WeaponFire, out _);
+        bool secondFamilySeed = !deduplicator.TryAccept(11, 77u, 1u, PresentationEventFamily.Impact, out _);
+        bool tracked = deduplicator.TrackedStreamCount == 2;
+        deduplicator.RemoveSource(77u);
+        bool removed = deduplicator.TrackedStreamCount == 0;
+        bool reseeded = !deduplicator.TryAccept(12, 77u, 1u, PresentationEventFamily.WeaponFire, out _) &&
+            deduplicator.TrackedStreamCount == 1;
+        return seed && nextAccepted && secondFamilySeed && tracked && removed && reseeded;
     }
 
     private bool CaptureViewport(string path)
@@ -1749,6 +1845,7 @@ render_mode unshaded, fog_disabled, depth_test_disabled, depth_draw_never, cull_
 uniform sampler2D screen_texture : hint_screen_texture, repeat_disable, filter_linear_mipmap;
 uniform sampler2D depth_texture : hint_depth_texture, repeat_disable, filter_nearest;
 uniform sampler2D normal_roughness_texture : hint_normal_roughness_texture, repeat_disable, filter_nearest;
+uniform bool post_enabled = true;
 uniform float brightness = 1.0;
 uniform float contrast = 1.0;
 uniform float saturation = 1.0;
@@ -1793,7 +1890,8 @@ void fragment() {
     vec3 south = texture(screen_texture, SCREEN_UV - vec2(0.0, pixel.y)).rgb;
     vec3 east = texture(screen_texture, SCREEN_UV + vec2(pixel.x, 0.0)).rgb;
     vec3 west = texture(screen_texture, SCREEN_UV - vec2(pixel.x, 0.0)).rgb;
-    vec3 color = center + (center * 4.0 - north - south - east - west) * sharpen;
+    vec3 color = center;
+    if (post_enabled) color += (center * 4.0 - north - south - east - west) * sharpen;
     if (bloom_enabled && halo_intensity > 0.001) {
         vec2 halo_pixel = halo_size * 2.4 / vec2(textureSize(screen_texture, 0));
         vec2 directions[8] = vec2[8](
@@ -1808,21 +1906,23 @@ void fragment() {
         }
         color += halo * (halo_intensity * 0.022);
     }
-    color *= brightness;
-    color = (color - 0.5) * contrast + 0.5;
-    float luminance = dot(color, vec3(0.2126, 0.7152, 0.0722));
-    color = mix(vec3(luminance), color, saturation);
-    color *= vec3(1.0 + temperature * 0.13, 1.0 + tint * 0.08, 1.0 - temperature * 0.13);
-    color.g *= 1.0 + tint * 0.08;
-    float grain = hash21(floor(FRAGCOORD.xy / max(0.5, grain_scale))) - 0.5;
-    color += grain * film_grain;
-    if (posterize_levels > 1.5) {
-        float ordered = fract(dot(floor(FRAGCOORD.xy), vec2(0.754877666, 0.569840296))) - 0.5;
-        color += ordered * dither_amount / posterize_levels;
-        color = floor(color * posterize_levels + 0.5) / posterize_levels;
+    if (post_enabled) {
+        color *= brightness;
+        color = (color - 0.5) * contrast + 0.5;
+        float luminance = dot(color, vec3(0.2126, 0.7152, 0.0722));
+        color = mix(vec3(luminance), color, saturation);
+        color *= vec3(1.0 + temperature * 0.13, 1.0 + tint * 0.08, 1.0 - temperature * 0.13);
+        color.g *= 1.0 + tint * 0.08;
+        float grain = hash21(floor(FRAGCOORD.xy / max(0.5, grain_scale))) - 0.5;
+        color += grain * film_grain;
+        if (posterize_levels > 1.5) {
+            float ordered = fract(dot(floor(FRAGCOORD.xy), vec2(0.754877666, 0.569840296))) - 0.5;
+            color += ordered * dither_amount / posterize_levels;
+            color = floor(color * posterize_levels + 0.5) / posterize_levels;
+        }
+        vec2 centered = SCREEN_UV * 2.0 - 1.0;
+        color *= 1.0 - vignette * smoothstep(0.25, 1.35, dot(centered, centered));
     }
-    vec2 centered = SCREEN_UV * 2.0 - 1.0;
-    color *= 1.0 - vignette * smoothstep(0.25, 1.35, dot(centered, centered));
 
     if (outline_enabled) {
         float dc = linear_depth(SCREEN_UV, INV_PROJECTION_MATRIX);

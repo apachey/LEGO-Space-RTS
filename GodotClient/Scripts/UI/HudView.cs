@@ -133,6 +133,10 @@ public partial class HudView : Control
         {
             _alertButton.Text = frame.Alert.Text;
             _alertButton.TooltipText = frame.Alert.Text;
+            _alertButton.Disabled = !frame.Alert.Actionable;
+            _alertButton.MouseDefaultCursorShape = frame.Alert.Actionable
+                ? Control.CursorShape.PointingHand
+                : Control.CursorShape.Arrow;
         }
         SetText(_objectiveLabel, frame.Objective);
         SetText(_tooltipTitle, frame.TooltipTitle);
@@ -336,7 +340,10 @@ public partial class HudView : Control
         _alertButton.Alignment = HorizontalAlignment.Center;
         _alertButton.TextOverrunBehavior = TextServer.OverrunBehavior.TrimEllipsis;
         _alertButton.ClipText = true;
-        _alertButton.Pressed += () => AlertRequested?.Invoke();
+        _alertButton.Pressed += () =>
+        {
+            if (_frame.Alert.Actionable) AlertRequested?.Invoke();
+        };
         _alertPanel.AddChild(_alertButton);
 
         _eventPanel = SurfacePanel("EventFeed", false); _safeArea.AddChild(_eventPanel);

@@ -215,8 +215,8 @@ public sealed class HudFrame
         signature.Append((int)Faction).Append('|').Append(MatchState).Append('|').Append(Ore).Append('|')
             .Append(Energy).Append('|').Append(Crystals).Append('|').Append(Operations).Append('|')
             .Append(FactionMechanic).Append('|').Append((int)ResourcePriority).Append('|')
-            .Append(Minimap.Signature()).Append('|').Append(Selection.Signature()).Append('|').Append((int)Alert.Priority).Append('|')
-            .Append(Alert.Text).Append('|').Append(Objective).Append('|').Append(TooltipTitle).Append('|')
+            .Append(Minimap.Signature()).Append('|').Append(Selection.Signature()).Append('|').Append(Alert.Signature()).Append('|')
+            .Append(Objective).Append('|').Append(TooltipTitle).Append('|')
             .Append(TooltipQuick).Append('|').Append(TooltipExpanded).Append('|').Append(ExpandedTooltip)
             .Append('|').Append(EnergyPopoverVisible).Append('|').Append(EnergyPopover);
         for (int i = 0; i < Commands.Count; i++) signature.Append("|C:").Append(Commands[i].Signature());
@@ -298,4 +298,5 @@ public sealed class HudAlertFrame
     public HudAlertPriority Priority { get; set; }
     public string Text { get; set; } = string.Empty;
     public bool Actionable { get; set; }
+    public string Signature() => $"{(int)Priority}|{Text}|{Actionable}";
 }

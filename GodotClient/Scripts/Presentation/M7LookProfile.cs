@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Godot;
 
 namespace LegoSpaceRTS.Presentation;
 
@@ -44,6 +45,11 @@ public sealed class M7LookProfile
     {
         try
         {
+            using JsonDocument document = JsonDocument.Parse(json, new JsonDocumentOptions
+            {
+                AllowTrailingCommas = true,
+                CommentHandling = JsonCommentHandling.Skip
+            });
             M7LookProfile? parsed = JsonSerializer.Deserialize<M7LookProfile>(json, JsonOptions);
             if (parsed is null)
             {
@@ -64,6 +70,7 @@ public sealed class M7LookProfile
             // values intentionally inherit the current review baseline, so old
             // copied profiles remain usable.
             int sourceSchemaVersion = parsed.SchemaVersion;
+            MergeMissingMaterialDefaults(parsed, document.RootElement);
             parsed.SchemaVersion = CurrentSchemaVersion;
             parsed.Normalize();
             if (sourceSchemaVersion == 1) ApplySchemaOneMigration(parsed);
@@ -105,6 +112,53 @@ public sealed class M7LookProfile
         destination.TextureScale = source.TextureScale;
     }
 
+    private static void MergeMissingMaterialDefaults(M7LookProfile profile, JsonElement root)
+    {
+        if (!root.TryGetProperty("materials", out JsonElement materials) || materials.ValueKind != JsonValueKind.Object)
+            return;
+
+        MaterialCollection defaults = CreateDefault().Materials;
+        MergeMissingMaterialDefaults(materials, "paintedHull", profile.Materials.PaintedHull, defaults.PaintedHull);
+        MergeMissingMaterialDefaults(materials, "structuralEarth", profile.Materials.StructuralEarth, defaults.StructuralEarth);
+        MergeMissingMaterialDefaults(materials, "accent", profile.Materials.Accent, defaults.Accent);
+        MergeMissingMaterialDefaults(materials, "darkMechanic", profile.Materials.DarkMechanic, defaults.DarkMechanic);
+        MergeMissingMaterialDefaults(materials, "toolSteel", profile.Materials.ToolSteel, defaults.ToolSteel);
+        MergeMissingMaterialDefaults(materials, "rubber", profile.Materials.Rubber, defaults.Rubber);
+        MergeMissingMaterialDefaults(materials, "buildingShell", profile.Materials.BuildingShell, defaults.BuildingShell);
+        MergeMissingMaterialDefaults(materials, "groundRock", profile.Materials.GroundRock, defaults.GroundRock);
+    }
+
+    private static void MergeMissingMaterialDefaults(
+        JsonElement materials,
+        string familyName,
+        MaterialLook? destination,
+        MaterialLook defaults)
+    {
+        if (destination is null ||
+            !materials.TryGetProperty(familyName, out JsonElement source) ||
+            source.ValueKind != JsonValueKind.Object)
+            return;
+
+        if (!HasValue(source, "baseColor")) destination.BaseColor = defaults.BaseColor;
+        if (!HasValue(source, "metallic")) destination.Metallic = defaults.Metallic;
+        if (!HasValue(source, "roughness")) destination.Roughness = defaults.Roughness;
+        if (!HasValue(source, "specular")) destination.Specular = defaults.Specular;
+        if (!HasValue(source, "clearcoat")) destination.Clearcoat = defaults.Clearcoat;
+        if (!HasValue(source, "clearcoatRoughness")) destination.ClearcoatRoughness = defaults.ClearcoatRoughness;
+        if (!HasValue(source, "fresnel")) destination.Fresnel = defaults.Fresnel;
+        if (!HasValue(source, "microStrength")) destination.MicroStrength = defaults.MicroStrength;
+        if (!HasValue(source, "microScale")) destination.MicroScale = defaults.MicroScale;
+        if (!HasValue(source, "macroVariation")) destination.MacroVariation = defaults.MacroVariation;
+        if (!HasValue(source, "edgeWear")) destination.EdgeWear = defaults.EdgeWear;
+        if (!HasValue(source, "dustAmount")) destination.DustAmount = defaults.DustAmount;
+        if (!HasValue(source, "brushedAmount")) destination.BrushedAmount = defaults.BrushedAmount;
+        if (!HasValue(source, "textureStrength")) destination.TextureStrength = defaults.TextureStrength;
+        if (!HasValue(source, "textureScale")) destination.TextureScale = defaults.TextureScale;
+    }
+
+    private static bool HasValue(JsonElement source, string propertyName) =>
+        source.TryGetProperty(propertyName, out JsonElement value) && value.ValueKind != JsonValueKind.Null;
+
     public void Normalize()
     {
         SchemaVersion = CurrentSchemaVersion;
@@ -137,8 +191,11 @@ public sealed class M7LookProfile
         Shading.GlobalSpecular = Clamp(Shading.GlobalSpecular, 0f, 2f);
         Shading.RimStrength = Clamp(Shading.RimStrength, 0f, 2f);
         Shading.RimWidth = Clamp(Shading.RimWidth, 0.05f, 1f);
+        Shading.ShadowTint = M7ProfileColor.Normalize(Shading.ShadowTint, "#253246");
+        Shading.HighlightTint = M7ProfileColor.Normalize(Shading.HighlightTint, "#fff4df");
 
         Materials.Normalize();
+        Glass.Tint = M7ProfileColor.Normalize(Glass.Tint, "#31595b");
         Glass.Opacity = Clamp(Glass.Opacity, 0.05f, 1f);
         Glass.Roughness = Clamp01(Glass.Roughness);
         Glass.Ior = Clamp(Glass.Ior, 1f, 2.5f);
@@ -154,6 +211,9 @@ public sealed class M7LookProfile
         Emission.EdgeDarkening = Clamp01(Emission.EdgeDarkening);
         Emission.LocalLightEnergy = Clamp(Emission.LocalLightEnergy, 0f, 4f);
         Emission.LocalLightRange = Clamp(Emission.LocalLightRange, 0.5f, 8f);
+        Emission.SignalColor = M7ProfileColor.Normalize(Emission.SignalColor, "#ef4515");
+        Emission.LampColor = M7ProfileColor.Normalize(Emission.LampColor, "#7dff4c");
+        Emission.CrystalColor = M7ProfileColor.Normalize(Emission.CrystalColor, "#55d9ff");
 
         Lighting.KeyAzimuth = WrapDegrees(Lighting.KeyAzimuth);
         Lighting.KeyElevation = Clamp(Lighting.KeyElevation, 10f, 85f);
@@ -167,6 +227,11 @@ public sealed class M7LookProfile
         Lighting.RimEnergy = Clamp(Lighting.RimEnergy, 0f, 8f);
         Lighting.ShadowOpacity = Clamp01(Lighting.ShadowOpacity);
         Lighting.BackgroundInfluence = Clamp01(Lighting.BackgroundInfluence);
+        Lighting.KeyColor = M7ProfileColor.Normalize(Lighting.KeyColor, "#fff4e5");
+        Lighting.FillColor = M7ProfileColor.Normalize(Lighting.FillColor, "#7caee6");
+        Lighting.AmbientColor = M7ProfileColor.Normalize(Lighting.AmbientColor, "#8ca1b5");
+        Lighting.RimColor = M7ProfileColor.Normalize(Lighting.RimColor, "#74a9ff");
+        Lighting.BackgroundColor = M7ProfileColor.Normalize(Lighting.BackgroundColor, "#151d25");
 
         Post.Exposure = Clamp(Post.Exposure, -2f, 2f);
         Post.Brightness = Clamp(Post.Brightness, 0.4f, 1.8f);
@@ -192,9 +257,11 @@ public sealed class M7LookProfile
         Outline.SilhouetteStrength = Clamp(Outline.SilhouetteStrength, 0f, 3f);
         Outline.CreaseStrength = Clamp(Outline.CreaseStrength, 0f, 3f);
         Outline.DistanceFade = Clamp(Outline.DistanceFade, 0f, 2f);
+        Outline.Color = M7ProfileColor.Normalize(Outline.Color, "#101820");
 
         Animation.Normalize();
         Destruction.Normalize();
+        Destruction.DustColor = M7ProfileColor.Normalize(Destruction.DustColor, "#776657");
 
         Vfx.TracerWidth = Clamp(Vfx.TracerWidth, 0.01f, 0.8f);
         Vfx.TracerLength = Clamp(Vfx.TracerLength, 0.1f, 8f);
@@ -211,6 +278,9 @@ public sealed class M7LookProfile
         Vfx.FireSize = Clamp(Vfx.FireSize, 0.1f, 4f);
         Vfx.FireEnergy = Clamp(Vfx.FireEnergy, 0f, 12f);
         Vfx.FireFlicker = Clamp01(Vfx.FireFlicker);
+        Vfx.TracerColor = M7ProfileColor.Normalize(Vfx.TracerColor, "#4bff2e");
+        Vfx.SmokeColor = M7ProfileColor.Normalize(Vfx.SmokeColor, "#252a2d");
+        Vfx.FireColor = M7ProfileColor.Normalize(Vfx.FireColor, "#ff6a16");
         VfxPool.Normalize();
 
         Ground.MacroAmount = Clamp01(Ground.MacroAmount);
@@ -222,6 +292,8 @@ public sealed class M7LookProfile
         Ground.TracksLength = Clamp(Ground.TracksLength, 1f, 16f);
         Ground.TrackTreadScale = Clamp(Ground.TrackTreadScale, 1f, 24f);
         Ground.UnitSeparation = Clamp(Ground.UnitSeparation, 4f, 14f);
+        Ground.SecondaryColor = M7ProfileColor.Normalize(Ground.SecondaryColor, "#353d41");
+        Ground.DustTint = M7ProfileColor.Normalize(Ground.DustTint, "#78644d");
     }
 
     private static float WrapDegrees(float value) => ((value % 360f) + 360f) % 360f;
@@ -275,16 +347,19 @@ public sealed class MaterialCollection
 
     public void Normalize()
     {
-        PaintedHull ??= new MaterialLook();
-        StructuralEarth ??= new MaterialLook();
-        Accent ??= new MaterialLook();
-        DarkMechanic ??= new MaterialLook();
-        ToolSteel ??= new MaterialLook();
-        Rubber ??= new MaterialLook();
-        BuildingShell ??= new MaterialLook();
-        GroundRock ??= new MaterialLook();
-        PaintedHull.Normalize(); StructuralEarth.Normalize(); Accent.Normalize(); DarkMechanic.Normalize();
-        ToolSteel.Normalize(); Rubber.Normalize(); BuildingShell.Normalize(); GroundRock.Normalize();
+        MaterialCollection defaults = new();
+        PaintedHull ??= defaults.PaintedHull;
+        StructuralEarth ??= defaults.StructuralEarth;
+        Accent ??= defaults.Accent;
+        DarkMechanic ??= defaults.DarkMechanic;
+        ToolSteel ??= defaults.ToolSteel;
+        Rubber ??= defaults.Rubber;
+        BuildingShell ??= defaults.BuildingShell;
+        GroundRock ??= defaults.GroundRock;
+        PaintedHull.Normalize(defaults.PaintedHull); StructuralEarth.Normalize(defaults.StructuralEarth);
+        Accent.Normalize(defaults.Accent); DarkMechanic.Normalize(defaults.DarkMechanic);
+        ToolSteel.Normalize(defaults.ToolSteel); Rubber.Normalize(defaults.Rubber);
+        BuildingShell.Normalize(defaults.BuildingShell); GroundRock.Normalize(defaults.GroundRock);
     }
 }
 
@@ -314,8 +389,9 @@ public sealed class MaterialLook
     public float TextureStrength { get; set; }
     public float TextureScale { get; set; } = 1f;
 
-    public void Normalize()
+    public void Normalize(MaterialLook? defaults = null)
     {
+        BaseColor = M7ProfileColor.Normalize(BaseColor, defaults?.BaseColor ?? "#808080");
         Metallic = Math.Clamp(Metallic, 0f, 1f); Roughness = Math.Clamp(Roughness, 0f, 1f);
         Specular = Math.Clamp(Specular, 0f, 1f); Clearcoat = Math.Clamp(Clearcoat, 0f, 1f);
         ClearcoatRoughness = Math.Clamp(ClearcoatRoughness, 0f, 1f); Fresnel = Math.Clamp(Fresnel, 0f, 1f);
@@ -600,4 +676,15 @@ public sealed class GroundLook
     public float TracksLength { get; set; } = 7.5f;
     public float TrackTreadScale { get; set; } = 10f;
     public float UnitSeparation { get; set; } = 6.5f;
+}
+
+internal static class M7ProfileColor
+{
+    public static string Normalize(string? value, string fallback)
+    {
+        string source = !string.IsNullOrWhiteSpace(value) && Color.HtmlIsValid(value)
+            ? value
+            : fallback;
+        return $"#{Color.FromHtml(source).ToHtml(false)}";
+    }
 }

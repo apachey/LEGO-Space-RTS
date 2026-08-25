@@ -14,7 +14,9 @@ patterns, depth-tested tracks, bounded LEGO-destruction controls and complete
 JSON copy/paste. T068 now provides a separate responsive full-HUD framework and
 T069 replaces its minimap placeholder with a client-legal north-up tactical map;
 the HUD Lab is now schema 2 and its visual language remains explicitly
-non-canonical. HUD and health visuals remain excluded from the world Look Lab. The
+non-canonical. A post-T069 quality revision makes outline/halo independent from
+the style post-pass, hardens profile paste, bounds VFX event memory and avoids
+unrelated live material rebuilds. HUD and health visuals remain excluded from the world Look Lab. The
 six-page Palette Ratio Lab is game-director accepted. The revised Look Lab
 awaits game-director profile exploration and review.**
 
@@ -284,6 +286,21 @@ fixtures; the Palette Lab remains the accepted palette review fixture.
 - No gameplay, SimCore, deterministic rule, network packet, replay format or
   visual canon changed.
 
+## M7 quality revision
+
+- The Look Lab composite remains available for outline and emissive halo when
+  style post-processing is disabled. Automation now proves the independent
+  `post off + outline on` path in addition to the existing A/B and zoom cases.
+- Look/HUD copy-paste normalizes invalid colors and gives partial material
+  families their correct family defaults. Existing schema migration remains
+  compatible.
+- GPU-particle pause is complete, live VFX materials are shared/cached by their
+  actual inputs, and event-deduplication state is removed with retired entity
+  views so long sessions remain bounded.
+- Retained HUD invalidation includes actionable-alert state; non-actionable
+  alerts cannot dispatch an action request. No HUD or world art direction was
+  selected by this revision.
+
 ## Integration format boundary
 
 - authoritative snapshot format **20**;
@@ -368,6 +385,13 @@ capture is `Artifacts/Screenshots/m7-t069-production-minimap.png`. The freshly
 exported app also emitted the schema-2 minimap PASS marker for the Martian Tube
 fixture; evidence is
 `Artifacts/Screenshots/m7-t069-exported-minimap-martian.png`.
+
+The M7 quality revision passed the complete full suite with zero blocking
+failures at `Artifacts/Verification/20260822T194330Z-full-summary.txt`: 278
+NUnit tests, all retained M6/M7 Godot smokes, the new post-off/outline-on
+regression, 100-repeat determinism, replay/snapshot checks, content regeneration
+and a fresh launchable macOS export. Exported-build evidence is
+`Artifacts/Screenshots/m7-quality-revision-outline-without-post.png`.
 
 The latest Stress60 run remained the expected diagnostic failure with phase
 completion **4/60, 5/60 and 2/60**. The exported macOS debug build is:

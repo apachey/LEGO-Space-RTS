@@ -190,6 +190,7 @@ public partial class UnitViewManager : Node3D
             _animationRigs.Remove(id);
             _animationDriver.Remove(id);
             _destructionDriver.Remove(id);
+            _eventDeduplicator.RemoveSource(id);
         }
         for (int i = 0; i < _remove.Count; i++) _pendingDebris.Remove(_remove[i]);
         UpdateProjectileViews(previous, current, alpha);

@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using LegoSpaceRTS.Presentation;
 
 namespace LegoSpaceRTS.UI;
 
@@ -94,6 +95,16 @@ public sealed class M7HudProfile
         Surface.CornerRadius = Clamp(Surface.CornerRadius, 0, 20);
         Surface.InnerPadding = Clamp(Surface.InnerPadding, 4, 24);
         Surface.Separation = Clamp(Surface.Separation, 2, 18);
+        Colors.Background = M7ProfileColor.Normalize(Colors.Background, "#111820");
+        Colors.Raised = M7ProfileColor.Normalize(Colors.Raised, "#1b2731");
+        Colors.Recessed = M7ProfileColor.Normalize(Colors.Recessed, "#0b1016");
+        Colors.Accent = M7ProfileColor.Normalize(Colors.Accent, "#e6ad28");
+        Colors.TextPrimary = M7ProfileColor.Normalize(Colors.TextPrimary, "#f2eee3");
+        Colors.TextMuted = M7ProfileColor.Normalize(Colors.TextMuted, "#aab4b8");
+        Colors.Good = M7ProfileColor.Normalize(Colors.Good, "#65c987");
+        Colors.Warning = M7ProfileColor.Normalize(Colors.Warning, "#f2b84b");
+        Colors.Danger = M7ProfileColor.Normalize(Colors.Danger, "#ff6b45");
+        Colors.Selection = M7ProfileColor.Normalize(Colors.Selection, "#5fc4d8");
         Minimap.MarkerScale = Clamp(Minimap.MarkerScale, 0.6f, 2.0f);
         Minimap.InterpolationSeconds = Clamp(Minimap.InterpolationSeconds, 0f, 0.30f);
         Minimap.ExploredFogOpacity = Clamp(Minimap.ExploredFogOpacity, 0.15f, 0.90f);
@@ -102,6 +113,17 @@ public sealed class M7HudProfile
         Minimap.GridOpacity = Clamp(Minimap.GridOpacity, 0f, 0.30f);
         Minimap.ViewportLineWidth = Clamp(Minimap.ViewportLineWidth, 1f, 5f);
         Minimap.AlertPulseScale = Clamp(Minimap.AlertPulseScale, 0.5f, 2.5f);
+        Minimap.GroundColor = M7ProfileColor.Normalize(Minimap.GroundColor, "#35403d");
+        Minimap.RoughColor = M7ProfileColor.Normalize(Minimap.RoughColor, "#594735");
+        Minimap.BlockedColor = M7ProfileColor.Normalize(Minimap.BlockedColor, "#1b2225");
+        Minimap.ExcavatableColor = M7ProfileColor.Normalize(Minimap.ExcavatableColor, "#71512f");
+        Minimap.OwnedColor = M7ProfileColor.Normalize(Minimap.OwnedColor, "#e6ad28");
+        Minimap.AlliedColor = M7ProfileColor.Normalize(Minimap.AlliedColor, "#65c987");
+        Minimap.EnemyColor = M7ProfileColor.Normalize(Minimap.EnemyColor, "#ff6b45");
+        Minimap.NeutralColor = M7ProfileColor.Normalize(Minimap.NeutralColor, "#b4bec1");
+        Minimap.ResourceColor = M7ProfileColor.Normalize(Minimap.ResourceColor, "#d9f24b");
+        Minimap.ViewportColor = M7ProfileColor.Normalize(Minimap.ViewportColor, "#f2eee3");
+        Minimap.AlertColor = M7ProfileColor.Normalize(Minimap.AlertColor, "#ff8a4d");
     }
 
     private static float Clamp(float value, float min, float max) => Math.Clamp(value, min, max);

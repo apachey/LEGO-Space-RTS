@@ -50,6 +50,16 @@ public sealed class PresentationEventDeduplicator
     }
 
     public void ClearForNewSession() => _highWatermarks.Clear();
+
+    public void RemoveSource(uint sourceEntity)
+    {
+        for (int family = (int)PresentationEventFamily.WeaponFire;
+             family <= (int)PresentationEventFamily.Environment;
+             family++)
+        {
+            _highWatermarks.Remove((sourceEntity, (PresentationEventFamily)family));
+        }
+    }
 }
 
 public interface IPooledPresentationVfx

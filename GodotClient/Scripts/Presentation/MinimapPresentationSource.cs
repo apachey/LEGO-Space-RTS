@@ -5,8 +5,8 @@ namespace LegoSpaceRTS.Presentation;
 
 /// <summary>
 /// Builds a bounded minimap frame from the same recipient-legal presentation
-/// snapshot and fog knowledge used by the world view. The only retained enemy
-/// information is the last observed position of static structures/resources.
+/// snapshot and fog knowledge used by the world view. Retained enemy knowledge
+/// is bounded to last-observed static structures/resources and observed tube segments.
 /// </summary>
 public sealed class MinimapPresentationSource
 {
