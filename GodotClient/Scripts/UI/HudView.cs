@@ -14,6 +14,7 @@ public partial class HudView : Control
     private readonly List<Label> _microLabels = new();
     private readonly List<PanelContainer> _surfacePanels = new();
     private readonly List<PanelContainer> _raisedPanels = new();
+    private readonly List<NinePatchRect> _artSkinFrames = new();
     private readonly List<Button> _allButtons = new();
     private readonly Button[] _commandButtons = new Button[CommandCapacity];
     private readonly Button[] _groupButtons = new Button[GroupCapacity];
@@ -436,8 +437,23 @@ public partial class HudView : Control
         Color accent = Parse(_profile.Colors.Accent, new Color("e6ad28"));
         Color text = Parse(_profile.Colors.TextPrimary, Colors.White);
         Color muted = Parse(_profile.Colors.TextMuted, new Color("aab4b8"));
-        for (int i = 0; i < _surfacePanels.Count; i++) _surfacePanels[i].AddThemeStyleboxOverride("panel", Style(background, accent));
-        for (int i = 0; i < _raisedPanels.Count; i++) _raisedPanels[i].AddThemeStyleboxOverride("panel", Style(raised, accent));
+        for (int i = 0; i < _surfacePanels.Count; i++)
+            _surfacePanels[i].AddThemeStyleboxOverride("panel", Style(background, accent, ArtContentPadding(_surfacePanels[i])));
+        for (int i = 0; i < _raisedPanels.Count; i++)
+            _raisedPanels[i].AddThemeStyleboxOverride("panel", Style(raised, accent, ArtContentPadding(_raisedPanels[i])));
+        Texture2D? artTexture = GD.Load<Texture2D>(FactionFramePath(_profile.ArtSkin.Faction));
+        for (int i = 0; i < _artSkinFrames.Count; i++)
+        {
+            NinePatchRect frame = _artSkinFrames[i];
+            int frameThickness = ArtFrameThickness(frame.Name);
+            frame.Visible = _profile.ArtSkin.Enabled && artTexture is not null;
+            frame.Texture = artTexture;
+            frame.SelfModulate = new Color(1f, 1f, 1f, _profile.ArtSkin.FrameOpacity);
+            frame.PatchMarginLeft = frameThickness;
+            frame.PatchMarginTop = frameThickness;
+            frame.PatchMarginRight = frameThickness;
+            frame.PatchMarginBottom = frameThickness;
+        }
         for (int i = 0; i < _headingLabels.Count; i++) _headingLabels[i].AddThemeColorOverride("font_color", accent);
         for (int i = 0; i < _bodyLabels.Count; i++) _bodyLabels[i].AddThemeColorOverride("font_color", text);
         for (int i = 0; i < _microLabels.Count; i++) _microLabels[i].AddThemeColorOverride("font_color", muted);
@@ -592,8 +608,29 @@ public partial class HudView : Control
     {
         PanelContainer panel = new() { Name = name, MouseFilter = MouseFilterEnum.Stop };
         (raised ? _raisedPanels : _surfacePanels).Add(panel);
+        if (name is "ResourceStrip" or "MinimapRegion" or "SelectionPanel" or "PortraitSlot" or "CommandPanel" or "EnergyDomainPopover")
+        {
+            NinePatchRect frame = new()
+            {
+                Name = $"{name}FactionFrame",
+                MouseFilter = MouseFilterEnum.Ignore,
+                DrawCenter = false,
+                CustomMinimumSize = Vector2.Zero
+            };
+            panel.AddChild(frame);
+            _artSkinFrames.Add(frame);
+        }
         return panel;
     }
+
+    private static string FactionFramePath(int faction) => faction switch
+    {
+        1 => "res://Assets/M7/Hud/astronauts_frame.png",
+        2 => "res://Assets/M7/Hud/aliens_frame.png",
+        3 => "res://Assets/M7/Hud/life_on_mars_astronauts_frame.png",
+        4 => "res://Assets/M7/Hud/martians_frame.png",
+        _ => "res://Assets/M7/Hud/rock_raiders_frame.png"
+    };
 
     private void AddResourceBlock(Container parent, string title, out Label heading, out Label value)
     {
@@ -628,11 +665,28 @@ public partial class HudView : Control
         return button;
     }
 
-    private StyleBoxFlat Style(Color background, Color border)
+    private int? ArtContentPadding(PanelContainer panel)
+    {
+        if (!_profile.ArtSkin.Enabled || panel.FindChild($"{panel.Name}FactionFrame", false, false) is null) return null;
+        return panel.Name == "ResourceStrip"
+            ? Math.Max(_profile.Surface.InnerPadding, Math.Min(12, _profile.ArtSkin.FrameThickness))
+            : Math.Max(_profile.Surface.InnerPadding, Math.Min(20, _profile.ArtSkin.FrameThickness));
+    }
+
+    private int ArtFrameThickness(string frameName)
+    {
+        if (frameName.StartsWith("ResourceStrip", StringComparison.Ordinal))
+            return Math.Min(12, _profile.ArtSkin.FrameThickness);
+        if (frameName.StartsWith("PortraitSlot", StringComparison.Ordinal))
+            return Math.Min(18, _profile.ArtSkin.FrameThickness);
+        return _profile.ArtSkin.FrameThickness;
+    }
+
+    private StyleBoxFlat Style(Color background, Color border, int? paddingOverride = null)
     {
         int radius = _profile.Surface.CornerRadius;
         int borderWidth = _profile.Surface.BorderWidth;
-        int padding = _profile.Surface.InnerPadding;
+        int padding = paddingOverride ?? _profile.Surface.InnerPadding;
         return new StyleBoxFlat
         {
             BgColor = new Color(background, _profile.Surface.PanelOpacity), BorderColor = border,

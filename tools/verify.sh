@@ -302,7 +302,7 @@ godot_m7_look_smoke() {
       printf 'M7 Look Lab emitted a shader or script error.\n' >&2
       return 1
     fi
-    if ! printf '%s\n' "${output}" | grep -q "M7 LOOK LAB: PASS schema=4 units=4 meshes=192 triangles=31104 buildings=2 firing=1 burning=1 animationDrivers=4 destructionDriver=1 vfxPools=5 prewarmed=168 controls=${controls} zoom=${zoom} post=${post} outline=${outline}"; then
+    if ! printf '%s\n' "${output}" | grep -q "M7 LOOK LAB: PASS schema=5 units=4 meshes=192 triangles=31104 buildings=2 firing=1 burning=1 animationDrivers=4 destructionDriver=1 vfxPools=5 prewarmed=168 controls=${controls} zoom=${zoom} post=${post} outline=${outline}"; then
       printf 'Godot exited without the required M7 Look Lab PASS marker for controls=%s zoom=%s post=%s outline=%s.\n' "${controls}" "${zoom}" "${post}" "${outline}" >&2
       return 1
     fi
@@ -324,7 +324,7 @@ godot_m7_hud_smoke() {
       printf 'M7 HUD Lab emitted a script or runtime error.\n' >&2
       return 1
     fi
-    if ! printf '%s\n' "${output}" | grep -q "M7 HUD LAB: PASS scenarios=8 commands=12 minimap=legal.*schema=2 active=${scenario}"; then
+    if ! printf '%s\n' "${output}" | grep -q "M7 HUD LAB: PASS scenarios=8 commands=12 minimap=legal.*factionSkins=5.*schema=4 active=${scenario}"; then
       printf 'Godot exited without the required T068/T069 HUD Lab PASS marker for scenario=%s aspect=%s.\n' "${scenario}" "${aspect}" >&2
       return 1
     fi

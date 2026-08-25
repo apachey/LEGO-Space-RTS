@@ -298,7 +298,8 @@ public partial class PooledParticleBurst : Node3D, IPooledPresentationVfx
             ProcessMaterial = process,
             LocalCoords = true,
             Emitting = false,
-            DrawPass1 = new QuadMesh { Size = Vector2.One }
+            DrawPass1 = new QuadMesh { Size = Vector2.One },
+            CastShadow = GeometryInstance3D.ShadowCastingSetting.Off
         };
         AddChild(Particles);
     }

@@ -143,11 +143,11 @@ public partial class GodotSmokeRunner : Node
             (_destroyedUnit != EntityId.None && _bridge.World.Entities.Destruction.Has(_destroyedUnit) &&
              !_bridge.World.Entities.Navigation.Has(_destroyedUnit) && standardWreck is MeshInstance3D standardView &&
              TryGetPresentation(_destroyedUnit, out PresentationEntity standardEntity) &&
-             standardView.Scale.IsEqualApprox(UnitViewManager.DebrisScale(standardEntity)) &&
+             !standardView.Visible && standardView.Scale.IsEqualApprox(UnitViewManager.BaseVisualScale(standardEntity)) &&
              _collapseUnit != EntityId.None && _bridge.World.Entities.Destruction.Has(_collapseUnit) &&
              !_bridge.World.Entities.Navigation.Has(_collapseUnit) && activeCollapse is MeshInstance3D collapseView &&
              TryGetPresentation(_collapseUnit, out PresentationEntity collapseEntity) &&
-             collapseView.Scale.IsEqualApprox(UnitViewManager.DebrisScale(collapseEntity)));
+             !collapseView.Visible && collapseView.Scale.IsEqualApprox(UnitViewManager.BaseVisualScale(collapseEntity)));
         bool preparedTitleOk = _captureConstruction || _captureRepair || _captureTransport || _captureTransformation || selectionTitle?.Text == "Chrome Crusher";
         bool preparedEdgePickOk = _captureConstruction || _captureRepair || _captureTransport || _captureTransformation || _preparedEdgePickObserved;
         bool preparedUiOk = preparedTitleOk && preparedEdgePickOk;

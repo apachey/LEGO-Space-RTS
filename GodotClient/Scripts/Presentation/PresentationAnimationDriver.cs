@@ -78,7 +78,9 @@ public sealed class PresentationAnimationTuning
     public float RecoilRecovery { get; set; } = 7f;
     public float TransformationLift { get; set; } = 0.18f;
     public float TransformationTiltDegrees { get; set; } = 8f;
-    public float DamageWobbleDegrees { get; set; } = 0.8f;
+    // Kept for source compatibility with pre-schema-5 profiles. Generic
+    // damage wobble is intentionally not rendered.
+    public float DamageWobbleDegrees { get; set; }
     public int TierOverride { get; set; }
 
     public void Normalize()
@@ -199,9 +201,6 @@ public sealed class PresentationAnimationDriver
             Math.Clamp(state.Locomotion, 0f, 1f);
         float lean = MathF.Sin(state.SuspensionPhase * 0.5f) * Mathf.DegToRad(tuning.BodyLeanDegrees) *
             Math.Clamp(state.Locomotion, 0f, 1f);
-        lean += MathF.Sin(state.SuspensionPhase * 0.73f + 0.8f) *
-            Mathf.DegToRad(tuning.DamageWobbleDegrees) * state.Damage;
-
         return new PresentationAnimationFrame(tier, parameterUpdate, state.Locomotion, state.Operation,
             state.Repair, state.WheelPhase, state.DrillPhase, suspension, lean, state.Recoil,
             state.Transformation, state.Damage, state.Destruction);
@@ -239,7 +238,8 @@ public sealed class PresentationAnimationDriver
 
 public sealed class PresentationAnimationRigBinding
 {
-    private readonly List<(Node3D Node, Vector3 BaseRotation)> _wheels = new();
+    private readonly Node3D _root;
+    private readonly List<(Node3D Node, Transform3D BaseRelativeTransform)> _wheels = new();
     private Node3D? _drill;
     private Vector3 _drillBaseRotation;
     private Node3D? _suspension;
@@ -252,6 +252,7 @@ public sealed class PresentationAnimationRigBinding
 
     public PresentationAnimationRigBinding(Node3D root)
     {
+        _root = root;
         Collect(root);
         _drill = root.FindChild("Pivot_Drill", true, false) as Node3D;
         _suspension = root.FindChild("Pivot_Suspension", true, false) as Node3D;
@@ -265,21 +266,29 @@ public sealed class PresentationAnimationRigBinding
 
     public void Apply(PresentationAnimationFrame frame, PresentationAnimationTuning tuning)
     {
-        for (int i = 0; i < _wheels.Count; i++)
-        {
-            (Node3D wheel, Vector3 baseRotation) = _wheels[i];
-            wheel.Rotation = baseRotation + Vector3.Right * frame.WheelPhaseRadians;
-        }
         if (_drill is not null)
             _drill.Rotation = _drillBaseRotation + Vector3.Forward * frame.DrillPhaseRadians;
-        if (_suspension is null) return;
-        float transformLift = frame.TransformationProgress * tuning.TransformationLift;
-        float recoil = frame.Recoil * frame.Recoil * tuning.RecoilDistance;
-        _suspension.Position = _suspensionBasePosition + Vector3.Up * (frame.SuspensionOffset + transformLift) +
-            Vector3.Back * recoil;
-        _suspension.Rotation = _suspensionBaseRotation + new Vector3(
-            frame.BodyLeanRadians + Mathf.DegToRad(tuning.TransformationTiltDegrees) * frame.TransformationProgress,
-            0f, 0f);
+        if (_suspension is not null)
+        {
+            float transformLift = frame.TransformationProgress * tuning.TransformationLift;
+            float recoil = frame.Recoil * frame.Recoil * tuning.RecoilDistance;
+            _suspension.Position = _suspensionBasePosition + Vector3.Up * (frame.SuspensionOffset + transformLift) +
+                Vector3.Back * recoil;
+            _suspension.Rotation = _suspensionBaseRotation + new Vector3(
+                frame.BodyLeanRadians + Mathf.DegToRad(tuning.TransformationTiltDegrees) * frame.TransformationProgress,
+                0f, 0f);
+        }
+
+        // Wheel centers remain planted relative to the vehicle root while the
+        // body/suspension moves above them. This avoids the toy-like whole-rig
+        // shake caused by parenting every wheel to the animated chassis.
+        Basis spin = new(Vector3.Right, frame.WheelPhaseRadians);
+        for (int i = 0; i < _wheels.Count; i++)
+        {
+            (Node3D wheel, Transform3D baseRelative) = _wheels[i];
+            Transform3D relative = new(baseRelative.Basis * spin, baseRelative.Origin);
+            wheel.GlobalTransform = _root.GlobalTransform * relative;
+        }
     }
 
     private void Collect(Node root)
@@ -287,7 +296,10 @@ public sealed class PresentationAnimationRigBinding
         foreach (Node child in root.GetChildren())
         {
             if (child is Node3D node && node.Name.ToString().StartsWith("Pivot_Wheel_", StringComparison.Ordinal))
-                _wheels.Add((node, node.Rotation));
+            {
+                Transform3D relative = _root.GlobalTransform.AffineInverse() * node.GlobalTransform;
+                _wheels.Add((node, relative));
+            }
             Collect(child);
         }
     }

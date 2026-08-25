@@ -1,10 +1,10 @@
-# M7 LOOK LAB — SCHEMA 4 AUDIT
+# M7 LOOK LAB — SCHEMA 5 AUDIT
 
 ## Status
 
 **NON-CANONICAL LOOK-DEVELOPMENT AUDIT.**
 
-This audit responds to the game-director review and the supplied schema-1
+This audit responds to the game-director reviews and supplied schema-1/schema-4
 profile. It records what was defective, what changed, which supplied settings
 became the new review baseline and where human judgement is still required.
 
@@ -157,6 +157,39 @@ The complete full suite passed at
 exported macOS app then ran the maximum 18-module Structure preview without
 runtime or shader errors and produced
 `Artifacts/Screenshots/m7-t067-exported-destruction-structure.png`.
+
+## Schema-5 material, lighting and presentation revision
+
+The supplied schema-4 profile is now the reset baseline and migrates without
+losing any reviewed value. The revision separates previously ambiguous controls
+and fixes defects revealed only after authored texture maps became visible:
+
+- material controls use surface-character presets and perceptual labels instead
+  of raw Blender terminology; the UI identifies the map used by every family;
+- generated regolith, bolted-machine and building-panel maps drive tinted albedo,
+  height-derived normals and gloss breakup, while a transparent glare sprite
+  drives muzzle/impact particles; stable mip selection prevents RTS-scale
+  sparkle;
+- terrain no longer emits into bloom, and its old sinusoidal/tiled color noise is
+  replaced by anti-tiled authored detail plus non-repeating domain-warped broad
+  patches;
+- signal and Crystal pulse are independent; static lamps do not pulse by
+  default; fire has direct illumination/reach controls and smoke renders behind
+  the luminous flame;
+- the chassis receives restrained suspension while wheel centers remain planted;
+  generic unit-hit wobble is removed, recoil uses the named muzzle after layout,
+  and only the correctly oriented unobstructed shooter fires;
+- destruction hides the intact source and emits bounded LEGO modules rather
+  than shrinking it under the terrain;
+- the fog preview follows the camera as a distant band and is held above terrain
+  to prevent the previous oval/polygon intersection artifact;
+- a presentation-only World Light Cycle section covers Earth, Mars, Moon,
+  authored Planet U and fixed Underground, including natural color transitions,
+  authored light/dark duration ratios and explicit readability/local-light
+  safeguards.
+
+These are laboratory capabilities, not selected art direction. Planet U's
+lighting is explicitly an authored experiment rather than astronomical canon.
 
 ## M7 quality revision
 

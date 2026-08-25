@@ -38,6 +38,7 @@ public partial class M7HudLab : Node3D
             else if (arguments[i] == "--m7-hud-aspect") _aspect = ParseAspect(arguments[i + 1]);
             else if (arguments[i] == "--capture-path") _capturePath = arguments[i + 1];
         }
+        _profile.ArtSkin.Faction = FactionForScenario(_scenario);
         BuildWorldBackdrop();
         BuildHudPreview();
         BuildControls();
@@ -55,7 +56,7 @@ public partial class M7HudLab : Node3D
         if (valid && _capturePath is not null) valid = CaptureViewport(_capturePath);
         _finished = true;
         if (valid)
-            GD.Print($"M7 HUD LAB: PASS scenarios=8 commands=12 minimap=legal markers=11 remembered=2 safeArea={_profile.Layout.SafeAreaPercent:0.#} uiScale={_profile.Layout.UiScale:0.00} aspect={_aspect} schema={M7HudProfile.CurrentSchemaVersion} active={M7HudFixtures.Slug(_scenario)}");
+            GD.Print($"M7 HUD LAB: PASS scenarios=8 commands=12 minimap=legal markers=11 remembered=2 factionSkins=5 safeArea={_profile.Layout.SafeAreaPercent:0.#} uiScale={_profile.Layout.UiScale:0.00} aspect={_aspect} schema={M7HudProfile.CurrentSchemaVersion} active={M7HudFixtures.Slug(_scenario)}");
         else GD.PrintErr("M7 HUD LAB: FAIL");
         GetTree().Quit(valid ? 0 : 2);
     }
@@ -154,8 +155,8 @@ public partial class M7HudLab : Node3D
         _controlPanel.AddChild(scroll);
         VBoxContainer box = new() { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
         box.AddThemeConstantOverride("separation", 7); scroll.AddChild(box);
-        Label title = LabLabel("M7 HUD LAB · FUNCTION FIRST", 20, new Color("e6ad28")); box.AddChild(title);
-        Label note = LabLabel("Ніякий стиль не затверджено. 1–8 — функціональні стани; Tab ховає контролі. Мінікарта показує туман, розвіддані, типи цілей, мережі, alerts і поворотну область камери.", 13, new Color("b7c0c5"));
+        Label title = LabLabel("M7 HUD LAB · FUNCTION + FACTION SKIN", 20, new Color("e6ad28")); box.AddChild(title);
+        Label note = LabLabel("Художні рамки не є каноном. Вони змінюють матеріальну мову фракції, але не затверджені місця ресурсів, мінікарти, вибору й команд. 1–8 — функціональні стани; Tab ховає контролі.", 13, new Color("b7c0c5"));
         note.AutowrapMode = TextServer.AutowrapMode.WordSmart; box.AddChild(note);
 
         AddSection(box, "SCENARIO FIXTURES");
@@ -173,6 +174,20 @@ public partial class M7HudLab : Node3D
             string selected = aspect;
             Button button = LabButton(aspect); button.Pressed += () => { _aspect = selected; ApplyPreviewAspect(); SetStatus($"Preview {selected}"); }; aspects.AddChild(button);
         }
+
+        AddSection(box, "FACTION ART SKIN");
+        HFlowContainer factions = new(); box.AddChild(factions);
+        string[] factionNames = { "Rock Raiders", "Mars Mission · Astronauts", "Mars Mission · Aliens", "Life on Mars · Astronauts", "Life on Mars · Martians" };
+        for (int i = 0; i < factionNames.Length; i++)
+        {
+            int faction = i;
+            Button button = LabButton(factionNames[i]);
+            button.Pressed += () => { _profile.ArtSkin.Faction = faction; ApplyAll(); SetStatus($"Faction skin: {factionNames[faction]}"); };
+            factions.AddChild(button);
+        }
+        AddToggle(box, "Generated faction frames", () => _profile.ArtSkin.Enabled, value => _profile.ArtSkin.Enabled = value);
+        AddSlider(box, "Frame visibility", 0, 1, 0.01, () => _profile.ArtSkin.FrameOpacity, value => _profile.ArtSkin.FrameOpacity = (float)value);
+        AddSlider(box, "Frame construction weight", 8, 40, 1, () => _profile.ArtSkin.FrameThickness, value => _profile.ArtSkin.FrameThickness = (int)value);
 
         AddSection(box, "LAYOUT");
         AddSlider(box, "Safe area %", 90, 100, 0.5, () => _profile.Layout.SafeAreaPercent, value => _profile.Layout.SafeAreaPercent = (float)value);
@@ -263,10 +278,19 @@ public partial class M7HudLab : Node3D
     private void SetScenario(M7HudScenario scenario)
     {
         _scenario = scenario;
-        _hud?.ApplyFrame(M7HudFixtures.Create(_scenario), true);
-        ApplySyntheticCameraPolygon();
+        _profile.ArtSkin.Faction = FactionForScenario(scenario);
+        ApplyAll();
         SetStatus($"Scenario {M7HudFixtures.Slug(scenario)}");
     }
+
+    private static int FactionForScenario(M7HudScenario scenario) => scenario switch
+    {
+        M7HudScenario.AstronautTransform => 1,
+        M7HudScenario.AlienResonance => 2,
+        M7HudScenario.CriticalTooltip => 3,
+        M7HudScenario.MartianNetwork => 4,
+        _ => 0
+    };
 
     private void ApplyPreviewAspect()
     {
@@ -307,6 +331,15 @@ public partial class M7HudLab : Node3D
         bool tree = _hud?.FindChild("ResourceStrip", true, false) is PanelContainer && _hud.FindChild("MinimapSlot", true, false) is HudMinimapView &&
             _hud.FindChild("SelectionPanel", true, false) is PanelContainer && _hud.FindChild("CommandGrid", true, false) is GridContainer &&
             _hud.FindChild("EventFeed", true, false) is PanelContainer && _hud.FindChild("HudTooltip", true, false) is PanelContainer;
+        bool factionArt = _hud?.FindChild("ResourceStripFactionFrame", true, false) is NinePatchRect &&
+            _hud.FindChild("MinimapRegionFactionFrame", true, false) is NinePatchRect &&
+            _hud.FindChild("SelectionPanelFactionFrame", true, false) is NinePatchRect &&
+            _hud.FindChild("CommandPanelFactionFrame", true, false) is NinePatchRect &&
+            ResourceLoader.Exists("res://Assets/M7/Hud/rock_raiders_frame.png") &&
+            ResourceLoader.Exists("res://Assets/M7/Hud/astronauts_frame.png") &&
+            ResourceLoader.Exists("res://Assets/M7/Hud/aliens_frame.png") &&
+            ResourceLoader.Exists("res://Assets/M7/Hud/life_on_mars_astronauts_frame.png") &&
+            ResourceLoader.Exists("res://Assets/M7/Hud/martians_frame.png");
         bool states = mixed.Selection.Groups.Count == 5 && mixed.Selection.Count == 45 && production.Queue.Count == 3 &&
             brownout.Alert.Priority == HudAlertPriority.High && brownout.EnergyPopoverVisible && critical.ExpandedTooltip;
         string actionableSignature = brownout.ContentSignature();
@@ -330,10 +363,10 @@ public partial class M7HudLab : Node3D
             Kind = HudMinimapMarkerKind.GroundMobile, Relation = HudMinimapRelation.Enemy
         });
         bool leakGuard = !illegal.ValidateClientKnowledge(0, out _);
-        if (!(fixtures && roundTrip && migration && profileSanitization && mapping && tree && states && actionableBinding &&
+        if (!(fixtures && roundTrip && migration && profileSanitization && mapping && tree && factionArt && states && actionableBinding &&
               objectiveBounded && minimap && leakGuard && productionKnowledge))
-            GD.PrintErr($"M7 HUD LAB DETAIL: fixtures={fixtures} roundTrip={roundTrip} migration={migration} sanitization={profileSanitization} mapping={mapping} tree={tree} states={states} actionable={actionableBinding} objectiveBounded={objectiveBounded} minimap={minimap} leakGuard={leakGuard} productionKnowledge={productionKnowledge}");
-        return fixtures && roundTrip && migration && profileSanitization && mapping && tree && states && actionableBinding &&
+            GD.PrintErr($"M7 HUD LAB DETAIL: fixtures={fixtures} roundTrip={roundTrip} migration={migration} sanitization={profileSanitization} mapping={mapping} tree={tree} factionArt={factionArt} states={states} actionable={actionableBinding} objectiveBounded={objectiveBounded} minimap={minimap} leakGuard={leakGuard} productionKnowledge={productionKnowledge}");
+        return fixtures && roundTrip && migration && profileSanitization && mapping && tree && factionArt && states && actionableBinding &&
             objectiveBounded && minimap && leakGuard && productionKnowledge;
     }
 

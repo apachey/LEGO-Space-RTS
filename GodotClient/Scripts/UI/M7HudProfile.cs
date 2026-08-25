@@ -6,12 +6,13 @@ namespace LegoSpaceRTS.UI;
 
 public sealed class M7HudProfile
 {
-    public const int CurrentSchemaVersion = 2;
+    public const int CurrentSchemaVersion = 4;
 
     public int SchemaVersion { get; set; } = CurrentSchemaVersion;
     public HudLayoutProfile Layout { get; set; } = new();
     public HudTypographyProfile Typography { get; set; } = new();
     public HudSurfaceProfile Surface { get; set; } = new();
+    public HudArtSkinProfile ArtSkin { get; set; } = new();
     public HudColorProfile Colors { get; set; } = new();
     public HudContentProfile Content { get; set; } = new();
     public HudMinimapProfile Minimap { get; set; } = new();
@@ -44,7 +45,7 @@ public sealed class M7HudProfile
                 error = "Clipboard does not contain an M7 HUD profile.";
                 return false;
             }
-            if (parsed.SchemaVersion is not 1 and not CurrentSchemaVersion)
+            if (parsed.SchemaVersion is not (1 or 2 or 3 or CurrentSchemaVersion))
             {
                 profile = CreateDefault();
                 error = $"HUD schema {parsed.SchemaVersion} is not supported; expected {CurrentSchemaVersion}.";
@@ -75,6 +76,7 @@ public sealed class M7HudProfile
         Layout ??= new HudLayoutProfile();
         Typography ??= new HudTypographyProfile();
         Surface ??= new HudSurfaceProfile();
+        ArtSkin ??= new HudArtSkinProfile();
         Colors ??= new HudColorProfile();
         Content ??= new HudContentProfile();
         Minimap ??= new HudMinimapProfile();
@@ -95,6 +97,9 @@ public sealed class M7HudProfile
         Surface.CornerRadius = Clamp(Surface.CornerRadius, 0, 20);
         Surface.InnerPadding = Clamp(Surface.InnerPadding, 4, 24);
         Surface.Separation = Clamp(Surface.Separation, 2, 18);
+        ArtSkin.Faction = Clamp(ArtSkin.Faction, 0, 4);
+        ArtSkin.FrameOpacity = Clamp(ArtSkin.FrameOpacity, 0f, 1f);
+        ArtSkin.FrameThickness = Clamp(ArtSkin.FrameThickness, 8, 40);
         Colors.Background = M7ProfileColor.Normalize(Colors.Background, "#111820");
         Colors.Raised = M7ProfileColor.Normalize(Colors.Raised, "#1b2731");
         Colors.Recessed = M7ProfileColor.Normalize(Colors.Recessed, "#0b1016");
@@ -159,6 +164,14 @@ public sealed class HudSurfaceProfile
     public int Separation { get; set; } = 7;
     public bool SolidCommandButtons { get; set; } = true;
     public bool HealthStateColors { get; set; } = true;
+}
+
+public sealed class HudArtSkinProfile
+{
+    public bool Enabled { get; set; } = true;
+    public int Faction { get; set; }
+    public float FrameOpacity { get; set; } = 0.92f;
+    public int FrameThickness { get; set; } = 22;
 }
 
 public sealed class HudColorProfile

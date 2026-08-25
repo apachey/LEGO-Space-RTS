@@ -79,15 +79,23 @@ presets:
 - independent viewport, alert and network visibility toggles;
 - terrain-family, owned/allied/enemy/neutral/resource, viewport and alert
   colors.
+- five generated faction frame families, an art-frame enable, opacity and
+  construction-weight control. Rock Raiders uses turquoise/brown industrial
+  framing; Mars Mission Astronauts use ivory/orange aerospace framing; Mars
+  Mission Aliens use black/lime/violet crystalline framing; Life on Mars
+  Astronauts use sand/red/blue retro-pneumatic framing; and Life on Mars
+  Martians use red/tan/blue/lime organic-pneumatic framing. These
+  skins preserve the same functional anchors and do not copy another game's
+  layouts or assets.
 
 `Tab` hides the laboratory controls for a clean evaluation.
 
 ## JSON handoff
 
-**COPY JSON** places the complete schema-2 `M7HudProfile` in the clipboard.
+**COPY JSON** places the complete schema-4 `M7HudProfile` in the clipboard.
 **PASTE JSON** accepts the same profile, normalizes all values and applies it
-live. Schema 1 profiles migrate to schema 2 defaults for the new minimap
-section. Unknown fields are ignored; unsupported schema versions fail visibly.
+live. Schema 1–3 profiles migrate to schema-4 defaults for minimap and faction
+art. Unknown fields are ignored; unsupported schema versions fail visibly.
 
 The profile is intentionally independent from `M7LookProfile`: world rendering
 and interface art direction can be reviewed and versioned separately.
@@ -114,11 +122,12 @@ The main verification suite exercises mixed selection, production, brownout and
 critical-tooltip fixtures across four aspect ratios. The smoke also verifies all
 eight fixture contracts, client-legal minimap knowledge, remembered-static
 rules, pixel/cell command conversion, the 12-slot command bound, required
-retained nodes, schema-1 migration and schema-2 JSON round-trip.
+retained nodes, all five imported faction frames, prior-schema migration and
+schema-4 JSON round-trip.
 
 ## Deliberately deferred
 
-- final HUD visual canon and faction framing;
+- final HUD visual canon and acceptance of any generated faction framing;
 - icons, portraits, authored typography and localization assets;
 - T073 complete command catalog and every target-mode button path;
 - attack-move-on-minimap and networked `G` team pings, because their target-mode

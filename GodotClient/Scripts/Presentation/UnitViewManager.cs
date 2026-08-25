@@ -154,6 +154,7 @@ public partial class UnitViewManager : Node3D
             else
             {
                 _pendingDebris.Remove(c.EntityId.Value);
+                view.Visible = true;
                 UpdateWeaponFeedback(view, c);
                 Node3D? repairEffect = view.GetNodeOrNull<Node3D>("RepairEffect");
                 if (repairEffect is not null) repairEffect.Visible = c.IsRepairing;
@@ -344,9 +345,8 @@ public partial class UnitViewManager : Node3D
         Vector3 baseScale = BaseVisualScale(entity);
         PresentationDestructionFrame frame = _destructionDriver.Update(entity.EntityId.Value, true,
             baseScale, delta, _destructionTuning);
-        float yaw = view.RotationDegrees.Y;
-        view.Scale = frame.Scale;
-        view.RotationDegrees = new Vector3(frame.TiltDegrees.X, yaw, frame.TiltDegrees.Z);
+        view.Scale = baseScale;
+        view.Visible = frame.NormalizedProgress < 0.08f;
     }
 
     internal static Vector3 DebrisScale(PresentationEntity entity)
@@ -375,6 +375,7 @@ public partial class UnitViewManager : Node3D
     {
         view.Name = $"Debris_{id}";
         view.Scale = scale;
+        view.Visible = false;
         string[] hidden = { "SelectionRing", "TargetRing", "HealthBar", "ConstructionProgressBar", "TransformationProgressBar", "ControlGroupLabel", "TransportLabel", "TransformationLabel", "BrownoutLabel", "WeaponFlash", "ContactImpact", "RepairEffect" };
         for (int i = 0; i < hidden.Length; i++)
         {

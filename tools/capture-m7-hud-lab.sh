@@ -34,7 +34,7 @@ dotnet build "${ROOT}/GodotClient/LEGO.SpaceRTS.Godot.csproj" -c Debug --no-rest
 "${GODOT}" --headless --import --path "${ROOT}/GodotClient"
 "${GODOT}" --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- \
   --m7-hud-lab --m7-hud-smoke --m7-hud-scenario "${SCENARIO}" --m7-hud-aspect "${ASPECT}" --m7-hud-controls "${CONTROLS}" --capture-path "${OUTPUT}"
-if [[ ! -s "${OUTPUT}" ]] || ! grep -q "M7 HUD LAB: PASS scenarios=8 commands=12 minimap=legal.*schema=2 active=${SCENARIO}" "${CAPTURE_LOG}"; then
+if [[ ! -s "${OUTPUT}" ]] || ! grep -q "M7 HUD LAB: PASS scenarios=8 commands=12 minimap=legal.*factionSkins=5.*schema=4 active=${SCENARIO}" "${CAPTURE_LOG}"; then
   printf 'FAIL: M7 HUD Lab capture or PASS marker was not produced.\n' >&2
   exit 1
 fi

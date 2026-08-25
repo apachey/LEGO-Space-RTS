@@ -12,12 +12,17 @@ CONTROLS="${2:-visible}"
 ZOOM="${3:-35}"
 POST="${4:-on}"
 OUTLINE="${5:-off}"
+WORLD="${6:-manual}"
+LOCAL_TIME="${7:-12}"
 CAPTURE_LOG="${TMPDIR:-/tmp}/lego-space-rts-m7-look-lab.log"
 if [[ "${OUTPUT}" != /* ]]; then OUTPUT="${ROOT}/${OUTPUT}"; fi
 
 case "${CONTROLS}" in visible|hidden) ;; *) printf 'Usage: %s [output.png] [visible|hidden] [zoom-cells] [on|off]\n' "$0" >&2; exit 2 ;; esac
 case "${POST}" in on|off) ;; *) printf 'Usage: %s [output.png] [visible|hidden] [zoom-cells] [on|off]\n' "$0" >&2; exit 2 ;; esac
 case "${OUTLINE}" in on|off) ;; *) printf 'Usage: %s [output.png] [visible|hidden] [zoom-cells] [on|off] [on|off]\n' "$0" >&2; exit 2 ;; esac
+case "${WORLD}" in manual|earth|mars|moon|planet-u|underground) ;;
+  *) printf 'Usage: %s [output.png] [visible|hidden] [zoom-cells] [on|off] [on|off] [manual|earth|mars|moon|planet-u|underground] [local-time]\n' "$0" >&2; exit 2 ;;
+esac
 if [[ -z "${GODOT}" ]] || ! godot_is_required_mono "${GODOT}"; then
   printf 'FAIL: Godot 4.7.1 .NET was not found.\n' >&2
   exit 1
@@ -28,8 +33,9 @@ mkdir -p "$(dirname "${OUTPUT}")"
 dotnet build "${ROOT}/GodotClient/LEGO.SpaceRTS.Godot.csproj" -c Debug --no-restore --disable-build-servers -m:1
 "${GODOT}" --headless --import --path "${ROOT}/GodotClient"
 "${GODOT}" --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- \
-  --m7-look-lab --m7-look-smoke --m7-look-controls "${CONTROLS}" --m7-look-zoom "${ZOOM}" --m7-look-post "${POST}" --m7-look-outline "${OUTLINE}" --capture-path "${OUTPUT}"
-if [[ ! -s "${OUTPUT}" ]] || ! grep -q "M7 LOOK LAB: PASS schema=4 units=4 meshes=192 triangles=31104 buildings=2 firing=1 burning=1 animationDrivers=4 destructionDriver=1 vfxPools=5 prewarmed=168 controls=${CONTROLS} zoom=${ZOOM} post=${POST} outline=${OUTLINE}" "${CAPTURE_LOG}"; then
+  --m7-look-lab --m7-look-smoke --m7-look-controls "${CONTROLS}" --m7-look-zoom "${ZOOM}" --m7-look-post "${POST}" --m7-look-outline "${OUTLINE}" \
+  --m7-look-world "${WORLD}" --m7-look-time "${LOCAL_TIME}" --capture-path "${OUTPUT}"
+if [[ ! -s "${OUTPUT}" ]] || ! grep -q "M7 LOOK LAB: PASS schema=5 units=4 meshes=192 triangles=31104 buildings=2 firing=1 burning=1 animationDrivers=4 destructionDriver=1 vfxPools=5 prewarmed=168 controls=${CONTROLS} zoom=${ZOOM} post=${POST} outline=${OUTLINE}" "${CAPTURE_LOG}"; then
   printf 'FAIL: M7 Look Lab capture or PASS marker was not produced.\n' >&2
   exit 1
 fi

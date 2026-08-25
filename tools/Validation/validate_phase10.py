@@ -96,6 +96,8 @@ check('M5AcceptanceScenarioFactory.Create' in loader and 'PrepareM5Acceptance' i
 basic_hud = (ROOT/'GodotClient/Scripts/UI/BasicHud.cs').read_text()
 hud_view = (ROOT/'GodotClient/Scripts/UI/HudView.cs').read_text()
 hud_profile = (ROOT/'GodotClient/Scripts/UI/M7HudProfile.cs').read_text()
+check('CurrentSchemaVersion = 4' in hud_profile and 'Clamp(ArtSkin.Faction, 0, 4)' in hud_profile,
+      'M7 HUD Profile schema 4 five-faction art domain missing')
 hud_minimap = (ROOT/'GodotClient/Scripts/UI/HudMinimapView.cs').read_text()
 minimap_source = (ROOT/'GodotClient/Scripts/Presentation/MinimapPresentationSource.cs').read_text()
 input_controller = (ROOT/'GodotClient/Scripts/Presentation/RtsInputController.cs').read_text()
@@ -134,13 +136,17 @@ for token in ['PresentationEventDeduplicator','PresentationVfxPoolStats','TryAcq
     check(token in vfx_pool, f'T066 pooled VFX foundation missing: {token}')
 check('QueueFree()' not in vfx_pool, 'T066 pooled VFX nodes must be reused rather than freed per effect')
 look_profile = (ROOT/'GodotClient/Scripts/Presentation/M7LookProfile.cs').read_text()
-check('CurrentSchemaVersion = 4' in look_profile and 'AnimationLook Animation' in look_profile and
-      'DestructionLook Destruction' in look_profile and 'VfxPoolLook VfxPool' in look_profile,
-      'M7 Look Profile schema 4 animation/destruction/VFX-pool controls missing')
+check('CurrentSchemaVersion = 5' in look_profile and 'AnimationLook Animation' in look_profile and
+      'DestructionLook Destruction' in look_profile and 'VfxPoolLook VfxPool' in look_profile and
+      'WorldCycleLook WorldCycle' in look_profile and 'SignalPulseAmount' in look_profile and
+      'LampPulseAmount' in look_profile and 'CrystalPulseAmount' in look_profile and
+      'ReliefStrength' in look_profile and 'TextureBlendMode' in look_profile,
+      'M7 Look Profile schema 5 texture/emission/world-cycle controls missing')
 look_lab = (ROOT/'GodotClient/Scripts/Client/M7LookLab.cs').read_text()
 for token in ['BuildAnimationSettings','PresentationAnimationDriver','BuildDestructionSettings',
               'PresentationDestructionDriver','PresentationVfxPool<PooledLegoDebrisBurst>',
-              'PresentationVfxPool<PooledTracerEffect>','UpdatePoolStatsLabel','ValidatePoolReuse']:
+              'PresentationVfxPool<PooledTracerEffect>','UpdatePoolStatsLabel','ValidatePoolReuse',
+              'BuildWorldCycleSettings','EvaluateWorldLighting','GlareTexturePath']:
     check(token in look_lab, f'M7 Look Lab T065/T066/T067 integration missing: {token}')
 destruction_presentation = (ROOT/'GodotClient/Scripts/Presentation/PresentationDestruction.cs').read_text()
 for token in ['PresentationDestructionScaleBand','PresentationDestructionDriver','MaxFragments = 18',
