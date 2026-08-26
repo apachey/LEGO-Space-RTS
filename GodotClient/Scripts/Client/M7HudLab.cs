@@ -185,9 +185,9 @@ public partial class M7HudLab : Node3D
             button.Pressed += () => { _profile.ArtSkin.Faction = faction; ApplyAll(); SetStatus($"Faction skin: {factionNames[faction]}"); };
             factions.AddChild(button);
         }
-        AddToggle(box, "Generated faction frames", () => _profile.ArtSkin.Enabled, value => _profile.ArtSkin.Enabled = value);
-        AddSlider(box, "Frame visibility", 0, 1, 0.01, () => _profile.ArtSkin.FrameOpacity, value => _profile.ArtSkin.FrameOpacity = (float)value);
-        AddSlider(box, "Frame construction weight", 8, 40, 1, () => _profile.ArtSkin.FrameThickness, value => _profile.ArtSkin.FrameThickness = (int)value);
+        AddToggle(box, "Faction chrome", () => _profile.ArtSkin.Enabled, value => _profile.ArtSkin.Enabled = value);
+        AddSlider(box, "Chrome intensity", 0, 1, 0.01, () => _profile.ArtSkin.ChromeIntensity, value => _profile.ArtSkin.ChromeIntensity = (float)value);
+        AddSlider(box, "Chrome scale", 0.75, 1.35, 0.01, () => _profile.ArtSkin.ChromeScale, value => _profile.ArtSkin.ChromeScale = (float)value);
 
         AddSection(box, "LAYOUT");
         AddSlider(box, "Safe area %", 90, 100, 0.5, () => _profile.Layout.SafeAreaPercent, value => _profile.Layout.SafeAreaPercent = (float)value);
@@ -320,6 +320,11 @@ public partial class M7HudLab : Node3D
             Math.Abs(parsed.Layout.SafeAreaPercent - _profile.Layout.SafeAreaPercent) < 0.001f;
         bool migration = M7HudProfile.TryFromJson("{\"schemaVersion\":1}", out M7HudProfile migrated, out _) &&
             migrated.SchemaVersion == M7HudProfile.CurrentSchemaVersion;
+        const string legacyFactionArt = "{\"schemaVersion\":4,\"artSkin\":{\"enabled\":true,\"faction\":2,\"frameOpacity\":0.63,\"frameThickness\":22}}";
+        bool chromeMigration = M7HudProfile.TryFromJson(legacyFactionArt, out M7HudProfile migratedChrome, out _) &&
+            Math.Abs(migratedChrome.ArtSkin.ChromeIntensity - 0.63f) < 0.001f &&
+            Math.Abs(migratedChrome.ArtSkin.ChromeScale - 1f) < 0.001f &&
+            migratedChrome.ArtSkin.FrameOpacity is null && migratedChrome.ArtSkin.FrameThickness is null;
         const string malformedColors = "{\"schemaVersion\":2,\"colors\":{\"background\":\"invalid\",\"accent\":null},\"minimap\":{\"enemyColor\":\"not-a-color\"}}";
         bool profileSanitization = M7HudProfile.TryFromJson(malformedColors, out M7HudProfile sanitized, out _) &&
             sanitized.Colors.Background == "#111820" && sanitized.Colors.Accent == "#e6ad28" &&
@@ -331,15 +336,18 @@ public partial class M7HudLab : Node3D
         bool tree = _hud?.FindChild("ResourceStrip", true, false) is PanelContainer && _hud.FindChild("MinimapSlot", true, false) is HudMinimapView &&
             _hud.FindChild("SelectionPanel", true, false) is PanelContainer && _hud.FindChild("CommandGrid", true, false) is GridContainer &&
             _hud.FindChild("EventFeed", true, false) is PanelContainer && _hud.FindChild("HudTooltip", true, false) is PanelContainer;
-        bool factionArt = _hud?.FindChild("ResourceStripFactionFrame", true, false) is NinePatchRect &&
-            _hud.FindChild("MinimapRegionFactionFrame", true, false) is NinePatchRect &&
-            _hud.FindChild("SelectionPanelFactionFrame", true, false) is NinePatchRect &&
-            _hud.FindChild("CommandPanelFactionFrame", true, false) is NinePatchRect &&
-            ResourceLoader.Exists("res://Assets/M7/Hud/rock_raiders_frame.png") &&
-            ResourceLoader.Exists("res://Assets/M7/Hud/astronauts_frame.png") &&
-            ResourceLoader.Exists("res://Assets/M7/Hud/aliens_frame.png") &&
-            ResourceLoader.Exists("res://Assets/M7/Hud/life_on_mars_astronauts_frame.png") &&
-            ResourceLoader.Exists("res://Assets/M7/Hud/martians_frame.png");
+        HudFactionChrome? topChrome = _hud?.FindChild("ResourceStripFactionChrome", true, false) as HudFactionChrome;
+        HudFactionChrome? minimapChrome = _hud?.FindChild("MinimapRegionFactionChrome", true, false) as HudFactionChrome;
+        HudFactionChrome? selectionChrome = _hud?.FindChild("SelectionPanelFactionChrome", true, false) as HudFactionChrome;
+        HudFactionChrome? commandChrome = _hud?.FindChild("CommandPanelFactionChrome", true, false) as HudFactionChrome;
+        bool factionArt = HudFactionChrome.ValidateRecipes(out _) &&
+            topChrome is { IsConfigured: true, Role: HudFactionChromeRole.TopStrip, UsesFixedSquareCorners: true, UsesProtectedSourceModules: true } &&
+            minimapChrome is { IsConfigured: true, Role: HudFactionChromeRole.SquarePanel } &&
+            selectionChrome is { IsConfigured: true, Role: HudFactionChromeRole.MainPanel } &&
+            commandChrome is { IsConfigured: true, Role: HudFactionChromeRole.MainPanel } &&
+            _hud?.FindChild("PortraitSlotFactionChrome", true, false) is null &&
+            _hud?.FindChild("EnergyDomainPopoverFactionChrome", true, false) is null &&
+            _hud?.FindChild("ResourceStripFactionFrame", true, false) is null;
         bool states = mixed.Selection.Groups.Count == 5 && mixed.Selection.Count == 45 && production.Queue.Count == 3 &&
             brownout.Alert.Priority == HudAlertPriority.High && brownout.EnergyPopoverVisible && critical.ExpandedTooltip;
         string actionableSignature = brownout.ContentSignature();
@@ -347,12 +355,16 @@ public partial class M7HudLab : Node3D
         bool actionableBinding = actionableSignature != brownout.ContentSignature();
         bool objectiveBounded = _hud?.FindChild("ObjectiveTracker", true, false) is Control objective &&
             objective.Size.Y <= 100f * _profile.Layout.UiScale;
+        bool layoutContained = ValidateSafeAreaContainment();
         bool productionKnowledge = ValidateProductionMinimapKnowledge();
-        if (_hud?.FindChild("CommandPanel", true, false) is Control commandPanel && _hud.FindChild("EventFeed", true, false) is Control eventPanel &&
+        if (_hud?.FindChild("CommandPanel", true, false) is Control commandPanel &&
+            _hud.FindChild("SelectionPanel", true, false) is Control selectionPanel &&
+            _hud.FindChild("MinimapRegion", true, false) is Control minimapPanel &&
+            _hud.FindChild("EventFeed", true, false) is Control eventPanel &&
             _hud.FindChild("ObjectiveTracker", true, false) is Control objectivePanel)
         {
             Label? objectiveLabel = objectivePanel.GetChildCount() > 0 ? objectivePanel.GetChild(0) as Label : null;
-            GD.Print($"M7 HUD LAB LAYOUT: command={commandPanel.Position}/{commandPanel.Size} events={eventPanel.Position}/{eventPanel.Size} objective={objectivePanel.Position}/{objectivePanel.Size} label={objectiveLabel?.Position}/{objectiveLabel?.Size} text={objectiveLabel?.Text.Length ?? 0} anchors={objectivePanel.AnchorTop:0.#}-{objectivePanel.AnchorBottom:0.#} preview={_previewFrame?.Size}");
+            GD.Print($"M7 HUD LAB LAYOUT: command={commandPanel.Position}/{commandPanel.Size} min={commandPanel.GetCombinedMinimumSize()} anchors={commandPanel.AnchorTop:0.#}-{commandPanel.AnchorBottom:0.#} selection={selectionPanel.Position}/{selectionPanel.Size} min={selectionPanel.GetCombinedMinimumSize()} anchors={selectionPanel.AnchorTop:0.#}-{selectionPanel.AnchorBottom:0.#} minimap={minimapPanel.Position}/{minimapPanel.Size} min={minimapPanel.GetCombinedMinimumSize()} anchors={minimapPanel.AnchorTop:0.#}-{minimapPanel.AnchorBottom:0.#} events={eventPanel.Position}/{eventPanel.Size} objective={objectivePanel.Position}/{objectivePanel.Size} label={objectiveLabel?.Position}/{objectiveLabel?.Size} text={objectiveLabel?.Text.Length ?? 0} anchors={objectivePanel.AnchorTop:0.#}-{objectivePanel.AnchorBottom:0.#} preview={_previewFrame?.Size}");
         }
         bool minimap = _hud?.FindChild("MinimapSlot", true, false) is HudMinimapView view && view.IsConfigured && view.IsNorthUp &&
             view.MarkerCount == 11 && view.RememberedMarkerCount == 2 && view.VisibleFogCells > 0 && view.ExploredFogCells > 0;
@@ -363,11 +375,42 @@ public partial class M7HudLab : Node3D
             Kind = HudMinimapMarkerKind.GroundMobile, Relation = HudMinimapRelation.Enemy
         });
         bool leakGuard = !illegal.ValidateClientKnowledge(0, out _);
-        if (!(fixtures && roundTrip && migration && profileSanitization && mapping && tree && factionArt && states && actionableBinding &&
-              objectiveBounded && minimap && leakGuard && productionKnowledge))
-            GD.PrintErr($"M7 HUD LAB DETAIL: fixtures={fixtures} roundTrip={roundTrip} migration={migration} sanitization={profileSanitization} mapping={mapping} tree={tree} factionArt={factionArt} states={states} actionable={actionableBinding} objectiveBounded={objectiveBounded} minimap={minimap} leakGuard={leakGuard} productionKnowledge={productionKnowledge}");
-        return fixtures && roundTrip && migration && profileSanitization && mapping && tree && factionArt && states && actionableBinding &&
-            objectiveBounded && minimap && leakGuard && productionKnowledge;
+        if (!(fixtures && roundTrip && migration && chromeMigration && profileSanitization && mapping && tree && factionArt && states && actionableBinding &&
+              objectiveBounded && layoutContained && minimap && leakGuard && productionKnowledge))
+            GD.PrintErr($"M7 HUD LAB DETAIL: fixtures={fixtures} roundTrip={roundTrip} migration={migration} chromeMigration={chromeMigration} sanitization={profileSanitization} mapping={mapping} tree={tree} factionArt={factionArt} states={states} actionable={actionableBinding} objectiveBounded={objectiveBounded} layoutContained={layoutContained} minimap={minimap} leakGuard={leakGuard} productionKnowledge={productionKnowledge}");
+        return fixtures && roundTrip && migration && chromeMigration && profileSanitization && mapping && tree && factionArt && states && actionableBinding &&
+            objectiveBounded && layoutContained && minimap && leakGuard && productionKnowledge;
+    }
+
+    private bool ValidateSafeAreaContainment()
+    {
+        if (_hud?.FindChild("HudSafeArea", true, false) is not Control safeArea) return false;
+        string[] panelNames = { "ResourceStrip", "MinimapRegion", "SelectionPanel", "CommandPanel" };
+        for (int i = 0; i < panelNames.Length; i++)
+        {
+            if (_hud.FindChild(panelNames[i], true, false) is not Control panel) return false;
+            Vector2 end = panel.Position + panel.Size;
+            if (panel.Position.X < -0.5f || panel.Position.Y < -0.5f ||
+                end.X > safeArea.Size.X + 0.5f || end.Y > safeArea.Size.Y + 0.5f)
+                return false;
+        }
+        if (_hud.FindChild("CommandPanel", true, false) is not Control commandPanel) return false;
+        Rect2 commandBounds = commandPanel.GetGlobalRect();
+        int expectedVisibleCommands = _hud.Frame.Commands.Count(command => command.Visible);
+        int visibleCommands = 0;
+        for (int i = 0; i < 12; i++)
+        {
+            if (_hud.FindChild($"Command{i}", true, false) is not Control command) return false;
+            if (!command.Visible) continue;
+            visibleCommands++;
+            Rect2 commandButtonBounds = command.GetGlobalRect();
+            if (commandButtonBounds.Position.X < commandBounds.Position.X - 0.5f ||
+                commandButtonBounds.Position.Y < commandBounds.Position.Y - 0.5f ||
+                commandButtonBounds.End.X > commandBounds.End.X + 0.5f ||
+                commandButtonBounds.End.Y > commandBounds.End.Y + 0.5f)
+                return false;
+        }
+        return visibleCommands == expectedVisibleCommands;
     }
 
     private static bool ValidateProductionMinimapKnowledge()

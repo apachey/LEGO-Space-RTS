@@ -8,11 +8,43 @@ public partial class M7LookLab : Node3D
     private const string ModelPath = "res://Assets/M7/raider_drill_rig.glb";
     private const string GlareTexturePath = "res://Assets/M7/Textures/emissive_glare.png";
     private const float GroundExtent = 300f;
+    private const float HeadlightRangeScale = 1.55f;
+    private const float WorkLightRangeScale = 0.72f;
+    private const float SignalLightRangeScale = 0.35f;
+    private const float CrystalLightRangeScale = 0.45f;
     private static Texture2D? _softDiscTexture;
     private static readonly string[] Categories =
     {
         "SCENE & CAMERA", "SHADING", "MATERIALS", "GLASS & EMISSION", "LIGHTING", "WORLD LIGHT CYCLE", "POST FX", "OUTLINE", "ANIMATION", "DESTRUCTION", "VFX", "GROUND"
     };
+
+    private enum EmissionLightKind
+    {
+        Headlight,
+        WorkLamp,
+        Signal,
+        Crystal
+    }
+
+    private sealed class EmissionLightBinding
+    {
+        public EmissionLightBinding(Light3D light, MeshInstance3D sourceMesh,
+            M7LookMaterialRole role, EmissionLightKind kind, Node3D? vehicleRoot)
+        {
+            Light = light;
+            SourceMesh = sourceMesh;
+            Role = role;
+            Kind = kind;
+            VehicleRoot = vehicleRoot;
+        }
+
+        public Light3D Light { get; }
+        public MeshInstance3D SourceMesh { get; }
+        public M7LookMaterialRole Role { get; }
+        public EmissionLightKind Kind { get; }
+        public Node3D? VehicleRoot { get; }
+        public ShaderMaterial? SourceMaterial { get; set; }
+    }
 
     private readonly List<Node3D> _units = new();
     private readonly List<Node3D?> _unitMuzzleSockets = new();
@@ -20,7 +52,7 @@ public partial class M7LookLab : Node3D
     private readonly List<MeshInstance3D> _unitMeshes = new();
     private readonly List<(MeshInstance3D Mesh, M7LookMaterialRole Role)> _roleMeshes = new();
     private Dictionary<M7LookMaterialRole, Material> _sharedMaterials = new();
-    private readonly List<(OmniLight3D Light, M7LookMaterialRole Role)> _emissionLights = new();
+    private readonly List<EmissionLightBinding> _emissionLights = new();
     private readonly List<MeshInstance3D> _tracks = new();
     private readonly List<ColorRect> _worldGradientSwatches = new();
     private (int Environment, float Daylight, float Darkness, float Readability)? _worldGradientKey;
@@ -32,6 +64,8 @@ public partial class M7LookLab : Node3D
     private DirectionalLight3D? _fillLight;
     private DirectionalLight3D? _rimLight;
     private Godot.Environment? _environment;
+    private Sky? _sky;
+    private ProceduralSkyMaterial? _skyMaterial;
     private MeshInstance3D? _ground;
     private readonly PresentationAnimationDriver _animationDriver = new();
     private readonly PresentationDestructionDriver _destructionDriver = new();
@@ -273,6 +307,7 @@ public partial class M7LookLab : Node3D
         _keyLight = new DirectionalLight3D
         {
             Name = "KeyLight",
+            SkyMode = DirectionalLight3D.SkyModeEnum.LightAndSky,
             ShadowEnabled = true,
             DirectionalShadowMode = DirectionalLight3D.ShadowMode.Parallel4Splits,
             DirectionalShadowBlendSplits = true,
@@ -284,14 +319,42 @@ public partial class M7LookLab : Node3D
             ShadowBias = 0.035f,
             ShadowNormalBias = 0.75f
         };
-        _fillLight = new DirectionalLight3D { Name = "FillLight", ShadowEnabled = false };
-        _rimLight = new DirectionalLight3D { Name = "RimLight", ShadowEnabled = false };
+        _fillLight = new DirectionalLight3D
+        {
+            Name = "FillLight", ShadowEnabled = false,
+            SkyMode = DirectionalLight3D.SkyModeEnum.LightOnly
+        };
+        _rimLight = new DirectionalLight3D
+        {
+            Name = "RimLight", ShadowEnabled = false,
+            SkyMode = DirectionalLight3D.SkyModeEnum.LightOnly
+        };
         AddChild(_keyLight); AddChild(_fillLight); AddChild(_rimLight);
 
+        _skyMaterial = new ProceduralSkyMaterial
+        {
+            SkyTopColor = new Color("10192c"),
+            SkyHorizonColor = new Color("334966"),
+            SkyCurve = 0.18f,
+            GroundBottomColor = new Color("090d13"),
+            GroundHorizonColor = new Color("202b38"),
+            GroundCurve = 0.14f,
+            SunAngleMax = 1.2f,
+            SunCurve = 0.08f,
+            UseDebanding = true
+        };
+        _sky = new Sky
+        {
+            SkyMaterial = _skyMaterial,
+            ProcessMode = Sky.ProcessModeEnum.Realtime,
+            RadianceSize = Sky.RadianceSizeEnum.Size256
+        };
         _environment = new Godot.Environment
         {
-            BackgroundMode = Godot.Environment.BGMode.Color,
+            BackgroundMode = Godot.Environment.BGMode.Sky,
+            Sky = _sky,
             AmbientLightSource = Godot.Environment.AmbientSource.Color,
+            ReflectedLightSource = Godot.Environment.ReflectionSource.Sky,
             GlowEnabled = true,
             AdjustmentEnabled = false
         };
@@ -988,7 +1051,7 @@ public partial class M7LookLab : Node3D
 
     private void BuildGroundSettings()
     {
-        AddNote("Large-scale terrain breakup lives here. Authored texture blend, physical relief and roughness are controlled under Materials → Ground rock, so the two tabs do not expose duplicate sliders.");
+        AddNote("Terrain composition lives here. Raster albedo, relief and roughness are role-authored internally so the ground stays stable at RTS zoom; these controls change only the readable color masses, mineral scale and track language.");
         AddColor("Secondary color", () => _profile.Ground.SecondaryColor, v => _profile.Ground.SecondaryColor = v);
         AddSlider("Broad patch contrast", 0, 1, 0.01, () => _profile.Ground.MacroAmount, v => _profile.Ground.MacroAmount = v);
         AddSlider("Broad patch frequency", 0.01, 2, 0.01, () => _profile.Ground.MacroScale, v => _profile.Ground.MacroScale = v);
@@ -1111,6 +1174,7 @@ public partial class M7LookLab : Node3D
         _environment.BackgroundColor = frame.BackgroundColor;
         _environment.AmbientLightColor = frame.AmbientColor;
         _environment.AmbientLightEnergy = frame.AmbientEnergy;
+        ApplyProceduralSky(frame);
         _environment.TonemapMode = (Godot.Environment.ToneMapper)_profile.Post.Tonemapper;
         _environment.TonemapExposure = Mathf.Pow(2f, _profile.Post.Exposure);
         _environment.GlowEnabled = _profile.Post.BloomEnabled;
@@ -1130,6 +1194,95 @@ public partial class M7LookLab : Node3D
                 ? $"{frame.PhaseName.ToUpperInvariant()}  ·  {frame.SolarAltitude:+0.0;-0.0;0.0}°  ·  {_profile.WorldCycle.LocalTimeHours:00.00}"
                 : "MANUAL LIGHTING PROFILE";
         RefreshWorldGradientStrip();
+    }
+
+    private void ApplyProceduralSky(M7WorldLightingFrame frame)
+    {
+        if (_skyMaterial is null || _environment is null) return;
+
+        Color top;
+        Color horizon;
+        Color groundHorizon;
+        Color groundBottom;
+        float energy;
+
+        if (frame.Environment == M7WorldEnvironment.Underground)
+        {
+            // The cave has no atmospheric horizon. Retain a very low-energy
+            // radiance source so coated materials do not collapse to black.
+            top = frame.BackgroundColor.Lerp(Colors.Black, 0.62f);
+            horizon = frame.BackgroundColor.Lerp(frame.AmbientColor, 0.10f).Darkened(0.38f);
+            groundHorizon = frame.BackgroundColor.Lerp(frame.AmbientColor, 0.08f).Darkened(0.52f);
+            groundBottom = frame.BackgroundColor.Lerp(Colors.Black, 0.76f);
+            energy = 0.42f;
+        }
+        else if (frame.Environment == M7WorldEnvironment.Moon)
+        {
+            // Airless worlds retain a black sky even in direct sun. A faint
+            // neutral horizon is solely a reflection/readability concession.
+            top = frame.BackgroundColor.Lerp(Colors.Black, 0.88f);
+            horizon = frame.BackgroundColor.Lerp(frame.AmbientColor, 0.07f).Darkened(0.58f);
+            groundHorizon = frame.BackgroundColor.Lerp(frame.AmbientColor, 0.12f).Darkened(0.48f);
+            groundBottom = frame.BackgroundColor.Lerp(Colors.Black, 0.72f);
+            energy = 0.48f + frame.DaylightFactor * 0.12f;
+        }
+        else
+        {
+            // Continuous altitude bands keep the transition smooth while
+            // preserving visibly distinct cool blue hour and warm golden hour.
+            float blueHour = SmoothBand(frame.SolarAltitude, -24f, -10f, -1f);
+            float goldenHour = SmoothPlateau(frame.SolarAltitude, -5f, 4f, 30f, 42f);
+            Color neutralTop = frame.BackgroundColor.Lerp(frame.FillColor,
+                0.08f + frame.DaylightFactor * 0.28f);
+            Color blueTop = frame.BackgroundColor.Lerp(frame.FillColor, 0.62f).Darkened(0.10f);
+            Color goldenTop = frame.BackgroundColor.Lerp(frame.FillColor, 0.34f);
+            top = neutralTop.Lerp(blueTop, blueHour * 0.76f)
+                .Lerp(goldenTop, goldenHour * 0.20f);
+
+            Color neutralHorizon = frame.BackgroundColor.Lerp(frame.AmbientColor, 0.48f);
+            Color blueHorizon = frame.BackgroundColor.Lerp(frame.FillColor, 0.82f).Lightened(0.04f);
+            Color goldenHorizon = frame.KeyColor.Lerp(frame.AmbientColor, 0.12f);
+            horizon = neutralHorizon.Lerp(blueHorizon, blueHour * 0.86f)
+                .Lerp(goldenHorizon, goldenHour * 0.88f);
+            groundHorizon = horizon.Lerp(frame.AmbientColor, 0.54f).Darkened(0.18f);
+            groundBottom = frame.BackgroundColor.Lerp(frame.AmbientColor, 0.14f).Darkened(0.50f);
+            energy = 0.72f + frame.DaylightFactor * 0.28f;
+        }
+
+        _skyMaterial.SkyTopColor = top;
+        _skyMaterial.SkyHorizonColor = horizon;
+        _skyMaterial.GroundHorizonColor = groundHorizon;
+        _skyMaterial.GroundBottomColor = groundBottom;
+        _skyMaterial.SkyEnergyMultiplier = energy;
+        _skyMaterial.GroundEnergyMultiplier = energy * 0.72f;
+        _skyMaterial.EnergyMultiplier = 1f;
+        _skyMaterial.SunAngleMax = frame.Environment is M7WorldEnvironment.Underground
+            ? 0.1f
+            : Mathf.Clamp(frame.KeyAngularSize, 0.35f, 2.8f);
+        _environment.BackgroundMode = Godot.Environment.BGMode.Sky;
+        _environment.ReflectedLightSource = Godot.Environment.ReflectionSource.Sky;
+    }
+
+    private static float SmoothBand(float value, float start, float peak, float end)
+    {
+        if (value <= start || value >= end) return 0f;
+        float linear = value <= peak
+            ? (value - start) / Math.Max(0.0001f, peak - start)
+            : (end - value) / Math.Max(0.0001f, end - peak);
+        linear = Mathf.Clamp(linear, 0f, 1f);
+        return linear * linear * (3f - 2f * linear);
+    }
+
+    private static float SmoothPlateau(float value, float start, float fullStart,
+        float fullEnd, float end)
+    {
+        if (value <= start || value >= end) return 0f;
+        if (value >= fullStart && value <= fullEnd) return 1f;
+        float linear = value < fullStart
+            ? (value - start) / Math.Max(0.0001f, fullStart - start)
+            : (end - value) / Math.Max(0.0001f, end - fullEnd);
+        linear = Mathf.Clamp(linear, 0f, 1f);
+        return linear * linear * (3f - 2f * linear);
     }
 
     private M7WorldLightingFrame ManualLightingFrame()
@@ -1159,6 +1312,17 @@ public partial class M7LookLab : Node3D
                 mesh.CastShadow = GeometryInstance3D.ShadowCastingSetting.Off;
         }
         EnsureEmissionLights();
+        Color headlightColor = M7LookMaterialFactory.ParseColor(_profile.Emission.SignalColor);
+        foreach (EmissionLightBinding binding in _emissionLights.Where(binding =>
+                     binding.Kind == EmissionLightKind.Headlight))
+        {
+            // Front amber lenses are functional headlights in this fixture,
+            // not the always-on status-signal material used by the building.
+            binding.SourceMaterial = M7LookMaterialFactory.Emissive(headlightColor,
+                _profile.Emission.SignalEnergy * _worldFunctionalLightFactor,
+                1f, _profile.Emission.EdgeDarkening);
+            binding.SourceMesh.MaterialOverride = binding.SourceMaterial;
+        }
     }
 
     private void ApplyPost()
@@ -1344,31 +1508,49 @@ public partial class M7LookLab : Node3D
             _profile.Emission.LampEnergy * lampPulse * _worldFunctionalLightFactor);
         UpdateSharedEmissionMaterial(M7LookMaterialRole.Crystal, crystalColor,
             _profile.Emission.CrystalEnergy * crystalPulse);
-        foreach ((OmniLight3D light, M7LookMaterialRole role) in _emissionLights)
+        float functionalFactor = _profile.WorldCycle.Enabled ? _worldFunctionalLightFactor : 1f;
+        foreach (EmissionLightBinding headlight in _emissionLights.Where(binding =>
+                     binding.Kind == EmissionLightKind.Headlight))
+            UpdateEmissionMaterial(headlight.SourceMaterial, signalColor,
+                _profile.Emission.SignalEnergy * functionalFactor);
+
+        foreach (EmissionLightBinding binding in _emissionLights)
         {
-            Color color = role switch
+            Color color = binding.Role switch
             {
                 M7LookMaterialRole.Signal => signalColor,
                 M7LookMaterialRole.Lamp => lampColor,
                 _ => crystalColor
             };
-            float energy = role switch
+            float sourceEnergy = binding.Role switch
             {
                 M7LookMaterialRole.Signal => _profile.Emission.SignalEnergy,
                 M7LookMaterialRole.Lamp => _profile.Emission.LampEnergy,
                 _ => _profile.Emission.CrystalEnergy
             };
-            float pulse = role switch
+            float pulse = binding.Kind switch
             {
-                M7LookMaterialRole.Signal => signalPulse,
-                M7LookMaterialRole.Lamp => lampPulse,
+                EmissionLightKind.Headlight => 1f,
+                EmissionLightKind.WorkLamp => lampPulse,
+                EmissionLightKind.Signal => signalPulse,
                 _ => crystalPulse
             };
+            float darknessGate = binding.Kind is EmissionLightKind.Headlight or EmissionLightKind.WorkLamp
+                ? functionalFactor
+                : 1f;
+            float roleScale = binding.Kind switch
+            {
+                EmissionLightKind.Headlight => 1f,
+                EmissionLightKind.WorkLamp => 0.65f,
+                EmissionLightKind.Signal => 0.18f,
+                _ => 0.10f
+            };
+            Light3D light = binding.Light;
             light.LightColor = color;
-            float illuminationFactor = _profile.WorldCycle.Enabled ? _worldFunctionalLightFactor : 1f;
-            light.LightEnergy = _profile.Emission.LocalLightEnergy * energy / 6f * pulse * ResolveLocalLightBoost() * illuminationFactor;
+            light.LightEnergy = _profile.Emission.LocalLightEnergy * sourceEnergy * pulse *
+                ResolveLocalLightBoost() * darknessGate * roleScale;
             light.Visible = light.LightEnergy > 0.001f;
-            light.OmniRange = _profile.Emission.LocalLightRange;
+            ConfigureEmissionLightReach(binding);
         }
         AnimateWeapon();
         AnimateFire();
@@ -1384,9 +1566,37 @@ public partial class M7LookLab : Node3D
     {
         if (!_sharedMaterials.TryGetValue(role, out Material? shared) || shared is not ShaderMaterial material)
             return;
+        UpdateEmissionMaterial(material, color, energy);
+    }
+
+    private void UpdateEmissionMaterial(ShaderMaterial? material, Color color, float energy)
+    {
+        if (material is null) return;
         material.SetShaderParameter("emission_color", color);
         material.SetShaderParameter("emission_energy", energy);
         material.SetShaderParameter("edge_darkening", _profile.Emission.EdgeDarkening);
+    }
+
+    private void ConfigureEmissionLightReach(EmissionLightBinding binding)
+    {
+        if (binding.Light is SpotLight3D spot)
+        {
+            spot.SpotRange = Math.Max(10f, _profile.Emission.LocalLightRange * HeadlightRangeScale);
+            spot.SpotAttenuation = 1.20f;
+            spot.SpotAngle = 56f;
+            spot.SpotAngleAttenuation = 0.65f;
+            return;
+        }
+
+        if (binding.Light is not OmniLight3D omni) return;
+        (float rangeScale, float minimumRange, float attenuation) = binding.Kind switch
+        {
+            EmissionLightKind.WorkLamp => (WorkLightRangeScale, 4f, 1.25f),
+            EmissionLightKind.Signal => (SignalLightRangeScale, 2f, 1.60f),
+            _ => (CrystalLightRangeScale, 3.5f, 1.45f)
+        };
+        omni.OmniRange = Math.Max(minimumRange, _profile.Emission.LocalLightRange * rangeScale);
+        omni.OmniAttenuation = attenuation;
     }
 
     private float ResolveEmissionPulse(M7LookMaterialRole role)
@@ -1814,16 +2024,125 @@ public partial class M7LookLab : Node3D
         foreach ((MeshInstance3D mesh, M7LookMaterialRole role) in _roleMeshes)
         {
             if (role is not (M7LookMaterialRole.Signal or M7LookMaterialRole.Lamp or M7LookMaterialRole.Crystal)) continue;
-            OmniLight3D light = new()
-            {
-                Name = $"{mesh.Name}_LocalLight",
-                Position = mesh.Mesh?.GetAabb().GetCenter() ?? Vector3.Zero,
-                ShadowEnabled = false,
-                OmniAttenuation = 2.4f
-            };
+            Node3D? vehicleRoot = FindOwningUnit(mesh);
+            bool headlightSource = role == M7LookMaterialRole.Signal && vehicleRoot is not null &&
+                mesh.Name.ToString().StartsWith("Signal_Amber_", StringComparison.Ordinal);
+            EmissionLightKind kind = headlightSource
+                ? EmissionLightKind.Headlight
+                : role switch
+                {
+                    M7LookMaterialRole.Lamp => EmissionLightKind.WorkLamp,
+                    M7LookMaterialRole.Crystal => EmissionLightKind.Crystal,
+                    _ => EmissionLightKind.Signal
+                };
+            Light3D light = headlightSource
+                ? new SpotLight3D
+                {
+                    Name = $"{mesh.Name}_Headlight",
+                    ShadowEnabled = false,
+                    LightCullMask = 1u,
+                    SpotRange = Math.Max(10f, _profile.Emission.LocalLightRange * HeadlightRangeScale),
+                    SpotAttenuation = 1.20f,
+                    SpotAngle = 56f,
+                    SpotAngleAttenuation = 0.65f
+                }
+                : new OmniLight3D
+                {
+                    Name = $"{mesh.Name}_LocalLight",
+                    ShadowEnabled = false,
+                    LightCullMask = 1u
+                };
             mesh.AddChild(light);
-            _emissionLights.Add((light, role));
+            if (light is SpotLight3D spot && vehicleRoot is not null)
+            {
+                // The imported rig's front is +Z. Godot spotlights emit along
+                // local -Z, so author the global cone once and retain it in
+                // mesh-local space as the unit rotates or its chassis moves.
+                Vector3 forward = vehicleRoot.GlobalTransform.Basis.Z;
+                forward.Y = 0f;
+                forward = forward.Normalized();
+                Vector3 source = mesh.ToGlobal(mesh.Mesh?.GetAabb().GetCenter() ?? Vector3.Zero);
+                spot.GlobalPosition = source + forward * 0.14f + Vector3.Down * 0.04f;
+                spot.LookAt(spot.GlobalPosition + forward * 10f + Vector3.Down * 2.68f, Vector3.Up);
+            }
+            else
+            {
+                light.Position = mesh.Mesh?.GetAabb().GetCenter() ?? Vector3.Zero;
+            }
+
+            EmissionLightBinding binding = new(light, mesh, role, kind, vehicleRoot);
+            ConfigureEmissionLightReach(binding);
+            _emissionLights.Add(binding);
         }
+    }
+
+    private Node3D? FindOwningUnit(Node node)
+    {
+        for (Node? current = node; current is not null; current = current.GetParent())
+            if (current is Node3D candidate && _units.Contains(candidate)) return candidate;
+        return null;
+    }
+
+    private bool ValidateEmissionLightRig()
+    {
+        int expectedSources = _roleMeshes.Count(entry => entry.Role is
+            M7LookMaterialRole.Signal or M7LookMaterialRole.Lamp or M7LookMaterialRole.Crystal);
+        if (_emissionLights.Count != expectedSources ||
+            _emissionLights.Count(binding => binding.Kind == EmissionLightKind.Headlight) != _units.Count * 2 ||
+            _emissionLights.Count(binding => binding.Kind == EmissionLightKind.WorkLamp) != _units.Count)
+            return false;
+
+        float functionalFactor = _profile.WorldCycle.Enabled ? _worldFunctionalLightFactor : 1f;
+        foreach (EmissionLightBinding binding in _emissionLights)
+        {
+            if (!ReferenceEquals(binding.Light.GetParent(), binding.SourceMesh) ||
+                (binding.Light.LightCullMask & 1u) == 0u)
+                return false;
+
+            if (binding.Kind == EmissionLightKind.Headlight)
+            {
+                if (binding.Light is not SpotLight3D spot || binding.VehicleRoot is null ||
+                    binding.SourceMaterial is null || spot.SpotRange < 10f ||
+                    spot.SpotAttenuation > 1.3f || spot.SpotAngle is < 45f or > 65f)
+                    return false;
+
+                Vector3 source = binding.SourceMesh.ToGlobal(
+                    binding.SourceMesh.Mesh?.GetAabb().GetCenter() ?? Vector3.Zero);
+                if (spot.GlobalPosition.DistanceTo(source) > 0.35f)
+                    return false;
+
+                Vector3 vehicleForward = binding.VehicleRoot.GlobalTransform.Basis.Z;
+                vehicleForward.Y = 0f;
+                vehicleForward = vehicleForward.Normalized();
+                Vector3 beamDirection = -spot.GlobalTransform.Basis.Z.Normalized();
+                if (beamDirection.Dot(vehicleForward) < 0.82f || beamDirection.Y > -0.08f)
+                    return false;
+                float groundDistance = -spot.GlobalPosition.Y / beamDirection.Y;
+                Vector3 groundHit = spot.GlobalPosition + beamDirection * groundDistance;
+                if (groundDistance <= 0f || groundDistance > spot.SpotRange * 1.05f ||
+                    (groundHit - spot.GlobalPosition).Dot(vehicleForward) < 2f)
+                    return false;
+
+                if (_profile.Emission.LocalLightEnergy > 0.001f &&
+                    _profile.Emission.SignalEnergy > 0.001f)
+                {
+                    bool shouldIlluminate = functionalFactor > 0.001f;
+                    if (shouldIlluminate != (spot.LightEnergy > 0.001f))
+                        return false;
+                    float lensEnergy = binding.SourceMaterial.GetShaderParameter("emission_energy").As<float>();
+                    float expectedLensEnergy = _profile.Emission.SignalEnergy * functionalFactor;
+                    if (!Mathf.IsEqualApprox(lensEnergy, expectedLensEnergy))
+                        return false;
+                }
+            }
+            else if (binding.Light is not OmniLight3D omni || omni.OmniRange < 2f ||
+                     omni.OmniAttenuation > 1.65f)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private static void ApplyParticleDrawMaterial(GpuParticles3D? particles, Material material)
@@ -2160,6 +2479,16 @@ public partial class M7LookLab : Node3D
         bool roles = Enum.GetValues<M7LookMaterialRole>().All(role => _roleMeshes.Any(entry => entry.Role == role));
         bool emissiveBindings = _roleMeshes.Where(entry => entry.Role is M7LookMaterialRole.Signal or M7LookMaterialRole.Lamp or M7LookMaterialRole.Crystal)
             .All(entry => entry.Mesh.MaterialOverride is ShaderMaterial);
+        bool emissionLightRig = ValidateEmissionLightRig();
+        bool proceduralSky = _environment is not null && _sky is not null && _skyMaterial is not null &&
+            _environment.BackgroundMode == Godot.Environment.BGMode.Sky &&
+            _environment.ReflectedLightSource == Godot.Environment.ReflectionSource.Sky &&
+            ReferenceEquals(_environment.Sky, _sky) && ReferenceEquals(_sky.SkyMaterial, _skyMaterial) &&
+            _keyLight?.SkyMode == DirectionalLight3D.SkyModeEnum.LightAndSky &&
+            _fillLight?.SkyMode == DirectionalLight3D.SkyModeEnum.LightOnly &&
+            _rimLight?.SkyMode == DirectionalLight3D.SkyModeEnum.LightOnly;
+        bool authoredTextureBindings = M7LookMaterialFactory.ValidateAuthoredTextureBindings(
+            _sharedMaterials, out _);
         Vector3 intactCenter = new(13f, 1.55f, -7f);
         bool exteriorImpact = Mathf.Abs(_targetPoint.X - intactCenter.X) >= 3.15f || Mathf.Abs(_targetPoint.Z - intactCenter.Z) >= 2.45f;
         bool animationBindings = _animationRigs.Count == 4 && _animationRigs.All(rig =>
@@ -2192,18 +2521,10 @@ public partial class M7LookLab : Node3D
         bool valid = _camera is { Fov: 36f } && _units.Count == 4 && _unitMeshes.Count >= 180 && triangles >= 30_000 &&
             animationBindings && roles && _ground is not null && _fireParticles is not null && vfxPools && destruction &&
             _controlsLayer is not null && _postMaterial is not null && postComposition && materialCacheStable &&
-            particlePauseState && pauseUiState && eventMemory &&
-            _emissionLights.Count > 0 && emissiveBindings && exteriorImpact && roundTrip && schemaOneMigration &&
+            particlePauseState && pauseUiState && eventMemory && proceduralSky && authoredTextureBindings &&
+            emissionLightRig && emissiveBindings && exteriorImpact && roundTrip && schemaOneMigration &&
             schemaTwoMigration && schemaThreeMigration && schemaFourMigration && profileSanitization &&
             schemaFiveMigration && explicitSchemaFiveWorld &&
-            ResourceLoader.Exists("res://Assets/M7/Textures/painted_shell_detail.png") &&
-            ResourceLoader.Exists("res://Assets/M7/Textures/brushed_metal_detail.png") &&
-            ResourceLoader.Exists("res://Assets/M7/Textures/rubber_detail.png") &&
-            ResourceLoader.Exists("res://Assets/M7/Textures/quarry_ground_detail.png") &&
-            ResourceLoader.Exists("res://Assets/M7/Textures/regolith_surface_v2.png") &&
-            ResourceLoader.Exists("res://Assets/M7/Textures/regolith_height.png") &&
-            ResourceLoader.Exists("res://Assets/M7/Textures/machine_panel_height.png") &&
-            ResourceLoader.Exists("res://Assets/M7/Textures/building_panel_height.png") &&
             ResourceLoader.Exists("res://Assets/M7/Textures/emissive_glare.png") &&
             _profile.Camera.ZoomCells is >= 24f and <= 72f;
         if (!valid)
@@ -2211,7 +2532,7 @@ public partial class M7LookLab : Node3D
             GD.PrintErr($"M7 LOOK LAB AUDIT: roundTrip={roundTrip} migrations={schemaOneMigration}/{schemaTwoMigration}/{schemaThreeMigration}/{schemaFourMigration}/{schemaFiveMigration} " +
                 $"schema5World={explicitSchemaFiveWorld} sanitization={profileSanitization} postComposition={postComposition} materialCache={materialCacheStable} " +
                 $"particlePause={particlePauseState} pauseUi={pauseUiState} eventMemory={eventMemory} roles={roles} " +
-                $"emission={emissiveBindings} impact={exteriorImpact} animation={animationBindings} pools={vfxPools} destruction={destruction}");
+                $"emission={emissiveBindings}/{emissionLightRig} sky={proceduralSky} textures={authoredTextureBindings} impact={exteriorImpact} animation={animationBindings} pools={vfxPools} destruction={destruction}");
         }
         return valid;
     }

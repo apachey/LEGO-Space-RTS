@@ -14,7 +14,7 @@ public partial class HudView : Control
     private readonly List<Label> _microLabels = new();
     private readonly List<PanelContainer> _surfacePanels = new();
     private readonly List<PanelContainer> _raisedPanels = new();
-    private readonly List<NinePatchRect> _artSkinFrames = new();
+    private readonly List<HudFactionChrome> _factionChrome = new();
     private readonly List<Button> _allButtons = new();
     private readonly Button[] _commandButtons = new Button[CommandCapacity];
     private readonly Button[] _groupButtons = new Button[GroupCapacity];
@@ -71,6 +71,7 @@ public partial class HudView : Control
     private Label? _energyPopoverLabel;
     private HudMinimapView? _minimap;
     private bool _treeBuilt;
+    private bool _layoutQueued;
 
     public event Action<string, bool>? CommandRequested;
     public event Action<string>? SelectionGroupRequested;
@@ -106,9 +107,12 @@ public partial class HudView : Control
         if (!_treeBuilt) return;
         ApplyTypography();
         ApplySurfaces();
-        LayoutPanels();
         _minimap?.ApplyProfile(profile);
+        // Visibility changes alter container minimums. Apply the current
+        // content before measuring the responsive panel rectangles.
         ApplyFrame(_frame, true);
+        LayoutPanels();
+        QueueDeferredLayout();
     }
 
     public void ApplyFrame(HudFrame frame, bool force = false)
@@ -116,6 +120,18 @@ public partial class HudView : Control
         if (!_treeBuilt) return;
         string signature = frame.ContentSignature();
         if (!force && signature == _lastSignature) return;
+        bool layoutVisibilityChanged = frame.Selection.Groups.Count != _frame.Selection.Groups.Count ||
+            frame.Commands.Count != _frame.Commands.Count || frame.Queue.Count != _frame.Queue.Count ||
+            frame.Selection.ShowPowerPriority != _frame.Selection.ShowPowerPriority ||
+            (frame.Selection.HealthPercent >= 0) != (_frame.Selection.HealthPercent >= 0) ||
+            (frame.Alert.Priority != HudAlertPriority.None && frame.Alert.Text.Length > 0) !=
+                (_frame.Alert.Priority != HudAlertPriority.None && _frame.Alert.Text.Length > 0) ||
+            (frame.Events.Count > 0) != (_frame.Events.Count > 0) ||
+            (frame.Objective.Length > 0) != (_frame.Objective.Length > 0) ||
+            (frame.TooltipTitle.Length > 0 && frame.TooltipQuick.Length > 0) !=
+                (_frame.TooltipTitle.Length > 0 && _frame.TooltipQuick.Length > 0) ||
+            (frame.EnergyPopoverVisible && frame.EnergyPopover.Length > 0) !=
+                (_frame.EnergyPopoverVisible && _frame.EnergyPopover.Length > 0);
         _lastSignature = signature;
         _frame = frame;
 
@@ -169,6 +185,22 @@ public partial class HudView : Control
         ApplyQueue(frame.Queue);
         ApplyEvents(frame.Events);
         _minimap?.SetFrame(frame.Minimap);
+        if (layoutVisibilityChanged)
+        {
+            LayoutPanels();
+            QueueDeferredLayout();
+        }
+    }
+
+    private void QueueDeferredLayout()
+    {
+        if (_layoutQueued) return;
+        _layoutQueued = true;
+        Callable.From(() =>
+        {
+            _layoutQueued = false;
+            if (IsInsideTree()) LayoutPanels();
+        }).CallDeferred();
     }
 
     private void BuildTree()
@@ -391,9 +423,15 @@ public partial class HudView : Control
         float scale = _profile.Layout.UiScale;
         float gap = _profile.Layout.PanelGap * scale;
         float topHeight = _profile.Layout.TopStripHeight * scale;
-        float bottomHeight = Math.Min(_profile.Layout.BottomRegionHeight * scale, area.Y * 0.25f);
-        float minimapWidth = Math.Min(_profile.Layout.MinimapSize * scale, area.X * 0.22f);
-        float commandWidth = Math.Min(_profile.Layout.CommandPanelWidth * scale, area.X * 0.31f);
+        float requestedBottomHeight = _profile.Layout.BottomRegionHeight * scale;
+        float availableBottomHeight = Math.Max(120f, area.Y - topHeight - gap * 2f);
+        float bottomHeight = Math.Min(requestedBottomHeight, availableBottomHeight);
+        float minimapWidth = Math.Min(
+            Math.Max(_profile.Layout.MinimapSize * scale, _minimapPanel.GetCombinedMinimumSize().X),
+            area.X * 0.24f);
+        float commandWidth = Math.Min(
+            Math.Max(_profile.Layout.CommandPanelWidth * scale, _commandPanel.GetCombinedMinimumSize().X),
+            area.X * 0.35f);
         float topWidth = Math.Min(area.X, 1560f * scale);
         SetRect(_topPanel, new Vector2((area.X - topWidth) * 0.5f, 0f), new Vector2(topWidth, topHeight));
         SetRect(_minimapPanel, new Vector2(0f, area.Y - bottomHeight), new Vector2(minimapWidth, bottomHeight));
@@ -403,6 +441,19 @@ public partial class HudView : Control
         float availableCenter = Math.Max(280f, centerEnd - centerStart);
         float centerWidth = Math.Min(_profile.Layout.SelectionMaxWidth * scale, availableCenter);
         SetRect(_selectionPanel, new Vector2(centerStart + (availableCenter - centerWidth) * 0.5f, area.Y - bottomHeight), new Vector2(centerWidth, bottomHeight));
+        // Containers can legitimately resolve taller than the nominal profile
+        // after faction chrome adds content padding. Measure that resolved
+        // height, then anchor all three regions to the safe area's bottom.
+        float resolvedBottomHeight = Math.Min(availableBottomHeight,
+            Math.Max(bottomHeight, Math.Max(_minimapPanel.Size.Y,
+                Math.Max(_selectionPanel.Size.Y, _commandPanel.Size.Y))));
+        if (resolvedBottomHeight > bottomHeight + 0.5f)
+        {
+            bottomHeight = resolvedBottomHeight;
+            SetRect(_minimapPanel, new Vector2(0f, area.Y - bottomHeight), new Vector2(minimapWidth, bottomHeight));
+            SetRect(_commandPanel, new Vector2(area.X - commandWidth, area.Y - bottomHeight), new Vector2(commandWidth, bottomHeight));
+            SetRect(_selectionPanel, new Vector2(centerStart + (availableCenter - centerWidth) * 0.5f, area.Y - bottomHeight), new Vector2(centerWidth, bottomHeight));
+        }
         SetRect(_alertPanel, new Vector2(0f, area.Y - bottomHeight - 52f * scale - gap), new Vector2(Math.Max(minimapWidth, 390f * scale), 52f * scale));
         SetRect(_eventPanel, new Vector2(area.X - commandWidth, area.Y - bottomHeight - 118f * scale - gap), new Vector2(commandWidth, 118f * scale));
         SetRect(_objectivePanel, new Vector2(area.X - 360f * scale, topHeight + gap), new Vector2(360f * scale, 88f * scale));
@@ -434,38 +485,41 @@ public partial class HudView : Control
         Color background = Parse(_profile.Colors.Background, new Color("111820"));
         Color raised = Parse(_profile.Colors.Raised, new Color("1b2731"));
         Color recessed = Parse(_profile.Colors.Recessed, new Color("0b1016"));
-        Color accent = Parse(_profile.Colors.Accent, new Color("e6ad28"));
+        Color displayAccent = DisplayAccent();
         Color text = Parse(_profile.Colors.TextPrimary, Colors.White);
         Color muted = Parse(_profile.Colors.TextMuted, new Color("aab4b8"));
         for (int i = 0; i < _surfacePanels.Count; i++)
-            _surfacePanels[i].AddThemeStyleboxOverride("panel", Style(background, accent, ArtContentPadding(_surfacePanels[i])));
-        for (int i = 0; i < _raisedPanels.Count; i++)
-            _raisedPanels[i].AddThemeStyleboxOverride("panel", Style(raised, accent, ArtContentPadding(_raisedPanels[i])));
-        Texture2D? artTexture = GD.Load<Texture2D>(FactionFramePath(_profile.ArtSkin.Faction));
-        for (int i = 0; i < _artSkinFrames.Count; i++)
         {
-            NinePatchRect frame = _artSkinFrames[i];
-            int frameThickness = ArtFrameThickness(frame.Name);
-            frame.Visible = _profile.ArtSkin.Enabled && artTexture is not null;
-            frame.Texture = artTexture;
-            frame.SelfModulate = new Color(1f, 1f, 1f, _profile.ArtSkin.FrameOpacity);
-            frame.PatchMarginLeft = frameThickness;
-            frame.PatchMarginTop = frameThickness;
-            frame.PatchMarginRight = frameThickness;
-            frame.PatchMarginBottom = frameThickness;
+            PanelContainer panel = _surfacePanels[i];
+            bool chromePanel = DirectChrome(panel) is not null;
+            bool suppressGenericBorder = _profile.ArtSkin.Enabled && chromePanel;
+            panel.AddThemeStyleboxOverride("panel", Style(background,
+                suppressGenericBorder ? Colors.Transparent : displayAccent,
+                ChromeContentPadding(panel), suppressGenericBorder));
         }
-        for (int i = 0; i < _headingLabels.Count; i++) _headingLabels[i].AddThemeColorOverride("font_color", accent);
+        for (int i = 0; i < _raisedPanels.Count; i++)
+            _raisedPanels[i].AddThemeStyleboxOverride("panel", Style(raised, displayAccent));
+        for (int i = 0; i < _factionChrome.Count; i++)
+        {
+            HudFactionChrome chrome = _factionChrome[i];
+            PanelContainer panel = chrome.GetParent<PanelContainer>();
+            int expansion = ChromeContentPadding(panel) ?? _profile.Surface.InnerPadding;
+            chrome.Configure(_profile.ArtSkin.Faction, chrome.Role,
+                _profile.ArtSkin.Enabled ? _profile.ArtSkin.ChromeIntensity : 0f,
+                _profile.ArtSkin.ChromeScale, expansion);
+        }
+        for (int i = 0; i < _headingLabels.Count; i++) _headingLabels[i].AddThemeColorOverride("font_color", displayAccent);
         for (int i = 0; i < _bodyLabels.Count; i++) _bodyLabels[i].AddThemeColorOverride("font_color", text);
         for (int i = 0; i < _microLabels.Count; i++) _microLabels[i].AddThemeColorOverride("font_color", muted);
         StyleBoxFlat normalButton = Style(_profile.Surface.SolidCommandButtons ? raised : background, muted);
-        StyleBoxFlat hoverButton = Style(raised.Lightened(0.10f), accent);
-        StyleBoxFlat pressedButton = Style(recessed, accent);
+        StyleBoxFlat hoverButton = Style(raised.Lightened(0.10f), displayAccent);
+        StyleBoxFlat pressedButton = Style(recessed, displayAccent);
         for (int i = 0; i < _allButtons.Count; i++)
         {
             Button button = _allButtons[i];
             button.AddThemeColorOverride("font_color", text);
             button.AddThemeColorOverride("font_hover_color", text);
-            button.AddThemeColorOverride("font_pressed_color", accent);
+            button.AddThemeColorOverride("font_pressed_color", displayAccent);
             button.AddThemeStyleboxOverride("normal", normalButton);
             button.AddThemeStyleboxOverride("hover", hoverButton);
             button.AddThemeStyleboxOverride("pressed", pressedButton);
@@ -484,7 +538,7 @@ public partial class HudView : Control
         for (int i = 0; i < _queueProgress.Length; i++)
         {
             _queueProgress[i].AddThemeStyleboxOverride("background", Style(recessed, recessed));
-            _queueProgress[i].AddThemeStyleboxOverride("fill", Style(accent, accent));
+            _queueProgress[i].AddThemeStyleboxOverride("fill", Style(displayAccent, displayAccent));
         }
         ApplyContainerSpacing();
     }
@@ -599,38 +653,41 @@ public partial class HudView : Control
     {
         HudAlertPriority.Critical => Parse(_profile.Colors.Danger, Colors.Red),
         HudAlertPriority.High => Parse(_profile.Colors.Warning, Colors.Orange),
-        HudAlertPriority.Normal => Parse(_profile.Colors.Accent, Colors.Yellow),
+        HudAlertPriority.Normal => DisplayAccent(),
         HudAlertPriority.Informational => Parse(_profile.Colors.Selection, Colors.Cyan),
         _ => Parse(_profile.Colors.TextMuted, Colors.Gray)
     };
+
+    private Color DisplayAccent() => _profile.ArtSkin.Enabled
+        ? HudFactionChrome.AccentForFaction(_profile.ArtSkin.Faction)
+        : Parse(_profile.Colors.Accent, new Color("e6ad28"));
 
     private PanelContainer SurfacePanel(string name, bool raised)
     {
         PanelContainer panel = new() { Name = name, MouseFilter = MouseFilterEnum.Stop };
         (raised ? _raisedPanels : _surfacePanels).Add(panel);
-        if (name is "ResourceStrip" or "MinimapRegion" or "SelectionPanel" or "PortraitSlot" or "CommandPanel" or "EnergyDomainPopover")
+        HudFactionChromeRole? chromeRole = name switch
         {
-            NinePatchRect frame = new()
+            "ResourceStrip" => HudFactionChromeRole.TopStrip,
+            "MinimapRegion" => HudFactionChromeRole.SquarePanel,
+            "SelectionPanel" or "CommandPanel" => HudFactionChromeRole.MainPanel,
+            _ => null
+        };
+        if (chromeRole.HasValue)
+        {
+            HudFactionChrome chrome = new()
             {
-                Name = $"{name}FactionFrame",
+                Name = $"{name}FactionChrome",
                 MouseFilter = MouseFilterEnum.Ignore,
-                DrawCenter = false,
                 CustomMinimumSize = Vector2.Zero
             };
-            panel.AddChild(frame);
-            _artSkinFrames.Add(frame);
+            chrome.Configure(_profile.ArtSkin.Faction, chromeRole.Value,
+                _profile.ArtSkin.ChromeIntensity, _profile.ArtSkin.ChromeScale, _profile.Surface.InnerPadding);
+            panel.AddChild(chrome);
+            _factionChrome.Add(chrome);
         }
         return panel;
     }
-
-    private static string FactionFramePath(int faction) => faction switch
-    {
-        1 => "res://Assets/M7/Hud/astronauts_frame.png",
-        2 => "res://Assets/M7/Hud/aliens_frame.png",
-        3 => "res://Assets/M7/Hud/life_on_mars_astronauts_frame.png",
-        4 => "res://Assets/M7/Hud/martians_frame.png",
-        _ => "res://Assets/M7/Hud/rock_raiders_frame.png"
-    };
 
     private void AddResourceBlock(Container parent, string title, out Label heading, out Label value)
     {
@@ -665,27 +722,21 @@ public partial class HudView : Control
         return button;
     }
 
-    private int? ArtContentPadding(PanelContainer panel)
+    private int? ChromeContentPadding(PanelContainer panel)
     {
-        if (!_profile.ArtSkin.Enabled || panel.FindChild($"{panel.Name}FactionFrame", false, false) is null) return null;
-        return panel.Name == "ResourceStrip"
-            ? Math.Max(_profile.Surface.InnerPadding, Math.Min(12, _profile.ArtSkin.FrameThickness))
-            : Math.Max(_profile.Surface.InnerPadding, Math.Min(20, _profile.ArtSkin.FrameThickness));
+        if (!_profile.ArtSkin.Enabled || DirectChrome(panel) is null) return null;
+        float basePadding = panel.Name == "ResourceStrip" ? 10f : 26f;
+        return Math.Max(_profile.Surface.InnerPadding,
+            Mathf.RoundToInt(basePadding * _profile.ArtSkin.ChromeScale));
     }
 
-    private int ArtFrameThickness(string frameName)
-    {
-        if (frameName.StartsWith("ResourceStrip", StringComparison.Ordinal))
-            return Math.Min(12, _profile.ArtSkin.FrameThickness);
-        if (frameName.StartsWith("PortraitSlot", StringComparison.Ordinal))
-            return Math.Min(18, _profile.ArtSkin.FrameThickness);
-        return _profile.ArtSkin.FrameThickness;
-    }
+    private static HudFactionChrome? DirectChrome(PanelContainer panel) =>
+        panel.FindChild($"{panel.Name}FactionChrome", false, false) as HudFactionChrome;
 
-    private StyleBoxFlat Style(Color background, Color border, int? paddingOverride = null)
+    private StyleBoxFlat Style(Color background, Color border, int? paddingOverride = null, bool suppressBorder = false)
     {
         int radius = _profile.Surface.CornerRadius;
-        int borderWidth = _profile.Surface.BorderWidth;
+        int borderWidth = suppressBorder ? 0 : _profile.Surface.BorderWidth;
         int padding = paddingOverride ?? _profile.Surface.InnerPadding;
         return new StyleBoxFlat
         {

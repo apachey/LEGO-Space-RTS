@@ -8,15 +8,15 @@ authoritative when anything here becomes stale.
 **M0–M6 are implemented, verified and game-director accepted. M7 visual canon
 remains deliberately open. Preset-style comparisons are retired as the primary
 workflow; the gameplay-scale realtime Look Lab is now at schema 6 with free
-camera control, nine reproducible surface/glare assets, role-authored material
+camera control, nine reproducible surface/glare assets, exact shader-bound role-authored material
 families with color-only art controls, per-function emission, automatic
-dusk/night work lamps, direct fire lighting, five presentation-only world-light
+dusk/night spot headlights and work lamps, direct fire lighting, five presentation-only world-light
 cycles with extended blue/golden-hour bands, planted-wheel animation, bounded
 VFX/destruction pools, deterministic material-audit captures, a natural world-light gradient,
 depressed tracks and complete JSON copy/paste. T068 now
 provides a separate responsive full-HUD framework and
 T069 replaces its minimap placeholder with a client-legal north-up tactical map;
-the HUD Lab is now schema 4 with five generated faction frame families and its visual language remains explicitly
+the HUD Lab is now schema 4 with five modular, non-stretched generated faction chrome families and its visual language remains explicitly
 non-canonical. A post-T069 quality revision makes outline/halo independent from
 the style post-pass, hardens profile paste, bounds VFX event memory and avoids
 unrelated live material rebuilds. HUD and health visuals remain excluded from the world Look Lab. The
@@ -262,7 +262,8 @@ fixtures; the Palette Lab remains the accepted palette review fixture.
 - `F8` → **M7 HUD Lab** provides eight information-density fixtures, four
   aspect previews, live layout/type/surface/content/color tokens and complete
   schema-4 JSON copy/paste, including prior-schema migration. Five generated,
-  independently switchable frame textures keep Rock Raiders, Mars Mission
+  independently switchable chrome textures use protected corners and sparse
+  motifs rather than stretched full frames, keeping Rock Raiders, Mars Mission
   Astronauts/Aliens and Life on Mars Astronauts/Martians visually distinct
   without changing the locked HUD anchors.
   Details are in
@@ -309,6 +310,13 @@ fixtures; the Palette Lab remains the accepted palette review fixture.
 - Retained HUD invalidation includes actionable-alert state; non-actionable
   alerts cannot dispatch an action request. No HUD or world art direction was
   selected by this revision.
+- The latest visual-quality pass binds raster maps by material role and validates
+  the actual shader resources, gives vehicle lamps real terrain illumination,
+  separates directional sky ownership from fill/rim lighting and preserves the
+  extended blue/golden phases. The HUD Lab now composes generated faction art
+  as modular chrome and asserts that major panels and every visible command
+  remain inside the safe area, including all 12 slots in the mixed-army
+  fixture. These remain review tools, not approved visual canon.
 
 ## Integration format boundary
 
@@ -323,16 +331,21 @@ fixtures; the Palette Lab remains the accepted palette review fixture.
 
 ## Verification state
 
-The current M7 exploration branch passed `./tools/verify.sh --full` on
-2026-08-22 with 278 NUnit tests, 24/24 representative mover acceptance, every
-T058–T063 ENet smoke, the legacy four-style smoke, all six Palette Ratio Lab
-pages, schema-2 Look Lab smoke at zoom 35/72 with explicit outline on/off,
-100-repeat determinism, replay record/playback, snapshot continuation,
-compiled-content regeneration and macOS export. Exact summary:
-`Artifacts/Verification/20260822T123634Z-full-summary.txt`.
-The final zero-count VFX correction then passed the complete fast suite at
-`Artifacts/Verification/20260822T124347Z-fast-summary.txt` and was included in
-a fresh verified macOS export.
+The current M7 quality revision passed `./tools/verify.sh --full` on 2026-08-26
+with **zero blocking failures**: 278 NUnit tests, 24/24 representative mover
+acceptance, every T058–T063 ENet smoke, all visual/palette pages, schema-6 Look
+Lab cases, responsive HUD cases at 16:9/16:10/21:9/4:3, 100-repeat determinism,
+replay record/playback, snapshot continuation, compiled-content regeneration
+and a launchable macOS export. Exact summary:
+`Artifacts/Verification/20260826T150646Z-full-summary.txt`.
+
+The preserved 60-mover M9 diagnostic remains `BLOCKING_LATER` and reported
+2/60 completion in this run; it does not block M7 acceptance and no movement
+architecture change was attempted here.
+
+The final terrain-density control correction then passed the complete fast
+suite at `Artifacts/Verification/20260826T195728Z-fast-summary.txt` with zero
+blocking or diagnostic failures.
 
 The freshly exported app was launched directly into the 500-panel faction
 abstract-model page and the ten-role faction light-language page. Both captured

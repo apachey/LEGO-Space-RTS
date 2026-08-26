@@ -79,8 +79,12 @@ presets:
 - independent viewport, alert and network visibility toggles;
 - terrain-family, owned/allied/enemy/neutral/resource, viewport and alert
   colors.
-- five generated faction frame families, an art-frame enable, opacity and
-  construction-weight control. Rock Raiders uses turquoise/brown industrial
+- five generated faction chrome families with enable, intensity and scale
+  controls. The square sources are not stretched over arbitrary panels:
+  protected square corners and sparse square motifs punctuate clean code-native
+  rails, while panel centers remain functional surfaces. Chrome is applied only
+  to the resource strip, minimap, selection and command regions, avoiding nested
+  portrait/popover double frames. Rock Raiders uses turquoise/brown industrial
   framing; Mars Mission Astronauts use ivory/orange aerospace framing; Mars
   Mission Aliens use black/lime/violet crystalline framing; Life on Mars
   Astronauts use sand/red/blue retro-pneumatic framing; and Life on Mars
@@ -95,7 +99,9 @@ presets:
 **COPY JSON** places the complete schema-4 `M7HudProfile` in the clipboard.
 **PASTE JSON** accepts the same profile, normalizes all values and applies it
 live. Schema 1–3 profiles migrate to schema-4 defaults for minimap and faction
-art. Unknown fields are ignored; unsupported schema versions fail visibly.
+art. Early schema-4 `frameOpacity`/`frameThickness` experiments migrate once to
+`chromeIntensity`/`chromeScale` and are omitted on the next copy. Unknown fields
+are ignored; unsupported schema versions fail visibly.
 
 The profile is intentionally independent from `M7LookProfile`: world rendering
 and interface art direction can be reviewed and versioned separately.
@@ -122,8 +128,10 @@ The main verification suite exercises mixed selection, production, brownout and
 critical-tooltip fixtures across four aspect ratios. The smoke also verifies all
 eight fixture contracts, client-legal minimap knowledge, remembered-static
 rules, pixel/cell command conversion, the 12-slot command bound, required
-retained nodes, all five imported faction frames, prior-schema migration and
-schema-4 JSON round-trip.
+retained nodes, all five imported faction frames, protected non-stretched atlas
+regions, prior-schema migration, schema-4 JSON round-trip and safe-area
+containment of every major panel plus every visible command button (including
+the twelfth slot in the 12-command mixed-army fixture).
 
 ## Deliberately deferred
 

@@ -150,14 +150,16 @@ check('CurrentSchemaVersion = 6' in look_profile and 'AnimationLook Animation' i
 look_materials = (ROOT/'GodotClient/Scripts/Presentation/M7LookMaterialFactory.cs').read_text()
 for token in ['regolith_surface_v2.png','varying vec3 view_position','varying vec3 local_normal',
               'ground_relief_normal','inspection_pass','anti_tiled_albedo','anti_tiled_height',
-              'AuthoredOpaque','OpaqueEmissiveShader','RegolithTexturePath = GroundAlbedoTexturePath']:
+              'micro_scale / 4.0','AuthoredOpaque','OpaqueEmissiveShader',
+              'RegolithTexturePath = GroundAlbedoTexturePath']:
     check(token in look_materials, f'M7 corrected material inspection pipeline missing: {token}')
 check('textureLod(detail_texture' not in look_materials and 'textureLod(albedo_texture' not in look_materials,
       'M7 material pipeline must use derivative-aware texture sampling at RTS zoom')
 world_lighting = (ROOT/'GodotClient/Scripts/Presentation/M7WorldLightingEvaluator.cs').read_text()
 for token in ['signed solar altitude','M7WorldEnvironment.Underground','NightReadability is a floor/boost',
               'ValidateDeterministic','Direct sun remained active below the horizon',
-              'FunctionalLightFactor','BlueHourAltitude = -18f','NeutralDayAltitude = 24f',
+              'FunctionalLightFactor','BlueHourAltitude = -24f','SunriseAltitude = -5f',
+              'GoldenHourStartAltitude = 2f','NeutralDayAltitude = 32f',
               'resolvedShadowFactor']:
     check(token in world_lighting, f'M7 deterministic world-light evaluator missing: {token}')
 look_lab = (ROOT/'GodotClient/Scripts/Client/M7LookLab.cs').read_text()

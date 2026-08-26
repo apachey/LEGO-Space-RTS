@@ -25,10 +25,11 @@ public static class M7LookMaterialFactory
     private const string RubberTexturePath = "res://Assets/M7/Textures/rubber_detail.png";
     private const string GroundTexturePath = "res://Assets/M7/Textures/quarry_ground_detail.png";
     private const string GroundAlbedoTexturePath = "res://Assets/M7/Textures/regolith_surface_v2.png";
-    // The old photographic rock image produced recognizable repeated ridges
-    // when reused as a height field. The generated low-frequency regolith map
-    // is deliberately neutral enough to support both color and shallow relief.
+    // The quiet generated regolith is reserved for colour. Relief and
+    // reflection breakup use separately transformed quarry samples so no
+    // single photograph is stamped into every output channel.
     private const string RegolithTexturePath = GroundAlbedoTexturePath;
+    private const string MachinePanelTexturePath = "res://Assets/M7/Textures/machine_panel_height.png";
     private const string BuildingPanelTexturePath = "res://Assets/M7/Textures/building_panel_height.png";
     private static Shader? _surfaceShaderResource;
     private static Shader? _groundShaderResource;
@@ -60,19 +61,70 @@ public static class M7LookMaterialFactory
         profile.Normalize();
         return new Dictionary<M7LookMaterialRole, Material>
         {
-            [M7LookMaterialRole.PaintedHull] = AuthoredOpaque(profile.Materials.PaintedHull, profile.Shading, PaintedTexturePath, profile.Materials.InspectionPass, M7LookMaterialRole.PaintedHull),
-            [M7LookMaterialRole.StructuralEarth] = AuthoredOpaque(profile.Materials.StructuralEarth, profile.Shading, PaintedTexturePath, profile.Materials.InspectionPass, M7LookMaterialRole.StructuralEarth),
-            [M7LookMaterialRole.Accent] = AuthoredOpaque(profile.Materials.Accent, profile.Shading, PaintedTexturePath, profile.Materials.InspectionPass, M7LookMaterialRole.Accent),
-            [M7LookMaterialRole.DarkMechanic] = AuthoredOpaque(profile.Materials.DarkMechanic, profile.Shading, MetalTexturePath, profile.Materials.InspectionPass, M7LookMaterialRole.DarkMechanic),
-            [M7LookMaterialRole.ToolSteel] = AuthoredOpaque(profile.Materials.ToolSteel, profile.Shading, MetalTexturePath, profile.Materials.InspectionPass, M7LookMaterialRole.ToolSteel),
-            [M7LookMaterialRole.Rubber] = AuthoredOpaque(profile.Materials.Rubber, profile.Shading, RubberTexturePath, profile.Materials.InspectionPass, M7LookMaterialRole.Rubber),
-            [M7LookMaterialRole.BuildingShell] = AuthoredOpaque(profile.Materials.BuildingShell, profile.Shading, BuildingPanelTexturePath, profile.Materials.InspectionPass, M7LookMaterialRole.BuildingShell),
+            [M7LookMaterialRole.PaintedHull] = AuthoredOpaque(profile.Materials.PaintedHull, profile.Shading, PaintedTexturePath, PaintedTexturePath, profile.Materials.InspectionPass, M7LookMaterialRole.PaintedHull),
+            [M7LookMaterialRole.StructuralEarth] = AuthoredOpaque(profile.Materials.StructuralEarth, profile.Shading, PaintedTexturePath, PaintedTexturePath, profile.Materials.InspectionPass, M7LookMaterialRole.StructuralEarth),
+            [M7LookMaterialRole.Accent] = AuthoredOpaque(profile.Materials.Accent, profile.Shading, PaintedTexturePath, PaintedTexturePath, profile.Materials.InspectionPass, M7LookMaterialRole.Accent),
+            [M7LookMaterialRole.DarkMechanic] = AuthoredOpaque(profile.Materials.DarkMechanic, profile.Shading, MetalTexturePath, MachinePanelTexturePath, profile.Materials.InspectionPass, M7LookMaterialRole.DarkMechanic),
+            [M7LookMaterialRole.ToolSteel] = AuthoredOpaque(profile.Materials.ToolSteel, profile.Shading, MetalTexturePath, MetalTexturePath, profile.Materials.InspectionPass, M7LookMaterialRole.ToolSteel),
+            [M7LookMaterialRole.Rubber] = AuthoredOpaque(profile.Materials.Rubber, profile.Shading, RubberTexturePath, RubberTexturePath, profile.Materials.InspectionPass, M7LookMaterialRole.Rubber),
+            [M7LookMaterialRole.BuildingShell] = AuthoredOpaque(profile.Materials.BuildingShell, profile.Shading, PaintedTexturePath, BuildingPanelTexturePath, profile.Materials.InspectionPass, M7LookMaterialRole.BuildingShell),
             [M7LookMaterialRole.GroundRock] = Ground(profile),
             [M7LookMaterialRole.CanopyGlass] = Glass(profile.Glass),
             [M7LookMaterialRole.Signal] = Emissive(ParseColor(profile.Emission.SignalColor), profile.Emission.SignalEnergy, 1f, profile.Emission.EdgeDarkening),
             [M7LookMaterialRole.Lamp] = Emissive(ParseColor(profile.Emission.LampColor), profile.Emission.LampEnergy, 1f, profile.Emission.EdgeDarkening),
             [M7LookMaterialRole.Crystal] = Emissive(ParseColor(profile.Emission.CrystalColor), profile.Emission.CrystalEnergy, 1f, profile.Emission.EdgeDarkening)
         };
+    }
+
+    public static bool ValidateAuthoredTextureBindings(
+        IReadOnlyDictionary<M7LookMaterialRole, Material> materials, out string error)
+    {
+        (M7LookMaterialRole Role, string Detail, string Height)[] opaqueExpectations =
+        {
+            (M7LookMaterialRole.PaintedHull, PaintedTexturePath, PaintedTexturePath),
+            (M7LookMaterialRole.StructuralEarth, PaintedTexturePath, PaintedTexturePath),
+            (M7LookMaterialRole.Accent, PaintedTexturePath, PaintedTexturePath),
+            (M7LookMaterialRole.DarkMechanic, MetalTexturePath, MachinePanelTexturePath),
+            (M7LookMaterialRole.ToolSteel, MetalTexturePath, MetalTexturePath),
+            (M7LookMaterialRole.Rubber, RubberTexturePath, RubberTexturePath),
+            (M7LookMaterialRole.BuildingShell, PaintedTexturePath, BuildingPanelTexturePath)
+        };
+        foreach ((M7LookMaterialRole role, string detailPath, string heightPath) in opaqueExpectations)
+        {
+            if (!materials.TryGetValue(role, out Material? raw) || raw is not ShaderMaterial material ||
+                !TextureParameterMatches(material, "detail_texture", detailPath) ||
+                !TextureParameterMatches(material, "height_texture", heightPath) ||
+                material.GetShaderParameter("texture_strength").As<double>() <= 0.0 ||
+                material.GetShaderParameter("relief_strength").As<double>() <= 0.0 ||
+                material.GetShaderParameter("roughness_variation").As<double>() <= 0.0)
+            {
+                error = $"Authored material texture routing is invalid for {role}.";
+                return false;
+            }
+        }
+
+        if (!materials.TryGetValue(M7LookMaterialRole.GroundRock, out Material? groundRaw) ||
+            groundRaw is not ShaderMaterial ground ||
+            !TextureParameterMatches(ground, "albedo_texture", RegolithTexturePath) ||
+            !TextureParameterMatches(ground, "height_texture", GroundTexturePath) ||
+            !TextureParameterMatches(ground, "detail_texture_b", GroundTexturePath) ||
+            ground.GetShaderParameter("albedo_variation").As<double>() <= 0.0 ||
+            ground.GetShaderParameter("relief_strength").As<double>() <= 0.0 ||
+            ground.GetShaderParameter("roughness_variation").As<double>() <= 0.0)
+        {
+            error = "Authored ground texture routing is invalid.";
+            return false;
+        }
+
+        error = string.Empty;
+        return true;
+    }
+
+    private static bool TextureParameterMatches(ShaderMaterial material, string parameter, string path)
+    {
+        Variant value = material.GetShaderParameter(parameter);
+        return value.VariantType == Variant.Type.Object &&
+            value.As<GodotObject>() is Texture2D texture && texture.ResourcePath == path;
     }
 
     public static ShaderMaterial Opaque(MaterialLook look, ShadingLook shading, string texturePath, int inspectionPass = 0)
@@ -92,8 +144,14 @@ public static class M7LookMaterialFactory
         material.SetShaderParameter("dust_amount", look.DustAmount);
         material.SetShaderParameter("brushed_amount", look.BrushedAmount);
         material.SetShaderParameter("detail_texture", GD.Load<Texture2D>(texturePath));
+        material.SetShaderParameter("height_texture", GD.Load<Texture2D>(texturePath));
         material.SetShaderParameter("texture_strength", look.TextureStrength);
         material.SetShaderParameter("texture_scale", look.TextureScale);
+        material.SetShaderParameter("height_scale", look.TextureScale);
+        material.SetShaderParameter("detail_center", 0.5f);
+        material.SetShaderParameter("detail_contrast", 2f);
+        material.SetShaderParameter("height_center", 0.5f);
+        material.SetShaderParameter("height_contrast", 2f);
         material.SetShaderParameter("relief_strength", look.ReliefStrength);
         material.SetShaderParameter("roughness_variation", look.RoughnessVariation);
         material.SetShaderParameter("texture_blend_mode", (float)look.TextureBlendMode);
@@ -112,20 +170,28 @@ public static class M7LookMaterialFactory
     private static ShaderMaterial AuthoredOpaque(
         MaterialLook look,
         ShadingLook shading,
-        string texturePath,
+        string detailTexturePath,
+        string heightTexturePath,
         int inspectionPass,
         M7LookMaterialRole role)
     {
-        ShaderMaterial material = Opaque(look, shading, texturePath, inspectionPass);
+        ShaderMaterial material = Opaque(look, shading, detailTexturePath, inspectionPass);
         SurfaceRecipe recipe = role switch
         {
-            M7LookMaterialRole.PaintedHull => new(0.03f, 0.42f, 0.48f, 0.18f, 0.28f, 0.18f, 0.015f, 3.0f, 0.015f, 0.00f, 0.040f, 1.15f, 0.006f, 0.025f),
-            M7LookMaterialRole.StructuralEarth => new(0.02f, 0.72f, 0.30f, 0.04f, 0.55f, 0.12f, 0.020f, 3.0f, 0.030f, 0.00f, 0.050f, 1.00f, 0.006f, 0.035f),
-            M7LookMaterialRole.Accent => new(0.00f, 0.34f, 0.50f, 0.22f, 0.24f, 0.18f, 0.010f, 3.0f, 0.010f, 0.00f, 0.030f, 1.20f, 0.004f, 0.020f),
-            M7LookMaterialRole.DarkMechanic => new(0.72f, 0.42f, 0.68f, 0.02f, 0.50f, 0.25f, 0.020f, 2.2f, 0.015f, 0.08f, 0.025f, 0.75f, 0.004f, 0.040f),
-            M7LookMaterialRole.ToolSteel => new(0.92f, 0.30f, 0.72f, 0.02f, 0.40f, 0.26f, 0.010f, 2.0f, 0.010f, 0.18f, 0.020f, 1.10f, 0.003f, 0.035f),
-            M7LookMaterialRole.Rubber => new(0.00f, 0.88f, 0.12f, 0.00f, 0.80f, 0.05f, 0.025f, 5.0f, 0.010f, 0.00f, 0.025f, 1.40f, 0.004f, 0.025f),
-            M7LookMaterialRole.BuildingShell => new(0.08f, 0.55f, 0.40f, 0.08f, 0.38f, 0.15f, 0.015f, 2.0f, 0.025f, 0.00f, 0.060f, 0.42f, 0.008f, 0.035f),
+            M7LookMaterialRole.PaintedHull => new(0.03f, 0.42f, 0.48f, 0.18f, 0.28f, 0.18f, 0.00f,
+                0.18f, 0.42f, 0.517f, 24f, 0.517f, 18f, 0.045f, 0.045f, 0.007f),
+            M7LookMaterialRole.StructuralEarth => new(0.02f, 0.72f, 0.30f, 0.04f, 0.55f, 0.12f, 0.00f,
+                0.14f, 0.32f, 0.517f, 28f, 0.517f, 18f, 0.060f, 0.060f, 0.009f),
+            M7LookMaterialRole.Accent => new(0.00f, 0.34f, 0.50f, 0.22f, 0.24f, 0.18f, 0.00f,
+                0.22f, 0.45f, 0.517f, 20f, 0.517f, 16f, 0.025f, 0.035f, 0.0045f),
+            M7LookMaterialRole.DarkMechanic => new(0.72f, 0.42f, 0.68f, 0.02f, 0.50f, 0.25f, 0.08f,
+                0.20f, 0.13f, 0.552f, 14f, 0.504f, 28f, 0.012f, 0.075f, 0.008f),
+            M7LookMaterialRole.ToolSteel => new(0.92f, 0.30f, 0.72f, 0.02f, 0.40f, 0.26f, 0.12f,
+                0.28f, 0.52f, 0.552f, 12f, 0.552f, 8f, 0.006f, 0.090f, 0.004f),
+            M7LookMaterialRole.Rubber => new(0.00f, 0.88f, 0.12f, 0.00f, 0.80f, 0.05f, 0.00f,
+                0.32f, 0.58f, 0.281f, 8f, 0.281f, 6f, 0.008f, 0.065f, 0.008f),
+            M7LookMaterialRole.BuildingShell => new(0.08f, 0.55f, 0.40f, 0.08f, 0.38f, 0.15f, 0.00f,
+                0.10f, 0.09f, 0.517f, 28f, 0.538f, 24f, 0.035f, 0.050f, 0.014f),
             _ => throw new ArgumentOutOfRangeException(nameof(role), role, null)
         };
         material.SetShaderParameter("metallic_value", recipe.Metallic);
@@ -134,15 +200,22 @@ public static class M7LookMaterialFactory
         material.SetShaderParameter("clearcoat_value", recipe.Clearcoat);
         material.SetShaderParameter("clearcoat_roughness", recipe.ClearcoatRoughness);
         material.SetShaderParameter("fresnel_value", recipe.Fresnel);
-        material.SetShaderParameter("micro_strength", recipe.MicroStrength);
-        material.SetShaderParameter("micro_scale", recipe.MicroScale);
-        material.SetShaderParameter("macro_variation", recipe.MacroVariation);
+        material.SetShaderParameter("micro_strength", 0f);
+        material.SetShaderParameter("micro_scale", 1f);
+        material.SetShaderParameter("macro_variation", 0f);
         material.SetShaderParameter("edge_wear", 0f);
         material.SetShaderParameter("dust_amount", 0f);
         material.SetShaderParameter("brushed_amount", recipe.BrushedAmount);
-        material.SetShaderParameter("texture_strength", recipe.TextureStrength);
-        material.SetShaderParameter("texture_scale", recipe.TextureScale);
-        material.SetShaderParameter("relief_strength", recipe.ReliefStrength);
+        material.SetShaderParameter("detail_texture", GD.Load<Texture2D>(detailTexturePath));
+        material.SetShaderParameter("height_texture", GD.Load<Texture2D>(heightTexturePath));
+        material.SetShaderParameter("texture_strength", recipe.AlbedoVariation);
+        material.SetShaderParameter("texture_scale", recipe.DetailScale);
+        material.SetShaderParameter("height_scale", recipe.HeightScale);
+        material.SetShaderParameter("detail_center", recipe.DetailCenter);
+        material.SetShaderParameter("detail_contrast", recipe.DetailContrast);
+        material.SetShaderParameter("height_center", recipe.HeightCenter);
+        material.SetShaderParameter("height_contrast", recipe.HeightContrast);
+        material.SetShaderParameter("relief_strength", recipe.BumpStrength);
         material.SetShaderParameter("roughness_variation", recipe.RoughnessVariation);
         material.SetShaderParameter("texture_blend_mode", 0f);
         return material;
@@ -154,19 +227,30 @@ public static class M7LookMaterialFactory
         ShaderMaterial material = new() { Shader = GroundShaderResource };
         material.SetShaderParameter("base_color", ParseColor(look.BaseColor));
         material.SetShaderParameter("secondary_color", ParseColor(profile.Ground.SecondaryColor));
-        material.SetShaderParameter("roughness_value", look.Roughness);
+        material.SetShaderParameter("roughness_value", 0.94f);
         material.SetShaderParameter("macro_amount", profile.Ground.MacroAmount);
         material.SetShaderParameter("macro_scale", profile.Ground.MacroScale);
         material.SetShaderParameter("micro_amount", profile.Ground.MicroAmount);
         material.SetShaderParameter("micro_scale", profile.Ground.MicroScale);
-        material.SetShaderParameter("albedo_texture", GD.Load<Texture2D>(GroundAlbedoTexturePath));
-        material.SetShaderParameter("height_texture", GD.Load<Texture2D>(RegolithTexturePath));
+        // Keep the quiet generated regolith in the colour channel. Quarry is
+        // sampled independently for height and roughness so the ground gains
+        // material response without stamping the same photograph into colour,
+        // bump and reflection at identical coordinates.
+        material.SetShaderParameter("albedo_texture", GD.Load<Texture2D>(RegolithTexturePath));
+        material.SetShaderParameter("height_texture", GD.Load<Texture2D>(GroundTexturePath));
         material.SetShaderParameter("detail_texture_b", GD.Load<Texture2D>(GroundTexturePath));
-        material.SetShaderParameter("texture_strength", look.TextureStrength);
-        material.SetShaderParameter("texture_scale", look.TextureScale);
-        material.SetShaderParameter("relief_strength", look.ReliefStrength);
-        material.SetShaderParameter("roughness_variation", look.RoughnessVariation);
-        material.SetShaderParameter("texture_blend_mode", (float)look.TextureBlendMode);
+        material.SetShaderParameter("albedo_scale", 0.055f);
+        material.SetShaderParameter("height_scale", 0.20f);
+        material.SetShaderParameter("roughness_scale", 0.31f);
+        material.SetShaderParameter("albedo_center", 0.548f);
+        material.SetShaderParameter("height_center", 0.551f);
+        material.SetShaderParameter("roughness_center", 0.551f);
+        material.SetShaderParameter("albedo_contrast", 16f);
+        material.SetShaderParameter("height_contrast", 6f);
+        material.SetShaderParameter("roughness_contrast", 14f);
+        material.SetShaderParameter("albedo_variation", 0.055f);
+        material.SetShaderParameter("relief_strength", 0.018f);
+        material.SetShaderParameter("roughness_variation", 0.080f);
         material.SetShaderParameter("inspection_pass", profile.Materials.InspectionPass);
         material.SetShaderParameter("background_color", ParseColor(profile.Lighting.BackgroundColor));
         material.SetShaderParameter("background_influence", profile.Lighting.BackgroundInfluence);
@@ -206,14 +290,16 @@ public static class M7LookMaterialFactory
         float Clearcoat,
         float ClearcoatRoughness,
         float Fresnel,
-        float MicroStrength,
-        float MicroScale,
-        float MacroVariation,
         float BrushedAmount,
-        float TextureStrength,
-        float TextureScale,
-        float ReliefStrength,
-        float RoughnessVariation);
+        float DetailScale,
+        float HeightScale,
+        float DetailCenter,
+        float DetailContrast,
+        float HeightCenter,
+        float HeightContrast,
+        float AlbedoVariation,
+        float RoughnessVariation,
+        float BumpStrength);
 
     public static StandardMaterial3D Transparent(Color color) => new()
     {
@@ -249,8 +335,14 @@ uniform float edge_wear : hint_range(0.0, 1.0) = 0.05;
 uniform float dust_amount : hint_range(0.0, 1.0) = 0.05;
 uniform float brushed_amount : hint_range(0.0, 1.0) = 0.0;
 uniform sampler2D detail_texture : filter_linear_mipmap_anisotropic, repeat_enable;
+uniform sampler2D height_texture : filter_linear_mipmap_anisotropic, repeat_enable;
 uniform float texture_strength : hint_range(0.0, 1.0) = 0.0;
 uniform float texture_scale = 1.0;
+uniform float height_scale = 1.0;
+uniform float detail_center = 0.5;
+uniform float detail_contrast = 2.0;
+uniform float height_center = 0.5;
+uniform float height_contrast = 2.0;
 uniform float relief_strength : hint_range(0.0, 1.5) = 0.12;
 uniform float roughness_variation : hint_range(0.0, 1.0) = 0.18;
 uniform float texture_blend_mode : hint_range(0.0, 2.0) = 0.0;
@@ -279,16 +371,22 @@ float triplanar_detail(vec3 p, vec3 n) {
         + texture(detail_texture, p.xy).r * weights.z;
 }
 
-vec3 blend_authored_texture(vec3 color, float height_value) {
-    float signed_height = (height_value - 0.5) * 2.0;
-    vec3 soft_light = color * (1.0 + signed_height * 0.42);
-    vec3 groove_deepen = color * mix(0.82, 1.08, height_value);
-    vec3 overlay = mix(2.0 * color * vec3(height_value),
-        1.0 - 2.0 * (1.0 - color) * (1.0 - vec3(height_value)),
-        step(vec3(0.5), color));
-    vec3 selected = texture_blend_mode < 0.5 ? soft_light
-        : (texture_blend_mode < 1.5 ? groove_deepen : overlay);
-    return mix(color, selected, texture_strength);
+float triplanar_height(vec3 p, vec3 n) {
+    vec3 weights = pow(abs(n), vec3(4.0));
+    weights /= max(0.0001, weights.x + weights.y + weights.z);
+    return texture(height_texture, p.yz).r * weights.x
+        + texture(height_texture, p.xz).r * weights.y
+        + texture(height_texture, p.xy).r * weights.z;
+}
+
+float authored_mask(float sample_value, float center, float contrast_value) {
+    // The source maps are intentionally neutral. Their useful 64–128 px mips
+    // occupy only a few code values around the mean, so applying another tiny
+    // alpha made them mathematically invisible. Centre/contrast converts each
+    // map into a bounded material mask before the per-channel artistic amount
+    // is applied. This preserves automatic mip filtering and cannot amplify a
+    // channel beyond its authored maximum.
+    return clamp((sample_value - center) * contrast_value, -1.0, 1.0);
 }
 
 vec3 relief_normal(vec3 base_normal, float height_value, float strength) {
@@ -319,43 +417,43 @@ void vertex() {
 }
 
 void fragment() {
-    vec3 detail_position = local_position * texture_scale;
     vec3 mapping_normal = normalize(local_normal);
-    float fine = triplanar_detail(detail_position * max(0.12, micro_scale * 0.12), mapping_normal);
-    float coarse = triplanar_detail(detail_position * 0.22, mapping_normal);
-    float broad = triplanar_detail(detail_position * 0.065, mapping_normal);
-    // Differences, rather than ratios, keep low-contrast authored maps quiet.
-    float macro = clamp((coarse - broad) * 2.0, -1.0, 1.0);
-    float micro = clamp((fine - coarse) * 1.35, -1.0, 1.0);
+    float color_sample = triplanar_detail(local_position * texture_scale, mapping_normal);
+    // A rotated/scaled lookup decorrelates reflection breakup from colour while
+    // retaining one role-specific detail asset and derivative-aware mips.
+    vec3 reflection_position = local_position * (texture_scale * 1.73)
+        + vec3(0.37, 0.61, 0.19);
+    float reflection_sample = triplanar_detail(reflection_position.zyx, mapping_normal.zyx);
+    float height_sample = triplanar_height(local_position * height_scale, mapping_normal);
+    float color_mask = authored_mask(color_sample, detail_center, detail_contrast);
+    float reflection_mask = authored_mask(reflection_sample, detail_center, detail_contrast * 0.72);
+    float height_mask = authored_mask(height_sample, height_center, height_contrast);
     float brush = sin((local_position.z + local_position.x * 0.17) * 9.0) * 0.5 + 0.5;
-    float authored_detail = clamp((fine - 0.5) * 2.0, -1.0, 1.0);
     if (inspection_pass == 0) {
-        NORMAL = relief_normal(normalize(NORMAL), fine, relief_strength * 0.40);
+        NORMAL = relief_normal(normalize(NORMAL), height_mask, relief_strength);
     } else if (inspection_pass == 3) {
-        NORMAL = relief_normal(normalize(NORMAL), fine, max(relief_strength, 0.18) * 0.52);
+        NORMAL = relief_normal(normalize(NORMAL), height_mask, max(relief_strength, 0.028));
     } else {
         NORMAL = normalize(NORMAL);
     }
     float normal_view_dot = clamp(dot(normalize(NORMAL), normalize(VIEW)), -1.0, 1.0);
     float upward = clamp((world_normal.y + 1.0) * 0.5, 0.0, 1.0);
-    float variation = macro * macro_variation + micro * micro_strength;
     vec3 color = base_color.rgb;
     if (inspection_pass == 0) {
-        color *= 1.0 + variation;
-        color = blend_authored_texture(color, fine);
+        color *= 1.0 + color_mask * texture_strength;
         color = mix(color, color * vec3(1.13, 1.10, 1.04), edge_wear * pow(clamp(1.0 - abs(normal_view_dot), 0.0, 1.0), 3.0));
-        color = mix(color, shadow_tint.rgb, dust_amount * upward * (0.12 + (macro * 0.5 + 0.5) * 0.20));
+        color = mix(color, shadow_tint.rgb, dust_amount * upward * 0.18);
     } else if (inspection_pass == 2) {
-        color = mix(base_color.rgb * 0.55, base_color.rgb * 1.45, fine);
+        color = base_color.rgb * (1.0 + color_mask * 0.34);
     } else if (inspection_pass >= 3) {
         color = vec3(0.46);
     }
     ALBEDO = color;
     METALLIC = inspection_pass >= 3 ? 0.0 : metallic_value;
-    float reflection_breakup = micro * micro_strength * 0.35 - (brush - 0.5) * brushed_amount * 0.35
-        + authored_detail * roughness_variation * 0.55;
+    float reflection_breakup = reflection_mask * roughness_variation
+        - (brush - 0.5) * brushed_amount * 0.18;
     ROUGHNESS = inspection_pass == 4
-        ? mix(0.14, 0.90, fine)
+        ? mix(0.16, 0.92, reflection_mask * 0.5 + 0.5)
         : clamp(roughness_value + (inspection_pass == 0 ? reflection_breakup : 0.0), 0.03, 1.0);
     SPECULAR = clamp(specular_value * mix(1.0 - fresnel_value * 0.25, 1.0 + fresnel_value * 0.25, pow(clamp(1.0 - normal_view_dot, 0.0, 1.0), 3.0)), 0.0, 1.0);
     CLEARCOAT = clearcoat_value;
@@ -370,10 +468,17 @@ void light() {
         float quantized = floor(wrapped * steps) / max(1.0, steps - 1.0);
         wrapped = mix(quantized, wrapped, band_softness);
     }
-    float shadowed = mix(shadow_floor, 1.0, ATTENUATION);
-    vec3 shadow_color = mix(shadow_tint.rgb, vec3(1.0), ATTENUATION);
+    // Directional shadows retain a controlled readability floor. Local lights
+    // must obey their real cone/range attenuation or headlights leave a flat
+    // residual wash across the whole clustered light volume.
+    float diffuse_attenuation = LIGHT_IS_DIRECTIONAL
+        ? mix(shadow_floor, 1.0, ATTENUATION)
+        : ATTENUATION;
+    vec3 shadow_color = LIGHT_IS_DIRECTIONAL
+        ? mix(shadow_tint.rgb, vec3(1.0), ATTENUATION)
+        : vec3(1.0);
     float inspection_metallic = inspection_pass >= 3 ? 0.0 : metallic_value;
-    DIFFUSE_LIGHT += LIGHT_COLOR * shadow_color * wrapped * shadowed * (1.0 - inspection_metallic * 0.72);
+    DIFFUSE_LIGHT += LIGHT_COLOR * shadow_color * wrapped * diffuse_attenuation * (1.0 - inspection_metallic * 0.72);
 
     vec3 half_sum = LIGHT + VIEW;
     vec3 half_vector = half_sum / max(length(half_sum), 0.0001);
@@ -407,11 +512,18 @@ uniform float micro_scale = 6.0;
 uniform sampler2D albedo_texture : filter_linear_mipmap_anisotropic, repeat_enable;
 uniform sampler2D height_texture : filter_linear_mipmap_anisotropic, repeat_enable;
 uniform sampler2D detail_texture_b : filter_linear_mipmap_anisotropic, repeat_enable;
-uniform float texture_strength = 0.35;
-uniform float texture_scale = 0.16;
+uniform float albedo_scale = 0.055;
+uniform float height_scale = 0.20;
+uniform float roughness_scale = 0.31;
+uniform float albedo_center = 0.548;
+uniform float height_center = 0.551;
+uniform float roughness_center = 0.551;
+uniform float albedo_contrast = 16.0;
+uniform float height_contrast = 6.0;
+uniform float roughness_contrast = 14.0;
+uniform float albedo_variation = 0.055;
 uniform float relief_strength = 0.45;
 uniform float roughness_variation = 0.30;
-uniform float texture_blend_mode = 1.0;
 uniform int inspection_pass : hint_range(0, 4) = 0;
 uniform vec4 background_color : source_color = vec4(0.08, 0.11, 0.14, 1.0);
 uniform float background_influence = 0.15;
@@ -437,20 +549,24 @@ float anti_tiled_height(vec2 uv) {
     mat2 rotate_b = mat2(vec2(0.342, -0.940), vec2(0.940, 0.342));
     float a = texture(height_texture, uv).r;
     float b = texture(height_texture, rotate_a * uv * 0.713 + vec2(0.37, 0.19)).r;
-    float c = texture(detail_texture_b, rotate_b * uv * 0.617 + vec2(0.11, 0.63)).r;
-    return clamp(a * 0.52 + b * 0.28 + c * 0.20, 0.0, 1.0);
+    float c = texture(height_texture, rotate_b * uv * 0.617 + vec2(0.11, 0.63)).r;
+    return clamp(a * 0.52 + b * 0.30 + c * 0.18, 0.0, 1.0);
 }
 
-vec3 blend_ground_texture(vec3 color, float height_value) {
-    float signed_height = (height_value - 0.5) * 2.0;
-    vec3 soft_light = color * (1.0 + signed_height * 0.34);
-    vec3 groove_deepen = color * mix(0.90, 1.04, height_value);
-    vec3 overlay = mix(2.0 * color * vec3(height_value),
-        1.0 - 2.0 * (1.0 - color) * (1.0 - vec3(height_value)),
-        step(vec3(0.5), color));
-    vec3 selected = texture_blend_mode < 0.5 ? soft_light
-        : (texture_blend_mode < 1.5 ? groove_deepen : overlay);
-    return mix(color, selected, texture_strength);
+float anti_tiled_roughness(vec2 uv) {
+    // This is intentionally a different transform family from height. Quarry
+    // therefore contributes believable mineral response without embossing the
+    // exact same dark patch into every output channel.
+    mat2 rotate_a = mat2(vec2(0.643, -0.766), vec2(0.766, 0.643));
+    mat2 rotate_b = mat2(vec2(-0.174, 0.985), vec2(-0.985, -0.174));
+    float a = texture(detail_texture_b, uv + vec2(0.43, 0.17)).r;
+    float b = texture(detail_texture_b, rotate_a * uv * 0.821 + vec2(0.07, 0.71)).r;
+    float c = texture(detail_texture_b, rotate_b * uv * 0.563 + vec2(0.68, 0.29)).r;
+    return clamp(a * 0.46 + b * 0.34 + c * 0.20, 0.0, 1.0);
+}
+
+float ground_material_mask(float sample_value, float center, float contrast_value) {
+    return clamp((sample_value - center) * contrast_value, -1.0, 1.0);
 }
 
 vec3 ground_relief_normal(vec3 base_normal, float height_value, float strength) {
@@ -493,38 +609,42 @@ float broad_ground_breakup(vec2 p) {
 }
 
 void fragment() {
-    // Density is expressed relative to the RTS camera baseline. It must not
-    // turn the authored height map into per-pixel colour noise at high values.
-    vec2 detail_uv = world_position.xz * texture_scale * max(0.65, sqrt(micro_scale / 8.0));
-    float albedo_detail = mix(0.5, anti_tiled_albedo(detail_uv * 0.72), 0.74);
-    float detail_height = mix(0.5, anti_tiled_height(detail_uv), 0.48);
-    float authored_detail = (detail_height - 0.5) * 2.0;
+    // Each channel uses a world-space frequency selected for the 24–72 cell
+    // camera range. Automatic mips remove sub-pixel grit; these scales retain
+    // only the broad mineral shapes that remain stable during RTS movement.
+    float mineral_density = clamp(micro_scale / 4.0, 0.025, 5.0);
+    float albedo_mask = ground_material_mask(
+        anti_tiled_albedo(world_position.xz * albedo_scale * mineral_density), albedo_center, albedo_contrast);
+    float height_mask = ground_material_mask(
+        anti_tiled_height(world_position.xz * height_scale), height_center, height_contrast);
+    float roughness_mask = ground_material_mask(
+        anti_tiled_roughness(world_position.xz * roughness_scale), roughness_center, roughness_contrast);
     float macro = broad_ground_breakup(world_position.xz * macro_scale);
-    // "Small mineral breakup" is a supporting tint, not another full albedo.
-    float blend = clamp(0.5 + macro * macro_amount * 0.62 + authored_detail * micro_amount * 0.045, 0.0, 1.0);
+    float blend = clamp(0.5 + macro * macro_amount * 0.62
+        + albedo_mask * micro_amount * 0.035, 0.0, 1.0);
     vec3 ground_color = mix(base_color.rgb, secondary_color.rgb, blend);
     if (inspection_pass == 1) {
         ground_color = base_color.rgb;
     } else if (inspection_pass == 2) {
-        ground_color = mix(base_color.rgb * 0.48, base_color.rgb * 1.52, albedo_detail);
+        ground_color = base_color.rgb * (1.0 + albedo_mask * 0.34);
     } else if (inspection_pass >= 3) {
         ground_color = vec3(0.46);
     } else {
-        ground_color = blend_ground_texture(ground_color, albedo_detail);
+        ground_color *= 1.0 + albedo_mask * albedo_variation;
     }
     // Far terrain should not turn into radial black pools. Background colour
     // remains the clear colour; ground keeps a stable, readable luminance.
     ALBEDO = mix(ground_color, background_color.rgb, background_influence * 0.22);
     if (inspection_pass == 0) {
-        NORMAL = ground_relief_normal(normalize(NORMAL), detail_height, relief_strength * 0.30);
+        NORMAL = ground_relief_normal(normalize(NORMAL), height_mask, relief_strength);
     } else if (inspection_pass == 3) {
-        NORMAL = ground_relief_normal(normalize(NORMAL), detail_height, max(relief_strength, 0.18) * 0.42);
+        NORMAL = ground_relief_normal(normalize(NORMAL), height_mask, max(relief_strength, 0.040));
     } else {
         NORMAL = normalize(NORMAL);
     }
     ROUGHNESS = inspection_pass == 4
-        ? mix(0.32, 0.98, detail_height)
-        : clamp(roughness_value + (inspection_pass == 0 ? authored_detail * roughness_variation * 0.32 : 0.0), 0.2, 1.0);
+        ? mix(0.30, 0.98, roughness_mask * 0.5 + 0.5)
+        : clamp(roughness_value + (inspection_pass == 0 ? roughness_mask * roughness_variation : 0.0), 0.2, 1.0);
     SPECULAR = 0.08;
 }
 """;

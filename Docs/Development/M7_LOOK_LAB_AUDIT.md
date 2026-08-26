@@ -1,4 +1,4 @@
-# M7 LOOK LAB — SCHEMA 5 AUDIT
+# M7 LOOK LAB — VISUAL QUALITY AUDIT
 
 ## Status
 
@@ -10,7 +10,7 @@ became the new review baseline and where human judgement is still required.
 
 ## Defect audit
 
-| Review finding | Root cause | Schema-2 result |
+| Review finding | Root cause | Current result |
 | --- | --- | --- |
 | Emission controls appeared inert | The old surfaces did not provide a complete HDR + halo + local-light response | Signal, lamp, Crystal, tracer and fire now have real HDR emission; object halo, darker same-hue luminous edge and local-light energy/range are independent controls |
 | Lighting background appeared inert | It changed only the clear background, which the terrain covered | `Far-field background` now affects both the environment and distant terrain through an explicit influence control, live without rebuilding materials |
@@ -45,7 +45,7 @@ the current schema after application.
 
 ## Texture generation record
 
-The built-in image generator produced four 1024×1024 grayscale review maps:
+The first texture pass produced four 1024×1024 grayscale review maps:
 
 - `painted_shell_detail.png` — seamless clean painted/molded shell micro-surface,
   broad subtle cloudy variation and sparse restrained wear, flat neutral data;
@@ -237,8 +237,8 @@ texture recipes. The brown chassis no longer uses quarry stone detail, and the
 misleading generic surface presets/raw shader sliders are absent from the
 art-director UI. Automated captures retain internal inspection passes.
 
-Earth blue hour now spans the wider -18° to -4° solar-altitude band and golden
-hour runs from 3° to 24°; the same evaluator preserves each world's authored
+Earth blue hour now spans the wider -24° to -5° solar-altitude band and golden
+hour runs from 2° to 32°; the same evaluator preserves each world's authored
 palette and light/dark ratio. Functional lamps transition on through civil
 twilight, are off at noon and remain enabled Underground. Signals and Crystals
 remain semantically emissive, while daytime local-light pools are suppressed.
@@ -249,3 +249,37 @@ Stress60 result remains the existing `BLOCKING_LATER — M9` diagnostic. Current
 visual evidence is `m7-authored-materials-earth-noon.png`,
 `m7-blue-hour-auto-lights.png`, `m7-golden-hour-extended.png` and
 `m7-shadow-fix-earth-0620.png` under `Artifacts/Screenshots/`.
+
+## Schema-6 raster, local-light and sky follow-up
+
+The latest review addressed the remaining cases where controls existed but the
+rendered evidence did not prove their effect:
+
+- each vehicle now owns two forward/downward `SpotLight3D` headlights plus one
+  compact work light; their beam direction, ground intersection, range,
+  attenuation and dusk/noon gate are structural smoke assertions;
+- headlight and work-light lenses fade with environmental darkness. Status
+  signals and inherently luminous Crystals remain separate semantic roles;
+- local lights use real cone/range attenuation in the authored surface shader.
+  The directional readability shadow floor no longer leaves residual local
+  light across an entire clustered-light volume;
+- only the key directional light contributes a procedural sun. Fill and
+  camera-relative rim lights are scene-only, so camera orbit cannot rotate sky
+  reflections;
+- raster checks now inspect the exact loaded shader parameters rather than only
+  asserting that PNG files exist. Paint, brushed metal, rubber, machine-panel
+  bump, building-panel bump, ground albedo, ground bump and roughness routes are
+  all covered;
+- the quiet regolith map supplies ground colour while independently transformed
+  quarry samples supply shallow bump and reflection breakup. The older detailed
+  `regolith_height.png` remains an audit asset but is intentionally not bound in
+  the normal view because its recognizable ridges tile at RTS scale;
+- blue hour remains classified at 4.5/5.0/5.5 and golden hour at
+  6.5/7.2/7.8 in the deterministic Earth review clock. Procedural sky and
+  twilight luminance make those extended phases visibly distinct without a
+  separate warm post filter.
+
+Current review evidence is `m7-blue-hour-headlights.png`,
+`m7-golden-hour-gradient.png`, `m7-raster-materials-close.png` and
+`m7-raster-materials-integrated.png` under `Artifacts/Screenshots/`. Visual
+acceptance remains the game director's decision.

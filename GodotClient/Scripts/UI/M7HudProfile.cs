@@ -98,8 +98,17 @@ public sealed class M7HudProfile
         Surface.InnerPadding = Clamp(Surface.InnerPadding, 4, 24);
         Surface.Separation = Clamp(Surface.Separation, 2, 18);
         ArtSkin.Faction = Clamp(ArtSkin.Faction, 0, 4);
-        ArtSkin.FrameOpacity = Clamp(ArtSkin.FrameOpacity, 0f, 1f);
-        ArtSkin.FrameThickness = Clamp(ArtSkin.FrameThickness, 8, 40);
+        // Schema-4 profiles created by the original full-frame experiment are
+        // still accepted. Their implementation-specific controls migrate once
+        // into the simpler modular chrome language and are omitted on export.
+        if (ArtSkin.FrameOpacity.HasValue)
+            ArtSkin.ChromeIntensity = ArtSkin.FrameOpacity.Value;
+        if (ArtSkin.FrameThickness.HasValue)
+            ArtSkin.ChromeScale = ArtSkin.FrameThickness.Value / 22f;
+        ArtSkin.FrameOpacity = null;
+        ArtSkin.FrameThickness = null;
+        ArtSkin.ChromeIntensity = Clamp(ArtSkin.ChromeIntensity, 0f, 1f);
+        ArtSkin.ChromeScale = Clamp(ArtSkin.ChromeScale, 0.75f, 1.35f);
         Colors.Background = M7ProfileColor.Normalize(Colors.Background, "#111820");
         Colors.Raised = M7ProfileColor.Normalize(Colors.Raised, "#1b2731");
         Colors.Recessed = M7ProfileColor.Normalize(Colors.Recessed, "#0b1016");
@@ -170,8 +179,10 @@ public sealed class HudArtSkinProfile
 {
     public bool Enabled { get; set; } = true;
     public int Faction { get; set; }
-    public float FrameOpacity { get; set; } = 0.92f;
-    public int FrameThickness { get; set; } = 22;
+    public float ChromeIntensity { get; set; } = 0.78f;
+    public float ChromeScale { get; set; } = 1f;
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] public float? FrameOpacity { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] public int? FrameThickness { get; set; }
 }
 
 public sealed class HudColorProfile

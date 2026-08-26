@@ -76,10 +76,10 @@ public static class M7WorldLightingEvaluator
     // Wide transition bands are intentional: the short physical instant at
     // the horizon is aesthetically valuable in an RTS and needs enough review
     // time to read as a real blue/golden hour rather than a color flash.
-    private const float BlueHourAltitude = -18f;
-    private const float SunriseAltitude = -4f;
-    private const float GoldenHourStartAltitude = 3f;
-    private const float NeutralDayAltitude = 24f;
+    private const float BlueHourAltitude = -24f;
+    private const float SunriseAltitude = -5f;
+    private const float GoldenHourStartAltitude = 2f;
+    private const float NeutralDayAltitude = 32f;
 
     private static readonly WorldPalette Earth = new(
         MaxSolarAltitude: 68f,
@@ -88,12 +88,15 @@ public static class M7WorldLightingEvaluator
         FillAzimuthOffset: 155f,
         Stops:
         [
-            Stop(-42f, "7184ad", 0f,    "48658f", 0.17f, "243757", 0.30f, "030814", "668bc4", 0.18f, 2.8f, 2.8f, 0.54f),
-            Stop(-12f, "7795c8", 0f,    "587bac", 0.18f, "304f78", 0.34f, "10233f", "7aa7e0", 0.20f, 2.4f, 2.2f, 0.64f),
-            Stop(-4f,  "f28a72", 0f,    "6b79a1", 0.16f, "5a5d79", 0.34f, "59384f", "91add3", 0.18f, 2.0f, 1.9f, 0.73f),
-            Stop(2f,   "ffad6f", 0.32f, "7f88a5", 0.13f, "8a766f", 0.35f, "a85e49", "a9bfd5", 0.15f, 1.7f, 1.7f, 0.82f),
-            Stop(8f,   "ffd099", 0.82f, "99adc0", 0.10f, "a6a6a1", 0.36f, "806d65", "b7cce0", 0.11f, 1.4f, 1.5f, 0.89f),
-            Stop(15f,  "fff0d3", 1.16f, "abc8df", 0.08f, "aebdca", 0.36f, "587d96", "abc8e2", 0.08f, 1.2f, 1.3f, 0.94f),
+            Stop(-42f, "7184ad", 0f,    "3e5985", 0.16f, "1d3152", 0.29f, "020713", "668bc4", 0.18f, 2.8f, 2.8f, 0.54f),
+            Stop(-24f, "718ec7", 0f,    "496b9c", 0.17f, "26476f", 0.32f, "07162d", "719bd7", 0.20f, 2.7f, 2.5f, 0.59f),
+            Stop(-12f, "789bd4", 0f,    "5c84bb", 0.19f, "315c8d", 0.36f, "123967", "82b1ed", 0.22f, 2.5f, 2.2f, 0.66f),
+            Stop(-5f,  "c78aa5", 0f,    "708db6", 0.18f, "4f6f98", 0.37f, "384f79", "91b9e6", 0.20f, 2.2f, 2.0f, 0.73f),
+            Stop(0f,   "ff8b5f", 0f,    "8b86a2", 0.16f, "776f87", 0.38f, "934d57", "a8c4e1", 0.18f, 1.9f, 1.8f, 0.79f),
+            Stop(2f,   "ff9d56", 0.34f, "9c8b9d", 0.14f, "917b79", 0.39f, "b75f49", "b5cce2", 0.16f, 1.8f, 1.7f, 0.82f),
+            Stop(8f,   "ffc46f", 0.82f, "b2a4ae", 0.12f, "aa9686", 0.40f, "b47a4f", "bfd4e6", 0.13f, 1.6f, 1.55f, 0.88f),
+            Stop(18f,  "ffe4aa", 1.15f, "b9c6d2", 0.09f, "b7b7ae", 0.39f, "778da0", "b9d1e7", 0.09f, 1.3f, 1.35f, 0.93f),
+            Stop(32f,  "fff5df", 1.30f, "b7cfe2", 0.08f, "b8c7d0", 0.37f, "6c96ae", "afcce6", 0.07f, 1.1f, 1.2f, 0.95f),
             Stop(90f,  "fffaf0", 1.34f, "b4cce0", 0.07f, "b6c5d0", 0.36f, "6b90a8", "abc8e2", 0.06f, 1.0f, 1.1f, 0.96f)
         ]);
 
@@ -105,11 +108,14 @@ public static class M7WorldLightingEvaluator
         Stops:
         [
             Stop(-38f, "6079ad", 0f,    "3d5180", 0.18f, "27365c", 0.31f, "090d1c", "7899d6", 0.20f, 1.8f, 1.8f, 0.50f),
-            Stop(-12f, "728ac0", 0f,    "526590", 0.18f, "413f66", 0.33f, "1c1e38", "88a7dd", 0.20f, 1.5f, 1.5f, 0.62f),
-            Stop(-4f,  "d77973", 0f,    "756178", 0.16f, "76515a", 0.34f, "55303b", "a3add6", 0.18f, 1.2f, 1.25f, 0.72f),
-            Stop(2f,   "ff8550", 0.30f, "986f76", 0.13f, "9a6552", 0.35f, "a84830", "b8b7d4", 0.15f, 1.0f, 1.1f, 0.81f),
-            Stop(8f,   "ffb06f", 0.86f, "b38c84", 0.10f, "b57a60", 0.36f, "a75d40", "c6c4dc", 0.11f, 0.85f, 0.95f, 0.88f),
-            Stop(15f,  "ffdbac", 1.22f, "c6a59a", 0.08f, "bd8b72", 0.36f, "85584b", "b9c8e5", 0.08f, 0.75f, 0.86f, 0.93f),
+            Stop(-24f, "6884ba", 0f,    "465d8c", 0.19f, "303f6b", 0.33f, "10162d", "809fdc", 0.21f, 1.7f, 1.65f, 0.56f),
+            Stop(-12f, "728ac0", 0f,    "526590", 0.19f, "46466f", 0.35f, "242647", "8daee5", 0.21f, 1.5f, 1.5f, 0.63f),
+            Stop(-5f,  "bd7f91", 0f,    "756b83", 0.17f, "76515f", 0.36f, "573746", "9eafe0", 0.19f, 1.3f, 1.3f, 0.71f),
+            Stop(0f,   "f56f54", 0f,    "8f6d79", 0.15f, "8e5b55", 0.37f, "923f35", "afb9dc", 0.17f, 1.1f, 1.18f, 0.78f),
+            Stop(2f,   "ff7d45", 0.32f, "9d7378", 0.14f, "a36150", 0.38f, "bd4b2e", "bdc1db", 0.15f, 1.0f, 1.1f, 0.81f),
+            Stop(8f,   "ffaa5d", 0.86f, "b88e83", 0.11f, "bb795d", 0.39f, "b9653d", "cac8df", 0.12f, 0.90f, 0.97f, 0.87f),
+            Stop(18f,  "ffd29a", 1.20f, "c6a69b", 0.09f, "c18b70", 0.38f, "915d4a", "bdcbe6", 0.09f, 0.78f, 0.88f, 0.92f),
+            Stop(32f,  "ffe5bd", 1.35f, "cbb0a4", 0.08f, "c38c71", 0.36f, "7f5344", "b2c5e6", 0.07f, 0.72f, 0.82f, 0.94f),
             Stop(90f,  "fff0d2", 1.42f, "d0b5a7", 0.07f, "c58b70", 0.34f, "784f42", "aabfe5", 0.06f, 0.70f, 0.78f, 0.95f)
         ]);
 
@@ -139,11 +145,14 @@ public static class M7WorldLightingEvaluator
         Stops:
         [
             Stop(-36f, "6972ed", 0f,    "4855a2", 0.19f, "302d68", 0.34f, "050719", "55d4c8", 0.24f, 3.3f, 3.4f, 0.48f),
-            Stop(-12f, "787ff8", 0f,    "5666bc", 0.20f, "403a82", 0.36f, "0d1030", "61e2d1", 0.25f, 3.1f, 3.1f, 0.58f),
-            Stop(-4f,  "d77de1", 0f,    "657fc2", 0.19f, "67528f", 0.37f, "3c2257", "6cead2", 0.23f, 2.9f, 2.9f, 0.69f),
-            Stop(2f,   "f28cda", 0.28f, "6e9bb8", 0.16f, "8b6890", 0.39f, "71365f", "72efd3", 0.20f, 2.7f, 2.7f, 0.78f),
-            Stop(8f,   "f4bad9", 0.72f, "78b4b7", 0.13f, "8b8da0", 0.39f, "5e566d", "6ef0d3", 0.16f, 2.5f, 2.5f, 0.86f),
-            Stop(15f,  "dff5f7", 1.04f, "89c7c3", 0.10f, "79aba9", 0.39f, "35616a", "62f0d0", 0.12f, 2.3f, 2.3f, 0.91f),
+            Stop(-24f, "7078f4", 0f,    "4e5cad", 0.20f, "373176", 0.35f, "090c26", "5bddca", 0.25f, 3.2f, 3.25f, 0.53f),
+            Stop(-12f, "7e83ff", 0f,    "5b6fc8", 0.21f, "463d91", 0.38f, "111744", "63ead6", 0.27f, 3.1f, 3.1f, 0.59f),
+            Stop(-5f,  "c879ee", 0f,    "697fc9", 0.20f, "65549b", 0.39f, "37265f", "6cebd2", 0.25f, 3.0f, 2.95f, 0.67f),
+            Stop(0f,   "ed76e0", 0f,    "7198c2", 0.18f, "84619a", 0.40f, "71365f", "72efd3", 0.22f, 2.8f, 2.8f, 0.75f),
+            Stop(2f,   "f28cda", 0.30f, "75a1bd", 0.17f, "916d96", 0.41f, "8a3c72", "75f1d4", 0.20f, 2.7f, 2.7f, 0.78f),
+            Stop(8f,   "f5b3d8", 0.72f, "7dbbbb", 0.14f, "9291a4", 0.41f, "715c79", "71f3d6", 0.17f, 2.5f, 2.5f, 0.85f),
+            Stop(18f,  "e8edf0", 1.05f, "8ecac5", 0.11f, "7fb0b0", 0.40f, "3c6a73", "65f2d2", 0.13f, 2.3f, 2.3f, 0.90f),
+            Stop(32f,  "e3f5f8", 1.18f, "93d1ca", 0.09f, "75b3b1", 0.39f, "2f5b64", "62f0d0", 0.10f, 2.2f, 2.25f, 0.93f),
             Stop(90f,  "e7f6ff", 1.28f, "93d2ca", 0.08f, "70b5b2", 0.38f, "28535b", "62f0d0", 0.08f, 2.1f, 2.2f, 0.94f)
         ]);
 
@@ -219,10 +228,15 @@ public static class M7WorldLightingEvaluator
             nightFactor * readability * 0.80f);
         Color readableBackground = sample.BackgroundColor.Lerp(sample.AmbientColor,
             nightFactor * readability * 0.12f);
+        // A gameplay blue hour cannot be a nearly-black night frame with a
+        // different hex value. Give the transition itself a broad luminance
+        // shelf, while deep night remains governed by the readability floor.
+        float twilightAmbientLift = twilightFactor * (0.30f + readability * 0.18f);
+        float twilightFillLift = twilightFactor * (0.16f + readability * 0.10f);
         float readableAmbientEnergy = Math.Max(sample.AmbientEnergy * readabilityBoost,
-            nightFactor * (0.42f + readability * 0.24f));
+            nightFactor * (0.42f + readability * 0.24f) + twilightAmbientLift);
         float readableFillEnergy = Math.Max(sample.FillEnergy * readabilityBoost,
-            nightFactor * (0.24f + readability * 0.16f));
+            nightFactor * (0.24f + readability * 0.16f) + twilightFillLift);
         float keyEnergy = solarAltitude <= 0f ? 0f : sample.KeyEnergy;
         float azimuth = PositiveModulo(time / 24f * 360f - 90f, 360f);
         M7WorldLightPhase phase = ResolvePhase(solarAltitude);
@@ -312,20 +326,24 @@ public static class M7WorldLightingEvaluator
             LocalLightBoost = 1.6f
         };
         M7WorldLightingFrame deepNight = Evaluate(earth, 0f);
+        M7WorldLightingFrame earlyBlueHour = Evaluate(earth, 4.5f);
         M7WorldLightingFrame blueHour = Evaluate(earth, 5f);
         M7WorldLightingFrame laterBlueHour = Evaluate(earth, 5.5f);
         M7WorldLightingFrame sunrise = Evaluate(earth, 6f);
         M7WorldLightingFrame golden = Evaluate(earth, 6.5f);
         M7WorldLightingFrame laterGolden = Evaluate(earth, 7.2f);
+        M7WorldLightingFrame lateGolden = Evaluate(earth, 7.8f);
         M7WorldLightingFrame day = Evaluate(earth, 12f);
         if (deepNight.Phase != M7WorldLightPhase.DeepNight ||
+            earlyBlueHour.Phase != M7WorldLightPhase.BlueHour ||
             blueHour.Phase != M7WorldLightPhase.BlueHour ||
             laterBlueHour.Phase != M7WorldLightPhase.BlueHour ||
             sunrise.Phase != M7WorldLightPhase.SunriseSunset ||
             golden.Phase != M7WorldLightPhase.GoldenHour ||
             laterGolden.Phase != M7WorldLightPhase.GoldenHour ||
+            lateGolden.Phase != M7WorldLightPhase.GoldenHour ||
             day.Phase != M7WorldLightPhase.NeutralDay)
-            return Fail("Earth review times do not traverse the expected five lighting phases.", out error);
+            return Fail("Earth review times do not traverse the expected five extended lighting phases.", out error);
         if (ColorDistance(deepNight.AmbientColor, blueHour.AmbientColor) < 0.08f ||
             ColorDistance(sunrise.BackgroundColor, golden.BackgroundColor) < 0.08f ||
             ColorDistance(golden.KeyColor, day.KeyColor) < 0.08f)

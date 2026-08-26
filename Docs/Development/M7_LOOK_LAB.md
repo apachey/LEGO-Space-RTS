@@ -81,9 +81,9 @@ rubber, coated building shell and rough rock are not one material recolored.
 
 ## Profile workflow
 
-- **COPY ALL JSON** copies a complete `schemaVersion: 5` profile, including the
+- **COPY ALL JSON** copies a complete `schemaVersion: 6` profile, including the
   current zoom. It never copies only a diff.
-- **PASTE & APPLY** validates the schema, migrates schemas 1–4, ignores the
+- **PASTE & APPLY** validates the schema, migrates schemas 1–5, ignores the
   removed HUD/scorch fields, clamps unsafe values and applies the complete
   profile live.
 - **RESET SECTION** restores the active section only.
@@ -112,19 +112,23 @@ depth and normal/roughness buffers in a fullscreen pass. Depth discontinuities
 control silhouettes; normal discontinuities control creases. High-roughness
 terrain suppresses crease lines so the toggle does not turn the ground into
 noise. Emissive surfaces write actual HDR emission, receive a darker same-hue
-edge, drive a separate bright-pixel halo and have optional nearby lights. The
-outline toggle can be evaluated without switching any other look parameter.
+edge and drive a separate bright-pixel halo. Vehicle headlights are
+forward/downward spot lights, work lamps use compact local pools, and
+fire/impact/Crystal sources retain their own lighting roles. Functional vehicle
+lights fade in through twilight and are off at noon. The outline toggle can be
+evaluated without switching any other look parameter.
 
 ## Texture scope
 
-Nine generated review assets remain reproducible. The active stack uses painted
-coating, brushed metal, rubber, quarry detail, low-frequency anti-tiled regolith,
-modular building panels and an alpha glare sprite. The older photographic
-regolith-height and tiled machine-panel maps are retained for audit history but
-no longer drive the normal view because they produced repeated ridges and noisy
-small parts. Derivative-aware sampling avoids sparkle, and terrain combines
-rotated samples with non-repeating broad breakup. These are review assets, not
-accepted production normal/ORM maps.
+Nine generated review assets remain reproducible. Eight are active: painted
+coating, brushed metal and rubber detail; machine-panel and building-panel
+height-derived bump; quiet regolith colour; independently transformed quarry
+bump/roughness; and an alpha glare sprite. The older detailed
+`regolith_height.png` remains for audit history but is deliberately unbound
+because its large ridges repeat at RTS scale. Albedo, height/bump and roughness
+sampling use separate coordinates and calibrated contrast instead of stamping
+one grayscale value into every channel. Derivative-aware mips avoid sparkle.
+These are review assets, not accepted production normal/ORM maps.
 
 ## T065 animation-driver integration
 
@@ -182,9 +186,10 @@ profiles inherit the neutral destruction defaults.
 Automation validates scene structure, mesh/triangle counts, schema-6 round-trip,
 schema-1 through schema-5 migration, animation and destruction-driver state,
 six-wheel/drill/suspension rig binding, all six pool prewarm/spawn/reuse/drop
-behavior, zoom bounds,
-generated-texture presence, emissive material bindings, exterior impact
-placement, shader compilation and captures. It cannot accept visual style,
+behavior, zoom bounds, exact authored-texture shader routing, directional
+headlight geometry and day/night gating, procedural-sky light ownership,
+emissive material bindings, exterior impact placement, shader compilation and
+captures. It cannot accept visual style,
 material appeal, readability, animation feel, VFX feel or camera feel. Those
 remain the game director's decision, and copied profile JSON is the exact
 handoff for the next implementation iteration.
