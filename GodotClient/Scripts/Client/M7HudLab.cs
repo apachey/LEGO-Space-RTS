@@ -137,6 +137,8 @@ public partial class M7HudLab : Node3D
             ApplySyntheticCameraPolygon();
             SetStatus($"{(queued ? "Queued move" : "Move")} at {cell.X}, {cell.Y}");
         };
+        _hud.AlertRequested += () =>
+            SetStatus("Alert focus requested — production centers the associated target.");
     }
 
     private void BuildControls()
@@ -194,8 +196,8 @@ public partial class M7HudLab : Node3D
         AddSlider(box, "UI scale", 0.8, 1.35, 0.01, () => _profile.Layout.UiScale, value => _profile.Layout.UiScale = (float)value);
         AddSlider(box, "Top strip height", 44, 78, 1, () => _profile.Layout.TopStripHeight, value => _profile.Layout.TopStripHeight = (float)value);
         AddSlider(box, "Bottom height", 172, 280, 1, () => _profile.Layout.BottomRegionHeight, value => _profile.Layout.BottomRegionHeight = (float)value);
-        AddSlider(box, "Minimap width", 164, 260, 1, () => _profile.Layout.MinimapSize, value => _profile.Layout.MinimapSize = (float)value);
-        AddSlider(box, "Command width", 300, 460, 1, () => _profile.Layout.CommandPanelWidth, value => _profile.Layout.CommandPanelWidth = (float)value);
+        AddSlider(box, "Minimap width target", 164, 260, 1, () => _profile.Layout.MinimapSize, value => _profile.Layout.MinimapSize = (float)value);
+        AddSlider(box, "Command width target", 300, 460, 1, () => _profile.Layout.CommandPanelWidth, value => _profile.Layout.CommandPanelWidth = (float)value);
         AddSlider(box, "Selection max width", 540, 960, 5, () => _profile.Layout.SelectionMaxWidth, value => _profile.Layout.SelectionMaxWidth = (float)value);
         AddSlider(box, "Panel gap", 4, 24, 1, () => _profile.Layout.PanelGap, value => _profile.Layout.PanelGap = (float)value);
 
@@ -269,10 +271,10 @@ public partial class M7HudLab : Node3D
     private void ApplyAll()
     {
         _profile.Normalize();
+        ApplyPreviewAspect();
         _hud?.ApplyProfile(_profile);
         _hud?.ApplyFrame(M7HudFixtures.Create(_scenario), true);
         ApplySyntheticCameraPolygon();
-        ApplyPreviewAspect();
     }
 
     private void SetScenario(M7HudScenario scenario)
@@ -309,6 +311,7 @@ public partial class M7HudLab : Node3D
         {
             HudFrame frame = M7HudFixtures.Create(scenario);
             return frame.ContentSignature().Length > 80 && frame.Commands.Count <= 12 &&
+                !frame.Selection.PortraitCaption.Contains("ART PENDING", StringComparison.OrdinalIgnoreCase) &&
                 frame.Minimap.ValidateClientKnowledge(0, out _);
         });
         HudFrame mixed = M7HudFixtures.Create(M7HudScenario.MixedArmy);
@@ -333,18 +336,19 @@ public partial class M7HudLab : Node3D
             HudMinimapView.PixelToBuildCell(new Vector2(205.9f, 205.9f), new Vector2(206, 206)) == new Vector2I(159, 159);
         FixVec2 commandTarget = RtsInputController.MinimapBuildCellCenter(new Vector2I(12, 34));
         mapping = mapping && commandTarget.X == Fix32.FromRatio(25, 2) && commandTarget.Y == Fix32.FromRatio(69, 2);
-        bool tree = _hud?.FindChild("ResourceStrip", true, false) is PanelContainer && _hud.FindChild("MinimapSlot", true, false) is HudMinimapView &&
+        bool tree = _hud?.FindChild("ResourceStrip", true, false) is PanelContainer && _hud.FindChild("BottomDeck", true, false) is PanelContainer &&
+            _hud.FindChild("MinimapSlot", true, false) is HudMinimapView &&
+            _hud.FindChild("TacticalPortrait", true, false) is HudPortraitView &&
             _hud.FindChild("SelectionPanel", true, false) is PanelContainer && _hud.FindChild("CommandGrid", true, false) is GridContainer &&
             _hud.FindChild("EventFeed", true, false) is PanelContainer && _hud.FindChild("HudTooltip", true, false) is PanelContainer;
         HudFactionChrome? topChrome = _hud?.FindChild("ResourceStripFactionChrome", true, false) as HudFactionChrome;
-        HudFactionChrome? minimapChrome = _hud?.FindChild("MinimapRegionFactionChrome", true, false) as HudFactionChrome;
-        HudFactionChrome? selectionChrome = _hud?.FindChild("SelectionPanelFactionChrome", true, false) as HudFactionChrome;
-        HudFactionChrome? commandChrome = _hud?.FindChild("CommandPanelFactionChrome", true, false) as HudFactionChrome;
+        HudFactionChrome? deckChrome = _hud?.FindChild("BottomDeckFactionChrome", true, false) as HudFactionChrome;
         bool factionArt = HudFactionChrome.ValidateRecipes(out _) &&
             topChrome is { IsConfigured: true, Role: HudFactionChromeRole.TopStrip, UsesFixedSquareCorners: true, UsesProtectedSourceModules: true } &&
-            minimapChrome is { IsConfigured: true, Role: HudFactionChromeRole.SquarePanel } &&
-            selectionChrome is { IsConfigured: true, Role: HudFactionChromeRole.MainPanel } &&
-            commandChrome is { IsConfigured: true, Role: HudFactionChromeRole.MainPanel } &&
+            deckChrome is { IsConfigured: true, Role: HudFactionChromeRole.BottomDeck, UsesSparseJunctionModules: true } &&
+            _hud?.FindChild("MinimapRegionFactionChrome", true, false) is null &&
+            _hud?.FindChild("SelectionPanelFactionChrome", true, false) is null &&
+            _hud?.FindChild("CommandPanelFactionChrome", true, false) is null &&
             _hud?.FindChild("PortraitSlotFactionChrome", true, false) is null &&
             _hud?.FindChild("EnergyDomainPopoverFactionChrome", true, false) is null &&
             _hud?.FindChild("ResourceStripFactionFrame", true, false) is null;
@@ -356,6 +360,7 @@ public partial class M7HudLab : Node3D
         bool objectiveBounded = _hud?.FindChild("ObjectiveTracker", true, false) is Control objective &&
             objective.Size.Y <= 100f * _profile.Layout.UiScale;
         bool layoutContained = ValidateSafeAreaContainment();
+        bool interactionBindings = ValidateInteractiveBindings();
         bool productionKnowledge = ValidateProductionMinimapKnowledge();
         if (_hud?.FindChild("CommandPanel", true, false) is Control commandPanel &&
             _hud.FindChild("SelectionPanel", true, false) is Control selectionPanel &&
@@ -376,22 +381,70 @@ public partial class M7HudLab : Node3D
         });
         bool leakGuard = !illegal.ValidateClientKnowledge(0, out _);
         if (!(fixtures && roundTrip && migration && chromeMigration && profileSanitization && mapping && tree && factionArt && states && actionableBinding &&
-              objectiveBounded && layoutContained && minimap && leakGuard && productionKnowledge))
-            GD.PrintErr($"M7 HUD LAB DETAIL: fixtures={fixtures} roundTrip={roundTrip} migration={migration} chromeMigration={chromeMigration} sanitization={profileSanitization} mapping={mapping} tree={tree} factionArt={factionArt} states={states} actionable={actionableBinding} objectiveBounded={objectiveBounded} layoutContained={layoutContained} minimap={minimap} leakGuard={leakGuard} productionKnowledge={productionKnowledge}");
+              objectiveBounded && layoutContained && interactionBindings && minimap && leakGuard && productionKnowledge))
+            GD.PrintErr($"M7 HUD LAB DETAIL: fixtures={fixtures} roundTrip={roundTrip} migration={migration} chromeMigration={chromeMigration} sanitization={profileSanitization} mapping={mapping} tree={tree} factionArt={factionArt} states={states} actionable={actionableBinding} objectiveBounded={objectiveBounded} layoutContained={layoutContained} interactions={interactionBindings} minimap={minimap} leakGuard={leakGuard} productionKnowledge={productionKnowledge}");
         return fixtures && roundTrip && migration && chromeMigration && profileSanitization && mapping && tree && factionArt && states && actionableBinding &&
-            objectiveBounded && layoutContained && minimap && leakGuard && productionKnowledge;
+            objectiveBounded && layoutContained && interactionBindings && minimap && leakGuard && productionKnowledge;
+    }
+
+    private bool ValidateInteractiveBindings()
+    {
+        if (_hud?.FindChild("EnergyButton", true, false) is not Button energyButton ||
+            _hud.FindChild("ActionableAlert", true, false) is not Button alertButton ||
+            _hud.FindChild("Command0", true, false) is not Button commandButton) return false;
+        foreach (Node child in GetDescendants(energyButton))
+            if (child is Control control && control.MouseFilter != Control.MouseFilterEnum.Ignore) return false;
+
+        int energyRequests = 0;
+        void OnEnergyRequested() => energyRequests++;
+        _hud.EnergyDetailsRequested += OnEnergyRequested;
+        energyButton.EmitSignal(BaseButton.SignalName.Pressed);
+        _hud.EnergyDetailsRequested -= OnEnergyRequested;
+
+        _hud.ApplyFrame(M7HudFixtures.Create(M7HudScenario.CriticalTooltip), true);
+        int alertRequests = 0;
+        void OnAlertRequested() => alertRequests++;
+        _hud.AlertRequested += OnAlertRequested;
+        alertButton.EmitSignal(BaseButton.SignalName.Pressed);
+        _hud.AlertRequested -= OnAlertRequested;
+
+        M7HudProfile outlineButtons = _profile.Clone();
+        outlineButtons.Surface.SolidCommandButtons = false;
+        _hud.ApplyProfile(outlineButtons);
+        float outlineAlpha = commandButton.GetThemeStylebox("normal") is StyleBoxFlat outlineStyle
+            ? outlineStyle.BgColor.A : 1f;
+        M7HudProfile solidButtons = _profile.Clone();
+        solidButtons.Surface.SolidCommandButtons = true;
+        _hud.ApplyProfile(solidButtons);
+        float solidAlpha = commandButton.GetThemeStylebox("normal") is StyleBoxFlat solidStyle
+            ? solidStyle.BgColor.A : 0f;
+
+        _hud.ApplyProfile(_profile);
+        _hud.ApplyFrame(M7HudFixtures.Create(_scenario), true);
+        ApplySyntheticCameraPolygon();
+        return energyRequests == 1 && alertRequests == 1 && outlineAlpha < 0.05f && solidAlpha > 0.95f;
+    }
+
+    private static IEnumerable<Node> GetDescendants(Node root)
+    {
+        foreach (Node child in root.GetChildren())
+        {
+            yield return child;
+            foreach (Node descendant in GetDescendants(child)) yield return descendant;
+        }
     }
 
     private bool ValidateSafeAreaContainment()
     {
         if (_hud?.FindChild("HudSafeArea", true, false) is not Control safeArea) return false;
-        string[] panelNames = { "ResourceStrip", "MinimapRegion", "SelectionPanel", "CommandPanel" };
+        Rect2 safeBounds = safeArea.GetGlobalRect();
+        string[] panelNames = { "ResourceStrip", "BottomDeck", "MinimapRegion", "SelectionPanel", "CommandPanel" };
         for (int i = 0; i < panelNames.Length; i++)
         {
             if (_hud.FindChild(panelNames[i], true, false) is not Control panel) return false;
-            Vector2 end = panel.Position + panel.Size;
-            if (panel.Position.X < -0.5f || panel.Position.Y < -0.5f ||
-                end.X > safeArea.Size.X + 0.5f || end.Y > safeArea.Size.Y + 0.5f)
+            Rect2 bounds = panel.GetGlobalRect();
+            if (bounds.Position.X < safeBounds.Position.X - 0.5f || bounds.Position.Y < safeBounds.Position.Y - 0.5f ||
+                bounds.End.X > safeBounds.End.X + 0.5f || bounds.End.Y > safeBounds.End.Y + 0.5f)
                 return false;
         }
         if (_hud.FindChild("CommandPanel", true, false) is not Control commandPanel) return false;
@@ -410,8 +463,31 @@ public partial class M7HudLab : Node3D
                 commandButtonBounds.End.Y > commandBounds.End.Y + 0.5f)
                 return false;
         }
-        return visibleCommands == expectedVisibleCommands;
+        if (visibleCommands != expectedVisibleCommands ||
+            _hud.FindChild("BottomDeck", true, false) is not Control bottomDeck) return false;
+
+        List<Rect2> visibleOverlays = new();
+        string[] overlayNames = { "AlertAccess", "EventFeed", "ObjectiveTracker", "HudTooltip", "EnergyDomainPopover" };
+        for (int i = 0; i < overlayNames.Length; i++)
+        {
+            if (_hud.FindChild(overlayNames[i], true, false) is not Control overlay) return false;
+            if (!overlay.Visible) continue;
+            Rect2 bounds = overlay.GetGlobalRect();
+            if (!ContainsRect(safeBounds, bounds) || RectsOverlap(bounds, bottomDeck.GetGlobalRect())) return false;
+            for (int previous = 0; previous < visibleOverlays.Count; previous++)
+                if (RectsOverlap(bounds, visibleOverlays[previous])) return false;
+            visibleOverlays.Add(bounds);
+        }
+        return true;
     }
+
+    private static bool ContainsRect(Rect2 outer, Rect2 inner) =>
+        inner.Position.X >= outer.Position.X - 0.5f && inner.Position.Y >= outer.Position.Y - 0.5f &&
+        inner.End.X <= outer.End.X + 0.5f && inner.End.Y <= outer.End.Y + 0.5f;
+
+    private static bool RectsOverlap(Rect2 a, Rect2 b) =>
+        a.Position.X < b.End.X - 0.5f && a.End.X > b.Position.X + 0.5f &&
+        a.Position.Y < b.End.Y - 0.5f && a.End.Y > b.Position.Y + 0.5f;
 
     private static bool ValidateProductionMinimapKnowledge()
     {

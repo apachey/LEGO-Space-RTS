@@ -20,7 +20,8 @@ public enum M7LookMaterialRole : byte
 
 public static class M7LookMaterialFactory
 {
-    private const string PaintedTexturePath = "res://Assets/M7/Textures/painted_shell_detail.png";
+    private const string PaintedMacroTexturePath = "res://Assets/M7/Textures/painted_shell_macro_v2.png";
+    private const string PaintedReliefTexturePath = "res://Assets/M7/Textures/painted_shell_detail.png";
     private const string MetalTexturePath = "res://Assets/M7/Textures/brushed_metal_detail.png";
     private const string RubberTexturePath = "res://Assets/M7/Textures/rubber_detail.png";
     private const string GroundTexturePath = "res://Assets/M7/Textures/quarry_ground_detail.png";
@@ -30,7 +31,6 @@ public static class M7LookMaterialFactory
     // single photograph is stamped into every output channel.
     private const string RegolithTexturePath = GroundAlbedoTexturePath;
     private const string MachinePanelTexturePath = "res://Assets/M7/Textures/machine_panel_height.png";
-    private const string BuildingPanelTexturePath = "res://Assets/M7/Textures/building_panel_height.png";
     private static Shader? _surfaceShaderResource;
     private static Shader? _groundShaderResource;
     private static Shader? _glassShaderResource;
@@ -61,13 +61,13 @@ public static class M7LookMaterialFactory
         profile.Normalize();
         return new Dictionary<M7LookMaterialRole, Material>
         {
-            [M7LookMaterialRole.PaintedHull] = AuthoredOpaque(profile.Materials.PaintedHull, profile.Shading, PaintedTexturePath, PaintedTexturePath, profile.Materials.InspectionPass, M7LookMaterialRole.PaintedHull),
-            [M7LookMaterialRole.StructuralEarth] = AuthoredOpaque(profile.Materials.StructuralEarth, profile.Shading, PaintedTexturePath, PaintedTexturePath, profile.Materials.InspectionPass, M7LookMaterialRole.StructuralEarth),
-            [M7LookMaterialRole.Accent] = AuthoredOpaque(profile.Materials.Accent, profile.Shading, PaintedTexturePath, PaintedTexturePath, profile.Materials.InspectionPass, M7LookMaterialRole.Accent),
+            [M7LookMaterialRole.PaintedHull] = AuthoredOpaque(profile.Materials.PaintedHull, profile.Shading, PaintedMacroTexturePath, PaintedReliefTexturePath, profile.Materials.InspectionPass, M7LookMaterialRole.PaintedHull),
+            [M7LookMaterialRole.StructuralEarth] = AuthoredOpaque(profile.Materials.StructuralEarth, profile.Shading, PaintedMacroTexturePath, PaintedReliefTexturePath, profile.Materials.InspectionPass, M7LookMaterialRole.StructuralEarth),
+            [M7LookMaterialRole.Accent] = AuthoredOpaque(profile.Materials.Accent, profile.Shading, PaintedMacroTexturePath, PaintedReliefTexturePath, profile.Materials.InspectionPass, M7LookMaterialRole.Accent),
             [M7LookMaterialRole.DarkMechanic] = AuthoredOpaque(profile.Materials.DarkMechanic, profile.Shading, MetalTexturePath, MachinePanelTexturePath, profile.Materials.InspectionPass, M7LookMaterialRole.DarkMechanic),
             [M7LookMaterialRole.ToolSteel] = AuthoredOpaque(profile.Materials.ToolSteel, profile.Shading, MetalTexturePath, MetalTexturePath, profile.Materials.InspectionPass, M7LookMaterialRole.ToolSteel),
             [M7LookMaterialRole.Rubber] = AuthoredOpaque(profile.Materials.Rubber, profile.Shading, RubberTexturePath, RubberTexturePath, profile.Materials.InspectionPass, M7LookMaterialRole.Rubber),
-            [M7LookMaterialRole.BuildingShell] = AuthoredOpaque(profile.Materials.BuildingShell, profile.Shading, PaintedTexturePath, BuildingPanelTexturePath, profile.Materials.InspectionPass, M7LookMaterialRole.BuildingShell),
+            [M7LookMaterialRole.BuildingShell] = AuthoredOpaque(profile.Materials.BuildingShell, profile.Shading, PaintedMacroTexturePath, PaintedMacroTexturePath, profile.Materials.InspectionPass, M7LookMaterialRole.BuildingShell),
             [M7LookMaterialRole.GroundRock] = Ground(profile),
             [M7LookMaterialRole.CanopyGlass] = Glass(profile.Glass),
             [M7LookMaterialRole.Signal] = Emissive(ParseColor(profile.Emission.SignalColor), profile.Emission.SignalEnergy, 1f, profile.Emission.EdgeDarkening),
@@ -76,25 +76,36 @@ public static class M7LookMaterialFactory
         };
     }
 
+    public static void SetTextureAnchor(MeshInstance3D mesh, Transform3D modelSpace)
+    {
+        mesh.SetInstanceShaderParameter("texture_offset", modelSpace.Origin);
+        mesh.SetInstanceShaderParameter("texture_axis_x", modelSpace.Basis.X);
+        mesh.SetInstanceShaderParameter("texture_axis_y", modelSpace.Basis.Y);
+        mesh.SetInstanceShaderParameter("texture_axis_z", modelSpace.Basis.Z);
+    }
+
     public static bool ValidateAuthoredTextureBindings(
         IReadOnlyDictionary<M7LookMaterialRole, Material> materials, out string error)
     {
         (M7LookMaterialRole Role, string Detail, string Height)[] opaqueExpectations =
         {
-            (M7LookMaterialRole.PaintedHull, PaintedTexturePath, PaintedTexturePath),
-            (M7LookMaterialRole.StructuralEarth, PaintedTexturePath, PaintedTexturePath),
-            (M7LookMaterialRole.Accent, PaintedTexturePath, PaintedTexturePath),
+            (M7LookMaterialRole.PaintedHull, PaintedMacroTexturePath, PaintedReliefTexturePath),
+            (M7LookMaterialRole.StructuralEarth, PaintedMacroTexturePath, PaintedReliefTexturePath),
+            (M7LookMaterialRole.Accent, PaintedMacroTexturePath, PaintedReliefTexturePath),
             (M7LookMaterialRole.DarkMechanic, MetalTexturePath, MachinePanelTexturePath),
             (M7LookMaterialRole.ToolSteel, MetalTexturePath, MetalTexturePath),
             (M7LookMaterialRole.Rubber, RubberTexturePath, RubberTexturePath),
-            (M7LookMaterialRole.BuildingShell, PaintedTexturePath, BuildingPanelTexturePath)
+            (M7LookMaterialRole.BuildingShell, PaintedMacroTexturePath, PaintedMacroTexturePath)
         };
         foreach ((M7LookMaterialRole role, string detailPath, string heightPath) in opaqueExpectations)
         {
+            bool requiresAlbedoTexture = role is M7LookMaterialRole.PaintedHull or
+                M7LookMaterialRole.StructuralEarth or M7LookMaterialRole.Accent or
+                M7LookMaterialRole.BuildingShell;
             if (!materials.TryGetValue(role, out Material? raw) || raw is not ShaderMaterial material ||
                 !TextureParameterMatches(material, "detail_texture", detailPath) ||
                 !TextureParameterMatches(material, "height_texture", heightPath) ||
-                material.GetShaderParameter("texture_strength").As<double>() <= 0.0 ||
+                (requiresAlbedoTexture && material.GetShaderParameter("texture_strength").As<double>() <= 0.0) ||
                 material.GetShaderParameter("relief_strength").As<double>() <= 0.0 ||
                 material.GetShaderParameter("roughness_variation").As<double>() <= 0.0)
             {
@@ -179,19 +190,19 @@ public static class M7LookMaterialFactory
         SurfaceRecipe recipe = role switch
         {
             M7LookMaterialRole.PaintedHull => new(0.03f, 0.42f, 0.48f, 0.18f, 0.28f, 0.18f, 0.00f,
-                0.18f, 0.42f, 0.517f, 24f, 0.517f, 18f, 0.045f, 0.045f, 0.007f),
+                0.22f, 0.10f, 0.505f, 12f, 0.517f, 8f, 0.22f, 0.030f, 0.0015f, 3.2f, 6f),
             M7LookMaterialRole.StructuralEarth => new(0.02f, 0.72f, 0.30f, 0.04f, 0.55f, 0.12f, 0.00f,
-                0.14f, 0.32f, 0.517f, 28f, 0.517f, 18f, 0.060f, 0.060f, 0.009f),
+                0.19f, 0.09f, 0.505f, 12f, 0.517f, 8f, 0.24f, 0.035f, 0.002f, 3.2f, 6f),
             M7LookMaterialRole.Accent => new(0.00f, 0.34f, 0.50f, 0.22f, 0.24f, 0.18f, 0.00f,
-                0.22f, 0.45f, 0.517f, 20f, 0.517f, 16f, 0.025f, 0.035f, 0.0045f),
+                0.24f, 0.11f, 0.505f, 10f, 0.517f, 6f, 0.16f, 0.020f, 0.001f, 3.2f, 6f),
             M7LookMaterialRole.DarkMechanic => new(0.72f, 0.42f, 0.68f, 0.02f, 0.50f, 0.25f, 0.08f,
-                0.20f, 0.13f, 0.552f, 14f, 0.504f, 28f, 0.012f, 0.075f, 0.008f),
+                0.14f, 0.09f, 0.552f, 10f, 0.504f, 10f, 0.010f, 0.050f, 0.004f, 2.8f, 4f),
             M7LookMaterialRole.ToolSteel => new(0.92f, 0.30f, 0.72f, 0.02f, 0.40f, 0.26f, 0.12f,
-                0.28f, 0.52f, 0.552f, 12f, 0.552f, 8f, 0.006f, 0.090f, 0.004f),
+                0.18f, 0.18f, 0.552f, 8f, 0.552f, 5f, 0.0f, 0.045f, 0.0003f, 2.8f, 8f),
             M7LookMaterialRole.Rubber => new(0.00f, 0.88f, 0.12f, 0.00f, 0.80f, 0.05f, 0.00f,
-                0.32f, 0.58f, 0.281f, 8f, 0.281f, 6f, 0.008f, 0.065f, 0.008f),
+                0.15f, 0.15f, 0.281f, 6f, 0.281f, 5f, 0.010f, 0.030f, 0.002f, 4f, 6f),
             M7LookMaterialRole.BuildingShell => new(0.08f, 0.55f, 0.40f, 0.08f, 0.38f, 0.15f, 0.00f,
-                0.10f, 0.09f, 0.517f, 28f, 0.538f, 24f, 0.035f, 0.050f, 0.014f),
+                0.12f, 0.07f, 0.505f, 3.5f, 0.505f, 3f, 0.12f, 0.012f, 0.0004f, 6f, 6f),
             _ => throw new ArgumentOutOfRangeException(nameof(role), role, null)
         };
         material.SetShaderParameter("metallic_value", recipe.Metallic);
@@ -215,6 +226,10 @@ public static class M7LookMaterialFactory
         material.SetShaderParameter("detail_contrast", recipe.DetailContrast);
         material.SetShaderParameter("height_center", recipe.HeightCenter);
         material.SetShaderParameter("height_contrast", recipe.HeightContrast);
+        material.SetShaderParameter("detail_filter_width", recipe.DetailFilterWidth);
+        material.SetShaderParameter("height_filter_width", recipe.HeightFilterWidth);
+        material.SetShaderParameter("groove_darkening", role == M7LookMaterialRole.DarkMechanic ? 0.015f : 0f);
+        material.SetShaderParameter("groove_roughness", role == M7LookMaterialRole.DarkMechanic ? 0.025f : 0f);
         material.SetShaderParameter("relief_strength", recipe.BumpStrength);
         material.SetShaderParameter("roughness_variation", recipe.RoughnessVariation);
         material.SetShaderParameter("texture_blend_mode", 0f);
@@ -299,7 +314,9 @@ public static class M7LookMaterialFactory
         float HeightContrast,
         float AlbedoVariation,
         float RoughnessVariation,
-        float BumpStrength);
+        float BumpStrength,
+        float DetailFilterWidth,
+        float HeightFilterWidth);
 
     public static StandardMaterial3D Transparent(Color color) => new()
     {
@@ -343,6 +360,10 @@ uniform float detail_center = 0.5;
 uniform float detail_contrast = 2.0;
 uniform float height_center = 0.5;
 uniform float height_contrast = 2.0;
+uniform float detail_filter_width : hint_range(1.0, 16.0) = 1.0;
+uniform float height_filter_width : hint_range(1.0, 16.0) = 1.0;
+uniform float groove_darkening : hint_range(0.0, 0.2) = 0.0;
+uniform float groove_roughness : hint_range(0.0, 0.2) = 0.0;
 uniform float relief_strength : hint_range(0.0, 1.5) = 0.12;
 uniform float roughness_variation : hint_range(0.0, 1.0) = 0.18;
 uniform float texture_blend_mode : hint_range(0.0, 2.0) = 0.0;
@@ -359,6 +380,25 @@ varying vec3 local_position;
 varying vec3 local_normal;
 varying vec3 view_position;
 varying vec3 world_normal;
+instance uniform vec3 texture_offset = vec3(0.0);
+instance uniform vec3 texture_axis_x = vec3(1.0, 0.0, 0.0);
+instance uniform vec3 texture_axis_y = vec3(0.0, 1.0, 0.0);
+instance uniform vec3 texture_axis_z = vec3(0.0, 0.0, 1.0);
+
+float filtered_detail(vec2 uv) {
+    // Bias automatic mip selection toward the large authored shapes. This is
+    // still derivative-aware as the RTS camera moves, but fine scratches can
+    // no longer collapse into screen-space glitter on units and buildings.
+    return textureGrad(detail_texture, uv,
+        dFdx(uv) * detail_filter_width,
+        dFdy(uv) * detail_filter_width).r;
+}
+
+float filtered_height(vec2 uv) {
+    return textureGrad(height_texture, uv,
+        dFdx(uv) * height_filter_width,
+        dFdy(uv) * height_filter_width).r;
+}
 
 float triplanar_detail(vec3 p, vec3 n) {
     vec3 weights = pow(abs(n), vec3(4.0));
@@ -366,17 +406,17 @@ float triplanar_detail(vec3 p, vec3 n) {
     // Automatic derivative-aware mip selection is essential here. A fixed
     // LOD made the same texture either sparkle or smear as the RTS camera
     // moved, while these coordinates remain locked to the object.
-    return texture(detail_texture, p.yz).r * weights.x
-        + texture(detail_texture, p.xz).r * weights.y
-        + texture(detail_texture, p.xy).r * weights.z;
+    return filtered_detail(p.yz) * weights.x
+        + filtered_detail(p.xz) * weights.y
+        + filtered_detail(p.xy) * weights.z;
 }
 
 float triplanar_height(vec3 p, vec3 n) {
     vec3 weights = pow(abs(n), vec3(4.0));
     weights /= max(0.0001, weights.x + weights.y + weights.z);
-    return texture(height_texture, p.yz).r * weights.x
-        + texture(height_texture, p.xz).r * weights.y
-        + texture(height_texture, p.xy).r * weights.z;
+    return filtered_height(p.yz) * weights.x
+        + filtered_height(p.xz) * weights.y
+        + filtered_height(p.xy) * weights.z;
 }
 
 float authored_mask(float sample_value, float center, float contrast_value) {
@@ -410,8 +450,18 @@ void vertex() {
     // The reviewed GLB uses unit node scales. Keeping sampling coordinates in
     // object space makes texture features follow yaw and authored animation;
     // relief derivatives below remain in view space to match fragment NORMAL.
-    local_position = VERTEX;
-    local_normal = NORMAL;
+    // Transform every child mesh into one model-wide material space. Sampling
+    // every LEGO module around its own local origin made even a strong raster
+    // look uniform on units while large one-piece buildings showed it clearly.
+    // Carrying all three axes also keeps rotated/offset parts from stretching
+    // or changing the triplanar direction independently.
+    local_position = texture_axis_x * VERTEX.x
+        + texture_axis_y * VERTEX.y
+        + texture_axis_z * VERTEX.z
+        + texture_offset;
+    local_normal = normalize(normalize(texture_axis_x) * NORMAL.x
+        + normalize(texture_axis_y) * NORMAL.y
+        + normalize(texture_axis_z) * NORMAL.z);
     view_position = (MODELVIEW_MATRIX * vec4(VERTEX, 1.0)).xyz;
     world_normal = normalize(MODEL_NORMAL_MATRIX * NORMAL);
 }
@@ -419,9 +469,10 @@ void vertex() {
 void fragment() {
     vec3 mapping_normal = normalize(local_normal);
     float color_sample = triplanar_detail(local_position * texture_scale, mapping_normal);
-    // A rotated/scaled lookup decorrelates reflection breakup from colour while
-    // retaining one role-specific detail asset and derivative-aware mips.
-    vec3 reflection_position = local_position * (texture_scale * 1.73)
+    // A rotated, broader lookup decorrelates reflection breakup from colour.
+    // The previous higher-frequency octave was the main remaining source of
+    // shimmer at gameplay zoom, particularly across large building faces.
+    vec3 reflection_position = local_position * (texture_scale * 0.58)
         + vec3(0.37, 0.61, 0.19);
     float reflection_sample = triplanar_detail(reflection_position.zyx, mapping_normal.zyx);
     float height_sample = triplanar_height(local_position * height_scale, mapping_normal);
@@ -441,6 +492,7 @@ void fragment() {
     vec3 color = base_color.rgb;
     if (inspection_pass == 0) {
         color *= 1.0 + color_mask * texture_strength;
+        color *= 1.0 - max(-height_mask, 0.0) * groove_darkening;
         color = mix(color, color * vec3(1.13, 1.10, 1.04), edge_wear * pow(clamp(1.0 - abs(normal_view_dot), 0.0, 1.0), 3.0));
         color = mix(color, shadow_tint.rgb, dust_amount * upward * 0.18);
     } else if (inspection_pass == 2) {
@@ -451,7 +503,8 @@ void fragment() {
     ALBEDO = color;
     METALLIC = inspection_pass >= 3 ? 0.0 : metallic_value;
     float reflection_breakup = reflection_mask * roughness_variation
-        - (brush - 0.5) * brushed_amount * 0.18;
+        - (brush - 0.5) * brushed_amount * 0.18
+        + max(-height_mask, 0.0) * groove_roughness;
     ROUGHNESS = inspection_pass == 4
         ? mix(0.16, 0.92, reflection_mask * 0.5 + 0.5)
         : clamp(roughness_value + (inspection_pass == 0 ? reflection_breakup : 0.0), 0.03, 1.0);

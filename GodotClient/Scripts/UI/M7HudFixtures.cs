@@ -74,7 +74,7 @@ public static class M7HudFixtures
         HudFrame frame = Base(HudFaction.RockRaiders, "WORKSITE CONNECTED");
         frame.Selection = new HudSelectionFrame
         {
-            Title = "CHROME CRUSHER", Subtitle = "HEAVY FRONTLINE  •  GROUND", PortraitCaption = "UNIT VIEW\nART PENDING",
+            Title = "CHROME CRUSHER", Subtitle = "HEAVY FRONTLINE  •  GROUND", PortraitCaption = "◆\nCHROME CRUSHER",
             Count = 1, HealthPercent = 68, HealthText = "HP 816 / 1,200  •  A4  •  DAMAGED",
             StatusText = "Target HEAVY  •  Drill ready\nWorksite #12  •  SERVICED\nPower ONLINE  •  NORMAL priority", ShowPowerPriority = true, PowerPriority = 1
         };
@@ -90,9 +90,9 @@ public static class M7HudFixtures
         frame.ResourcePriority = HudAlertPriority.High;
         frame.Selection = new HudSelectionFrame
         {
-            Title = "45 OBJECTS SELECTED", Subtitle = "5 gameplay types  •  grouped for RTS-scale readability",
-            PortraitCaption = "GROUP\n45 SELECTED", Count = 45,
-            StatusText = "Click a type card to narrow selection. No portrait wall is generated.", ShowPowerPriority = true, MixedPowerPriority = true,
+            Title = "45 UNITS SELECTED", Subtitle = "FIELD FORCE  •  5 UNIT TYPES",
+            PortraitCaption = "45\nFIELD FORCE", Count = 45,
+            StatusText = "9 damaged  •  7 receiving support\nSelect a composition card to focus that unit type.", ShowPowerPriority = true, MixedPowerPriority = true,
             Groups =
             {
                 new HudSelectionGroupFrame { Id = "crew", Name = "Crew", Count = 12, AverageHealthPercent = 91, StateSummary = "2 damaged  •  5 repairing" },
@@ -112,7 +112,7 @@ public static class M7HudFixtures
         frame.Selection = new HudSelectionFrame
         {
             Title = "VEHICLE SERVICE BAY ×3", Subtitle = "AGGREGATE PRODUCTION  •  shortest projected queue",
-            PortraitCaption = "STRUCTURE VIEW\nART PENDING", Count = 3, HealthPercent = 100,
+            PortraitCaption = "▦\nSERVICE BAYS ×3", Count = 3, HealthPercent = 100,
             HealthText = "3 facilities  •  all operational", StatusText = "Shift-click queues five across eligible facilities.\nRally: south expansion."
         };
         frame.Commands = new List<HudCommandFrame>
@@ -138,7 +138,7 @@ public static class M7HudFixtures
         frame.Events.Insert(0, new HudEventFrame { Priority = HudAlertPriority.High, Time = "NOW", Text = "Brownout began in HQ Domain" });
         frame.Selection = new HudSelectionFrame
         {
-            Title = "ORE PROCESSING PLANT", Subtitle = "ECONOMY STRUCTURE  •  HQ DOMAIN", PortraitCaption = "STRUCTURE VIEW\nART PENDING",
+            Title = "ORE PROCESSING PLANT", Subtitle = "ECONOMY STRUCTURE  •  HQ DOMAIN", PortraitCaption = "▦\nORE PROCESSING",
             Count = 1, HealthPercent = 84, HealthText = "HP 1,260 / 1,500  •  A2  •  HEALTHY",
             StatusText = "BROWNOUT — Low-priority structure disabled.\nDomain demand exceeds generation by 9 E/s.", ShowPowerPriority = true, PowerPriority = 2
         };
@@ -154,11 +154,11 @@ public static class M7HudFixtures
         HudFrame frame = Base(HudFaction.Astronauts, "FORWARD SERVICE AVAILABLE");
         frame.Selection = new HudSelectionFrame
         {
-            Title = "MX-41 SWITCH FIGHTER", Subtitle = "ANTI-AIR / FRONTLINE  •  TRANSFORMING", PortraitCaption = "UNIT VIEW\nART PENDING",
+            Title = "MX-41 SWITCH FIGHTER", Subtitle = "ANTI-AIR / FRONTLINE  •  TRANSFORMING", PortraitCaption = "⇄\nMX-41",
             Count = 1, HealthPercent = 93, HealthText = "HP 930 / 1,000  •  A3  •  HEALTHY",
             StatusText = "GROUND → FLIGHT  •  61%\nCancellation committed  •  reversal lock follows completion\nForward Service available"
         };
-        frame.Commands = StandardCommands("STATE CHANGE", "Q");
+        frame.Commands = StandardCommands("REFIT", "E");
         frame.Objective = "FORWARD DEPLOYMENT\nHold the central service corridor  •  02:18";
         return frame;
     }
@@ -169,7 +169,7 @@ public static class M7HudFixtures
         frame.Crystals = "9 spendable";
         frame.Selection = new HudSelectionFrame
         {
-            Title = "RESONANCE CORE", Subtitle = "FACTION SYSTEM  •  SURGE ANCHOR", PortraitCaption = "STRUCTURE VIEW\nART PENDING",
+            Title = "RESONANCE CORE", Subtitle = "FACTION SYSTEM  •  SURGE ANCHOR", PortraitCaption = "◇\nRESONANCE CORE",
             Count = 1, HealthPercent = 76, HealthText = "HP 1,140 / 1,500  •  A2  •  HEALTHY",
             StatusText = "Committed Crystals 4 / 6\nCharge contribution +1.6/s  •  demand 8 E/s\nSurge available  •  50 Charge"
         };
@@ -183,7 +183,7 @@ public static class M7HudFixtures
         HudFrame frame = Base(HudFaction.Martians, "AERO NETWORK 5 STATIONS  •  1 SEGMENT");
         frame.Selection = new HudSelectionFrame
         {
-            Title = "SETTLEMENT STATION", Subtitle = "NETWORK / PRODUCTION  •  COMPONENT A", PortraitCaption = "STRUCTURE VIEW\nART PENDING",
+            Title = "SETTLEMENT STATION", Subtitle = "NETWORK / PRODUCTION  •  COMPONENT A", PortraitCaption = "⌁\nSETTLEMENT STATION",
             Count = 1, HealthPercent = 100, HealthText = "HP 1,800 / 1,800  •  A3  •  HEALTHY",
             StatusText = "Aero Tube 3 / 4 connections\nNetwork 5 stations  •  6 active routes\nThroughput 3 units  •  reachable stations highlighted"
         };
@@ -202,15 +202,15 @@ public static class M7HudFixtures
     private static HudFrame CriticalTooltip()
     {
         HudFrame frame = Base(HudFaction.RockRaiders, "WORKSITE SEGMENTED");
-        frame.Alert = new HudAlertFrame { Priority = HudAlertPriority.Critical, Text = "COMMAND STRUCTURE IN SEVERE DANGER — SPACE TO FOCUS", Actionable = true };
+        frame.Alert = new HudAlertFrame { Priority = HudAlertPriority.Critical, Text = "COMMAND STRUCTURE IN SEVERE DANGER", Actionable = true };
         frame.Events.Insert(0, new HudEventFrame { Priority = HudAlertPriority.Critical, Time = "NOW", Text = "Rock Raiders HQ critical" });
         frame.Selection = new HudSelectionFrame
         {
-            Title = "ROCK RAIDERS HQ", Subtitle = "COMMAND STRUCTURE  •  UNDER ATTACK", PortraitCaption = "STRUCTURE VIEW\nART PENDING",
+            Title = "ROCK RAIDERS HQ", Subtitle = "COMMAND STRUCTURE  •  UNDER ATTACK", PortraitCaption = "▦\nROCK RAIDERS HQ",
             Count = 1, HealthPercent = 17, HealthText = "HP 425 / 2,500  •  A4  •  CRITICAL",
             StatusText = "Strategic structure under siege\nWorksite disconnected  •  local supplied work may continue\nRepairers approaching ×3"
         };
-        frame.Commands = StandardCommands("REPAIR", "R");
+        frame.Commands = StandardCommands();
         frame.TooltipTitle = "REPAIR [R]";
         frame.TooltipQuick = "Restore a damaged owned target.\nCost: Ore per HP restored.";
         frame.TooltipExpanded = "Counters attrition and preserves expensive infrastructure. Repairers must reach service range; brownout can disable supporting structures. Valid layers: ground structures and grounded units.";
@@ -273,6 +273,25 @@ public static class M7HudFixtures
         Command("special", special, specialHotkey), Command("state", "STATE CHANGE", "Q"), Command("detail", "DETAIL", "ALT")
     };
 
-    private static HudCommandFrame Command(string id, string name, string hotkey) => new() { Id = id, Name = name, Hotkey = hotkey, Enabled = true, Tooltip = $"{name} command fixture." };
+    private static HudCommandFrame Command(string id, string name, string hotkey) => new()
+    {
+        Id = id, Name = name, Hotkey = hotkey, Enabled = true, Tooltip = CommandTooltip(id)
+    };
+
+    private static string CommandTooltip(string id) => id switch
+    {
+        "move" => "Move selected units to a ground position.",
+        "attack" => "Target an enemy or issue Attack-Move on ground.",
+        "stop" => "Cancel ordinary queued orders and stop.",
+        "hold" => "Hold the current position.",
+        "patrol" => "Patrol between ordered waypoints.",
+        "spread" => "Increase formation spacing.",
+        "repair" => "Repair a legal damaged target.",
+        "load" => "Load eligible selected units.",
+        "unload" => "Unload carried units at a legal position.",
+        "state" => "Change the unit's tactical configuration.",
+        "detail" => "Open expanded selection information.",
+        _ => "Use the selected faction action."
+    };
     private static HudCommandFrame ProductionCommand(string id, string name, string cost) => new() { Id = id, Name = name, Cost = cost, Enabled = true, QueueFive = true, Tooltip = "Click +1  •  Shift-click +5" };
 }

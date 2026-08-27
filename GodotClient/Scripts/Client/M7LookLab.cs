@@ -51,6 +51,7 @@ public partial class M7LookLab : Node3D
     private readonly List<PresentationAnimationRigBinding> _animationRigs = new();
     private readonly List<MeshInstance3D> _unitMeshes = new();
     private readonly List<(MeshInstance3D Mesh, M7LookMaterialRole Role)> _roleMeshes = new();
+    private readonly Dictionary<MeshInstance3D, Transform3D> _textureBindTransforms = new();
     private Dictionary<M7LookMaterialRole, Material> _sharedMaterials = new();
     private readonly List<EmissionLightBinding> _emissionLights = new();
     private readonly List<MeshInstance3D> _tracks = new();
@@ -392,6 +393,7 @@ public partial class M7LookLab : Node3D
         BuildCombatEffects();
         BuildBurningEffects(burning.GlobalPosition + new Vector3(0f, 1.9f, 0f));
         BuildPostProcess();
+        CaptureTextureBindTransforms();
     }
 
     private void CreateUnit(string name, Vector3 position, float yawDegrees)
@@ -1308,6 +1310,8 @@ public partial class M7LookLab : Node3D
         foreach ((MeshInstance3D mesh, M7LookMaterialRole role) in _roleMeshes)
         {
             mesh.MaterialOverride = _sharedMaterials[role];
+            if (UsesModelSpaceTexture(role) && _textureBindTransforms.TryGetValue(mesh, out Transform3D bindTransform))
+                M7LookMaterialFactory.SetTextureAnchor(mesh, bindTransform);
             if (role is M7LookMaterialRole.Signal or M7LookMaterialRole.Lamp or M7LookMaterialRole.Crystal)
                 mesh.CastShadow = GeometryInstance3D.ShadowCastingSetting.Off;
         }
@@ -1324,6 +1328,30 @@ public partial class M7LookLab : Node3D
             binding.SourceMesh.MaterialOverride = binding.SourceMaterial;
         }
     }
+
+    private Node3D ResolveTextureRoot(MeshInstance3D mesh)
+    {
+        Node3D root = mesh;
+        while (root.GetParent() is Node3D parent && parent != this) root = parent;
+        return root;
+    }
+
+    private void CaptureTextureBindTransforms()
+    {
+        _textureBindTransforms.Clear();
+        foreach ((MeshInstance3D mesh, M7LookMaterialRole role) in _roleMeshes)
+        {
+            if (!UsesModelSpaceTexture(role)) continue;
+            Node3D root = ResolveTextureRoot(mesh);
+            _textureBindTransforms[mesh] = root.GlobalTransform.AffineInverse() * mesh.GlobalTransform;
+        }
+    }
+
+    private static bool UsesModelSpaceTexture(M7LookMaterialRole role) => role is
+        M7LookMaterialRole.PaintedHull or M7LookMaterialRole.StructuralEarth or
+        M7LookMaterialRole.Accent or M7LookMaterialRole.DarkMechanic or
+        M7LookMaterialRole.ToolSteel or M7LookMaterialRole.Rubber or
+        M7LookMaterialRole.BuildingShell;
 
     private void ApplyPost()
     {
@@ -2489,6 +2517,7 @@ public partial class M7LookLab : Node3D
             _rimLight?.SkyMode == DirectionalLight3D.SkyModeEnum.LightOnly;
         bool authoredTextureBindings = M7LookMaterialFactory.ValidateAuthoredTextureBindings(
             _sharedMaterials, out _);
+        bool textureBindTransforms = ValidateTextureBindTransforms();
         Vector3 intactCenter = new(13f, 1.55f, -7f);
         bool exteriorImpact = Mathf.Abs(_targetPoint.X - intactCenter.X) >= 3.15f || Mathf.Abs(_targetPoint.Z - intactCenter.Z) >= 2.45f;
         bool animationBindings = _animationRigs.Count == 4 && _animationRigs.All(rig =>
@@ -2521,7 +2550,7 @@ public partial class M7LookLab : Node3D
         bool valid = _camera is { Fov: 36f } && _units.Count == 4 && _unitMeshes.Count >= 180 && triangles >= 30_000 &&
             animationBindings && roles && _ground is not null && _fireParticles is not null && vfxPools && destruction &&
             _controlsLayer is not null && _postMaterial is not null && postComposition && materialCacheStable &&
-            particlePauseState && pauseUiState && eventMemory && proceduralSky && authoredTextureBindings &&
+            particlePauseState && pauseUiState && eventMemory && proceduralSky && authoredTextureBindings && textureBindTransforms &&
             emissionLightRig && emissiveBindings && exteriorImpact && roundTrip && schemaOneMigration &&
             schemaTwoMigration && schemaThreeMigration && schemaFourMigration && profileSanitization &&
             schemaFiveMigration && explicitSchemaFiveWorld &&
@@ -2532,9 +2561,35 @@ public partial class M7LookLab : Node3D
             GD.PrintErr($"M7 LOOK LAB AUDIT: roundTrip={roundTrip} migrations={schemaOneMigration}/{schemaTwoMigration}/{schemaThreeMigration}/{schemaFourMigration}/{schemaFiveMigration} " +
                 $"schema5World={explicitSchemaFiveWorld} sanitization={profileSanitization} postComposition={postComposition} materialCache={materialCacheStable} " +
                 $"particlePause={particlePauseState} pauseUi={pauseUiState} eventMemory={eventMemory} roles={roles} " +
-                $"emission={emissiveBindings}/{emissionLightRig} sky={proceduralSky} textures={authoredTextureBindings} impact={exteriorImpact} animation={animationBindings} pools={vfxPools} destruction={destruction}");
+                $"emission={emissiveBindings}/{emissionLightRig} sky={proceduralSky} textures={authoredTextureBindings}/{textureBindTransforms} impact={exteriorImpact} animation={animationBindings} pools={vfxPools} destruction={destruction}");
         }
         return valid;
+    }
+
+    private bool ValidateTextureBindTransforms()
+    {
+        int expectedCount = _roleMeshes.Count(entry => UsesModelSpaceTexture(entry.Role));
+        if (_textureBindTransforms.Count != expectedCount || expectedCount == 0) return false;
+
+        bool hasNonIdentityAnchor = false;
+        foreach ((MeshInstance3D mesh, Transform3D expected) in _textureBindTransforms)
+        {
+            Vector3 offset = mesh.GetInstanceShaderParameter("texture_offset").As<Vector3>();
+            Vector3 axisX = mesh.GetInstanceShaderParameter("texture_axis_x").As<Vector3>();
+            Vector3 axisY = mesh.GetInstanceShaderParameter("texture_axis_y").As<Vector3>();
+            Vector3 axisZ = mesh.GetInstanceShaderParameter("texture_axis_z").As<Vector3>();
+            if (!offset.IsEqualApprox(expected.Origin) ||
+                !axisX.IsEqualApprox(expected.Basis.X) ||
+                !axisY.IsEqualApprox(expected.Basis.Y) ||
+                !axisZ.IsEqualApprox(expected.Basis.Z))
+                return false;
+
+            hasNonIdentityAnchor |= expected.Origin.LengthSquared() > 0.0001f ||
+                !expected.Basis.X.IsEqualApprox(Vector3.Right) ||
+                !expected.Basis.Y.IsEqualApprox(Vector3.Up) ||
+                !expected.Basis.Z.IsEqualApprox(Vector3.Back);
+        }
+        return hasNonIdentityAnchor;
     }
 
     private static bool ValidateAnimationDriver()

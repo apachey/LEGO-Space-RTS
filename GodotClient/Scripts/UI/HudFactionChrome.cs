@@ -5,15 +5,14 @@ namespace LegoSpaceRTS.UI;
 public enum HudFactionChromeRole : byte
 {
     TopStrip,
-    SquarePanel,
-    MainPanel
+    BottomDeck
 }
 
 /// <summary>
-/// Composes faction chrome from a square source atlas without stretching its
-/// illustrated machinery. Corners remain square crops, while sparse square
-/// motifs punctuate code-native rails. The transparent centre is deliberately
-/// left to the functional HUD surface.
+/// Composes one outer faction chassis from a square source atlas without
+/// stretching its illustrated machinery. The source is used as hardware, not
+/// wallpaper: large protected corners frame the console and a small number of
+/// square modules mark real section junctions on code-native rails.
 /// </summary>
 public partial class HudFactionChrome : Control
 {
@@ -34,11 +33,14 @@ public partial class HudFactionChrome : Control
     private float _chromeScale = 1f;
     private float _outerExpansion;
     private Color _accent = AccentForFaction(0);
+    private float _leftJunction = 0.22f;
+    private float _rightJunction = 0.78f;
 
     public HudFactionChromeRole Role { get; private set; }
     public bool IsConfigured => _texture is not null;
     public bool UsesFixedSquareCorners => true;
     public bool UsesProtectedSourceModules => true;
+    public bool UsesSparseJunctionModules => true;
     public int ProtectedSourceSize => _recipe.ProtectedSourceSize;
 
     public HudFactionChrome()
@@ -61,6 +63,13 @@ public partial class HudFactionChrome : Control
         QueueRedraw();
     }
 
+    public void SetJunctions(float leftNormalized, float rightNormalized)
+    {
+        _leftJunction = Mathf.Clamp(leftNormalized, 0.08f, 0.48f);
+        _rightJunction = Mathf.Clamp(rightNormalized, 0.52f, 0.92f);
+        QueueRedraw();
+    }
+
     public override void _Notification(int what)
     {
         if (what == NotificationResized) QueueRedraw();
@@ -77,17 +86,16 @@ public partial class HudFactionChrome : Control
 
         float requestedCorner = Role switch
         {
-            HudFactionChromeRole.TopStrip => 18f,
-            HudFactionChromeRole.SquarePanel => 30f,
-            _ => 28f
+            HudFactionChromeRole.TopStrip => 21f,
+            _ => 38f
         } * _chromeScale;
         float corner = Mathf.Min(requestedCorner, Mathf.Min(outer.Size.X, outer.Size.Y) * 0.45f);
         if (corner < 2f) return;
 
         Color modulate = new(1f, 1f, 1f, _intensity);
         DrawCorners(outer, corner, modulate);
-        DrawHorizontalRails(outer, corner, modulate);
-        DrawVerticalRails(outer, corner, modulate);
+        DrawRails(outer, corner);
+        DrawFunctionalModules(outer, corner, modulate);
     }
 
     public static string TexturePathForFaction(int faction) =>
@@ -100,6 +108,15 @@ public partial class HudFactionChrome : Control
         3 => new Color("c84d43"), // Life on Mars astronauts · equipment red
         4 => new Color("6ea9b5"), // Life on Mars Martians · Aero Tube blue
         _ => new Color("b47a3a")  // Rock Raiders · industrial brown/copper
+    };
+
+    public static Color SecondaryAccentForFaction(int faction) => Math.Clamp(faction, 0, Recipes.Length - 1) switch
+    {
+        1 => new Color("77a9bc"), // Mars Mission astronauts · navigation blue
+        2 => new Color("7754a6"), // Mars Mission aliens · deep resonance violet
+        3 => new Color("7296ad"), // Life on Mars astronauts · equipment blue
+        4 => new Color("b9674f"), // Life on Mars Martians · articulated red
+        _ => new Color("147f79")  // Rock Raiders · dark turquoise machinery
     };
 
     public static bool ValidateRecipes(out string error)
@@ -144,93 +161,45 @@ public partial class HudFactionChrome : Control
             new Rect2(right, bottom, source, source), modulate);
     }
 
-    private void DrawHorizontalRails(Rect2 outer, float corner, Color modulate)
+    private void DrawRails(Rect2 outer, float corner)
     {
-        float available = outer.Size.X - corner * 2f;
-        if (available <= 0f) return;
+        Color primary = new(_accent.R, _accent.G, _accent.B, _intensity * 0.72f);
+        Color secondaryBase = SecondaryAccentForFaction(Array.IndexOf(Recipes, _recipe));
+        Color secondary = new(secondaryBase.R, secondaryBase.G, secondaryBase.B, _intensity * 0.42f);
+        float outerLine = Role == HudFactionChromeRole.TopStrip ? 1.5f : 2f;
+        float inset = Role == HudFactionChromeRole.TopStrip ? 2f : 3f;
+        DrawLine(new Vector2(outer.Position.X + corner, outer.Position.Y + inset),
+            new Vector2(outer.End.X - corner, outer.Position.Y + inset), primary, outerLine, true);
+        DrawLine(new Vector2(outer.Position.X + corner, outer.End.Y - inset),
+            new Vector2(outer.End.X - corner, outer.End.Y - inset), primary, outerLine, true);
+        DrawLine(new Vector2(outer.Position.X + inset, outer.Position.Y + corner),
+            new Vector2(outer.Position.X + inset, outer.End.Y - corner), secondary, outerLine, true);
+        DrawLine(new Vector2(outer.End.X - inset, outer.Position.Y + corner),
+            new Vector2(outer.End.X - inset, outer.End.Y - corner), secondary, outerLine, true);
+    }
 
+    private void DrawFunctionalModules(Rect2 outer, float corner, Color modulate)
+    {
         float source = _recipe.ProtectedSourceSize;
-        // The generated atlas contains a complete decorative rail. Repeating
-        // that whole rail makes every panel look like a row of tiny frames.
-        // A protected square motif at its centre retains faction character at
-        // UI scale without anisotropic stretching or visual chatter.
         float sourceX = (AtlasSize - source) * 0.5f;
         Rect2 topSource = new(sourceX, 0f, source, source);
         Rect2 bottomSource = new(sourceX, AtlasSize - source, source, source);
-        float start = outer.Position.X + corner;
-        Color railColor = new(_accent.R, _accent.G, _accent.B, _intensity * 0.62f);
-        float lineWidth = Role == HudFactionChromeRole.TopStrip ? 1.5f : 2f;
-        DrawLine(new Vector2(start, outer.Position.Y + corner * 0.52f),
-            new Vector2(start + available, outer.Position.Y + corner * 0.52f), railColor, lineWidth, true);
-        DrawLine(new Vector2(start, outer.End.Y - corner * 0.52f),
-            new Vector2(start + available, outer.End.Y - corner * 0.52f), railColor, lineWidth, true);
-        DrawHorizontalModules(start, outer.Position.Y, available, corner, topSource, modulate);
-        DrawHorizontalModules(start, outer.End.Y - corner, available, corner, bottomSource, modulate);
-    }
-
-    private void DrawVerticalRails(Rect2 outer, float corner, Color modulate)
-    {
-        float available = outer.Size.Y - corner * 2f;
-        if (available <= 0f) return;
-
-        float source = _recipe.ProtectedSourceSize;
-        float sourceY = (AtlasSize - source) * 0.5f;
-        Rect2 leftSource = new(0f, sourceY, source, source);
-        Rect2 rightSource = new(AtlasSize - source, sourceY, source, source);
-        float start = outer.Position.Y + corner;
-        Color railColor = new(_accent.R, _accent.G, _accent.B, _intensity * 0.62f);
-        DrawLine(new Vector2(outer.Position.X + corner * 0.52f, start),
-            new Vector2(outer.Position.X + corner * 0.52f, start + available), railColor, 2f, true);
-        DrawLine(new Vector2(outer.End.X - corner * 0.52f, start),
-            new Vector2(outer.End.X - corner * 0.52f, start + available), railColor, 2f, true);
-        DrawVerticalModules(outer.Position.X, start, corner, available, leftSource, modulate);
-        DrawVerticalModules(outer.End.X - corner, start, corner, available, rightSource, modulate);
-    }
-
-    private void DrawHorizontalModules(float x, float y, float width, float height, Rect2 source, Color modulate)
-    {
-        float sourceScale = height / source.Size.Y;
-        float moduleWidth = source.Size.X * sourceScale;
-        if (moduleWidth > width) return;
-        float targetSpacing = (Role switch
+        float module = Mathf.Min(corner, Role == HudFactionChromeRole.TopStrip ? 20f * _chromeScale : 34f * _chromeScale);
+        if (Role == HudFactionChromeRole.TopStrip)
         {
-            HudFactionChromeRole.TopStrip => 260f,
-            HudFactionChromeRole.SquarePanel => 150f,
-            _ => 180f
-        }) * _chromeScale;
-        int desiredCount = Role switch
-        {
-            HudFactionChromeRole.TopStrip => 5,
-            HudFactionChromeRole.MainPanel => 1,
-            _ => Math.Clamp(Mathf.RoundToInt(width / targetSpacing), 1, 4)
-        };
-        int nonOverlappingCount = Math.Max(1, Mathf.FloorToInt(width / moduleWidth));
-        int count = Math.Min(desiredCount, nonOverlappingCount);
-        for (int i = 0; i < count; i++)
-        {
-            float offset = count == 1 ? (width - moduleWidth) * 0.5f
-                : Mathf.Lerp(0f, width - moduleWidth, i / (float)(count - 1));
-            DrawTextureRectRegion(_texture!, new Rect2(x + offset, y, moduleWidth, height), source, modulate);
+            DrawModule(outer, 0.5f, module, topSource, bottomSource, modulate);
+            return;
         }
+        DrawModule(outer, _leftJunction, module, topSource, bottomSource, modulate);
+        DrawModule(outer, _rightJunction, module, topSource, bottomSource, modulate);
     }
 
-    private void DrawVerticalModules(float x, float y, float width, float height, Rect2 source, Color modulate)
+    private void DrawModule(Rect2 outer, float normalizedX, float size, Rect2 topSource, Rect2 bottomSource, Color modulate)
     {
-        float sourceScale = width / source.Size.X;
-        float moduleHeight = source.Size.Y * sourceScale;
-        if (moduleHeight > height) return;
-        float targetSpacing = (Role == HudFactionChromeRole.SquarePanel ? 150f : 170f) * _chromeScale;
-        int desiredCount = Role == HudFactionChromeRole.MainPanel
-            ? 1
-            : Math.Clamp(Mathf.RoundToInt(height / targetSpacing), 1, 4);
-        int nonOverlappingCount = Math.Max(1, Mathf.FloorToInt(height / moduleHeight));
-        int count = Math.Min(desiredCount, nonOverlappingCount);
-        for (int i = 0; i < count; i++)
-        {
-            float offset = count == 1 ? (height - moduleHeight) * 0.5f
-                : Mathf.Lerp(0f, height - moduleHeight, i / (float)(count - 1));
-            DrawTextureRectRegion(_texture!, new Rect2(x, y + offset, width, moduleHeight), source, modulate);
-        }
+        float x = Mathf.Lerp(outer.Position.X, outer.End.X, normalizedX) - size * 0.5f;
+        x = Mathf.Clamp(x, outer.Position.X + size, outer.End.X - size * 2f);
+        DrawTextureRectRegion(_texture!, new Rect2(x, outer.Position.Y, size, size), topSource, modulate);
+        DrawTextureRectRegion(_texture!, new Rect2(x, outer.End.Y - size, size, size), bottomSource, modulate);
     }
 
     private readonly record struct ChromeRecipe(string TexturePath, int ProtectedSourceSize);

@@ -32,7 +32,10 @@ required = [
     'GodotClient/Scripts/Presentation/PresentationDestruction.cs',
     'GodotClient/Scripts/Client/M7LookLab.cs',
     'GodotClient/Assets/M7/Textures/regolith_surface_v2.png',
+    'GodotClient/Assets/M7/Textures/painted_shell_macro_v2.png',
+    'GodotClient/Assets/M7/Textures/painted_shell_macro_v2.png.import',
     'GodotClient/Scripts/UI/BasicHud.cs','GodotClient/Scripts/UI/DebugHud.cs','GodotClient/Scripts/UI/M5PlaytestHud.cs',
+    'GodotClient/Scripts/UI/HudPortraitView.cs',
     'SimCore/Runtime/Scenarios/M5AcceptanceScenarioFactory.cs','Docs/IMPLEMENTATION_REPORT.md',
     'tools/doctor.sh','tools/verify.sh','tools/run-game.sh','tools/build-mac.sh','tools/capture-visual-smoke.sh',
     'tools/setup-git-hooks.sh','.githooks/pre-commit','.githooks/pre-push',
@@ -99,6 +102,9 @@ check('requested ? LoadM5Acceptance() : LoadCanonicalOpening()' in loader, 'norm
 check('M5AcceptanceScenarioFactory.Create' in loader and 'PrepareM5Acceptance' in composition, 'M5 acceptance handoff is not wired to the runtime')
 basic_hud = (ROOT/'GodotClient/Scripts/UI/BasicHud.cs').read_text()
 hud_view = (ROOT/'GodotClient/Scripts/UI/HudView.cs').read_text()
+hud_lab = (ROOT/'GodotClient/Scripts/Client/M7HudLab.cs').read_text()
+hud_portrait = (ROOT/'GodotClient/Scripts/UI/HudPortraitView.cs').read_text()
+hud_chrome = (ROOT/'GodotClient/Scripts/UI/HudFactionChrome.cs').read_text()
 hud_profile = (ROOT/'GodotClient/Scripts/UI/M7HudProfile.cs').read_text()
 check('CurrentSchemaVersion = 4' in hud_profile and 'Clamp(ArtSkin.Faction, 0, 4)' in hud_profile,
       'M7 HUD Profile schema 4 five-faction art domain missing')
@@ -106,10 +112,32 @@ hud_minimap = (ROOT/'GodotClient/Scripts/UI/HudMinimapView.cs').read_text()
 minimap_source = (ROOT/'GodotClient/Scripts/Presentation/MinimapPresentationSource.cs').read_text()
 input_controller = (ROOT/'GodotClient/Scripts/Presentation/RtsInputController.cs').read_text()
 camera_controller = (ROOT/'GodotClient/Scripts/Presentation/RtsCameraController.cs').read_text()
-for token in ['ResourceStrip','SelectionPanel','PortraitSlot','ContextualEnergyPriority','EnergyDomainPopover','MinimapSlot','CommandPanel','CommandGrid','SelectionTypeGroups','EventFeed']:
+for token in ['ResourceStrip','BottomDeck','SelectionPanel','PortraitSlot','TacticalPortrait',
+              'ContextualEnergyPriority','EnergyDomainPopover','MinimapSlot','CommandPanel',
+              'CommandGrid','SelectionTypeGroups','EventFeed']:
     check(token in hud_view, f'T068 retained HUD element missing: {token}')
+for token in ['HudPortraitView','DrawVehicle','DrawGroup','DrawStructure','DrawTransformation','ConciseCaption']:
+    check(token in hud_portrait, f'M7 code-native tactical portrait missing: {token}')
+for token in ['HudFactionChromeRole.BottomDeck','UsesSparseJunctionModules','DrawFunctionalModules','SetJunctions']:
+    check(token in hud_view + hud_chrome, f'M7 continuous faction control-deck chrome missing: {token}')
+check('HudFactionChromeRole.SquarePanel' not in hud_view + hud_chrome and
+      'HudFactionChromeRole.MainPanel' not in hud_view + hud_chrome,
+      'M7 HUD returned to separately framed/stretched inner panels')
 for token in ['HudFrame','BuildGroupedSelection','BuildCommands','CanQueueProduction','QueueProduction']:
     check(token in basic_hud, f'T068 production HUD binding missing: {token}')
+for token in ['AlertRequested += FocusCurrentAlert','FocusCurrentAlert','_alertFocusEntity']:
+    check(token in basic_hud, f'T068 actionable production alert focus missing: {token}')
+for token in ['button.AddThemeStyleboxOverride("disabled", transparent)',
+              'float scale = _profile.Layout.UiScale',
+              'int separation = _profile.Surface.Separation',
+              'paddingOverride ?? _profile.Surface.InnerPadding',
+              '_profile.Surface.SolidCommandButtons',
+              'SectionMargin']:
+    check(token in hud_view, f'M7 direct art-director HUD control binding missing: {token}')
+for token in ['ResponsiveWidthRatio','EffectiveLayoutScale','EffectiveInnerPadding','ResponsiveFontSize']:
+    check(token not in hud_view, f'M7 HUD control is silently capped by viewport width: {token}')
+check('ValidateInteractiveBindings' in hud_lab and 'outlineAlpha' in hud_lab and 'alertRequests' in hud_lab,
+      'M7 HUD interaction regression gate missing')
 for token in ['SafeAreaPercent { get; set; } = 96f','UiScale','TextScale','CommandPanelWidth','SelectionMaxWidth']:
     check(token in hud_profile, f'T068 responsive HUD profile missing: {token}')
 check('CommandCapacity = 12' in hud_view and 'GroupCapacity = 8' in hud_view,
@@ -148,10 +176,20 @@ check('CurrentSchemaVersion = 6' in look_profile and 'AnimationLook Animation' i
       'InspectionPass' in look_profile and 'ApplySchemaSixMigration' in look_profile,
       'M7 Look Profile schema 6 texture/emission/world-cycle controls missing')
 look_materials = (ROOT/'GodotClient/Scripts/Presentation/M7LookMaterialFactory.cs').read_text()
-for token in ['regolith_surface_v2.png','varying vec3 view_position','varying vec3 local_normal',
+paint_macro_import = (ROOT/'GodotClient/Assets/M7/Textures/painted_shell_macro_v2.png.import').read_text()
+check('mipmaps/generate=true' in paint_macro_import,
+      'M7 painted macro-albedo must import with mipmaps for RTS zoom stability')
+for token in ['regolith_surface_v2.png','painted_shell_macro_v2.png',
+              'varying vec3 view_position','varying vec3 local_normal',
               'ground_relief_normal','inspection_pass','anti_tiled_albedo','anti_tiled_height',
               'micro_scale / 4.0','AuthoredOpaque','OpaqueEmissiveShader',
-              'RegolithTexturePath = GroundAlbedoTexturePath']:
+              'RegolithTexturePath = GroundAlbedoTexturePath',
+              'textureGrad(detail_texture','textureGrad(height_texture',
+              'detail_filter_width','height_filter_width','groove_darkening',
+              'instance uniform vec3 texture_offset',
+              'instance uniform vec3 texture_axis_x',
+              'instance uniform vec3 texture_axis_y',
+              'instance uniform vec3 texture_axis_z']:
     check(token in look_materials, f'M7 corrected material inspection pipeline missing: {token}')
 check('textureLod(detail_texture' not in look_materials and 'textureLod(albedo_texture' not in look_materials,
       'M7 material pipeline must use derivative-aware texture sampling at RTS zoom')
@@ -170,7 +208,8 @@ for token in ['BuildAnimationSettings','PresentationAnimationDriver','BuildDestr
               'PresentationVfxPool<PooledExplosionBurst>','--m7-look-profile',
               '--m7-look-material-view','--m7-look-material-audit','FormatCaptureFloat',
               'DirectionalLight3D.ShadowMode.Parallel4Splits','_worldFunctionalLightFactor',
-              'float broadRelief']:
+              'float broadRelief','SetTextureAnchor','ResolveTextureRoot',
+              'CaptureTextureBindTransforms','ValidateTextureBindTransforms']:
     check(token in look_lab, f'M7 Look Lab T065/T066/T067 integration missing: {token}')
 check('Start from surface character' not in look_lab and 'Physical surface depth' not in look_lab,
       'M7 normal Materials UI must remain role-authored rather than exposing low-level shader controls')

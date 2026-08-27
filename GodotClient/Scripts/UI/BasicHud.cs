@@ -19,6 +19,7 @@ public partial class BasicHud : CanvasLayer
     private RtsCameraController? _camera;
     private MinimapPresentationSource? _minimapSource;
     private HudView? _view;
+    private EntityId _alertFocusEntity = EntityId.None;
     private bool _energyPopoverVisible;
     private double _nextRefresh;
 
@@ -40,6 +41,7 @@ public partial class BasicHud : CanvasLayer
         _view.CommandRequested += HandleCommand;
         _view.PowerPriorityRequested += priority => _input.SetSelectedEnergyPriority((EnergyPriority)priority);
         _view.EnergyDetailsRequested += () => { _energyPopoverVisible = !_energyPopoverVisible; RefreshNow(); };
+        _view.AlertRequested += FocusCurrentAlert;
         _view.SelectionGroupRequested += NarrowSelectionToGroup;
         _view.MinimapCameraRequested += HandleMinimapCamera;
         _view.MinimapGroundCommandRequested += _input.IssueMinimapGroundCommand;
@@ -246,16 +248,39 @@ public partial class BasicHud : CanvasLayer
 
     private void BuildAlertFrame(HudFrame frame)
     {
+        _alertFocusEntity = EntityId.None;
         EntityId[] roots = WorksiteGraphSystem.GetPlayerComponents(_bridge!.World, 0);
         for (int i = 0; i < roots.Length; i++)
         {
             if (!_bridge.World.Entities.EnergyDomain.TryGet(roots[i], out EnergyDomain energy) || !energy.IsBrownout) continue;
             int deficit = energy.ContinuousDemandPerSecond - energy.GenerationPerSecond;
-            frame.Alert = new HudAlertFrame { Priority = HudAlertPriority.High, Text = $"BROWNOUT — Worksite #{roots[i].Value} deficit {deficit} E/s", Actionable = true };
+            _alertFocusEntity = roots[i];
+            frame.Alert = new HudAlertFrame
+            {
+                Priority = HudAlertPriority.High,
+                Text = $"BROWNOUT — Worksite #{roots[i].Value} deficit {deficit} E/s",
+                Actionable = _bridge.World.Entities.Transform.Has(_alertFocusEntity)
+            };
             return;
         }
         OperationsCapacityState capacity = _bridge.World.GetOperationsCapacity(0);
-        if (capacity.IsOverCapacity) frame.Alert = new HudAlertFrame { Priority = HudAlertPriority.Critical, Text = "OPERATIONS CAPACITY EXCEEDED", Actionable = true };
+        if (capacity.IsOverCapacity)
+        {
+            _alertFocusEntity = ActiveWorksiteRoot(roots);
+            frame.Alert = new HudAlertFrame
+            {
+                Priority = HudAlertPriority.Critical,
+                Text = "OPERATIONS CAPACITY EXCEEDED",
+                Actionable = _alertFocusEntity != EntityId.None && _bridge.World.Entities.Transform.Has(_alertFocusEntity)
+            };
+        }
+    }
+
+    private void FocusCurrentAlert()
+    {
+        if (_camera is null || _bridge is null || _alertFocusEntity == EntityId.None ||
+            !_bridge.World.Entities.Transform.TryGet(_alertFocusEntity, out SimTransform transform)) return;
+        _camera.CenterOn(transform.Position.ToWorld());
     }
 
     private static List<HudEventFrame> BuildEventFeed(HudFrame frame)

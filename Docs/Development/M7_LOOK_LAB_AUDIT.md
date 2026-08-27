@@ -266,10 +266,11 @@ rendered evidence did not prove their effect:
 - only the key directional light contributes a procedural sun. Fill and
   camera-relative rim lights are scene-only, so camera orbit cannot rotate sky
   reflections;
-- raster checks now inspect the exact loaded shader parameters rather than only
-  asserting that PNG files exist. Paint, brushed metal, rubber, machine-panel
-  bump, building-panel bump, ground albedo, ground bump and roughness routes are
-  all covered;
+- at that revision, raster checks began inspecting the exact loaded shader
+  parameters rather than only asserting that PNG files exist. Paint, brushed
+  metal, rubber, machine-panel bump, then-active building-panel bump, ground
+  albedo, ground bump and roughness routes were covered. The building route is
+  superseded by the raster-frequency follow-up below;
 - the quiet regolith map supplies ground colour while independently transformed
   quarry samples supply shallow bump and reflection breakup. The older detailed
   `regolith_height.png` remains an audit asset but is intentionally not bound in
@@ -283,3 +284,45 @@ Current review evidence is `m7-blue-hour-headlights.png`,
 `m7-golden-hour-gradient.png`, `m7-raster-materials-close.png` and
 `m7-raster-materials-integrated.png` under `Artifacts/Screenshots/`. Visual
 acceptance remains the game director's decision.
+
+## Raster frequency and model-space follow-up
+
+The next close/gameplay comparison showed that simply proving a PNG binding was
+not enough. Large one-piece building meshes displayed the raster strongly while
+the drill rigs looked almost flat until extreme zoom, and the visible building
+response read as fine noise rather than material identity. Two independent
+causes were present:
+
+- paint colour and relief reused the same mostly high-frequency source, so bump
+  and roughness carried more visible information than albedo;
+- every imported LEGO sub-mesh sampled around its own local origin, repeatedly
+  showing nearly the same small part of the map instead of composing one texture
+  field across the complete vehicle.
+
+Painted hull, coated structure, accent and building shell now use
+`painted_shell_macro_v2.png` as a broad low-frequency albedo source. The earlier
+`painted_shell_detail.png` remains a separate, strongly attenuated relief source;
+machine panels, steel and rubber retain their role-specific maps. The fine
+building-panel height map is deliberately unbound: at gameplay scale its panel
+frequency read as a screen-space grid, so building shells reuse the broad macro
+map at very low relief strength without groove darkening, with lower colour
+contrast than the smaller vehicle parts. Each channel has its
+own derivative multiplier for stable mip selection,
+and the higher-frequency reflection octave was replaced with a broader sample.
+Model children receive one cached bind-pose origin and full basis so the macro
+pattern spans the assembled rig instead of restarting or changing axis on every
+piece. Because the transform is captured before animation, changing a material
+cannot shift the raster phase to the current wheel, suspension or drill pose.
+This avoids the previous embossed/static-like building surface while keeping
+the generated paint variation visible in the albedo channel.
+
+The generated macro map is look-development data, not approved visual canon.
+Current objective evidence is `m7-materials-final-color.png`,
+`m7-materials-final-zoom24.png`, `m7-materials-final-zoom39-5.png`,
+`m7-materials-final-zoom72.png`, `m7-materials-final-relief.png` and
+`m7-materials-final-integrated.png` under `Artifacts/Screenshots/`. The normal
+combined view remains deliberately cleaner than the isolated colour/relief
+diagnostics. At the 72-cell strategic limit the macro layer is expected to
+filter almost completely rather than alias; human review should judge whether
+the 24–39.5-cell broad paint variation is strong enough without reintroducing
+gameplay-scale shimmer.

@@ -120,14 +120,19 @@ evaluated without switching any other look parameter.
 
 ## Texture scope
 
-Nine generated review assets remain reproducible. Eight are active: painted
-coating, brushed metal and rubber detail; machine-panel and building-panel
-height-derived bump; quiet regolith colour; independently transformed quarry
-bump/roughness; and an alpha glare sprite. The older detailed
-`regolith_height.png` remains for audit history but is deliberately unbound
+Ten generated review assets remain reproducible. Eight are active: broad painted
+macro-albedo, also reused at very low strength for broad building relief, and
+separate restrained vehicle-paint relief; brushed metal and rubber detail;
+machine-panel height-derived bump; quiet regolith colour; independently
+transformed quarry bump/roughness; and an alpha glare sprite. The older detailed
+`regolith_height.png` and fine `building_panel_height.png` remain for audit
+history but are deliberately unbound
 because its large ridges repeat at RTS scale. Albedo, height/bump and roughness
 sampling use separate coordinates and calibrated contrast instead of stamping
-one grayscale value into every channel. Derivative-aware mips avoid sparkle.
+one grayscale value into every channel. Imported LEGO sub-meshes use their
+cached bind-pose origin and basis to share one model-space texture field;
+derivative-aware mips avoid sparkle without allowing live animation or a colour
+edit to shift the raster phase.
 These are review assets, not accepted production normal/ORM maps.
 
 ## T065 animation-driver integration

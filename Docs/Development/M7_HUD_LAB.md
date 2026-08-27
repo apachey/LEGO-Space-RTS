@@ -28,7 +28,8 @@ Open it from `F8` → **M7 HUD Lab**, or launch:
 
 - top: Ore, Energy, spendable Crystals, Operations Capacity, faction mechanic
   and match state;
-- bottom-left: fog-correct north-up minimap and actionable alert access;
+- bottom-left: fog-correct north-up minimap and actionable alert access; a
+  production alert click centers its associated Energy Domain or Worksite;
 - bottom-center: entity or type-group selection information;
 - bottom-right: canonical 3×4 command grid and local queue;
 - temporary layers: compact objective tracker, event feed, Energy Domain
@@ -81,16 +82,23 @@ presets:
   colors.
 - five generated faction chrome families with enable, intensity and scale
   controls. The square sources are not stretched over arbitrary panels:
-  protected square corners and sparse square motifs punctuate clean code-native
-  rails, while panel centers remain functional surfaces. Chrome is applied only
-  to the resource strip, minimap, selection and command regions, avoiding nested
-  portrait/popover double frames. Rock Raiders uses turquoise/brown industrial
-  framing; Mars Mission Astronauts use ivory/orange aerospace framing; Mars
-  Mission Aliens use black/lime/violet crystalline framing; Life on Mars
-  Astronauts use sand/red/blue retro-pneumatic framing; and Life on Mars
-  Martians use red/tan/blue/lime organic-pneumatic framing. These
-  skins preserve the same functional anchors and do not copy another game's
-  layouts or assets.
+  protected source corners and a small number of source modules punctuate clean
+  code-native rails. One outer faction chassis frames the complete bottom
+  control deck; only two modules mark the real minimap/selection and
+  selection/command junctions. Its three contiguous inner surfaces remain
+  code-native and the top resource strip owns the only other faction frame, so
+  generated art never becomes repeated wallpaper or nested panel borders. Rock
+  Raiders uses turquoise/brown industrial framing; Mars Mission Astronauts use
+  ivory/orange aerospace framing; Mars Mission Aliens use black/lime/violet
+  crystalline framing; Life on Mars Astronauts use sand/red/blue
+  retro-pneumatic framing; and Life on Mars Martians use red/tan/blue/lime
+  organic-pneumatic framing. These skins preserve the same functional anchors
+  and do not copy another game's layouts or assets.
+- a code-native tactical portrait inside the selection section. It draws a
+  faction-coloured blueprint display with distinct single-unit, grouped-force,
+  structure and transforming-unit silhouettes, plus a concise caption. This
+  replaces the text-only art placeholder and gives the retained layout a useful
+  visual hierarchy while authored roster portraits remain future content.
 
 `Tab` hides the laboratory controls for a clean evaluation.
 
@@ -128,15 +136,39 @@ The main verification suite exercises mixed selection, production, brownout and
 critical-tooltip fixtures across four aspect ratios. The smoke also verifies all
 eight fixture contracts, client-legal minimap knowledge, remembered-static
 rules, pixel/cell command conversion, the 12-slot command bound, required
-retained nodes, all five imported faction frames, protected non-stretched atlas
-regions, prior-schema migration, schema-4 JSON round-trip and safe-area
+retained nodes, the procedural tactical portrait, all five imported faction
+frames, protected non-stretched atlas regions, one continuous bottom-deck
+chassis, prior-schema migration, schema-4 JSON round-trip and safe-area
 containment of every major panel plus every visible command button (including
-the twelfth slot in the 12-command mixed-army fixture).
+the twelfth slot in the 12-command mixed-army fixture). It also proves that the
+Energy readout's children cannot intercept its button input. Default-profile
+fixtures cover 16:9, 16:10, 21:9 and 4:3; arbitrary combinations of maximum
+layout controls are intentionally not presented as a supported boundary case.
+Typography, panel opacity, spacing, padding and command fill are applied
+directly, with smoke coverage for the solid/outline command-button switch.
+Minimap and command widths are explicitly labelled as targets: the continuous
+deck constrains them only when required to stay inside the selected safe area.
+The laboratory reports this distinction instead of silently scaling all other
+art-director values down with the viewport.
+
+Current post-redesign evidence under `Artifacts/Screenshots/` is:
+
+- `m7-hud-final-mixed-16-9.png` and
+  `m7-hud-final-production-16-10.png` for group/queue density;
+- `m7-hud-final-astronaut-16-9.png`, `m7-hud-final-alien-16-9.png` and
+  `m7-hud-final-martian-21-9.png` for the remaining faction chassis and
+  procedural portrait kinds;
+- `m7-hud-final-critical-4-3.png` for the narrow tooltip/event/deck collision
+  gate;
+- `m7-hud-final-brownout-21-9.png` for the Energy Domain, alert and event
+  overlays.
 
 ## Deliberately deferred
 
 - final HUD visual canon and acceptance of any generated faction framing;
-- icons, portraits, authored typography and localization assets;
+- final authored command icons, roster portrait art, typography and
+  localization assets; the current procedural glyphs/blueprints are functional
+  visual scaffolding rather than approved final art;
 - T073 complete command catalog and every target-mode button path;
 - attack-move-on-minimap and networked `G` team pings, because their target-mode
   and command transport belong to T073 rather than being invented in T069;

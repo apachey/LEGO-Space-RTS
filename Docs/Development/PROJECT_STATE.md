@@ -8,7 +8,7 @@ authoritative when anything here becomes stale.
 **M0–M6 are implemented, verified and game-director accepted. M7 visual canon
 remains deliberately open. Preset-style comparisons are retired as the primary
 workflow; the gameplay-scale realtime Look Lab is now at schema 6 with free
-camera control, nine reproducible surface/glare assets, exact shader-bound role-authored material
+camera control, ten reproducible surface/glare assets, exact shader-bound role-authored material
 families with color-only art controls, per-function emission, automatic
 dusk/night spot headlights and work lamps, direct fire lighting, five presentation-only world-light
 cycles with extended blue/golden-hour bands, planted-wheel animation, bounded
@@ -198,9 +198,11 @@ The old inverted-hull outline is retired. The Look Lab uses a real Forward+
 depth and normal/roughness pass, separates silhouette from crease strength and
 suppresses rough-terrain crease noise. Emissive surfaces now provide real HDR
 output, a darker same-hue edge, a separate halo and optional local lights.
-Signals, steady lamps and Crystals have independent pulse behavior. Nine
-authored review assets distinguish paint, brushed metal, rubber, quarry ground,
-two regolith layers, machine panels, building panels and emissive glare. The old Style and Material labs remain reproducible engineering
+Signals, steady lamps and Crystals have independent pulse behavior. Ten
+authored review assets remain reproducible; eight are active across paint,
+brushed metal, rubber, quarry ground, quiet regolith colour, machine panels and
+emissive glare. The fine building-panel and older detailed-regolith maps are
+retained as unbound audit history. The old Style and Material labs remain reproducible engineering
 fixtures; the Palette Lab remains the accepted palette review fixture.
 
 ## M7 T065/T066 presentation implementation
@@ -263,9 +265,12 @@ fixtures; the Palette Lab remains the accepted palette review fixture.
   aspect previews, live layout/type/surface/content/color tokens and complete
   schema-4 JSON copy/paste, including prior-schema migration. Five generated,
   independently switchable chrome textures use protected corners and sparse
-  motifs rather than stretched full frames, keeping Rock Raiders, Mars Mission
-  Astronauts/Aliens and Life on Mars Astronauts/Martians visually distinct
-  without changing the locked HUD anchors.
+  functional junctions rather than stretched full frames. One continuous
+  bottom control deck now joins minimap, selection and commands, while a
+  code-native faction-coloured blueprint portrait distinguishes units, groups,
+  structures and transformations. Rock Raiders, Mars Mission
+  Astronauts/Aliens and Life on Mars Astronauts/Martians remain visually
+  distinct without changing the locked HUD anchors.
   Details are in
   `Docs/Development/M7_HUD_LAB.md`.
 - T068 does not approve HUD art direction. Authored icons, portraits,
@@ -313,10 +318,20 @@ fixtures; the Palette Lab remains the accepted palette review fixture.
 - The latest visual-quality pass binds raster maps by material role and validates
   the actual shader resources, gives vehicle lamps real terrain illumination,
   separates directional sky ownership from fill/rim lighting and preserves the
-  extended blue/golden phases. The HUD Lab now composes generated faction art
-  as modular chrome and asserts that major panels and every visible command
-  remain inside the safe area, including all 12 slots in the mixed-army
-  fixture. These remain review tools, not approved visual canon.
+  extended blue/golden phases. Painted surfaces now separate a broad generated
+  macro-albedo map from restrained relief, use derivative-aware filtering at RTS
+  zoom and share model-wide texture coordinates instead of restarting on every
+  LEGO sub-mesh. The HUD Lab now composes generated faction art as one outer
+  control-deck chassis with protected corners and sparse functional junctions;
+  minimap, selection and commands remain code-native contiguous sections rather
+  than separately framed texture cards. Automation asserts that major panels
+  and every visible command remain inside the safe area, including all 12 slots
+  in the mixed-army fixture, across the four supported default-profile aspect
+  fixtures. Laboratory scale, type, opacity, padding, spacing and command-fill
+  values now apply directly instead of being silently capped by viewport width;
+  geometric deck widths are labelled as safe-area-constrained targets. Production Energy and alert buttons
+  retain reliable hit targets; actionable brownout/capacity alerts center their
+  associated Worksite. These remain review tools, not approved visual canon.
 
 ## Integration format boundary
 
@@ -331,13 +346,14 @@ fixtures; the Palette Lab remains the accepted palette review fixture.
 
 ## Verification state
 
-The current M7 quality revision passed `./tools/verify.sh --full` on 2026-08-26
+The current M7 material/HUD quality revision passed `./tools/verify.sh --full` on 2026-08-27
 with **zero blocking failures**: 278 NUnit tests, 24/24 representative mover
 acceptance, every T058–T063 ENet smoke, all visual/palette pages, schema-6 Look
 Lab cases, responsive HUD cases at 16:9/16:10/21:9/4:3, 100-repeat determinism,
-replay record/playback, snapshot continuation, compiled-content regeneration
-and a launchable macOS export. Exact summary:
-`Artifacts/Verification/20260826T150646Z-full-summary.txt`.
+replay record/playback, snapshot
+continuation, compiled-content regeneration and a launchable macOS export.
+Exact summary:
+`Artifacts/Verification/20260827T115151Z-full-summary.txt`.
 
 The preserved 60-mover M9 diagnostic remains `BLOCKING_LATER` and reported
 2/60 completion in this run; it does not block M7 acceptance and no movement
