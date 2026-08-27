@@ -326,3 +326,17 @@ diagnostics. At the 72-cell strategic limit the macro layer is expected to
 filter almost completely rather than alias; human review should judge whether
 the 24–39.5-cell broad paint variation is strong enough without reintroducing
 gameplay-scale shimmer.
+
+## Perceptual-strength follow-up
+
+The first model-space correction proved that the raster was routed correctly,
+but the normal combined view still carried only a weak albedo signal after RTS
+mip filtering. Increasing contrast alone made the generated source's residual
+fine grain more obvious, particularly on broad building faces. The retained
+solution increases painted-family albedo amplitude while enlarging the map's
+world-space footprint and applying a substantially stronger derivative-aware
+low-pass. This preserves broad colour breakup at 24–39.5 cells and continues to
+filter it at the 72-cell strategic limit. Runtime validation now rejects macro
+paint bindings whose albedo amplitude or filter width falls below the reviewed
+perceptual floor. Current evidence is `m7-materials-stronger-zoom24-v3.png` and
+`m7-materials-stronger-zoom39-5-v3.png` under `Artifacts/Screenshots/`.

@@ -118,7 +118,9 @@ for token in ['ResourceStrip','BottomDeck','SelectionPanel','PortraitSlot','Tact
     check(token in hud_view, f'T068 retained HUD element missing: {token}')
 for token in ['HudPortraitView','DrawVehicle','DrawGroup','DrawStructure','DrawTransformation','ConciseCaption']:
     check(token in hud_portrait, f'M7 code-native tactical portrait missing: {token}')
-for token in ['HudFactionChromeRole.BottomDeck','UsesSparseJunctionModules','DrawFunctionalModules','SetJunctions']:
+for token in ['HudFactionChromeRole.BottomDeck','UsesSparseJunctionModules','UsesTiledEdgeWalls',
+              'UsesFactionSurfaceFill','DrawTiledEdgeWalls','DrawHorizontalTiles','DrawVerticalTiles',
+              'DrawSurfaceFill','SurfaceForFaction','DrawFunctionalModules','SetJunctions']:
     check(token in hud_view + hud_chrome, f'M7 continuous faction control-deck chrome missing: {token}')
 check('HudFactionChromeRole.SquarePanel' not in hud_view + hud_chrome and
       'HudFactionChromeRole.MainPanel' not in hud_view + hud_chrome,
@@ -193,6 +195,8 @@ for token in ['regolith_surface_v2.png','painted_shell_macro_v2.png',
     check(token in look_materials, f'M7 corrected material inspection pipeline missing: {token}')
 check('textureLod(detail_texture' not in look_materials and 'textureLod(albedo_texture' not in look_materials,
       'M7 material pipeline must use derivative-aware texture sampling at RTS zoom')
+check('detail_filter_width").As<double>() < 12.0' in look_materials,
+      'M7 macro-albedo perceptual/filtering regression floor missing')
 world_lighting = (ROOT/'GodotClient/Scripts/Presentation/M7WorldLightingEvaluator.cs').read_text()
 for token in ['signed solar altitude','M7WorldEnvironment.Underground','NightReadability is a floor/boost',
               'ValidateDeterministic','Direct sun remained active below the horizon',

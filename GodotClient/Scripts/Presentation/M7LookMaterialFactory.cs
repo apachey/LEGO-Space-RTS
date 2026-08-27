@@ -112,6 +112,20 @@ public static class M7LookMaterialFactory
                 error = $"Authored material texture routing is invalid for {role}.";
                 return false;
             }
+
+            // The raster can be technically bound yet disappear after RTS-scale
+            // mip filtering. Keep a perceptual floor for the four macro-painted
+            // families without relaxing the aggressive filter that prevents
+            // high-frequency shimmer. This is deliberately not applied to metal
+            // or rubber, whose texture is carried primarily by reflection/relief.
+            if (requiresAlbedoTexture &&
+                (material.GetShaderParameter("texture_strength").As<double>() < 0.20 ||
+                 material.GetShaderParameter("detail_contrast").As<double>() < 7.0 ||
+                 material.GetShaderParameter("detail_filter_width").As<double>() < 12.0))
+            {
+                error = $"Authored macro-albedo is too weak or insufficiently filtered for {role}.";
+                return false;
+            }
         }
 
         if (!materials.TryGetValue(M7LookMaterialRole.GroundRock, out Material? groundRaw) ||
@@ -190,11 +204,11 @@ public static class M7LookMaterialFactory
         SurfaceRecipe recipe = role switch
         {
             M7LookMaterialRole.PaintedHull => new(0.03f, 0.42f, 0.48f, 0.18f, 0.28f, 0.18f, 0.00f,
-                0.22f, 0.10f, 0.505f, 12f, 0.517f, 8f, 0.22f, 0.030f, 0.0015f, 3.2f, 6f),
+                0.10f, 0.10f, 0.505f, 14f, 0.517f, 8f, 0.34f, 0.030f, 0.0015f, 16f, 6f),
             M7LookMaterialRole.StructuralEarth => new(0.02f, 0.72f, 0.30f, 0.04f, 0.55f, 0.12f, 0.00f,
-                0.19f, 0.09f, 0.505f, 12f, 0.517f, 8f, 0.24f, 0.035f, 0.002f, 3.2f, 6f),
+                0.09f, 0.09f, 0.505f, 13f, 0.517f, 8f, 0.36f, 0.035f, 0.002f, 16f, 6f),
             M7LookMaterialRole.Accent => new(0.00f, 0.34f, 0.50f, 0.22f, 0.24f, 0.18f, 0.00f,
-                0.24f, 0.11f, 0.505f, 10f, 0.517f, 6f, 0.16f, 0.020f, 0.001f, 3.2f, 6f),
+                0.11f, 0.11f, 0.505f, 12f, 0.517f, 6f, 0.26f, 0.020f, 0.001f, 16f, 6f),
             M7LookMaterialRole.DarkMechanic => new(0.72f, 0.42f, 0.68f, 0.02f, 0.50f, 0.25f, 0.08f,
                 0.14f, 0.09f, 0.552f, 10f, 0.504f, 10f, 0.010f, 0.050f, 0.004f, 2.8f, 4f),
             M7LookMaterialRole.ToolSteel => new(0.92f, 0.30f, 0.72f, 0.02f, 0.40f, 0.26f, 0.12f,
@@ -202,7 +216,7 @@ public static class M7LookMaterialFactory
             M7LookMaterialRole.Rubber => new(0.00f, 0.88f, 0.12f, 0.00f, 0.80f, 0.05f, 0.00f,
                 0.15f, 0.15f, 0.281f, 6f, 0.281f, 5f, 0.010f, 0.030f, 0.002f, 4f, 6f),
             M7LookMaterialRole.BuildingShell => new(0.08f, 0.55f, 0.40f, 0.08f, 0.38f, 0.15f, 0.00f,
-                0.12f, 0.07f, 0.505f, 3.5f, 0.505f, 3f, 0.12f, 0.012f, 0.0004f, 6f, 6f),
+                0.075f, 0.07f, 0.505f, 11f, 0.505f, 3f, 0.30f, 0.012f, 0.0004f, 20f, 6f),
             _ => throw new ArgumentOutOfRangeException(nameof(role), role, null)
         };
         material.SetShaderParameter("metallic_value", recipe.Metallic);

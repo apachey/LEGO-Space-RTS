@@ -558,6 +558,8 @@ public partial class HudView : Control
         Color recessed = Parse(_profile.Colors.Recessed, new Color("0b1016"));
         Color displayAccent = DisplayAccent();
         Color secondaryAccent = SecondaryAccent();
+        Color factionSurface = HudFactionChrome.SurfaceForFaction(_profile.ArtSkin.Faction);
+        float factionFill = _profile.ArtSkin.Enabled ? 0.16f * _profile.ArtSkin.ChromeIntensity : 0f;
         Color text = Parse(_profile.Colors.TextPrimary, Colors.White);
         Color muted = Parse(_profile.Colors.TextMuted, new Color("aab4b8"));
         for (int i = 0; i < _surfacePanels.Count; i++)
@@ -566,22 +568,30 @@ public partial class HudView : Control
             bool chromePanel = DirectChrome(panel) is not null;
             bool suppressGenericBorder = _profile.ArtSkin.Enabled && chromePanel;
             if (panel == _bottomDeck)
-                panel.AddThemeStyleboxOverride("panel", Style(recessed, Colors.Transparent, 0, true));
+                panel.AddThemeStyleboxOverride("panel", Style(recessed.Lerp(factionSurface, factionFill * 1.25f), Colors.Transparent, 0, true));
             else if (panel == _minimapPanel || panel == _selectionPanel || panel == _commandPanel)
             {
                 Color sectionBackground = panel == _selectionPanel ? background.Lightened(0.025f) : recessed.Lightened(0.025f);
+                sectionBackground = sectionBackground.Lerp(factionSurface,
+                    factionFill * (panel == _selectionPanel ? 1.15f : 0.85f));
                 panel.AddThemeStyleboxOverride("panel", SectionStyle(sectionBackground,
                     new Color(secondaryAccent, 0.46f), panel == _minimapPanel, panel == _commandPanel));
             }
             else
-                panel.AddThemeStyleboxOverride("panel", Style(background,
+            {
+                Color panelBackground = chromePanel
+                    ? background.Lerp(factionSurface, factionFill)
+                    : background;
+                panel.AddThemeStyleboxOverride("panel", Style(panelBackground,
                     suppressGenericBorder ? Colors.Transparent : displayAccent,
                     ChromeContentPadding(panel), suppressGenericBorder));
+            }
         }
         for (int i = 0; i < _raisedPanels.Count; i++)
             _raisedPanels[i].AddThemeStyleboxOverride("panel", Style(raised, displayAccent));
         if (_portraitPanel is not null)
-            _portraitPanel.AddThemeStyleboxOverride("panel", Style(recessed.Lightened(0.03f), secondaryAccent));
+            _portraitPanel.AddThemeStyleboxOverride("panel", Style(
+                recessed.Lightened(0.03f).Lerp(factionSurface, factionFill * 1.35f), secondaryAccent));
         _portraitView?.ApplyProfile(_profile);
         for (int i = 0; i < _factionChrome.Count; i++)
         {
@@ -912,8 +922,8 @@ public partial class HudView : Control
         int padding = _profile.Surface.InnerPadding;
         const int outerMargin = 30;
         const int innerMargin = 14;
-        const int topMargin = 13;
-        const int bottomMargin = 17;
+        const int topMargin = 29;
+        const int bottomMargin = 27;
         return new StyleBoxFlat
         {
             BgColor = new Color(background, _profile.Surface.PanelOpacity),

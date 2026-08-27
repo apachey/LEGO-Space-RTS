@@ -10,9 +10,11 @@ public enum HudFactionChromeRole : byte
 
 /// <summary>
 /// Composes one outer faction chassis from a square source atlas without
-/// stretching its illustrated machinery. The source is used as hardware, not
-/// wallpaper: large protected corners frame the console and a small number of
-/// square modules mark real section junctions on code-native rails.
+/// stretching its illustrated machinery. Protected corners retain their shape;
+/// the authored wall spans between them are repeated at a uniform scale and
+/// cropped only at the final tile. A small number of source modules still mark
+/// real section junctions, so the chassis reads as a complete built object
+/// rather than four unrelated corner decals or stretched wallpaper.
 /// </summary>
 public partial class HudFactionChrome : Control
 {
@@ -41,6 +43,8 @@ public partial class HudFactionChrome : Control
     public bool UsesFixedSquareCorners => true;
     public bool UsesProtectedSourceModules => true;
     public bool UsesSparseJunctionModules => true;
+    public bool UsesTiledEdgeWalls => true;
+    public bool UsesFactionSurfaceFill => true;
     public int ProtectedSourceSize => _recipe.ProtectedSourceSize;
 
     public HudFactionChrome()
@@ -86,13 +90,15 @@ public partial class HudFactionChrome : Control
 
         float requestedCorner = Role switch
         {
-            HudFactionChromeRole.TopStrip => 21f,
-            _ => 38f
+            HudFactionChromeRole.TopStrip => 15f,
+            _ => 30f
         } * _chromeScale;
         float corner = Mathf.Min(requestedCorner, Mathf.Min(outer.Size.X, outer.Size.Y) * 0.45f);
         if (corner < 2f) return;
 
         Color modulate = new(1f, 1f, 1f, _intensity);
+        DrawSurfaceFill(outer, corner);
+        DrawTiledEdgeWalls(outer, corner, modulate);
         DrawCorners(outer, corner, modulate);
         DrawRails(outer, corner);
         DrawFunctionalModules(outer, corner, modulate);
@@ -117,6 +123,15 @@ public partial class HudFactionChrome : Control
         3 => new Color("7296ad"), // Life on Mars astronauts · equipment blue
         4 => new Color("b9674f"), // Life on Mars Martians · articulated red
         _ => new Color("147f79")  // Rock Raiders · dark turquoise machinery
+    };
+
+    public static Color SurfaceForFaction(int faction) => Math.Clamp(faction, 0, Recipes.Length - 1) switch
+    {
+        1 => new Color("29343a"), // aerospace graphite blue
+        2 => new Color("171524"), // deep organic violet-black
+        3 => new Color("302a28"), // warm retro equipment graphite
+        4 => new Color("1e3032"), // cool Aero Network machinery
+        _ => new Color("182b2d")  // Raider teal-black industrial console
     };
 
     public static bool ValidateRecipes(out string error)
@@ -161,6 +176,86 @@ public partial class HudFactionChrome : Control
             new Rect2(right, bottom, source, source), modulate);
     }
 
+    private void DrawSurfaceFill(Rect2 outer, float corner)
+    {
+        int faction = Array.IndexOf(Recipes, _recipe);
+        Color surface = SurfaceForFaction(faction);
+        Color secondary = SecondaryAccentForFaction(faction);
+        float fillAlpha = (Role == HudFactionChromeRole.TopStrip ? 0.16f : 0.10f) * _intensity;
+        float bandAlpha = (Role == HudFactionChromeRole.TopStrip ? 0.10f : 0.065f) * _intensity;
+        Rect2 inner = outer.Grow(-Mathf.Max(3f, corner * 0.42f));
+        if (inner.Size.X <= 1f || inner.Size.Y <= 1f) return;
+
+        DrawRect(inner, new Color(surface.R, surface.G, surface.B, fillAlpha));
+        float bandHeight = Mathf.Clamp(inner.Size.Y * 0.18f, 3f, 13f * _chromeScale);
+        DrawRect(new Rect2(inner.Position, new Vector2(inner.Size.X, bandHeight)),
+            new Color(secondary.R, secondary.G, secondary.B, bandAlpha));
+        DrawRect(new Rect2(new Vector2(inner.Position.X, inner.End.Y - bandHeight), new Vector2(inner.Size.X, bandHeight)),
+            new Color(_accent.R, _accent.G, _accent.B, bandAlpha * 0.72f));
+    }
+
+    private void DrawTiledEdgeWalls(Rect2 outer, float corner, Color modulate)
+    {
+        float sourceCorner = _recipe.ProtectedSourceSize;
+        float sourceSpan = AtlasSize - sourceCorner * 2f;
+        if (sourceSpan < 4f) return;
+
+        float horizontalLength = Mathf.Max(0f, outer.Size.X - corner * 2f);
+        float verticalLength = Mathf.Max(0f, outer.Size.Y - corner * 2f);
+        if (horizontalLength > 0.5f)
+        {
+            DrawHorizontalTiles(new Vector2(outer.Position.X + corner, outer.Position.Y),
+                horizontalLength, corner, new Rect2(sourceCorner, 0f, sourceSpan, sourceCorner), modulate);
+            DrawHorizontalTiles(new Vector2(outer.Position.X + corner, outer.End.Y - corner),
+                horizontalLength, corner, new Rect2(sourceCorner, AtlasSize - sourceCorner, sourceSpan, sourceCorner), modulate);
+        }
+        if (verticalLength > 0.5f)
+        {
+            DrawVerticalTiles(new Vector2(outer.Position.X, outer.Position.Y + corner),
+                verticalLength, corner, new Rect2(0f, sourceCorner, sourceCorner, sourceSpan), modulate);
+            DrawVerticalTiles(new Vector2(outer.End.X - corner, outer.Position.Y + corner),
+                verticalLength, corner, new Rect2(AtlasSize - sourceCorner, sourceCorner, sourceCorner, sourceSpan), modulate);
+        }
+    }
+
+    private void DrawHorizontalTiles(Vector2 start, float length, float thickness, Rect2 source, Color modulate)
+    {
+        float scale = thickness / source.Size.Y;
+        float sourceTileWidth = source.Size.X;
+        float destinationTileWidth = sourceTileWidth * scale;
+        if (destinationTileWidth <= 0.5f) return;
+
+        float drawn = 0f;
+        while (drawn < length - 0.25f)
+        {
+            float destinationWidth = Mathf.Min(destinationTileWidth, length - drawn);
+            float croppedSourceWidth = destinationWidth / scale;
+            DrawTextureRectRegion(_texture!,
+                new Rect2(start + new Vector2(drawn, 0f), new Vector2(destinationWidth, thickness)),
+                new Rect2(source.Position, new Vector2(croppedSourceWidth, source.Size.Y)), modulate);
+            drawn += destinationWidth;
+        }
+    }
+
+    private void DrawVerticalTiles(Vector2 start, float length, float thickness, Rect2 source, Color modulate)
+    {
+        float scale = thickness / source.Size.X;
+        float sourceTileHeight = source.Size.Y;
+        float destinationTileHeight = sourceTileHeight * scale;
+        if (destinationTileHeight <= 0.5f) return;
+
+        float drawn = 0f;
+        while (drawn < length - 0.25f)
+        {
+            float destinationHeight = Mathf.Min(destinationTileHeight, length - drawn);
+            float croppedSourceHeight = destinationHeight / scale;
+            DrawTextureRectRegion(_texture!,
+                new Rect2(start + new Vector2(0f, drawn), new Vector2(thickness, destinationHeight)),
+                new Rect2(source.Position, new Vector2(source.Size.X, croppedSourceHeight)), modulate);
+            drawn += destinationHeight;
+        }
+    }
+
     private void DrawRails(Rect2 outer, float corner)
     {
         Color primary = new(_accent.R, _accent.G, _accent.B, _intensity * 0.72f);
@@ -184,7 +279,7 @@ public partial class HudFactionChrome : Control
         float sourceX = (AtlasSize - source) * 0.5f;
         Rect2 topSource = new(sourceX, 0f, source, source);
         Rect2 bottomSource = new(sourceX, AtlasSize - source, source, source);
-        float module = Mathf.Min(corner, Role == HudFactionChromeRole.TopStrip ? 20f * _chromeScale : 34f * _chromeScale);
+        float module = Mathf.Min(corner, Role == HudFactionChromeRole.TopStrip ? 14f * _chromeScale : 26f * _chromeScale);
         if (Role == HudFactionChromeRole.TopStrip)
         {
             DrawModule(outer, 0.5f, module, topSource, bottomSource, modulate);

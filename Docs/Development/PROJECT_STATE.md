@@ -264,8 +264,9 @@ fixtures; the Palette Lab remains the accepted palette review fixture.
 - `F8` → **M7 HUD Lab** provides eight information-density fixtures, four
   aspect previews, live layout/type/surface/content/color tokens and complete
   schema-4 JSON copy/paste, including prior-schema migration. Five generated,
-  independently switchable chrome textures use protected corners and sparse
-  functional junctions rather than stretched full frames. One continuous
+  independently switchable chrome textures use protected corners, uniformly
+  scaled tiled wall spans and sparse functional junctions rather than stretched
+  full frames or isolated corner decals. One continuous
   bottom control deck now joins minimap, selection and commands, while a
   code-native faction-coloured blueprint portrait distinguishes units, groups,
   structures and transformations. Rock Raiders, Mars Mission
@@ -319,10 +320,12 @@ fixtures; the Palette Lab remains the accepted palette review fixture.
   the actual shader resources, gives vehicle lamps real terrain illumination,
   separates directional sky ownership from fill/rim lighting and preserves the
   extended blue/golden phases. Painted surfaces now separate a broad generated
-  macro-albedo map from restrained relief, use derivative-aware filtering at RTS
-  zoom and share model-wide texture coordinates instead of restarting on every
+  macro-albedo map from restrained relief, use a validated stronger broad
+  albedo signal plus derivative-aware low-pass filtering at RTS zoom, and share
+  model-wide texture coordinates instead of restarting on every
   LEGO sub-mesh. The HUD Lab now composes generated faction art as one outer
-  control-deck chassis with protected corners and sparse functional junctions;
+  control-deck chassis with protected corners, complete tiled edge walls,
+  restrained faction surface fills and sparse functional junctions;
   minimap, selection and commands remain code-native contiguous sections rather
   than separately framed texture cards. Automation asserts that major panels
   and every visible command remain inside the safe area, including all 12 slots
@@ -353,7 +356,7 @@ Lab cases, responsive HUD cases at 16:9/16:10/21:9/4:3, 100-repeat determinism,
 replay record/playback, snapshot
 continuation, compiled-content regeneration and a launchable macOS export.
 Exact summary:
-`Artifacts/Verification/20260827T115151Z-full-summary.txt`.
+`Artifacts/Verification/20260827T224426Z-full-summary.txt`.
 
 The preserved 60-mover M9 diagnostic remains `BLOCKING_LATER` and reported
 2/60 completion in this run; it does not block M7 acceptance and no movement

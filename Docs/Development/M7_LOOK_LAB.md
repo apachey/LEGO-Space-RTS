@@ -131,7 +131,11 @@ because its large ridges repeat at RTS scale. Albedo, height/bump and roughness
 sampling use separate coordinates and calibrated contrast instead of stamping
 one grayscale value into every channel. Imported LEGO sub-meshes use their
 cached bind-pose origin and basis to share one model-space texture field;
-derivative-aware mips avoid sparkle without allowing live animation or a colour
+painted families now use a larger world-space macro footprint and a deliberately
+strong mip bias so the broad raster variation reads at 24–39.5 cells without
+restoring the source map's fine grain. A validated minimum albedo amplitude and
+filter width prevents a technically bound map from becoming imperceptible again.
+Derivative-aware mips avoid sparkle without allowing live animation or a colour
 edit to shift the raster phase.
 These are review assets, not accepted production normal/ORM maps.
 

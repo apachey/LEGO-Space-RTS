@@ -82,12 +82,16 @@ presets:
   colors.
 - five generated faction chrome families with enable, intensity and scale
   controls. The square sources are not stretched over arbitrary panels:
-  protected source corners and a small number of source modules punctuate clean
-  code-native rails. One outer faction chassis frames the complete bottom
-  control deck; only two modules mark the real minimap/selection and
-  selection/command junctions. Its three contiguous inner surfaces remain
-  code-native and the top resource strip owns the only other faction frame, so
-  generated art never becomes repeated wallpaper or nested panel borders. Rock
+  protected source corners retain their square proportions, while the authored
+  horizontal and vertical wall spans are repeated at one uniform scale and only
+  the final partial tile is cropped. One outer faction chassis therefore has
+  complete textured walls around the bottom control deck instead of isolated
+  corner decals; only two additional source modules mark the real
+  minimap/selection and selection/command junctions. The three contiguous inner
+  surfaces receive restrained faction-specific chassis fills but remain
+  code-native functional regions, and the top resource strip owns the only
+  other complete faction frame. Generated art is neither stretched nor cloned
+  into nested panel borders. Rock
   Raiders uses turquoise/brown industrial framing; Mars Mission Astronauts use
   ivory/orange aerospace framing; Mars Mission Aliens use black/lime/violet
   crystalline framing; Life on Mars Astronauts use sand/red/blue
@@ -137,7 +141,8 @@ critical-tooltip fixtures across four aspect ratios. The smoke also verifies all
 eight fixture contracts, client-legal minimap knowledge, remembered-static
 rules, pixel/cell command conversion, the 12-slot command bound, required
 retained nodes, the procedural tactical portrait, all five imported faction
-frames, protected non-stretched atlas regions, one continuous bottom-deck
+frames, protected non-stretched corners, uniformly scaled tiled wall regions,
+restrained faction chassis fills, one continuous bottom-deck
 chassis, prior-schema migration, schema-4 JSON round-trip and safe-area
 containment of every major panel plus every visible command button (including
 the twelfth slot in the 12-command mixed-army fixture). It also proves that the
@@ -153,14 +158,15 @@ art-director values down with the viewport.
 
 Current post-redesign evidence under `Artifacts/Screenshots/` is:
 
-- `m7-hud-final-mixed-16-9.png` and
-  `m7-hud-final-production-16-10.png` for group/queue density;
-- `m7-hud-final-astronaut-16-9.png`, `m7-hud-final-alien-16-9.png` and
-  `m7-hud-final-martian-21-9.png` for the remaining faction chassis and
+- `m7-hud-walls-final-mixed-16-9.png` and
+  `m7-hud-walls-final-production-16-10.png` for group/queue density;
+- `m7-hud-walls-final-astronaut-16-9.png`,
+  `m7-hud-walls-final-alien-16-9.png` and
+  `m7-hud-walls-final-martian-21-9.png` for the remaining faction chassis and
   procedural portrait kinds;
-- `m7-hud-final-critical-4-3.png` for the narrow tooltip/event/deck collision
+- `m7-hud-walls-final-critical-4-3.png` for the narrow tooltip/event/deck collision
   gate;
-- `m7-hud-final-brownout-21-9.png` for the Energy Domain, alert and event
+- `m7-hud-walls-final-brownout-21-9.png` for the Energy Domain, alert and event
   overlays.
 
 ## Deliberately deferred

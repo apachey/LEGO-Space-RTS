@@ -344,8 +344,10 @@ public partial class M7HudLab : Node3D
         HudFactionChrome? topChrome = _hud?.FindChild("ResourceStripFactionChrome", true, false) as HudFactionChrome;
         HudFactionChrome? deckChrome = _hud?.FindChild("BottomDeckFactionChrome", true, false) as HudFactionChrome;
         bool factionArt = HudFactionChrome.ValidateRecipes(out _) &&
-            topChrome is { IsConfigured: true, Role: HudFactionChromeRole.TopStrip, UsesFixedSquareCorners: true, UsesProtectedSourceModules: true } &&
-            deckChrome is { IsConfigured: true, Role: HudFactionChromeRole.BottomDeck, UsesSparseJunctionModules: true } &&
+            topChrome is { IsConfigured: true, Role: HudFactionChromeRole.TopStrip, UsesFixedSquareCorners: true,
+                UsesProtectedSourceModules: true, UsesTiledEdgeWalls: true, UsesFactionSurfaceFill: true } &&
+            deckChrome is { IsConfigured: true, Role: HudFactionChromeRole.BottomDeck, UsesSparseJunctionModules: true,
+                UsesTiledEdgeWalls: true, UsesFactionSurfaceFill: true } &&
             _hud?.FindChild("MinimapRegionFactionChrome", true, false) is null &&
             _hud?.FindChild("SelectionPanelFactionChrome", true, false) is null &&
             _hud?.FindChild("CommandPanelFactionChrome", true, false) is null &&
