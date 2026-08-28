@@ -36,6 +36,7 @@ public partial class M7HudLab : Node3D
         {
             if (arguments[i] == "--m7-hud-scenario") _scenario = M7HudFixtures.Parse(arguments[i + 1]);
             else if (arguments[i] == "--m7-hud-aspect") _aspect = ParseAspect(arguments[i + 1]);
+            else if (arguments[i] == "--m7-hud-finish") _profile.ArtSkin.Finish = ParseFinish(arguments[i + 1]);
             else if (arguments[i] == "--capture-path") _capturePath = arguments[i + 1];
         }
         _profile.ArtSkin.Faction = FactionForScenario(_scenario);
@@ -44,7 +45,7 @@ public partial class M7HudLab : Node3D
         BuildControls();
         ApplyAll();
         ProcessPriority = 1000;
-        GD.Print($"M7 HUD LAB: active={M7HudFixtures.Slug(_scenario)} aspect={_aspect} controls=Tab 1..8 scenarios");
+        GD.Print($"M7 HUD LAB: active={M7HudFixtures.Slug(_scenario)} aspect={_aspect} finish={_profile.ArtSkin.Finish} controls=Tab 1..8 scenarios");
     }
 
     public override void _Process(double delta)
@@ -56,7 +57,7 @@ public partial class M7HudLab : Node3D
         if (valid && _capturePath is not null) valid = CaptureViewport(_capturePath);
         _finished = true;
         if (valid)
-            GD.Print($"M7 HUD LAB: PASS scenarios=8 commands=12 minimap=legal markers=11 remembered=2 factionSkins=5 safeArea={_profile.Layout.SafeAreaPercent:0.#} uiScale={_profile.Layout.UiScale:0.00} aspect={_aspect} schema={M7HudProfile.CurrentSchemaVersion} active={M7HudFixtures.Slug(_scenario)}");
+            GD.Print($"M7 HUD LAB: PASS scenarios=8 commands=12 minimap=legal markers=11 remembered=2 factionSkins=5 finishes=3 safeArea={_profile.Layout.SafeAreaPercent:0.#} uiScale={_profile.Layout.UiScale:0.00} aspect={_aspect} schema={M7HudProfile.CurrentSchemaVersion} active={M7HudFixtures.Slug(_scenario)} finish={_profile.ArtSkin.Finish}");
         else GD.PrintErr("M7 HUD LAB: FAIL");
         GetTree().Quit(valid ? 0 : 2);
     }
@@ -157,8 +158,8 @@ public partial class M7HudLab : Node3D
         _controlPanel.AddChild(scroll);
         VBoxContainer box = new() { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
         box.AddThemeConstantOverride("separation", 7); scroll.AddChild(box);
-        Label title = LabLabel("M7 HUD LAB · FUNCTION + FACTION SKIN", 20, new Color("e6ad28")); box.AddChild(title);
-        Label note = LabLabel("Художні рамки не є каноном. Вони змінюють матеріальну мову фракції, але не затверджені місця ресурсів, мінікарти, вибору й команд. 1–8 — функціональні стани; Tab ховає контролі.", 13, new Color("b7c0c5"));
+        Label title = LabLabel("M7 HUD LAB · RTS COMMAND CONSOLE", 20, new Color("e6ad28")); box.AddChild(title);
+        Label note = LabLabel("Неканонічний SC2 reference treatment: повноширинна консоль, minimap → selection → portrait → 3×4 commands. Старі фракційні рамки збережені для чесного A/B на тій самій геометрії. 1–8 — стани; Tab ховає контролі.", 13, new Color("b7c0c5"));
         note.AutowrapMode = TextServer.AutowrapMode.WordSmart; box.AddChild(note);
 
         AddSection(box, "SCENARIO FIXTURES");
@@ -175,6 +176,26 @@ public partial class M7HudLab : Node3D
         {
             string selected = aspect;
             Button button = LabButton(aspect); button.Pressed += () => { _aspect = selected; ApplyPreviewAspect(); SetStatus($"Preview {selected}"); }; aspects.AddChild(button);
+        }
+
+        AddSection(box, "HUD FINISH · SAME GEOMETRY A/B");
+        HFlowContainer finishes = new(); box.AddChild(finishes);
+        foreach ((string label, HudArtFinish finish) in new[]
+                 {
+                     ("STRUCTURAL CONSOLE", HudArtFinish.StructuralConsole),
+                     ("LEGACY FRAMES", HudArtFinish.LegacyFrames),
+                     ("CLEAN", HudArtFinish.Clean)
+                 })
+        {
+            HudArtFinish selected = finish;
+            Button button = LabButton(label);
+            button.Pressed += () =>
+            {
+                _profile.ArtSkin.Finish = selected;
+                ApplyAll();
+                SetStatus($"HUD finish: {selected}");
+            };
+            finishes.AddChild(button);
         }
 
         AddSection(box, "FACTION ART SKIN");
@@ -197,8 +218,8 @@ public partial class M7HudLab : Node3D
         AddSlider(box, "Top strip height", 44, 78, 1, () => _profile.Layout.TopStripHeight, value => _profile.Layout.TopStripHeight = (float)value);
         AddSlider(box, "Bottom height", 172, 280, 1, () => _profile.Layout.BottomRegionHeight, value => _profile.Layout.BottomRegionHeight = (float)value);
         AddSlider(box, "Minimap width target", 164, 260, 1, () => _profile.Layout.MinimapSize, value => _profile.Layout.MinimapSize = (float)value);
-        AddSlider(box, "Command width target", 300, 460, 1, () => _profile.Layout.CommandPanelWidth, value => _profile.Layout.CommandPanelWidth = (float)value);
-        AddSlider(box, "Selection max width", 540, 960, 5, () => _profile.Layout.SelectionMaxWidth, value => _profile.Layout.SelectionMaxWidth = (float)value);
+        AddSlider(box, "Command width target", 220, 380, 1, () => _profile.Layout.CommandPanelWidth, value => _profile.Layout.CommandPanelWidth = (float)value);
+        AddSlider(box, "Selection max width", 540, 1200, 5, () => _profile.Layout.SelectionMaxWidth, value => _profile.Layout.SelectionMaxWidth = (float)value);
         AddSlider(box, "Panel gap", 4, 24, 1, () => _profile.Layout.PanelGap, value => _profile.Layout.PanelGap = (float)value);
 
         AddSection(box, "TYPE & SURFACES");
@@ -320,13 +341,15 @@ public partial class M7HudLab : Node3D
         HudFrame critical = M7HudFixtures.Create(M7HudScenario.CriticalTooltip);
         string json = _profile.ToJson();
         bool roundTrip = M7HudProfile.TryFromJson(json, out M7HudProfile parsed, out _) && parsed.SchemaVersion == M7HudProfile.CurrentSchemaVersion &&
-            Math.Abs(parsed.Layout.SafeAreaPercent - _profile.Layout.SafeAreaPercent) < 0.001f;
+            Math.Abs(parsed.Layout.SafeAreaPercent - _profile.Layout.SafeAreaPercent) < 0.001f &&
+            parsed.ArtSkin.Finish == _profile.ArtSkin.Finish;
         bool migration = M7HudProfile.TryFromJson("{\"schemaVersion\":1}", out M7HudProfile migrated, out _) &&
-            migrated.SchemaVersion == M7HudProfile.CurrentSchemaVersion;
+            migrated.SchemaVersion == M7HudProfile.CurrentSchemaVersion && migrated.ArtSkin.Finish == HudArtFinish.LegacyFrames;
         const string legacyFactionArt = "{\"schemaVersion\":4,\"artSkin\":{\"enabled\":true,\"faction\":2,\"frameOpacity\":0.63,\"frameThickness\":22}}";
         bool chromeMigration = M7HudProfile.TryFromJson(legacyFactionArt, out M7HudProfile migratedChrome, out _) &&
             Math.Abs(migratedChrome.ArtSkin.ChromeIntensity - 0.63f) < 0.001f &&
             Math.Abs(migratedChrome.ArtSkin.ChromeScale - 1f) < 0.001f &&
+            migratedChrome.ArtSkin.Finish == HudArtFinish.LegacyFrames &&
             migratedChrome.ArtSkin.FrameOpacity is null && migratedChrome.ArtSkin.FrameThickness is null;
         const string malformedColors = "{\"schemaVersion\":2,\"colors\":{\"background\":\"invalid\",\"accent\":null},\"minimap\":{\"enemyColor\":\"not-a-color\"}}";
         bool profileSanitization = M7HudProfile.TryFromJson(malformedColors, out M7HudProfile sanitized, out _) &&
@@ -339,15 +362,22 @@ public partial class M7HudLab : Node3D
         bool tree = _hud?.FindChild("ResourceStrip", true, false) is PanelContainer && _hud.FindChild("BottomDeck", true, false) is PanelContainer &&
             _hud.FindChild("MinimapSlot", true, false) is HudMinimapView &&
             _hud.FindChild("TacticalPortrait", true, false) is HudPortraitView &&
+            _hud.FindChild("PortraitSlot", true, false) is PanelContainer &&
             _hud.FindChild("SelectionPanel", true, false) is PanelContainer && _hud.FindChild("CommandGrid", true, false) is GridContainer &&
             _hud.FindChild("EventFeed", true, false) is PanelContainer && _hud.FindChild("HudTooltip", true, false) is PanelContainer;
         HudFactionChrome? topChrome = _hud?.FindChild("ResourceStripFactionChrome", true, false) as HudFactionChrome;
         HudFactionChrome? deckChrome = _hud?.FindChild("BottomDeckFactionChrome", true, false) as HudFactionChrome;
+        HudStructuralChrome? topStructural = _hud?.FindChild("ResourceStripStructuralChrome", true, false) as HudStructuralChrome;
+        HudStructuralChrome? deckStructural = _hud?.FindChild("BottomDeckStructuralChrome", true, false) as HudStructuralChrome;
         bool factionArt = HudFactionChrome.ValidateRecipes(out _) &&
             topChrome is { IsConfigured: true, Role: HudFactionChromeRole.TopStrip, UsesFixedSquareCorners: true,
                 UsesProtectedSourceModules: true, UsesTiledEdgeWalls: true, UsesFactionSurfaceFill: true } &&
             deckChrome is { IsConfigured: true, Role: HudFactionChromeRole.BottomDeck, UsesSparseJunctionModules: true,
                 UsesTiledEdgeWalls: true, UsesFactionSurfaceFill: true } &&
+            topStructural is { IsConfigured: true, Role: HudFactionChromeRole.TopStrip,
+                UsesTiledConsoleSurface: true, UsesSculptedShoulders: true } &&
+            deckStructural is { IsConfigured: true, Role: HudFactionChromeRole.BottomDeck,
+                UsesTiledConsoleSurface: true, UsesSculptedShoulders: true } &&
             _hud?.FindChild("MinimapRegionFactionChrome", true, false) is null &&
             _hud?.FindChild("SelectionPanelFactionChrome", true, false) is null &&
             _hud?.FindChild("CommandPanelFactionChrome", true, false) is null &&
@@ -360,7 +390,8 @@ public partial class M7HudLab : Node3D
         brownout.Alert.Actionable = !brownout.Alert.Actionable;
         bool actionableBinding = actionableSignature != brownout.ContentSignature();
         bool objectiveBounded = _hud?.FindChild("ObjectiveTracker", true, false) is Control objective &&
-            objective.Size.Y <= 100f * _profile.Layout.UiScale;
+            objective.Size.Y <= 100f * PreviewRenderScale();
+        bool finishModes = ValidateFinishModes();
         bool layoutContained = ValidateSafeAreaContainment();
         bool interactionBindings = ValidateInteractiveBindings();
         bool productionKnowledge = ValidateProductionMinimapKnowledge();
@@ -382,10 +413,10 @@ public partial class M7HudLab : Node3D
             Kind = HudMinimapMarkerKind.GroundMobile, Relation = HudMinimapRelation.Enemy
         });
         bool leakGuard = !illegal.ValidateClientKnowledge(0, out _);
-        if (!(fixtures && roundTrip && migration && chromeMigration && profileSanitization && mapping && tree && factionArt && states && actionableBinding &&
+        if (!(fixtures && roundTrip && migration && chromeMigration && profileSanitization && mapping && tree && factionArt && finishModes && states && actionableBinding &&
               objectiveBounded && layoutContained && interactionBindings && minimap && leakGuard && productionKnowledge))
-            GD.PrintErr($"M7 HUD LAB DETAIL: fixtures={fixtures} roundTrip={roundTrip} migration={migration} chromeMigration={chromeMigration} sanitization={profileSanitization} mapping={mapping} tree={tree} factionArt={factionArt} states={states} actionable={actionableBinding} objectiveBounded={objectiveBounded} layoutContained={layoutContained} interactions={interactionBindings} minimap={minimap} leakGuard={leakGuard} productionKnowledge={productionKnowledge}");
-        return fixtures && roundTrip && migration && chromeMigration && profileSanitization && mapping && tree && factionArt && states && actionableBinding &&
+            GD.PrintErr($"M7 HUD LAB DETAIL: fixtures={fixtures} roundTrip={roundTrip} migration={migration} chromeMigration={chromeMigration} sanitization={profileSanitization} mapping={mapping} tree={tree} factionArt={factionArt} finishes={finishModes} states={states} actionable={actionableBinding} objectiveBounded={objectiveBounded} layoutContained={layoutContained} interactions={interactionBindings} minimap={minimap} leakGuard={leakGuard} productionKnowledge={productionKnowledge}");
+        return fixtures && roundTrip && migration && chromeMigration && profileSanitization && mapping && tree && factionArt && finishModes && states && actionableBinding &&
             objectiveBounded && layoutContained && interactionBindings && minimap && leakGuard && productionKnowledge;
     }
 
@@ -427,6 +458,63 @@ public partial class M7HudLab : Node3D
         return energyRequests == 1 && alertRequests == 1 && outlineAlpha < 0.05f && solidAlpha > 0.95f;
     }
 
+    private bool ValidateFinishModes()
+    {
+        if (_hud is null) return false;
+        M7HudProfile original = _profile.Clone();
+        HudFrame frame = M7HudFixtures.Create(_scenario);
+        Rect2[]? baseline = null;
+        bool valid = true;
+        foreach (HudArtFinish finish in Enum.GetValues<HudArtFinish>())
+        {
+            M7HudProfile candidate = original.Clone();
+            candidate.ArtSkin.Enabled = true;
+            candidate.ArtSkin.Finish = finish;
+            _hud.ApplyProfile(candidate);
+            _hud.ApplyFrame(frame, true);
+            HudFactionChrome? legacy = _hud.FindChild("BottomDeckFactionChrome", true, false) as HudFactionChrome;
+            HudStructuralChrome? structural = _hud.FindChild("BottomDeckStructuralChrome", true, false) as HudStructuralChrome;
+            valid &= finish switch
+            {
+                HudArtFinish.StructuralConsole => structural is { Visible: true } && legacy is { Visible: false },
+                HudArtFinish.LegacyFrames => legacy is { Visible: true } && structural is { Visible: false },
+                _ => legacy is { Visible: false } && structural is { Visible: false }
+            };
+            Rect2[]? rects = CapturePrimaryRects();
+            if (rects is null) valid = false;
+            else if (baseline is null) baseline = rects;
+            else
+                for (int i = 0; i < baseline.Length; i++)
+                    valid &= RectNearlyEqual(baseline[i], rects[i]);
+        }
+        _hud.ApplyProfile(original);
+        _hud.ApplyFrame(frame, true);
+        ApplySyntheticCameraPolygon();
+        return valid;
+    }
+
+    private Rect2[]? CapturePrimaryRects()
+    {
+        if (_hud is null) return null;
+        string[] names = { "ResourceStrip", "BottomDeck", "MinimapRegion", "SelectionPanel", "PortraitSlot", "CommandPanel" };
+        Rect2[] rects = new Rect2[names.Length];
+        for (int i = 0; i < names.Length; i++)
+        {
+            if (_hud.FindChild(names[i], true, false) is not Control control) return null;
+            rects[i] = control.GetGlobalRect();
+        }
+        return rects;
+    }
+
+    private static bool RectNearlyEqual(Rect2 left, Rect2 right) =>
+        left.Position.DistanceTo(right.Position) <= 0.5f && left.Size.DistanceTo(right.Size) <= 0.5f;
+
+    private float PreviewRenderScale()
+    {
+        float height = _previewFrame?.Size.Y ?? 1080f;
+        return _profile.Layout.UiScale * Mathf.Clamp(height / 1080f, 2f / 3f, 2f);
+    }
+
     private static IEnumerable<Node> GetDescendants(Node root)
     {
         foreach (Node child in root.GetChildren())
@@ -440,7 +528,7 @@ public partial class M7HudLab : Node3D
     {
         if (_hud?.FindChild("HudSafeArea", true, false) is not Control safeArea) return false;
         Rect2 safeBounds = safeArea.GetGlobalRect();
-        string[] panelNames = { "ResourceStrip", "BottomDeck", "MinimapRegion", "SelectionPanel", "CommandPanel" };
+        string[] panelNames = { "ResourceStrip", "BottomDeck", "MinimapRegion", "SelectionPanel", "PortraitSlot", "CommandPanel" };
         for (int i = 0; i < panelNames.Length; i++)
         {
             if (_hud.FindChild(panelNames[i], true, false) is not Control panel) return false;
@@ -452,12 +540,14 @@ public partial class M7HudLab : Node3D
         if (_hud.FindChild("CommandPanel", true, false) is not Control commandPanel) return false;
         Rect2 commandBounds = commandPanel.GetGlobalRect();
         int expectedVisibleCommands = _hud.Frame.Commands.Count(command => command.Visible);
-        int visibleCommands = 0;
+        int visibleWells = 0;
+        int populatedCommands = 0;
         for (int i = 0; i < 12; i++)
         {
             if (_hud.FindChild($"Command{i}", true, false) is not Control command) return false;
             if (!command.Visible) continue;
-            visibleCommands++;
+            visibleWells++;
+            if (_hud.Frame.Commands.Count > i && _hud.Frame.Commands[i].Visible) populatedCommands++;
             Rect2 commandButtonBounds = command.GetGlobalRect();
             if (commandButtonBounds.Position.X < commandBounds.Position.X - 0.5f ||
                 commandButtonBounds.Position.Y < commandBounds.Position.Y - 0.5f ||
@@ -465,8 +555,20 @@ public partial class M7HudLab : Node3D
                 commandButtonBounds.End.Y > commandBounds.End.Y + 0.5f)
                 return false;
         }
-        if (visibleCommands != expectedVisibleCommands ||
+        if (visibleWells != 12 || populatedCommands != expectedVisibleCommands ||
             _hud.FindChild("BottomDeck", true, false) is not Control bottomDeck) return false;
+
+        if (_hud.FindChild("MinimapRegion", true, false) is not Control minimapPanel ||
+            _hud.FindChild("SelectionPanel", true, false) is not Control selectionPanel ||
+            _hud.FindChild("PortraitSlot", true, false) is not Control portraitPanel) return false;
+        Rect2 deckBounds = bottomDeck.GetGlobalRect();
+        Rect2 minimapBounds = minimapPanel.GetGlobalRect();
+        Rect2 selectionBounds = selectionPanel.GetGlobalRect();
+        Rect2 portraitBounds = portraitPanel.GetGlobalRect();
+        if (Math.Abs(minimapBounds.Position.X - deckBounds.Position.X) > 0.5f ||
+            Math.Abs(commandBounds.End.X - deckBounds.End.X) > 0.5f ||
+            minimapBounds.End.X > selectionBounds.Position.X || selectionBounds.End.X > portraitBounds.Position.X ||
+            portraitBounds.End.X > commandBounds.Position.X) return false;
 
         List<Rect2> visibleOverlays = new();
         string[] overlayNames = { "AlertAccess", "EventFeed", "ObjectiveTracker", "HudTooltip", "EnergyDomainPopover" };
@@ -626,6 +728,13 @@ public partial class M7HudLab : Node3D
     private void SetStatus(string text, bool error = false) { if (_status is null) return; _status.Text = text; _status.AddThemeColorOverride("font_color", error ? new Color("ff6b45") : new Color("65c987")); }
     private void Handled() => GetViewport().SetInputAsHandled();
     private static string ParseAspect(string value) => value.Trim().ToLowerInvariant() switch { "16:10" or "16-10" => "16:10", "21:9" or "21-9" => "21:9", "4:3" or "4-3" => "4:3", _ => "16:9" };
+
+    private static HudArtFinish ParseFinish(string value) => value.Trim().ToLowerInvariant() switch
+    {
+        "legacy" or "legacy-frames" or "frames" => HudArtFinish.LegacyFrames,
+        "clean" or "none" => HudArtFinish.Clean,
+        _ => HudArtFinish.StructuralConsole
+    };
 
     private void AddBuilding(Vector3 position, Vector3 size, Color color, string name)
     {

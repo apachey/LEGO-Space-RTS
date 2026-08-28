@@ -11,6 +11,7 @@ OUTPUT="${1:-${ROOT}/Artifacts/Screenshots/m7-hud-lab-mixed-army.png}"
 SCENARIO="${2:-mixed-army}"
 ASPECT="${3:-16-9}"
 CONTROLS="${4:-hidden}"
+FINISH="${5:-structural}"
 CAPTURE_LOG="${TMPDIR:-/tmp}/lego-space-rts-m7-hud-lab.log"
 if [[ "${OUTPUT}" != /* ]]; then OUTPUT="${ROOT}/${OUTPUT}"; fi
 
@@ -21,7 +22,10 @@ case "${ASPECT}" in 16-9|16-10|21-9|4-3) ;;
   *) printf 'Usage: %s [output.png] [scenario] [16-9|16-10|21-9|4-3]\n' "$0" >&2; exit 2 ;;
 esac
 case "${CONTROLS}" in visible|hidden) ;;
-  *) printf 'Usage: %s [output.png] [scenario] [aspect] [visible|hidden]\n' "$0" >&2; exit 2 ;;
+  *) printf 'Usage: %s [output.png] [scenario] [aspect] [visible|hidden] [structural|legacy|clean]\n' "$0" >&2; exit 2 ;;
+esac
+case "${FINISH}" in structural|legacy|clean) ;;
+  *) printf 'Usage: %s [output.png] [scenario] [aspect] [visible|hidden] [structural|legacy|clean]\n' "$0" >&2; exit 2 ;;
 esac
 if [[ -z "${GODOT}" ]] || ! godot_is_required_mono "${GODOT}"; then
   printf 'FAIL: Godot 4.7.1 .NET was not found.\n' >&2
@@ -33,8 +37,8 @@ mkdir -p "$(dirname "${OUTPUT}")"
 dotnet build "${ROOT}/GodotClient/LEGO.SpaceRTS.Godot.csproj" -c Debug --no-restore --disable-build-servers -m:1
 "${GODOT}" --headless --import --path "${ROOT}/GodotClient"
 "${GODOT}" --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- \
-  --m7-hud-lab --m7-hud-smoke --m7-hud-scenario "${SCENARIO}" --m7-hud-aspect "${ASPECT}" --m7-hud-controls "${CONTROLS}" --capture-path "${OUTPUT}"
-if [[ ! -s "${OUTPUT}" ]] || ! grep -q "M7 HUD LAB: PASS scenarios=8 commands=12 minimap=legal.*factionSkins=5.*schema=4 active=${SCENARIO}" "${CAPTURE_LOG}"; then
+  --m7-hud-lab --m7-hud-smoke --m7-hud-scenario "${SCENARIO}" --m7-hud-aspect "${ASPECT}" --m7-hud-finish "${FINISH}" --m7-hud-controls "${CONTROLS}" --capture-path "${OUTPUT}"
+if [[ ! -s "${OUTPUT}" ]] || ! grep -q "M7 HUD LAB: PASS scenarios=8 commands=12 minimap=legal.*factionSkins=5 finishes=3.*schema=5 active=${SCENARIO}" "${CAPTURE_LOG}"; then
   printf 'FAIL: M7 HUD Lab capture or PASS marker was not produced.\n' >&2
   exit 1
 fi

@@ -6,7 +6,7 @@ namespace LegoSpaceRTS.Presentation;
 
 public sealed class M7LookProfile
 {
-    public const int CurrentSchemaVersion = 6;
+    public const int CurrentSchemaVersion = 7;
 
     public int SchemaVersion { get; set; } = CurrentSchemaVersion;
     public CameraLook Camera { get; set; } = new();
@@ -58,7 +58,7 @@ public sealed class M7LookProfile
                 error = "Clipboard does not contain an M7 Look profile.";
                 return false;
             }
-            if (parsed.SchemaVersion is not (1 or 2 or 3 or 4 or 5 or CurrentSchemaVersion))
+            if (parsed.SchemaVersion is not (1 or 2 or 3 or 4 or 5 or 6 or CurrentSchemaVersion))
             {
                 profile = CreateDefault();
                 error = $"Profile schema {parsed.SchemaVersion} is not supported; expected 1–{CurrentSchemaVersion}.";
@@ -71,7 +71,9 @@ public sealed class M7LookProfile
             // 5 adds a practical texture stack, per-function emission response,
             // direct fire lighting and presentation-only world-light profiles. Schema
             // 6 corrects camera-dependent texture projection, establishes a quiet RTS
-            // material baseline and adds deterministic preview-shot / blast controls. Missing
+            // material baseline and adds deterministic preview-shot / blast controls. Schema 7
+            // makes the authored, map-scale terrain composition the new review default while
+            // preserving every older profile as the exact legacy raster treatment. Missing
             // values intentionally inherit the current review baseline, so old
             // copied profiles remain usable.
             int sourceSchemaVersion = parsed.SchemaVersion;
@@ -90,6 +92,7 @@ public sealed class M7LookProfile
                 parsed.WorldCycle.AnimatePreview = false;
             }
             if (sourceSchemaVersion < 6) ApplySchemaSixMigration(parsed);
+            if (sourceSchemaVersion < 7) ApplySchemaSevenMigration(parsed);
             parsed.Normalize();
             profile = parsed;
             error = string.Empty;
@@ -192,6 +195,14 @@ public sealed class M7LookProfile
         profile.Destruction.BlastLightEnergy = Math.Max(profile.Destruction.BlastLightEnergy, 16f);
         profile.Destruction.DustOpacity = Math.Min(profile.Destruction.DustOpacity, 0.42f);
         profile.WorldCycle.NightReadability = Math.Max(profile.WorldCycle.NightReadability, 0.58f);
+    }
+
+    private static void ApplySchemaSevenMigration(M7LookProfile profile)
+    {
+        // Schema 6 and older describe the raster-led ground exactly as it was
+        // reviewed. Keep that visual result available instead of silently
+        // replacing it when an older clipboard profile is pasted.
+        profile.Ground.SurfaceTreatment = M7GroundSurfaceTreatment.LegacyRaster;
     }
 
     private static void MergeMissingMaterialDefaults(M7LookProfile profile, JsonElement root)
@@ -386,6 +397,8 @@ public sealed class M7LookProfile
         Ground.MacroScale = Clamp(Ground.MacroScale, 0.01f, 2f);
         Ground.MicroAmount = Clamp01(Ground.MicroAmount);
         Ground.MicroScale = Clamp(Ground.MicroScale, 0.1f, 20f);
+        if (!Enum.IsDefined(Ground.SurfaceTreatment))
+            Ground.SurfaceTreatment = M7GroundSurfaceTreatment.AuthoredSurfaceStack;
         Ground.TracksOpacity = Clamp01(Ground.TracksOpacity);
         Ground.TracksWidth = Clamp(Ground.TracksWidth, 0.2f, 2f);
         Ground.TracksLength = Clamp(Ground.TracksLength, 1f, 16f);
@@ -864,8 +877,15 @@ public sealed class VfxPoolLook
     }
 }
 
+public enum M7GroundSurfaceTreatment : byte
+{
+    AuthoredSurfaceStack = 0,
+    LegacyRaster = 1
+}
+
 public sealed class GroundLook
 {
+    public M7GroundSurfaceTreatment SurfaceTreatment { get; set; } = M7GroundSurfaceTreatment.AuthoredSurfaceStack;
     public string SecondaryColor { get; set; } = "#444844";
     public float MacroAmount { get; set; } = 0.18f;
     public float MacroScale { get; set; } = 0.055f;

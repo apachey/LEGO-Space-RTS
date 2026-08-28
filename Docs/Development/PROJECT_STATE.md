@@ -7,17 +7,20 @@ authoritative when anything here becomes stale.
 
 **M0–M6 are implemented, verified and game-director accepted. M7 visual canon
 remains deliberately open. Preset-style comparisons are retired as the primary
-workflow; the gameplay-scale realtime Look Lab is now at schema 6 with free
+workflow; the gameplay-scale realtime Look Lab is now at schema 7 with free
 camera control, ten reproducible surface/glare assets, exact shader-bound role-authored material
 families with color-only art controls, per-function emission, automatic
 dusk/night spot headlights and work lamps, direct fire lighting, five presentation-only world-light
 cycles with extended blue/golden-hour bands, planted-wheel animation, bounded
 VFX/destruction pools, deterministic material-audit captures, a natural world-light gradient,
-depressed tracks and complete JSON copy/paste. T068 now
+an A/B between map-scale authored terrain composition and the preserved
+raster-led ground, depressed tracks and complete JSON copy/paste. T068 now
 provides a separate responsive full-HUD framework and
 T069 replaces its minimap placeholder with a client-legal north-up tactical map;
-the HUD Lab is now schema 4 with five modular, non-stretched generated faction chrome families and its visual language remains explicitly
-non-canonical. A post-T069 quality revision makes outline/halo independent from
+the HUD Lab is now schema 5 with a full-width RTS command console and three
+same-geometry finishes: Structural Console, all five preserved Legacy Frames
+and Clean. Its visual language remains explicitly non-canonical. A post-T069
+quality revision makes outline/halo independent from
 the style post-pass, hardens profile paste, bounds VFX event memory and avoids
 unrelated live material rebuilds. HUD and health visuals remain excluded from the world Look Lab. The
 six-page Palette Ratio Lab is game-director accepted. The revised Look Lab
@@ -258,17 +261,21 @@ fixtures; the Palette Lab remains the accepted palette review fixture.
   interaction. T069 now owns the implemented minimap inside this retained slot.
 - Mixed selections aggregate up to 128 selected entities by gameplay type and
   bind to eight reusable cards rather than generating portrait walls.
-- The skeleton supports 90–100% safe area, 96% default, independent UI/text
-  scale, bounded ultrawide center width and the required desktop aspect/resolution
-  families.
+- The full-width skeleton supports 90–100% safe area, 98% default, independent
+  UI/text scale and height-relative responsive scaling. Functional bay order is
+  minimap, adaptive selection, dedicated tactical portrait and an icon-first
+  3×4 command card; the local production queue is a compact strip above it.
 - `F8` → **M7 HUD Lab** provides eight information-density fixtures, four
   aspect previews, live layout/type/surface/content/color tokens and complete
-  schema-4 JSON copy/paste, including prior-schema migration. Five generated,
-  independently switchable chrome textures use protected corners, uniformly
+  schema-5 JSON copy/paste, including prior-schema migration. Structural,
+  Legacy and Clean finishes share invariant panel geometry and hit targets.
+  Five generated, independently switchable chrome textures use protected corners, uniformly
   scaled tiled wall spans and sparse functional junctions rather than stretched
   full frames or isolated corner decals. One continuous
-  bottom control deck now joins minimap, selection and commands, while a
-  code-native faction-coloured blueprint portrait distinguishes units, groups,
+  bottom control deck now joins minimap, selection, portrait and commands. The
+  new Structural finish adds an original bounded industrial raster surface,
+  sculpted shoulders and filled recessed bays; Legacy retains the old frames
+  without modification. A code-native faction-coloured blueprint portrait distinguishes units, groups,
   structures and transformations. Rock Raiders, Mars Mission
   Astronauts/Aliens and Life on Mars Astronauts/Martians remain visually
   distinct without changing the locked HUD anchors.
@@ -323,7 +330,10 @@ fixtures; the Palette Lab remains the accepted palette review fixture.
   macro-albedo map from restrained relief, use a validated stronger broad
   albedo signal plus derivative-aware low-pass filtering at RTS zoom, and share
   model-wide texture coordinates instead of restarting on every
-  LEGO sub-mesh. The HUD Lab now composes generated faction art as one outer
+  LEGO sub-mesh. The Look Lab now also defaults to broad authored terrain
+  zones—compacted pad/routes, bedrock, loose regolith and a mineral seam—with
+  sparse material-specific breakup; schema 1–6 profiles retain the previous
+  result through Legacy Raster. The HUD Lab now composes generated faction art as one outer
   control-deck chassis with protected corners, complete tiled edge walls,
   restrained faction surface fills and sparse functional junctions;
   minimap, selection and commands remain code-native contiguous sections rather
@@ -334,7 +344,9 @@ fixtures; the Palette Lab remains the accepted palette review fixture.
   values now apply directly instead of being silently capped by viewport width;
   geometric deck widths are labelled as safe-area-constrained targets. Production Energy and alert buttons
   retain reliable hit targets; actionable brownout/capacity alerts center their
-  associated Worksite. These remain review tools, not approved visual canon.
+  associated Worksite. Structural Console adds a complete filled chassis while
+  Legacy Frames and Clean remain direct same-layout comparisons. These remain
+  review tools, not approved visual canon.
 
 ## Integration format boundary
 
@@ -349,14 +361,14 @@ fixtures; the Palette Lab remains the accepted palette review fixture.
 
 ## Verification state
 
-The current M7 material/HUD quality revision passed `./tools/verify.sh --full` on 2026-08-27
-with **zero blocking failures**: 278 NUnit tests, 24/24 representative mover
-acceptance, every T058–T063 ENet smoke, all visual/palette pages, schema-6 Look
-Lab cases, responsive HUD cases at 16:9/16:10/21:9/4:3, 100-repeat determinism,
-replay record/playback, snapshot
+The current M7 authored-ground/HUD-console revision passed
+`./tools/verify.sh --full` on 2026-08-28 with **zero blocking failures**: 278
+NUnit tests, 24/24 representative mover acceptance, every T058–T063 ENet
+smoke, all visual/palette pages, schema-7 Look Lab cases covering Authored
+Surface and Legacy Raster, schema-5 Structural/Legacy/Clean HUD cases at
+16:9/16:10/21:9/4:3, 100-repeat determinism, replay record/playback, snapshot
 continuation, compiled-content regeneration and a launchable macOS export.
-Exact summary:
-`Artifacts/Verification/20260827T224426Z-full-summary.txt`.
+Exact summary: `Artifacts/Verification/20260828T093407Z-full-summary.txt`.
 
 The preserved 60-mover M9 diagnostic remains `BLOCKING_LATER` and reported
 2/60 completion in this run; it does not block M7 acceptance and no movement

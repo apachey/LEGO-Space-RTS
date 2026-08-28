@@ -15,9 +15,13 @@ public partial class HudView : Control
     private readonly List<PanelContainer> _surfacePanels = new();
     private readonly List<PanelContainer> _raisedPanels = new();
     private readonly List<HudFactionChrome> _factionChrome = new();
+    private readonly List<HudStructuralChrome> _structuralChrome = new();
     private readonly List<Button> _allButtons = new();
     private readonly List<ColorRect> _topDividers = new();
     private readonly Button[] _commandButtons = new Button[CommandCapacity];
+    private readonly Label[] _commandIconLabels = new Label[CommandCapacity];
+    private readonly Label[] _commandHotkeyLabels = new Label[CommandCapacity];
+    private readonly Label[] _commandCostLabels = new Label[CommandCapacity];
     private readonly Button[] _groupButtons = new Button[GroupCapacity];
     private readonly ProgressBar[] _groupHealth = new ProgressBar[GroupCapacity];
     private readonly Control[] _queueRows = new Control[QueueCapacity];
@@ -34,6 +38,7 @@ public partial class HudView : Control
     private PanelContainer? _bottomDeck;
     private Control? _bottomDeckContent;
     private HudFactionChrome? _bottomDeckChrome;
+    private HudStructuralChrome? _bottomDeckStructuralChrome;
     private PanelContainer? _minimapPanel;
     private PanelContainer? _selectionPanel;
     private PanelContainer? _commandPanel;
@@ -61,14 +66,15 @@ public partial class HudView : Control
     private ProgressBar? _selectionHealth;
     private Label? _selectionHealthText;
     private Label? _selectionStatus;
-    private VBoxContainer? _groupList;
+    private GridContainer? _groupList;
     private ScrollContainer? _groupScroll;
+    private CenterContainer? _groupCenter;
     private HBoxContainer? _priorityRow;
     private Label? _commandTitle;
     private GridContainer? _commandGrid;
     private Label? _queueHeading;
     private ScrollContainer? _queueScroll;
-    private VBoxContainer? _queueList;
+    private HBoxContainer? _queueList;
     private Button? _alertButton;
     private Label? _objectiveLabel;
     private Label? _tooltipTitle;
@@ -167,14 +173,17 @@ public partial class HudView : Control
             ? $"{frame.TooltipQuick}\n\n{frame.TooltipExpanded}" : frame.TooltipQuick);
         SetText(_energyPopoverLabel, frame.EnergyPopover);
 
+        bool groupedSelection = frame.Selection.Groups.Count > 0;
         if (_selectionHealth is not null)
         {
-            _selectionHealth.Visible = frame.Selection.HealthPercent >= 0;
+            _selectionHealth.Visible = !groupedSelection && frame.Selection.HealthPercent >= 0;
             _selectionHealth.Value = Math.Clamp(frame.Selection.HealthPercent, 0, 100);
             ApplyHealthFill(_selectionHealth, frame.Selection.HealthPercent);
         }
-        if (_selectionHealthText is not null) _selectionHealthText.Visible = frame.Selection.HealthPercent >= 0;
-        if (_priorityRow is not null) _priorityRow.Visible = frame.Selection.ShowPowerPriority;
+        if (_selectionHealthText is not null) _selectionHealthText.Visible = !groupedSelection && frame.Selection.HealthPercent >= 0;
+        if (_selectionSubtitle is not null) _selectionSubtitle.Visible = !groupedSelection;
+        if (_selectionStatus is not null) _selectionStatus.Visible = !groupedSelection;
+        if (_priorityRow is not null) _priorityRow.Visible = !groupedSelection && frame.Selection.ShowPowerPriority;
         for (int i = 0; i < _priorityButtons.Length; i++)
             _priorityButtons[i].ButtonPressed = !frame.Selection.MixedPowerPriority && frame.Selection.PowerPriority == i;
         if (_portraitPanel is not null) _portraitPanel.Visible = _profile.Content.ShowPortrait;
@@ -219,6 +228,7 @@ public partial class HudView : Control
         BuildBottomDeck();
         BuildMinimapRegion();
         BuildSelectionRegion();
+        BuildPortraitRegion();
         BuildCommandRegion();
         BuildTransientRegions();
     }
@@ -230,6 +240,7 @@ public partial class HudView : Control
         _bottomDeckContent = new Control { Name = "BottomDeckContent", MouseFilter = MouseFilterEnum.Ignore };
         _bottomDeck.AddChild(_bottomDeckContent);
         _bottomDeckChrome = DirectChrome(_bottomDeck);
+        _bottomDeckStructuralChrome = DirectStructuralChrome(_bottomDeck);
         _bottomDeckChrome?.MoveToFront();
     }
 
@@ -237,25 +248,25 @@ public partial class HudView : Control
     {
         _topPanel = SurfacePanel("ResourceStrip", false);
         _safeArea!.AddChild(_topPanel);
-        HBoxContainer row = new() { Name = "ResourceRow", Alignment = BoxContainer.AlignmentMode.Center };
+        HBoxContainer row = new() { Name = "ResourceRow", Alignment = BoxContainer.AlignmentMode.End };
         _topPanel.AddChild(row);
-        AddResourceBlock(row, "◆  ORE", out _oreHeading, out _oreValue);
+        AddResourceChip(row, "◆", "ORE", out _oreHeading, out _oreValue);
         AddTopDivider(row);
         Button energyButton = Button("", "EnergyButton");
         energyButton.Flat = true;
         energyButton.SizeFlagsHorizontal = SizeFlags.ExpandFill;
-        energyButton.SizeFlagsStretchRatio = 1.35f;
-        VBoxContainer energy = ResourceBlock("ϟ  ENERGY", out _energyHeading, out _energyValue);
+        energyButton.SizeFlagsStretchRatio = 1.55f;
+        HBoxContainer energy = ResourceChip("ϟ", "ENERGY", out _energyHeading, out _energyValue);
         energyButton.AddChild(energy);
         energyButton.Pressed += () => EnergyDetailsRequested?.Invoke();
         row.AddChild(energyButton);
         AddTopDivider(row);
-        AddResourceBlock(row, "◇  CRYSTALS", out _crystalHeading, out _crystalValue);
+        AddResourceChip(row, "◇", "CRYSTALS", out _crystalHeading, out _crystalValue);
         AddTopDivider(row);
-        AddResourceBlock(row, "▦  OPERATIONS", out _operationsHeading, out _operationsValue);
+        AddResourceChip(row, "▦", "OPERATIONS", out _operationsHeading, out _operationsValue);
         AddTopDivider(row);
-        VBoxContainer mechanic = ResourceBlock("SYSTEM", out _mechanicHeading, out _mechanicValue);
-        mechanic.SizeFlagsStretchRatio = 1.55f;
+        HBoxContainer mechanic = ResourceChip("◈", "SYSTEM", out _mechanicHeading, out _mechanicValue);
+        mechanic.SizeFlagsStretchRatio = 1.8f;
         row.AddChild(mechanic);
         AddTopDivider(row);
         _matchState = Label("MATCH", TextRole.Micro);
@@ -269,28 +280,119 @@ public partial class HudView : Control
     {
         _minimapPanel = SurfacePanel("MinimapRegion", false);
         _bottomDeckContent!.AddChild(_minimapPanel);
-        VBoxContainer box = new();
-        _minimapPanel.AddChild(box);
-        HBoxContainer header = new(); box.AddChild(header);
-        Label title = Label("TACTICAL MAP", TextRole.Heading); title.SizeFlagsHorizontal = SizeFlags.ExpandFill; header.AddChild(title);
-        Label north = Label("N ↑", TextRole.Micro); header.AddChild(north);
-        _minimap = new HudMinimapView { Name = "MinimapSlot", SizeFlagsVertical = SizeFlags.ExpandFill };
+        _minimap = new HudMinimapView
+        {
+            Name = "MinimapSlot", SizeFlagsHorizontal = SizeFlags.ExpandFill,
+            SizeFlagsVertical = SizeFlags.ExpandFill
+        };
         _minimap.Configure(_profile);
         _minimap.CameraRequested += cell => MinimapCameraRequested?.Invoke(cell);
         _minimap.GroundCommandRequested += (cell, queued) => MinimapGroundCommandRequested?.Invoke(cell, queued);
         _minimap.TooltipText = "North-up tactical map. Left-click or drag: camera. Right-click: move/rally. Shift + right-click: queue.";
-        box.AddChild(_minimap);
-        Label legend = Label("● MOBILE   ■ STRUCTURE   ▲ AIR", TextRole.Micro);
-        legend.Name = "MinimapLegend"; legend.HorizontalAlignment = HorizontalAlignment.Center; box.AddChild(legend);
+        _minimapPanel.AddChild(_minimap);
+        Label north = Label("N", TextRole.Micro);
+        north.Name = "MinimapLegend";
+        north.MouseFilter = MouseFilterEnum.Ignore;
+        north.AnchorLeft = 0.82f;
+        north.AnchorRight = 1f;
+        north.AnchorBottom = 0.18f;
+        north.HorizontalAlignment = HorizontalAlignment.Center;
+        north.VerticalAlignment = VerticalAlignment.Center;
+        _minimap.AddChild(north);
     }
 
     private void BuildSelectionRegion()
     {
         _selectionPanel = SurfacePanel("SelectionPanel", false);
         _bottomDeckContent!.AddChild(_selectionPanel);
-        HBoxContainer row = new(); _selectionPanel.AddChild(row);
+        VBoxContainer information = new() { Name = "SelectionInformation", SizeFlagsHorizontal = SizeFlags.ExpandFill };
+        _selectionPanel.AddChild(information);
+        HBoxContainer titleRow = new() { Name = "SelectionHeader" };
+        information.AddChild(titleRow);
+        _selectionTitle = Label("NO SELECTION", TextRole.Heading);
+        _selectionTitle.Name = "SelectionTitle";
+        _selectionTitle.SizeFlagsHorizontal = SizeFlags.ExpandFill;
+        titleRow.AddChild(_selectionTitle);
+        _selectionHealthText = Label(string.Empty, TextRole.Micro);
+        _selectionHealthText.HorizontalAlignment = HorizontalAlignment.Right;
+        titleRow.AddChild(_selectionHealthText);
+        _selectionSubtitle = Label("Select an entity or issue a command.", TextRole.Micro);
+        _selectionSubtitle.TextOverrunBehavior = TextServer.OverrunBehavior.TrimEllipsis;
+        _selectionSubtitle.ClipText = true;
+        information.AddChild(_selectionSubtitle);
+        _selectionHealth = new ProgressBar
+        {
+            Name = "SelectionHealth", MinValue = 0, MaxValue = 100, ShowPercentage = false,
+            CustomMinimumSize = new Vector2(0, 8)
+        };
+        information.AddChild(_selectionHealth);
+        _selectionStatus = Label(string.Empty, TextRole.Body);
+        _selectionStatus.AutowrapMode = TextServer.AutowrapMode.WordSmart;
+        _selectionStatus.MaxLinesVisible = 2;
+        _selectionStatus.TextOverrunBehavior = TextServer.OverrunBehavior.TrimEllipsis;
+        _selectionStatus.ClipText = true;
+        information.AddChild(_selectionStatus);
+        _priorityRow = new HBoxContainer { Name = "ContextualEnergyPriority" };
+        _priorityRow.AddChild(Label("POWER", TextRole.Micro));
+        string[] priorities = { "HIGH", "NORMAL", "LOW" };
+        for (int i = 0; i < priorities.Length; i++)
+        {
+            int priority = i;
+            _priorityButtons[i] = Button(priorities[i], $"Priority{priorities[i]}");
+            _priorityButtons[i].ToggleMode = true;
+            _priorityButtons[i].Pressed += () => PowerPriorityRequested?.Invoke(priority);
+            _priorityRow.AddChild(_priorityButtons[i]);
+        }
+        information.AddChild(_priorityRow);
+
+        _groupScroll = new ScrollContainer
+        {
+            Name = "SelectionGroupScroll", SizeFlagsHorizontal = SizeFlags.ExpandFill,
+            SizeFlagsVertical = SizeFlags.ExpandFill, HorizontalScrollMode = ScrollContainer.ScrollMode.Disabled,
+            VerticalScrollMode = ScrollContainer.ScrollMode.Disabled
+        };
+        information.AddChild(_groupScroll);
+        _groupCenter = new CenterContainer
+        {
+            Name = "SelectionGroupCenter", SizeFlagsHorizontal = SizeFlags.ExpandFill,
+            SizeFlagsVertical = SizeFlags.ExpandFill
+        };
+        _groupScroll.AddChild(_groupCenter);
+        _groupList = new GridContainer
+        {
+            Name = "SelectionTypeGroups", Columns = 4, SizeFlagsHorizontal = SizeFlags.ShrinkCenter,
+            SizeFlagsVertical = SizeFlags.ShrinkCenter
+        };
+        _groupCenter.AddChild(_groupList);
+        for (int i = 0; i < GroupCapacity; i++)
+        {
+            int index = i;
+            VBoxContainer group = new() { Name = $"SelectionGroupCard{i}" };
+            _groupButtons[i] = Button("GROUP", $"SelectionGroup{i}");
+            _groupButtons[i].Alignment = HorizontalAlignment.Center;
+            _groupButtons[i].CustomMinimumSize = new Vector2(142, 52);
+            _groupButtons[i].TextOverrunBehavior = TextServer.OverrunBehavior.TrimEllipsis;
+            _groupButtons[i].ClipText = true;
+            _groupButtons[i].Pressed += () =>
+            {
+                if (index < _frame.Selection.Groups.Count) SelectionGroupRequested?.Invoke(_frame.Selection.Groups[index].Id);
+            };
+            group.AddChild(_groupButtons[i]);
+            _groupHealth[i] = new ProgressBar
+            {
+                MinValue = 0, MaxValue = 100, ShowPercentage = false,
+                CustomMinimumSize = new Vector2(0, 4)
+            };
+            group.AddChild(_groupHealth[i]);
+            _groupList.AddChild(group);
+        }
+    }
+
+    private void BuildPortraitRegion()
+    {
         _portraitPanel = SurfacePanel("PortraitSlot", true);
-        _portraitPanel.CustomMinimumSize = new Vector2(144, 0);
+        _bottomDeckContent!.AddChild(_portraitPanel);
+        _portraitPanel.CustomMinimumSize = new Vector2(132, 0);
         VBoxContainer portraitStack = new() { Name = "TacticalPortraitStack" };
         _portraitPanel.AddChild(portraitStack);
         _portraitView = new HudPortraitView
@@ -309,53 +411,6 @@ public partial class HudView : Control
         _portraitLabel.ClipText = true;
         _portraitLabel.CustomMinimumSize = new Vector2(0, 18);
         portraitStack.AddChild(_portraitLabel);
-        row.AddChild(_portraitPanel);
-
-        VBoxContainer information = new() { Name = "SelectionInformation", SizeFlagsHorizontal = SizeFlags.ExpandFill };
-        row.AddChild(information);
-        _selectionTitle = Label("NO SELECTION", TextRole.Heading); _selectionTitle.Name = "SelectionTitle"; information.AddChild(_selectionTitle);
-        _selectionSubtitle = Label("Select an entity or issue a command.", TextRole.Micro);
-        _selectionSubtitle.AutowrapMode = TextServer.AutowrapMode.WordSmart; information.AddChild(_selectionSubtitle);
-        _selectionHealth = new ProgressBar { Name = "SelectionHealth", MinValue = 0, MaxValue = 100, ShowPercentage = false, CustomMinimumSize = new Vector2(0, 10) };
-        information.AddChild(_selectionHealth);
-        _selectionHealthText = Label(string.Empty, TextRole.Micro); information.AddChild(_selectionHealthText);
-        _selectionStatus = Label(string.Empty, TextRole.Body);
-        _selectionStatus.AutowrapMode = TextServer.AutowrapMode.WordSmart;
-        _selectionStatus.SizeFlagsVertical = SizeFlags.ExpandFill;
-        information.AddChild(_selectionStatus);
-        _priorityRow = new HBoxContainer { Name = "ContextualEnergyPriority" };
-        _priorityRow.AddChild(Label("POWER", TextRole.Micro));
-        string[] priorities = { "HIGH", "NORMAL", "LOW" };
-        for (int i = 0; i < priorities.Length; i++)
-        {
-            int priority = i;
-            _priorityButtons[i] = Button(priorities[i], $"Priority{priorities[i]}");
-            _priorityButtons[i].ToggleMode = true;
-            _priorityButtons[i].Pressed += () => PowerPriorityRequested?.Invoke(priority);
-            _priorityRow.AddChild(_priorityButtons[i]);
-        }
-        information.AddChild(_priorityRow);
-
-        _groupScroll = new ScrollContainer { Name = "SelectionGroupScroll", CustomMinimumSize = new Vector2(216, 0), SizeFlagsVertical = SizeFlags.ExpandFill, HorizontalScrollMode = ScrollContainer.ScrollMode.Disabled };
-        row.AddChild(_groupScroll);
-        _groupList = new VBoxContainer { Name = "SelectionTypeGroups", CustomMinimumSize = new Vector2(200, 0), SizeFlagsHorizontal = SizeFlags.ExpandFill };
-        _groupScroll.AddChild(_groupList);
-        _groupList.AddChild(Label("COMPOSITION", TextRole.Micro));
-        for (int i = 0; i < GroupCapacity; i++)
-        {
-            int index = i;
-            VBoxContainer group = new();
-            _groupButtons[i] = Button("GROUP", $"SelectionGroup{i}");
-            _groupButtons[i].Alignment = HorizontalAlignment.Left;
-            _groupButtons[i].Pressed += () =>
-            {
-                if (index < _frame.Selection.Groups.Count) SelectionGroupRequested?.Invoke(_frame.Selection.Groups[index].Id);
-            };
-            group.AddChild(_groupButtons[i]);
-            _groupHealth[i] = new ProgressBar { MinValue = 0, MaxValue = 100, ShowPercentage = false, CustomMinimumSize = new Vector2(0, 4) };
-            group.AddChild(_groupHealth[i]);
-            _groupList.AddChild(group);
-        }
     }
 
     private void BuildCommandRegion()
@@ -363,18 +418,86 @@ public partial class HudView : Control
         _commandPanel = SurfacePanel("CommandPanel", false);
         _bottomDeckContent!.AddChild(_commandPanel);
         VBoxContainer box = new(); _commandPanel.AddChild(box);
-        HBoxContainer header = new(); box.AddChild(header);
-        _commandTitle = Label("COMMANDS", TextRole.Heading); _commandTitle.Name = "CommandTitle"; _commandTitle.SizeFlagsHorizontal = SizeFlags.ExpandFill; header.AddChild(_commandTitle);
-        Label gridLabel = Label("ORDERS", TextRole.Micro); header.AddChild(gridLabel);
-        _commandGrid = new GridContainer { Name = "CommandGrid", Columns = 3 };
+        _commandTitle = Label(string.Empty, TextRole.Micro);
+        _commandTitle.Name = "CommandTitle";
+        _commandTitle.Visible = false;
+        box.AddChild(_commandTitle);
+        _queueHeading = Label("QUEUE", TextRole.Micro);
+        _queueHeading.Visible = false;
+        box.AddChild(_queueHeading);
+        _queueScroll = new ScrollContainer
+        {
+            Name = "ProductionQueueScroll", CustomMinimumSize = new Vector2(0, 38),
+            HorizontalScrollMode = ScrollContainer.ScrollMode.Auto,
+            VerticalScrollMode = ScrollContainer.ScrollMode.Disabled
+        };
+        box.AddChild(_queueScroll);
+        _queueList = new HBoxContainer { Name = "ProductionQueue", SizeFlagsVertical = SizeFlags.ExpandFill };
+        _queueScroll.AddChild(_queueList);
+        for (int i = 0; i < QueueCapacity; i++)
+        {
+            VBoxContainer queueRow = new() { CustomMinimumSize = new Vector2(104, 0) };
+            _queueRows[i] = queueRow;
+            HBoxContainer line = new(); queueRow.AddChild(line);
+            _queueLabels[i] = Label(string.Empty, TextRole.Micro);
+            _queueLabels[i].SizeFlagsHorizontal = SizeFlags.ExpandFill;
+            _queueLabels[i].TextOverrunBehavior = TextServer.OverrunBehavior.TrimEllipsis;
+            _queueLabels[i].ClipText = true;
+            line.AddChild(_queueLabels[i]);
+            Button cancel = Button("×", $"CancelQueue{i}");
+            cancel.CustomMinimumSize = new Vector2(22, 20);
+            cancel.Disabled = true;
+            // Queue cancellation is not implemented until T073. Do not spend
+            // scarce command-card width on a dead control; the retained node
+            // can become visible when the actual interaction exists.
+            cancel.Visible = false;
+            cancel.TooltipText = "Cancel this queued item.";
+            line.AddChild(cancel);
+            _queueProgress[i] = new ProgressBar
+            {
+                MinValue = 0, MaxValue = 100, ShowPercentage = false,
+                CustomMinimumSize = new Vector2(0, 4)
+            };
+            queueRow.AddChild(_queueProgress[i]);
+            _queueList.AddChild(queueRow);
+        }
+        _commandGrid = new GridContainer
+        {
+            Name = "CommandGrid", Columns = 4, SizeFlagsHorizontal = SizeFlags.ExpandFill,
+            SizeFlagsVertical = SizeFlags.ExpandFill
+        };
         box.AddChild(_commandGrid);
         for (int i = 0; i < CommandCapacity; i++)
         {
             int index = i;
             _commandButtons[i] = Button("—", $"Command{i}");
-            _commandButtons[i].CustomMinimumSize = new Vector2(0, 30);
+            _commandButtons[i].CustomMinimumSize = new Vector2(58, 40);
             _commandButtons[i].SizeFlagsHorizontal = SizeFlags.ExpandFill;
-            _commandButtons[i].Alignment = HorizontalAlignment.Left;
+            _commandButtons[i].SizeFlagsVertical = SizeFlags.ExpandFill;
+            _commandButtons[i].ToggleMode = true;
+            _commandButtons[i].ClipContents = true;
+            _commandButtons[i].Text = string.Empty;
+            _commandIconLabels[i] = CommandOverlayLabel("◆", TextRole.Heading);
+            _commandIconLabels[i].SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
+            _commandIconLabels[i].HorizontalAlignment = HorizontalAlignment.Center;
+            _commandIconLabels[i].VerticalAlignment = VerticalAlignment.Center;
+            _commandButtons[i].AddChild(_commandIconLabels[i]);
+            _commandHotkeyLabels[i] = CommandOverlayLabel(string.Empty, TextRole.Micro);
+            _commandHotkeyLabels[i].AnchorLeft = 0.68f;
+            _commandHotkeyLabels[i].AnchorRight = 1f;
+            _commandHotkeyLabels[i].AnchorBottom = 0.42f;
+            _commandHotkeyLabels[i].HorizontalAlignment = HorizontalAlignment.Center;
+            _commandHotkeyLabels[i].VerticalAlignment = VerticalAlignment.Center;
+            _commandButtons[i].AddChild(_commandHotkeyLabels[i]);
+            _commandCostLabels[i] = CommandOverlayLabel(string.Empty, TextRole.Micro);
+            _commandCostLabels[i].AnchorTop = 0.70f;
+            _commandCostLabels[i].AnchorRight = 1f;
+            _commandCostLabels[i].AnchorBottom = 1f;
+            _commandCostLabels[i].HorizontalAlignment = HorizontalAlignment.Center;
+            _commandCostLabels[i].VerticalAlignment = VerticalAlignment.Center;
+            _commandCostLabels[i].TextOverrunBehavior = TextServer.OverrunBehavior.TrimEllipsis;
+            _commandCostLabels[i].ClipText = true;
+            _commandButtons[i].AddChild(_commandCostLabels[i]);
             _commandButtons[i].Pressed += () =>
             {
                 if (index >= _frame.Commands.Count) return;
@@ -382,25 +505,6 @@ public partial class HudView : Control
                 CommandRequested?.Invoke(command.Id, command.QueueFive && Input.IsKeyPressed(Key.Shift));
             };
             _commandGrid.AddChild(_commandButtons[i]);
-        }
-        _queueHeading = Label("QUEUE", TextRole.Micro); box.AddChild(_queueHeading);
-        _queueScroll = new ScrollContainer { Name = "ProductionQueueScroll", CustomMinimumSize = new Vector2(0, 44), SizeFlagsVertical = SizeFlags.ExpandFill, HorizontalScrollMode = ScrollContainer.ScrollMode.Disabled };
-        box.AddChild(_queueScroll);
-        _queueList = new VBoxContainer { Name = "ProductionQueue", SizeFlagsHorizontal = SizeFlags.ExpandFill }; _queueScroll.AddChild(_queueList);
-        for (int i = 0; i < QueueCapacity; i++)
-        {
-            VBoxContainer queueRow = new();
-            _queueRows[i] = queueRow;
-            HBoxContainer line = new(); queueRow.AddChild(line);
-            _queueLabels[i] = Label(string.Empty, TextRole.Micro); _queueLabels[i].SizeFlagsHorizontal = SizeFlags.ExpandFill; line.AddChild(_queueLabels[i]);
-            Button cancel = Button("×", $"CancelQueue{i}");
-            cancel.CustomMinimumSize = new Vector2(26, 22);
-            cancel.Disabled = true;
-            cancel.TooltipText = "Cancel this queued item.";
-            line.AddChild(cancel);
-            _queueProgress[i] = new ProgressBar { MinValue = 0, MaxValue = 100, ShowPercentage = false, CustomMinimumSize = new Vector2(0, 4) };
-            queueRow.AddChild(_queueProgress[i]);
-            _queueList.AddChild(queueRow);
         }
     }
 
@@ -419,7 +523,7 @@ public partial class HudView : Control
         _alertPanel.AddChild(_alertButton);
 
         _eventPanel = SurfacePanel("EventFeed", false); _safeArea.AddChild(_eventPanel);
-        VBoxContainer eventBox = new(); _eventPanel.AddChild(eventBox); eventBox.AddChild(Label("EVENT FEED", TextRole.Micro));
+        VBoxContainer eventBox = new(); _eventPanel.AddChild(eventBox);
         for (int i = 0; i < EventCapacity; i++)
         {
             _eventLabels[i] = Label(string.Empty, TextRole.Micro);
@@ -457,7 +561,7 @@ public partial class HudView : Control
 
     private void LayoutPanels()
     {
-        if (_safeArea is null || _topPanel is null || _bottomDeck is null || _bottomDeckContent is null || _minimapPanel is null || _selectionPanel is null || _commandPanel is null || _alertPanel is null ||
+        if (_safeArea is null || _topPanel is null || _bottomDeck is null || _bottomDeckContent is null || _minimapPanel is null || _selectionPanel is null || _portraitPanel is null || _commandPanel is null || _alertPanel is null ||
             _eventPanel is null || _objectivePanel is null || _tooltipPanel is null || _energyPopover is null) return;
         float safeInset = (100f - _profile.Layout.SafeAreaPercent) / 200f;
         _safeArea.AnchorLeft = safeInset; _safeArea.AnchorRight = 1f - safeInset;
@@ -465,76 +569,83 @@ public partial class HudView : Control
         _safeArea.OffsetLeft = _safeArea.OffsetRight = _safeArea.OffsetTop = _safeArea.OffsetBottom = 0f;
         Vector2 area = _safeArea.Size;
         if (area.X <= 1f || area.Y <= 1f) return;
-        float scale = _profile.Layout.UiScale;
+        float scale = ResponsiveScale();
         float gap = _profile.Layout.PanelGap * scale;
-        float sectionGap = Mathf.Clamp(gap * 0.35f, 2f, 6f);
+        float sectionGap = Mathf.Clamp(gap * 0.48f, 2f, 7f);
         float topHeight = _profile.Layout.TopStripHeight * scale;
         float requestedBottomHeight = _profile.Layout.BottomRegionHeight * scale;
-        float availableBottomHeight = Math.Max(120f, area.Y - topHeight - gap * 2f);
+        float availableBottomHeight = Math.Max(110f, area.Y - topHeight - gap * 2f);
         float bottomHeight = Math.Min(requestedBottomHeight, availableBottomHeight);
-        float sectionMinimumHeight = Math.Max(_minimapPanel.GetCombinedMinimumSize().Y,
-            Math.Max(_selectionPanel.GetCombinedMinimumSize().Y, _commandPanel.GetCombinedMinimumSize().Y));
-        bottomHeight = Math.Min(availableBottomHeight, Math.Max(bottomHeight, sectionMinimumHeight));
-        float minimapWidth = Math.Min(
-            Math.Max(_profile.Layout.MinimapSize * scale, _minimapPanel.GetCombinedMinimumSize().X),
-            area.X * 0.24f);
-        float commandWidth = Math.Min(
-            Math.Max(_profile.Layout.CommandPanelWidth * scale, _commandPanel.GetCombinedMinimumSize().X),
-            area.X * 0.35f);
-        float topWidth = Math.Min(area.X, 1560f * scale);
-        SetRect(_topPanel, new Vector2((area.X - topWidth) * 0.5f, 0f), new Vector2(topWidth, topHeight));
-        float desiredDeckWidth = minimapWidth + commandWidth + _profile.Layout.SelectionMaxWidth * scale + sectionGap * 2f;
-        float deckWidth = Math.Min(area.X, Math.Max(minimapWidth + commandWidth + 300f * scale + sectionGap * 2f, desiredDeckWidth));
-        float deckX = (area.X - deckWidth) * 0.5f;
+        float minimapWidth = Mathf.Clamp(_profile.Layout.MinimapSize * scale,
+            bottomHeight * 0.82f, Math.Min(area.X * 0.22f, bottomHeight * 1.12f));
+        float commandWidth = Mathf.Clamp(_profile.Layout.CommandPanelWidth * scale,
+            214f * scale, Math.Min(area.X * 0.27f, 330f * scale));
+        float portraitWidth = _portraitPanel.Visible
+            ? Mathf.Clamp(142f * scale, 92f * scale, Math.Min(area.X * 0.13f, 162f * scale))
+            : 0f;
+        float topWidth = Math.Min(area.X * 0.82f, 940f * scale);
+        SetRect(_topPanel, new Vector2(area.X - topWidth, 0f), new Vector2(topWidth, topHeight));
+        float deckWidth = area.X;
+        float deckX = 0f;
         float deckY = area.Y - bottomHeight;
-        float selectionWidth = Math.Max(280f, deckWidth - minimapWidth - commandWidth - sectionGap * 2f);
+        int gapCount = _portraitPanel.Visible ? 3 : 2;
+        float availableSelectionWidth = Math.Max(250f * scale,
+            deckWidth - minimapWidth - portraitWidth - commandWidth - sectionGap * gapCount);
+        float selectionWidth = Math.Min(availableSelectionWidth, _profile.Layout.SelectionMaxWidth * scale);
+        float bridgeWidth = Math.Max(0f, availableSelectionWidth - selectionWidth);
         SetRect(_bottomDeck, new Vector2(deckX, deckY), new Vector2(deckWidth, bottomHeight));
         SetRect(_bottomDeckContent, Vector2.Zero, new Vector2(deckWidth, bottomHeight));
         SetRect(_minimapPanel, Vector2.Zero, new Vector2(minimapWidth, bottomHeight));
         SetRect(_selectionPanel, new Vector2(minimapWidth + sectionGap, 0f), new Vector2(selectionWidth, bottomHeight));
+        float portraitX = minimapWidth + sectionGap + selectionWidth + bridgeWidth + sectionGap;
+        SetRect(_portraitPanel, new Vector2(portraitX, 0f), new Vector2(portraitWidth, bottomHeight));
         SetRect(_commandPanel, new Vector2(deckWidth - commandWidth, 0f), new Vector2(commandWidth, bottomHeight));
         _bottomDeckChrome?.SetJunctions((minimapWidth + sectionGap * 0.5f) / deckWidth,
             (deckWidth - commandWidth - sectionGap * 0.5f) / deckWidth);
+        _bottomDeckStructuralChrome?.SetJunctions(
+            (minimapWidth + sectionGap * 0.5f) / deckWidth,
+            (minimapWidth + sectionGap + selectionWidth + sectionGap * 0.5f) / deckWidth,
+            (portraitX - sectionGap * 0.5f) / deckWidth,
+            (deckWidth - commandWidth - sectionGap * 0.5f) / deckWidth);
 
-        SetRect(_alertPanel, new Vector2(deckX, deckY - 52f * scale - gap), new Vector2(Math.Min(deckWidth * 0.42f, Math.Max(minimapWidth, 390f * scale)), 52f * scale));
-        float eventHeight = Math.Max(96f * scale, _eventPanel.GetCombinedMinimumSize().Y);
+        float alertHeight = 44f * scale;
+        SetRect(_alertPanel, new Vector2(deckX, deckY - alertHeight - gap),
+            new Vector2(Math.Min(deckWidth * 0.38f, Math.Max(minimapWidth, 390f * scale)), alertHeight));
+        float eventHeight = Math.Max(76f * scale, _eventPanel.GetCombinedMinimumSize().Y);
         float tooltipHeight = Math.Max(196f * scale, _tooltipPanel.GetCombinedMinimumSize().Y);
         float commandX = deckX + deckWidth - commandWidth;
         float topOverlayLimit = topHeight + gap;
         float overlayBottom = deckY - gap;
         float availableStackHeight = Math.Max(0f, overlayBottom - topOverlayLimit);
-        if (_tooltipPanel.Visible && _eventPanel.Visible)
-        {
-            float desiredStackHeight = eventHeight + sectionGap + tooltipHeight;
-            if (desiredStackHeight > availableStackHeight)
-            {
-                float overflow = desiredStackHeight - availableStackHeight;
-                float reducibleTooltip = Math.Max(0f, tooltipHeight - 120f * scale);
-                float tooltipReduction = Math.Min(overflow, reducibleTooltip);
-                tooltipHeight -= tooltipReduction;
-                overflow -= tooltipReduction;
-                eventHeight = Math.Max(72f * scale, eventHeight - overflow);
-            }
-        }
-        else if (_tooltipPanel.Visible) tooltipHeight = Math.Min(tooltipHeight, availableStackHeight);
-        else if (_eventPanel.Visible) eventHeight = Math.Min(eventHeight, availableStackHeight);
+        tooltipHeight = Math.Min(tooltipHeight, availableStackHeight);
         float tooltipY = Math.Max(topOverlayLimit, overlayBottom - tooltipHeight);
-        float eventY = _tooltipPanel.Visible
-            ? Math.Max(topOverlayLimit, tooltipY - eventHeight - sectionGap)
-            : Math.Max(topOverlayLimit, overlayBottom - eventHeight);
-        SetRect(_eventPanel, new Vector2(commandX, eventY), new Vector2(commandWidth, eventHeight));
-        SetRect(_objectivePanel, new Vector2(area.X - 360f * scale, topHeight + gap), new Vector2(360f * scale, 88f * scale));
+        float leftOverlayBottom = _alertPanel.Visible ? deckY - alertHeight - gap * 2f : overlayBottom;
+        float eventY = Math.Max(topOverlayLimit, leftOverlayBottom - eventHeight);
+        SetRect(_eventPanel, new Vector2(deckX, eventY),
+            new Vector2(Math.Min(area.X * 0.36f, 480f * scale), eventHeight));
+        SetRect(_objectivePanel, new Vector2(0f, topHeight + gap),
+            new Vector2(Math.Min(area.X * 0.38f, 390f * scale), 82f * scale));
         SetRect(_tooltipPanel, new Vector2(commandX, tooltipY), new Vector2(commandWidth, tooltipHeight));
-        SetRect(_energyPopover, new Vector2((area.X - 390f * scale) * 0.5f, topHeight + gap), new Vector2(390f * scale, 184f * scale));
-        if (_portraitPanel is not null) _portraitPanel.CustomMinimumSize = new Vector2(144f * scale, 0f);
-        if (_portraitView is not null) _portraitView.CustomMinimumSize = new Vector2(128f * scale, 106f * scale);
-        if (_groupScroll is not null) _groupScroll.CustomMinimumSize = new Vector2(216f * scale, 0f);
-        if (_groupList is not null) _groupList.CustomMinimumSize = new Vector2(200f * scale, 0f);
+        float popoverWidth = Math.Min(390f * scale, area.X * 0.42f);
+        SetRect(_energyPopover, new Vector2(area.X - popoverWidth, topHeight + gap),
+            new Vector2(popoverWidth, 174f * scale));
+        _portraitPanel.CustomMinimumSize = Vector2.Zero;
+        if (_portraitView is not null) _portraitView.CustomMinimumSize = new Vector2(0f, 96f * scale);
+        if (_groupScroll is not null) _groupScroll.CustomMinimumSize = Vector2.Zero;
+        if (_groupCenter is not null) _groupCenter.CustomMinimumSize = Vector2.Zero;
+        if (_groupList is not null) _groupList.CustomMinimumSize = Vector2.Zero;
+        for (int i = 0; i < _groupButtons.Length; i++)
+            _groupButtons[i].CustomMinimumSize = new Vector2(142f * scale, 52f * scale);
+        for (int i = 0; i < _commandButtons.Length; i++)
+            _commandButtons[i].CustomMinimumSize = new Vector2(58f * scale, 38f * scale);
+        if (_queueScroll is not null) _queueScroll.CustomMinimumSize = new Vector2(0f, 36f * scale);
+        for (int i = 0; i < _queueRows.Length; i++)
+            _queueRows[i].CustomMinimumSize = new Vector2(98f * scale, 0f);
     }
 
     private void ApplyTypography()
     {
-        float requestedScale = _profile.Layout.UiScale * _profile.Typography.TextScale;
+        float requestedScale = ResponsiveScale() * _profile.Typography.TextScale;
         int headingSize = RoundFont(_profile.Typography.HeadingSize * requestedScale);
         int bodySize = RoundFont(_profile.Typography.BodySize * requestedScale);
         int microSize = RoundFont(_profile.Typography.MicroSize * requestedScale);
@@ -542,6 +653,12 @@ public partial class HudView : Control
         for (int i = 0; i < _bodyLabels.Count; i++) _bodyLabels[i].AddThemeFontSizeOverride("font_size", bodySize);
         for (int i = 0; i < _microLabels.Count; i++) _microLabels[i].AddThemeFontSizeOverride("font_size", microSize);
         for (int i = 0; i < _allButtons.Count; i++) _allButtons[i].AddThemeFontSizeOverride("font_size", microSize);
+        for (int i = 0; i < _commandIconLabels.Length; i++)
+        {
+            _commandIconLabels[i]?.AddThemeFontSizeOverride("font_size", Math.Max(18, RoundFont(25f * requestedScale)));
+            _commandHotkeyLabels[i]?.AddThemeFontSizeOverride("font_size", Math.Max(8, RoundFont(9f * requestedScale)));
+            _commandCostLabels[i]?.AddThemeFontSizeOverride("font_size", Math.Max(8, RoundFont(8f * requestedScale)));
+        }
         if (_oreHeading is not null) _oreHeading.Visible = _profile.Content.ShowResourceLabels;
         if (_energyHeading is not null) _energyHeading.Visible = _profile.Content.ShowResourceLabels;
         if (_crystalHeading is not null) _crystalHeading.Visible = _profile.Content.ShowResourceLabels;
@@ -559,14 +676,18 @@ public partial class HudView : Control
         Color displayAccent = DisplayAccent();
         Color secondaryAccent = SecondaryAccent();
         Color factionSurface = HudFactionChrome.SurfaceForFaction(_profile.ArtSkin.Faction);
-        float factionFill = _profile.ArtSkin.Enabled ? 0.16f * _profile.ArtSkin.ChromeIntensity : 0f;
+        bool legacyFinish = _profile.ArtSkin.Enabled && _profile.ArtSkin.Finish == HudArtFinish.LegacyFrames;
+        bool structuralFinish = _profile.ArtSkin.Enabled && _profile.ArtSkin.Finish == HudArtFinish.StructuralConsole;
+        float factionFill = legacyFinish
+            ? 0.16f * _profile.ArtSkin.ChromeIntensity
+            : structuralFinish ? 0.24f * _profile.ArtSkin.ChromeIntensity : 0f;
         Color text = Parse(_profile.Colors.TextPrimary, Colors.White);
         Color muted = Parse(_profile.Colors.TextMuted, new Color("aab4b8"));
         for (int i = 0; i < _surfacePanels.Count; i++)
         {
             PanelContainer panel = _surfacePanels[i];
             bool chromePanel = DirectChrome(panel) is not null;
-            bool suppressGenericBorder = _profile.ArtSkin.Enabled && chromePanel;
+            bool suppressGenericBorder = (legacyFinish || structuralFinish) && chromePanel;
             if (panel == _bottomDeck)
                 panel.AddThemeStyleboxOverride("panel", Style(recessed.Lerp(factionSurface, factionFill * 1.25f), Colors.Transparent, 0, true));
             else if (panel == _minimapPanel || panel == _selectionPanel || panel == _commandPanel)
@@ -574,8 +695,10 @@ public partial class HudView : Control
                 Color sectionBackground = panel == _selectionPanel ? background.Lightened(0.025f) : recessed.Lightened(0.025f);
                 sectionBackground = sectionBackground.Lerp(factionSurface,
                     factionFill * (panel == _selectionPanel ? 1.15f : 0.85f));
-                panel.AddThemeStyleboxOverride("panel", SectionStyle(sectionBackground,
-                    new Color(secondaryAccent, 0.46f), panel == _minimapPanel, panel == _commandPanel));
+                StyleBoxFlat section = SectionStyle(sectionBackground,
+                    new Color(secondaryAccent, 0.46f), panel == _minimapPanel, panel == _commandPanel);
+                if (structuralFinish) section.BgColor = new Color(section.BgColor, Math.Min(0.80f, section.BgColor.A));
+                panel.AddThemeStyleboxOverride("panel", section);
             }
             else
             {
@@ -588,7 +711,23 @@ public partial class HudView : Control
             }
         }
         for (int i = 0; i < _raisedPanels.Count; i++)
-            _raisedPanels[i].AddThemeStyleboxOverride("panel", Style(raised, displayAccent));
+        {
+            StyleBoxFlat raisedStyle = Style(raised, displayAccent);
+            if (structuralFinish) raisedStyle.BgColor = new Color(raisedStyle.BgColor, Math.Min(0.82f, raisedStyle.BgColor.A));
+            _raisedPanels[i].AddThemeStyleboxOverride("panel", raisedStyle);
+        }
+        if (_eventPanel is not null)
+        {
+            StyleBoxFlat toastStyle = Style(recessed, Colors.Transparent, 7, true);
+            toastStyle.BgColor = new Color(recessed, 0.62f);
+            _eventPanel.AddThemeStyleboxOverride("panel", toastStyle);
+        }
+        if (_objectivePanel is not null)
+        {
+            StyleBoxFlat objectiveStyle = Style(recessed, Colors.Transparent, 7, true);
+            objectiveStyle.BgColor = new Color(recessed, 0.52f);
+            _objectivePanel.AddThemeStyleboxOverride("panel", objectiveStyle);
+        }
         if (_portraitPanel is not null)
             _portraitPanel.AddThemeStyleboxOverride("panel", Style(
                 recessed.Lightened(0.03f).Lerp(factionSurface, factionFill * 1.35f), secondaryAccent));
@@ -599,12 +738,24 @@ public partial class HudView : Control
             PanelContainer panel = chrome.GetParent<PanelContainer>();
             int expansion = ChromeContentPadding(panel) ?? _profile.Surface.InnerPadding;
             chrome.Configure(_profile.ArtSkin.Faction, chrome.Role,
-                _profile.ArtSkin.Enabled ? _profile.ArtSkin.ChromeIntensity : 0f,
+                legacyFinish ? _profile.ArtSkin.ChromeIntensity : 0f,
                 _profile.ArtSkin.ChromeScale, expansion);
+        }
+        for (int i = 0; i < _structuralChrome.Count; i++)
+        {
+            HudStructuralChrome chrome = _structuralChrome[i];
+            chrome.Configure(_profile.ArtSkin.Faction, chrome.Role,
+                structuralFinish ? _profile.ArtSkin.ChromeIntensity : 0f,
+                _profile.ArtSkin.ChromeScale, _profile.Surface.InnerPadding);
         }
         for (int i = 0; i < _headingLabels.Count; i++) _headingLabels[i].AddThemeColorOverride("font_color", displayAccent);
         for (int i = 0; i < _bodyLabels.Count; i++) _bodyLabels[i].AddThemeColorOverride("font_color", text);
         for (int i = 0; i < _microLabels.Count; i++) _microLabels[i].AddThemeColorOverride("font_color", muted);
+        for (int i = 0; i < _commandHotkeyLabels.Length; i++)
+        {
+            _commandHotkeyLabels[i]?.AddThemeColorOverride("font_color", displayAccent);
+            _commandCostLabels[i]?.AddThemeColorOverride("font_color", Parse(_profile.Colors.Warning, Colors.Orange));
+        }
         for (int i = 0; i < _topDividers.Count; i++)
             _topDividers[i].Color = new Color(secondaryAccent, 0.32f);
         StyleBoxFlat normalButton = Style(raised, muted);
@@ -678,7 +829,7 @@ public partial class HudView : Control
 
     private void ApplyContainerSpacing()
     {
-        int separation = _profile.Surface.Separation;
+        int separation = Math.Max(2, Mathf.RoundToInt(_profile.Surface.Separation * ResponsiveScale()));
         foreach (Node node in GetChildrenRecursive(this))
         {
             if (node is BoxContainer box) box.AddThemeConstantOverride("separation", separation);
@@ -698,7 +849,8 @@ public partial class HudView : Control
             _groupButtons[i].GetParent<CanvasItem>().Visible = visible;
             if (!visible) continue;
             HudSelectionGroupFrame group = groups[i];
-            _groupButtons[i].Text = $"▰  {group.Name} ×{group.Count}\n{group.StateSummary}";
+            _groupButtons[i].Text = $"▰ {group.Name}\n×{group.Count}";
+            _groupButtons[i].TooltipText = group.StateSummary;
             _groupHealth[i].Value = Math.Clamp(group.AverageHealthPercent, 0, 100);
             ApplyHealthFill(_groupHealth[i], group.AverageHealthPercent);
         }
@@ -711,13 +863,29 @@ public partial class HudView : Control
         {
             Button button = _commandButtons[i];
             bool exists = i < commands.Count && commands[i].Visible;
-            button.Visible = exists;
-            if (!exists) continue;
+            button.Visible = true;
+            if (!exists)
+            {
+                button.Disabled = true;
+                button.ButtonPressed = false;
+                button.TooltipText = string.Empty;
+                button.Modulate = new Color(1f, 1f, 1f, 0.34f);
+                _commandIconLabels[i].Text = string.Empty;
+                _commandHotkeyLabels[i].Text = string.Empty;
+                _commandCostLabels[i].Text = string.Empty;
+                continue;
+            }
             HudCommandFrame command = commands[i];
-            string hotkey = _profile.Content.ShowHotkeys && command.Hotkey.Length > 0 ? $"  [{command.Hotkey}]" : string.Empty;
-            string cost = _profile.Content.ShowCommandCosts && command.Cost.Length > 0 ? $"\n{command.Cost}" : string.Empty;
-            button.Text = $"{CommandGlyph(command.Id)}  {command.Name}{hotkey}{cost}";
-            button.TooltipText = command.Tooltip;
+            button.Modulate = Colors.White;
+            button.Text = string.Empty;
+            _commandIconLabels[i].Text = CommandGlyph(command.Id);
+            _commandHotkeyLabels[i].Text = _profile.Content.ShowHotkeys && command.Hotkey.Length > 0
+                ? command.Hotkey.ToUpperInvariant()
+                : string.Empty;
+            _commandCostLabels[i].Text = _profile.Content.ShowCommandCosts ? command.Cost : string.Empty;
+            button.TooltipText = command.Cost.Length > 0
+                ? $"{command.Name} · {command.Cost}\n{command.Tooltip}"
+                : $"{command.Name}\n{command.Tooltip}";
             button.Disabled = !command.Enabled;
             button.ButtonPressed = command.Active;
         }
@@ -740,12 +908,14 @@ public partial class HudView : Control
             _queueRows[i].Visible = visible;
             if (!visible) continue;
             HudQueueFrame item = queue[i];
-            _queueLabels[i].Text = $"{i + 1}. {item.Name}{(item.Count > 1 ? $" ×{item.Count}" : string.Empty)}{(item.Paused ? "  PAUSED" : string.Empty)}";
+            string count = item.Count > 1 ? $" ×{item.Count}" : string.Empty;
+            _queueLabels[i].Text = $"{item.Name.ToUpperInvariant()}{count}{(item.Paused ? " · PAUSED" : string.Empty)}";
+            _queueRows[i].TooltipText = $"Queue {i + 1}: {item.Name}{count}{(item.Paused ? " · paused" : string.Empty)}";
             _queueProgress[i].Value = item.ProgressPercent;
         }
         bool hasQueue = queue.Count > 0;
         if (_queueList is not null) _queueList.Visible = hasQueue;
-        if (_queueHeading is not null) _queueHeading.Visible = hasQueue;
+        if (_queueHeading is not null) _queueHeading.Visible = false;
         if (_queueScroll is not null) _queueScroll.Visible = hasQueue;
     }
 
@@ -800,11 +970,11 @@ public partial class HudView : Control
         _ => Parse(_profile.Colors.TextMuted, Colors.Gray)
     };
 
-    private Color DisplayAccent() => _profile.ArtSkin.Enabled
+    private Color DisplayAccent() => _profile.ArtSkin.Enabled && _profile.ArtSkin.Finish != HudArtFinish.Clean
         ? HudFactionChrome.AccentForFaction(_profile.ArtSkin.Faction)
         : Parse(_profile.Colors.Accent, new Color("e6ad28"));
 
-    private Color SecondaryAccent() => _profile.ArtSkin.Enabled
+    private Color SecondaryAccent() => _profile.ArtSkin.Enabled && _profile.ArtSkin.Finish != HudArtFinish.Clean
         ? HudFactionChrome.SecondaryAccentForFaction(_profile.ArtSkin.Faction)
         : Parse(_profile.Colors.Selection, new Color("5fc4d8"));
 
@@ -820,6 +990,16 @@ public partial class HudView : Control
         };
         if (chromeRole.HasValue)
         {
+            HudStructuralChrome structural = new()
+            {
+                Name = $"{name}StructuralChrome",
+                MouseFilter = MouseFilterEnum.Ignore,
+                CustomMinimumSize = Vector2.Zero
+            };
+            structural.Configure(_profile.ArtSkin.Faction, chromeRole.Value,
+                0f, _profile.ArtSkin.ChromeScale, _profile.Surface.InnerPadding);
+            panel.AddChild(structural);
+            _structuralChrome.Add(structural);
             HudFactionChrome chrome = new()
             {
                 Name = $"{name}FactionChrome",
@@ -834,9 +1014,9 @@ public partial class HudView : Control
         return panel;
     }
 
-    private void AddResourceBlock(Container parent, string title, out Label heading, out Label value)
+    private void AddResourceChip(Container parent, string glyph, string title, out Label heading, out Label value)
     {
-        VBoxContainer box = ResourceBlock(title, out heading, out value);
+        HBoxContainer box = ResourceChip(glyph, title, out heading, out value);
         parent.AddChild(box);
     }
 
@@ -853,23 +1033,39 @@ public partial class HudView : Control
         parent.AddChild(divider);
     }
 
-    private VBoxContainer ResourceBlock(string title, out Label heading, out Label value)
+    private HBoxContainer ResourceChip(string glyph, string title, out Label heading, out Label value)
     {
-        VBoxContainer box = new()
+        HBoxContainer box = new()
         {
             SizeFlagsHorizontal = SizeFlags.ExpandFill,
             SizeFlagsStretchRatio = 1f,
+            Alignment = BoxContainer.AlignmentMode.Center,
             MouseFilter = MouseFilterEnum.Ignore
         };
+        Label icon = Label(glyph, TextRole.Body);
+        icon.HorizontalAlignment = HorizontalAlignment.Center;
+        icon.VerticalAlignment = VerticalAlignment.Center;
+        icon.MouseFilter = MouseFilterEnum.Ignore;
+        box.AddChild(icon);
         heading = Label(title, TextRole.Micro);
-        heading.HorizontalAlignment = HorizontalAlignment.Center;
+        heading.HorizontalAlignment = HorizontalAlignment.Left;
+        heading.VerticalAlignment = VerticalAlignment.Center;
         heading.MouseFilter = MouseFilterEnum.Ignore;
         box.AddChild(heading);
         value = Label("—", TextRole.Body);
-        value.HorizontalAlignment = HorizontalAlignment.Center;
+        value.HorizontalAlignment = HorizontalAlignment.Right;
+        value.VerticalAlignment = VerticalAlignment.Center;
+        value.SizeFlagsHorizontal = SizeFlags.ExpandFill;
         value.MouseFilter = MouseFilterEnum.Ignore;
         box.AddChild(value);
         return box;
+    }
+
+    private Label CommandOverlayLabel(string text, TextRole role)
+    {
+        Label label = Label(text, role);
+        label.MouseFilter = MouseFilterEnum.Ignore;
+        return label;
     }
 
     private Label Label(string text, TextRole role)
@@ -893,7 +1089,7 @@ public partial class HudView : Control
 
     private int? ChromeContentPadding(PanelContainer panel)
     {
-        if (!_profile.ArtSkin.Enabled || DirectChrome(panel) is null) return null;
+        if (!_profile.ArtSkin.Enabled || _profile.ArtSkin.Finish != HudArtFinish.LegacyFrames || DirectChrome(panel) is null) return null;
         if (panel.Name == "BottomDeck") return 0;
         float basePadding = 10f;
         return Math.Max(_profile.Surface.InnerPadding,
@@ -903,11 +1099,15 @@ public partial class HudView : Control
     private static HudFactionChrome? DirectChrome(PanelContainer panel) =>
         panel.FindChild($"{panel.Name}FactionChrome", false, false) as HudFactionChrome;
 
+    private static HudStructuralChrome? DirectStructuralChrome(PanelContainer panel) =>
+        panel.FindChild($"{panel.Name}StructuralChrome", false, false) as HudStructuralChrome;
+
     private StyleBoxFlat Style(Color background, Color border, int? paddingOverride = null, bool suppressBorder = false)
     {
-        int radius = _profile.Surface.CornerRadius;
-        int borderWidth = suppressBorder ? 0 : _profile.Surface.BorderWidth;
-        int padding = paddingOverride ?? _profile.Surface.InnerPadding;
+        float scale = ResponsiveScale();
+        int radius = Mathf.RoundToInt(_profile.Surface.CornerRadius * scale);
+        int borderWidth = suppressBorder ? 0 : Math.Max(1, Mathf.RoundToInt(_profile.Surface.BorderWidth * scale));
+        int padding = Mathf.RoundToInt((paddingOverride ?? _profile.Surface.InnerPadding) * scale);
         return new StyleBoxFlat
         {
             BgColor = new Color(background, _profile.Surface.PanelOpacity), BorderColor = border,
@@ -919,26 +1119,24 @@ public partial class HudView : Control
 
     private StyleBoxFlat SectionStyle(Color background, Color divider, bool outerLeft, bool outerRight)
     {
-        int padding = _profile.Surface.InnerPadding;
-        const int outerMargin = 30;
-        const int innerMargin = 14;
-        const int topMargin = 29;
-        const int bottomMargin = 27;
+        float scale = ResponsiveScale();
+        int padding = Mathf.RoundToInt(_profile.Surface.InnerPadding * scale);
+        int outerMargin = Mathf.RoundToInt(20f * scale);
+        int innerMargin = Mathf.RoundToInt(10f * scale);
+        int topMargin = Mathf.RoundToInt(14f * scale);
+        int bottomMargin = Mathf.RoundToInt(13f * scale);
         return new StyleBoxFlat
         {
             BgColor = new Color(background, _profile.Surface.PanelOpacity),
             BorderColor = divider,
             BorderWidthLeft = 1, BorderWidthTop = 1, BorderWidthRight = 1, BorderWidthBottom = 1,
             CornerRadiusTopLeft = 2, CornerRadiusTopRight = 2, CornerRadiusBottomLeft = 2, CornerRadiusBottomRight = 2,
-            ContentMarginLeft = SectionMargin(outerLeft ? outerMargin : innerMargin, padding),
-            ContentMarginRight = SectionMargin(outerRight ? outerMargin : innerMargin, padding),
-            ContentMarginTop = SectionMargin(topMargin, padding),
-            ContentMarginBottom = SectionMargin(bottomMargin, padding)
+            ContentMarginLeft = Math.Max(outerLeft ? outerMargin : innerMargin, padding),
+            ContentMarginRight = Math.Max(outerRight ? outerMargin : innerMargin, padding),
+            ContentMarginTop = Math.Max(topMargin, padding),
+            ContentMarginBottom = Math.Max(bottomMargin, padding)
         };
     }
-
-    private static int SectionMargin(int authoredMargin, int padding) =>
-        Math.Max(0, authoredMargin + padding - 10);
 
     private static StyleBoxFlat ButtonStyle(Color background, Color border)
     {
@@ -973,6 +1171,12 @@ public partial class HudView : Control
     }
 
     private static int RoundFont(float size) => Math.Max(8, Mathf.RoundToInt(size));
+
+    private float ResponsiveScale()
+    {
+        float height = Size.Y > 1f ? Size.Y : 1080f;
+        return _profile.Layout.UiScale * Mathf.Clamp(height / 1080f, 2f / 3f, 2f);
+    }
 
     private static Color Parse(string html, Color fallback) => Color.HtmlIsValid(html) ? new Color(html) : fallback;
 

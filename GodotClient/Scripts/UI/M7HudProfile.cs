@@ -6,7 +6,7 @@ namespace LegoSpaceRTS.UI;
 
 public sealed class M7HudProfile
 {
-    public const int CurrentSchemaVersion = 4;
+    public const int CurrentSchemaVersion = 5;
 
     public int SchemaVersion { get; set; } = CurrentSchemaVersion;
     public HudLayoutProfile Layout { get; set; } = new();
@@ -45,11 +45,20 @@ public sealed class M7HudProfile
                 error = "Clipboard does not contain an M7 HUD profile.";
                 return false;
             }
-            if (parsed.SchemaVersion is not (1 or 2 or 3 or CurrentSchemaVersion))
+            if (parsed.SchemaVersion is not (1 or 2 or 3 or 4 or CurrentSchemaVersion))
             {
                 profile = CreateDefault();
                 error = $"HUD schema {parsed.SchemaVersion} is not supported; expected {CurrentSchemaVersion}.";
                 return false;
+            }
+            // Schema 1-4 profiles were authored against the preserved generated
+            // faction-frame renderer. Keep that exact visual treatment on paste;
+            // schema 5 defaults to the new structural console so A/B changes skin
+            // without silently changing an old director profile.
+            if (parsed.SchemaVersion <= 4)
+            {
+                parsed.ArtSkin ??= new HudArtSkinProfile();
+                parsed.ArtSkin.Finish = HudArtFinish.LegacyFrames;
             }
             parsed.Normalize();
             profile = parsed;
@@ -85,8 +94,8 @@ public sealed class M7HudProfile
         Layout.TopStripHeight = Clamp(Layout.TopStripHeight, 44f, 78f);
         Layout.BottomRegionHeight = Clamp(Layout.BottomRegionHeight, 172f, 280f);
         Layout.MinimapSize = Clamp(Layout.MinimapSize, 164f, 260f);
-        Layout.CommandPanelWidth = Clamp(Layout.CommandPanelWidth, 300f, 460f);
-        Layout.SelectionMaxWidth = Clamp(Layout.SelectionMaxWidth, 540f, 960f);
+        Layout.CommandPanelWidth = Clamp(Layout.CommandPanelWidth, 220f, 380f);
+        Layout.SelectionMaxWidth = Clamp(Layout.SelectionMaxWidth, 540f, 1200f);
         Layout.PanelGap = Clamp(Layout.PanelGap, 4f, 24f);
         Typography.TextScale = Clamp(Typography.TextScale, 0.8f, 1.4f);
         Typography.HeadingSize = Clamp(Typography.HeadingSize, 12, 26);
@@ -107,6 +116,7 @@ public sealed class M7HudProfile
             ArtSkin.ChromeScale = ArtSkin.FrameThickness.Value / 22f;
         ArtSkin.FrameOpacity = null;
         ArtSkin.FrameThickness = null;
+        if (!Enum.IsDefined(ArtSkin.Finish)) ArtSkin.Finish = HudArtFinish.StructuralConsole;
         ArtSkin.ChromeIntensity = Clamp(ArtSkin.ChromeIntensity, 0f, 1f);
         ArtSkin.ChromeScale = Clamp(ArtSkin.ChromeScale, 0.75f, 1.35f);
         Colors.Background = M7ProfileColor.Normalize(Colors.Background, "#111820");
@@ -146,14 +156,14 @@ public sealed class M7HudProfile
 
 public sealed class HudLayoutProfile
 {
-    public float SafeAreaPercent { get; set; } = 96f;
+    public float SafeAreaPercent { get; set; } = 98f;
     public float UiScale { get; set; } = 1f;
-    public float TopStripHeight { get; set; } = 54f;
-    public float BottomRegionHeight { get; set; } = 214f;
-    public float MinimapSize { get; set; } = 206f;
-    public float CommandPanelWidth { get; set; } = 372f;
-    public float SelectionMaxWidth { get; set; } = 820f;
-    public float PanelGap { get; set; } = 10f;
+    public float TopStripHeight { get; set; } = 48f;
+    public float BottomRegionHeight { get; set; } = 220f;
+    public float MinimapSize { get; set; } = 210f;
+    public float CommandPanelWidth { get; set; } = 280f;
+    public float SelectionMaxWidth { get; set; } = 1200f;
+    public float PanelGap { get; set; } = 6f;
 }
 
 public sealed class HudTypographyProfile
@@ -168,9 +178,9 @@ public sealed class HudSurfaceProfile
 {
     public float PanelOpacity { get; set; } = 0.92f;
     public int BorderWidth { get; set; } = 1;
-    public int CornerRadius { get; set; } = 6;
-    public int InnerPadding { get; set; } = 10;
-    public int Separation { get; set; } = 7;
+    public int CornerRadius { get; set; } = 2;
+    public int InnerPadding { get; set; } = 8;
+    public int Separation { get; set; } = 5;
     public bool SolidCommandButtons { get; set; } = true;
     public bool HealthStateColors { get; set; } = true;
 }
@@ -179,10 +189,18 @@ public sealed class HudArtSkinProfile
 {
     public bool Enabled { get; set; } = true;
     public int Faction { get; set; }
-    public float ChromeIntensity { get; set; } = 0.78f;
+    public HudArtFinish Finish { get; set; } = HudArtFinish.StructuralConsole;
+    public float ChromeIntensity { get; set; } = 0.88f;
     public float ChromeScale { get; set; } = 1f;
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] public float? FrameOpacity { get; set; }
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] public int? FrameThickness { get; set; }
+}
+
+public enum HudArtFinish : byte
+{
+    StructuralConsole,
+    LegacyFrames,
+    Clean
 }
 
 public sealed class HudColorProfile
@@ -201,13 +219,16 @@ public sealed class HudColorProfile
 
 public sealed class HudContentProfile
 {
-    public bool ShowResourceLabels { get; set; } = true;
+    public bool ShowResourceLabels { get; set; }
     public bool ShowHotkeys { get; set; } = true;
     public bool ShowPortrait { get; set; } = true;
     public bool ShowEventFeed { get; set; } = true;
     public bool ShowObjectiveTracker { get; set; } = true;
     public bool ShowMinimapLegend { get; set; } = true;
-    public bool ShowCommandCosts { get; set; } = true;
+    // A classic RTS command card keeps the grid icon-first; full name,
+    // description and cost remain available in the hover tooltip. The lab can
+    // still enable inline costs for density comparison.
+    public bool ShowCommandCosts { get; set; }
 }
 
 public sealed class HudMinimapProfile

@@ -18,6 +18,7 @@ PROFILE="${8:-}"
 CAPTURE_FRAME="${9:-24}"
 MATERIAL_VIEW="${10:-}"
 MATERIAL_AUDIT="${11:-off}"
+GROUND_TREATMENT="${12:-}"
 CAPTURE_LOG="$(mktemp "${TMPDIR:-/tmp}/lego-space-rts-m7-look-lab.XXXXXX")"
 trap 'rm -f -- "${CAPTURE_LOG}"' EXIT
 if [[ "${OUTPUT}" != /* ]]; then OUTPUT="${ROOT}/${OUTPUT}"; fi
@@ -28,6 +29,7 @@ if [[ -n "${PROFILE}" ]]; then
   WORLD="${WORLD:-profile}"
   LOCAL_TIME="${LOCAL_TIME:-profile}"
   MATERIAL_VIEW="${MATERIAL_VIEW:-profile}"
+  GROUND_TREATMENT="${GROUND_TREATMENT:-profile}"
 else
   ZOOM="${ZOOM:-35}"
   POST="${POST:-on}"
@@ -35,10 +37,11 @@ else
   WORLD="${WORLD:-manual}"
   LOCAL_TIME="${LOCAL_TIME:-12}"
   MATERIAL_VIEW="${MATERIAL_VIEW:-combined}"
+  GROUND_TREATMENT="${GROUND_TREATMENT:-authored}"
 fi
 
 usage() {
-  printf 'Usage: %s [output.png] [visible|hidden] [zoom-cells|profile] [post:on|off|profile] [outline:on|off|profile] [manual|earth|mars|moon|planet-u|underground|profile] [local-time|profile] [profile.json] [capture-frame] [combined|base|color|relief|reflection|profile] [material-audit:on|off]\n' "$0" >&2
+  printf 'Usage: %s [output.png] [visible|hidden] [zoom-cells|profile] [post:on|off|profile] [outline:on|off|profile] [manual|earth|mars|moon|planet-u|underground|profile] [local-time|profile] [profile.json] [capture-frame] [combined|base|color|relief|reflection|profile] [material-audit:on|off] [authored|legacy|profile]\n' "$0" >&2
 }
 
 case "${CONTROLS}" in visible|hidden) ;; *) usage; exit 2 ;; esac
@@ -74,6 +77,10 @@ esac
 case "${MATERIAL_AUDIT}" in on|off) ;;
   *) printf 'FAIL: material audit must be on or off.\n' >&2; exit 2 ;;
 esac
+case "${GROUND_TREATMENT}" in authored|legacy) ;;
+  profile) [[ -n "${PROFILE}" ]] || { usage; exit 2; } ;;
+  *) printf 'FAIL: ground treatment must be authored, legacy or profile.\n' >&2; exit 2 ;;
+esac
 if [[ -z "${GODOT}" ]] || ! godot_is_required_mono "${GODOT}"; then
   printf 'FAIL: Godot 4.7.1 .NET was not found.\n' >&2
   exit 1
@@ -95,10 +102,11 @@ if [[ "${WORLD}" != profile ]]; then EXTRA_ARGS+=(--m7-look-world "${WORLD}"); f
 if [[ "${LOCAL_TIME}" != profile ]]; then EXTRA_ARGS+=(--m7-look-time "${LOCAL_TIME}"); fi
 if [[ "${MATERIAL_VIEW}" != profile ]]; then EXTRA_ARGS+=(--m7-look-material-view "${MATERIAL_VIEW}"); fi
 if [[ "${MATERIAL_AUDIT}" == "on" ]]; then EXTRA_ARGS+=(--m7-look-material-audit); fi
+if [[ "${GROUND_TREATMENT}" != profile ]]; then EXTRA_ARGS+=(--m7-look-ground "${GROUND_TREATMENT}"); fi
 "${GODOT}" --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- \
   --m7-look-lab --m7-look-smoke --m7-look-controls "${CONTROLS}" --m7-look-capture-frame "${CAPTURE_FRAME}" \
   "${EXTRA_ARGS[@]}" --capture-path "${OUTPUT}"
-PASS_PREFIX="M7 LOOK LAB: PASS schema=6 units=4 meshes=192 triangles=31104 buildings=2"
+PASS_PREFIX="M7 LOOK LAB: PASS schema=7 units=4 meshes=192 triangles=31104 buildings=2"
 if [[ ! -s "${OUTPUT}" ]] || ! grep -q "${PASS_PREFIX}" "${CAPTURE_LOG}"; then
   printf 'FAIL: M7 Look Lab capture or PASS marker was not produced.\n' >&2
   exit 1
@@ -129,6 +137,9 @@ if [[ "${LOCAL_TIME}" != profile && "${WORLD}" != profile && "${WORLD}" != manua
 fi
 if [[ "${MATERIAL_VIEW}" != profile ]] && ! grep -q "${PASS_PREFIX}.*materialView=${MATERIAL_VIEW}" "${CAPTURE_LOG}"; then
   printf 'FAIL: M7 Look Lab did not apply material view=%s.\n' "${MATERIAL_VIEW}" >&2; exit 1
+fi
+if [[ "${GROUND_TREATMENT}" != profile ]] && ! grep -q "${PASS_PREFIX}.*ground=${GROUND_TREATMENT}" "${CAPTURE_LOG}"; then
+  printf 'FAIL: M7 Look Lab did not apply ground treatment=%s.\n' "${GROUND_TREATMENT}" >&2; exit 1
 fi
 if ! grep -q "${PASS_PREFIX}.*audit=${MATERIAL_AUDIT}" "${CAPTURE_LOG}"; then
   printf 'FAIL: M7 Look Lab did not apply material audit=%s.\n' "${MATERIAL_AUDIT}" >&2; exit 1

@@ -30,8 +30,10 @@ Open it from `F8` → **M7 HUD Lab**, or launch:
   and match state;
 - bottom-left: fog-correct north-up minimap and actionable alert access; a
   production alert click centers its associated Energy Domain or Worksite;
-- bottom-center: entity or type-group selection information;
-- bottom-right: canonical 3×4 command grid and local queue;
+- bottom-center: a wide entity/type-group information bay followed by a
+  dedicated tactical portrait bay;
+- bottom-right: an icon-first canonical 3×4 command card and a compact local
+  queue strip;
 - temporary layers: compact objective tracker, event feed, Energy Domain
   popover and quick/expanded tooltip.
 
@@ -59,8 +61,23 @@ These are information-density tests, not proposed visual variants.
 
 ## Live controls
 
-The laboratory exposes every current presentation token rather than bundled
-presets:
+The laboratory exposes the current presentation tokens and three art-finish
+modes on one invariant geometry:
+
+- **Structural Console** is the new default: a continuous sculpted chassis,
+  recessed functional bays and an original dark industrial raster surface;
+- **Legacy Frames** keeps all five previously generated faction frame families
+  intact and applies them to the redesigned layout;
+- **Clean** removes both decorative layers and exposes the functional layout by
+  itself.
+
+The redesign uses the useful composition grammar of a classic full-width RTS
+command console—minimap, adaptive selection bay, dedicated portrait and
+icon-first command card—without copying another game's art, icons or data. Art
+finish changes never alter panel rectangles or hit targets, so the three modes
+are a real A/B/C comparison rather than different layouts.
+
+Live controls include:
 
 - responsive preview: 16:9, 16:10, 21:9 and 4:3;
 - safe area: 90–100%;
@@ -98,6 +115,11 @@ presets:
   retro-pneumatic framing; and Life on Mars Martians use red/tan/blue/lime
   organic-pneumatic framing. These skins preserve the same functional anchors
   and do not copy another game's layouts or assets.
+- an original `console_surface_v1.png` industrial surface. Structural Console
+  samples bounded source patches inside the code-native chassis rather than
+  stretching one image across the screen. Large panels, shallow seams and
+  restrained copper details provide the missing wall/fill material while
+  functional separators, faction accents and outer silhouettes remain code.
 - a code-native tactical portrait inside the selection section. It draws a
   faction-coloured blueprint display with distinct single-unit, grouped-force,
   structure and transforming-unit silhouettes, plus a concise caption. This
@@ -108,10 +130,11 @@ presets:
 
 ## JSON handoff
 
-**COPY JSON** places the complete schema-4 `M7HudProfile` in the clipboard.
+**COPY JSON** places the complete schema-5 `M7HudProfile` in the clipboard.
 **PASTE JSON** accepts the same profile, normalizes all values and applies it
-live. Schema 1–3 profiles migrate to schema-4 defaults for minimap and faction
-art. Early schema-4 `frameOpacity`/`frameThickness` experiments migrate once to
+live. Schema 1–4 profiles migrate to **Legacy Frames**, preserving the visual
+result that was authored before the finish switch existed. Early schema-4
+`frameOpacity`/`frameThickness` experiments still migrate once to
 `chromeIntensity`/`chromeScale` and are omitted on the next copy. Unknown fields
 are ignored; unsupported schema versions fail visibly.
 
@@ -125,7 +148,8 @@ Headless fixture validation:
 ```text
 Godot --headless --path GodotClient -- \
   --m7-hud-lab --m7-hud-smoke \
-  --m7-hud-scenario mixed-army --m7-hud-aspect 21-9
+  --m7-hud-scenario mixed-army --m7-hud-aspect 21-9 \
+  --m7-hud-finish structural
 ```
 
 Capture helper:
@@ -133,17 +157,19 @@ Capture helper:
 ```text
 ./tools/capture-m7-hud-lab.sh \
   Artifacts/Screenshots/m7-hud-lab-mixed-army.png \
-  mixed-army 16-9
+  mixed-army 16-9 hidden structural
 ```
 
-The main verification suite exercises mixed selection, production, brownout and
-critical-tooltip fixtures across four aspect ratios. The smoke also verifies all
+The main verification suite exercises Structural mixed selection, production,
+brownout and critical-tooltip fixtures across four aspect ratios, plus identical
+Structural/Legacy/Clean mixed-selection geometry. The smoke also verifies all
 eight fixture contracts, client-legal minimap knowledge, remembered-static
 rules, pixel/cell command conversion, the 12-slot command bound, required
 retained nodes, the procedural tactical portrait, all five imported faction
 frames, protected non-stretched corners, uniformly scaled tiled wall regions,
 restrained faction chassis fills, one continuous bottom-deck
-chassis, prior-schema migration, schema-4 JSON round-trip and safe-area
+chassis, the Structural raster binding and sculpted shoulders, prior-schema
+migration, schema-5 JSON round-trip and safe-area
 containment of every major panel plus every visible command button (including
 the twelfth slot in the 12-command mixed-army fixture). It also proves that the
 Energy readout's children cannot intercept its button input. Default-profile
@@ -158,16 +184,16 @@ art-director values down with the viewport.
 
 Current post-redesign evidence under `Artifacts/Screenshots/` is:
 
-- `m7-hud-walls-final-mixed-16-9.png` and
-  `m7-hud-walls-final-production-16-10.png` for group/queue density;
-- `m7-hud-walls-final-astronaut-16-9.png`,
-  `m7-hud-walls-final-alien-16-9.png` and
-  `m7-hud-walls-final-martian-21-9.png` for the remaining faction chassis and
-  procedural portrait kinds;
-- `m7-hud-walls-final-critical-4-3.png` for the narrow tooltip/event/deck collision
-  gate;
-- `m7-hud-walls-final-brownout-21-9.png` for the Energy Domain, alert and event
-  overlays.
+- `m7-hud-final-structural-mixed-16-9-v2.png`,
+  `m7-hud-final-legacy-mixed-16-9-v2.png` and
+  `m7-hud-final-clean-mixed-16-9-v2.png` for the same-geometry A/B/C comparison;
+- `m7-hud-final-structural-production-16-10-v3.png` and
+  `m7-hud-final-legacy-production-16-10-v2.png` for queue/command density and the
+  direct Structural-versus-old-frame comparison;
+- `m7-hud-final-structural-brownout-21-9.png` for Energy Domain, alert and event
+  overlays on ultrawide;
+- `m7-hud-final-structural-critical-4-3.png` for the narrow
+  tooltip/event/alert/deck collision gate.
 
 ## Deliberately deferred
 

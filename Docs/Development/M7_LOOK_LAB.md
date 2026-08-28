@@ -72,8 +72,11 @@ The left panel contains twelve sections:
 11. **VFX** — prewarmed tracer/muzzle/impact budgets and live pool telemetry,
    load-preview emitter count, tracer, particle muzzle/impact, spark, luminous
    fire and smoke appearance;
-12. **Ground** — non-repeating two-color macro/mineral variation, depth-tested
-   bump/depression tread tracks and unit spacing.
+12. **Ground** — a simple A/B between the new **Authored Surface** and the
+   preserved **Legacy Raster**, plus two readable terrain colors, depth-tested
+   tread tracks and unit spacing. Authored Surface composes a compacted work
+   pad and routes, exposed bedrock shelves, loose regolith and a mineral seam at
+   map scale; it deliberately does not expose macro/micro shader knobs.
 
 The surface families intentionally begin with distinct physical responses:
 painted shell, dusty brown structure, metallic mechanisms and tools, matte
@@ -81,11 +84,12 @@ rubber, coated building shell and rough rock are not one material recolored.
 
 ## Profile workflow
 
-- **COPY ALL JSON** copies a complete `schemaVersion: 6` profile, including the
+- **COPY ALL JSON** copies a complete `schemaVersion: 7` profile, including the
   current zoom. It never copies only a diff.
-- **PASTE & APPLY** validates the schema, migrates schemas 1–5, ignores the
+- **PASTE & APPLY** validates the schema, migrates schemas 1–6, ignores the
   removed HUD/scorch fields, clamps unsafe values and applies the complete
-  profile live.
+  profile live. Schema 1–6 profiles retain their exact Legacy Raster treatment;
+  fresh profiles start on Authored Surface.
 - **RESET SECTION** restores the active section only.
 - **RESET ALL** restores the neutral lab baseline.
 - **PAUSE / RESUME** freezes motion for comparisons.
@@ -102,6 +106,9 @@ The runtime entry is `F8` → **M7 Look Lab**. Automation may launch it with:
 Automated lighting evidence can additionally select
 `--m7-look-world manual|earth|mars|moon|planet-u|underground` and
 `--m7-look-time 0..24`.
+
+Ground comparison may be selected explicitly with
+`--m7-look-ground authored|legacy`.
 
 Source-render capture is provided by `tools/capture-m7-look-lab.sh`.
 
@@ -136,7 +143,11 @@ strong mip bias so the broad raster variation reads at 24–39.5 cells without
 restoring the source map's fine grain. A validated minimum albedo amplitude and
 filter width prevents a technically bound map from becoming imperceptible again.
 Derivative-aware mips avoid sparkle without allowing live animation or a colour
-edit to shift the raster phase.
+edit to shift the raster phase. In the schema-7 Authored Surface treatment,
+those same rasters are subordinate albedo/relief/reflection response inside
+large deterministic material zones; broad authored forms, sparse slab seams,
+strata, cracks and gravel carry the image at RTS zoom. Legacy Raster remains
+available unchanged for comparison.
 These are review assets, not accepted production normal/ORM maps.
 
 ## T065 animation-driver integration
@@ -187,13 +198,13 @@ cosmetic burst.
 The lab can target the fourth unit, the burning structure or alternate between
 them. Fire/smoke/light evidence follows the structure. Fragment motion, count,
 lifetime, fade, dust value and active pool budget are editable and copied in
-schema 6. Existing schema 1–5
+schema 7. Existing schema 1–6
 profiles inherit the neutral destruction defaults.
 
 ## Decision boundary
 
-Automation validates scene structure, mesh/triangle counts, schema-6 round-trip,
-schema-1 through schema-5 migration, animation and destruction-driver state,
+Automation validates scene structure, mesh/triangle counts, schema-7 round-trip,
+schema-1 through schema-6 migration, both ground treatments, animation and destruction-driver state,
 six-wheel/drill/suspension rig binding, all six pool prewarm/spawn/reuse/drop
 behavior, zoom bounds, exact authored-texture shader routing, directional
 headlight geometry and day/night gating, procedural-sky light ownership,

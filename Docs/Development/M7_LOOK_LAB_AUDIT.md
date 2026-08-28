@@ -340,3 +340,31 @@ filter it at the 72-cell strategic limit. Runtime validation now rejects macro
 paint bindings whose albedo amplitude or filter width falls below the reviewed
 perceptual floor. Current evidence is `m7-materials-stronger-zoom24-v3.png` and
 `m7-materials-stronger-zoom39-5-v3.png` under `Artifacts/Screenshots/`.
+
+## Schema-7 authored ground composition
+
+The next review established that a technically visible raster still left the
+terrain visually empty. Raising the same map again would trade emptiness for
+noise without creating readable world structure. The new default therefore
+changes the composition method rather than adding another texture-strength
+iteration.
+
+**Authored Surface** uses stable world-space material zones: a compacted central
+work pad, three travelled routes, two exposed rock shelves, loose regolith and
+a mineral seam leading toward the Crystal fixture. Sparse slab joints, strata,
+cracks and gravel occur only in their relevant zone. Existing regolith and
+quarry rasters remain bound, but they now provide subordinate color, relief and
+roughness response inside those broad forms. The normal Ground UI exposes only
+the treatment choice, two readable terrain colors and track/staging controls;
+the retired macro/micro shader values remain serialized solely so older profiles
+can be reproduced.
+
+**Legacy Raster** preserves the complete schema-6 treatment. Profiles copied
+from schemas 1–6 migrate to this mode rather than silently changing an authored
+result; a fresh schema-7 profile starts on Authored Surface. Both routes are
+runtime-smoked and share the same gameplay-scale camera, lighting and geometry.
+
+Current comparison evidence is `m7-ground-authored-final-v2.png`,
+`m7-ground-legacy-v1.png` and `m7-ground-authored-zoom72.png` under
+`Artifacts/Screenshots/`. Neither treatment is visual canon; the comparison is
+an art-direction decision surface.

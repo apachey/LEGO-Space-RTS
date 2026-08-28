@@ -133,11 +133,37 @@ public static class M7LookMaterialFactory
             !TextureParameterMatches(ground, "albedo_texture", RegolithTexturePath) ||
             !TextureParameterMatches(ground, "height_texture", GroundTexturePath) ||
             !TextureParameterMatches(ground, "detail_texture_b", GroundTexturePath) ||
+            ground.GetShaderParameter("surface_treatment").As<int>() is < 0 or > 1 ||
+            ground.GetShaderParameter("authored_zone_revision").As<double>() < 1.0 ||
             ground.GetShaderParameter("albedo_variation").As<double>() <= 0.0 ||
             ground.GetShaderParameter("relief_strength").As<double>() <= 0.0 ||
             ground.GetShaderParameter("roughness_variation").As<double>() <= 0.0)
         {
             error = "Authored ground texture routing is invalid.";
+            return false;
+        }
+
+        error = string.Empty;
+        return true;
+    }
+
+    public static bool ValidateGroundTreatmentModes(out string error)
+    {
+        M7LookProfile authoredProfile = M7LookProfile.CreateDefault();
+        authoredProfile.Ground.SurfaceTreatment = M7GroundSurfaceTreatment.AuthoredSurfaceStack;
+        M7LookProfile legacyProfile = M7LookProfile.CreateDefault();
+        legacyProfile.Ground.SurfaceTreatment = M7GroundSurfaceTreatment.LegacyRaster;
+        ShaderMaterial authored = Ground(authoredProfile);
+        ShaderMaterial legacy = Ground(legacyProfile);
+        if (authored.GetShaderParameter("surface_treatment").As<int>() !=
+                (int)M7GroundSurfaceTreatment.AuthoredSurfaceStack ||
+            legacy.GetShaderParameter("surface_treatment").As<int>() !=
+                (int)M7GroundSurfaceTreatment.LegacyRaster ||
+            authored.GetShaderParameter("authored_zone_revision").As<double>() < 1.0 ||
+            !TextureParameterMatches(authored, "albedo_texture", RegolithTexturePath) ||
+            !TextureParameterMatches(legacy, "albedo_texture", RegolithTexturePath))
+        {
+            error = "Authored/legacy ground treatment routing is invalid.";
             return false;
         }
 
@@ -280,6 +306,8 @@ public static class M7LookMaterialFactory
         material.SetShaderParameter("albedo_variation", 0.055f);
         material.SetShaderParameter("relief_strength", 0.018f);
         material.SetShaderParameter("roughness_variation", 0.080f);
+        material.SetShaderParameter("surface_treatment", (int)profile.Ground.SurfaceTreatment);
+        material.SetShaderParameter("authored_zone_revision", 1f);
         material.SetShaderParameter("inspection_pass", profile.Materials.InspectionPass);
         material.SetShaderParameter("background_color", ParseColor(profile.Lighting.BackgroundColor));
         material.SetShaderParameter("background_influence", profile.Lighting.BackgroundInfluence);
@@ -591,6 +619,8 @@ uniform float roughness_contrast = 14.0;
 uniform float albedo_variation = 0.055;
 uniform float relief_strength = 0.45;
 uniform float roughness_variation = 0.30;
+uniform int surface_treatment : hint_range(0, 1) = 0;
+uniform float authored_zone_revision = 1.0;
 uniform int inspection_pass : hint_range(0, 4) = 0;
 uniform vec4 background_color : source_color = vec4(0.08, 0.11, 0.14, 1.0);
 uniform float background_influence = 0.15;
@@ -675,6 +705,101 @@ float broad_ground_breakup(vec2 p) {
     return (broad * 0.74 + medium * 0.26 - 0.5) * 2.0;
 }
 
+float authored_ellipse(vec2 p, vec2 center, vec2 radii, float feather) {
+    float distance_value = length((p - center) / radii);
+    return 1.0 - smoothstep(1.0 - feather, 1.0 + feather, distance_value);
+}
+
+float authored_segment_distance(vec2 p, vec2 start, vec2 end) {
+    vec2 segment = end - start;
+    float along = clamp(dot(p - start, segment) / max(dot(segment, segment), 0.0001), 0.0, 1.0);
+    return length(p - (start + segment * along));
+}
+
+vec4 authored_zone_masks(vec2 p) {
+    // This is a unique map-scale composition rather than another tiled noise
+    // layer: a central compacted work pad, three travelled service routes,
+    // two exposed bedrock shelves, and a mineral seam leading to the review
+    // crystal cluster. All positions are fixed in world space and therefore
+    // remain stable while the RTS camera zooms and rotates.
+    p += vec2(authored_zone_revision - 1.0) * 0.0001;
+    float pad = authored_ellipse(p, vec2(0.0, -0.8), vec2(15.5, 11.8), 0.12);
+    float route_a = 1.0 - smoothstep(3.0, 4.8,
+        authored_segment_distance(p, vec2(-4.0, -2.0), vec2(22.0, -13.5)));
+    float route_b = 1.0 - smoothstep(2.5, 4.2,
+        authored_segment_distance(p, vec2(-7.0, -3.5), vec2(-23.0, -16.0)));
+    float route_c = 1.0 - smoothstep(2.2, 4.0,
+        authored_segment_distance(p, vec2(-5.0, 4.5), vec2(-27.0, 18.0)));
+    float compacted = max(pad, max(route_a, max(route_b, route_c)) * 0.88);
+
+    vec2 shelf_warp = vec2(
+        ground_noise(p * 0.043 + vec2(1.7, 7.4)),
+        ground_noise(p * 0.037 + vec2(8.2, 2.6))) * 2.0 - 1.0;
+    float bedrock_a = authored_ellipse(p + shelf_warp * 2.6,
+        vec2(-18.0, 10.5), vec2(10.5, 6.2), 0.16);
+    float bedrock_b = authored_ellipse(p - shelf_warp * 2.1,
+        vec2(23.0, 12.5), vec2(12.0, 7.4), 0.18);
+    float bedrock = max(bedrock_a, bedrock_b) * (1.0 - compacted * 0.62);
+
+    float seam_center = 7.0 + p.x * 0.10 + sin((p.x + 5.0) * 0.15) * 1.65;
+    float seam_window = authored_ellipse(p, vec2(9.0, 7.8), vec2(28.0, 12.0), 0.28);
+    float seam_breakup = mix(0.28, 1.0, smoothstep(0.30, 0.70,
+        ground_noise(p * 0.17 + vec2(5.8, 9.1))));
+    float seam = (1.0 - smoothstep(0.30, 1.04, abs(p.y - seam_center))) *
+        seam_window * seam_breakup * (0.38 + bedrock * 0.62) * (1.0 - pad * 0.42);
+    float loose = clamp(1.0 - compacted * 0.82 - bedrock * 0.72, 0.0, 1.0);
+    return vec4(compacted, bedrock, seam, loose);
+}
+
+vec3 authored_surface_color(vec2 p, vec4 zones, float raster_mask,
+        out float material_relief, out float material_roughness) {
+    vec3 loose_color = mix(base_color.rgb, secondary_color.rgb, 0.22);
+    vec3 compacted_color = mix(base_color.rgb, secondary_color.rgb, 0.42) * 0.98;
+    // Exposed rock is cooler, not simply darker: keeping its luminance near the
+    // surrounding soil prevents authored shelves from reading as the old black
+    // terrain anomalies or as baked shadows.
+    vec3 bedrock_color = mix(secondary_color.rgb, base_color.rgb, 0.62) * vec3(0.96, 1.00, 1.05);
+    vec3 seam_color = mix(base_color.rgb, vec3(0.52, 0.45, 0.30), 0.28) * 0.99;
+
+    vec3 result = loose_color;
+    result = mix(result, compacted_color, zones.x);
+    result = mix(result, bedrock_color, zones.y);
+    result = mix(result, seam_color, zones.z * 0.54);
+
+    // Sparse mid-scale breakup is tied to the relevant material family rather
+    // than sprayed uniformly across the entire map.
+    vec2 slab_uv = (p + vec2(2.1, 1.4)) / 6.8;
+    vec2 slab_distance = min(fract(slab_uv), 1.0 - fract(slab_uv)) * 6.8;
+    float slab_edge = 1.0 - smoothstep(0.11, 0.31, min(slab_distance.x, slab_distance.y));
+    slab_edge *= zones.x;
+
+    float strata_wave = sin(dot(p, vec2(0.32, 0.95)) * 0.78 +
+        ground_noise(p * 0.075 + vec2(3.4, 8.1)) * 2.5);
+    float strata = smoothstep(0.76, 0.95, abs(strata_wave)) * zones.y;
+
+    float crack_field_a = ground_noise(p * 0.22 + vec2(4.7, 1.9));
+    float crack_field_b = ground_noise(p * 0.22 + vec2(9.2, 6.3));
+    float cracks = (1.0 - smoothstep(0.025, 0.095, abs(crack_field_a - crack_field_b))) *
+        clamp(zones.y * 0.88 + zones.w * 0.24, 0.0, 1.0);
+
+    vec2 gravel_cell = floor(p * 0.46);
+    vec2 gravel_local = fract(p * 0.46) - 0.5;
+    float gravel_seed = ground_hash(gravel_cell + vec2(14.0, 3.0));
+    float gravel = step(0.79, gravel_seed) *
+        (1.0 - smoothstep(0.11, 0.30, length(gravel_local))) * zones.w;
+
+    result *= 1.0 - slab_edge * 0.080 - cracks * 0.085;
+    result *= 1.0 + strata * 0.070 + gravel * 0.060;
+    // Raster albedo now provides subordinate mineral response only; the large
+    // authored colour masses survive mips and remain legible at 24–72 cells.
+    result *= 1.0 + raster_mask * 0.042;
+    material_relief = raster_mask * 0.16 - slab_edge * 0.62 +
+        strata * 0.28 - cracks * 0.34 + gravel * 0.18;
+    material_roughness = clamp(0.96 - zones.x * 0.08 - zones.y * 0.19 -
+        zones.z * 0.16 + gravel * 0.035, 0.64, 0.99);
+    return max(result, vec3(0.095));
+}
+
 void fragment() {
     // Each channel uses a world-space frequency selected for the 24–72 cell
     // camera range. Automatic mips remove sub-pixel grit; these scales retain
@@ -690,10 +815,22 @@ void fragment() {
     float blend = clamp(0.5 + macro * macro_amount * 0.62
         + albedo_mask * micro_amount * 0.035, 0.0, 1.0);
     vec3 ground_color = mix(base_color.rgb, secondary_color.rgb, blend);
+    float composed_relief = height_mask;
+    float composed_roughness = clamp(roughness_value + roughness_mask * roughness_variation, 0.2, 1.0);
+    if (surface_treatment == 0) {
+        vec4 zones = authored_zone_masks(world_position.xz);
+        ground_color = authored_surface_color(world_position.xz, zones, albedo_mask,
+            composed_relief, composed_roughness);
+        // Broad procedural noise merely prevents perfectly sterile plateaus;
+        // it no longer defines the terrain composition.
+        ground_color *= 1.0 + macro * 0.018;
+    }
     if (inspection_pass == 1) {
         ground_color = base_color.rgb;
     } else if (inspection_pass == 2) {
-        ground_color = base_color.rgb * (1.0 + albedo_mask * 0.34);
+        ground_color = surface_treatment == 0
+            ? ground_color
+            : base_color.rgb * (1.0 + albedo_mask * 0.34);
     } else if (inspection_pass >= 3) {
         ground_color = vec3(0.46);
     } else {
@@ -703,15 +840,18 @@ void fragment() {
     // remains the clear colour; ground keeps a stable, readable luminance.
     ALBEDO = mix(ground_color, background_color.rgb, background_influence * 0.22);
     if (inspection_pass == 0) {
-        NORMAL = ground_relief_normal(normalize(NORMAL), height_mask, relief_strength);
+        float response = surface_treatment == 0 ? 0.046 : relief_strength;
+        NORMAL = ground_relief_normal(normalize(NORMAL), composed_relief, response);
     } else if (inspection_pass == 3) {
-        NORMAL = ground_relief_normal(normalize(NORMAL), height_mask, max(relief_strength, 0.040));
+        NORMAL = ground_relief_normal(normalize(NORMAL), composed_relief, max(relief_strength, 0.040));
     } else {
         NORMAL = normalize(NORMAL);
     }
     ROUGHNESS = inspection_pass == 4
-        ? mix(0.30, 0.98, roughness_mask * 0.5 + 0.5)
-        : clamp(roughness_value + (inspection_pass == 0 ? roughness_mask * roughness_variation : 0.0), 0.2, 1.0);
+        ? (surface_treatment == 0
+            ? mix(0.30, 0.98, composed_roughness)
+            : mix(0.30, 0.98, roughness_mask * 0.5 + 0.5))
+        : (inspection_pass == 0 ? composed_roughness : roughness_value);
     SPECULAR = 0.08;
 }
 """;
