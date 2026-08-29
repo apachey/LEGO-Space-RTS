@@ -411,3 +411,39 @@ Current objective evidence is `m7-ground-schema8-earth-authored.png`,
 `m7-ground-schema8-underground-authored.png` under `Artifacts/Screenshots/`.
 All captures use the same model, camera and scene fixture; visual acceptance
 remains the game director's decision.
+
+## Schema-9 hybrid ground and staging rationale
+
+The authored A shape is not random geology. It is a deterministic diagram of
+the Look Lab fixture: an elliptical compacted work pad contains the four review
+units; one service apron reaches the intact building at `(13, -7)`; a second
+reaches the burning building at `(-13, -10)`; and a narrower route/mineral seam
+reaches the Crystal cluster at `(10.2, 6.8)`. Irregular exposed bedrock shelves
+sit outside those traffic masks. Edge breakup is deterministic procedural
+warping so the areas do not look like perfect vector primitives, but their
+placement and purpose are fixed. This is presentation-only staging for judging
+materials around the current fixture, not geology, generated-map logic or map
+canon.
+
+Schema 9 adds **Hybrid Surface** as enum value `3`; schema-8 values `0`, `1`
+and `2` remain Authored Surface, Raster Forward and Legacy Raster respectively.
+Hybrid starts from the same authored work-pad/routes, then uses the detailed
+regolith raster to change colour, normal and roughness per material zone.
+Compacted traffic deliberately remains calmer, while loose soil and bedrock
+receive stronger response. The pad scales with the live 4–14 Unit spacing
+control. Its traffic mask, both route endpoints, every fixture footprint and
+the tread-mark strip remain at the CPU ground boundary, so vertex relief cannot
+clip or z-fight those presentation objects. A derivative-filtered normal
+provides close and RTS lighting depth; an explicit-LOD vertex sample adds only
+broad, restrained mesh relief outside traffic so the raster no longer reads as
+paint on a flat plane. Authored A and
+Raster Forward B remain visible as clean method comparisons; Legacy stays
+migration-only.
+
+Schema-9 comparison evidence is `m7-ground-schema9-earth-authored.png`,
+`m7-ground-schema9-earth-raster.png`, `m7-ground-schema9-earth-hybrid.png` and
+`m7-ground-schema9-earth-hybrid-zoom72.png` under `Artifacts/Screenshots/`.
+`m7-ground-schema9-earth-hybrid-spacing14.png` is the maximum-spacing regression
+capture: all four units remain on the scaled work pad and the fixed tread strip
+stays above the undisplaced traffic surface. The first four use the same Earth
+time, camera direction and scene fixture.

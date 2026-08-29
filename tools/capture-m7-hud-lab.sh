@@ -25,10 +25,21 @@ esac
 case "${CONTROLS}" in visible|hidden) ;;
   *) printf 'Usage: %s [output.png] [scenario] [aspect] [visible|hidden] [hybrid|structural|legacy|clean] [light|sandstone|oxide|olive|alien|graphite|custom]\n' "$0" >&2; exit 2 ;;
 esac
-case "${FINISH}" in hybrid|structural|legacy|clean) ;;
+case "${FINISH}" in
+  hybrid) EXPECTED_FINISH="HybridConsole" ;;
+  structural) EXPECTED_FINISH="StructuralConsole" ;;
+  legacy) EXPECTED_FINISH="LegacyFrames" ;;
+  clean) EXPECTED_FINISH="Clean" ;;
   *) printf 'Usage: %s [output.png] [scenario] [aspect] [visible|hidden] [hybrid|structural|legacy|clean] [light|sandstone|oxide|olive|alien|graphite|custom]\n' "$0" >&2; exit 2 ;;
 esac
-case "${PALETTE}" in light|sandstone|oxide|olive|alien|graphite|custom) ;;
+case "${PALETTE}" in
+  light) EXPECTED_PALETTE="LightCeramic" ;;
+  sandstone) EXPECTED_PALETTE="WarmSandstone" ;;
+  oxide) EXPECTED_PALETTE="OxideWorkshop" ;;
+  olive) EXPECTED_PALETTE="FieldOlive" ;;
+  alien) EXPECTED_PALETTE="AlienPorcelain" ;;
+  graphite) EXPECTED_PALETTE="NeutralGraphite" ;;
+  custom) EXPECTED_PALETTE="Custom" ;;
   *) printf 'Usage: %s [output.png] [scenario] [aspect] [visible|hidden] [hybrid|structural|legacy|clean] [light|sandstone|oxide|olive|alien|graphite|custom]\n' "$0" >&2; exit 2 ;;
 esac
 if [[ -z "${GODOT}" ]] || ! godot_is_required_mono "${GODOT}"; then
@@ -42,7 +53,7 @@ dotnet build "${ROOT}/GodotClient/LEGO.SpaceRTS.Godot.csproj" -c Debug --no-rest
 "${GODOT}" --headless --import --path "${ROOT}/GodotClient"
 "${GODOT}" --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- \
   --m7-hud-lab --m7-hud-smoke --m7-hud-scenario "${SCENARIO}" --m7-hud-aspect "${ASPECT}" --m7-hud-finish "${FINISH}" --m7-hud-palette "${PALETTE}" --m7-hud-controls "${CONTROLS}" --capture-path "${OUTPUT}"
-if [[ ! -s "${OUTPUT}" ]] || ! grep -q "M7 HUD LAB: PASS scenarios=8 commands=12 minimap=legal.*factionSkins=5 finishes=4 palettes=6.*schema=6 active=${SCENARIO}" "${CAPTURE_LOG}"; then
+if [[ ! -s "${OUTPUT}" ]] || ! grep -q "M7 HUD LAB: PASS scenarios=8 commands=12 minimap=legal.*factionSkins=5 finishes=4 palettes=6.*schema=7 active=${SCENARIO} finish=${EXPECTED_FINISH} palette=${EXPECTED_PALETTE}" "${CAPTURE_LOG}"; then
   printf 'FAIL: M7 HUD Lab capture or PASS marker was not produced.\n' >&2
   exit 1
 fi

@@ -384,6 +384,19 @@ public partial class M7HudLab : Node3D
             migratedFive.ArtSkin.Finish == HudArtFinish.Clean &&
             migratedFive.ArtSkin.SurfacePalette == HudSurfacePalette.Custom &&
             migratedFive.Colors.Background == "#202122" && migratedFive.Colors.Raised == "#1b2731";
+        const string schemaSix = "{\"schemaVersion\":6,\"artSkin\":{\"finish\":3,\"surfacePalette\":3,\"chromeIntensity\":0.73,\"chromeScale\":1.08},\"colors\":{\"background\":\"#522419\",\"raised\":\"#8b4430\",\"recessed\":\"#24130f\",\"accent\":\"#ff8a36\"}}";
+        bool schemaSixMigration = M7HudProfile.TryFromJson(schemaSix, out M7HudProfile migratedSix, out _) &&
+            migratedSix.SchemaVersion == M7HudProfile.CurrentSchemaVersion &&
+            migratedSix.ArtSkin.Finish == HudArtFinish.HybridConsole &&
+            migratedSix.ArtSkin.SurfacePalette == HudSurfacePalette.OxideWorkshop &&
+            Math.Abs(migratedSix.ArtSkin.ChromeIntensity - 0.73f) < 0.001f &&
+            Math.Abs(migratedSix.ArtSkin.ChromeScale - 1.08f) < 0.001f &&
+            migratedSix.Colors.Background == "#522419" && migratedSix.Colors.Accent == "#ff8a36" &&
+            M7HudProfile.TryFromJson(migratedSix.ToJson(), out M7HudProfile schemaSixRoundTrip, out _) &&
+            schemaSixRoundTrip.SchemaVersion == M7HudProfile.CurrentSchemaVersion &&
+            schemaSixRoundTrip.ArtSkin.Finish == HudArtFinish.HybridConsole &&
+            schemaSixRoundTrip.ArtSkin.SurfacePalette == HudSurfacePalette.OxideWorkshop &&
+            schemaSixRoundTrip.Colors.Background == "#522419";
         const string malformedColors = "{\"schemaVersion\":2,\"colors\":{\"background\":\"invalid\",\"accent\":null},\"minimap\":{\"enemyColor\":\"not-a-color\"}}";
         bool profileSanitization = M7HudProfile.TryFromJson(malformedColors, out M7HudProfile sanitized, out _) &&
             sanitized.Colors.Background == "#cfc6ae" && sanitized.Colors.Accent == "#d95f24" &&
@@ -406,15 +419,14 @@ public partial class M7HudLab : Node3D
         HudStructuralChrome? deckStructural = _hud?.FindChild("BottomDeckStructuralChrome", true, false) as HudStructuralChrome;
         bool factionArt = HudFactionChrome.ValidateRecipes(out _) &&
             topChrome is { IsConfigured: true, Role: HudFactionChromeRole.TopStrip, UsesFixedSquareCorners: true,
-                UsesProtectedSourceModules: true, UsesTiledEdgeWalls: true, UsesFactionSurfaceFill: true } &&
+                UsesProtectedSourceModules: true, UsesTiledEdgeWalls: true } &&
             deckChrome is { IsConfigured: true, Role: HudFactionChromeRole.BottomDeck, UsesSparseJunctionModules: true,
-                UsesTiledEdgeWalls: true, UsesFactionSurfaceFill: true } &&
-            topStructural is { IsConfigured: true, Role: HudFactionChromeRole.TopStrip,
-                UsesTiledConsoleSurface: true, UsesSculptedShoulders: true } &&
-            deckStructural is { IsConfigured: true, Role: HudFactionChromeRole.BottomDeck,
-                UsesTiledConsoleSurface: true, UsesSculptedShoulders: true } &&
+                UsesTiledEdgeWalls: true } &&
+            topStructural is { IsConfigured: true, Role: HudFactionChromeRole.TopStrip, UsesTiledConsoleSurface: true } &&
+            deckStructural is { IsConfigured: true, Role: HudFactionChromeRole.BottomDeck, UsesTiledConsoleSurface: true } &&
             _hud?.FindChild("SelectionPanelRasterSurface", true, false) is HudRasterSurfaceOverlay
-                { IsConfigured: true, UsesBoundedRasterPlates: true, UsesUnstretchedSourceRegions: true } &&
+                { IsConfigured: true, UsesBoundedRasterPlates: true, UsesUnstretchedSourceRegions: true,
+                    UsesSingleContinuousSurfaceField: true } &&
             _hud?.FindChild("MinimapRegionFactionChrome", true, false) is null &&
             _hud?.FindChild("SelectionPanelFactionChrome", true, false) is null &&
             _hud?.FindChild("CommandPanelFactionChrome", true, false) is null &&
@@ -451,10 +463,10 @@ public partial class M7HudLab : Node3D
             Kind = HudMinimapMarkerKind.GroundMobile, Relation = HudMinimapRelation.Enemy
         });
         bool leakGuard = !illegal.ValidateClientKnowledge(0, out _);
-        if (!(fixtures && roundTrip && migration && chromeMigration && schemaFiveMigration && profileSanitization && mapping && tree && factionArt && finishModes && paletteModes && states && actionableBinding &&
+        if (!(fixtures && roundTrip && migration && chromeMigration && schemaFiveMigration && schemaSixMigration && profileSanitization && mapping && tree && factionArt && finishModes && paletteModes && states && actionableBinding &&
               objectiveBounded && layoutContained && interactionBindings && minimap && leakGuard && productionKnowledge))
-            GD.PrintErr($"M7 HUD LAB DETAIL: fixtures={fixtures} roundTrip={roundTrip} migration={migration} chromeMigration={chromeMigration} schema5={schemaFiveMigration} sanitization={profileSanitization} mapping={mapping} tree={tree} factionArt={factionArt} finishes={finishModes} palettes={paletteModes} states={states} actionable={actionableBinding} objectiveBounded={objectiveBounded} layoutContained={layoutContained} interactions={interactionBindings} minimap={minimap} leakGuard={leakGuard} productionKnowledge={productionKnowledge}");
-        return fixtures && roundTrip && migration && chromeMigration && schemaFiveMigration && profileSanitization && mapping && tree && factionArt && finishModes && paletteModes && states && actionableBinding &&
+            GD.PrintErr($"M7 HUD LAB DETAIL: fixtures={fixtures} roundTrip={roundTrip} migration={migration} chromeMigration={chromeMigration} schema5={schemaFiveMigration} schema6={schemaSixMigration} sanitization={profileSanitization} mapping={mapping} tree={tree} factionArt={factionArt} finishes={finishModes} palettes={paletteModes} states={states} actionable={actionableBinding} objectiveBounded={objectiveBounded} layoutContained={layoutContained} interactions={interactionBindings} minimap={minimap} leakGuard={leakGuard} productionKnowledge={productionKnowledge}");
+        return fixtures && roundTrip && migration && chromeMigration && schemaFiveMigration && schemaSixMigration && profileSanitization && mapping && tree && factionArt && finishModes && paletteModes && states && actionableBinding &&
             objectiveBounded && layoutContained && interactionBindings && minimap && leakGuard && productionKnowledge;
     }
 
@@ -510,15 +522,24 @@ public partial class M7HudLab : Node3D
             candidate.ArtSkin.Finish = finish;
             _hud.ApplyProfile(candidate);
             _hud.ApplyFrame(frame, true);
-            HudFactionChrome? legacy = _hud.FindChild("BottomDeckFactionChrome", true, false) as HudFactionChrome;
+            HudFactionChrome? rasterFrame = _hud.FindChild("BottomDeckFactionChrome", true, false) as HudFactionChrome;
             HudStructuralChrome? structural = _hud.FindChild("BottomDeckStructuralChrome", true, false) as HudStructuralChrome;
             HudRasterSurfaceOverlay? raster = _hud.FindChild("SelectionPanelRasterSurface", true, false) as HudRasterSurfaceOverlay;
             valid &= finish switch
             {
-                HudArtFinish.HybridConsole => structural is { Visible: true, UsesFactionRasterModules: true } && legacy is { Visible: false } && raster is { Visible: true },
-                HudArtFinish.StructuralConsole => structural is { Visible: true, UsesFactionRasterModules: false } && legacy is { Visible: false } && raster is { Visible: false },
-                HudArtFinish.LegacyFrames => legacy is { Visible: true } && structural is { Visible: false } && raster is { Visible: false },
-                _ => legacy is { Visible: false } && structural is { Visible: false } && raster is { Visible: false }
+                HudArtFinish.HybridConsole =>
+                    structural is { Visible: true, UsesInteriorOnlyHybrid: true, UsesSculptedShoulders: false,
+                        UsesFactionRasterModules: false } &&
+                    rasterFrame is { Visible: true, IsFrameOnly: true, UsesFactionSurfaceFill: false,
+                        UsesVectorAccentRails: false } &&
+                    raster is { Visible: true, UsesSingleContinuousSurfaceField: true },
+                HudArtFinish.StructuralConsole =>
+                    structural is { Visible: true, UsesInteriorOnlyHybrid: false, UsesSculptedShoulders: true,
+                        UsesFactionRasterModules: false } && rasterFrame is { Visible: false } && raster is { Visible: false },
+                HudArtFinish.LegacyFrames =>
+                    rasterFrame is { Visible: true, IsFrameOnly: false, UsesFactionSurfaceFill: true,
+                        UsesVectorAccentRails: true } && structural is { Visible: false } && raster is { Visible: false },
+                _ => rasterFrame is { Visible: false } && structural is { Visible: false } && raster is { Visible: false }
             };
             Rect2[]? rects = CapturePrimaryRects();
             if (rects is null) valid = false;

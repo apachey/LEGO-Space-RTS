@@ -678,6 +678,8 @@ public partial class HudView : Control
         Color secondaryAccent = SecondaryAccent();
         Color factionSurface = HudFactionChrome.SurfaceForFaction(_profile.ArtSkin.Faction);
         bool legacyFinish = _profile.ArtSkin.Enabled && _profile.ArtSkin.Finish == HudArtFinish.LegacyFrames;
+        bool hybridFinish = _profile.ArtSkin.Enabled && _profile.ArtSkin.Finish == HudArtFinish.HybridConsole;
+        bool rasterFrameFinish = legacyFinish || hybridFinish;
         bool structuralFinish = _profile.ArtSkin.Enabled &&
             _profile.ArtSkin.Finish is HudArtFinish.StructuralConsole or HudArtFinish.HybridConsole;
         float factionFill = legacyFinish ? 0.16f * _profile.ArtSkin.ChromeIntensity : 0f;
@@ -687,7 +689,7 @@ public partial class HudView : Control
         {
             PanelContainer panel = _surfacePanels[i];
             bool chromePanel = DirectChrome(panel) is not null;
-            bool suppressGenericBorder = (legacyFinish || structuralFinish) && chromePanel;
+            bool suppressGenericBorder = (rasterFrameFinish || structuralFinish) && chromePanel;
             if (panel == _bottomDeck)
                 panel.AddThemeStyleboxOverride("panel", Style(recessed.Lerp(factionSurface, factionFill * 1.25f), Colors.Transparent, 0, true));
             else if (panel == _minimapPanel || panel == _selectionPanel || panel == _commandPanel)
@@ -736,8 +738,8 @@ public partial class HudView : Control
             PanelContainer panel = chrome.GetParent<PanelContainer>();
             int expansion = ChromeContentPadding(panel) ?? _profile.Surface.InnerPadding;
             chrome.Configure(_profile.ArtSkin.Faction, chrome.Role,
-                legacyFinish ? _profile.ArtSkin.ChromeIntensity : 0f,
-                _profile.ArtSkin.ChromeScale, expansion);
+                rasterFrameFinish ? _profile.ArtSkin.ChromeIntensity : 0f,
+                _profile.ArtSkin.ChromeScale, expansion, hybridFinish);
         }
         for (int i = 0; i < _structuralChrome.Count; i++)
         {
@@ -1118,7 +1120,9 @@ public partial class HudView : Control
 
     private int? ChromeContentPadding(PanelContainer panel)
     {
-        if (!_profile.ArtSkin.Enabled || _profile.ArtSkin.Finish != HudArtFinish.LegacyFrames || DirectChrome(panel) is null) return null;
+        if (!_profile.ArtSkin.Enabled ||
+            _profile.ArtSkin.Finish is not (HudArtFinish.HybridConsole or HudArtFinish.LegacyFrames) ||
+            DirectChrome(panel) is null) return null;
         if (panel.Name == "BottomDeck") return 0;
         float basePadding = 10f;
         return Math.Max(_profile.Surface.InnerPadding,

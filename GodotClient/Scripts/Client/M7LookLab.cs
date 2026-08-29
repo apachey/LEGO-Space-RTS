@@ -188,6 +188,8 @@ public partial class M7LookLab : Node3D
             _profile.Ground.SurfaceTreatment = M7GroundSurfaceTreatment.AuthoredSurfaceStack;
         else if (groundOverride == "raster")
             _profile.Ground.SurfaceTreatment = M7GroundSurfaceTreatment.RasterForward;
+        else if (groundOverride == "hybrid")
+            _profile.Ground.SurfaceTreatment = M7GroundSurfaceTreatment.HybridSurface;
         else if (groundOverride == "legacy")
             _profile.Ground.SurfaceTreatment = M7GroundSurfaceTreatment.LegacyRaster;
         string? worldOverride = ParseString(commandLineArgs, "--m7-look-world");
@@ -1064,8 +1066,8 @@ public partial class M7LookLab : Node3D
         AddNote(_profile.WorldCycle.Enabled
             ? $"The terrain palette follows the selected world profile. {GroundSurfaceDescription()} Switch worlds in DAY / NIGHT to compare five deliberately distinct exploratory environments."
             : "Manual lighting keeps the two custom ground colours from the copied profile.");
-        AddHeading("SURFACE TREATMENT · A/B");
-        AddNote("A uses authored map-scale zones, with raster detail supporting the composition. B pushes broad raster albedo, height and roughness forward so the image texture stays visible at RTS zoom without a noisy repeating tile.");
+        AddHeading("SURFACE TREATMENT · A/B/C");
+        AddNote("A tests deterministic map-scale composition. B makes the raster the dominant surface. C keeps A's readable work-pad/routes but lets the raster drive stronger colour, normal, roughness and restrained physical relief.");
         AddGroundTreatmentChoices();
         if (!_profile.WorldCycle.Enabled)
         {
@@ -1079,6 +1081,8 @@ public partial class M7LookLab : Node3D
             ? "A: large fixed material zones carry the image at gameplay zoom. On Earth this reads as desert sand drifting over a partially buried sedimentary work slab."
             : _profile.Ground.SurfaceTreatment == M7GroundSurfaceTreatment.RasterForward
                 ? "B: the same world palette is shaped by a large raster footprint. Stone, sediment, bump and reflection are deliberately stronger, with rotated unequal samples suppressing visible tiling."
+                : _profile.Ground.SurfaceTreatment == M7GroundSurfaceTreatment.HybridSurface
+                    ? "C: authored fixture staging and raster surface evidence work together. Broad raster height displaces only the review mesh, while traffic areas remain flatter than bedrock and loose soil."
                 : "Legacy ground is retained only when an older copied profile is migrated; it is not a recommended review treatment.");
         AddHeading("TRACK LANGUAGE / STAGING");
         if (!_profile.WorldCycle.Enabled)
@@ -1095,8 +1099,8 @@ public partial class M7LookLab : Node3D
     private void AddGroundTreatmentChoices()
     {
         if (_settingsBox is null) return;
-        HBoxContainer row = new() { Name = "GroundTreatmentChoices" };
-        row.AddThemeConstantOverride("separation", 8);
+        VBoxContainer row = new() { Name = "GroundTreatmentChoices" };
+        row.AddThemeConstantOverride("separation", 6);
         _settingsBox.AddChild(row);
         AddGroundTreatmentChoice(row, $"A · {GroundSurfaceDisplayName().ToUpperInvariant()}",
             M7GroundSurfaceTreatment.AuthoredSurfaceStack,
@@ -1104,6 +1108,9 @@ public partial class M7LookLab : Node3D
         AddGroundTreatmentChoice(row, "B · RASTER FORWARD",
             M7GroundSurfaceTreatment.RasterForward,
             "Large raster colour, height and reflection forms, aggressively anti-tiled for RTS camera movement.");
+        AddGroundTreatmentChoice(row, "C · HYBRID SURFACE",
+            M7GroundSurfaceTreatment.HybridSurface,
+            "Authored fixture composition with raster colour, normal, roughness and restrained broad vertex relief.");
     }
 
     private void AddGroundTreatmentChoice(Container parent, string label,
@@ -1115,6 +1122,7 @@ public partial class M7LookLab : Node3D
             {
                 M7GroundSurfaceTreatment.AuthoredSurfaceStack => "GroundTreatmentAuthored",
                 M7GroundSurfaceTreatment.RasterForward => "GroundTreatmentRasterForward",
+                M7GroundSurfaceTreatment.HybridSurface => "GroundTreatmentHybrid",
                 _ => "GroundTreatmentLegacy"
             },
             Text = label,
@@ -1134,7 +1142,14 @@ public partial class M7LookLab : Node3D
             _profile.Ground.SurfaceTreatment = treatment;
             ApplyProfile(rebuildMaterials: true);
             BuildCurrentSettings();
-            SetStatus($"Ground: {(treatment == M7GroundSurfaceTreatment.AuthoredSurfaceStack ? GroundSurfaceDisplayName() : "Raster Forward")}");
+            string treatmentName = treatment switch
+            {
+                M7GroundSurfaceTreatment.AuthoredSurfaceStack => GroundSurfaceDisplayName(),
+                M7GroundSurfaceTreatment.RasterForward => "Raster Forward",
+                M7GroundSurfaceTreatment.HybridSurface => "Hybrid Surface",
+                _ => "Legacy Raster"
+            };
+            SetStatus($"Ground: {treatmentName}");
         };
         parent.AddChild(button);
     }
@@ -1197,6 +1212,8 @@ public partial class M7LookLab : Node3D
     {
         if (_units.Count != 4) return;
         float spacing = _profile.Ground.UnitSeparation;
+        if (_ground?.MaterialOverride is ShaderMaterial groundMaterial)
+            groundMaterial.SetShaderParameter("staging_unit_spacing", spacing);
         Vector3[] positions =
         {
             new(0.55f * spacing, 0.08f, 0.95f * spacing),
@@ -2634,6 +2651,20 @@ public partial class M7LookLab : Node3D
         bool schemaEightRasterGround = M7LookProfile.TryFromJson(schemaEightRasterFixture,
             out M7LookProfile rasterEight, out _) &&
             rasterEight.Ground.SurfaceTreatment == M7GroundSurfaceTreatment.RasterForward;
+        const string schemaEightAuthoredFixture = "{\"schemaVersion\":8,\"ground\":{\"surfaceTreatment\":0}}";
+        const string schemaEightLegacyFixture = "{\"schemaVersion\":8,\"ground\":{\"surfaceTreatment\":2}}";
+        const string schemaEightOutOfRangeFixture = "{\"schemaVersion\":8,\"ground\":{\"surfaceTreatment\":3}}";
+        bool schemaEightStableGround = M7LookProfile.TryFromJson(schemaEightAuthoredFixture,
+            out M7LookProfile authoredEight, out _) &&
+            authoredEight.Ground.SurfaceTreatment == M7GroundSurfaceTreatment.AuthoredSurfaceStack &&
+            M7LookProfile.TryFromJson(schemaEightLegacyFixture, out M7LookProfile legacyEight, out _) &&
+            legacyEight.Ground.SurfaceTreatment == M7GroundSurfaceTreatment.LegacyRaster &&
+            M7LookProfile.TryFromJson(schemaEightOutOfRangeFixture, out M7LookProfile sanitizedEight, out _) &&
+            sanitizedEight.Ground.SurfaceTreatment == M7GroundSurfaceTreatment.AuthoredSurfaceStack;
+        const string schemaNineHybridFixture = "{\"schemaVersion\":9,\"ground\":{\"surfaceTreatment\":3}}";
+        bool schemaNineHybridGround = M7LookProfile.TryFromJson(schemaNineHybridFixture,
+            out M7LookProfile hybridNine, out _) &&
+            hybridNine.Ground.SurfaceTreatment == M7GroundSurfaceTreatment.HybridSurface;
         const string partialProfileFixture = "{\"schemaVersion\":4,\"materials\":{\"paintedHull\":{\"baseColor\":\"invalid\",\"metallic\":0.71}},\"lighting\":{\"keyColor\":\"not-a-color\"}}";
         bool profileSanitization = M7LookProfile.TryFromJson(partialProfileFixture,
             out M7LookProfile sanitized, out _) && sanitized.Materials.PaintedHull.BaseColor == "#07867e" &&
@@ -2654,6 +2685,9 @@ public partial class M7LookLab : Node3D
         bool authoredTextureBindings = M7LookMaterialFactory.ValidateAuthoredTextureBindings(
             _sharedMaterials, out _);
         bool groundTreatmentModes = M7LookMaterialFactory.ValidateGroundTreatmentModes(out _);
+        bool groundSpacingBinding = _ground?.MaterialOverride is ShaderMaterial groundMaterial &&
+            Mathf.IsEqualApprox((float)groundMaterial.GetShaderParameter("staging_unit_spacing").As<double>(),
+                _profile.Ground.UnitSeparation);
         bool textureBindTransforms = ValidateTextureBindTransforms();
         Vector3 intactCenter = new(13f, 1.55f, -7f);
         bool exteriorImpact = Mathf.Abs(_targetPoint.X - intactCenter.X) >= 3.15f || Mathf.Abs(_targetPoint.Z - intactCenter.Z) >= 2.45f;
@@ -2691,14 +2725,14 @@ public partial class M7LookLab : Node3D
             emissionLightRig && emissiveBindings && exteriorImpact && roundTrip && schemaOneMigration &&
             schemaTwoMigration && schemaThreeMigration && schemaFourMigration && profileSanitization &&
             schemaFiveMigration && explicitSchemaFiveWorld && schemaSixGroundMigration && schemaSevenGround &&
-            schemaSevenLegacyGround && schemaEightRasterGround &&
-            groundTreatmentModes &&
+            schemaSevenLegacyGround && schemaEightRasterGround && schemaEightStableGround && schemaNineHybridGround &&
+            groundTreatmentModes && groundSpacingBinding &&
             ResourceLoader.Exists("res://Assets/M7/Textures/emissive_glare.png") &&
             _profile.Camera.ZoomCells is >= 24f and <= 72f;
         if (!valid)
         {
             GD.PrintErr($"M7 LOOK LAB AUDIT: roundTrip={roundTrip} migrations={schemaOneMigration}/{schemaTwoMigration}/{schemaThreeMigration}/{schemaFourMigration}/{schemaFiveMigration}/{schemaSixGroundMigration} " +
-                $"schema5World={explicitSchemaFiveWorld} schema7Ground={schemaSevenGround}/{schemaSevenLegacyGround} schema8Raster={schemaEightRasterGround} groundModes={groundTreatmentModes} sanitization={profileSanitization} postComposition={postComposition} materialCache={materialCacheStable} " +
+                $"schema5World={explicitSchemaFiveWorld} schema7Ground={schemaSevenGround}/{schemaSevenLegacyGround} schema8Ground={schemaEightRasterGround}/{schemaEightStableGround} schema9Hybrid={schemaNineHybridGround} groundModes={groundTreatmentModes}/{groundSpacingBinding} sanitization={profileSanitization} postComposition={postComposition} materialCache={materialCacheStable} " +
                 $"particlePause={particlePauseState} pauseUi={pauseUiState} eventMemory={eventMemory} roles={roles} " +
                 $"emission={emissiveBindings}/{emissionLightRig} sky={proceduralSky} textures={authoredTextureBindings}/{textureBindTransforms} impact={exteriorImpact} animation={animationBindings} pools={vfxPools} destruction={destruction}");
         }
@@ -2919,6 +2953,7 @@ public partial class M7LookLab : Node3D
     private string CaptureGroundMarker() => _profile.Ground.SurfaceTreatment switch
     {
         M7GroundSurfaceTreatment.RasterForward => "raster",
+        M7GroundSurfaceTreatment.HybridSurface => "hybrid",
         M7GroundSurfaceTreatment.LegacyRaster => "legacy",
         _ => "authored"
     };

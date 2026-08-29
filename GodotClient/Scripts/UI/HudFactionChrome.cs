@@ -34,6 +34,7 @@ public partial class HudFactionChrome : Control
     private float _intensity = 0.78f;
     private float _chromeScale = 1f;
     private float _outerExpansion;
+    private bool _frameOnly;
     private Color _accent = AccentForFaction(0);
     private float _leftJunction = 0.22f;
     private float _rightJunction = 0.78f;
@@ -44,7 +45,9 @@ public partial class HudFactionChrome : Control
     public bool UsesProtectedSourceModules => true;
     public bool UsesSparseJunctionModules => true;
     public bool UsesTiledEdgeWalls => true;
-    public bool UsesFactionSurfaceFill => true;
+    public bool UsesFactionSurfaceFill => !_frameOnly;
+    public bool IsFrameOnly => _frameOnly;
+    public bool UsesVectorAccentRails => !_frameOnly;
     public int ProtectedSourceSize => _recipe.ProtectedSourceSize;
 
     public HudFactionChrome()
@@ -53,7 +56,8 @@ public partial class HudFactionChrome : Control
         ClipContents = false;
     }
 
-    public void Configure(int faction, HudFactionChromeRole role, float intensity, float chromeScale, float outerExpansion)
+    public void Configure(int faction, HudFactionChromeRole role, float intensity, float chromeScale,
+        float outerExpansion, bool frameOnly = false)
     {
         int index = Math.Clamp(faction, 0, Recipes.Length - 1);
         _recipe = Recipes[index];
@@ -62,6 +66,7 @@ public partial class HudFactionChrome : Control
         _intensity = Mathf.Clamp(intensity, 0f, 1f);
         _chromeScale = Mathf.Clamp(chromeScale, 0.75f, 1.35f);
         _outerExpansion = Mathf.Max(0f, outerExpansion);
+        _frameOnly = frameOnly;
         _accent = AccentForFaction(index);
         Visible = _texture is not null && _intensity > 0.001f;
         QueueRedraw();
@@ -97,10 +102,10 @@ public partial class HudFactionChrome : Control
         if (corner < 2f) return;
 
         Color modulate = new(1f, 1f, 1f, _intensity);
-        DrawSurfaceFill(outer, corner);
+        if (!_frameOnly) DrawSurfaceFill(outer, corner);
         DrawTiledEdgeWalls(outer, corner, modulate);
         DrawCorners(outer, corner, modulate);
-        DrawRails(outer, corner);
+        if (!_frameOnly) DrawRails(outer, corner);
         DrawFunctionalModules(outer, corner, modulate);
     }
 

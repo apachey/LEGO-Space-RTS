@@ -6,7 +6,7 @@ namespace LegoSpaceRTS.UI;
 
 public sealed class M7HudProfile
 {
-    public const int CurrentSchemaVersion = 6;
+    public const int CurrentSchemaVersion = 7;
 
     public int SchemaVersion { get; set; } = CurrentSchemaVersion;
     public HudLayoutProfile Layout { get; set; } = new();
@@ -50,7 +50,7 @@ public sealed class M7HudProfile
                 error = "Clipboard does not contain an M7 HUD profile.";
                 return false;
             }
-            if (parsed.SchemaVersion is not (1 or 2 or 3 or 4 or 5 or CurrentSchemaVersion))
+            if (parsed.SchemaVersion is not (1 or 2 or 3 or 4 or 5 or 6 or CurrentSchemaVersion))
             {
                 profile = CreateDefault();
                 error = $"HUD schema {parsed.SchemaVersion} is not supported; expected {CurrentSchemaVersion}.";
@@ -60,7 +60,10 @@ public sealed class M7HudProfile
             // Schema 1-4 profiles were authored against the generated frame
             // renderer. Schema 5 introduced Structural/Legacy/Clean but still
             // used the navy-biased baseline. Preserve both results exactly;
-            // schema 6 is the first hybrid + broad-palette profile.
+            // schema 6 introduced Hybrid + broad palettes. Schema 7 changes
+            // only how Hybrid is composed (raster outer frame with a
+            // code-native interior), so every stored schema-6 token remains
+            // authoritative during migration.
             parsed.ArtSkin ??= new HudArtSkinProfile();
             if (sourceSchemaVersion <= 4)
             {

@@ -72,14 +72,22 @@ The left panel contains twelve sections:
 11. **VFX** — prewarmed tracer/muzzle/impact budgets and live pool telemetry,
    load-preview emitter count, tracer, particle muzzle/impact, spark, luminous
    fire and smoke appearance;
-12. **Ground** — a useful A/B between **Authored Surface** and **Raster
-   Forward**, plus depth-tested tread tracks and unit spacing. Both treatments
-   follow the selected World Light Cycle identity: Earth Desert, Mars Oxide
+12. **Ground** — an A/B/C comparison between **Authored Surface**, **Raster
+   Forward** and **Hybrid Surface**, plus depth-tested tread tracks and unit
+   spacing. All treatments follow the selected World Light Cycle identity:
+   Earth Desert, Mars Oxide
    Plain, Moon Regolith, exploratory Planet U Mineral Dust or Underground
-   Cavern Floor. Authored Surface composes a compacted work pad and routes,
-   exposed bedrock shelves, loose regolith and a mineral seam at map scale;
+   Cavern Floor. Authored Surface composes a compacted vehicle work pad, service
+   aprons to both building fixtures, a narrower route/seam to the Crystal,
+   exposed bedrock outside traffic and loose regolith at map scale;
    Raster Forward gives broad image-authored albedo, height and roughness the
-   leading role while unequal rotated samples suppress tiling. The old Legacy
+   leading role while unequal rotated samples suppress tiling. Hybrid Surface
+   retains the authored fixture composition while giving the raster stronger
+   colour, normal and roughness response plus restrained broad vertex relief.
+   The work pad follows the live Unit spacing control; pad, routes, fixtures and
+   tread marks stay exactly flat while physical displacement is confined to the
+   surrounding loose soil and bedrock.
+   The old Legacy
    Raster is retained only for copied-profile migration.
 
 The surface families intentionally begin with distinct physical responses:
@@ -88,13 +96,14 @@ rubber, coated building shell and rough rock are not one material recolored.
 
 ## Profile workflow
 
-- **COPY ALL JSON** copies a complete `schemaVersion: 8` profile, including the
+- **COPY ALL JSON** copies a complete `schemaVersion: 9` profile, including the
   current zoom. It never copies only a diff.
-- **PASTE & APPLY** validates the schema, migrates schemas 1–7, ignores the
+- **PASTE & APPLY** validates the schema, migrates schemas 1–8, ignores the
   removed HUD/scorch fields, clamps unsafe values and applies the complete
   profile live. Schema 1–6 profiles retain their exact Legacy Raster treatment;
-  schema-7 Authored/Legacy values retain their meaning; fresh profiles start on
-  Authored Surface and expose Raster Forward as the useful B comparison.
+  schema-7 Authored/Legacy and all schema-8 values retain their meaning; fresh
+  profiles start on Authored Surface and expose Raster Forward and Hybrid
+  Surface as explicit comparison treatments.
 - **RESET SECTION** restores the active section only.
 - **RESET ALL** restores the neutral lab baseline.
 - **PAUSE / RESUME** freezes motion for comparisons.
@@ -113,7 +122,7 @@ Automated lighting evidence can additionally select
 `--m7-look-time 0..24`.
 
 Ground comparison may be selected explicitly with
-`--m7-look-ground authored|raster|legacy`. `legacy` is automation-only migration
+`--m7-look-ground authored|raster|hybrid|legacy`. `legacy` is automation-only migration
 evidence and is not presented as a recommended review button.
 
 Source-render capture is provided by `tools/capture-m7-look-lab.sh`.

@@ -199,8 +199,9 @@ rejected continuing with bundled variants. The primary path is now `F8` →
 **M7 Look Lab**, documented in `Docs/Development/M7_LOOK_LAB.md`. It uses the
 actual 36-degree gameplay camera and 24–72 build-cell zoom, four identical units,
 two buildings, live combat/fire evidence and expanded textured ground. Twelve
-independent control sections feed a complete schema-6 JSON profile; schemas 1–5
-are migrated. Temporary HUD, selection and health visuals are excluded.
+independent control sections feed a complete schema-9 JSON profile; schemas 1–8
+are migrated without redefining their reviewed ground treatments. Temporary
+HUD, selection and health visuals are excluded.
 
 The old inverted-hull outline is retired. The Look Lab uses a real Forward+
 depth and normal/roughness pass, separates silhouette from crease strength and
@@ -250,8 +251,8 @@ fixtures; the Palette Lab remains the accepted palette review fixture.
   or gameplay-relevant physics were introduced.
 - The Look Lab can destroy the fourth unit, the burning structure or alternate
   them. The intact source disappears into a module burst rather than sinking or
-  shrinking. Fragment, flash, smoke, ring, dust and pool-budget controls remain live; schema-6
-  copy/paste retains the complete experiment.
+shrinking. Fragment, flash, smoke, ring, dust and pool-budget controls remain
+live; the current schema-9 copy/paste retains the complete experiment.
 - The implementation does not select destruction art direction. Breakup rhythm,
   wreck silhouette and eventual faction-specific profiles remain game-director
   review gates.
@@ -272,14 +273,16 @@ fixtures; the Palette Lab remains the accepted palette review fixture.
   3×4 command card; the local production queue is a compact strip above it.
 - `F8` → **M7 HUD Lab** provides eight information-density fixtures, four
   aspect previews, live layout/type/surface/content/color tokens and complete
-  schema-6 JSON copy/paste, including prior-schema migration. Hybrid,
+  schema-7 JSON copy/paste, including schemas 1–6 migration. Hybrid,
   Structural, Legacy and Clean finishes share invariant panel geometry and hit
-  targets. Hybrid keeps an adaptive code-native chassis while using selected
-  square regions from the five faction atlases as sparse fasteners and
-  mechanisms; bounded, aspect-preserving plates from the console raster fill
-  the selection and command bays without stretching an illustrated frame.
-  Structural isolates the vector chassis, Legacy retains the old complete
-  frames without modification and Clean exposes the functional skeleton. Six
+  targets. Hybrid now reuses the complete tiled raster edge walls, protected
+  corners and junction modules from Legacy Frames as its only visible outer
+  frame; it removes their old faction-dark fill and extra vector rails. A quiet
+  code-native interior retains adaptive junctions, and one continuous,
+  aspect-cropped console raster fills each selection/command bay without
+  stretching or repeated boxed plates. Structural isolates the earlier vector
+  chassis, Legacy remains an unmodified comparison and Clean exposes the
+  functional skeleton. Six
   broad surface families—Light Ceramic, Warm Sandstone, Oxide Workshop, Field
   Olive, Alien Porcelain and Neutral Graphite—are independent from faction art
   and alter the full console mass rather than tinting one navy theme. One
@@ -339,16 +342,22 @@ fixtures; the Palette Lab remains the accepted palette review fixture.
   macro-albedo map from restrained relief, use a validated stronger broad
   albedo signal plus derivative-aware low-pass filtering at RTS zoom, and share
   model-wide texture coordinates instead of restarting on every
-  LEGO sub-mesh. The Look Lab now exposes broad authored terrain zones—compacted
-  pad/routes, bedrock, loose regolith and a mineral seam—beside Raster Forward,
-  which promotes large image-authored albedo/height forms while filtering
-  pebble-scale noise and suppressing visible tiling. Earth is explicitly the
+  LEGO sub-mesh. The Look Lab now exposes three explicit ground comparisons:
+  Authored Surface, Raster Forward and Hybrid Surface. The authored composition
+  is deterministic lab staging rather than geology: a spacing-aware four-unit
+  work pad, service aprons to both buildings, a route/seam to the Crystal, and
+  bedrock outside traffic. Raster Forward promotes large image-authored
+  albedo/height forms while filtering pebble-scale noise and suppressing visible
+  tiling. Hybrid retains the authored composition, adds stronger raster colour,
+  normal and roughness response, and confines restrained vertex relief to loose
+  soil/bedrock so fixtures and tracks remain at the shared ground boundary.
+  Earth is explicitly the
   reviewed desert/sand-covered-slab identity; Mars, Moon, Planet U and
   Underground route distinct exploratory ground palettes and track dust.
-  Schema 1–6 and schema-7 Legacy profiles retain the old raster result through
-  migration. The HUD Lab now combines generated faction details with a
-  code-native outer control-deck chassis, bounded inner raster plates and broad
-  non-faction surface palettes;
+  Schema 1–8 profiles retain their prior treatment meanings through migration.
+  The HUD Lab now uses the retained Legacy raster wall as Hybrid's sole outer
+  frame, with a code-native adaptive interior, continuous aspect-cropped raster
+  fields and broad non-faction surface palettes;
   minimap, selection and commands remain code-native contiguous sections rather
   than separately framed texture cards. Automation asserts that major panels
   and every visible command remain inside the safe area, including all 12 slots
@@ -357,9 +366,9 @@ fixtures; the Palette Lab remains the accepted palette review fixture.
   values now apply directly instead of being silently capped by viewport width;
   geometric deck widths are labelled as safe-area-constrained targets. Production Energy and alert buttons
   retain reliable hit targets; actionable brownout/capacity alerts center their
-  associated Worksite. Structural Console adds a complete filled chassis while
-  Legacy Frames and Clean remain direct same-layout comparisons. These remain
-  review tools, not approved visual canon.
+  associated Worksite. Structural Console keeps its complete vector chassis
+  while Legacy Frames and Clean remain direct same-layout comparisons. These
+  remain review tools, not approved visual canon.
 
 ## Integration format boundary
 
@@ -374,15 +383,22 @@ fixtures; the Palette Lab remains the accepted palette review fixture.
 
 ## Verification state
 
-The current M7 raster-forward/hybrid-HUD revision passed
+The current M7 logical-hybrid-ground/polished-hybrid-HUD revision passed
 `./tools/verify.sh --full` on 2026-08-29 with **zero blocking failures**: 278
 NUnit tests, 24/24 representative mover acceptance, every T058–T063 ENet
-smoke, all visual/palette pages, schema-8 Look Lab cases covering Authored
-Surface, Raster Forward and all five environments, schema-6
+smoke, all visual/palette pages, schema-9 Look Lab cases covering Authored
+Surface, Raster Forward, Hybrid Surface at zoom 35/72 and all five environments,
+schema-7
 Hybrid/Structural/Legacy/Clean HUD cases with six broad surface families at
 16:9/16:10/21:9/4:3, 100-repeat determinism, replay record/playback, snapshot
 continuation, compiled-content regeneration and a launchable macOS export.
-Exact summary: `Artifacts/Verification/20260829T070923Z-full-summary.txt`.
+Exact summary: `Artifacts/Verification/20260829T131054Z-full-summary.txt`.
+
+The freshly exported app was then launched directly into the schema-7 Hybrid
+HUD and schema-9 Earth Hybrid Surface fixtures with the Metal Forward+ renderer;
+both emitted their complete PASS markers and saved
+`Artifacts/Screenshots/m7-exported-hud-hybrid-schema7.png` and
+`Artifacts/Screenshots/m7-exported-look-earth-hybrid-schema9.png`.
 
 The preserved 60-mover M9 diagnostic remains `BLOCKING_LATER` and reported
 2/60 completion in this run; it does not block M7 acceptance and no movement

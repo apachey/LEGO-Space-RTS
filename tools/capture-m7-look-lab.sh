@@ -41,7 +41,7 @@ else
 fi
 
 usage() {
-  printf 'Usage: %s [output.png] [visible|hidden] [zoom-cells|profile] [post:on|off|profile] [outline:on|off|profile] [manual|earth|mars|moon|planet-u|underground|profile] [local-time|profile] [profile.json] [capture-frame] [combined|base|color|relief|reflection|profile] [material-audit:on|off] [authored|raster|legacy|profile]\n' "$0" >&2
+  printf 'Usage: %s [output.png] [visible|hidden] [zoom-cells|profile] [post:on|off|profile] [outline:on|off|profile] [manual|earth|mars|moon|planet-u|underground|profile] [local-time|profile] [profile.json] [capture-frame] [combined|base|color|relief|reflection|profile] [material-audit:on|off] [authored|raster|hybrid|legacy|profile]\n' "$0" >&2
 }
 
 case "${CONTROLS}" in visible|hidden) ;; *) usage; exit 2 ;; esac
@@ -77,9 +77,9 @@ esac
 case "${MATERIAL_AUDIT}" in on|off) ;;
   *) printf 'FAIL: material audit must be on or off.\n' >&2; exit 2 ;;
 esac
-case "${GROUND_TREATMENT}" in authored|raster|legacy) ;;
+case "${GROUND_TREATMENT}" in authored|raster|hybrid|legacy) ;;
   profile) [[ -n "${PROFILE}" ]] || { usage; exit 2; } ;;
-  *) printf 'FAIL: ground treatment must be authored, raster, legacy or profile.\n' >&2; exit 2 ;;
+  *) printf 'FAIL: ground treatment must be authored, raster, hybrid, legacy or profile.\n' >&2; exit 2 ;;
 esac
 if [[ -z "${GODOT}" ]] || ! godot_is_required_mono "${GODOT}"; then
   printf 'FAIL: Godot 4.7.1 .NET was not found.\n' >&2
@@ -106,7 +106,7 @@ if [[ "${GROUND_TREATMENT}" != profile ]]; then EXTRA_ARGS+=(--m7-look-ground "$
 "${GODOT}" --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- \
   --m7-look-lab --m7-look-smoke --m7-look-controls "${CONTROLS}" --m7-look-capture-frame "${CAPTURE_FRAME}" \
   "${EXTRA_ARGS[@]}" --capture-path "${OUTPUT}"
-PASS_PREFIX="M7 LOOK LAB: PASS schema=8 units=4 meshes=192 triangles=31104 buildings=2"
+PASS_PREFIX="M7 LOOK LAB: PASS schema=9 units=4 meshes=192 triangles=31104 buildings=2"
 if [[ ! -s "${OUTPUT}" ]] || ! grep -q "${PASS_PREFIX}" "${CAPTURE_LOG}"; then
   printf 'FAIL: M7 Look Lab capture or PASS marker was not produced.\n' >&2
   exit 1

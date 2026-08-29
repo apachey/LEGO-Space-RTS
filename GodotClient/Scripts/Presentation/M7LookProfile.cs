@@ -6,7 +6,7 @@ namespace LegoSpaceRTS.Presentation;
 
 public sealed class M7LookProfile
 {
-    public const int CurrentSchemaVersion = 8;
+    public const int CurrentSchemaVersion = 9;
 
     public int SchemaVersion { get; set; } = CurrentSchemaVersion;
     public CameraLook Camera { get; set; } = new();
@@ -75,7 +75,8 @@ public sealed class M7LookProfile
             // makes the authored, map-scale terrain composition the new review default while
             // preserving every older profile as the exact legacy raster treatment. Schema 8
             // adds a readable raster-forward review treatment and explicit environment surface
-            // identities without changing the meaning of either schema-7 ground value. Missing
+            // identities without changing the meaning of either schema-7 ground value. Schema 9
+            // adds a third hybrid comparison without reassigning any schema-8 enum value. Missing
             // values intentionally inherit the current review baseline, so old
             // copied profiles remain usable.
             int sourceSchemaVersion = parsed.SchemaVersion;
@@ -96,6 +97,7 @@ public sealed class M7LookProfile
             if (sourceSchemaVersion < 6) ApplySchemaSixMigration(parsed);
             if (sourceSchemaVersion < 7) ApplySchemaSevenMigration(parsed);
             if (sourceSchemaVersion == 7) ApplySchemaEightMigration(parsed);
+            if (sourceSchemaVersion < 9) ApplySchemaNineMigration(parsed);
             parsed.Normalize();
             profile = parsed;
             error = string.Empty;
@@ -216,6 +218,15 @@ public sealed class M7LookProfile
         // AuthoredSurfaceStack exactly as reviewed.
         if (profile.Ground.SurfaceTreatment == M7GroundSurfaceTreatment.RasterForward)
             profile.Ground.SurfaceTreatment = M7GroundSurfaceTreatment.LegacyRaster;
+    }
+
+    private static void ApplySchemaNineMigration(M7LookProfile profile)
+    {
+        // HybridSurface did not exist before schema 9. Preserve the old
+        // sanitization result for an out-of-range numeric value 3 instead of
+        // retroactively giving malformed schema 1–8 data a new visual meaning.
+        if (profile.Ground.SurfaceTreatment == M7GroundSurfaceTreatment.HybridSurface)
+            profile.Ground.SurfaceTreatment = M7GroundSurfaceTreatment.AuthoredSurfaceStack;
     }
 
     private static void MergeMissingMaterialDefaults(M7LookProfile profile, JsonElement root)
@@ -894,7 +905,8 @@ public enum M7GroundSurfaceTreatment : byte
 {
     AuthoredSurfaceStack = 0,
     RasterForward = 1,
-    LegacyRaster = 2
+    LegacyRaster = 2,
+    HybridSurface = 3
 }
 
 public sealed class GroundLook

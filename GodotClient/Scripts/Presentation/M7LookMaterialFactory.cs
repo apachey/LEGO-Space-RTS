@@ -135,8 +135,11 @@ public static class M7LookMaterialFactory
             !TextureParameterMatches(ground, "raster_forward_texture", GroundRasterForwardTexturePath) ||
             !TextureParameterMatches(ground, "height_texture", GroundTexturePath) ||
             !TextureParameterMatches(ground, "detail_texture_b", GroundTexturePath) ||
-            ground.GetShaderParameter("surface_treatment").As<int>() is < 0 or > 2 ||
-            ground.GetShaderParameter("authored_zone_revision").As<double>() < 2.0 ||
+            ground.GetShaderParameter("surface_treatment").As<int>() is < 0 or > 3 ||
+            ground.GetShaderParameter("authored_zone_revision").As<double>() < 3.0 ||
+            ground.GetShaderParameter("hybrid_vertex_relief").As<double>() <= 0.0 ||
+            ground.GetShaderParameter("hybrid_raster_strength").As<double>() <= 0.0 ||
+            ground.GetShaderParameter("staging_unit_spacing").As<double>() is < 4.0 or > 14.0 ||
             ground.GetShaderParameter("albedo_variation").As<double>() <= 0.0 ||
             ground.GetShaderParameter("relief_strength").As<double>() <= 0.0 ||
             ground.GetShaderParameter("roughness_variation").As<double>() <= 0.0)
@@ -157,10 +160,14 @@ public static class M7LookMaterialFactory
         M7LookProfile rasterProfile = M7LookProfile.CreateDefault();
         rasterProfile.Ground.SurfaceTreatment = M7GroundSurfaceTreatment.RasterForward;
         rasterProfile.WorldCycle.Environment = (int)M7WorldEnvironment.Mars;
+        M7LookProfile hybridProfile = M7LookProfile.CreateDefault();
+        hybridProfile.Ground.SurfaceTreatment = M7GroundSurfaceTreatment.HybridSurface;
+        hybridProfile.WorldCycle.Environment = (int)M7WorldEnvironment.Earth;
         M7LookProfile legacyProfile = M7LookProfile.CreateDefault();
         legacyProfile.Ground.SurfaceTreatment = M7GroundSurfaceTreatment.LegacyRaster;
         ShaderMaterial authored = Ground(authoredProfile);
         ShaderMaterial raster = Ground(rasterProfile);
+        ShaderMaterial hybrid = Ground(hybridProfile);
         ShaderMaterial legacy = Ground(legacyProfile);
         bool environmentRouting = true;
         for (int environment = (int)M7WorldEnvironment.Earth;
@@ -179,9 +186,15 @@ public static class M7LookMaterialFactory
                 (int)M7GroundSurfaceTreatment.AuthoredSurfaceStack ||
             raster.GetShaderParameter("surface_treatment").As<int>() !=
                 (int)M7GroundSurfaceTreatment.RasterForward ||
+            hybrid.GetShaderParameter("surface_treatment").As<int>() !=
+                (int)M7GroundSurfaceTreatment.HybridSurface ||
             legacy.GetShaderParameter("surface_treatment").As<int>() !=
                 (int)M7GroundSurfaceTreatment.LegacyRaster ||
-            authored.GetShaderParameter("authored_zone_revision").As<double>() < 2.0 ||
+            authored.GetShaderParameter("authored_zone_revision").As<double>() < 3.0 ||
+            hybrid.GetShaderParameter("hybrid_vertex_relief").As<double>() <= 0.0 ||
+            hybrid.GetShaderParameter("hybrid_raster_strength").As<double>() <= 0.0 ||
+            !Mathf.IsEqualApprox((float)hybrid.GetShaderParameter("staging_unit_spacing").As<double>(),
+                hybridProfile.Ground.UnitSeparation) ||
             authored.GetShaderParameter("world_environment").As<int>() != (int)M7WorldEnvironment.Earth ||
             raster.GetShaderParameter("world_environment").As<int>() != (int)M7WorldEnvironment.Mars ||
             !environmentRouting ||
@@ -189,7 +202,7 @@ public static class M7LookMaterialFactory
             !TextureParameterMatches(raster, "raster_forward_texture", GroundRasterForwardTexturePath) ||
             !TextureParameterMatches(legacy, "albedo_texture", RegolithTexturePath))
         {
-            error = "Authored/raster-forward/legacy ground treatment routing is invalid.";
+            error = "Authored/raster-forward/hybrid/legacy ground treatment routing is invalid.";
             return false;
         }
 
@@ -334,7 +347,10 @@ public static class M7LookMaterialFactory
         material.SetShaderParameter("relief_strength", 0.018f);
         material.SetShaderParameter("roughness_variation", 0.080f);
         material.SetShaderParameter("surface_treatment", (int)profile.Ground.SurfaceTreatment);
-        material.SetShaderParameter("authored_zone_revision", 2f);
+        material.SetShaderParameter("authored_zone_revision", 3f);
+        material.SetShaderParameter("hybrid_vertex_relief", 0.22f);
+        material.SetShaderParameter("hybrid_raster_strength", 0.17f);
+        material.SetShaderParameter("staging_unit_spacing", profile.Ground.UnitSeparation);
         material.SetShaderParameter("world_environment", profile.WorldCycle.Enabled
             ? profile.WorldCycle.Environment
             : -1);
@@ -650,8 +666,11 @@ uniform float roughness_contrast = 14.0;
 uniform float albedo_variation = 0.055;
 uniform float relief_strength = 0.45;
 uniform float roughness_variation = 0.30;
-uniform int surface_treatment : hint_range(0, 2) = 0;
+uniform int surface_treatment : hint_range(0, 3) = 0;
 uniform float authored_zone_revision = 1.0;
+uniform float hybrid_vertex_relief = 0.22;
+uniform float hybrid_raster_strength = 0.17;
+uniform float staging_unit_spacing = 6.9;
 uniform int world_environment : hint_range(-1, 4) = 0;
 uniform int inspection_pass : hint_range(0, 4) = 0;
 uniform vec4 background_color : source_color = vec4(0.08, 0.11, 0.14, 1.0);
@@ -659,7 +678,59 @@ uniform float background_influence = 0.15;
 varying vec3 world_position;
 varying vec3 view_position;
 
+float staging_ellipse(vec2 p, vec2 center, vec2 radii, float feather) {
+    float distance_value = length((p - center) / radii);
+    return 1.0 - smoothstep(1.0 - feather, 1.0 + feather, distance_value);
+}
+
+float staging_segment_distance(vec2 p, vec2 start, vec2 end) {
+    vec2 segment = end - start;
+    float along = clamp(dot(p - start, segment) / max(dot(segment, segment), 0.0001), 0.0, 1.0);
+    return length(p - (start + segment * along));
+}
+
+float staging_traffic_mask(vec2 p) {
+    // These anchors match the deterministic Look Lab fixture: the vehicle
+    // work pad at the origin, the intact structure at (13,-7), the burning
+    // structure at (-13,-10), and the Crystal cluster at (10.2,6.8).
+    float spacing_scale = clamp(staging_unit_spacing / 6.9, 4.0 / 6.9, 14.0 / 6.9);
+    float pad = staging_ellipse(p, vec2(-1.8, -0.3) * spacing_scale,
+        vec2(12.6, 10.2) * spacing_scale, 0.12);
+    float intact_route = 1.0 - smoothstep(2.15, 3.65,
+        staging_segment_distance(p, vec2(3.8, -1.2) * spacing_scale, vec2(13.0, -7.0)));
+    float burning_route = 1.0 - smoothstep(2.0, 3.45,
+        staging_segment_distance(p, vec2(-4.7, -2.5) * spacing_scale, vec2(-13.0, -10.0)));
+    float crystal_route = 1.0 - smoothstep(1.65, 2.85,
+        staging_segment_distance(p, vec2(2.4, 3.0) * spacing_scale, vec2(10.2, 6.8)));
+    return max(pad, max(intact_route, max(burning_route, crystal_route)) * 0.90);
+}
+
+float hybrid_vertex_raster(vec2 p) {
+    mat2 rotate = mat2(vec2(0.906, 0.423), vec2(-0.423, 0.906));
+    vec2 uv = p * 0.026;
+    // Explicit LOD removes pebble noise before displacement. Actual geometry
+    // carries only broad raster masses; finer relief remains in the normal.
+    float a = textureLod(raster_forward_texture, uv, 3.0).r;
+    float b = textureLod(raster_forward_texture,
+        rotate * uv * 0.681 + vec2(0.31, 0.73), 3.4).r;
+    return clamp(a * 0.68 + b * 0.32, 0.0, 1.0);
+}
+
 void vertex() {
+    vec3 source_world_position = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
+    if (surface_treatment == 3) {
+        float traffic = staging_traffic_mask(source_world_position.xz);
+        float outside_traffic = 1.0 - traffic;
+        float raster_relief = hybrid_vertex_raster(source_world_position.xz) * 2.0 - 1.0;
+        float broad_relief = sin(source_world_position.x * 0.071 + source_world_position.z * 0.029) * 0.32 +
+            cos(source_world_position.z * 0.061 - source_world_position.x * 0.018) * 0.18;
+        // Fixture surfaces and tread marks use the CPU GroundHeight boundary.
+        // Keep them exactly coplanar in the authored traffic mask; only the
+        // surrounding loose soil and bedrock receive physical displacement.
+        float displacement_gate = smoothstep(0.18, 0.92, outside_traffic);
+        float amplitude = 0.62 * displacement_gate * hybrid_vertex_relief;
+        VERTEX.y += (raster_relief + broad_relief * 0.24) * amplitude;
+    }
     world_position = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
     view_position = (MODELVIEW_MATRIX * vec4(VERTEX, 1.0)).xyz;
 }
@@ -757,48 +828,30 @@ float broad_ground_breakup(vec2 p) {
     return (broad * 0.74 + medium * 0.26 - 0.5) * 2.0;
 }
 
-float authored_ellipse(vec2 p, vec2 center, vec2 radii, float feather) {
-    float distance_value = length((p - center) / radii);
-    return 1.0 - smoothstep(1.0 - feather, 1.0 + feather, distance_value);
-}
-
-float authored_segment_distance(vec2 p, vec2 start, vec2 end) {
-    vec2 segment = end - start;
-    float along = clamp(dot(p - start, segment) / max(dot(segment, segment), 0.0001), 0.0, 1.0);
-    return length(p - (start + segment * along));
-}
-
 vec4 authored_zone_masks(vec2 p) {
     // This is a unique map-scale composition rather than another tiled noise
-    // layer: a central compacted work pad, three travelled service routes,
-    // two exposed bedrock shelves, and a mineral seam leading to the review
-    // crystal cluster. All positions are fixed in world space and therefore
-    // remain stable while the RTS camera zooms and rotates.
+    // layer. Every shape has a fixture job: the central vehicle work pad,
+    // service aprons to the two structures, a narrower mineral route toward
+    // the Crystal, and bedrock kept outside the travelled area. All positions
+    // are deterministic lab staging, not procedural geology or map canon.
     p += vec2(authored_zone_revision - 1.0) * 0.0001;
-    float pad = authored_ellipse(p, vec2(0.0, -0.8), vec2(15.5, 11.8), 0.12);
-    float route_a = 1.0 - smoothstep(3.0, 4.8,
-        authored_segment_distance(p, vec2(-4.0, -2.0), vec2(22.0, -13.5)));
-    float route_b = 1.0 - smoothstep(2.5, 4.2,
-        authored_segment_distance(p, vec2(-7.0, -3.5), vec2(-23.0, -16.0)));
-    float route_c = 1.0 - smoothstep(2.2, 4.0,
-        authored_segment_distance(p, vec2(-5.0, 4.5), vec2(-27.0, 18.0)));
-    float compacted = max(pad, max(route_a, max(route_b, route_c)) * 0.88);
+    float compacted = staging_traffic_mask(p);
 
     vec2 shelf_warp = vec2(
         ground_noise(p * 0.043 + vec2(1.7, 7.4)),
         ground_noise(p * 0.037 + vec2(8.2, 2.6))) * 2.0 - 1.0;
-    float bedrock_a = authored_ellipse(p + shelf_warp * 2.6,
-        vec2(-18.0, 10.5), vec2(10.5, 6.2), 0.16);
-    float bedrock_b = authored_ellipse(p - shelf_warp * 2.1,
-        vec2(23.0, 12.5), vec2(12.0, 7.4), 0.18);
-    float bedrock = max(bedrock_a, bedrock_b) * (1.0 - compacted * 0.62);
+    float bedrock_a = staging_ellipse(p + shelf_warp * 2.6,
+        vec2(-20.0, 11.5), vec2(11.5, 6.8), 0.16);
+    float bedrock_b = staging_ellipse(p - shelf_warp * 2.1,
+        vec2(22.5, 14.0), vec2(13.0, 8.2), 0.18);
+    float bedrock = max(bedrock_a, bedrock_b) * (1.0 - compacted * 0.88);
 
-    float seam_center = 7.0 + p.x * 0.10 + sin((p.x + 5.0) * 0.15) * 1.65;
-    float seam_window = authored_ellipse(p, vec2(9.0, 7.8), vec2(28.0, 12.0), 0.28);
+    float crystal_route_distance = staging_segment_distance(p, vec2(2.4, 3.0), vec2(10.2, 6.8));
+    float seam_window = staging_ellipse(p, vec2(7.0, 5.2), vec2(12.0, 6.5), 0.24);
     float seam_breakup = mix(0.28, 1.0, smoothstep(0.30, 0.70,
         ground_noise(p * 0.17 + vec2(5.8, 9.1))));
-    float seam = (1.0 - smoothstep(0.30, 1.04, abs(p.y - seam_center))) *
-        seam_window * seam_breakup * (0.38 + bedrock * 0.62) * (1.0 - pad * 0.42);
+    float seam = (1.0 - smoothstep(0.24, 0.92, crystal_route_distance)) *
+        seam_window * seam_breakup * (0.55 + bedrock * 0.35) * (1.0 - compacted * 0.28);
     float loose = clamp(1.0 - compacted * 0.82 - bedrock * 0.72, 0.0, 1.0);
     return vec4(compacted, bedrock, seam, loose);
 }
@@ -941,11 +994,33 @@ void fragment() {
         composed_relief = raster_forward_mask * 0.78 + height_mask * 0.22;
         composed_roughness = clamp(0.87 + roughness_mask * 0.075 - raster_forward_mask * 0.045,
             0.72, 0.98);
+    } else if (surface_treatment == 3) {
+        vec4 zones = authored_zone_masks(world_position.xz);
+        float authored_relief;
+        float authored_roughness;
+        ground_color = authored_surface_color(world_position.xz, zones, albedo_mask,
+            authored_relief, authored_roughness);
+        float raster_forward_sample = anti_tiled_raster_forward(world_position.xz * 0.026);
+        float raster_forward_mask = clamp((raster_forward_sample - 0.48) * 7.0, -1.0, 1.0);
+        // Hybrid keeps the deterministic authored composition readable, but
+        // lets the raster materially change each zone instead of floating over
+        // it as uniform opacity. Bedrock and loose soil carry more relief;
+        // compacted traffic stays calmer and physically flatter.
+        float raster_color_weight = hybrid_raster_strength *
+            mix(0.68, 1.18, clamp(zones.y + zones.w * 0.42, 0.0, 1.0));
+        ground_color *= 1.0 + raster_forward_mask * raster_color_weight;
+        ground_color *= 1.0 + macro * 0.022;
+        float material_response = mix(0.36, 0.82,
+            clamp(zones.y + zones.w * 0.52, 0.0, 1.0));
+        composed_relief = authored_relief + raster_forward_mask * material_response +
+            height_mask * 0.16;
+        composed_roughness = clamp(authored_roughness + roughness_mask * 0.055 -
+            raster_forward_mask * 0.035, 0.62, 0.99);
     }
     if (inspection_pass == 1) {
         ground_color = base_color.rgb;
     } else if (inspection_pass == 2) {
-        ground_color = surface_treatment < 2
+        ground_color = surface_treatment != 2
             ? ground_color
             : base_color.rgb * (1.0 + albedo_mask * 0.34);
     } else if (inspection_pass >= 3) {
@@ -958,7 +1033,8 @@ void fragment() {
     ALBEDO = mix(ground_color, background_color.rgb, background_influence * 0.22);
     if (inspection_pass == 0) {
         float response = surface_treatment == 0 ? 0.046
-            : (surface_treatment == 1 ? 0.082 : relief_strength);
+            : (surface_treatment == 1 ? 0.082
+            : (surface_treatment == 3 ? 0.105 : relief_strength));
         NORMAL = ground_relief_normal(normalize(NORMAL), composed_relief, response);
     } else if (inspection_pass == 3) {
         NORMAL = ground_relief_normal(normalize(NORMAL), composed_relief, max(relief_strength, 0.040));
@@ -966,7 +1042,7 @@ void fragment() {
         NORMAL = normalize(NORMAL);
     }
     ROUGHNESS = inspection_pass == 4
-        ? (surface_treatment < 2
+        ? (surface_treatment != 2
             ? mix(0.30, 0.98, composed_roughness)
             : mix(0.30, 0.98, roughness_mask * 0.5 + 0.5))
         : (inspection_pass == 0 ? composed_roughness : roughness_value);

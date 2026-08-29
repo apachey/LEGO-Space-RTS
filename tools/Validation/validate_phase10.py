@@ -108,10 +108,10 @@ hud_chrome = (ROOT/'GodotClient/Scripts/UI/HudFactionChrome.cs').read_text()
 hud_structural = (ROOT/'GodotClient/Scripts/UI/HudStructuralChrome.cs').read_text()
 hud_raster_surface = (ROOT/'GodotClient/Scripts/UI/HudRasterSurfaceOverlay.cs').read_text()
 hud_profile = (ROOT/'GodotClient/Scripts/UI/M7HudProfile.cs').read_text()
-check('CurrentSchemaVersion = 6' in hud_profile and 'Clamp(ArtSkin.Faction, 0, 4)' in hud_profile and
+check('CurrentSchemaVersion = 7' in hud_profile and 'Clamp(ArtSkin.Faction, 0, 4)' in hud_profile and
       'HudArtFinish Finish' in hud_profile and 'HybridConsole' in hud_profile and
       'HudSurfacePalette SurfacePalette' in hud_profile and 'HudSurfacePaletteLibrary' in hud_profile,
-      'M7 HUD Profile schema 6 hybrid/palette domain missing')
+      'M7 HUD Profile schema 7 polished hybrid/palette domain missing')
 hud_minimap = (ROOT/'GodotClient/Scripts/UI/HudMinimapView.cs').read_text()
 minimap_source = (ROOT/'GodotClient/Scripts/Presentation/MinimapPresentationSource.cs').read_text()
 input_controller = (ROOT/'GodotClient/Scripts/Presentation/RtsInputController.cs').read_text()
@@ -127,13 +127,16 @@ for token in ['HudFactionChromeRole.BottomDeck','UsesSparseJunctionModules','Use
               'DrawSurfaceFill','SurfaceForFaction','DrawFunctionalModules','SetJunctions']:
     check(token in hud_view + hud_chrome, f'M7 continuous faction control-deck chrome missing: {token}')
 for token in ['ConsoleSurfaceTexturePath','UsesTiledConsoleSurface','UsesSculptedShoulders',
-              'UsesFactionRasterModules','DrawHybridRasterDetails','ProtectedSourceSizeForFaction',
+              'UsesInteriorOnlyHybrid','DrawHybridInterior','ProtectedSourceSizeForFaction',
               'CreateChassisShape','DrawRecessedBays','DrawLayeredRails','SetJunctions']:
     check(token in hud_structural + hud_chrome, f'M7 structural RTS console chrome missing: {token}')
+for token in ['IsFrameOnly','UsesVectorAccentRails','if (!_frameOnly) DrawSurfaceFill',
+              'if (!_frameOnly) DrawRails','rasterFrameFinish','hybridFinish']:
+    check(token in hud_chrome + hud_view, f'M7 hybrid legacy-frame/vector-interior composition missing: {token}')
 check((ROOT/'GodotClient/Assets/M7/Hud/console_surface_v1.png').exists(),
       'M7 structural console raster surface missing')
 for token in ['HudRasterSurfaceOverlay','UsesBoundedRasterPlates','UsesUnstretchedSourceRegions',
-              'SourcePlates','HudRasterSurfaceRole.Selection','HudRasterSurfaceRole.Command',
+              'UsesSingleContinuousSurfaceField','CropToAspect','HudRasterSurfaceRole.Selection','HudRasterSurfaceRole.Command',
               'Name = $"{name}RasterSurface"']:
     check(token in hud_raster_surface + hud_view, f'M7 hybrid raster fill detail missing: {token}')
 check('HudFactionChromeRole.SquarePanel' not in hud_view + hud_chrome and
@@ -188,15 +191,17 @@ for token in ['PresentationEventDeduplicator','PresentationVfxPoolStats','TryAcq
     check(token in vfx_pool, f'T066 pooled VFX foundation missing: {token}')
 check('QueueFree()' not in vfx_pool, 'T066 pooled VFX nodes must be reused rather than freed per effect')
 look_profile = (ROOT/'GodotClient/Scripts/Presentation/M7LookProfile.cs').read_text()
-check('CurrentSchemaVersion = 8' in look_profile and 'AnimationLook Animation' in look_profile and
+check('CurrentSchemaVersion = 9' in look_profile and 'AnimationLook Animation' in look_profile and
       'DestructionLook Destruction' in look_profile and 'VfxPoolLook VfxPool' in look_profile and
       'WorldCycleLook WorldCycle' in look_profile and 'SignalPulseAmount' in look_profile and
       'LampPulseAmount' in look_profile and 'CrystalPulseAmount' in look_profile and
       'ReliefStrength' in look_profile and 'TextureBlendMode' in look_profile and
       'InspectionPass' in look_profile and 'ApplySchemaSixMigration' in look_profile and
       'ApplySchemaSevenMigration' in look_profile and 'ApplySchemaEightMigration' in look_profile and
-      'RasterForward' in look_profile and 'M7GroundSurfaceTreatment' in look_profile,
-      'M7 Look Profile schema 8 texture/emission/world-cycle/ground-treatment controls missing')
+      'ApplySchemaNineMigration' in look_profile and
+      'RasterForward' in look_profile and 'HybridSurface' in look_profile and
+      'M7GroundSurfaceTreatment' in look_profile,
+      'M7 Look Profile schema 9 texture/emission/world-cycle/ground-treatment controls missing')
 look_materials = (ROOT/'GodotClient/Scripts/Presentation/M7LookMaterialFactory.cs').read_text()
 paint_macro_import = (ROOT/'GodotClient/Assets/M7/Textures/painted_shell_macro_v2.png.import').read_text()
 check('mipmaps/generate=true' in paint_macro_import,
@@ -210,7 +215,10 @@ for token in ['regolith_surface_v2.png','regolith_height.png','painted_shell_mac
               'detail_filter_width','height_filter_width','groove_darkening',
               'surface_treatment','authored_zone_masks','authored_surface_color',
               'anti_tiled_raster_forward','environment_surface_palette','world_environment',
-              'authored_segment_distance','ValidateGroundTreatmentModes',
+              'ValidateGroundTreatmentModes',
+              'staging_traffic_mask','staging_segment_distance','hybrid_vertex_relief',
+              'hybrid_raster_strength','staging_unit_spacing','displacement_gate',
+              'textureLod(raster_forward_texture',
               'instance uniform vec3 texture_offset',
               'instance uniform vec3 texture_axis_x',
               'instance uniform vec3 texture_axis_y',
@@ -238,7 +246,8 @@ for token in ['BuildAnimationSettings','PresentationAnimationDriver','BuildDestr
               'float broadRelief','SetTextureAnchor','ResolveTextureRoot',
               'CaptureTextureBindTransforms','ValidateTextureBindTransforms',
               '--m7-look-ground','AddGroundTreatmentChoices','CaptureGroundMarker',
-              'CaptureSurfaceMarker','GroundSurfaceDisplayName','Raster Forward']:
+              'CaptureSurfaceMarker','GroundSurfaceDisplayName','Raster Forward','Hybrid Surface',
+              'groundSpacingBinding']:
     check(token in look_lab, f'M7 Look Lab T065/T066/T067 integration missing: {token}')
 check('Start from surface character' not in look_lab and 'Physical surface depth' not in look_lab,
       'M7 normal Materials UI must remain role-authored rather than exposing low-level shader controls')
