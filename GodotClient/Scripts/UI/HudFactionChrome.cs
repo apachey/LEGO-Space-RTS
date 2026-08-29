@@ -107,6 +107,9 @@ public partial class HudFactionChrome : Control
     public static string TexturePathForFaction(int faction) =>
         Recipes[Math.Clamp(faction, 0, Recipes.Length - 1)].TexturePath;
 
+    public static int ProtectedSourceSizeForFaction(int faction) =>
+        Recipes[Math.Clamp(faction, 0, Recipes.Length - 1)].ProtectedSourceSize;
+
     public static Color AccentForFaction(int faction) => Math.Clamp(faction, 0, Recipes.Length - 1) switch
     {
         1 => new Color("e97832"), // Mars Mission astronauts · restrained orange

@@ -16,6 +16,7 @@ public partial class HudView : Control
     private readonly List<PanelContainer> _raisedPanels = new();
     private readonly List<HudFactionChrome> _factionChrome = new();
     private readonly List<HudStructuralChrome> _structuralChrome = new();
+    private readonly List<HudRasterSurfaceOverlay> _rasterSurfaceOverlays = new();
     private readonly List<Button> _allButtons = new();
     private readonly List<ColorRect> _topDividers = new();
     private readonly Button[] _commandButtons = new Button[CommandCapacity];
@@ -677,10 +678,9 @@ public partial class HudView : Control
         Color secondaryAccent = SecondaryAccent();
         Color factionSurface = HudFactionChrome.SurfaceForFaction(_profile.ArtSkin.Faction);
         bool legacyFinish = _profile.ArtSkin.Enabled && _profile.ArtSkin.Finish == HudArtFinish.LegacyFrames;
-        bool structuralFinish = _profile.ArtSkin.Enabled && _profile.ArtSkin.Finish == HudArtFinish.StructuralConsole;
-        float factionFill = legacyFinish
-            ? 0.16f * _profile.ArtSkin.ChromeIntensity
-            : structuralFinish ? 0.24f * _profile.ArtSkin.ChromeIntensity : 0f;
+        bool structuralFinish = _profile.ArtSkin.Enabled &&
+            _profile.ArtSkin.Finish is HudArtFinish.StructuralConsole or HudArtFinish.HybridConsole;
+        float factionFill = legacyFinish ? 0.16f * _profile.ArtSkin.ChromeIntensity : 0f;
         Color text = Parse(_profile.Colors.TextPrimary, Colors.White);
         Color muted = Parse(_profile.Colors.TextMuted, new Color("aab4b8"));
         for (int i = 0; i < _surfacePanels.Count; i++)
@@ -697,7 +697,6 @@ public partial class HudView : Control
                     factionFill * (panel == _selectionPanel ? 1.15f : 0.85f));
                 StyleBoxFlat section = SectionStyle(sectionBackground,
                     new Color(secondaryAccent, 0.46f), panel == _minimapPanel, panel == _commandPanel);
-                if (structuralFinish) section.BgColor = new Color(section.BgColor, Math.Min(0.80f, section.BgColor.A));
                 panel.AddThemeStyleboxOverride("panel", section);
             }
             else
@@ -713,7 +712,6 @@ public partial class HudView : Control
         for (int i = 0; i < _raisedPanels.Count; i++)
         {
             StyleBoxFlat raisedStyle = Style(raised, displayAccent);
-            if (structuralFinish) raisedStyle.BgColor = new Color(raisedStyle.BgColor, Math.Min(0.82f, raisedStyle.BgColor.A));
             _raisedPanels[i].AddThemeStyleboxOverride("panel", raisedStyle);
         }
         if (_eventPanel is not null)
@@ -746,7 +744,15 @@ public partial class HudView : Control
             HudStructuralChrome chrome = _structuralChrome[i];
             chrome.Configure(_profile.ArtSkin.Faction, chrome.Role,
                 structuralFinish ? _profile.ArtSkin.ChromeIntensity : 0f,
-                _profile.ArtSkin.ChromeScale, _profile.Surface.InnerPadding);
+                _profile.ArtSkin.ChromeScale, _profile.Surface.InnerPadding,
+                _profile.ArtSkin.Finish, background, recessed, displayAccent, secondaryAccent);
+        }
+        for (int i = 0; i < _rasterSurfaceOverlays.Count; i++)
+        {
+            HudRasterSurfaceOverlay overlay = _rasterSurfaceOverlays[i];
+            overlay.Configure(overlay.Role, _profile.ArtSkin.Finish,
+                _profile.ArtSkin.Enabled ? _profile.ArtSkin.ChromeIntensity : 0f,
+                recessed, displayAccent);
         }
         for (int i = 0; i < _headingLabels.Count; i++) _headingLabels[i].AddThemeColorOverride("font_color", displayAccent);
         for (int i = 0; i < _bodyLabels.Count; i++) _bodyLabels[i].AddThemeColorOverride("font_color", text);
@@ -970,13 +976,13 @@ public partial class HudView : Control
         _ => Parse(_profile.Colors.TextMuted, Colors.Gray)
     };
 
-    private Color DisplayAccent() => _profile.ArtSkin.Enabled && _profile.ArtSkin.Finish != HudArtFinish.Clean
+    private Color DisplayAccent() => _profile.ArtSkin.Enabled && _profile.ArtSkin.Finish == HudArtFinish.LegacyFrames
         ? HudFactionChrome.AccentForFaction(_profile.ArtSkin.Faction)
-        : Parse(_profile.Colors.Accent, new Color("e6ad28"));
+        : Parse(_profile.Colors.Accent, new Color("d95f24"));
 
-    private Color SecondaryAccent() => _profile.ArtSkin.Enabled && _profile.ArtSkin.Finish != HudArtFinish.Clean
+    private Color SecondaryAccent() => _profile.ArtSkin.Enabled && _profile.ArtSkin.Finish == HudArtFinish.LegacyFrames
         ? HudFactionChrome.SecondaryAccentForFaction(_profile.ArtSkin.Faction)
-        : Parse(_profile.Colors.Selection, new Color("5fc4d8"));
+        : Parse(_profile.Colors.Selection, new Color("166e7a"));
 
     private PanelContainer SurfacePanel(string name, bool raised)
     {
@@ -997,7 +1003,11 @@ public partial class HudView : Control
                 CustomMinimumSize = Vector2.Zero
             };
             structural.Configure(_profile.ArtSkin.Faction, chromeRole.Value,
-                0f, _profile.ArtSkin.ChromeScale, _profile.Surface.InnerPadding);
+                0f, _profile.ArtSkin.ChromeScale, _profile.Surface.InnerPadding,
+                _profile.ArtSkin.Finish,
+                Parse(_profile.Colors.Background, new Color("cfc6ae")),
+                Parse(_profile.Colors.Recessed, new Color("8b8578")),
+                DisplayAccent(), SecondaryAccent());
             panel.AddChild(structural);
             _structuralChrome.Add(structural);
             HudFactionChrome chrome = new()
@@ -1010,6 +1020,25 @@ public partial class HudView : Control
                 _profile.ArtSkin.ChromeIntensity, _profile.ArtSkin.ChromeScale, _profile.Surface.InnerPadding);
             panel.AddChild(chrome);
             _factionChrome.Add(chrome);
+        }
+        HudRasterSurfaceRole? rasterRole = name switch
+        {
+            "SelectionPanel" => HudRasterSurfaceRole.Selection,
+            "CommandPanel" => HudRasterSurfaceRole.Command,
+            _ => null
+        };
+        if (rasterRole.HasValue)
+        {
+            HudRasterSurfaceOverlay overlay = new()
+            {
+                Name = $"{name}RasterSurface",
+                MouseFilter = MouseFilterEnum.Ignore,
+                CustomMinimumSize = Vector2.Zero
+            };
+            overlay.Configure(rasterRole.Value, _profile.ArtSkin.Finish, 0f,
+                Parse(_profile.Colors.Recessed, new Color("8b8578")), DisplayAccent());
+            panel.AddChild(overlay);
+            _rasterSurfaceOverlays.Add(overlay);
         }
         return panel;
     }

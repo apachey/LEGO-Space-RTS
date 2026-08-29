@@ -61,21 +61,51 @@ These are information-density tests, not proposed visual variants.
 
 ## Live controls
 
-The laboratory exposes the current presentation tokens and three art-finish
+The laboratory exposes the current presentation tokens and four art-finish
 modes on one invariant geometry:
 
-- **Structural Console** is the new default: a continuous sculpted chassis,
-  recessed functional bays and an original dark industrial raster surface;
+- **Hybrid · Vector + Raster** is the schema-6 default. Adaptive code-native
+  silhouettes, bays, shoulders, rails and dividers own the layout. Raster art
+  is used only where it adds material detail: fixed regions of the original
+  console surface become bounded plates inside the selection and command bays,
+  while small protected regions of the selected faction atlas become corner,
+  side and functional-junction modules. The modules remain square and the
+  plates keep their source aspect; neither is stretched across an arbitrary
+  panel.
+- **Structural Console** keeps the same adaptive chassis and its restrained
+  console-surface sampling, but removes Hybrid's faction-atlas modules and
+  bounded inner raster plates. It isolates the structural contribution without
+  changing the HUD layout.
 - **Legacy Frames** keeps all five previously generated faction frame families
-  intact and applies them to the redesigned layout;
-- **Clean** removes both decorative layers and exposes the functional layout by
-  itself.
+  intact as a comparison baseline. It is not the schema-6 direction or the
+  default.
+- **Clean** removes the structural and legacy decorative layers and exposes the
+  functional layout by itself.
 
 The redesign uses the useful composition grammar of a classic full-width RTS
 command console—minimap, adaptive selection bay, dedicated portrait and
 icon-first command card—without copying another game's art, icons or data. Art
-finish changes never alter panel rectangles or hit targets, so the three modes
-are a real A/B/C comparison rather than different layouts.
+finish changes never alter panel rectangles or hit targets, so the four modes
+are a material/rendering comparison rather than different layouts.
+
+Surface color is a separate axis from both faction identity and art finish.
+Schema 6 provides six deliberately broad full-surface families:
+
+- **Light Ceramic** (fresh-profile default): pale mineral/ceramic shell with
+  warm orange and teal controls;
+- **Warm Sandstone**: earthen brown construction with amber controls;
+- **Oxide Workshop**: dark rust-red workshop metal with hot orange controls;
+- **Field Olive**: muted green field equipment with yellow controls;
+- **Alien Porcelain**: violet porcelain/crystalline surfaces with lime accents;
+- **Neutral Graphite**: neutral grey machinery with copper accents.
+
+They replace background, raised, recessed, accent, text and status tokens as a
+coherent family while preserving identical geometry. They are exploration
+presets, not faction assignments and not visual canon. In particular, the old
+dark-navy test baseline is neither the schema-6 default nor an approved project
+theme; it survives only when an old profile must be migrated without changing
+its appearance, or when the director deliberately enters it as a **Custom**
+palette. Editing any individual color marks the profile as **Custom**.
 
 Live controls include:
 
@@ -98,28 +128,23 @@ Live controls include:
 - terrain-family, owned/allied/enemy/neutral/resource, viewport and alert
   colors.
 - five generated faction chrome families with enable, intensity and scale
-  controls. The square sources are not stretched over arbitrary panels:
-  protected source corners retain their square proportions, while the authored
-  horizontal and vertical wall spans are repeated at one uniform scale and only
-  the final partial tile is cropped. One outer faction chassis therefore has
-  complete textured walls around the bottom control deck instead of isolated
-  corner decals; only two additional source modules mark the real
-  minimap/selection and selection/command junctions. The three contiguous inner
-  surfaces receive restrained faction-specific chassis fills but remain
-  code-native functional regions, and the top resource strip owns the only
-  other complete faction frame. Generated art is neither stretched nor cloned
-  into nested panel borders. Rock
-  Raiders uses turquoise/brown industrial framing; Mars Mission Astronauts use
-  ivory/orange aerospace framing; Mars Mission Aliens use black/lime/violet
-  crystalline framing; Life on Mars Astronauts use sand/red/blue
-  retro-pneumatic framing; and Life on Mars Martians use red/tan/blue/lime
-  organic-pneumatic framing. These skins preserve the same functional anchors
-  and do not copy another game's layouts or assets.
-- an original `console_surface_v1.png` industrial surface. Structural Console
-  samples bounded source patches inside the code-native chassis rather than
-  stretching one image across the screen. Large panels, shallow seams and
-  restrained copper details provide the missing wall/fill material while
-  functional separators, faction accents and outer silhouettes remain code.
+  controls. **Hybrid** extracts only protected square corners, side mechanisms
+  and functional-junction modules from those atlases and places them over the
+  adaptive vector chassis without arbitrary-axis stretching. **Legacy Frames**
+  remains available when the earlier complete textured-wall treatment needs to
+  be compared. Rock Raiders uses turquoise/brown industrial framing; Mars
+  Mission Astronauts use ivory/orange aerospace framing; Mars Mission Aliens
+  use black/lime/violet crystalline framing; Life on Mars Astronauts use
+  sand/red/blue retro-pneumatic framing; and Life on Mars Martians use
+  red/tan/blue/lime organic-pneumatic framing. These experimental skins preserve
+  the same functional anchors and do not copy another game's layouts or assets.
+- an original `console_surface_v1.png` industrial surface. Fixed source patches
+  are uniformly scaled and partially cropped where necessary inside the
+  code-native chassis. Hybrid also places a small number of bounded,
+  aspect-preserving plates behind selection and command content. Raster seams,
+  vents and fasteners therefore supplement the code-owned silhouette,
+  functional separators and hit targets instead of becoming a stretched HUD
+  screenshot.
 - a code-native tactical portrait inside the selection section. It draws a
   faction-coloured blueprint display with distinct single-unit, grouped-force,
   structure and transforming-unit silhouettes, plus a concise caption. This
@@ -130,13 +155,24 @@ Live controls include:
 
 ## JSON handoff
 
-**COPY JSON** places the complete schema-5 `M7HudProfile` in the clipboard.
+**COPY JSON** places the complete schema-6 `M7HudProfile` in the clipboard.
 **PASTE JSON** accepts the same profile, normalizes all values and applies it
-live. Schema 1–4 profiles migrate to **Legacy Frames**, preserving the visual
-result that was authored before the finish switch existed. Early schema-4
-`frameOpacity`/`frameThickness` experiments still migrate once to
-`chromeIntensity`/`chromeScale` and are omitted on the next copy. Unknown fields
-are ignored; unsupported schema versions fail visibly.
+live.
+
+- Schema 1–4 profiles migrate to **Legacy Frames** + **Custom**, preserving the
+  generated-frame and old dark-surface result authored before the finish switch
+  existed. Early schema-4 `frameOpacity`/`frameThickness` experiments still
+  migrate once to `chromeIntensity`/`chromeScale` and are omitted on the next
+  copy.
+- Schema 5 preserves an explicitly stored Structural/Legacy/Clean finish. A
+  schema-5 profile without a finish uses **Structural Console**. It migrates to
+  **Custom**, and omitted color tokens receive the former schema-5 defaults so
+  loading an old profile does not silently recolor it.
+- A fresh schema-6 profile starts in **Hybrid · Vector + Raster** + **Light
+  Ceramic**. Named palette buttons replace the full surface token family;
+  individual color editing switches the palette marker to **Custom**.
+
+Unknown fields are ignored; unsupported schema versions fail visibly.
 
 The profile is intentionally independent from `M7LookProfile`: world rendering
 and interface art direction can be reviewed and versioned separately.
@@ -149,7 +185,7 @@ Headless fixture validation:
 Godot --headless --path GodotClient -- \
   --m7-hud-lab --m7-hud-smoke \
   --m7-hud-scenario mixed-army --m7-hud-aspect 21-9 \
-  --m7-hud-finish structural
+  --m7-hud-finish hybrid --m7-hud-palette sandstone
 ```
 
 Capture helper:
@@ -157,19 +193,31 @@ Capture helper:
 ```text
 ./tools/capture-m7-hud-lab.sh \
   Artifacts/Screenshots/m7-hud-lab-mixed-army.png \
-  mixed-army 16-9 hidden structural
+  mixed-army 16-9 hidden hybrid light
 ```
 
-The main verification suite exercises Structural mixed selection, production,
-brownout and critical-tooltip fixtures across four aspect ratios, plus identical
-Structural/Legacy/Clean mixed-selection geometry. The smoke also verifies all
-eight fixture contracts, client-legal minimap knowledge, remembered-static
-rules, pixel/cell command conversion, the 12-slot command bound, required
-retained nodes, the procedural tactical portrait, all five imported faction
-frames, protected non-stretched corners, uniformly scaled tiled wall regions,
-restrained faction chassis fills, one continuous bottom-deck
-chassis, the Structural raster binding and sculpted shoulders, prior-schema
-migration, schema-5 JSON round-trip and safe-area
+The capture helper arguments are:
+
+```text
+capture-m7-hud-lab.sh OUTPUT SCENARIO ASPECT CONTROLS FINISH PALETTE
+```
+
+`FINISH` accepts `hybrid`, `structural`, `legacy` or `clean`. `PALETTE`
+accepts `light`, `sandstone`, `oxide`, `olive`, `alien`, `graphite` or
+`custom`. Defaults are `hybrid` and `light`.
+
+The main verification suite exercises Hybrid mixed selection with four very
+different surface families, Structural/Legacy/Clean comparison cases, and
+Hybrid production, brownout and critical-tooltip fixtures across four aspect
+ratios. It verifies identical Hybrid/Structural/Legacy/Clean primary geometry
+and identical primary geometry across all six named palettes. The smoke also
+verifies all eight fixture contracts, client-legal minimap knowledge,
+remembered-static rules, pixel/cell command conversion, the 12-slot command
+bound, required retained nodes, the procedural tactical portrait, all five
+imported faction frames, protected square faction modules, bounded
+aspect-preserving raster
+plates, one continuous bottom-deck chassis, the console-surface binding and
+sculpted shoulders, schema 1–5 migration, schema-6 JSON round-trip and safe-area
 containment of every major panel plus every visible command button (including
 the twelfth slot in the 12-command mixed-army fixture). It also proves that the
 Energy readout's children cannot intercept its button input. Default-profile
@@ -182,18 +230,23 @@ deck constrains them only when required to stay inside the selected safe area.
 The laboratory reports this distinction instead of silently scaling all other
 art-director values down with the viewport.
 
-Current post-redesign evidence under `Artifacts/Screenshots/` is:
+Current schema-6 evidence under `Artifacts/Screenshots/` is:
 
-- `m7-hud-final-structural-mixed-16-9-v2.png`,
-  `m7-hud-final-legacy-mixed-16-9-v2.png` and
-  `m7-hud-final-clean-mixed-16-9-v2.png` for the same-geometry A/B/C comparison;
-- `m7-hud-final-structural-production-16-10-v3.png` and
-  `m7-hud-final-legacy-production-16-10-v2.png` for queue/command density and the
-  direct Structural-versus-old-frame comparison;
-- `m7-hud-final-structural-brownout-21-9.png` for Energy Domain, alert and event
-  overlays on ultrawide;
-- `m7-hud-final-structural-critical-4-3.png` for the narrow
-  tooltip/event/alert/deck collision gate.
+- `m7-hud-hybrid-light-v2.png` and `m7-hud-hybrid-oxide-v2.png` show the same
+  mixed-army geometry with visibly different light and rust-red surface
+  families, bounded inner raster plates and sparse faction modules;
+- `m7-hud-hybrid-astronaut-light-v3.png`,
+  `m7-hud-hybrid-alien-porcelain-v3.png`,
+  `m7-hud-hybrid-martian-sandstone-v3.png` and
+  `m7-hud-hybrid-rock-olive-v3.png` prove that both the faction raster modules
+  and the independent console surface family can change without altering the
+  retained HUD composition;
+- `m7-hud-structural-graphite-v1.png` isolates the Structural finish in neutral
+  graphite;
+- `m7-hud-final-legacy-mixed-16-9-v2.png` and
+  `m7-hud-final-clean-mixed-16-9-v2.png` remain retained comparison evidence for
+  the old complete-frame treatment and undecorated functional skeleton. They
+  are comparison baselines, not claims that either is the selected direction.
 
 ## Deliberately deferred
 

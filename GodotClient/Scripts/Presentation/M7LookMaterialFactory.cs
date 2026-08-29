@@ -26,6 +26,7 @@ public static class M7LookMaterialFactory
     private const string RubberTexturePath = "res://Assets/M7/Textures/rubber_detail.png";
     private const string GroundTexturePath = "res://Assets/M7/Textures/quarry_ground_detail.png";
     private const string GroundAlbedoTexturePath = "res://Assets/M7/Textures/regolith_surface_v2.png";
+    private const string GroundRasterForwardTexturePath = "res://Assets/M7/Textures/regolith_height.png";
     // The quiet generated regolith is reserved for colour. Relief and
     // reflection breakup use separately transformed quarry samples so no
     // single photograph is stamped into every output channel.
@@ -131,10 +132,11 @@ public static class M7LookMaterialFactory
         if (!materials.TryGetValue(M7LookMaterialRole.GroundRock, out Material? groundRaw) ||
             groundRaw is not ShaderMaterial ground ||
             !TextureParameterMatches(ground, "albedo_texture", RegolithTexturePath) ||
+            !TextureParameterMatches(ground, "raster_forward_texture", GroundRasterForwardTexturePath) ||
             !TextureParameterMatches(ground, "height_texture", GroundTexturePath) ||
             !TextureParameterMatches(ground, "detail_texture_b", GroundTexturePath) ||
-            ground.GetShaderParameter("surface_treatment").As<int>() is < 0 or > 1 ||
-            ground.GetShaderParameter("authored_zone_revision").As<double>() < 1.0 ||
+            ground.GetShaderParameter("surface_treatment").As<int>() is < 0 or > 2 ||
+            ground.GetShaderParameter("authored_zone_revision").As<double>() < 2.0 ||
             ground.GetShaderParameter("albedo_variation").As<double>() <= 0.0 ||
             ground.GetShaderParameter("relief_strength").As<double>() <= 0.0 ||
             ground.GetShaderParameter("roughness_variation").As<double>() <= 0.0)
@@ -151,19 +153,43 @@ public static class M7LookMaterialFactory
     {
         M7LookProfile authoredProfile = M7LookProfile.CreateDefault();
         authoredProfile.Ground.SurfaceTreatment = M7GroundSurfaceTreatment.AuthoredSurfaceStack;
+        authoredProfile.WorldCycle.Environment = (int)M7WorldEnvironment.Earth;
+        M7LookProfile rasterProfile = M7LookProfile.CreateDefault();
+        rasterProfile.Ground.SurfaceTreatment = M7GroundSurfaceTreatment.RasterForward;
+        rasterProfile.WorldCycle.Environment = (int)M7WorldEnvironment.Mars;
         M7LookProfile legacyProfile = M7LookProfile.CreateDefault();
         legacyProfile.Ground.SurfaceTreatment = M7GroundSurfaceTreatment.LegacyRaster;
         ShaderMaterial authored = Ground(authoredProfile);
+        ShaderMaterial raster = Ground(rasterProfile);
         ShaderMaterial legacy = Ground(legacyProfile);
+        bool environmentRouting = true;
+        for (int environment = (int)M7WorldEnvironment.Earth;
+             environment <= (int)M7WorldEnvironment.Underground;
+             environment++)
+        {
+            M7LookProfile environmentProfile = M7LookProfile.CreateDefault();
+            environmentProfile.WorldCycle.Enabled = true;
+            environmentProfile.WorldCycle.Environment = environment;
+            environmentRouting &= Ground(environmentProfile).GetShaderParameter("world_environment").As<int>() == environment;
+        }
+        M7LookProfile manualProfile = M7LookProfile.CreateDefault();
+        manualProfile.WorldCycle.Enabled = false;
+        environmentRouting &= Ground(manualProfile).GetShaderParameter("world_environment").As<int>() == -1;
         if (authored.GetShaderParameter("surface_treatment").As<int>() !=
                 (int)M7GroundSurfaceTreatment.AuthoredSurfaceStack ||
+            raster.GetShaderParameter("surface_treatment").As<int>() !=
+                (int)M7GroundSurfaceTreatment.RasterForward ||
             legacy.GetShaderParameter("surface_treatment").As<int>() !=
                 (int)M7GroundSurfaceTreatment.LegacyRaster ||
-            authored.GetShaderParameter("authored_zone_revision").As<double>() < 1.0 ||
+            authored.GetShaderParameter("authored_zone_revision").As<double>() < 2.0 ||
+            authored.GetShaderParameter("world_environment").As<int>() != (int)M7WorldEnvironment.Earth ||
+            raster.GetShaderParameter("world_environment").As<int>() != (int)M7WorldEnvironment.Mars ||
+            !environmentRouting ||
             !TextureParameterMatches(authored, "albedo_texture", RegolithTexturePath) ||
+            !TextureParameterMatches(raster, "raster_forward_texture", GroundRasterForwardTexturePath) ||
             !TextureParameterMatches(legacy, "albedo_texture", RegolithTexturePath))
         {
-            error = "Authored/legacy ground treatment routing is invalid.";
+            error = "Authored/raster-forward/legacy ground treatment routing is invalid.";
             return false;
         }
 
@@ -292,6 +318,7 @@ public static class M7LookMaterialFactory
         // material response without stamping the same photograph into colour,
         // bump and reflection at identical coordinates.
         material.SetShaderParameter("albedo_texture", GD.Load<Texture2D>(RegolithTexturePath));
+        material.SetShaderParameter("raster_forward_texture", GD.Load<Texture2D>(GroundRasterForwardTexturePath));
         material.SetShaderParameter("height_texture", GD.Load<Texture2D>(GroundTexturePath));
         material.SetShaderParameter("detail_texture_b", GD.Load<Texture2D>(GroundTexturePath));
         material.SetShaderParameter("albedo_scale", 0.055f);
@@ -307,7 +334,10 @@ public static class M7LookMaterialFactory
         material.SetShaderParameter("relief_strength", 0.018f);
         material.SetShaderParameter("roughness_variation", 0.080f);
         material.SetShaderParameter("surface_treatment", (int)profile.Ground.SurfaceTreatment);
-        material.SetShaderParameter("authored_zone_revision", 1f);
+        material.SetShaderParameter("authored_zone_revision", 2f);
+        material.SetShaderParameter("world_environment", profile.WorldCycle.Enabled
+            ? profile.WorldCycle.Environment
+            : -1);
         material.SetShaderParameter("inspection_pass", profile.Materials.InspectionPass);
         material.SetShaderParameter("background_color", ParseColor(profile.Lighting.BackgroundColor));
         material.SetShaderParameter("background_influence", profile.Lighting.BackgroundInfluence);
@@ -605,6 +635,7 @@ uniform float macro_scale = 0.13;
 uniform float micro_amount = 0.18;
 uniform float micro_scale = 6.0;
 uniform sampler2D albedo_texture : filter_linear_mipmap_anisotropic, repeat_enable;
+uniform sampler2D raster_forward_texture : filter_linear_mipmap_anisotropic, repeat_enable;
 uniform sampler2D height_texture : filter_linear_mipmap_anisotropic, repeat_enable;
 uniform sampler2D detail_texture_b : filter_linear_mipmap_anisotropic, repeat_enable;
 uniform float albedo_scale = 0.055;
@@ -619,8 +650,9 @@ uniform float roughness_contrast = 14.0;
 uniform float albedo_variation = 0.055;
 uniform float relief_strength = 0.45;
 uniform float roughness_variation = 0.30;
-uniform int surface_treatment : hint_range(0, 1) = 0;
+uniform int surface_treatment : hint_range(0, 2) = 0;
 uniform float authored_zone_revision = 1.0;
+uniform int world_environment : hint_range(-1, 4) = 0;
 uniform int inspection_pass : hint_range(0, 4) = 0;
 uniform vec4 background_color : source_color = vec4(0.08, 0.11, 0.14, 1.0);
 uniform float background_influence = 0.15;
@@ -648,6 +680,26 @@ float anti_tiled_height(vec2 uv) {
     float b = texture(height_texture, rotate_a * uv * 0.713 + vec2(0.37, 0.19)).r;
     float c = texture(height_texture, rotate_b * uv * 0.617 + vec2(0.11, 0.63)).r;
     return clamp(a * 0.52 + b * 0.30 + c * 0.18, 0.0, 1.0);
+}
+
+float anti_tiled_raster_forward(vec2 uv) {
+    // One texture footprint spans a large terrain area. Rotated, differently
+    // scaled samples erase the obvious square repeat while retaining the
+    // raster's broad stone, sediment and gravel shapes at gameplay zoom.
+    mat2 rotate_a = mat2(vec2(0.906, 0.423), vec2(-0.423, 0.906));
+    mat2 rotate_b = mat2(vec2(0.259, -0.966), vec2(0.966, 0.259));
+    // Deliberately widen the derivative footprint. The source contains useful
+    // ridges and sediment masses, but its pebble-scale information becomes
+    // screen noise from the RTS camera. This keeps the former and filters the
+    // latter instead of merely lowering texture opacity.
+    vec2 grad_x = dFdx(uv) * 3.5;
+    vec2 grad_y = dFdy(uv) * 3.5;
+    float a = textureGrad(raster_forward_texture, uv, grad_x, grad_y).r;
+    float b = textureGrad(raster_forward_texture, rotate_a * uv * 0.681 + vec2(0.31, 0.73),
+        rotate_a * grad_x * 0.681, rotate_a * grad_y * 0.681).r;
+    float c = textureGrad(raster_forward_texture, rotate_b * uv * 0.437 + vec2(0.79, 0.17),
+        rotate_b * grad_x * 0.437, rotate_b * grad_y * 0.437).r;
+    return clamp(a * 0.60 + b * 0.27 + c * 0.13, 0.0, 1.0);
 }
 
 float anti_tiled_roughness(vec2 uv) {
@@ -751,15 +803,59 @@ vec4 authored_zone_masks(vec2 p) {
     return vec4(compacted, bedrock, seam, loose);
 }
 
+void environment_surface_palette(out vec3 loose_color, out vec3 compacted_color,
+        out vec3 bedrock_color, out vec3 seam_color) {
+    if (world_environment == 0) {
+        // Earth desert: warm windblown sand over cooler, partially buried
+        // sedimentary slabs. This is the explicit identity of authored A.
+        loose_color = vec3(0.50, 0.405, 0.265);
+        compacted_color = vec3(0.405, 0.335, 0.245);
+        bedrock_color = vec3(0.425, 0.405, 0.345);
+        seam_color = vec3(0.66, 0.50, 0.245);
+    } else if (world_environment == 1) {
+        // Mars: oxidised basalt fines, dark pressure-compacted soil and a
+        // brighter iron-rich seam.
+        loose_color = vec3(0.405, 0.205, 0.145);
+        compacted_color = vec3(0.275, 0.145, 0.115);
+        bedrock_color = vec3(0.235, 0.195, 0.19);
+        seam_color = vec3(0.565, 0.285, 0.135);
+    } else if (world_environment == 2) {
+        // Moon: pale powder, compressed grey traffic areas, cold fractured
+        // basalt and a restrained ejecta streak.
+        loose_color = vec3(0.455, 0.465, 0.455);
+        compacted_color = vec3(0.345, 0.365, 0.37);
+        bedrock_color = vec3(0.255, 0.285, 0.315);
+        seam_color = vec3(0.62, 0.615, 0.545);
+    } else if (world_environment == 3) {
+        // Planet U is deliberately exploratory rather than canon: muted
+        // violet dust, blue-grey plates and green mineral weathering.
+        loose_color = vec3(0.355, 0.245, 0.475);
+        compacted_color = vec3(0.235, 0.265, 0.355);
+        bedrock_color = vec3(0.17, 0.225, 0.255);
+        seam_color = vec3(0.45, 0.64, 0.255);
+    } else if (world_environment == 4) {
+        // Underground: dry brown cave dust over charcoal bedrock. The warmer
+        // mineral band helps local base and combat lights read in the gloom.
+        loose_color = vec3(0.305, 0.275, 0.235);
+        compacted_color = vec3(0.23, 0.235, 0.225);
+        bedrock_color = vec3(0.185, 0.205, 0.215);
+        seam_color = vec3(0.52, 0.37, 0.215);
+    } else {
+        // Manual lighting/profile mode retains the user's serialized colours.
+        loose_color = mix(base_color.rgb, secondary_color.rgb, 0.22);
+        compacted_color = mix(base_color.rgb, secondary_color.rgb, 0.42) * 0.98;
+        bedrock_color = mix(secondary_color.rgb, base_color.rgb, 0.62) * vec3(0.96, 1.00, 1.05);
+        seam_color = mix(base_color.rgb, vec3(0.52, 0.45, 0.30), 0.28) * 0.99;
+    }
+}
+
 vec3 authored_surface_color(vec2 p, vec4 zones, float raster_mask,
         out float material_relief, out float material_roughness) {
-    vec3 loose_color = mix(base_color.rgb, secondary_color.rgb, 0.22);
-    vec3 compacted_color = mix(base_color.rgb, secondary_color.rgb, 0.42) * 0.98;
-    // Exposed rock is cooler, not simply darker: keeping its luminance near the
-    // surrounding soil prevents authored shelves from reading as the old black
-    // terrain anomalies or as baked shadows.
-    vec3 bedrock_color = mix(secondary_color.rgb, base_color.rgb, 0.62) * vec3(0.96, 1.00, 1.05);
-    vec3 seam_color = mix(base_color.rgb, vec3(0.52, 0.45, 0.30), 0.28) * 0.99;
+    vec3 loose_color;
+    vec3 compacted_color;
+    vec3 bedrock_color;
+    vec3 seam_color;
+    environment_surface_palette(loose_color, compacted_color, bedrock_color, seam_color);
 
     vec3 result = loose_color;
     result = mix(result, compacted_color, zones.x);
@@ -824,23 +920,45 @@ void fragment() {
         // Broad procedural noise merely prevents perfectly sterile plateaus;
         // it no longer defines the terrain composition.
         ground_color *= 1.0 + macro * 0.018;
+    } else if (surface_treatment == 1) {
+        vec3 loose_color;
+        vec3 compacted_color;
+        vec3 bedrock_color;
+        vec3 seam_color;
+        environment_surface_palette(loose_color, compacted_color, bedrock_color, seam_color);
+        float raster_forward_sample = anti_tiled_raster_forward(world_position.xz * 0.026);
+        float raster_forward_mask = clamp((raster_forward_sample - 0.48) * 7.0, -1.0, 1.0);
+        // Raster Forward deliberately carries much more visible colour mass
+        // than the legacy surface. Broad image features select material
+        // families; a second low-frequency field breaks the remaining repeat.
+        float stone = smoothstep(-0.50, 0.55, raster_forward_mask + macro * 0.18);
+        float sediment = smoothstep(0.57, 0.86,
+            anti_tiled_raster_forward(world_position.xz * 0.014 + vec2(0.41, 0.18)));
+        ground_color = mix(loose_color, bedrock_color, stone * 0.72);
+        ground_color = mix(ground_color, compacted_color, sediment * 0.36);
+        ground_color = mix(ground_color, seam_color, max(raster_forward_mask, 0.0) * 0.13);
+        ground_color *= 1.0 + raster_forward_mask * 0.20 + macro * 0.035;
+        composed_relief = raster_forward_mask * 0.78 + height_mask * 0.22;
+        composed_roughness = clamp(0.87 + roughness_mask * 0.075 - raster_forward_mask * 0.045,
+            0.72, 0.98);
     }
     if (inspection_pass == 1) {
         ground_color = base_color.rgb;
     } else if (inspection_pass == 2) {
-        ground_color = surface_treatment == 0
+        ground_color = surface_treatment < 2
             ? ground_color
             : base_color.rgb * (1.0 + albedo_mask * 0.34);
     } else if (inspection_pass >= 3) {
         ground_color = vec3(0.46);
-    } else {
+    } else if (surface_treatment == 2) {
         ground_color *= 1.0 + albedo_mask * albedo_variation;
     }
     // Far terrain should not turn into radial black pools. Background colour
     // remains the clear colour; ground keeps a stable, readable luminance.
     ALBEDO = mix(ground_color, background_color.rgb, background_influence * 0.22);
     if (inspection_pass == 0) {
-        float response = surface_treatment == 0 ? 0.046 : relief_strength;
+        float response = surface_treatment == 0 ? 0.046
+            : (surface_treatment == 1 ? 0.082 : relief_strength);
         NORMAL = ground_relief_normal(normalize(NORMAL), composed_relief, response);
     } else if (inspection_pass == 3) {
         NORMAL = ground_relief_normal(normalize(NORMAL), composed_relief, max(relief_strength, 0.040));
@@ -848,7 +966,7 @@ void fragment() {
         NORMAL = normalize(NORMAL);
     }
     ROUGHNESS = inspection_pass == 4
-        ? (surface_treatment == 0
+        ? (surface_treatment < 2
             ? mix(0.30, 0.98, composed_roughness)
             : mix(0.30, 0.98, roughness_mask * 0.5 + 0.5))
         : (inspection_pass == 0 ? composed_roughness : roughness_value);

@@ -16,17 +16,24 @@ public partial class HudStructuralChrome : Control
     private const int MaxSurfaceTiles = 96;
 
     private Texture2D? _consoleSurface;
+    private Texture2D? _factionTexture;
     private int _faction;
     private float _intensity = 0.82f;
     private float _chromeScale = 1f;
     private float _outerExpansion;
     private bool _isConfigured;
+    private bool _hybridDetails;
+    private Color _shellColor = new("cfc6ae");
+    private Color _bayColor = new("8b8578");
+    private Color _accentColor = new("d95f24");
+    private Color _secondaryColor = new("166e7a");
     private float[] _junctions = { 0.22f, 0.78f };
 
     public HudFactionChromeRole Role { get; private set; }
     public bool IsConfigured => _isConfigured;
     public bool UsesTiledConsoleSurface => _consoleSurface is not null;
     public bool UsesSculptedShoulders => true;
+    public bool UsesFactionRasterModules => _hybridDetails && _factionTexture is not null;
 
     public HudStructuralChrome()
     {
@@ -34,7 +41,9 @@ public partial class HudStructuralChrome : Control
         ClipContents = false;
     }
 
-    public void Configure(int faction, HudFactionChromeRole role, float intensity, float chromeScale, float outerExpansion)
+    public void Configure(int faction, HudFactionChromeRole role, float intensity, float chromeScale,
+        float outerExpansion, HudArtFinish finish, Color shellColor, Color bayColor,
+        Color accentColor, Color secondaryColor)
     {
         _faction = Math.Clamp(faction, 0, 4);
         Role = role;
@@ -44,6 +53,15 @@ public partial class HudStructuralChrome : Control
         _consoleSurface = ResourceLoader.Exists(ConsoleSurfaceTexturePath)
             ? GD.Load<Texture2D>(ConsoleSurfaceTexturePath)
             : null;
+        _hybridDetails = finish == HudArtFinish.HybridConsole;
+        string factionTexturePath = HudFactionChrome.TexturePathForFaction(_faction);
+        _factionTexture = _hybridDetails && ResourceLoader.Exists(factionTexturePath)
+            ? GD.Load<Texture2D>(factionTexturePath)
+            : null;
+        _shellColor = shellColor;
+        _bayColor = bayColor;
+        _accentColor = accentColor;
+        _secondaryColor = secondaryColor;
         _isConfigured = true;
         Visible = _intensity > 0.001f;
         QueueRedraw();
@@ -102,11 +120,10 @@ public partial class HudStructuralChrome : Control
         float bottomCut = Mathf.Min((top ? 7f : 12f) * _chromeScale, outer.Size.Y * 0.28f);
         float rim = Mathf.Clamp((top ? 3.5f : 6f) * _chromeScale, 2f, outer.Size.Y * 0.14f);
 
-        Color surface = HudFactionChrome.SurfaceForFaction(_faction);
-        Color accent = HudFactionChrome.AccentForFaction(_faction);
-        Color secondary = HudFactionChrome.SecondaryAccentForFaction(_faction);
-        Color shadow = new Color(0.012f, 0.018f, 0.022f, 0.96f * _intensity);
-        Color chassis = WithAlpha(surface.Lerp(new Color("536068"), 0.24f), 0.97f * _intensity);
+        Color accent = _accentColor;
+        Color secondary = _secondaryColor;
+        Color shadow = WithAlpha(_bayColor.Darkened(0.78f), 0.96f * _intensity);
+        Color chassis = WithAlpha(_shellColor, 0.97f * _intensity);
         Color upperBevel = WithAlpha(chassis.Lerp(Colors.White, 0.22f), 0.82f * _intensity);
         Color lowerBevel = WithAlpha(Colors.Black, 0.82f * _intensity);
 
@@ -131,6 +148,7 @@ public partial class HudStructuralChrome : Control
         DrawRecessedBays(consoleArea, accent, secondary, rim);
         DrawTiledConsoleSurface(consoleArea);
         DrawShoulders(outer, shoulder, topCut, bottomCut, accent, secondary, rim);
+        DrawHybridRasterDetails(outer, consoleArea, shoulder, rim);
         DrawLayeredRails(outer, shoulder, rim, upperBevel, lowerBevel, accent, secondary);
         DrawJunctions(outer, consoleArea, accent, secondary, rim);
     }
@@ -158,7 +176,7 @@ public partial class HudStructuralChrome : Control
 
             Rect2 bay = new(new Vector2(left, area.Position.Y), new Vector2(right - left, area.Size.Y));
             Vector2[] shape = CreatePanelShape(bay, chamfer);
-            DrawColoredPolygon(shape, new Color(0.018f, 0.026f, 0.032f, 0.70f * _intensity));
+            DrawColoredPolygon(shape, WithAlpha(_bayColor, 0.88f * _intensity));
             DrawClosed(shape, WithAlpha(Colors.Black, 0.72f * _intensity), Mathf.Max(1f, rim * 0.45f));
 
             Color bayGlint = i % 2 == 0 ? secondary : accent;
@@ -174,16 +192,22 @@ public partial class HudStructuralChrome : Control
     {
         if (_consoleSurface is null || area.Size.X < 2f || area.Size.Y < 2f) return;
 
-        float destinationTile = (Role == HudFactionChromeRole.TopStrip ? 112f : 156f) * _chromeScale;
-        float sourceTile = Math.Min(420f, Math.Min(_consoleSurface.GetWidth(), _consoleSurface.GetHeight()));
+        float destinationTile = (Role == HudFactionChromeRole.TopStrip ? 144f : 236f) * _chromeScale;
+        float sourceTile = Math.Min(288f, Math.Min(_consoleSurface.GetWidth(), _consoleSurface.GetHeight()));
         if (destinationTile < 4f || sourceTile < 4f) return;
 
         int textureWidth = Math.Max(1, _consoleSurface.GetWidth());
         int textureHeight = Math.Max(1, _consoleSurface.GetHeight());
         int sourceRangeX = Math.Max(1, textureWidth - (int)sourceTile);
         int sourceRangeY = Math.Max(1, textureHeight - (int)sourceTile);
-        Color modulate = new(1f, 1f, 1f,
-            (Role == HudFactionChromeRole.TopStrip ? 0.34f : 0.42f) * _intensity);
+        int[] patchX = { 18, 332, 646, 944, 174, 508, 806, 42 };
+        int[] patchY = { 20, 24, 30, 318, 618, 624, 930, 902 };
+        float luminance = _shellColor.R * 0.2126f + _shellColor.G * 0.7152f + _shellColor.B * 0.0722f;
+        float surfaceAlpha = Mathf.Lerp(
+            Role == HudFactionChromeRole.TopStrip ? 0.29f : 0.36f,
+            Role == HudFactionChromeRole.TopStrip ? 0.14f : 0.21f,
+            Mathf.Clamp(luminance, 0f, 1f));
+        Color modulate = new(1f, 1f, 1f, surfaceAlpha * _intensity);
 
         int tileCount = 0;
         int row = 0;
@@ -196,8 +220,9 @@ public partial class HudStructuralChrome : Control
                 float height = Mathf.Min(destinationTile, area.End.Y - y);
                 float sourceWidth = sourceTile * width / destinationTile;
                 float sourceHeight = sourceTile * height / destinationTile;
-                float sourceX = (column * 227 + row * 83) % sourceRangeX;
-                float sourceY = (row * 193 + column * 61) % sourceRangeY;
+                int patch = (row * 5 + column * 3) % patchX.Length;
+                float sourceX = patchX[patch] % sourceRangeX;
+                float sourceY = patchY[patch] % sourceRangeY;
                 DrawTextureRectRegion(
                     _consoleSurface,
                     new Rect2(x, y, width, height),
@@ -208,13 +233,67 @@ public partial class HudStructuralChrome : Control
         }
     }
 
+    private void DrawHybridRasterDetails(Rect2 outer, Rect2 consoleArea, float shoulder, float rim)
+    {
+        if (!_hybridDetails || _factionTexture is null) return;
+
+        float sourceSize = HudFactionChrome.ProtectedSourceSizeForFaction(_faction);
+        float sourceEnd = 256f - sourceSize;
+        float centerSource = (256f - sourceSize) * 0.5f;
+        float cornerSize = Mathf.Clamp(
+            (Role == HudFactionChromeRole.TopStrip ? 18f : 44f) * _chromeScale,
+            10f, Math.Min(outer.Size.Y * 0.42f, shoulder * 0.82f));
+        float moduleSize = Mathf.Clamp(
+            (Role == HudFactionChromeRole.TopStrip ? 15f : 34f) * _chromeScale,
+            9f, outer.Size.Y * 0.34f);
+        Color modulate = new(1f, 1f, 1f,
+            (Role == HudFactionChromeRole.TopStrip ? 0.82f : 0.90f) * _intensity);
+
+        // The four atlas corners remain square. They become detailed fastening
+        // blocks on top of the adaptive vector shoulders rather than a second
+        // complete frame stretched around the HUD.
+        DrawTextureRectRegion(_factionTexture,
+            new Rect2(outer.Position + new Vector2(rim, rim), new Vector2(cornerSize, cornerSize)),
+            new Rect2(0f, 0f, sourceSize, sourceSize), modulate);
+        DrawTextureRectRegion(_factionTexture,
+            new Rect2(new Vector2(outer.End.X - rim - cornerSize, outer.Position.Y + rim), new Vector2(cornerSize, cornerSize)),
+            new Rect2(sourceEnd, 0f, sourceSize, sourceSize), modulate);
+        DrawTextureRectRegion(_factionTexture,
+            new Rect2(new Vector2(outer.Position.X + rim, outer.End.Y - rim - cornerSize), new Vector2(cornerSize, cornerSize)),
+            new Rect2(0f, sourceEnd, sourceSize, sourceSize), modulate);
+        DrawTextureRectRegion(_factionTexture,
+            new Rect2(new Vector2(outer.End.X - rim - cornerSize, outer.End.Y - rim - cornerSize), new Vector2(cornerSize, cornerSize)),
+            new Rect2(sourceEnd, sourceEnd, sourceSize, sourceSize), modulate);
+
+        Rect2 topModule = new(centerSource, 0f, sourceSize, sourceSize);
+        Rect2 bottomModule = new(centerSource, sourceEnd, sourceSize, sourceSize);
+        for (int i = 0; i < _junctions.Length; i++)
+        {
+            float x = Mathf.Lerp(consoleArea.Position.X, consoleArea.End.X, _junctions[i]) - moduleSize * 0.5f;
+            DrawTextureRectRegion(_factionTexture,
+                new Rect2(x, outer.Position.Y + rim * 0.15f, moduleSize, moduleSize), topModule, modulate);
+            DrawTextureRectRegion(_factionTexture,
+                new Rect2(x, outer.End.Y - rim * 0.15f - moduleSize, moduleSize, moduleSize), bottomModule, modulate);
+        }
+
+        // Side-center mechanisms add one more authored material cue without
+        // repeating the entire illustrated wall span.
+        float sideY = outer.GetCenter().Y - moduleSize * 0.5f;
+        DrawTextureRectRegion(_factionTexture,
+            new Rect2(outer.Position.X + rim * 0.25f, sideY, moduleSize, moduleSize),
+            new Rect2(0f, centerSource, sourceSize, sourceSize), modulate);
+        DrawTextureRectRegion(_factionTexture,
+            new Rect2(outer.End.X - rim * 0.25f - moduleSize, sideY, moduleSize, moduleSize),
+            new Rect2(sourceEnd, centerSource, sourceSize, sourceSize), modulate);
+    }
+
     private void DrawShoulders(Rect2 outer, float shoulder, float topCut, float bottomCut,
         Color accent, Color secondary, float rim)
     {
         float inset = Mathf.Max(2f, rim * 0.72f);
         float innerX = outer.Position.X + shoulder;
         float rightInnerX = outer.End.X - shoulder;
-        Color plate = new Color(0.025f, 0.034f, 0.040f, 0.94f * _intensity);
+        Color plate = WithAlpha(_bayColor.Darkened(0.34f), 0.94f * _intensity);
 
         Vector2[] left =
         {
@@ -284,7 +363,7 @@ public partial class HudStructuralChrome : Control
                 new(x - halfWidth, outer.End.Y - rim * 0.45f),
                 new(x - halfWidth * 0.62f, outer.GetCenter().Y)
             };
-            DrawColoredPolygon(divider, new Color(0.015f, 0.022f, 0.027f, 0.91f * _intensity));
+            DrawColoredPolygon(divider, WithAlpha(_bayColor.Darkened(0.62f), 0.91f * _intensity));
             DrawClosed(divider, WithAlpha(Colors.Black, 0.92f * _intensity), Mathf.Max(1f, rim * 0.36f));
             DrawLine(new Vector2(x, outer.Position.Y + rim), new Vector2(x, outer.End.Y - rim),
                 WithAlpha(signal, 0.74f * _intensity), Mathf.Max(1f, 1.35f * _chromeScale), true);

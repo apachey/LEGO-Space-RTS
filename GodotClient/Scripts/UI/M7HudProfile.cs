@@ -6,7 +6,7 @@ namespace LegoSpaceRTS.UI;
 
 public sealed class M7HudProfile
 {
-    public const int CurrentSchemaVersion = 5;
+    public const int CurrentSchemaVersion = 6;
 
     public int SchemaVersion { get; set; } = CurrentSchemaVersion;
     public HudLayoutProfile Layout { get; set; } = new();
@@ -38,6 +38,11 @@ public sealed class M7HudProfile
     {
         try
         {
+            using JsonDocument document = JsonDocument.Parse(json, new JsonDocumentOptions
+            {
+                AllowTrailingCommas = true,
+                CommentHandling = JsonCommentHandling.Skip
+            });
             M7HudProfile? parsed = JsonSerializer.Deserialize<M7HudProfile>(json, JsonOptions);
             if (parsed is null)
             {
@@ -45,21 +50,31 @@ public sealed class M7HudProfile
                 error = "Clipboard does not contain an M7 HUD profile.";
                 return false;
             }
-            if (parsed.SchemaVersion is not (1 or 2 or 3 or 4 or CurrentSchemaVersion))
+            if (parsed.SchemaVersion is not (1 or 2 or 3 or 4 or 5 or CurrentSchemaVersion))
             {
                 profile = CreateDefault();
                 error = $"HUD schema {parsed.SchemaVersion} is not supported; expected {CurrentSchemaVersion}.";
                 return false;
             }
-            // Schema 1-4 profiles were authored against the preserved generated
-            // faction-frame renderer. Keep that exact visual treatment on paste;
-            // schema 5 defaults to the new structural console so A/B changes skin
-            // without silently changing an old director profile.
-            if (parsed.SchemaVersion <= 4)
+            int sourceSchemaVersion = parsed.SchemaVersion;
+            // Schema 1-4 profiles were authored against the generated frame
+            // renderer. Schema 5 introduced Structural/Legacy/Clean but still
+            // used the navy-biased baseline. Preserve both results exactly;
+            // schema 6 is the first hybrid + broad-palette profile.
+            parsed.ArtSkin ??= new HudArtSkinProfile();
+            if (sourceSchemaVersion <= 4)
             {
-                parsed.ArtSkin ??= new HudArtSkinProfile();
                 parsed.ArtSkin.Finish = HudArtFinish.LegacyFrames;
+                parsed.ArtSkin.SurfacePalette = HudSurfacePalette.Custom;
             }
+            else if (sourceSchemaVersion == 5)
+            {
+                if (!HasNestedProperty(document.RootElement, "artSkin", "finish"))
+                    parsed.ArtSkin.Finish = HudArtFinish.StructuralConsole;
+                parsed.ArtSkin.SurfacePalette = HudSurfacePalette.Custom;
+            }
+            if (sourceSchemaVersion <= 5)
+                MergeMissingLegacyColorDefaults(parsed, document.RootElement);
             parsed.Normalize();
             profile = parsed;
             error = string.Empty;
@@ -72,6 +87,28 @@ public sealed class M7HudProfile
             return false;
         }
     }
+
+    private static void MergeMissingLegacyColorDefaults(M7HudProfile profile, JsonElement root)
+    {
+        profile.Colors ??= new HudColorProfile();
+        bool hasColors = root.TryGetProperty("colors", out JsonElement colors) &&
+            colors.ValueKind == JsonValueKind.Object;
+        if (!hasColors || !colors.TryGetProperty("background", out _)) profile.Colors.Background = "#111820";
+        if (!hasColors || !colors.TryGetProperty("raised", out _)) profile.Colors.Raised = "#1b2731";
+        if (!hasColors || !colors.TryGetProperty("recessed", out _)) profile.Colors.Recessed = "#0b1016";
+        if (!hasColors || !colors.TryGetProperty("accent", out _)) profile.Colors.Accent = "#e6ad28";
+        if (!hasColors || !colors.TryGetProperty("textPrimary", out _)) profile.Colors.TextPrimary = "#f2eee3";
+        if (!hasColors || !colors.TryGetProperty("textMuted", out _)) profile.Colors.TextMuted = "#aab4b8";
+        if (!hasColors || !colors.TryGetProperty("good", out _)) profile.Colors.Good = "#65c987";
+        if (!hasColors || !colors.TryGetProperty("warning", out _)) profile.Colors.Warning = "#f2b84b";
+        if (!hasColors || !colors.TryGetProperty("danger", out _)) profile.Colors.Danger = "#ff6b45";
+        if (!hasColors || !colors.TryGetProperty("selection", out _)) profile.Colors.Selection = "#5fc4d8";
+    }
+
+    private static bool HasNestedProperty(JsonElement root, string parent, string child) =>
+        root.TryGetProperty(parent, out JsonElement element) &&
+        element.ValueKind == JsonValueKind.Object &&
+        element.TryGetProperty(child, out _);
 
     public M7HudProfile Clone()
     {
@@ -116,19 +153,20 @@ public sealed class M7HudProfile
             ArtSkin.ChromeScale = ArtSkin.FrameThickness.Value / 22f;
         ArtSkin.FrameOpacity = null;
         ArtSkin.FrameThickness = null;
-        if (!Enum.IsDefined(ArtSkin.Finish)) ArtSkin.Finish = HudArtFinish.StructuralConsole;
+        if (!Enum.IsDefined(ArtSkin.Finish)) ArtSkin.Finish = HudArtFinish.HybridConsole;
+        if (!Enum.IsDefined(ArtSkin.SurfacePalette)) ArtSkin.SurfacePalette = HudSurfacePalette.LightCeramic;
         ArtSkin.ChromeIntensity = Clamp(ArtSkin.ChromeIntensity, 0f, 1f);
         ArtSkin.ChromeScale = Clamp(ArtSkin.ChromeScale, 0.75f, 1.35f);
-        Colors.Background = M7ProfileColor.Normalize(Colors.Background, "#111820");
-        Colors.Raised = M7ProfileColor.Normalize(Colors.Raised, "#1b2731");
-        Colors.Recessed = M7ProfileColor.Normalize(Colors.Recessed, "#0b1016");
-        Colors.Accent = M7ProfileColor.Normalize(Colors.Accent, "#e6ad28");
-        Colors.TextPrimary = M7ProfileColor.Normalize(Colors.TextPrimary, "#f2eee3");
-        Colors.TextMuted = M7ProfileColor.Normalize(Colors.TextMuted, "#aab4b8");
-        Colors.Good = M7ProfileColor.Normalize(Colors.Good, "#65c987");
-        Colors.Warning = M7ProfileColor.Normalize(Colors.Warning, "#f2b84b");
-        Colors.Danger = M7ProfileColor.Normalize(Colors.Danger, "#ff6b45");
-        Colors.Selection = M7ProfileColor.Normalize(Colors.Selection, "#5fc4d8");
+        Colors.Background = M7ProfileColor.Normalize(Colors.Background, "#cfc6ae");
+        Colors.Raised = M7ProfileColor.Normalize(Colors.Raised, "#eee6d0");
+        Colors.Recessed = M7ProfileColor.Normalize(Colors.Recessed, "#8b8578");
+        Colors.Accent = M7ProfileColor.Normalize(Colors.Accent, "#d95f24");
+        Colors.TextPrimary = M7ProfileColor.Normalize(Colors.TextPrimary, "#171a1b");
+        Colors.TextMuted = M7ProfileColor.Normalize(Colors.TextMuted, "#4c5355");
+        Colors.Good = M7ProfileColor.Normalize(Colors.Good, "#2d6c42");
+        Colors.Warning = M7ProfileColor.Normalize(Colors.Warning, "#8c5b00");
+        Colors.Danger = M7ProfileColor.Normalize(Colors.Danger, "#ad2b20");
+        Colors.Selection = M7ProfileColor.Normalize(Colors.Selection, "#166e7a");
         Minimap.MarkerScale = Clamp(Minimap.MarkerScale, 0.6f, 2.0f);
         Minimap.InterpolationSeconds = Clamp(Minimap.InterpolationSeconds, 0f, 0.30f);
         Minimap.ExploredFogOpacity = Clamp(Minimap.ExploredFogOpacity, 0.15f, 0.90f);
@@ -189,7 +227,8 @@ public sealed class HudArtSkinProfile
 {
     public bool Enabled { get; set; } = true;
     public int Faction { get; set; }
-    public HudArtFinish Finish { get; set; } = HudArtFinish.StructuralConsole;
+    public HudArtFinish Finish { get; set; } = HudArtFinish.HybridConsole;
+    public HudSurfacePalette SurfacePalette { get; set; } = HudSurfacePalette.LightCeramic;
     public float ChromeIntensity { get; set; } = 0.88f;
     public float ChromeScale { get; set; } = 1f;
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] public float? FrameOpacity { get; set; }
@@ -198,23 +237,83 @@ public sealed class HudArtSkinProfile
 
 public enum HudArtFinish : byte
 {
-    StructuralConsole,
-    LegacyFrames,
-    Clean
+    StructuralConsole = 0,
+    LegacyFrames = 1,
+    Clean = 2,
+    HybridConsole = 3
+}
+
+public enum HudSurfacePalette : byte
+{
+    Custom = 0,
+    LightCeramic = 1,
+    WarmSandstone = 2,
+    OxideWorkshop = 3,
+    FieldOlive = 4,
+    AlienPorcelain = 5,
+    NeutralGraphite = 6
 }
 
 public sealed class HudColorProfile
 {
-    public string Background { get; set; } = "#111820";
-    public string Raised { get; set; } = "#1b2731";
-    public string Recessed { get; set; } = "#0b1016";
-    public string Accent { get; set; } = "#e6ad28";
-    public string TextPrimary { get; set; } = "#f2eee3";
-    public string TextMuted { get; set; } = "#aab4b8";
-    public string Good { get; set; } = "#65c987";
-    public string Warning { get; set; } = "#f2b84b";
-    public string Danger { get; set; } = "#ff6b45";
-    public string Selection { get; set; } = "#5fc4d8";
+    public string Background { get; set; } = "#cfc6ae";
+    public string Raised { get; set; } = "#eee6d0";
+    public string Recessed { get; set; } = "#8b8578";
+    public string Accent { get; set; } = "#d95f24";
+    public string TextPrimary { get; set; } = "#171a1b";
+    public string TextMuted { get; set; } = "#4c5355";
+    public string Good { get; set; } = "#2d6c42";
+    public string Warning { get; set; } = "#8c5b00";
+    public string Danger { get; set; } = "#ad2b20";
+    public string Selection { get; set; } = "#166e7a";
+}
+
+public static class HudSurfacePaletteLibrary
+{
+    public static void Apply(M7HudProfile profile, HudSurfacePalette palette)
+    {
+        profile.ArtSkin ??= new HudArtSkinProfile();
+        profile.Colors ??= new HudColorProfile();
+        profile.ArtSkin.SurfacePalette = palette;
+        if (palette == HudSurfacePalette.Custom) return;
+
+        HudPaletteTokens tokens = palette switch
+        {
+            HudSurfacePalette.WarmSandstone => new(
+                "#5d4935", "#81694e", "#2e251e", "#e2a33f", "#fff0d8", "#c8ad87",
+                "#78b975", "#efb84f", "#ff7154", "#43b6ad"),
+            HudSurfacePalette.OxideWorkshop => new(
+                "#44291f", "#75432e", "#19110e", "#ef8a37", "#f8e6d9", "#c59a83",
+                "#86c879", "#ffc052", "#ff6548", "#72b8c2"),
+            HudSurfacePalette.FieldOlive => new(
+                "#3b422f", "#687351", "#171c14", "#e4bd4d", "#f1f0dc", "#b6b99c",
+                "#82c56d", "#e6b54c", "#f06c4f", "#8eb6a8"),
+            HudSurfacePalette.AlienPorcelain => new(
+                "#3a2b43", "#6c5079", "#17111c", "#a8e63e", "#f4ecf6", "#bba9c3",
+                "#91dd57", "#f3b84f", "#ff5f6c", "#72b8e8"),
+            HudSurfacePalette.NeutralGraphite => new(
+                "#353739", "#575b5d", "#181a1c", "#cf8241", "#f1eee8", "#aeb2b3",
+                "#75bb82", "#e3b44e", "#ef6b50", "#6eb3ba"),
+            _ => new(
+                "#cfc6ae", "#eee6d0", "#8b8578", "#d95f24", "#171a1b", "#4c5355",
+                "#2d6c42", "#8c5b00", "#ad2b20", "#166e7a")
+        };
+        profile.Colors.Background = tokens.Background;
+        profile.Colors.Raised = tokens.Raised;
+        profile.Colors.Recessed = tokens.Recessed;
+        profile.Colors.Accent = tokens.Accent;
+        profile.Colors.TextPrimary = tokens.TextPrimary;
+        profile.Colors.TextMuted = tokens.TextMuted;
+        profile.Colors.Good = tokens.Good;
+        profile.Colors.Warning = tokens.Warning;
+        profile.Colors.Danger = tokens.Danger;
+        profile.Colors.Selection = tokens.Selection;
+    }
+
+    private readonly record struct HudPaletteTokens(
+        string Background, string Raised, string Recessed, string Accent,
+        string TextPrimary, string TextMuted, string Good, string Warning,
+        string Danger, string Selection);
 }
 
 public sealed class HudContentProfile

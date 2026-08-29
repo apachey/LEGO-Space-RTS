@@ -6,7 +6,7 @@ namespace LegoSpaceRTS.Presentation;
 
 public sealed class M7LookProfile
 {
-    public const int CurrentSchemaVersion = 7;
+    public const int CurrentSchemaVersion = 8;
 
     public int SchemaVersion { get; set; } = CurrentSchemaVersion;
     public CameraLook Camera { get; set; } = new();
@@ -58,7 +58,7 @@ public sealed class M7LookProfile
                 error = "Clipboard does not contain an M7 Look profile.";
                 return false;
             }
-            if (parsed.SchemaVersion is not (1 or 2 or 3 or 4 or 5 or 6 or CurrentSchemaVersion))
+            if (parsed.SchemaVersion is < 1 or > CurrentSchemaVersion)
             {
                 profile = CreateDefault();
                 error = $"Profile schema {parsed.SchemaVersion} is not supported; expected 1–{CurrentSchemaVersion}.";
@@ -73,7 +73,9 @@ public sealed class M7LookProfile
             // 6 corrects camera-dependent texture projection, establishes a quiet RTS
             // material baseline and adds deterministic preview-shot / blast controls. Schema 7
             // makes the authored, map-scale terrain composition the new review default while
-            // preserving every older profile as the exact legacy raster treatment. Missing
+            // preserving every older profile as the exact legacy raster treatment. Schema 8
+            // adds a readable raster-forward review treatment and explicit environment surface
+            // identities without changing the meaning of either schema-7 ground value. Missing
             // values intentionally inherit the current review baseline, so old
             // copied profiles remain usable.
             int sourceSchemaVersion = parsed.SchemaVersion;
@@ -93,6 +95,7 @@ public sealed class M7LookProfile
             }
             if (sourceSchemaVersion < 6) ApplySchemaSixMigration(parsed);
             if (sourceSchemaVersion < 7) ApplySchemaSevenMigration(parsed);
+            if (sourceSchemaVersion == 7) ApplySchemaEightMigration(parsed);
             parsed.Normalize();
             profile = parsed;
             error = string.Empty;
@@ -203,6 +206,16 @@ public sealed class M7LookProfile
         // reviewed. Keep that visual result available instead of silently
         // replacing it when an older clipboard profile is pasted.
         profile.Ground.SurfaceTreatment = M7GroundSurfaceTreatment.LegacyRaster;
+    }
+
+    private static void ApplySchemaEightMigration(M7LookProfile profile)
+    {
+        // In schema 7 enum value 1 meant LegacyRaster. Schema 8 reserves that
+        // value for the new RasterForward review surface, so remap the old
+        // serialized value to its new explicit legacy slot. Value 0 remains
+        // AuthoredSurfaceStack exactly as reviewed.
+        if (profile.Ground.SurfaceTreatment == M7GroundSurfaceTreatment.RasterForward)
+            profile.Ground.SurfaceTreatment = M7GroundSurfaceTreatment.LegacyRaster;
     }
 
     private static void MergeMissingMaterialDefaults(M7LookProfile profile, JsonElement root)
@@ -880,7 +893,8 @@ public sealed class VfxPoolLook
 public enum M7GroundSurfaceTreatment : byte
 {
     AuthoredSurfaceStack = 0,
-    LegacyRaster = 1
+    RasterForward = 1,
+    LegacyRaster = 2
 }
 
 public sealed class GroundLook

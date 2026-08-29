@@ -272,9 +272,10 @@ rendered evidence did not prove their effect:
   albedo, ground bump and roughness routes were covered. The building route is
   superseded by the raster-frequency follow-up below;
 - the quiet regolith map supplies ground colour while independently transformed
-  quarry samples supply shallow bump and reflection breakup. The older detailed
-  `regolith_height.png` remains an audit asset but is intentionally not bound in
-  the normal view because its recognizable ridges tile at RTS scale;
+  quarry samples supply shallow bump and reflection breakup. At this revision,
+  the detailed `regolith_height.png` was intentionally unbound because a simple
+  repeat tiled at RTS scale; schema 8 later reintroduces it only through the
+  large-footprint anti-tiled Raster Forward path described below;
 - blue hour remains classified at 4.5/5.0/5.5 and golden hour at
   6.5/7.2/7.8 in the deterministic Earth review clock. Procedural sky and
   twilight luminance make those extended phases visibly distinct without a
@@ -368,3 +369,45 @@ Current comparison evidence is `m7-ground-authored-final-v2.png`,
 `m7-ground-legacy-v1.png` and `m7-ground-authored-zoom72.png` under
 `Artifacts/Screenshots/`. Neither treatment is visual canon; the comparison is
 an art-direction decision surface.
+
+## Schema-8 world surfaces and raster-forward comparison
+
+The schema-7 A/B was not a fair art-direction choice: Authored Surface carried
+readable composition, while Legacy Raster intentionally reproduced the earlier
+nearly invisible texture. Schema 8 keeps that old result only for profile
+migration and replaces the visible B button with **Raster Forward**.
+
+Raster Forward binds the more descriptive `regolith_height.png` over a large
+world-space footprint. Three unequal, rotated samples break the square repeat;
+the remaining broad raster values select terrain color families and drive
+shallow height and roughness response. It is deliberately more visible than the
+subordinate raster in Authored Surface, but avoids restoring high-frequency
+screen noise at 24–72-cell camera distances.
+
+Ground color is no longer an unidentified universal test floor when World Light
+Cycle is enabled. Both A and B now follow one of five explicit, exploratory
+surface identities:
+
+- **Earth Desert** — warm windblown sand over partially buried cooler
+  sedimentary slabs;
+- **Mars Oxide Plain** — rust fines, dark compacted soil and iron-rich seams;
+- **Moon Regolith** — pale powder, compressed traffic areas and cold basalt;
+- **Planet U Mineral Dust** — a non-canon violet/blue-grey/green mineral study;
+- **Underground Cavern Floor** — dry brown dust, charcoal bedrock and warmer
+  mineral bands designed around local light.
+
+The geometry of the authored work slab remains presentation-only lab staging.
+These identities are comparative environment studies, not approved biome or map
+canon. Schema 1–6 still migrate to Legacy Raster; schema-7 values 0 and 1 still
+resolve to Authored Surface and Legacy Raster respectively; only a fresh
+schema-8 profile exposes Raster Forward as enum value 1.
+
+Current objective evidence is `m7-ground-schema8-earth-authored.png`,
+`m7-ground-schema8-earth-raster-v3.png`,
+`m7-ground-schema8-earth-raster-zoom72.png`,
+`m7-ground-schema8-mars-authored-v2.png`,
+`m7-ground-schema8-moon-authored.png`,
+`m7-ground-schema8-planet-u-authored-v2.png` and
+`m7-ground-schema8-underground-authored.png` under `Artifacts/Screenshots/`.
+All captures use the same model, camera and scene fixture; visual acceptance
+remains the game director's decision.

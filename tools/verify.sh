@@ -288,13 +288,19 @@ godot_m7_palette_smoke() {
 }
 
 godot_m7_look_smoke() {
-  local godot output status controls zoom outline post ground fixture
+  local godot output status controls zoom outline post ground world surface fixture
   godot="$(discover_godot 2>/dev/null || true)"
   if [[ -z "${godot}" ]]; then printf 'Godot executable not found.\n' >&2; return 1; fi
   if ! godot_is_required_mono "${godot}"; then printf 'Godot is not the required 4.7.1 .NET build: %s\n' "${godot}" >&2; return 1; fi
-  for fixture in "visible 35 on on authored" "hidden 35 off on authored" "hidden 72 on on authored" "hidden 35 on off authored" "hidden 35 on on legacy"; do
-    read -r controls zoom outline post ground <<< "${fixture}"
-    output="$("${godot}" --headless --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-look-lab --m7-look-smoke --m7-look-controls "${controls}" --m7-look-zoom "${zoom}" --m7-look-post "${post}" --m7-look-outline "${outline}" --m7-look-ground "${ground}" 2>&1)"
+  for fixture in \
+    "visible 35 on on authored earth earth-desert" \
+    "hidden 35 off on authored mars mars-oxide" \
+    "hidden 72 on on authored moon moon-regolith" \
+    "hidden 35 on off authored planet-u planet-u-mineral" \
+    "hidden 35 on on authored underground underground-cavern" \
+    "hidden 35 on on raster earth earth-desert"; do
+    read -r controls zoom outline post ground world surface <<< "${fixture}"
+    output="$("${godot}" --headless --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-look-lab --m7-look-smoke --m7-look-controls "${controls}" --m7-look-zoom "${zoom}" --m7-look-post "${post}" --m7-look-outline "${outline}" --m7-look-ground "${ground}" --m7-look-world "${world}" 2>&1)"
     status=$?
     printf '%s\n' "${output}"
     if (( status != 0 )); then return "${status}"; fi
@@ -302,21 +308,21 @@ godot_m7_look_smoke() {
       printf 'M7 Look Lab emitted a shader or script error.\n' >&2
       return 1
     fi
-    if ! printf '%s\n' "${output}" | grep -q "M7 LOOK LAB: PASS schema=7 units=4 meshes=192 triangles=31104 buildings=2 firing=on burning=on animationDrivers=4 destructionDriver=1 vfxPools=6 prewarmed=180 controls=${controls} zoom=${zoom} post=${post} outline=${outline}.*ground=${ground} materialView=combined audit=off"; then
-      printf 'Godot exited without the required M7 Look Lab PASS marker for controls=%s zoom=%s post=%s outline=%s ground=%s.\n' "${controls}" "${zoom}" "${post}" "${outline}" "${ground}" >&2
+    if ! printf '%s\n' "${output}" | grep -q "M7 LOOK LAB: PASS schema=8 units=4 meshes=192 triangles=31104 buildings=2 firing=on burning=on animationDrivers=4 destructionDriver=1 vfxPools=6 prewarmed=180 controls=${controls} zoom=${zoom} post=${post} outline=${outline}.*world=${world}.*ground=${ground} surface=${surface} materialView=combined audit=off"; then
+      printf 'Godot exited without the required M7 Look Lab PASS marker for controls=%s zoom=%s post=%s outline=%s ground=%s world=%s surface=%s.\n' "${controls}" "${zoom}" "${post}" "${outline}" "${ground}" "${world}" "${surface}" >&2
       return 1
     fi
   done
 }
 
 godot_m7_hud_smoke() {
-  local godot output status fixture scenario aspect finish
+  local godot output status fixture scenario aspect finish palette
   godot="$(discover_godot 2>/dev/null || true)"
   if [[ -z "${godot}" ]]; then printf 'Godot executable not found.\n' >&2; return 1; fi
   if ! godot_is_required_mono "${godot}"; then printf 'Godot is not the required 4.7.1 .NET build: %s\n' "${godot}" >&2; return 1; fi
-  for fixture in "mixed-army 16-9 structural" "mixed-army 16-9 legacy" "mixed-army 16-9 clean" "production 16-10 structural" "brownout 21-9 structural" "critical-tooltip 4-3 structural"; do
-    read -r scenario aspect finish <<< "${fixture}"
-    output="$("${godot}" --headless --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-hud-lab --m7-hud-smoke --m7-hud-scenario "${scenario}" --m7-hud-aspect "${aspect}" --m7-hud-finish "${finish}" 2>&1)"
+  for fixture in "mixed-army 16-9 hybrid light" "mixed-army 16-9 hybrid sandstone" "mixed-army 16-9 hybrid oxide" "mixed-army 16-9 hybrid alien" "mixed-army 16-9 structural graphite" "mixed-army 16-9 legacy light" "mixed-army 16-9 clean light" "production 16-10 hybrid sandstone" "brownout 21-9 hybrid oxide" "critical-tooltip 4-3 hybrid light"; do
+    read -r scenario aspect finish palette <<< "${fixture}"
+    output="$("${godot}" --headless --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-hud-lab --m7-hud-smoke --m7-hud-scenario "${scenario}" --m7-hud-aspect "${aspect}" --m7-hud-finish "${finish}" --m7-hud-palette "${palette}" 2>&1)"
     status=$?
     printf '%s\n' "${output}"
     if (( status != 0 )); then return "${status}"; fi
@@ -324,8 +330,8 @@ godot_m7_hud_smoke() {
       printf 'M7 HUD Lab emitted a script or runtime error.\n' >&2
       return 1
     fi
-    if ! printf '%s\n' "${output}" | grep -q "M7 HUD LAB: PASS scenarios=8 commands=12 minimap=legal.*factionSkins=5 finishes=3.*schema=5 active=${scenario}"; then
-      printf 'Godot exited without the required T068/T069 HUD Lab PASS marker for scenario=%s aspect=%s finish=%s.\n' "${scenario}" "${aspect}" "${finish}" >&2
+    if ! printf '%s\n' "${output}" | grep -q "M7 HUD LAB: PASS scenarios=8 commands=12 minimap=legal.*factionSkins=5 finishes=4 palettes=6.*schema=6 active=${scenario}"; then
+      printf 'Godot exited without the required T068/T069 HUD Lab PASS marker for scenario=%s aspect=%s finish=%s palette=%s.\n' "${scenario}" "${aspect}" "${finish}" "${palette}" >&2
       return 1
     fi
   done

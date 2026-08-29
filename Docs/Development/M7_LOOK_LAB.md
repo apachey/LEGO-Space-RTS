@@ -72,11 +72,15 @@ The left panel contains twelve sections:
 11. **VFX** — prewarmed tracer/muzzle/impact budgets and live pool telemetry,
    load-preview emitter count, tracer, particle muzzle/impact, spark, luminous
    fire and smoke appearance;
-12. **Ground** — a simple A/B between the new **Authored Surface** and the
-   preserved **Legacy Raster**, plus two readable terrain colors, depth-tested
-   tread tracks and unit spacing. Authored Surface composes a compacted work
-   pad and routes, exposed bedrock shelves, loose regolith and a mineral seam at
-   map scale; it deliberately does not expose macro/micro shader knobs.
+12. **Ground** — a useful A/B between **Authored Surface** and **Raster
+   Forward**, plus depth-tested tread tracks and unit spacing. Both treatments
+   follow the selected World Light Cycle identity: Earth Desert, Mars Oxide
+   Plain, Moon Regolith, exploratory Planet U Mineral Dust or Underground
+   Cavern Floor. Authored Surface composes a compacted work pad and routes,
+   exposed bedrock shelves, loose regolith and a mineral seam at map scale;
+   Raster Forward gives broad image-authored albedo, height and roughness the
+   leading role while unequal rotated samples suppress tiling. The old Legacy
+   Raster is retained only for copied-profile migration.
 
 The surface families intentionally begin with distinct physical responses:
 painted shell, dusty brown structure, metallic mechanisms and tools, matte
@@ -84,12 +88,13 @@ rubber, coated building shell and rough rock are not one material recolored.
 
 ## Profile workflow
 
-- **COPY ALL JSON** copies a complete `schemaVersion: 7` profile, including the
+- **COPY ALL JSON** copies a complete `schemaVersion: 8` profile, including the
   current zoom. It never copies only a diff.
-- **PASTE & APPLY** validates the schema, migrates schemas 1–6, ignores the
+- **PASTE & APPLY** validates the schema, migrates schemas 1–7, ignores the
   removed HUD/scorch fields, clamps unsafe values and applies the complete
   profile live. Schema 1–6 profiles retain their exact Legacy Raster treatment;
-  fresh profiles start on Authored Surface.
+  schema-7 Authored/Legacy values retain their meaning; fresh profiles start on
+  Authored Surface and expose Raster Forward as the useful B comparison.
 - **RESET SECTION** restores the active section only.
 - **RESET ALL** restores the neutral lab baseline.
 - **PAUSE / RESUME** freezes motion for comparisons.
@@ -108,7 +113,8 @@ Automated lighting evidence can additionally select
 `--m7-look-time 0..24`.
 
 Ground comparison may be selected explicitly with
-`--m7-look-ground authored|legacy`.
+`--m7-look-ground authored|raster|legacy`. `legacy` is automation-only migration
+evidence and is not presented as a recommended review button.
 
 Source-render capture is provided by `tools/capture-m7-look-lab.sh`.
 
@@ -127,14 +133,13 @@ evaluated without switching any other look parameter.
 
 ## Texture scope
 
-Ten generated review assets remain reproducible. Eight are active: broad painted
+Ten generated review assets remain reproducible. Nine are active: broad painted
 macro-albedo, also reused at very low strength for broad building relief, and
 separate restrained vehicle-paint relief; brushed metal and rubber detail;
 machine-panel height-derived bump; quiet regolith colour; independently
-transformed quarry bump/roughness; and an alpha glare sprite. The older detailed
-`regolith_height.png` and fine `building_panel_height.png` remain for audit
-history but are deliberately unbound
-because its large ridges repeat at RTS scale. Albedo, height/bump and roughness
+transformed quarry bump/roughness; detailed regolith used only by Raster Forward;
+and an alpha glare sprite. The fine `building_panel_height.png` remains for audit
+history but is deliberately unbound. Albedo, height/bump and roughness
 sampling use separate coordinates and calibrated contrast instead of stamping
 one grayscale value into every channel. Imported LEGO sub-meshes use their
 cached bind-pose origin and basis to share one model-space texture field;
@@ -146,8 +151,11 @@ Derivative-aware mips avoid sparkle without allowing live animation or a colour
 edit to shift the raster phase. In the schema-7 Authored Surface treatment,
 those same rasters are subordinate albedo/relief/reflection response inside
 large deterministic material zones; broad authored forms, sparse slab seams,
-strata, cracks and gravel carry the image at RTS zoom. Legacy Raster remains
-available unchanged for comparison.
+strata, cracks and gravel carry the image at RTS zoom. Schema-8 Raster Forward
+instead maps the detailed regolith across a very large world-space footprint,
+combines unequal rotated samples, and deliberately strengthens broad color,
+height and reflection response. Legacy Raster remains available unchanged only
+for migration evidence.
 These are review assets, not accepted production normal/ORM maps.
 
 ## T065 animation-driver integration
@@ -198,13 +206,14 @@ cosmetic burst.
 The lab can target the fourth unit, the burning structure or alternate between
 them. Fire/smoke/light evidence follows the structure. Fragment motion, count,
 lifetime, fade, dust value and active pool budget are editable and copied in
-schema 7. Existing schema 1–6
+schema 8. Existing schema 1–7
 profiles inherit the neutral destruction defaults.
 
 ## Decision boundary
 
-Automation validates scene structure, mesh/triangle counts, schema-7 round-trip,
-schema-1 through schema-6 migration, both ground treatments, animation and destruction-driver state,
+Automation validates scene structure, mesh/triangle counts, schema-8 round-trip,
+schema-1 through schema-7 migration, all three serialized ground treatments,
+all five environment surface identities, animation and destruction-driver state,
 six-wheel/drill/suspension rig binding, all six pool prewarm/spawn/reuse/drop
 behavior, zoom bounds, exact authored-texture shader routing, directional
 headlight geometry and day/night gating, procedural-sky light ownership,
