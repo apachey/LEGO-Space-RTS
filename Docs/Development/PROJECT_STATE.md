@@ -278,14 +278,14 @@ live; the current schema-9 copy/paste retains the complete experiment.
 - `F8` → **M7 HUD Lab** provides eight information-density fixtures, four
   aspect previews, live layout/type/surface/content/color tokens and complete
   schema-8 JSON copy/paste, including schemas 1–7 migration. Hybrid,
-  Structural, Legacy and Clean finishes share invariant panel geometry and hit
-  targets. Hybrid protects authored raster corner/material detail, bridges it
-  with responsive code-native rails, clips decoration behind content and uses
-  one continuous interior with a single owner for every functional divider.
-  Complete square frames are no longer repeated as edge tiles or re-cropped into
-  duplicate ornaments. Structural isolates the earlier vector chassis, Legacy
-  preserves the old full-frame renderer for direct comparison and Clean exposes
-  the functional skeleton.
+  Structural, Legacy and Clean finishes share invariant outer chassis geometry
+  and hit targets. Hybrid derives a separate alpha aperture from each faction's
+  actual frame, clips its plate/raster/content to that opening, and draws the
+  complete perimeter last. Authored raster corners, shoulders and one central
+  clasp remain proportionally correct; thick code-native rails continue along
+  every side without stretching or repeating the raster edge. Structural
+  isolates the earlier vector chassis, Legacy preserves the old full-frame
+  renderer for direct comparison and Clean exposes the functional skeleton.
 
   Schema 8 replaces independent named surface palettes in normal use with one
   complete recipe per playable faction. Rock Raiders bind industrial grey,
@@ -298,7 +298,9 @@ live; the current schema-9 copy/paste retains the complete experiment.
   remain stable. The retired fifth Life on Mars human art slot migrates to the
   unified Astronaut recipe. A code-native faction-coloured blueprint portrait
   still distinguishes units, groups, structures and transformations without
-  changing the locked HUD anchors.
+  changing the locked HUD anchors. The laboratory can now override the faction
+  kit while leaving a scenario's content untouched; production auto-binding is
+  unchanged and Reset restores it.
   Details are in
   `Docs/Development/M7_HUD_LAB.md`; source and regeneration rules are in
   `Docs/Development/M7_HUD_FRAME_AUDIT.md`.
@@ -365,8 +367,9 @@ live; the current schema-9 copy/paste retains the complete experiment.
   Underground route distinct exploratory ground palettes and track dust.
   Schema 1–8 profiles retain their prior treatment meanings through migration.
   The HUD Lab schema-8 revision replaces the dirty repeated-frame composition
-  with protected raster modules, responsive vector rails, a clipped continuous
-  interior and one divider owner. The frame and complete shell palette now bind
+  with protected, proportion-preserving raster modules, responsive four-sided
+  vector rails, a faction-derived alpha aperture, clipped continuous interior
+  and one divider owner. The frame and complete shell palette now bind
   to exactly four playable-faction recipes; the Astronaut sources share one kit
   and Alien purple is removed. Legacy retains the old frame renderer for honest
   A/B comparison, while the former named non-faction palettes are migration or
@@ -396,13 +399,14 @@ live; the current schema-9 copy/paste retains the complete experiment.
 
 ## Verification state
 
-The schema-8 faction-bound HUD revision passed `./tools/verify.sh --full` on
-2026-08-30 with **zero blocking failures**: 278 NUnit tests, all retained M6/M7
-smokes, all four faction-bound Hybrid recipes, Structural/Legacy/Clean
-comparisons, 16:9/16:10/21:9/4:3 HUD containment, 100-repeat determinism,
+The schema-8 faction-mask/perimeter HUD revision passed `./tools/verify.sh
+--full` on 2026-08-30 with **zero blocking failures**: 278 NUnit tests, all
+retained M6/M7 smokes, four faction-derived aperture masks, the complete
+Hybrid/Structural/Legacy/Clean matrix, 16:9/16:10/21:9/4:3 containment, a
+same-fixture Alien-kit override regression, 100-repeat determinism,
 replay/snapshot continuation, content regeneration and a launchable macOS
 export. Exact summary:
-`Artifacts/Verification/20260829T223757Z-full-summary.txt`. The preserved
+`Artifacts/Verification/20260830T121031Z-full-summary.txt`. The preserved
 60-mover M9 diagnostic again reported 2/60 completion and remains
 `BLOCKING_LATER`; it does not block M7 and no movement architecture was changed.
 

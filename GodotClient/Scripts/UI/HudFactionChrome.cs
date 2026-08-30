@@ -26,12 +26,18 @@ public partial class HudFactionChrome : Control
     private float _rightJunction = 0.78f;
 
     public HudFactionChromeRole Role { get; private set; }
+    public HudFaction Faction => _recipe.Faction;
     public bool IsConfigured => _texture is not null;
     public bool UsesFixedSquareCorners => true;
     public bool UsesProtectedSourceModules => true;
     public bool UsesSparseJunctionModules => !_frameOnly;
     public bool UsesTiledEdgeWalls => !_frameOnly;
     public bool UsesContinuousHybridRails => _frameOnly;
+    public bool UsesCompleteHybridPerimeter => _frameOnly;
+    public bool UsesIsotropicRasterModules => _frameOnly;
+    public bool AvoidsFullSpanRasterStretch => _frameOnly;
+    public bool SupportsCompleteHybridPerimeter => true;
+    public bool SupportsIsotropicRasterModules => true;
     public bool UsesFactionSurfaceFill => !_frameOnly;
     public bool IsFrameOnly => _frameOnly;
     public bool UsesVectorAccentRails => true;
@@ -78,14 +84,14 @@ public partial class HudFactionChrome : Control
             ? new Rect2(Vector2.Zero, Size)
             : new Rect2(new Vector2(-_outerExpansion, -_outerExpansion),
                 Size + new Vector2(_outerExpansion * 2f, _outerExpansion * 2f));
-        float requestedCorner = (Role == HudFactionChromeRole.TopStrip ? 15f : 30f) * _chromeScale;
-        float corner = Mathf.Min(requestedCorner, Mathf.Min(outer.Size.X, outer.Size.Y) * 0.45f);
+        float corner = DestinationCornerSize(_recipe, Role, outer.Size, _chromeScale);
         if (corner < 2f) return;
 
         Color modulate = new(1f, 1f, 1f, _intensity);
         if (_frameOnly)
         {
             DrawContinuousHybridRails(outer, corner);
+            DrawAuthoredEdgeModules(outer, corner, modulate);
             DrawCorners(outer, corner, modulate);
             return;
         }
@@ -103,7 +109,21 @@ public partial class HudFactionChrome : Control
     public static int ProtectedSourceSizeForFaction(int faction)
     {
         HudFactionSkinRecipe recipe = HudFactionSkinLibrary.RecipeFor(faction);
-        return Mathf.RoundToInt(256f * recipe.ProtectedFraction);
+        Texture2D? texture = ResourceLoader.Exists(recipe.HybridFramePath)
+            ? GD.Load<Texture2D>(recipe.HybridFramePath)
+            : null;
+        return texture is null
+            ? 0
+            : Mathf.RoundToInt(Math.Min(texture.GetWidth(), texture.GetHeight()) * recipe.ProtectedFraction);
+    }
+
+    public static float DestinationCornerSize(HudFactionSkinRecipe recipe, HudFactionChromeRole role,
+        Vector2 destinationSize, float chromeScale)
+    {
+        float requested = (role == HudFactionChromeRole.TopStrip ? 22f : 44f) *
+            Mathf.Clamp(chromeScale, 0.75f, 1.35f) * recipe.DestinationScale;
+        float available = Mathf.Min(destinationSize.X, destinationSize.Y) * 0.48f;
+        return Mathf.Max(1f, Mathf.Round(Mathf.Min(requested, available)));
     }
 
     public static Color AccentForFaction(int faction) =>
@@ -142,8 +162,13 @@ public partial class HudFactionChrome : Control
     private int SourceCornerSize()
     {
         if (_texture is null) return 0;
-        int shortest = Math.Min(_texture.GetWidth(), _texture.GetHeight());
-        return Mathf.Clamp(Mathf.RoundToInt(shortest * _recipe.ProtectedFraction), 1, shortest / 2);
+        return SourceCornerSize(_texture, _recipe);
+    }
+
+    internal static int SourceCornerSize(Texture2D texture, HudFactionSkinRecipe recipe)
+    {
+        int shortest = Math.Min(texture.GetWidth(), texture.GetHeight());
+        return Mathf.Clamp(Mathf.RoundToInt(shortest * recipe.ProtectedFraction), 1, shortest / 2);
     }
 
     private void DrawCorners(Rect2 outer, float corner, Color modulate)
@@ -172,34 +197,110 @@ public partial class HudFactionChrome : Control
         Color accent = ColorFor(_recipe.Accent, Colors.Orange);
         Color secondary = ColorFor(_recipe.Secondary, Colors.Cyan);
         bool top = Role == HudFactionChromeRole.TopStrip;
-        float rail = Mathf.Clamp((top ? 4.5f : 9f) * _chromeScale, 3f, outer.Size.Y * 0.16f);
-        float side = Mathf.Clamp((top ? 5f : 10f) * _chromeScale, 3f, outer.Size.X * 0.05f);
+        Vector4 aperture = _recipe.ApertureInsetRatios;
+        float leftRail = Mathf.Clamp(corner * aperture.X, 3f, outer.Size.X * 0.48f);
+        float topRail = Mathf.Clamp(corner * aperture.Y, 3f, outer.Size.Y * 0.48f);
+        float rightRail = Mathf.Clamp(corner * aperture.Z, 3f, outer.Size.X * 0.48f);
+        float bottomRail = Mathf.Clamp(corner * aperture.W, 3f, outer.Size.Y * 0.48f);
         Color edge = WithAlpha(recess.Darkened(0.34f), 0.96f);
         Color plate = WithAlpha(shell, top ? 0.92f : 0.96f);
 
-        DrawRect(new Rect2(outer.Position, new Vector2(outer.Size.X, rail)), edge);
-        DrawRect(new Rect2(new Vector2(outer.Position.X, outer.End.Y - rail), new Vector2(outer.Size.X, rail)), edge);
-        DrawRect(new Rect2(outer.Position, new Vector2(side, outer.Size.Y)), edge);
-        DrawRect(new Rect2(new Vector2(outer.End.X - side, outer.Position.Y), new Vector2(side, outer.Size.Y)), edge);
+        DrawRect(new Rect2(outer.Position, new Vector2(outer.Size.X, topRail)), edge);
+        DrawRect(new Rect2(new Vector2(outer.Position.X, outer.End.Y - bottomRail),
+            new Vector2(outer.Size.X, bottomRail)), edge);
+        DrawRect(new Rect2(outer.Position, new Vector2(leftRail, outer.Size.Y)), edge);
+        DrawRect(new Rect2(new Vector2(outer.End.X - rightRail, outer.Position.Y),
+            new Vector2(rightRail, outer.Size.Y)), edge);
 
-        float inner = Mathf.Max(1f, rail * 0.35f);
+        float inner = Mathf.Max(1f, topRail * 0.35f);
+        float bottomInner = Mathf.Max(1f, bottomRail * 0.35f);
         DrawRect(new Rect2(new Vector2(outer.Position.X + corner * 0.60f, outer.Position.Y + 1f),
             new Vector2(Mathf.Max(0f, outer.Size.X - corner * 1.20f), inner)), plate);
-        DrawRect(new Rect2(new Vector2(outer.Position.X + corner * 0.60f, outer.End.Y - inner - 1f),
-            new Vector2(Mathf.Max(0f, outer.Size.X - corner * 1.20f), inner)), plate.Darkened(0.22f));
+        DrawRect(new Rect2(new Vector2(outer.Position.X + corner * 0.60f, outer.End.Y - bottomInner - 1f),
+            new Vector2(Mathf.Max(0f, outer.Size.X - corner * 1.20f), bottomInner)), plate.Darkened(0.22f));
 
         float signal = Mathf.Max(1f, (top ? 1.1f : 1.7f) * _chromeScale);
-        DrawFactionSignals(outer, corner, rail, signal, accent, secondary);
+        DrawFactionSignals(outer, corner, topRail, bottomRail, signal, accent, secondary);
     }
 
-    private void DrawFactionSignals(Rect2 outer, float corner, float rail, float width,
+    private void DrawAuthoredEdgeModules(Rect2 outer, float corner, Color modulate)
+    {
+        if (_texture is null) return;
+        float source = SourceCornerSize();
+        float sourceSpanX = _texture.GetWidth() - source * 2f;
+        float sourceSpanY = _texture.GetHeight() - source * 2f;
+        float destinationSpanX = outer.Size.X - corner * 2f;
+        float destinationSpanY = outer.Size.Y - corner * 2f;
+        if (sourceSpanX <= 1f || sourceSpanY <= 1f || destinationSpanX < 0f || destinationSpanY < 0f) return;
+
+        Color edgeModulate = new(modulate, modulate.A *
+            (Role == HudFactionChromeRole.TopStrip ? 0.78f : 0.94f));
+        float isotropicScale = corner / source;
+        if (destinationSpanX > 0.5f)
+        {
+            float centerSource = Mathf.Min(source * 1.35f, sourceSpanX * 0.42f);
+            float shoulderSource = Mathf.Min(source, (sourceSpanX - centerSource) * 0.5f);
+            float shoulderWidth = Mathf.Min(shoulderSource * isotropicScale, destinationSpanX * 0.22f);
+            float centerWidth = Mathf.Min(centerSource * isotropicScale, destinationSpanX * 0.24f);
+            shoulderSource = shoulderWidth / isotropicScale;
+            centerSource = centerWidth / isotropicScale;
+            DrawHorizontalModule(outer.Position.X + corner, shoulderWidth,
+                source, shoulderSource, outer, corner, edgeModulate);
+            DrawHorizontalModule(outer.End.X - corner - shoulderWidth, shoulderWidth,
+                _texture.GetWidth() - source - shoulderSource, shoulderSource, outer, corner, edgeModulate);
+            DrawHorizontalModule(outer.Position.X + (outer.Size.X - centerWidth) * 0.5f, centerWidth,
+                (_texture.GetWidth() - centerSource) * 0.5f, centerSource, outer, corner, edgeModulate);
+        }
+        if (destinationSpanY > 0.5f)
+        {
+            float centerSource = Mathf.Min(source * 1.35f, sourceSpanY * 0.42f);
+            float shoulderSource = Mathf.Min(source, (sourceSpanY - centerSource) * 0.5f);
+            float shoulderHeight = Mathf.Min(shoulderSource * isotropicScale, destinationSpanY * 0.22f);
+            float centerHeight = Mathf.Min(centerSource * isotropicScale, destinationSpanY * 0.24f);
+            shoulderSource = shoulderHeight / isotropicScale;
+            centerSource = centerHeight / isotropicScale;
+            DrawVerticalModule(outer.Position.Y + corner, shoulderHeight,
+                source, shoulderSource, outer, corner, edgeModulate);
+            DrawVerticalModule(outer.End.Y - corner - shoulderHeight, shoulderHeight,
+                _texture.GetHeight() - source - shoulderSource, shoulderSource, outer, corner, edgeModulate);
+            DrawVerticalModule(outer.Position.Y + (outer.Size.Y - centerHeight) * 0.5f, centerHeight,
+                (_texture.GetHeight() - centerSource) * 0.5f, centerSource, outer, corner, edgeModulate);
+        }
+    }
+
+    private void DrawHorizontalModule(float destinationX, float destinationWidth,
+        float sourceX, float sourceWidth, Rect2 outer, float corner, Color modulate)
+    {
+        if (_texture is null || destinationWidth <= 0.5f || sourceWidth <= 0.5f) return;
+        DrawTextureRectRegion(_texture,
+            new Rect2(new Vector2(destinationX, outer.Position.Y), new Vector2(destinationWidth, corner)),
+            new Rect2(sourceX, 0f, sourceWidth, SourceCornerSize()), modulate);
+        DrawTextureRectRegion(_texture,
+            new Rect2(new Vector2(destinationX, outer.End.Y - corner), new Vector2(destinationWidth, corner)),
+            new Rect2(sourceX, _texture.GetHeight() - SourceCornerSize(), sourceWidth, SourceCornerSize()), modulate);
+    }
+
+    private void DrawVerticalModule(float destinationY, float destinationHeight,
+        float sourceY, float sourceHeight, Rect2 outer, float corner, Color modulate)
+    {
+        if (_texture is null || destinationHeight <= 0.5f || sourceHeight <= 0.5f) return;
+        float sourceCorner = SourceCornerSize();
+        DrawTextureRectRegion(_texture,
+            new Rect2(new Vector2(outer.Position.X, destinationY), new Vector2(corner, destinationHeight)),
+            new Rect2(0f, sourceY, sourceCorner, sourceHeight), modulate);
+        DrawTextureRectRegion(_texture,
+            new Rect2(new Vector2(outer.End.X - corner, destinationY), new Vector2(corner, destinationHeight)),
+            new Rect2(_texture.GetWidth() - sourceCorner, sourceY, sourceCorner, sourceHeight), modulate);
+    }
+
+    private void DrawFactionSignals(Rect2 outer, float corner, float topRail, float bottomRail, float width,
         Color accent, Color secondary)
     {
         float left = outer.Position.X + corner * 0.82f;
         float right = outer.End.X - corner * 0.82f;
         if (right <= left) return;
-        float topY = outer.Position.Y + Mathf.Min(rail - 1f, rail * 0.58f);
-        float bottomY = outer.End.Y - Mathf.Min(rail - 1f, rail * 0.48f);
+        float topY = outer.Position.Y + Mathf.Min(topRail - 1f, topRail * 0.58f);
+        float bottomY = outer.End.Y - Mathf.Min(bottomRail - 1f, bottomRail * 0.48f);
 
         switch (_recipe.RailStyle)
         {

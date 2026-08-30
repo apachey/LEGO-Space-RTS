@@ -37,6 +37,7 @@ required = [
     'GodotClient/Scripts/UI/BasicHud.cs','GodotClient/Scripts/UI/DebugHud.cs','GodotClient/Scripts/UI/M5PlaytestHud.cs',
     'GodotClient/Scripts/UI/HudPortraitView.cs','GodotClient/Scripts/UI/M7HudProfile.cs',
     'GodotClient/Scripts/UI/HudFactionSkinLibrary.cs','GodotClient/Scripts/UI/HudFactionChrome.cs',
+    'GodotClient/Scripts/UI/HudFactionSurfaceMask.cs',
     'GodotClient/Assets/M7/Hud/rock_raiders_frame.png','GodotClient/Assets/M7/Hud/astronauts_frame.png',
     'GodotClient/Assets/M7/Hud/aliens_frame.png','GodotClient/Assets/M7/Hud/martians_frame.png',
     'GodotClient/Assets/M7/Hud/astronauts_unified_frame_v2.png','GodotClient/Assets/M7/Hud/aliens_frame_v2.png',
@@ -111,6 +112,7 @@ hud_view = (ROOT/'GodotClient/Scripts/UI/HudView.cs').read_text()
 hud_lab = (ROOT/'GodotClient/Scripts/Client/M7HudLab.cs').read_text()
 hud_portrait = (ROOT/'GodotClient/Scripts/UI/HudPortraitView.cs').read_text()
 hud_chrome = (ROOT/'GodotClient/Scripts/UI/HudFactionChrome.cs').read_text()
+hud_surface_mask = (ROOT/'GodotClient/Scripts/UI/HudFactionSurfaceMask.cs').read_text()
 hud_structural = (ROOT/'GodotClient/Scripts/UI/HudStructuralChrome.cs').read_text()
 hud_raster_surface = (ROOT/'GodotClient/Scripts/UI/HudRasterSurfaceOverlay.cs').read_text()
 hud_profile = (ROOT/'GodotClient/Scripts/UI/M7HudProfile.cs').read_text()
@@ -129,6 +131,7 @@ for faction in ['RockRaiders','Astronauts','Aliens','Martians']:
     check(hud_faction_skins.count(f'HudFaction.{faction}') == 1,
           f'M7 HUD must define exactly one complete skin recipe for {faction}')
 for token in ['Count = 4','HudFactionSkinRecipe','HybridFramePath','LegacyFramePath',
+              'ApertureInsetRatios','DestinationScale',
               'HudFactionRailStyle.Industrial','HudFactionRailStyle.Expedition',
               'HudFactionRailStyle.Resonance','HudFactionRailStyle.Pneumatic',
               'SharedGood','SharedWarning','SharedDanger','Validate(out string error)',
@@ -165,9 +168,24 @@ for token in ['HudFactionChromeRole.BottomDeck','UsesSparseJunctionModules','Use
               'DrawLegacySurfaceFill','DrawLegacyRails','DrawFunctionalModules','SetJunctions']:
     check(token in hud_view + hud_chrome, f'M7 continuous faction control-deck chrome missing: {token}')
 for token in ['UsesContinuousHybridRails','DrawContinuousHybridRails',
+              'UsesCompleteHybridPerimeter','UsesIsotropicRasterModules','AvoidsFullSpanRasterStretch',
+              'DrawAuthoredEdgeModules','DestinationCornerSize',
               'UsesTiledEdgeWalls => !_frameOnly','UsesSparseJunctionModules => !_frameOnly',
               'UsesFactionSurfaceFill => !_frameOnly','ClipContents = true']:
     check(token in hud_chrome, f'M7 clean hybrid/retained Legacy composition missing: {token}')
+check('256f * recipe.ProtectedFraction' not in hud_chrome,
+      'M7 frame source guides still assume every faction texture is 256px')
+for token in ['HudFactionSurfaceMask','TransparentThreshold','GetOrCreateMask',
+              'ClipChildrenMode.Only','FactionSurfaceFill','UsesFactionApertureMask','ClipsRasterAndContent',
+              'UsesSharedNineSliceGeometry','ContentRectFor','DrawNineSlice',
+              'source[center * 4 + 3]','touchesExterior','ApertureInsetRatios',
+              'HudArtFinish.LegacyFrames','_recipe.LegacyFramePath','_recipe.HybridFramePath']:
+    check(token in hud_surface_mask + hud_view,
+          f'M7 faction-specific aperture mask missing: {token}')
+for token in ['Name = $"{name}FactionSurfaceMask"','DirectSurfaceMask',
+              'Style(Colors.Transparent, Colors.Transparent, 0, true)',
+              'ZIndex = 20']:
+    check(token in hud_view, f'M7 masked chassis layer ordering missing: {token}')
 for token in ['ConsoleSurfaceTexturePath','UsesTiledConsoleSurface','UsesSculptedShoulders',
               'UsesInteriorOnlyHybrid','DrawHybridInterior','ProtectedSourceSizeForFaction',
               'CreateChassisShape','DrawRecessedBays','DrawLayeredRails','SetJunctions']:
@@ -204,7 +222,9 @@ check('ValidateInteractiveBindings' in hud_lab and 'outlineAlpha' in hud_lab and
       'M7 HUD interaction regression gate missing')
 for token in ['ValidateFactionSkinModes','HudSurfacePalette.FactionBound',
               'HudFactionSkinLibrary.Apply','HudFactionSkinLibrary.Validate',
-              'HudFactionChrome.ValidateRecipes','factionSkins=4']:
+              'HudFactionChrome.ValidateRecipes','factionSkins=4',
+              'SelectFactionKit','EffectivePreviewFrame','FactionKit{faction}',
+              'apertureMasks=4','kitSwitch=interactive','--m7-hud-kit']:
     check(token in hud_lab + hud_profile + hud_faction_skins + hud_chrome,
           f'M7 HUD faction-bound skin validation missing: {token}')
 check('factionSkins=5' not in hud_lab, 'M7 HUD lab still reports a retired fifth faction skin')

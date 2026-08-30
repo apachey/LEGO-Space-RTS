@@ -84,22 +84,29 @@ pretends to be a faction-authentic recipe.
 The same geometry supports four finishes:
 
 - **Hybrid · Vector + Raster** is the schema-8 default. Generated raster art is
-  kept where it contributes authored material detail--especially protected
-  corners--while responsive rails, functional seams and hit geometry stay
-  code-native. The bottom console is one bounded, clipped chassis with a
-  continuous interior surface. One renderer owns each divider. Complete square
-  frame images are not repeated as edge tiles, stretched across arbitrary
-  panels or re-cropped into duplicate ornaments.
+  kept where it contributes authored material detail--protected corners,
+  adjacent shoulders and one central clasp--while responsive rails, functional
+  seams and hit geometry stay code-native. Each recipe derives its own alpha
+  aperture from the transparent centre of that faction's frame. The plate,
+  raster surface and HUD content are clipped by that aperture before the full
+  perimeter is drawn on top. Long rails therefore remain continuous on all
+  four sides without stretching or repeating raster detail. The bottom console
+  is one bounded chassis with a continuous interior surface, and one renderer
+  owns each divider.
 - **Structural Console** isolates the earlier vector chassis and its responsive
   construction without the generated faction frame.
 - **Legacy Frames** preserves the previous full raster-frame renderer and old
-  assets for honest A/B comparison. It is a baseline, not the selected design
-  and not permission to reintroduce five playable skin slots.
+  assets for honest A/B comparison. Its clip aperture is derived from that
+  active Legacy texture rather than the Hybrid v2 texture. It is a baseline,
+  not the selected design and not permission to reintroduce five playable skin
+  slots.
 - **Clean** removes decorative chrome and exposes the functional layout.
 
-Art-finish changes never move panels or hit targets. Faction changes replace
-the complete visual recipe but also preserve geometry. This keeps comparison
-about presentation rather than silently comparing different UX layouts.
+Art-finish changes never move panels or hit targets. Faction changes preserve
+the outer top-strip/deck geometry, functional bay order and minimum hit sizes;
+their inner content rectangle may shift by a few pixels to follow the authored
+aperture. This keeps the comparison about presentation without allowing the
+surface to leak beyond its own frame.
 
 The useful lesson from StarCraft II is functional hierarchy and the legibility
 of a full-width command console, not its specific frame art, iconography or
@@ -121,8 +128,9 @@ readability:
   objectives, minimap legend and command costs;
 - minimap marker scale, motion smoothing, fog/contact opacity, grid, viewport,
   alert/network toggles and tactical-map colors;
-- faction recipe, Hybrid/Structural/Legacy/Clean finish, chrome intensity and
-  scale;
+- independently previewable faction recipe, Hybrid/Structural/Legacy/Clean
+  finish, chrome intensity and scale; changing a preview kit preserves the
+  active density fixture until Reset;
 - complete color tokens for explicit **Custom** audits.
 
 The code-native tactical portrait remains functional scaffolding. It shows a
@@ -168,23 +176,30 @@ Godot --headless --path GodotClient -- \
   --m7-hud-finish hybrid
 ```
 
-The capture helper retains the same scenario/aspect/control/finish workflow:
+The capture helper retains the same scenario/aspect/control/finish workflow and
+accepts an optional final faction-kit override:
 
 ```text
 ./tools/capture-m7-hud-lab.sh \
   Artifacts/Screenshots/m7-hud-alien-hybrid-schema8.png \
-  alien-resonance 16-9 hidden hybrid faction
+  mixed-army 16-9 hidden hybrid faction aliens
 ```
 
-The final argument `faction` (also the helper default) leaves the recipe
-`FactionBound`. The old named palette arguments remain available only for
-migration/debug comparisons and produce an explicit **Custom** profile.
+The sixth argument `faction` (also the helper default) leaves the palette
+`FactionBound`. The optional seventh argument chooses `rock-raiders`,
+`astronauts`, `aliens` or `martians` without changing the fixture. Omitting it
+binds the kit to the scenario as production does. The old named palette
+arguments remain available only for migration/debug comparisons and produce an
+explicit **Custom** profile.
 
 The schema-8 smoke contract must cover:
 
 - all eight fixtures and all four playable faction recipes;
-- identical panel/hit geometry across all four finishes and factions;
-- Hybrid's bounded corners, continuous interior and single divider system;
+- identical outer chassis across all finishes and factions, finish-invariant
+  hit geometry, and bounded faction-specific inner offsets;
+- four independently switchable kits on one unchanged fixture;
+- Hybrid's faction-specific aperture masks, bounded plate/content, complete
+  four-sided perimeter, isotropic raster modules and single divider system;
 - Legacy availability without treating its retired fifth art slot as a
   playable faction;
 - all visible command buttons inside the safe area, including the 12-command

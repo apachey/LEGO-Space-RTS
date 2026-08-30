@@ -15,6 +15,7 @@ public partial class HudView : Control
     private readonly List<PanelContainer> _surfacePanels = new();
     private readonly List<PanelContainer> _raisedPanels = new();
     private readonly List<HudFactionChrome> _factionChrome = new();
+    private readonly List<HudFactionSurfaceMask> _factionSurfaceMasks = new();
     private readonly List<HudStructuralChrome> _structuralChrome = new();
     private readonly List<HudRasterSurfaceOverlay> _rasterSurfaceOverlays = new();
     private readonly List<Button> _allButtons = new();
@@ -36,7 +37,10 @@ public partial class HudView : Control
     private string _lastSignature = string.Empty;
     private Control? _safeArea;
     private PanelContainer? _topPanel;
+    private HudFactionSurfaceMask? _topSurfaceMask;
+    private HBoxContainer? _resourceRow;
     private PanelContainer? _bottomDeck;
+    private HudFactionSurfaceMask? _bottomSurfaceMask;
     private Control? _bottomDeckContent;
     private HudFactionChrome? _bottomDeckChrome;
     private HudStructuralChrome? _bottomDeckStructuralChrome;
@@ -246,8 +250,16 @@ public partial class HudView : Control
     {
         _bottomDeck = SurfacePanel("BottomDeck", false);
         _safeArea!.AddChild(_bottomDeck);
-        _bottomDeckContent = new Control { Name = "BottomDeckContent", MouseFilter = MouseFilterEnum.Ignore };
-        _bottomDeck.AddChild(_bottomDeckContent);
+        _bottomSurfaceMask = DirectSurfaceMask(_bottomDeck);
+        _bottomDeckContent = new Control
+        {
+            Name = "BottomDeckContent",
+            MouseFilter = MouseFilterEnum.Ignore,
+            // Above the structural/raster backing, below the faction frame.
+            ZIndex = 11
+        };
+        if (_bottomSurfaceMask is not null) _bottomSurfaceMask.AddChild(_bottomDeckContent);
+        else _bottomDeck.AddChild(_bottomDeckContent);
         _bottomDeckChrome = DirectChrome(_bottomDeck);
         _bottomDeckStructuralChrome = DirectStructuralChrome(_bottomDeck);
     }
@@ -256,8 +268,18 @@ public partial class HudView : Control
     {
         _topPanel = SurfacePanel("ResourceStrip", false);
         _safeArea!.AddChild(_topPanel);
-        HBoxContainer row = new() { Name = "ResourceRow", Alignment = BoxContainer.AlignmentMode.End };
-        _topPanel.AddChild(row);
+        _topSurfaceMask = DirectSurfaceMask(_topPanel);
+        _resourceRow = new HBoxContainer
+        {
+            Name = "ResourceRow",
+            Alignment = BoxContainer.AlignmentMode.End,
+            // Keep resource text over the structural backing while the outer
+            // faction frame remains the final foreground layer.
+            ZIndex = 11
+        };
+        if (_topSurfaceMask is not null) _topSurfaceMask.AddChild(_resourceRow);
+        else _topPanel.AddChild(_resourceRow);
+        HBoxContainer row = _resourceRow;
         AddResourceChip(row, "◆", "ORE", out _oreHeading, out _oreValue);
         AddTopDivider(row);
         Button energyButton = Button("", "EnergyButton");
@@ -584,48 +606,57 @@ public partial class HudView : Control
         float requestedBottomHeight = _profile.Layout.BottomRegionHeight * scale;
         float availableBottomHeight = Math.Max(110f, area.Y - topHeight - gap * 2f);
         float bottomHeight = Math.Min(requestedBottomHeight, availableBottomHeight);
-        float minimapWidth = Mathf.Clamp(_profile.Layout.MinimapSize * scale,
-            bottomHeight * 0.82f, Math.Min(area.X * 0.22f, bottomHeight * 1.12f));
-        float commandWidth = Mathf.Clamp(_profile.Layout.CommandPanelWidth * scale,
-            214f * scale, Math.Min(area.X * 0.27f, 330f * scale));
-        float portraitWidth = _portraitPanel.Visible
-            ? Mathf.Clamp(142f * scale, 92f * scale, Math.Min(area.X * 0.13f, 162f * scale))
-            : 0f;
         float topWidth = Math.Min(area.X * 0.94f, 1180f * scale);
         SetRect(_topPanel, new Vector2(area.X - topWidth, 0f), new Vector2(topWidth, topHeight));
+        Rect2 topContentRect = _topSurfaceMask?.ContentRectFor(new Vector2(topWidth, topHeight)) ??
+            new Rect2(Vector2.Zero, new Vector2(topWidth, topHeight));
+        if (_resourceRow is not null) SetRect(_resourceRow, topContentRect.Position, topContentRect.Size);
+
         float deckWidth = area.X;
         float deckX = 0f;
         float deckY = area.Y - bottomHeight;
+        SetRect(_bottomDeck, new Vector2(deckX, deckY), new Vector2(deckWidth, bottomHeight));
+        Rect2 deckContentRect = _bottomSurfaceMask?.ContentRectFor(new Vector2(deckWidth, bottomHeight)) ??
+            new Rect2(Vector2.Zero, new Vector2(deckWidth, bottomHeight));
+        SetRect(_bottomDeckContent, deckContentRect.Position, deckContentRect.Size);
+        float contentWidth = deckContentRect.Size.X;
+        float contentHeight = deckContentRect.Size.Y;
+        float minimapWidth = Mathf.Clamp(_profile.Layout.MinimapSize * scale,
+            contentHeight * 0.82f, Math.Min(contentWidth * 0.22f, contentHeight * 1.12f));
+        float commandWidth = Mathf.Clamp(_profile.Layout.CommandPanelWidth * scale,
+            214f * scale, Math.Min(contentWidth * 0.27f, 330f * scale));
+        float portraitWidth = _portraitPanel.Visible
+            ? Mathf.Clamp(142f * scale, 92f * scale, Math.Min(contentWidth * 0.13f, 162f * scale))
+            : 0f;
         int gapCount = _portraitPanel.Visible ? 3 : 2;
         float availableSelectionWidth = Math.Max(250f * scale,
-            deckWidth - minimapWidth - portraitWidth - commandWidth - sectionGap * gapCount);
+            contentWidth - minimapWidth - portraitWidth - commandWidth - sectionGap * gapCount);
         float selectionWidth = Math.Min(availableSelectionWidth, _profile.Layout.SelectionMaxWidth * scale);
         float bridgeWidth = Math.Max(0f, availableSelectionWidth - selectionWidth);
-        SetRect(_bottomDeck, new Vector2(deckX, deckY), new Vector2(deckWidth, bottomHeight));
-        SetRect(_bottomDeckContent, Vector2.Zero, new Vector2(deckWidth, bottomHeight));
-        SetRect(_minimapPanel, Vector2.Zero, new Vector2(minimapWidth, bottomHeight));
-        SetRect(_selectionPanel, new Vector2(minimapWidth + sectionGap, 0f), new Vector2(selectionWidth, bottomHeight));
+        SetRect(_minimapPanel, Vector2.Zero, new Vector2(minimapWidth, contentHeight));
+        SetRect(_selectionPanel, new Vector2(minimapWidth + sectionGap, 0f), new Vector2(selectionWidth, contentHeight));
         float portraitX = minimapWidth + sectionGap + selectionWidth + bridgeWidth + sectionGap;
-        SetRect(_portraitPanel, new Vector2(portraitX, 0f), new Vector2(portraitWidth, bottomHeight));
-        SetRect(_commandPanel, new Vector2(deckWidth - commandWidth, 0f), new Vector2(commandWidth, bottomHeight));
-        _bottomDeckChrome?.SetJunctions((minimapWidth + sectionGap * 0.5f) / deckWidth,
-            (deckWidth - commandWidth - sectionGap * 0.5f) / deckWidth);
+        SetRect(_portraitPanel, new Vector2(portraitX, 0f), new Vector2(portraitWidth, contentHeight));
+        SetRect(_commandPanel, new Vector2(contentWidth - commandWidth, 0f), new Vector2(commandWidth, contentHeight));
+        _bottomDeckChrome?.SetJunctions(
+            (deckContentRect.Position.X + minimapWidth + sectionGap * 0.5f) / deckWidth,
+            (deckContentRect.End.X - commandWidth - sectionGap * 0.5f) / deckWidth);
         if (_portraitPanel.Visible)
             _bottomDeckStructuralChrome?.SetJunctions(
-                (minimapWidth + sectionGap * 0.5f) / deckWidth,
-                (portraitX - sectionGap * 0.5f) / deckWidth,
-                (deckWidth - commandWidth - sectionGap * 0.5f) / deckWidth);
+                (deckContentRect.Position.X + minimapWidth + sectionGap * 0.5f) / deckWidth,
+                (deckContentRect.Position.X + portraitX - sectionGap * 0.5f) / deckWidth,
+                (deckContentRect.End.X - commandWidth - sectionGap * 0.5f) / deckWidth);
         else
             _bottomDeckStructuralChrome?.SetJunctions(
-                (minimapWidth + sectionGap * 0.5f) / deckWidth,
-                (deckWidth - commandWidth - sectionGap * 0.5f) / deckWidth);
+                (deckContentRect.Position.X + minimapWidth + sectionGap * 0.5f) / deckWidth,
+                (deckContentRect.End.X - commandWidth - sectionGap * 0.5f) / deckWidth);
 
         float alertHeight = 44f * scale;
         SetRect(_alertPanel, new Vector2(deckX, deckY - alertHeight - gap),
             new Vector2(Math.Min(deckWidth * 0.38f, Math.Max(minimapWidth, 390f * scale)), alertHeight));
         float eventHeight = Math.Max(76f * scale, _eventPanel.GetCombinedMinimumSize().Y);
         float tooltipHeight = Math.Max(196f * scale, _tooltipPanel.GetCombinedMinimumSize().Y);
-        float commandX = deckX + deckWidth - commandWidth;
+        float commandX = deckX + deckContentRect.End.X - commandWidth;
         float topOverlayLimit = topHeight + gap;
         float overlayBottom = deckY - gap;
         float availableStackHeight = Math.Max(0f, overlayBottom - topOverlayLimit);
@@ -701,8 +732,16 @@ public partial class HudView : Control
             PanelContainer panel = _surfacePanels[i];
             bool chromePanel = DirectChrome(panel) is not null;
             bool suppressGenericBorder = (rasterFrameFinish || structuralFinish) && chromePanel;
-            if (panel == _bottomDeck)
-                panel.AddThemeStyleboxOverride("panel", Style(recessed.Lerp(factionSurface, factionFill * 1.25f), Colors.Transparent, 0, true));
+            if (panel == _bottomDeck || panel == _topPanel)
+            {
+                Color chassisSurface = panel == _bottomDeck
+                    ? recessed.Lerp(factionSurface, factionFill * 1.25f)
+                    : background.Lerp(factionSurface, factionFill);
+                panel.AddThemeStyleboxOverride("panel", rasterFrameFinish
+                    ? Style(Colors.Transparent, Colors.Transparent, 0, true)
+                    : Style(chassisSurface, suppressGenericBorder ? Colors.Transparent : displayAccent, 0,
+                        suppressGenericBorder));
+            }
             else if (panel == _minimapPanel || panel == _selectionPanel || panel == _commandPanel)
             {
                 Color sectionBackground = panel == _selectionPanel ? background.Lightened(0.025f) : recessed.Lightened(0.025f);
@@ -746,14 +785,25 @@ public partial class HudView : Control
                 ? HybridSectionStyle(recessed.Lightened(0.03f), false, false)
                 : Style(recessed.Lightened(0.03f).Lerp(factionSurface, factionFill * 1.35f), secondaryAccent));
         _portraitView?.ApplyProfile(_profile);
+        HudArtFinish surfaceFinish = _profile.ArtSkin.Enabled
+            ? _profile.ArtSkin.Finish
+            : HudArtFinish.Clean;
+        for (int i = 0; i < _factionSurfaceMasks.Count; i++)
+        {
+            HudFactionSurfaceMask mask = _factionSurfaceMasks[i];
+            Color surface = mask.Role == HudFactionChromeRole.TopStrip
+                ? background.Lerp(factionSurface, factionFill)
+                : recessed.Lerp(factionSurface, factionFill * 1.25f);
+            mask.Configure(_profile.ArtSkin.Faction, mask.Role, surfaceFinish,
+                _profile.ArtSkin.ChromeScale, surface, _profile.Surface.PanelOpacity,
+                Mathf.RoundToInt(_profile.Surface.InnerPadding * ResponsiveScale()));
+        }
         for (int i = 0; i < _factionChrome.Count; i++)
         {
             HudFactionChrome chrome = _factionChrome[i];
-            PanelContainer panel = chrome.GetParent<PanelContainer>();
-            int expansion = ChromeContentPadding(panel) ?? _profile.Surface.InnerPadding;
             chrome.Configure(_profile.ArtSkin.Faction, chrome.Role,
                 rasterFrameFinish ? _profile.ArtSkin.ChromeIntensity : 0f,
-                _profile.ArtSkin.ChromeScale, expansion, hybridFinish);
+                _profile.ArtSkin.ChromeScale, 0f, hybridFinish);
         }
         for (int i = 0; i < _structuralChrome.Count; i++)
         {
@@ -1001,7 +1051,7 @@ public partial class HudView : Control
 
     private PanelContainer SurfacePanel(string name, bool raised)
     {
-        PanelContainer panel = new() { Name = name, MouseFilter = MouseFilterEnum.Stop };
+        PanelContainer panel = new() { Name = name, MouseFilter = MouseFilterEnum.Stop, ClipContents = true };
         (raised ? _raisedPanels : _surfacePanels).Add(panel);
         HudFactionChromeRole? chromeRole = name switch
         {
@@ -1011,11 +1061,43 @@ public partial class HudView : Control
         };
         if (chromeRole.HasValue)
         {
+            HudFactionSurfaceMask surfaceMask = new()
+            {
+                Name = $"{name}FactionSurfaceMask",
+                MouseFilter = MouseFilterEnum.Ignore,
+                CustomMinimumSize = Vector2.Zero,
+                ZIndex = 0
+            };
+            surfaceMask.Configure(_profile.ArtSkin.Faction, chromeRole.Value, _profile.ArtSkin.Finish,
+                _profile.ArtSkin.ChromeScale,
+                chromeRole.Value == HudFactionChromeRole.TopStrip
+                    ? Parse(_profile.Colors.Background, new Color("303534"))
+                    : Parse(_profile.Colors.Recessed, new Color("171b1a")),
+                _profile.Surface.PanelOpacity, _profile.Surface.InnerPadding);
+            panel.AddChild(surfaceMask);
+            _factionSurfaceMasks.Add(surfaceMask);
+
+            if (name == "BottomDeck")
+            {
+                HudRasterSurfaceOverlay overlay = new()
+                {
+                    Name = $"{name}RasterSurface",
+                    MouseFilter = MouseFilterEnum.Ignore,
+                    CustomMinimumSize = Vector2.Zero
+                };
+                overlay.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
+                overlay.Configure(HudRasterSurfaceRole.BottomDeck, _profile.ArtSkin.Finish, 0f,
+                    Parse(_profile.Colors.Recessed, new Color("8b8578")), DisplayAccent());
+                surfaceMask.AddChild(overlay);
+                _rasterSurfaceOverlays.Add(overlay);
+            }
+
             HudStructuralChrome structural = new()
             {
                 Name = $"{name}StructuralChrome",
                 MouseFilter = MouseFilterEnum.Ignore,
-                CustomMinimumSize = Vector2.Zero
+                CustomMinimumSize = Vector2.Zero,
+                ZIndex = 10
             };
             structural.Configure(_profile.ArtSkin.Faction, chromeRole.Value,
                 0f, _profile.ArtSkin.ChromeScale, _profile.Surface.InnerPadding,
@@ -1029,28 +1111,13 @@ public partial class HudView : Control
             {
                 Name = $"{name}FactionChrome",
                 MouseFilter = MouseFilterEnum.Ignore,
-                CustomMinimumSize = Vector2.Zero
+                CustomMinimumSize = Vector2.Zero,
+                ZIndex = 20
             };
             chrome.Configure(_profile.ArtSkin.Faction, chromeRole.Value,
                 _profile.ArtSkin.ChromeIntensity, _profile.ArtSkin.ChromeScale, _profile.Surface.InnerPadding);
             panel.AddChild(chrome);
             _factionChrome.Add(chrome);
-        }
-        HudRasterSurfaceRole? rasterRole = name == "BottomDeck"
-            ? HudRasterSurfaceRole.BottomDeck
-            : null;
-        if (rasterRole.HasValue)
-        {
-            HudRasterSurfaceOverlay overlay = new()
-            {
-                Name = $"{name}RasterSurface",
-                MouseFilter = MouseFilterEnum.Ignore,
-                CustomMinimumSize = Vector2.Zero
-            };
-            overlay.Configure(rasterRole.Value, _profile.ArtSkin.Finish, 0f,
-                Parse(_profile.Colors.Recessed, new Color("8b8578")), DisplayAccent());
-            panel.AddChild(overlay);
-            _rasterSurfaceOverlays.Add(overlay);
         }
         return panel;
     }
@@ -1141,6 +1208,9 @@ public partial class HudView : Control
 
     private static HudFactionChrome? DirectChrome(PanelContainer panel) =>
         panel.FindChild($"{panel.Name}FactionChrome", false, false) as HudFactionChrome;
+
+    private static HudFactionSurfaceMask? DirectSurfaceMask(PanelContainer panel) =>
+        panel.FindChild($"{panel.Name}FactionSurfaceMask", false, false) as HudFactionSurfaceMask;
 
     private static HudStructuralChrome? DirectStructuralChrome(PanelContainer panel) =>
         panel.FindChild($"{panel.Name}StructuralChrome", false, false) as HudStructuralChrome;

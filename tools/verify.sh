@@ -318,19 +318,34 @@ godot_m7_look_smoke() {
 }
 
 godot_m7_hud_smoke() {
-  local godot output status fixture scenario aspect finish expected_finish
+  local godot output status fixture scenario aspect finish expected_finish kit expected_kit
   godot="$(discover_godot 2>/dev/null || true)"
   if [[ -z "${godot}" ]]; then printf 'Godot executable not found.\n' >&2; return 1; fi
   if ! godot_is_required_mono "${godot}"; then printf 'Godot is not the required 4.7.1 .NET build: %s\n' "${godot}" >&2; return 1; fi
-  for fixture in "rock-unit 16-9 hybrid" "astronaut-transform 16-9 hybrid" "alien-resonance 16-9 hybrid" "martian-network 16-9 hybrid" "mixed-army 16-9 structural" "mixed-army 16-9 legacy" "mixed-army 16-9 clean" "production 16-10 hybrid" "brownout 21-9 hybrid" "critical-tooltip 4-3 hybrid"; do
-    read -r scenario aspect finish <<< "${fixture}"
+  for fixture in "rock-unit 16-9 hybrid scenario" "astronaut-transform 16-9 hybrid scenario" "alien-resonance 16-9 hybrid scenario" "martian-network 16-9 hybrid scenario" "mixed-army 16-9 structural scenario" "mixed-army 16-9 legacy scenario" "mixed-army 16-9 clean scenario" "production 16-10 hybrid scenario" "brownout 21-9 hybrid scenario" "critical-tooltip 4-3 hybrid scenario" "rock-unit 16-9 hybrid aliens"; do
+    read -r scenario aspect finish kit <<< "${fixture}"
     case "${finish}" in
       hybrid) expected_finish="HybridConsole" ;;
       structural) expected_finish="StructuralConsole" ;;
       legacy) expected_finish="LegacyFrames" ;;
       clean) expected_finish="Clean" ;;
     esac
-    output="$("${godot}" --headless --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-hud-lab --m7-hud-smoke --m7-hud-scenario "${scenario}" --m7-hud-aspect "${aspect}" --m7-hud-finish "${finish}" 2>&1)"
+    case "${kit}" in
+      aliens) expected_kit="Aliens" ;;
+      scenario)
+        case "${scenario}" in
+          astronaut-transform) expected_kit="Astronauts" ;;
+          alien-resonance) expected_kit="Aliens" ;;
+          martian-network) expected_kit="Martians" ;;
+          *) expected_kit="Rock Raiders" ;;
+        esac
+        ;;
+    esac
+    if [[ "${kit}" == "scenario" ]]; then
+      output="$("${godot}" --headless --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-hud-lab --m7-hud-smoke --m7-hud-scenario "${scenario}" --m7-hud-aspect "${aspect}" --m7-hud-finish "${finish}" 2>&1)"
+    else
+      output="$("${godot}" --headless --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-hud-lab --m7-hud-smoke --m7-hud-scenario "${scenario}" --m7-hud-aspect "${aspect}" --m7-hud-finish "${finish}" --m7-hud-kit "${kit}" 2>&1)"
+    fi
     status=$?
     printf '%s\n' "${output}"
     if (( status != 0 )); then return "${status}"; fi
@@ -338,8 +353,8 @@ godot_m7_hud_smoke() {
       printf 'M7 HUD Lab emitted a script or runtime error.\n' >&2
       return 1
     fi
-    if ! printf '%s\n' "${output}" | grep -q "M7 HUD LAB: PASS scenarios=8 commands=12 minimap=legal.*factionSkins=4 finishes=4.*schema=8 active=${scenario} finish=${expected_finish} palette=FactionBound"; then
-      printf 'Godot exited without the required T068/T069 schema-8 HUD Lab PASS marker for scenario=%s aspect=%s finish=%s.\n' "${scenario}" "${aspect}" "${finish}" >&2
+    if ! printf '%s\n' "${output}" | grep -q "M7 HUD LAB: PASS scenarios=8 commands=12 minimap=legal.*factionSkins=4 finishes=4.*schema=8 active=${scenario} finish=${expected_finish} palette=FactionBound.*apertureMasks=4 kitSwitch=interactive kit=${expected_kit}"; then
+      printf 'Godot exited without the required T068/T069 schema-8 HUD Lab PASS marker for scenario=%s aspect=%s finish=%s kit=%s.\n' "${scenario}" "${aspect}" "${finish}" "${kit}" >&2
       return 1
     fi
   done

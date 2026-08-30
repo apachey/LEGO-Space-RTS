@@ -10,6 +10,7 @@ public partial class M7HudLab : Node3D
     private Action? _returnToPrototype;
     private M7HudProfile _profile = M7HudProfile.CreateDefault();
     private M7HudScenario _scenario = M7HudScenario.MixedArmy;
+    private HudFaction? _previewFactionOverride;
     private string _aspect = "16:9";
     private HudView? _hud;
     private Control? _previewFrame;
@@ -18,6 +19,7 @@ public partial class M7HudLab : Node3D
     private bool _controlsVisible = true;
     private bool _smoke;
     private bool _finished;
+    private int _smokeExitCode;
     private int _frames;
     private string? _capturePath;
     private Vector2 _labCameraCenter = new(83f, 80f);
@@ -38,9 +40,17 @@ public partial class M7HudLab : Node3D
             else if (arguments[i] == "--m7-hud-aspect") _aspect = ParseAspect(arguments[i + 1]);
             else if (arguments[i] == "--m7-hud-finish") _profile.ArtSkin.Finish = ParseFinish(arguments[i + 1]);
             else if (arguments[i] == "--m7-hud-palette") HudSurfacePaletteLibrary.Apply(_profile, ParsePalette(arguments[i + 1]));
+            else if (arguments[i] == "--m7-hud-kit") _previewFactionOverride = ParseFactionKit(arguments[i + 1]);
             else if (arguments[i] == "--capture-path") _capturePath = arguments[i + 1];
         }
-        BindFactionToScenario(_scenario);
+        if (_previewFactionOverride.HasValue)
+        {
+            int faction = HudFactionSkinLibrary.IndexFor(_previewFactionOverride.Value);
+            if (_profile.ArtSkin.SurfacePalette == HudSurfacePalette.FactionBound)
+                HudFactionSkinLibrary.Apply(_profile, faction);
+            else _profile.ArtSkin.Faction = faction;
+        }
+        else BindFactionToScenario(_scenario);
         BuildWorldBackdrop();
         BuildHudPreview();
         BuildControls();
@@ -51,16 +61,25 @@ public partial class M7HudLab : Node3D
 
     public override void _Process(double delta)
     {
-        if (!_smoke || _finished) return;
+        if (!_smoke) return;
         _frames++;
+        if (_finished)
+        {
+            // Validation changes finishes, faction masks and preview sizes in
+            // one frame. Let the rendering server consume those queued canvas
+            // updates before destroying the headless viewport; otherwise the
+            // alpha-mask backbuffer can race Godot's shutdown on macOS.
+            if (_frames >= 32) GetTree().Quit(_smokeExitCode);
+            return;
+        }
         if (_frames < 24) return;
         bool valid = ValidateLab();
         if (valid && _capturePath is not null) valid = CaptureViewport(_capturePath);
         _finished = true;
+        _smokeExitCode = valid ? 0 : 2;
         if (valid)
-            GD.Print($"M7 HUD LAB: PASS scenarios=8 commands=12 minimap=legal markers=11 remembered=2 factionSkins=4 finishes=4 safeArea={_profile.Layout.SafeAreaPercent:0.#} uiScale={_profile.Layout.UiScale:0.00} aspect={_aspect} schema={M7HudProfile.CurrentSchemaVersion} active={M7HudFixtures.Slug(_scenario)} finish={_profile.ArtSkin.Finish} palette={_profile.ArtSkin.SurfacePalette}");
+            GD.Print($"M7 HUD LAB: PASS scenarios=8 commands=12 minimap=legal markers=11 remembered=2 factionSkins=4 finishes=4 safeArea={_profile.Layout.SafeAreaPercent:0.#} uiScale={_profile.Layout.UiScale:0.00} aspect={_aspect} schema={M7HudProfile.CurrentSchemaVersion} active={M7HudFixtures.Slug(_scenario)} finish={_profile.ArtSkin.Finish} palette={_profile.ArtSkin.SurfacePalette} apertureMasks=4 kitSwitch=interactive kit={HudFactionSkinLibrary.RecipeFor(_profile.ArtSkin.Faction).Name}");
         else GD.PrintErr("M7 HUD LAB: FAIL");
-        GetTree().Quit(valid ? 0 : 2);
     }
 
     public override void _UnhandledInput(InputEvent @event)
@@ -208,12 +227,8 @@ public partial class M7HudLab : Node3D
         {
             int faction = i;
             Button button = LabButton(factionNames[i]);
-            button.Pressed += () =>
-            {
-                HudFactionSkinLibrary.Apply(_profile, faction);
-                ApplyAll();
-                SetStatus($"Faction HUD kit: {factionNames[faction]}");
-            };
+            button.Name = $"FactionKit{faction}";
+            button.Pressed += () => SelectFactionKit(faction, true);
             factions.AddChild(button);
         }
         AddToggle(box, "Faction chrome", () => _profile.ArtSkin.Enabled, value => _profile.ArtSkin.Enabled = value);
@@ -301,17 +316,34 @@ public partial class M7HudLab : Node3D
     {
         _profile.Normalize();
         ApplyPreviewAspect();
+        HudFrame frame = EffectivePreviewFrame();
+        _hud?.ApplyFrame(frame, true);
         _hud?.ApplyProfile(_profile);
-        _hud?.ApplyFrame(M7HudFixtures.Create(_scenario), true);
         ApplySyntheticCameraPolygon();
     }
 
     private void SetScenario(M7HudScenario scenario)
     {
         _scenario = scenario;
-        BindFactionToScenario(scenario);
+        if (!_previewFactionOverride.HasValue) BindFactionToScenario(scenario);
         ApplyAll();
         SetStatus($"Scenario {M7HudFixtures.Slug(scenario)}");
+    }
+
+    private void SelectFactionKit(int faction, bool announce)
+    {
+        HudFactionSkinRecipe recipe = HudFactionSkinLibrary.RecipeFor(faction);
+        _previewFactionOverride = recipe.Faction;
+        HudFactionSkinLibrary.Apply(_profile, faction);
+        ApplyAll();
+        if (announce) SetStatus($"Faction HUD kit: {recipe.Name}");
+    }
+
+    private HudFrame EffectivePreviewFrame()
+    {
+        HudFrame frame = M7HudFixtures.Create(_scenario);
+        if (_previewFactionOverride.HasValue) frame.Faction = _previewFactionOverride.Value;
+        return frame;
     }
 
     private void BindFactionToScenario(M7HudScenario scenario)
@@ -391,6 +423,8 @@ public partial class M7HudLab : Node3D
             _hud.FindChild("MinimapSlot", true, false) is HudMinimapView &&
             _hud.FindChild("TacticalPortrait", true, false) is HudPortraitView &&
             _hud.FindChild("PortraitSlot", true, false) is PanelContainer &&
+            _hud.FindChild("ResourceStripFactionSurfaceMask", true, false) is HudFactionSurfaceMask &&
+            _hud.FindChild("BottomDeckFactionSurfaceMask", true, false) is HudFactionSurfaceMask &&
             _hud.FindChild("BottomDeckRasterSurface", true, false) is HudRasterSurfaceOverlay &&
             _hud.FindChild("SelectionPanelRasterSurface", true, false) is null &&
             _hud.FindChild("CommandPanelRasterSurface", true, false) is null &&
@@ -398,12 +432,26 @@ public partial class M7HudLab : Node3D
             _hud.FindChild("EventFeed", true, false) is PanelContainer && _hud.FindChild("HudTooltip", true, false) is PanelContainer;
         HudFactionChrome? topChrome = _hud?.FindChild("ResourceStripFactionChrome", true, false) as HudFactionChrome;
         HudFactionChrome? deckChrome = _hud?.FindChild("BottomDeckFactionChrome", true, false) as HudFactionChrome;
+        HudFactionSurfaceMask? topMask = _hud?.FindChild("ResourceStripFactionSurfaceMask", true, false) as HudFactionSurfaceMask;
+        HudFactionSurfaceMask? deckMask = _hud?.FindChild("BottomDeckFactionSurfaceMask", true, false) as HudFactionSurfaceMask;
         HudStructuralChrome? topStructural = _hud?.FindChild("ResourceStripStructuralChrome", true, false) as HudStructuralChrome;
         HudStructuralChrome? deckStructural = _hud?.FindChild("BottomDeckStructuralChrome", true, false) as HudStructuralChrome;
+        bool expectsApertureMask = _profile.ArtSkin.Enabled &&
+            _profile.ArtSkin.Finish is HudArtFinish.HybridConsole or HudArtFinish.LegacyFrames;
         bool factionArt = HudFactionChrome.ValidateRecipes(out _) &&
             topChrome is { IsConfigured: true, Role: HudFactionChromeRole.TopStrip, UsesFixedSquareCorners: true,
-                UsesProtectedSourceModules: true } &&
-            deckChrome is { IsConfigured: true, Role: HudFactionChromeRole.BottomDeck } &&
+                UsesProtectedSourceModules: true, SupportsCompleteHybridPerimeter: true,
+                SupportsIsotropicRasterModules: true } &&
+            deckChrome is { IsConfigured: true, Role: HudFactionChromeRole.BottomDeck,
+                SupportsCompleteHybridPerimeter: true, SupportsIsotropicRasterModules: true } &&
+            topMask is { IsConfigured: true, Role: HudFactionChromeRole.TopStrip,
+                UsesSharedNineSliceGeometry: true } &&
+            deckMask is { IsConfigured: true, Role: HudFactionChromeRole.BottomDeck,
+                UsesSharedNineSliceGeometry: true } &&
+            topMask.UsesFactionApertureMask == expectsApertureMask &&
+            deckMask.UsesFactionApertureMask == expectsApertureMask &&
+            topMask.ClipsRasterAndContent == expectsApertureMask &&
+            deckMask.ClipsRasterAndContent == expectsApertureMask &&
             topStructural is { IsConfigured: true, Role: HudFactionChromeRole.TopStrip } &&
             deckStructural is { IsConfigured: true, Role: HudFactionChromeRole.BottomDeck } &&
             _hud?.FindChild("BottomDeckRasterSurface", true, false) is HudRasterSurfaceOverlay
@@ -485,7 +533,7 @@ public partial class M7HudLab : Node3D
             ? solidStyle.BgColor.A : 0f;
 
         _hud.ApplyProfile(_profile);
-        _hud.ApplyFrame(M7HudFixtures.Create(_scenario), true);
+        _hud.ApplyFrame(EffectivePreviewFrame(), true);
         ApplySyntheticCameraPolygon();
         return energyRequests == 1 && alertRequests == 1 && outlineAlpha < 0.05f && solidAlpha > 0.95f;
     }
@@ -494,11 +542,12 @@ public partial class M7HudLab : Node3D
     {
         if (_hud is null) return false;
         M7HudProfile original = _profile.Clone();
-        HudFrame frame = M7HudFixtures.Create(_scenario);
+        HudFrame frame = EffectivePreviewFrame();
         Rect2[]? baseline = null;
         bool valid = true;
         foreach (HudArtFinish finish in Enum.GetValues<HudArtFinish>())
         {
+            bool finishValid = true;
             M7HudProfile candidate = original.Clone();
             candidate.ArtSkin.Enabled = true;
             candidate.ArtSkin.Finish = finish;
@@ -507,34 +556,42 @@ public partial class M7HudLab : Node3D
             HudFactionChrome? rasterFrame = _hud.FindChild("BottomDeckFactionChrome", true, false) as HudFactionChrome;
             HudStructuralChrome? structural = _hud.FindChild("BottomDeckStructuralChrome", true, false) as HudStructuralChrome;
             HudRasterSurfaceOverlay? raster = _hud.FindChild("BottomDeckRasterSurface", true, false) as HudRasterSurfaceOverlay;
-            valid &= finish switch
+            HudFactionSurfaceMask? mask = _hud.FindChild("BottomDeckFactionSurfaceMask", true, false) as HudFactionSurfaceMask;
+            finishValid &= finish switch
             {
                 HudArtFinish.HybridConsole =>
                     structural is { Visible: true, UsesInteriorOnlyHybrid: true, UsesSculptedShoulders: false,
                         UsesFactionRasterModules: false, UsesCleanHybridSeparators: true } &&
                     rasterFrame is { Visible: true, IsFrameOnly: true, UsesFactionSurfaceFill: false,
                         UsesVectorAccentRails: true, UsesContinuousHybridRails: true, UsesTiledEdgeWalls: false,
-                        UsesSparseJunctionModules: false } &&
+                        UsesSparseJunctionModules: false, UsesCompleteHybridPerimeter: true,
+                        UsesIsotropicRasterModules: true, AvoidsFullSpanRasterStretch: true } &&
+                    mask is { UsesFactionApertureMask: true, ClipsRasterAndContent: true } &&
                     raster is { Visible: true, UsesSingleContinuousSurfaceField: true, UsesSingleDeckWideSurface: true },
                 HudArtFinish.StructuralConsole =>
                     structural is { Visible: true, UsesInteriorOnlyHybrid: false, UsesSculptedShoulders: true,
-                        UsesFactionRasterModules: false } && rasterFrame is { Visible: false } && raster is { Visible: false },
+                        UsesFactionRasterModules: false } && rasterFrame is { Visible: false } &&
+                    mask is { UsesFactionApertureMask: false, ClipsRasterAndContent: false } && raster is { Visible: false },
                 HudArtFinish.LegacyFrames =>
                     rasterFrame is { Visible: true, IsFrameOnly: false, UsesFactionSurfaceFill: true,
                         UsesVectorAccentRails: true, UsesTiledEdgeWalls: true, UsesSparseJunctionModules: true } &&
+                    mask is { UsesFactionApertureMask: true, ClipsRasterAndContent: true } &&
                     structural is { Visible: false } && raster is { Visible: false },
-                _ => rasterFrame is { Visible: false } && structural is { Visible: false } && raster is { Visible: false }
+                _ => rasterFrame is { Visible: false } && structural is { Visible: false } &&
+                    mask is { UsesFactionApertureMask: false, ClipsRasterAndContent: false } && raster is { Visible: false }
             };
             Rect2[]? rects = CapturePrimaryRects();
-            if (rects is null) valid = false;
+            if (rects is null) finishValid = false;
             else if (baseline is null) baseline = rects;
             else
                 for (int i = 0; i < baseline.Length; i++)
-                    valid &= RectNearlyEqual(baseline[i], rects[i]);
+                    finishValid &= RectNearlyEqual(baseline[i], rects[i]);
+            if (!finishValid)
+                GD.PrintErr($"M7 HUD LAB FINISH DETAIL: finish={finish} rects={FormatRects(rects)} baseline={FormatRects(baseline)}");
+            valid &= finishValid;
         }
-        _hud.ApplyProfile(original);
-        _hud.ApplyFrame(frame, true);
-        ApplySyntheticCameraPolygon();
+        _profile = original;
+        ApplyAll();
         return valid;
     }
 
@@ -542,40 +599,54 @@ public partial class M7HudLab : Node3D
     {
         if (_hud is null) return false;
         M7HudProfile original = _profile.Clone();
-        M7HudScenario[] scenarios =
-        {
-            M7HudScenario.RockRaiderUnit,
-            M7HudScenario.AstronautTransform,
-            M7HudScenario.AlienResonance,
-            M7HudScenario.MartianNetwork
-        };
+        HudFaction? originalOverride = _previewFactionOverride;
+        string fixtureTitle = M7HudFixtures.Create(_scenario).Selection.Title;
         HashSet<string> signatures = new(StringComparer.Ordinal);
-        Rect2[]? baseline = null;
+        HashSet<string> apertureSignatures = new(StringComparer.Ordinal);
+        bool expectsApertureMask = original.ArtSkin.Enabled &&
+            original.ArtSkin.Finish is HudArtFinish.HybridConsole or HudArtFinish.LegacyFrames;
+        Rect2? topBaseline = null;
+        Rect2? deckBaseline = null;
         bool valid = true;
         for (int faction = 0; faction < HudFactionSkinLibrary.Count; faction++)
         {
-            M7HudProfile candidate = original.Clone();
-            candidate.ArtSkin.Finish = HudArtFinish.HybridConsole;
-            HudFactionSkinLibrary.Apply(candidate, faction);
-            candidate.Normalize();
-            valid &= candidate.ArtSkin.SurfacePalette == HudSurfacePalette.FactionBound &&
-                candidate.ArtSkin.Faction == faction;
-            signatures.Add($"{candidate.Colors.Background}/{candidate.Colors.Raised}/{candidate.Colors.Recessed}/{candidate.Colors.Accent}/{candidate.Colors.TextPrimary}");
-            _hud.ApplyProfile(candidate);
-            _hud.ApplyFrame(M7HudFixtures.Create(scenarios[faction]), true);
-            Rect2[]? rects = CapturePrimaryRects();
-            if (rects is null) valid = false;
-            else if (baseline is null) baseline = rects;
-            else
-                for (int i = 0; i < baseline.Length; i++)
-                    valid &= RectNearlyEqual(baseline[i], rects[i]);
+            Button? kitButton = FindChild($"FactionKit{faction}", true, false) as Button;
+            if (kitButton is null) valid = false;
+            else kitButton.EmitSignal(Button.SignalName.Pressed);
+            HudFactionSkinRecipe recipe = HudFactionSkinLibrary.RecipeFor(faction);
+            HudFactionChrome? topChrome = _hud.FindChild("ResourceStripFactionChrome", true, false) as HudFactionChrome;
+            HudFactionChrome? deckChrome = _hud.FindChild("BottomDeckFactionChrome", true, false) as HudFactionChrome;
+            HudFactionSurfaceMask? topMask = _hud.FindChild("ResourceStripFactionSurfaceMask", true, false) as HudFactionSurfaceMask;
+            HudFactionSurfaceMask? deckMask = _hud.FindChild("BottomDeckFactionSurfaceMask", true, false) as HudFactionSurfaceMask;
+            valid &= _profile.ArtSkin.SurfacePalette == HudSurfacePalette.FactionBound &&
+                _profile.ArtSkin.Faction == faction && _hud.Profile.ArtSkin.Faction == faction &&
+                _hud.Frame.Faction == recipe.Faction && _hud.Frame.Selection.Title == fixtureTitle &&
+                topChrome?.Faction == recipe.Faction && deckChrome?.Faction == recipe.Faction &&
+                topMask is { IsConfigured: true } && deckMask is { IsConfigured: true } &&
+                topMask.UsesFactionApertureMask == expectsApertureMask &&
+                deckMask.UsesFactionApertureMask == expectsApertureMask &&
+                topMask.Faction == recipe.Faction && deckMask.Faction == recipe.Faction &&
+                kitButton is not null;
+            signatures.Add($"{_profile.Colors.Background}/{_profile.Colors.Raised}/{_profile.Colors.Recessed}/{_profile.Colors.Accent}/{_profile.Colors.TextPrimary}");
+            apertureSignatures.Add($"{recipe.ApertureInsetRatios}/{recipe.DestinationScale:0.00}");
+
+            if (_hud.FindChild("ResourceStrip", true, false) is not Control top ||
+                _hud.FindChild("BottomDeck", true, false) is not Control deck) valid = false;
+            else if (topBaseline is null)
+            {
+                topBaseline = top.GetGlobalRect();
+                deckBaseline = deck.GetGlobalRect();
+            }
+            else valid &= RectNearlyEqual(topBaseline.Value, top.GetGlobalRect()) &&
+                RectNearlyEqual(deckBaseline!.Value, deck.GetGlobalRect());
         }
         HudFactionSkinRecipe alien = HudFactionSkinLibrary.RecipeFor((int)HudFaction.Aliens);
         valid &= signatures.Count == HudFactionSkinLibrary.Count &&
+            apertureSignatures.Count == HudFactionSkinLibrary.Count &&
             alien.Background == "#111315" && alien.Accent == "#78b82a" && alien.Secondary == "#6f777b";
-        _hud.ApplyProfile(original);
-        _hud.ApplyFrame(M7HudFixtures.Create(_scenario), true);
-        ApplySyntheticCameraPolygon();
+        _profile = original;
+        _previewFactionOverride = originalOverride;
+        ApplyAll();
         return valid;
     }
 
@@ -594,6 +665,10 @@ public partial class M7HudLab : Node3D
 
     private static bool RectNearlyEqual(Rect2 left, Rect2 right) =>
         left.Position.DistanceTo(right.Position) <= 0.5f && left.Size.DistanceTo(right.Size) <= 0.5f;
+
+    private static string FormatRects(Rect2[]? rects) => rects is null
+        ? "missing"
+        : string.Join(";", rects.Select(rect => $"{rect.Position}/{rect.Size}"));
 
     private float PreviewRenderScale()
     {
@@ -646,13 +721,22 @@ public partial class M7HudLab : Node3D
 
         if (_hud.FindChild("MinimapRegion", true, false) is not Control minimapPanel ||
             _hud.FindChild("SelectionPanel", true, false) is not Control selectionPanel ||
-            _hud.FindChild("PortraitSlot", true, false) is not Control portraitPanel) return false;
+            _hud.FindChild("PortraitSlot", true, false) is not Control portraitPanel ||
+            _hud.FindChild("BottomDeckContent", true, false) is not Control deckContent ||
+            _hud.FindChild("BottomDeckFactionSurfaceMask", true, false) is not HudFactionSurfaceMask deckMask) return false;
         Rect2 deckBounds = bottomDeck.GetGlobalRect();
+        Rect2 contentBounds = deckContent.GetGlobalRect();
         Rect2 minimapBounds = minimapPanel.GetGlobalRect();
         Rect2 selectionBounds = selectionPanel.GetGlobalRect();
         Rect2 portraitBounds = portraitPanel.GetGlobalRect();
-        if (Math.Abs(minimapBounds.Position.X - deckBounds.Position.X) > 0.5f ||
-            Math.Abs(commandBounds.End.X - deckBounds.End.X) > 0.5f ||
+        Rect2 expectedContent = deckMask.ContentRectFor(deckMask.Size);
+        if (!ContainsRect(deckBounds, contentBounds) || !ContainsRect(contentBounds, minimapBounds) ||
+            !ContainsRect(contentBounds, selectionBounds) || !ContainsRect(contentBounds, portraitBounds) ||
+            !ContainsRect(contentBounds, commandBounds) ||
+            deckContent.Position.DistanceTo(expectedContent.Position) > 0.5f ||
+            deckContent.Size.DistanceTo(expectedContent.Size) > 0.5f ||
+            Math.Abs(minimapBounds.Position.X - contentBounds.Position.X) > 0.5f ||
+            Math.Abs(commandBounds.End.X - contentBounds.End.X) > 0.5f ||
             minimapBounds.End.X > selectionBounds.Position.X || selectionBounds.End.X > portraitBounds.Position.X ||
             portraitBounds.End.X > commandBounds.Position.X) return false;
 
@@ -765,6 +849,7 @@ public partial class M7HudLab : Node3D
     {
         if (!M7HudProfile.TryFromJson(DisplayServer.ClipboardGet(), out M7HudProfile pasted, out string error)) { SetStatus(error, true); return; }
         _profile = pasted;
+        _previewFactionOverride = HudFactionSkinLibrary.RecipeFor(_profile.ArtSkin.Faction).Faction;
         ApplyAll();
         SetStatus("Pasted and applied HUD profile.");
     }
@@ -772,6 +857,7 @@ public partial class M7HudLab : Node3D
     private void ResetProfile()
     {
         _profile = M7HudProfile.CreateDefault();
+        _previewFactionOverride = null;
         BindFactionToScenario(_scenario);
         ApplyAll();
         SetStatus("Reset to the scenario's faction-bound HUD kit.");
@@ -848,6 +934,15 @@ public partial class M7HudLab : Node3D
         "custom" => HudSurfacePalette.Custom,
         "faction" or "faction-bound" or "auto" or "canonical" => HudSurfacePalette.FactionBound,
         _ => HudSurfacePalette.FactionBound
+    };
+
+    private static HudFaction? ParseFactionKit(string value) => value.Trim().ToLowerInvariant() switch
+    {
+        "rock" or "rock-raiders" or "rockraiders" => HudFaction.RockRaiders,
+        "astronaut" or "astronauts" => HudFaction.Astronauts,
+        "alien" or "aliens" => HudFaction.Aliens,
+        "martian" or "martians" => HudFaction.Martians,
+        _ => null
     };
 
     private void AddBuilding(Vector3 position, Vector3 size, Color color, string name)
