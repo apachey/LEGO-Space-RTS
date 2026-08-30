@@ -23,6 +23,7 @@ public readonly record struct HudFactionSkinRecipe(
     float ProtectedFraction,
     Vector4 ApertureInsetRatios,
     float DestinationScale,
+    float ApertureCornerRadiusFraction,
     HudFactionRailStyle RailStyle,
     string Background,
     string Raised,
@@ -51,6 +52,7 @@ public static class HudFactionSkinLibrary
             48f / 256f,
             new Vector4(32f / 48f, 32f / 48f, 32f / 48f, 35f / 48f),
             1f,
+            0.85f,
             HudFactionRailStyle.Industrial,
             "#303534", "#545b58", "#171b1a", "#a76538", "#087f78",
             "#f1eadc", "#b7b1a4", "#20a69d"),
@@ -62,6 +64,7 @@ public static class HudFactionSkinLibrary
             0.19f,
             new Vector4(154f / 238f, 154f / 238f, 154f / 238f, 170f / 238f),
             1.06f,
+            0.38f,
             HudFactionRailStyle.Expedition,
             "#d2d4d0", "#f0efe9", "#344149", "#e96f18", "#397fb5",
             "#101518", "#29373e", "#328fff"),
@@ -73,6 +76,7 @@ public static class HudFactionSkinLibrary
             0.19f,
             new Vector4(151f / 238f, 145f / 238f, 148f / 238f, 153f / 238f),
             1.06f,
+            0.44f,
             HudFactionRailStyle.Resonance,
             "#111315", "#293321", "#070908", "#78b82a", "#6f777b",
             "#e9f0df", "#9ca693", "#7cff2e"),
@@ -84,6 +88,7 @@ public static class HudFactionSkinLibrary
             52f / 256f,
             new Vector4(28f / 52f, 29f / 52f, 28f / 52f, 34f / 52f),
             1.02f,
+            0.78f,
             HudFactionRailStyle.Pneumatic,
             "#8d796c", "#c2b397", "#343338", "#a64c49", "#3d7794",
             "#111517", "#303537", "#3272b8")
@@ -132,7 +137,8 @@ public static class HudFactionSkinLibrary
                 recipe.ApertureInsetRatios.Y is < 0.45f or > 0.90f ||
                 recipe.ApertureInsetRatios.Z is < 0.45f or > 0.90f ||
                 recipe.ApertureInsetRatios.W is < 0.45f or > 0.90f ||
-                recipe.DestinationScale is < 0.90f or > 1.15f)
+                recipe.DestinationScale is < 0.90f or > 1.15f ||
+                recipe.ApertureCornerRadiusFraction is < 0.20f or > 0.90f)
             {
                 error = $"Faction HUD recipe {recipe.Name} has unsafe aperture geometry.";
                 return false;

@@ -445,11 +445,15 @@ public partial class M7HudLab : Node3D
             deckChrome is { IsConfigured: true, Role: HudFactionChromeRole.BottomDeck,
                 SupportsCompleteHybridPerimeter: true, SupportsIsotropicRasterModules: true } &&
             topMask is { IsConfigured: true, Role: HudFactionChromeRole.TopStrip,
-                UsesSharedNineSliceGeometry: true } &&
+                UsesSharedNineSliceGeometry: true, UsesShapedApertureCorners: true } &&
             deckMask is { IsConfigured: true, Role: HudFactionChromeRole.BottomDeck,
-                UsesSharedNineSliceGeometry: true } &&
+                UsesSharedNineSliceGeometry: true, UsesShapedApertureCorners: true,
+                UsesFullBleedBottomDeck: true,
+                RegisteredMaskedSurfaceCount: >= 4 } &&
             topMask.UsesFactionApertureMask == expectsApertureMask &&
             deckMask.UsesFactionApertureMask == expectsApertureMask &&
+            topMask.UsesShaderApertureMask == expectsApertureMask &&
+            deckMask.UsesShaderApertureMask == expectsApertureMask &&
             topMask.ClipsRasterAndContent == expectsApertureMask &&
             deckMask.ClipsRasterAndContent == expectsApertureMask &&
             topStructural is { IsConfigured: true, Role: HudFactionChromeRole.TopStrip } &&
@@ -482,7 +486,7 @@ public partial class M7HudLab : Node3D
             _hud.FindChild("ObjectiveTracker", true, false) is Control objectivePanel)
         {
             Label? objectiveLabel = objectivePanel.GetChildCount() > 0 ? objectivePanel.GetChild(0) as Label : null;
-            GD.Print($"M7 HUD LAB LAYOUT: command={commandPanel.Position}/{commandPanel.Size} min={commandPanel.GetCombinedMinimumSize()} anchors={commandPanel.AnchorTop:0.#}-{commandPanel.AnchorBottom:0.#} selection={selectionPanel.Position}/{selectionPanel.Size} min={selectionPanel.GetCombinedMinimumSize()} anchors={selectionPanel.AnchorTop:0.#}-{selectionPanel.AnchorBottom:0.#} minimap={minimapPanel.Position}/{minimapPanel.Size} min={minimapPanel.GetCombinedMinimumSize()} anchors={minimapPanel.AnchorTop:0.#}-{minimapPanel.AnchorBottom:0.#} events={eventPanel.Position}/{eventPanel.Size} objective={objectivePanel.Position}/{objectivePanel.Size} label={objectiveLabel?.Position}/{objectiveLabel?.Size} text={objectiveLabel?.Text.Length ?? 0} anchors={objectivePanel.AnchorTop:0.#}-{objectivePanel.AnchorBottom:0.#} preview={_previewFrame?.Size}");
+            GD.Print($"M7 HUD LAB LAYOUT: command={commandPanel.Position}/{commandPanel.Size} min={commandPanel.GetCombinedMinimumSize()} anchors={commandPanel.AnchorTop:0.#}-{commandPanel.AnchorBottom:0.#} selection={selectionPanel.Position}/{selectionPanel.Size} min={selectionPanel.GetCombinedMinimumSize()} anchors={selectionPanel.AnchorTop:0.#}-{selectionPanel.AnchorBottom:0.#} minimap={minimapPanel.Position}/{minimapPanel.Size} min={minimapPanel.GetCombinedMinimumSize()} anchors={minimapPanel.AnchorTop:0.#}-{minimapPanel.AnchorBottom:0.#} events={eventPanel.Position}/{eventPanel.Size} objective={objectivePanel.Position}/{objectivePanel.Size} label={objectiveLabel?.Position}/{objectiveLabel?.Size} text={objectiveLabel?.Text.Length ?? 0} anchors={objectivePanel.AnchorTop:0.#}-{objectivePanel.AnchorBottom:0.#} preview={_previewFrame?.Size} topFill={topMask?.SurfaceFillColor.ToHtml()} deckFill={deckMask?.SurfaceFillColor.ToHtml()}");
         }
         bool minimap = _hud?.FindChild("MinimapSlot", true, false) is HudMinimapView view && view.IsConfigured && view.IsNorthUp &&
             view.MarkerCount == 11 && view.RememberedMarkerCount == 2 && view.VisibleFogCells > 0 && view.ExploredFogCells > 0;
@@ -566,19 +570,25 @@ public partial class M7HudLab : Node3D
                         UsesVectorAccentRails: true, UsesContinuousHybridRails: true, UsesTiledEdgeWalls: false,
                         UsesSparseJunctionModules: false, UsesCompleteHybridPerimeter: true,
                         UsesIsotropicRasterModules: true, AvoidsFullSpanRasterStretch: true } &&
-                    mask is { UsesFactionApertureMask: true, ClipsRasterAndContent: true } &&
+                    mask is { UsesFactionApertureMask: true, UsesShaderApertureMask: true,
+                        UsesShapedApertureCorners: true, UsesFullBleedBottomDeck: true,
+                        ClipsRasterAndContent: true, RegisteredMaskedSurfaceCount: >= 4 } &&
                     raster is { Visible: true, UsesSingleContinuousSurfaceField: true, UsesSingleDeckWideSurface: true },
                 HudArtFinish.StructuralConsole =>
                     structural is { Visible: true, UsesInteriorOnlyHybrid: false, UsesSculptedShoulders: true,
                         UsesFactionRasterModules: false } && rasterFrame is { Visible: false } &&
-                    mask is { UsesFactionApertureMask: false, ClipsRasterAndContent: false } && raster is { Visible: false },
+                    mask is { UsesFactionApertureMask: false, UsesShaderApertureMask: false,
+                        ClipsRasterAndContent: false } && raster is { Visible: false },
                 HudArtFinish.LegacyFrames =>
                     rasterFrame is { Visible: true, IsFrameOnly: false, UsesFactionSurfaceFill: true,
                         UsesVectorAccentRails: true, UsesTiledEdgeWalls: true, UsesSparseJunctionModules: true } &&
-                    mask is { UsesFactionApertureMask: true, ClipsRasterAndContent: true } &&
+                    mask is { UsesFactionApertureMask: true, UsesShaderApertureMask: true,
+                        UsesShapedApertureCorners: true, UsesFullBleedBottomDeck: true,
+                        ClipsRasterAndContent: true, RegisteredMaskedSurfaceCount: >= 4 } &&
                     structural is { Visible: false } && raster is { Visible: false },
                 _ => rasterFrame is { Visible: false } && structural is { Visible: false } &&
-                    mask is { UsesFactionApertureMask: false, ClipsRasterAndContent: false } && raster is { Visible: false }
+                    mask is { UsesFactionApertureMask: false, UsesShaderApertureMask: false,
+                        ClipsRasterAndContent: false } && raster is { Visible: false }
             };
             Rect2[]? rects = CapturePrimaryRects();
             if (rects is null) finishValid = false;
@@ -625,10 +635,17 @@ public partial class M7HudLab : Node3D
                 topMask is { IsConfigured: true } && deckMask is { IsConfigured: true } &&
                 topMask.UsesFactionApertureMask == expectsApertureMask &&
                 deckMask.UsesFactionApertureMask == expectsApertureMask &&
+                topMask.UsesShaderApertureMask == expectsApertureMask &&
+                deckMask.UsesShaderApertureMask == expectsApertureMask &&
+                topMask.UsesShapedApertureCorners && deckMask.UsesShapedApertureCorners &&
+                deckMask.UsesFullBleedBottomDeck && deckMask.RegisteredMaskedSurfaceCount >= 4 &&
                 topMask.Faction == recipe.Faction && deckMask.Faction == recipe.Faction &&
+                (faction != (int)HudFaction.RockRaiders ||
+                    RelativeLuminance(topMask.SurfaceFillColor) < 0.28f &&
+                    RelativeLuminance(deckMask.SurfaceFillColor) < 0.18f) &&
                 kitButton is not null;
             signatures.Add($"{_profile.Colors.Background}/{_profile.Colors.Raised}/{_profile.Colors.Recessed}/{_profile.Colors.Accent}/{_profile.Colors.TextPrimary}");
-            apertureSignatures.Add($"{recipe.ApertureInsetRatios}/{recipe.DestinationScale:0.00}");
+            apertureSignatures.Add($"{recipe.ApertureInsetRatios}/{recipe.DestinationScale:0.00}/{recipe.ApertureCornerRadiusFraction:0.00}");
 
             if (_hud.FindChild("ResourceStrip", true, false) is not Control top ||
                 _hud.FindChild("BottomDeck", true, false) is not Control deck) valid = false;
@@ -737,6 +754,10 @@ public partial class M7HudLab : Node3D
             deckContent.Size.DistanceTo(expectedContent.Size) > 0.5f ||
             Math.Abs(minimapBounds.Position.X - contentBounds.Position.X) > 0.5f ||
             Math.Abs(commandBounds.End.X - contentBounds.End.X) > 0.5f ||
+            Math.Abs(minimapBounds.Position.Y - contentBounds.Position.Y) > 0.5f ||
+            selectionBounds.Position.Y <= contentBounds.Position.Y + 0.5f ||
+            portraitBounds.Position.Y <= contentBounds.Position.Y + 0.5f ||
+            commandBounds.Position.Y <= contentBounds.Position.Y + 0.5f ||
             minimapBounds.End.X > selectionBounds.Position.X || selectionBounds.End.X > portraitBounds.Position.X ||
             portraitBounds.End.X > commandBounds.Position.X) return false;
 
@@ -914,6 +935,8 @@ public partial class M7HudLab : Node3D
     private void SetStatus(string text, bool error = false) { if (_status is null) return; _status.Text = text; _status.AddThemeColorOverride("font_color", error ? new Color("ff6b45") : new Color("65c987")); }
     private void Handled() => GetViewport().SetInputAsHandled();
     private static string ParseAspect(string value) => value.Trim().ToLowerInvariant() switch { "16:10" or "16-10" => "16:10", "21:9" or "21-9" => "21:9", "4:3" or "4-3" => "4:3", _ => "16:9" };
+    private static float RelativeLuminance(Color color) =>
+        color.R * 0.2126f + color.G * 0.7152f + color.B * 0.0722f;
 
     private static HudArtFinish ParseFinish(string value) => value.Trim().ToLowerInvariant() switch
     {

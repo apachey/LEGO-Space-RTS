@@ -87,12 +87,17 @@ The same geometry supports four finishes:
   kept where it contributes authored material detail--protected corners,
   adjacent shoulders and one central clasp--while responsive rails, functional
   seams and hit geometry stay code-native. Each recipe derives its own alpha
-  aperture from the transparent centre of that faction's frame. The plate,
-  raster surface and HUD content are clipped by that aperture before the full
-  perimeter is drawn on top. Long rails therefore remain continuous on all
-  four sides without stretching or repeating raster detail. The bottom console
-  is one bounded chassis with a continuous interior surface, and one renderer
-  owns each divider.
+  aperture from the transparent centre of that faction's frame and applies a
+  faction-tuned inner-corner radius. The lower plate is full-bleed beneath the
+  frame: its raster field, minimap, fog, markers and outer command surface use
+  one nine-slice shader aperture while functional labels retain a safe inset.
+  A darker aperture-derived gutter closes transparent square gaps in the source
+  PNG without restoring a square interior. This avoids Godot's backbuffer
+  `Clip Children` Z-order limitation and keeps the frame as the actual visible
+  boundary. Long rails therefore remain continuous on all four sides without
+  stretching or repeating raster detail. The bottom console is one bounded
+  chassis with a continuous interior surface, and one renderer owns each
+  divider.
 - **Structural Console** isolates the earlier vector chassis and its responsive
   construction without the generated faction frame.
 - **Legacy Frames** preserves the previous full raster-frame renderer and old
@@ -103,10 +108,11 @@ The same geometry supports four finishes:
 - **Clean** removes decorative chrome and exposes the functional layout.
 
 Art-finish changes never move panels or hit targets. Faction changes preserve
-the outer top-strip/deck geometry, functional bay order and minimum hit sizes;
-their inner content rectangle may shift by a few pixels to follow the authored
-aperture. This keeps the comparison about presentation without allowing the
-surface to leak beyond its own frame.
+the outer top-strip/deck geometry, functional bay order and minimum hit sizes.
+The lower visual field reaches the faction aperture while selection, portrait
+and command content use one finish-invariant top clearance; the top resource
+row uses its authored inset. This keeps the comparison about presentation
+without allowing a raster surface or minimap element to leak beyond its frame.
 
 The useful lesson from StarCraft II is functional hierarchy and the legibility
 of a full-width command console, not its specific frame art, iconography or
@@ -198,8 +204,10 @@ The schema-8 smoke contract must cover:
 - identical outer chassis across all finishes and factions, finish-invariant
   hit geometry, and bounded faction-specific inner offsets;
 - four independently switchable kits on one unchanged fixture;
-- Hybrid's faction-specific aperture masks, bounded plate/content, complete
-  four-sided perimeter, isotropic raster modules and single divider system;
+- Hybrid's faction-specific rounded shader apertures, dark inner gutters,
+  full-bleed lower plate with safe functional clearance, masked minimap raster
+  and markers, complete four-sided perimeter, isotropic raster modules and a
+  single divider system;
 - Legacy availability without treating its retired fifth art slot as a
   playable faction;
 - all visible command buttons inside the safe area, including the 12-command

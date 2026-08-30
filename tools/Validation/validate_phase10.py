@@ -38,6 +38,7 @@ required = [
     'GodotClient/Scripts/UI/HudPortraitView.cs','GodotClient/Scripts/UI/M7HudProfile.cs',
     'GodotClient/Scripts/UI/HudFactionSkinLibrary.cs','GodotClient/Scripts/UI/HudFactionChrome.cs',
     'GodotClient/Scripts/UI/HudFactionSurfaceMask.cs',
+    'GodotClient/Shaders/hud_faction_aperture.gdshader',
     'GodotClient/Assets/M7/Hud/rock_raiders_frame.png','GodotClient/Assets/M7/Hud/astronauts_frame.png',
     'GodotClient/Assets/M7/Hud/aliens_frame.png','GodotClient/Assets/M7/Hud/martians_frame.png',
     'GodotClient/Assets/M7/Hud/astronauts_unified_frame_v2.png','GodotClient/Assets/M7/Hud/aliens_frame_v2.png',
@@ -113,6 +114,7 @@ hud_lab = (ROOT/'GodotClient/Scripts/Client/M7HudLab.cs').read_text()
 hud_portrait = (ROOT/'GodotClient/Scripts/UI/HudPortraitView.cs').read_text()
 hud_chrome = (ROOT/'GodotClient/Scripts/UI/HudFactionChrome.cs').read_text()
 hud_surface_mask = (ROOT/'GodotClient/Scripts/UI/HudFactionSurfaceMask.cs').read_text()
+hud_aperture_shader = (ROOT/'GodotClient/Shaders/hud_faction_aperture.gdshader').read_text()
 hud_structural = (ROOT/'GodotClient/Scripts/UI/HudStructuralChrome.cs').read_text()
 hud_raster_surface = (ROOT/'GodotClient/Scripts/UI/HudRasterSurfaceOverlay.cs').read_text()
 hud_profile = (ROOT/'GodotClient/Scripts/UI/M7HudProfile.cs').read_text()
@@ -131,7 +133,7 @@ for faction in ['RockRaiders','Astronauts','Aliens','Martians']:
     check(hud_faction_skins.count(f'HudFaction.{faction}') == 1,
           f'M7 HUD must define exactly one complete skin recipe for {faction}')
 for token in ['Count = 4','HudFactionSkinRecipe','HybridFramePath','LegacyFramePath',
-              'ApertureInsetRatios','DestinationScale',
+              'ApertureInsetRatios','DestinationScale','ApertureCornerRadiusFraction',
               'HudFactionRailStyle.Industrial','HudFactionRailStyle.Expedition',
               'HudFactionRailStyle.Resonance','HudFactionRailStyle.Pneumatic',
               'SharedGood','SharedWarning','SharedDanger','Validate(out string error)',
@@ -176,12 +178,18 @@ for token in ['UsesContinuousHybridRails','DrawContinuousHybridRails',
 check('256f * recipe.ProtectedFraction' not in hud_chrome,
       'M7 frame source guides still assume every faction texture is 256px')
 for token in ['HudFactionSurfaceMask','TransparentThreshold','GetOrCreateMask',
-              'ClipChildrenMode.Only','FactionSurfaceFill','UsesFactionApertureMask','ClipsRasterAndContent',
-              'UsesSharedNineSliceGeometry','ContentRectFor','DrawNineSlice',
+              'ClipChildrenMode.Disabled','RegisterMaskedSurface','UsesFactionApertureMask',
+              'UsesShaderApertureMask','ClipsRasterAndContent','UsesShapedApertureCorners',
+              'UsesFullBleedBottomDeck','RegisteredMaskedSurfaceCount',
+              'UsesSharedNineSliceGeometry','ContentRectFor','DrawNineSlice','InsideRoundedRect',
+              '_gutterMaskTexture','ApertureCornerRadiusFraction',
               'source[center * 4 + 3]','touchesExterior','ApertureInsetRatios',
               'HudArtFinish.LegacyFrames','_recipe.LegacyFramePath','_recipe.HybridFramePath']:
     check(token in hud_surface_mask + hud_view,
           f'M7 faction-specific aperture mask missing: {token}')
+for token in ['shader_type canvas_item','aperture_mask','mask_screen_rect','mask_source_corner',
+              'mask_destination_corner','SCREEN_UV','source_axis','discard']:
+    check(token in hud_aperture_shader, f'M7 faction aperture shader missing: {token}')
 for token in ['Name = $"{name}FactionSurfaceMask"','DirectSurfaceMask',
               'Style(Colors.Transparent, Colors.Transparent, 0, true)',
               'ZIndex = 20']:

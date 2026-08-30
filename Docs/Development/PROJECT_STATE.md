@@ -280,10 +280,16 @@ live; the current schema-9 copy/paste retains the complete experiment.
   schema-8 JSON copy/paste, including schemas 1–7 migration. Hybrid,
   Structural, Legacy and Clean finishes share invariant outer chassis geometry
   and hit targets. Hybrid derives a separate alpha aperture from each faction's
-  actual frame, clips its plate/raster/content to that opening, and draws the
-  complete perimeter last. Authored raster corners, shoulders and one central
-  clasp remain proportionally correct; thick code-native rails continue along
-  every side without stretching or repeating the raster edge. Structural
+  actual frame, applies a faction-tuned rounded inner corner, and draws the
+  complete perimeter last. The lower plate is full-bleed beneath the frame;
+  one nine-slice shader masks its raster field, minimap, fog/markers and outer
+  command surface without relying on Godot's Z-sensitive backbuffer clipping.
+  A dark aperture-derived gutter fills square transparency left by the source
+  PNG, while functional selection/portrait/command content receives one stable
+  top clearance. Rock Raiders top and lower surfaces remain dark rather than
+  inheriting a technical white mask. Authored raster corners, shoulders and one
+  central clasp remain proportionally correct; thick code-native rails continue
+  along every side without stretching or repeating the raster edge. Structural
   isolates the earlier vector chassis, Legacy preserves the old full-frame
   renderer for direct comparison and Clean exposes the functional skeleton.
 
@@ -368,8 +374,9 @@ live; the current schema-9 copy/paste retains the complete experiment.
   Schema 1–8 profiles retain their prior treatment meanings through migration.
   The HUD Lab schema-8 revision replaces the dirty repeated-frame composition
   with protected, proportion-preserving raster modules, responsive four-sided
-  vector rails, a faction-derived alpha aperture, clipped continuous interior
-  and one divider owner. The frame and complete shell palette now bind
+  vector rails, a faction-derived rounded aperture, shader-masked full-bleed
+  edge surfaces, a dark inner gutter, safe functional clearance and one divider
+  owner. The frame and complete shell palette now bind
   to exactly four playable-faction recipes; the Astronaut sources share one kit
   and Alien purple is removed. Legacy retains the old frame renderer for honest
   A/B comparison, while the former named non-faction palettes are migration or
@@ -399,14 +406,14 @@ live; the current schema-9 copy/paste retains the complete experiment.
 
 ## Verification state
 
-The schema-8 faction-mask/perimeter HUD revision passed `./tools/verify.sh
---full` on 2026-08-30 with **zero blocking failures**: 278 NUnit tests, all
-retained M6/M7 smokes, four faction-derived aperture masks, the complete
-Hybrid/Structural/Legacy/Clean matrix, 16:9/16:10/21:9/4:3 containment, a
-same-fixture Alien-kit override regression, 100-repeat determinism,
-replay/snapshot continuation, content regeneration and a launchable macOS
-export. Exact summary:
-`Artifacts/Verification/20260830T121031Z-full-summary.txt`. The preserved
+The schema-8 rounded-aperture HUD revision passed `./tools/verify.sh --full` on
+2026-08-30 UTC with **zero blocking failures**: 278 NUnit tests, all retained
+M6/M7 smokes, four faction-derived shader masks, masked minimap/fog/markers,
+dark Rock Raiders surfaces, the complete Hybrid/Structural/Legacy/Clean
+matrix, 16:9/16:10/21:9/4:3 containment, a same-fixture Alien-kit override
+regression, 100-repeat determinism, replay/snapshot continuation, content
+regeneration and a launchable macOS export. Exact summary:
+`Artifacts/Verification/20260830T172045Z-full-summary.txt`. The preserved
 60-mover M9 diagnostic again reported 2/60 completion and remains
 `BLOCKING_LATER`; it does not block M7 and no movement architecture was changed.
 

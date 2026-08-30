@@ -12,12 +12,15 @@ namespace LegoSpaceRTS.UI;
 public partial class HudFactionSurfaceMask : Control
 {
     private const byte TransparentThreshold = 48;
+    private const string ApertureShaderPath = "res://Shaders/hud_faction_aperture.gdshader";
     private static readonly Dictionary<string, Texture2D> MaskCache = new(StringComparer.Ordinal);
 
-    private readonly ColorRect _surfaceFill;
+    private readonly Dictionary<CanvasItem, Material?> _registeredSurfaceMaterials = new();
     private HudFactionSkinRecipe _recipe = HudFactionSkinLibrary.RecipeFor(0);
     private Texture2D? _frameTexture;
     private Texture2D? _maskTexture;
+    private Texture2D? _gutterMaskTexture;
+    private ShaderMaterial? _apertureMaterial;
     private HudArtFinish _finish = HudArtFinish.HybridConsole;
     private float _chromeScale = 1f;
     private float _panelOpacity = 1f;
@@ -26,11 +29,19 @@ public partial class HudFactionSurfaceMask : Control
 
     public HudFactionChromeRole Role { get; private set; }
     public HudFaction Faction => _recipe.Faction;
-    public bool IsConfigured => _frameTexture is not null && _maskTexture is not null;
+    public bool IsConfigured => _frameTexture is not null && _maskTexture is not null &&
+        _gutterMaskTexture is not null &&
+        _apertureMaterial?.Shader is not null;
     public bool UsesFactionApertureMask =>
         _finish is HudArtFinish.HybridConsole or HudArtFinish.LegacyFrames && IsConfigured;
     public bool UsesSharedNineSliceGeometry => true;
+    public bool UsesShaderApertureMask => UsesFactionApertureMask &&
+        ClipChildren == ClipChildrenMode.Disabled;
     public bool ClipsRasterAndContent => UsesFactionApertureMask;
+    public bool UsesShapedApertureCorners => _recipe.ApertureCornerRadiusFraction > 0f;
+    public bool UsesFullBleedBottomDeck => Role == HudFactionChromeRole.BottomDeck;
+    public Color SurfaceFillColor => new(_surfaceColor, _panelOpacity);
+    public int RegisteredMaskedSurfaceCount => _registeredSurfaceMaterials.Count;
 
     public HudFactionSurfaceMask()
     {
@@ -38,14 +49,7 @@ public partial class HudFactionSurfaceMask : Control
         ClipContents = true;
         ClipChildren = ClipChildrenMode.Disabled;
         TextureFilter = TextureFilterEnum.Linear;
-        _surfaceFill = new ColorRect
-        {
-            Name = "FactionSurfaceFill",
-            MouseFilter = MouseFilterEnum.Ignore,
-            ZIndex = -100
-        };
-        AddChild(_surfaceFill);
-        _surfaceFill.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
+        SetNotifyTransform(true);
     }
 
     public void Configure(int faction, HudFactionChromeRole role, HudArtFinish finish,
@@ -66,17 +70,49 @@ public partial class HudFactionSurfaceMask : Control
             : null;
         _maskTexture = _frameTexture is null
             ? null
-            : GetOrCreateMask(framePath, _frameTexture, _recipe);
-        ClipChildren = UsesFactionApertureMask
-            ? ClipChildrenMode.Only
-            : ClipChildrenMode.Disabled;
-        _surfaceFill.Visible = UsesFactionApertureMask;
-        _surfaceFill.Color = new Color(_surfaceColor, _panelOpacity);
+            : GetOrCreateMask(framePath, _frameTexture, _recipe,
+                _recipe.ApertureCornerRadiusFraction);
+        _gutterMaskTexture = _frameTexture is null
+            ? null
+            : GetOrCreateMask(framePath, _frameTexture, _recipe, 0f);
+        EnsureApertureMaterial();
+        ClipChildren = ClipChildrenMode.Disabled;
+        Material = null;
+        ApplyRegisteredSurfaceMaterials();
+        UpdateApertureMaterialParameters();
         QueueRedraw();
+    }
+
+    /// <summary>
+    /// Applies the aperture shader only to an edge surface that can meet the
+    /// outer frame. Masking the whole UI subtree makes Godot reinterpret GUI
+    /// primitive colors; inner controls already live inside readable margins.
+    /// </summary>
+    public void RegisterMaskedSurface(CanvasItem surface)
+    {
+        if (!_registeredSurfaceMaterials.TryAdd(surface, surface.Material)) return;
+        surface.Material = UsesFactionApertureMask ? _apertureMaterial : surface.Material;
+    }
+
+    public void RegisterMaskedSurfaceTree(CanvasItem surface)
+    {
+        RegisterMaskedSurface(surface);
+        foreach (Node child in surface.GetChildren())
+        {
+            if (child is CanvasItem canvasChild) RegisterMaskedSurfaceTree(canvasChild);
+            else RegisterCanvasDescendants(child);
+        }
     }
 
     public Rect2 ContentRectFor(Vector2 destinationSize)
     {
+        // Lower-deck surfaces deliberately run under the authored frame. The
+        // per-faction alpha aperture is the boundary; introducing a second
+        // rectangular inset leaves a visible square minimap corner inside the
+        // sculpted frame. Functional children retain their own safe margins.
+        if (Role == HudFactionChromeRole.BottomDeck)
+            return new Rect2(Vector2.Zero, destinationSize);
+
         if (_frameTexture is null || destinationSize.X <= 2f || destinationSize.Y <= 2f)
         {
             float fallback = Math.Min(_fallbackPadding,
@@ -88,20 +124,17 @@ public partial class HudFactionSurfaceMask : Control
 
         float corner = HudFactionChrome.DestinationCornerSize(_recipe, Role, destinationSize, _chromeScale);
         Vector4 ratios = _recipe.ApertureInsetRatios;
-        bool topStrip = Role == HudFactionChromeRole.TopStrip;
-        // The alpha aperture owns the visual plate boundary. Content needs a
-        // smaller ergonomic inset so mixed-selection cards and the canonical
-        // minimap target are not shrunk by the full illustrated frame width.
-        float horizontalFactor = topStrip ? 0.50f : 0.28f;
-        // Bottom content may extend beneath the illustrated rail because the
-        // exact alpha aperture clips it safely. Keeping this inset shallow
-        // preserves the canonical command-card height at 21:9.
-        float verticalFactor = topStrip ? 0.50f : 0.08f;
-        float breathingRoom = topStrip ? 0.5f : 1f;
+        // Top-strip labels clear the illustrated rail. The lower deck takes
+        // the full-bleed branch above because its section controls provide
+        // their own readable margins beneath the visible frame.
+        const float horizontalFactor = 0.82f;
+        const float topFactor = 0.60f;
+        const float bottomFactor = 0.60f;
+        float breathingRoom = 1f;
         float left = Mathf.Round(corner * ratios.X * horizontalFactor + breathingRoom);
-        float top = Mathf.Round(corner * ratios.Y * verticalFactor + breathingRoom);
+        float top = Mathf.Round(corner * ratios.Y * topFactor + breathingRoom);
         float right = Mathf.Round(corner * ratios.Z * horizontalFactor + breathingRoom);
-        float bottom = Mathf.Round(corner * ratios.W * verticalFactor + breathingRoom);
+        float bottom = Mathf.Round(corner * ratios.W * bottomFactor + breathingRoom);
         float width = destinationSize.X - left - right;
         float height = destinationSize.Y - top - bottom;
         if (width < 8f || height < 8f)
@@ -117,16 +150,71 @@ public partial class HudFactionSurfaceMask : Control
 
     public override void _Notification(int what)
     {
-        if (what == NotificationResized) QueueRedraw();
+        if (what == (int)NotificationResized || what == (int)NotificationTransformChanged ||
+            what == (int)NotificationEnterCanvas)
+        {
+            UpdateApertureMaterialParameters();
+            if (what == (int)NotificationResized) QueueRedraw();
+        }
     }
 
     public override void _Draw()
     {
-        if (!UsesFactionApertureMask || _maskTexture is null || Size.X < 4f || Size.Y < 4f) return;
+        if (!UsesFactionApertureMask || _maskTexture is null || _gutterMaskTexture is null ||
+            Size.X < 4f || Size.Y < 4f) return;
         int sourceCorner = HudFactionChrome.SourceCornerSize(_maskTexture, _recipe);
         float destinationCorner = HudFactionChrome.DestinationCornerSize(_recipe, Role, Size, _chromeScale);
+        // The generated frame PNGs leave a square transparent opening behind
+        // their sculpted corners. A darker aperture-derived gutter prevents
+        // the game world from shining through the deliberately round plate.
+        DrawNineSlice(_gutterMaskTexture, new Rect2(Vector2.Zero, Size), sourceCorner,
+            destinationCorner, new Color(_surfaceColor.Darkened(0.58f), Math.Max(0.96f, _panelOpacity)));
         DrawNineSlice(_maskTexture, new Rect2(Vector2.Zero, Size), sourceCorner, destinationCorner,
-            Colors.White);
+            new Color(_surfaceColor, _panelOpacity));
+    }
+
+    private void EnsureApertureMaterial()
+    {
+        if (_apertureMaterial?.Shader is not null) return;
+        Shader? shader = ResourceLoader.Exists(ApertureShaderPath)
+            ? GD.Load<Shader>(ApertureShaderPath)
+            : null;
+        if (shader is not null) _apertureMaterial = new ShaderMaterial { Shader = shader };
+    }
+
+    private void UpdateApertureMaterialParameters()
+    {
+        if (_apertureMaterial is null || _maskTexture is null || !IsInsideTree() ||
+            Size.X < 2f || Size.Y < 2f) return;
+        Vector2 viewportSize = GetViewportRect().Size;
+        if (viewportSize.X < 2f || viewportSize.Y < 2f) return;
+        Rect2 global = GetGlobalRect();
+        _apertureMaterial.SetShaderParameter("aperture_mask", _maskTexture);
+        _apertureMaterial.SetShaderParameter("mask_source_size",
+            new Vector2(_maskTexture.GetWidth(), _maskTexture.GetHeight()));
+        _apertureMaterial.SetShaderParameter("mask_source_corner",
+            (float)HudFactionChrome.SourceCornerSize(_maskTexture, _recipe));
+        _apertureMaterial.SetShaderParameter("mask_screen_rect", new Vector4(
+            global.Position.X / viewportSize.X, global.Position.Y / viewportSize.Y,
+            global.Size.X / viewportSize.X, global.Size.Y / viewportSize.Y));
+        _apertureMaterial.SetShaderParameter("mask_destination_size", Size);
+        _apertureMaterial.SetShaderParameter("mask_destination_corner",
+            HudFactionChrome.DestinationCornerSize(_recipe, Role, Size, _chromeScale));
+    }
+
+    private void ApplyRegisteredSurfaceMaterials()
+    {
+        foreach ((CanvasItem surface, Material? original) in _registeredSurfaceMaterials)
+            surface.Material = UsesFactionApertureMask ? _apertureMaterial : original;
+    }
+
+    private void RegisterCanvasDescendants(Node root)
+    {
+        foreach (Node child in root.GetChildren())
+        {
+            if (child is CanvasItem canvasChild) RegisterMaskedSurfaceTree(canvasChild);
+            else RegisterCanvasDescendants(child);
+        }
     }
 
     private void DrawNineSlice(Texture2D texture, Rect2 destination, float sourceCorner,
@@ -154,9 +242,10 @@ public partial class HudFactionSurfaceMask : Control
     }
 
     private static Texture2D? GetOrCreateMask(string path, Texture2D frameTexture,
-        HudFactionSkinRecipe recipe)
+        HudFactionSkinRecipe recipe, float cornerRadiusFraction)
     {
-        if (MaskCache.TryGetValue(path, out Texture2D? cached)) return cached;
+        string cacheKey = $"{path}|{cornerRadiusFraction:0.000}";
+        if (MaskCache.TryGetValue(cacheKey, out Texture2D? cached)) return cached;
         Image sourceImage = frameTexture.GetImage();
         if (sourceImage.IsEmpty()) return null;
         if (sourceImage.IsCompressed() && sourceImage.Decompress() != Error.Ok) return null;
@@ -175,12 +264,20 @@ public partial class HudFactionSurfaceMask : Control
         int write = 0;
         queue[write++] = center;
         aperture[center] = 1;
+        int minX = width / 2;
+        int maxX = minX;
+        int minY = height / 2;
+        int maxY = minY;
         bool touchesExterior = false;
         while (read < write)
         {
             int index = queue[read++];
             int x = index % width;
             int y = index / width;
+            minX = Math.Min(minX, x);
+            maxX = Math.Max(maxX, x);
+            minY = Math.Min(minY, y);
+            maxY = Math.Max(maxY, y);
             if (x == 0 || y == 0 || x == width - 1 || y == height - 1) touchesExterior = true;
             Visit(index - 1, x > 0);
             Visit(index + 1, x + 1 < width);
@@ -190,6 +287,22 @@ public partial class HudFactionSurfaceMask : Control
         if (touchesExterior || write < pixelCount / 20) return null;
 
         int sourceCorner = HudFactionChrome.SourceCornerSize(frameTexture, recipe);
+        if (cornerRadiusFraction > 0.001f)
+        {
+            int apertureRadius = Math.Max(2,
+                Mathf.RoundToInt(sourceCorner * cornerRadiusFraction));
+            apertureRadius = Math.Min(apertureRadius,
+                Math.Max(2, Math.Min(maxX - minX + 1, maxY - minY + 1) / 3));
+            for (int y = minY; y <= maxY; y++)
+            for (int x = minX; x <= maxX; x++)
+            {
+                int index = y * width + x;
+                if (aperture[index] != 0 &&
+                    !InsideRoundedRect(x, y, minX, minY, maxX, maxY, apertureRadius))
+                    aperture[index] = 0;
+            }
+        }
+
         int overlap = Math.Max(1, Mathf.RoundToInt(sourceCorner * 0.07f));
         byte[] horizontal = new byte[pixelCount];
         for (int y = 0; y < height; y++)
@@ -230,7 +343,7 @@ public partial class HudFactionSurfaceMask : Control
         Image maskImage = Image.CreateFromData(width, height, false, Image.Format.Rgba8, rgba);
         maskImage.GenerateMipmaps();
         Texture2D mask = ImageTexture.CreateFromImage(maskImage);
-        MaskCache[path] = mask;
+        MaskCache[cacheKey] = mask;
         return mask;
 
         void Visit(int candidate, bool inBounds)
@@ -239,5 +352,15 @@ public partial class HudFactionSurfaceMask : Control
             aperture[candidate] = 1;
             queue[write++] = candidate;
         }
+    }
+
+    private static bool InsideRoundedRect(int x, int y, int minX, int minY,
+        int maxX, int maxY, int radius)
+    {
+        int nearestX = Math.Clamp(x, minX + radius, maxX - radius);
+        int nearestY = Math.Clamp(y, minY + radius, maxY - radius);
+        long dx = x - nearestX;
+        long dy = y - nearestY;
+        return dx * dx + dy * dy <= (long)radius * radius;
     }
 }

@@ -251,11 +251,15 @@ public partial class HudView : Control
         _bottomDeck = SurfacePanel("BottomDeck", false);
         _safeArea!.AddChild(_bottomDeck);
         _bottomSurfaceMask = DirectSurfaceMask(_bottomDeck);
+        if (_bottomSurfaceMask is not null &&
+            _bottomSurfaceMask.FindChild("BottomDeckRasterSurface", false, false) is CanvasItem rasterSurface)
+            _bottomSurfaceMask.RegisterMaskedSurface(rasterSurface);
         _bottomDeckContent = new Control
         {
             Name = "BottomDeckContent",
             MouseFilter = MouseFilterEnum.Ignore,
-            // Above the structural/raster backing, below the faction frame.
+            // Above structural backing, below the visible faction frame. The
+            // inherited shader clips independently of CanvasItem Z ordering.
             ZIndex = 11
         };
         if (_bottomSurfaceMask is not null) _bottomSurfaceMask.AddChild(_bottomDeckContent);
@@ -273,8 +277,7 @@ public partial class HudView : Control
         {
             Name = "ResourceRow",
             Alignment = BoxContainer.AlignmentMode.End,
-            // Keep resource text over the structural backing while the outer
-            // faction frame remains the final foreground layer.
+            // Above structural backing, below the visible faction frame.
             ZIndex = 11
         };
         if (_topSurfaceMask is not null) _topSurfaceMask.AddChild(_resourceRow);
@@ -310,12 +313,14 @@ public partial class HudView : Control
     {
         _minimapPanel = SurfacePanel("MinimapRegion", false);
         _bottomDeckContent!.AddChild(_minimapPanel);
+        _bottomSurfaceMask?.RegisterMaskedSurface(_minimapPanel);
         _minimap = new HudMinimapView
         {
             Name = "MinimapSlot", SizeFlagsHorizontal = SizeFlags.ExpandFill,
             SizeFlagsVertical = SizeFlags.ExpandFill
         };
         _minimap.Configure(_profile);
+        _bottomSurfaceMask?.RegisterMaskedSurfaceTree(_minimap);
         _minimap.CameraRequested += cell => MinimapCameraRequested?.Invoke(cell);
         _minimap.GroundCommandRequested += (cell, queued) => MinimapGroundCommandRequested?.Invoke(cell, queued);
         _minimap.TooltipText = "North-up tactical map. Left-click or drag: camera. Right-click: move/rally. Shift + right-click: queue.";
@@ -447,6 +452,7 @@ public partial class HudView : Control
     {
         _commandPanel = SurfacePanel("CommandPanel", false);
         _bottomDeckContent!.AddChild(_commandPanel);
+        _bottomSurfaceMask?.RegisterMaskedSurface(_commandPanel);
         VBoxContainer box = new(); _commandPanel.AddChild(box);
         _commandTitle = Label(string.Empty, TextRole.Micro);
         _commandTitle.Name = "CommandTitle";
@@ -633,11 +639,23 @@ public partial class HudView : Control
             contentWidth - minimapWidth - portraitWidth - commandWidth - sectionGap * gapCount);
         float selectionWidth = Math.Min(availableSelectionWidth, _profile.Layout.SelectionMaxWidth * scale);
         float bridgeWidth = Math.Max(0f, availableSelectionWidth - selectionWidth);
+        float functionalMinimumHeight = Math.Max(_selectionPanel.GetCombinedMinimumSize().Y,
+            Math.Max(_commandPanel.GetCombinedMinimumSize().Y,
+                _portraitPanel.Visible ? _portraitPanel.GetCombinedMinimumSize().Y : 0f));
+        // Ten reference pixels clear the faction rail while remaining below
+        // every finish's retained minimum height at ultrawide scale. Keeping
+        // the desired inset below those minima also prevents 1px mode drift.
+        float functionalTopInset = Math.Min(10f * scale,
+            Math.Max(0f, contentHeight - functionalMinimumHeight));
+        float functionalHeight = contentHeight - functionalTopInset;
         SetRect(_minimapPanel, Vector2.Zero, new Vector2(minimapWidth, contentHeight));
-        SetRect(_selectionPanel, new Vector2(minimapWidth + sectionGap, 0f), new Vector2(selectionWidth, contentHeight));
+        SetRect(_selectionPanel, new Vector2(minimapWidth + sectionGap, functionalTopInset),
+            new Vector2(selectionWidth, functionalHeight));
         float portraitX = minimapWidth + sectionGap + selectionWidth + bridgeWidth + sectionGap;
-        SetRect(_portraitPanel, new Vector2(portraitX, 0f), new Vector2(portraitWidth, contentHeight));
-        SetRect(_commandPanel, new Vector2(contentWidth - commandWidth, 0f), new Vector2(commandWidth, contentHeight));
+        SetRect(_portraitPanel, new Vector2(portraitX, functionalTopInset),
+            new Vector2(portraitWidth, functionalHeight));
+        SetRect(_commandPanel, new Vector2(contentWidth - commandWidth, functionalTopInset),
+            new Vector2(commandWidth, functionalHeight));
         _bottomDeckChrome?.SetJunctions(
             (deckContentRect.Position.X + minimapWidth + sectionGap * 0.5f) / deckWidth,
             (deckContentRect.End.X - commandWidth - sectionGap * 0.5f) / deckWidth);
@@ -1258,14 +1276,20 @@ public partial class HudView : Control
         int outerMargin = Mathf.RoundToInt(20f * scale);
         int innerMargin = Mathf.RoundToInt(10f * scale);
         int verticalMargin = Mathf.RoundToInt(14f * scale);
+        // The minimap is the lower deck's outer-left visual field. Let its
+        // raster reach beneath the authored faction frame so the frame's own
+        // alpha aperture shapes the corner. A rectangular inset here exposes
+        // a second, square visual system inside the otherwise sculpted shell.
+        int minimapEdgeMargin = outerLeft ? 0 : Math.Max(innerMargin, padding);
+        int minimapVerticalMargin = outerLeft ? 0 : Math.Max(verticalMargin, padding);
         return new StyleBoxFlat
         {
             BgColor = new Color(background, 0.28f * _profile.Surface.PanelOpacity),
             BorderWidthLeft = 0, BorderWidthTop = 0, BorderWidthRight = 0, BorderWidthBottom = 0,
-            ContentMarginLeft = Math.Max(outerLeft ? outerMargin : innerMargin, padding),
+            ContentMarginLeft = minimapEdgeMargin,
             ContentMarginRight = Math.Max(outerRight ? outerMargin : innerMargin, padding),
-            ContentMarginTop = Math.Max(verticalMargin, padding),
-            ContentMarginBottom = Math.Max(verticalMargin, padding)
+            ContentMarginTop = minimapVerticalMargin,
+            ContentMarginBottom = minimapVerticalMargin
         };
     }
 
