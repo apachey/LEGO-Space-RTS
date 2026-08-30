@@ -4,21 +4,17 @@ namespace LegoSpaceRTS.UI;
 
 public enum HudRasterSurfaceRole : byte
 {
-    Selection,
-    Command
+    BottomDeck
 }
 
 /// <summary>
-/// Places one continuous, aspect-correct raster material field inside a
-/// code-native HUD bay. The source is cropped, never stretched, to the current
-/// adaptive panel. Raster vents, fasteners and seams therefore add material
-/// detail without producing a repeated row of boxed plates.
+/// Places one continuous, aspect-correct raster material field across the
+/// complete bottom command deck. The source is cropped, never stretched or
+/// tiled. Raster vents, fasteners and seams therefore provide authored detail
+/// without competing selection/portrait/command material systems.
 /// </summary>
 public partial class HudRasterSurfaceOverlay : Control
 {
-    private static readonly Rect2 SelectionSource = new(22f, 314f, 1210f, 382f);
-    private static readonly Rect2 CommandSource = new(628f, 250f, 584f, 640f);
-
     private Texture2D? _surface;
     private HudRasterSurfaceRole _role;
     private float _intensity;
@@ -30,6 +26,7 @@ public partial class HudRasterSurfaceOverlay : Control
     public bool UsesBoundedRasterPlates => true;
     public bool UsesUnstretchedSourceRegions => true;
     public bool UsesSingleContinuousSurfaceField => true;
+    public bool UsesSingleDeckWideSurface => _role == HudRasterSurfaceRole.BottomDeck;
 
     public HudRasterSurfaceOverlay()
     {
@@ -60,21 +57,20 @@ public partial class HudRasterSurfaceOverlay : Control
     {
         if (!Visible || _surface is null || Size.X < 48f || Size.Y < 32f) return;
 
-        float insetX = Mathf.Clamp(Size.X * 0.012f, 6f, 16f);
-        float insetY = Mathf.Clamp(Size.Y * 0.065f, 6f, 13f);
+        float insetX = Mathf.Clamp(Size.X * 0.006f, 7f, 14f);
+        float insetY = Mathf.Clamp(Size.Y * 0.045f, 7f, 12f);
         Rect2 area = new(new Vector2(insetX, insetY), Size - new Vector2(insetX * 2f, insetY * 2f));
         if (area.Size.X < 8f || area.Size.Y < 8f) return;
 
-        Rect2 authoredSource = _role == HudRasterSurfaceRole.Selection ? SelectionSource : CommandSource;
+        Rect2 authoredSource = new(0f, 0f, _surface.GetWidth(), _surface.GetHeight());
         Rect2 source = CropToAspect(authoredSource, area.Size.X / area.Size.Y);
         float luminance = _bayColor.R * 0.2126f + _bayColor.G * 0.7152f + _bayColor.B * 0.0722f;
-        float rasterAlpha = Mathf.Lerp(0.34f, 0.21f, Mathf.Clamp(luminance, 0f, 1f)) * _intensity;
-        if (_role == HudRasterSurfaceRole.Command) rasterAlpha *= 0.90f;
+        float rasterAlpha = Mathf.Lerp(0.28f, 0.16f, Mathf.Clamp(luminance, 0f, 1f)) * _intensity;
         DrawTextureRectRegion(_surface, area, source, new Color(1f, 1f, 1f, rasterAlpha));
 
         // A very quiet palette tint integrates the neutral raster with the
         // selected surface family without drawing another visible rectangle.
-        DrawRect(area, new Color(_accentColor, 0.018f * _intensity));
+        DrawRect(area, new Color(_accentColor, 0.014f * _intensity));
     }
 
     private static Rect2 CropToAspect(Rect2 source, float targetAspect)

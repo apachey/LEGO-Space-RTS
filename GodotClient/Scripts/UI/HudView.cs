@@ -130,6 +130,14 @@ public partial class HudView : Control
     public void ApplyFrame(HudFrame frame, bool force = false)
     {
         if (!_treeBuilt) return;
+        int frameFaction = HudFactionSkinLibrary.IndexFor(frame.Faction);
+        if (_profile.ArtSkin.SurfacePalette == HudSurfacePalette.FactionBound &&
+            _profile.ArtSkin.Faction != frameFaction)
+        {
+            HudFactionSkinLibrary.Apply(_profile, frameFaction);
+            ApplySurfaces();
+            _portraitView?.ApplyProfile(_profile);
+        }
         string signature = frame.ContentSignature();
         if (!force && signature == _lastSignature) return;
         bool layoutVisibilityChanged = frame.Selection.Groups.Count != _frame.Selection.Groups.Count ||
@@ -242,7 +250,6 @@ public partial class HudView : Control
         _bottomDeck.AddChild(_bottomDeckContent);
         _bottomDeckChrome = DirectChrome(_bottomDeck);
         _bottomDeckStructuralChrome = DirectStructuralChrome(_bottomDeck);
-        _bottomDeckChrome?.MoveToFront();
     }
 
     private void BuildTopStrip()
@@ -267,13 +274,13 @@ public partial class HudView : Control
         AddResourceChip(row, "▦", "OPERATIONS", out _operationsHeading, out _operationsValue);
         AddTopDivider(row);
         HBoxContainer mechanic = ResourceChip("◈", "SYSTEM", out _mechanicHeading, out _mechanicValue);
-        mechanic.SizeFlagsStretchRatio = 1.8f;
+        mechanic.SizeFlagsStretchRatio = 2.8f;
         row.AddChild(mechanic);
         AddTopDivider(row);
         _matchState = Label("MATCH", TextRole.Micro);
         _matchState.HorizontalAlignment = HorizontalAlignment.Center;
         _matchState.VerticalAlignment = VerticalAlignment.Center;
-        _matchState.CustomMinimumSize = new Vector2(150, 0);
+        _matchState.CustomMinimumSize = new Vector2(132, 0);
         row.AddChild(_matchState);
     }
 
@@ -584,7 +591,7 @@ public partial class HudView : Control
         float portraitWidth = _portraitPanel.Visible
             ? Mathf.Clamp(142f * scale, 92f * scale, Math.Min(area.X * 0.13f, 162f * scale))
             : 0f;
-        float topWidth = Math.Min(area.X * 0.82f, 940f * scale);
+        float topWidth = Math.Min(area.X * 0.94f, 1180f * scale);
         SetRect(_topPanel, new Vector2(area.X - topWidth, 0f), new Vector2(topWidth, topHeight));
         float deckWidth = area.X;
         float deckX = 0f;
@@ -603,11 +610,15 @@ public partial class HudView : Control
         SetRect(_commandPanel, new Vector2(deckWidth - commandWidth, 0f), new Vector2(commandWidth, bottomHeight));
         _bottomDeckChrome?.SetJunctions((minimapWidth + sectionGap * 0.5f) / deckWidth,
             (deckWidth - commandWidth - sectionGap * 0.5f) / deckWidth);
-        _bottomDeckStructuralChrome?.SetJunctions(
-            (minimapWidth + sectionGap * 0.5f) / deckWidth,
-            (minimapWidth + sectionGap + selectionWidth + sectionGap * 0.5f) / deckWidth,
-            (portraitX - sectionGap * 0.5f) / deckWidth,
-            (deckWidth - commandWidth - sectionGap * 0.5f) / deckWidth);
+        if (_portraitPanel.Visible)
+            _bottomDeckStructuralChrome?.SetJunctions(
+                (minimapWidth + sectionGap * 0.5f) / deckWidth,
+                (portraitX - sectionGap * 0.5f) / deckWidth,
+                (deckWidth - commandWidth - sectionGap * 0.5f) / deckWidth);
+        else
+            _bottomDeckStructuralChrome?.SetJunctions(
+                (minimapWidth + sectionGap * 0.5f) / deckWidth,
+                (deckWidth - commandWidth - sectionGap * 0.5f) / deckWidth);
 
         float alertHeight = 44f * scale;
         SetRect(_alertPanel, new Vector2(deckX, deckY - alertHeight - gap),
@@ -697,8 +708,10 @@ public partial class HudView : Control
                 Color sectionBackground = panel == _selectionPanel ? background.Lightened(0.025f) : recessed.Lightened(0.025f);
                 sectionBackground = sectionBackground.Lerp(factionSurface,
                     factionFill * (panel == _selectionPanel ? 1.15f : 0.85f));
-                StyleBoxFlat section = SectionStyle(sectionBackground,
-                    new Color(secondaryAccent, 0.46f), panel == _minimapPanel, panel == _commandPanel);
+                StyleBoxFlat section = hybridFinish
+                    ? HybridSectionStyle(sectionBackground, panel == _minimapPanel, panel == _commandPanel)
+                    : SectionStyle(sectionBackground, new Color(secondaryAccent, 0.46f),
+                        panel == _minimapPanel, panel == _commandPanel);
                 panel.AddThemeStyleboxOverride("panel", section);
             }
             else
@@ -729,8 +742,9 @@ public partial class HudView : Control
             _objectivePanel.AddThemeStyleboxOverride("panel", objectiveStyle);
         }
         if (_portraitPanel is not null)
-            _portraitPanel.AddThemeStyleboxOverride("panel", Style(
-                recessed.Lightened(0.03f).Lerp(factionSurface, factionFill * 1.35f), secondaryAccent));
+            _portraitPanel.AddThemeStyleboxOverride("panel", hybridFinish
+                ? HybridSectionStyle(recessed.Lightened(0.03f), false, false)
+                : Style(recessed.Lightened(0.03f).Lerp(factionSurface, factionFill * 1.35f), secondaryAccent));
         _portraitView?.ApplyProfile(_profile);
         for (int i = 0; i < _factionChrome.Count; i++)
         {
@@ -871,7 +885,7 @@ public partial class HudView : Control
         {
             Button button = _commandButtons[i];
             bool exists = i < commands.Count && commands[i].Visible;
-            button.Visible = true;
+            button.Visible = exists;
             if (!exists)
             {
                 button.Disabled = true;
@@ -978,11 +992,10 @@ public partial class HudView : Control
         _ => Parse(_profile.Colors.TextMuted, Colors.Gray)
     };
 
-    private Color DisplayAccent() => _profile.ArtSkin.Enabled && _profile.ArtSkin.Finish == HudArtFinish.LegacyFrames
-        ? HudFactionChrome.AccentForFaction(_profile.ArtSkin.Faction)
-        : Parse(_profile.Colors.Accent, new Color("d95f24"));
+    private Color DisplayAccent() => Parse(_profile.Colors.Accent,
+        HudFactionChrome.AccentForFaction(_profile.ArtSkin.Faction));
 
-    private Color SecondaryAccent() => _profile.ArtSkin.Enabled && _profile.ArtSkin.Finish == HudArtFinish.LegacyFrames
+    private Color SecondaryAccent() => _profile.ArtSkin.SurfacePalette == HudSurfacePalette.FactionBound
         ? HudFactionChrome.SecondaryAccentForFaction(_profile.ArtSkin.Faction)
         : Parse(_profile.Colors.Selection, new Color("166e7a"));
 
@@ -1023,12 +1036,9 @@ public partial class HudView : Control
             panel.AddChild(chrome);
             _factionChrome.Add(chrome);
         }
-        HudRasterSurfaceRole? rasterRole = name switch
-        {
-            "SelectionPanel" => HudRasterSurfaceRole.Selection,
-            "CommandPanel" => HudRasterSurfaceRole.Command,
-            _ => null
-        };
+        HudRasterSurfaceRole? rasterRole = name == "BottomDeck"
+            ? HudRasterSurfaceRole.BottomDeck
+            : null;
         if (rasterRole.HasValue)
         {
             HudRasterSurfaceOverlay overlay = new()
@@ -1168,6 +1178,24 @@ public partial class HudView : Control
             ContentMarginRight = Math.Max(outerRight ? outerMargin : innerMargin, padding),
             ContentMarginTop = Math.Max(topMargin, padding),
             ContentMarginBottom = Math.Max(bottomMargin, padding)
+        };
+    }
+
+    private StyleBoxFlat HybridSectionStyle(Color background, bool outerLeft, bool outerRight)
+    {
+        float scale = ResponsiveScale();
+        int padding = Mathf.RoundToInt(_profile.Surface.InnerPadding * scale);
+        int outerMargin = Mathf.RoundToInt(20f * scale);
+        int innerMargin = Mathf.RoundToInt(10f * scale);
+        int verticalMargin = Mathf.RoundToInt(14f * scale);
+        return new StyleBoxFlat
+        {
+            BgColor = new Color(background, 0.28f * _profile.Surface.PanelOpacity),
+            BorderWidthLeft = 0, BorderWidthTop = 0, BorderWidthRight = 0, BorderWidthBottom = 0,
+            ContentMarginLeft = Math.Max(outerLeft ? outerMargin : innerMargin, padding),
+            ContentMarginRight = Math.Max(outerRight ? outerMargin : innerMargin, padding),
+            ContentMarginTop = Math.Max(verticalMargin, padding),
+            ContentMarginBottom = Math.Max(verticalMargin, padding)
         };
     }
 

@@ -6,7 +6,7 @@ namespace LegoSpaceRTS.UI;
 
 public sealed class M7HudProfile
 {
-    public const int CurrentSchemaVersion = 7;
+    public const int CurrentSchemaVersion = 8;
 
     public int SchemaVersion { get; set; } = CurrentSchemaVersion;
     public HudLayoutProfile Layout { get; set; } = new();
@@ -26,7 +26,13 @@ public sealed class M7HudProfile
         UnmappedMemberHandling = JsonUnmappedMemberHandling.Skip
     };
 
-    public static M7HudProfile CreateDefault() => new();
+    public static M7HudProfile CreateDefault()
+    {
+        M7HudProfile profile = new();
+        HudFactionSkinLibrary.Apply(profile, 0);
+        profile.Normalize();
+        return profile;
+    }
 
     public string ToJson()
     {
@@ -50,7 +56,7 @@ public sealed class M7HudProfile
                 error = "Clipboard does not contain an M7 HUD profile.";
                 return false;
             }
-            if (parsed.SchemaVersion is not (1 or 2 or 3 or 4 or 5 or 6 or CurrentSchemaVersion))
+            if (parsed.SchemaVersion < 1 || parsed.SchemaVersion > CurrentSchemaVersion)
             {
                 profile = CreateDefault();
                 error = $"HUD schema {parsed.SchemaVersion} is not supported; expected {CurrentSchemaVersion}.";
@@ -60,10 +66,11 @@ public sealed class M7HudProfile
             // Schema 1-4 profiles were authored against the generated frame
             // renderer. Schema 5 introduced Structural/Legacy/Clean but still
             // used the navy-biased baseline. Preserve both results exactly;
-            // schema 6 introduced Hybrid + broad palettes. Schema 7 changes
-            // only how Hybrid is composed (raster outer frame with a
-            // code-native interior), so every stored schema-6 token remains
-            // authoritative during migration.
+            // schema 6 introduced Hybrid + broad palettes and schema 7 changed
+            // its composition. Schema 8 restores the four actual playable
+            // factions and makes frame + surface one recipe. Explicit Custom
+            // colours remain custom; named pre-schema-8 experiments become the
+            // corresponding faction recipe in non-legacy finishes.
             parsed.ArtSkin ??= new HudArtSkinProfile();
             if (sourceSchemaVersion <= 4)
             {
@@ -75,6 +82,19 @@ public sealed class M7HudProfile
                 if (!HasNestedProperty(document.RootElement, "artSkin", "finish"))
                     parsed.ArtSkin.Finish = HudArtFinish.StructuralConsole;
                 parsed.ArtSkin.SurfacePalette = HudSurfacePalette.Custom;
+            }
+            if (sourceSchemaVersion <= 7)
+            {
+                parsed.ArtSkin.Faction = parsed.ArtSkin.Faction switch
+                {
+                    3 => 1, // retired Life on Mars astronaut sub-skin -> shared Astronaut HUD
+                    4 => 3, // old fifth slot -> canonical Martian slot
+                    _ => parsed.ArtSkin.Faction
+                };
+                if (sourceSchemaVersion >= 6 &&
+                    parsed.ArtSkin.Finish != HudArtFinish.LegacyFrames &&
+                    parsed.ArtSkin.SurfacePalette != HudSurfacePalette.Custom)
+                    parsed.ArtSkin.SurfacePalette = HudSurfacePalette.FactionBound;
             }
             if (sourceSchemaVersion <= 5)
                 MergeMissingLegacyColorDefaults(parsed, document.RootElement);
@@ -146,7 +166,7 @@ public sealed class M7HudProfile
         Surface.CornerRadius = Clamp(Surface.CornerRadius, 0, 20);
         Surface.InnerPadding = Clamp(Surface.InnerPadding, 4, 24);
         Surface.Separation = Clamp(Surface.Separation, 2, 18);
-        ArtSkin.Faction = Clamp(ArtSkin.Faction, 0, 4);
+        ArtSkin.Faction = Clamp(ArtSkin.Faction, 0, HudFactionSkinLibrary.Count - 1);
         // Schema-4 profiles created by the original full-frame experiment are
         // still accepted. Their implementation-specific controls migrate once
         // into the simpler modular chrome language and are omitted on export.
@@ -157,7 +177,9 @@ public sealed class M7HudProfile
         ArtSkin.FrameOpacity = null;
         ArtSkin.FrameThickness = null;
         if (!Enum.IsDefined(ArtSkin.Finish)) ArtSkin.Finish = HudArtFinish.HybridConsole;
-        if (!Enum.IsDefined(ArtSkin.SurfacePalette)) ArtSkin.SurfacePalette = HudSurfacePalette.LightCeramic;
+        if (!Enum.IsDefined(ArtSkin.SurfacePalette)) ArtSkin.SurfacePalette = HudSurfacePalette.FactionBound;
+        if (ArtSkin.SurfacePalette is not (HudSurfacePalette.Custom or HudSurfacePalette.FactionBound))
+            ArtSkin.SurfacePalette = HudSurfacePalette.Custom;
         ArtSkin.ChromeIntensity = Clamp(ArtSkin.ChromeIntensity, 0f, 1f);
         ArtSkin.ChromeScale = Clamp(ArtSkin.ChromeScale, 0.75f, 1.35f);
         Colors.Background = M7ProfileColor.Normalize(Colors.Background, "#cfc6ae");
@@ -170,6 +192,8 @@ public sealed class M7HudProfile
         Colors.Warning = M7ProfileColor.Normalize(Colors.Warning, "#8c5b00");
         Colors.Danger = M7ProfileColor.Normalize(Colors.Danger, "#ad2b20");
         Colors.Selection = M7ProfileColor.Normalize(Colors.Selection, "#166e7a");
+        if (ArtSkin.SurfacePalette == HudSurfacePalette.FactionBound)
+            HudFactionSkinLibrary.Apply(this, ArtSkin.Faction);
         Minimap.MarkerScale = Clamp(Minimap.MarkerScale, 0.6f, 2.0f);
         Minimap.InterpolationSeconds = Clamp(Minimap.InterpolationSeconds, 0f, 0.30f);
         Minimap.ExploredFogOpacity = Clamp(Minimap.ExploredFogOpacity, 0.15f, 0.90f);
@@ -231,7 +255,7 @@ public sealed class HudArtSkinProfile
     public bool Enabled { get; set; } = true;
     public int Faction { get; set; }
     public HudArtFinish Finish { get; set; } = HudArtFinish.HybridConsole;
-    public HudSurfacePalette SurfacePalette { get; set; } = HudSurfacePalette.LightCeramic;
+    public HudSurfacePalette SurfacePalette { get; set; } = HudSurfacePalette.FactionBound;
     public float ChromeIntensity { get; set; } = 0.88f;
     public float ChromeScale { get; set; } = 1f;
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] public float? FrameOpacity { get; set; }
@@ -254,21 +278,22 @@ public enum HudSurfacePalette : byte
     OxideWorkshop = 3,
     FieldOlive = 4,
     AlienPorcelain = 5,
-    NeutralGraphite = 6
+    NeutralGraphite = 6,
+    FactionBound = 7
 }
 
 public sealed class HudColorProfile
 {
-    public string Background { get; set; } = "#cfc6ae";
-    public string Raised { get; set; } = "#eee6d0";
-    public string Recessed { get; set; } = "#8b8578";
-    public string Accent { get; set; } = "#d95f24";
-    public string TextPrimary { get; set; } = "#171a1b";
-    public string TextMuted { get; set; } = "#4c5355";
-    public string Good { get; set; } = "#2d6c42";
-    public string Warning { get; set; } = "#8c5b00";
-    public string Danger { get; set; } = "#ad2b20";
-    public string Selection { get; set; } = "#166e7a";
+    public string Background { get; set; } = "#303534";
+    public string Raised { get; set; } = "#545b58";
+    public string Recessed { get; set; } = "#171b1a";
+    public string Accent { get; set; } = "#a76538";
+    public string TextPrimary { get; set; } = "#f1eadc";
+    public string TextMuted { get; set; } = "#b7b1a4";
+    public string Good { get; set; } = "#65c987";
+    public string Warning { get; set; } = "#f2b84b";
+    public string Danger { get; set; } = "#ff6b45";
+    public string Selection { get; set; } = "#20a69d";
 }
 
 public static class HudSurfacePaletteLibrary
@@ -277,7 +302,12 @@ public static class HudSurfacePaletteLibrary
     {
         profile.ArtSkin ??= new HudArtSkinProfile();
         profile.Colors ??= new HudColorProfile();
-        profile.ArtSkin.SurfacePalette = palette;
+        if (palette == HudSurfacePalette.FactionBound)
+        {
+            HudFactionSkinLibrary.Apply(profile, profile.ArtSkin.Faction);
+            return;
+        }
+        profile.ArtSkin.SurfacePalette = HudSurfacePalette.Custom;
         if (palette == HudSurfacePalette.Custom) return;
 
         HudPaletteTokens tokens = palette switch

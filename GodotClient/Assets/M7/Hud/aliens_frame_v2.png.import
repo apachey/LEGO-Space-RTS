@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ci7ebpjyapr15"
-path="res://.godot/imported/martians_frame.png-405b48d0d7283c35d489ef9f3059ef65.ctex"
+uid="uid://byo5b0keqifk1"
+path="res://.godot/imported/aliens_frame_v2.png-2e783000fae8241c9020d80b92c53871.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/M7/Hud/martians_frame.png"
-dest_files=["res://.godot/imported/martians_frame.png-405b48d0d7283c35d489ef9f3059ef65.ctex"]
+source_file="res://Assets/M7/Hud/aliens_frame_v2.png"
+dest_files=["res://.godot/imported/aliens_frame_v2.png-2e783000fae8241c9020d80b92c53871.ctex"]
 
 [params]
 

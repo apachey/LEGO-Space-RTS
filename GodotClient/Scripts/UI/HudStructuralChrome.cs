@@ -33,11 +33,12 @@ public partial class HudStructuralChrome : Control
     public bool UsesSculptedShoulders => !_hybridInteriorOnly;
     public bool UsesFactionRasterModules => false;
     public bool UsesInteriorOnlyHybrid => _hybridInteriorOnly;
+    public bool UsesCleanHybridSeparators => _hybridInteriorOnly;
 
     public HudStructuralChrome()
     {
         MouseFilter = MouseFilterEnum.Ignore;
-        ClipContents = false;
+        ClipContents = true;
     }
 
     public void Configure(int faction, HudFactionChromeRole role, float intensity, float chromeScale,
@@ -153,37 +154,31 @@ public partial class HudStructuralChrome : Control
     }
 
     /// <summary>
-    /// Hybrid delegates the complete outer chassis to the generated faction
-    /// frame. This layer therefore draws only a quiet, palette-owned interior
-    /// field and functional section junctions. It deliberately has no outer
-    /// polygon, shoulders or rails, avoiding a second frame beneath the raster
-    /// one while retaining adaptive code-native structure.
+    /// Hybrid delegates the complete chassis and its surface field to the
+    /// faction frame plus one deck-wide raster overlay. This layer owns only
+    /// the functional section separators. It deliberately draws no second
+    /// background, shoulders, circles or rails.
     /// </summary>
     private void DrawHybridInterior(Rect2 outer)
     {
         bool top = Role == HudFactionChromeRole.TopStrip;
-        float frameInset = Mathf.Clamp((top ? 16f : 31f) * _chromeScale,
-            8f, Math.Min(outer.Size.X, outer.Size.Y) * 0.42f);
+        float frameInset = Mathf.Clamp((top ? 11f : 18f) * _chromeScale,
+            7f, Math.Min(outer.Size.X, outer.Size.Y) * 0.32f);
         Rect2 interior = outer.Grow(-frameInset);
         if (interior.Size.X < 18f || interior.Size.Y < 8f) return;
 
-        float fieldAlpha = (top ? 0.16f : 0.10f) * _intensity;
-        DrawRect(interior, WithAlpha(_bayColor, fieldAlpha));
-
-        float halfWidth = Mathf.Clamp((top ? 1.8f : 2.8f) * _chromeScale, 1.4f, 4.5f);
-        float cap = Mathf.Clamp((top ? 2.5f : 5f) * _chromeScale, 2f, 7f);
+        float cap = Mathf.Clamp((top ? 2f : 7f) * _chromeScale, 2f, 10f);
+        float darkWidth = Mathf.Clamp((top ? 1.4f : 2.2f) * _chromeScale, 1f, 3.5f);
+        float signalWidth = Mathf.Clamp((top ? 0.7f : 1f) * _chromeScale, 0.65f, 1.5f);
         for (int i = 0; i < _junctions.Length; i++)
         {
             float x = Mathf.Lerp(interior.Position.X, interior.End.X, _junctions[i]);
-            Color signal = i % 2 == 0 ? _secondaryColor : _accentColor;
-            Rect2 spine = new(
-                new Vector2(x - halfWidth, interior.Position.Y + cap),
-                new Vector2(halfWidth * 2f, Math.Max(1f, interior.Size.Y - cap * 2f)));
-            DrawRect(spine, WithAlpha(_bayColor.Darkened(0.52f), 0.48f * _intensity));
-            DrawLine(new Vector2(x, spine.Position.Y), new Vector2(x, spine.End.Y),
-                WithAlpha(signal, 0.42f * _intensity), Mathf.Max(1f, 0.9f * _chromeScale), true);
-            DrawCircle(new Vector2(x, interior.GetCenter().Y), Mathf.Max(1.2f, 1.8f * _chromeScale),
-                WithAlpha(signal, 0.66f * _intensity));
+            float startY = interior.Position.Y + cap;
+            float endY = interior.End.Y - cap;
+            DrawLine(new Vector2(x, startY), new Vector2(x, endY),
+                WithAlpha(_bayColor.Darkened(0.64f), 0.62f * _intensity), darkWidth, true);
+            DrawLine(new Vector2(x + darkWidth * 0.64f, startY), new Vector2(x + darkWidth * 0.64f, endY),
+                WithAlpha(_secondaryColor, 0.24f * _intensity), signalWidth, true);
         }
     }
 

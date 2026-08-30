@@ -40,7 +40,7 @@ public partial class M7HudLab : Node3D
             else if (arguments[i] == "--m7-hud-palette") HudSurfacePaletteLibrary.Apply(_profile, ParsePalette(arguments[i + 1]));
             else if (arguments[i] == "--capture-path") _capturePath = arguments[i + 1];
         }
-        _profile.ArtSkin.Faction = FactionForScenario(_scenario);
+        BindFactionToScenario(_scenario);
         BuildWorldBackdrop();
         BuildHudPreview();
         BuildControls();
@@ -58,7 +58,7 @@ public partial class M7HudLab : Node3D
         if (valid && _capturePath is not null) valid = CaptureViewport(_capturePath);
         _finished = true;
         if (valid)
-            GD.Print($"M7 HUD LAB: PASS scenarios=8 commands=12 minimap=legal markers=11 remembered=2 factionSkins=5 finishes=4 palettes=6 safeArea={_profile.Layout.SafeAreaPercent:0.#} uiScale={_profile.Layout.UiScale:0.00} aspect={_aspect} schema={M7HudProfile.CurrentSchemaVersion} active={M7HudFixtures.Slug(_scenario)} finish={_profile.ArtSkin.Finish} palette={_profile.ArtSkin.SurfacePalette}");
+            GD.Print($"M7 HUD LAB: PASS scenarios=8 commands=12 minimap=legal markers=11 remembered=2 factionSkins=4 finishes=4 safeArea={_profile.Layout.SafeAreaPercent:0.#} uiScale={_profile.Layout.UiScale:0.00} aspect={_aspect} schema={M7HudProfile.CurrentSchemaVersion} active={M7HudFixtures.Slug(_scenario)} finish={_profile.ArtSkin.Finish} palette={_profile.ArtSkin.SurfacePalette}");
         else GD.PrintErr("M7 HUD LAB: FAIL");
         GetTree().Quit(valid ? 0 : 2);
     }
@@ -160,7 +160,7 @@ public partial class M7HudLab : Node3D
         VBoxContainer box = new() { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
         box.AddThemeConstantOverride("separation", 7); scroll.AddChild(box);
         Label title = LabLabel("M7 HUD LAB · HYBRID RTS CONSOLE", 20, new Color("e6ad28")); box.AddChild(title);
-        Label note = LabLabel("Неканонічний hybrid: адаптивна кодова конструкція + вибрані растрові механізми без розтягування. Палітра корпусу більше не прив'язана до navy або до фракційного atlas. 1–8 — стани; Tab ховає контролі.", 13, new Color("b7c0c5"));
+        Label note = LabLabel("Неканонічний hybrid: одна чиста адаптивна конструкція + захищені растрові деталі. Рамка, корпус і акценти зв'язані з однією з 4 фракцій; ручні кольори нижче — лише Custom audit. 1–8 — стани; Tab ховає контролі.", 13, new Color("b7c0c5"));
         note.AutowrapMode = TextServer.AutowrapMode.WordSmart; box.AddChild(note);
 
         AddSection(box, "SCENARIO FIXTURES");
@@ -200,38 +200,20 @@ public partial class M7HudLab : Node3D
             finishes.AddChild(button);
         }
 
-        AddSection(box, "SURFACE FAMILY · BROAD COLOR MASS");
-        AddNote(box, "Це незалежно від faction raster. Preset змінює сам корпус, панелі, recess, текст і сигнальні кольори; ручна правка нижче переводить профіль у Custom.");
-        GridContainer palettes = new() { Columns = 2 }; box.AddChild(palettes);
-        foreach ((string label, HudSurfacePalette palette) in new[]
-                 {
-                     ("LIGHT CERAMIC", HudSurfacePalette.LightCeramic),
-                     ("WARM SANDSTONE", HudSurfacePalette.WarmSandstone),
-                     ("OXIDE WORKSHOP", HudSurfacePalette.OxideWorkshop),
-                     ("FIELD OLIVE", HudSurfacePalette.FieldOlive),
-                     ("ALIEN PORCELAIN", HudSurfacePalette.AlienPorcelain),
-                     ("NEUTRAL GRAPHITE", HudSurfacePalette.NeutralGraphite)
-                 })
-        {
-            HudSurfacePalette selected = palette;
-            Button button = PaletteButton(label, selected);
-            button.Pressed += () =>
-            {
-                HudSurfacePaletteLibrary.Apply(_profile, selected);
-                ApplyAll();
-                SetStatus($"Surface family: {selected}");
-            };
-            palettes.AddChild(button);
-        }
-
-        AddSection(box, "FACTION ART SKIN");
+        AddSection(box, "FACTION HUD KIT · FRAME + SURFACE");
+        AddNote(box, "Одна кнопка застосовує повний набір кольорів, стінок, растра й рамки. Astronauts об'єднує Life on Mars field equipment та Mars Mission aerospace design; Aliens не використовує фіолетовий.");
         HFlowContainer factions = new(); box.AddChild(factions);
-        string[] factionNames = { "Rock Raiders", "Mars Mission · Astronauts", "Mars Mission · Aliens", "Life on Mars · Astronauts", "Life on Mars · Martians" };
+        string[] factionNames = { "Rock Raiders", "Astronauts", "Aliens", "Martians" };
         for (int i = 0; i < factionNames.Length; i++)
         {
             int faction = i;
             Button button = LabButton(factionNames[i]);
-            button.Pressed += () => { _profile.ArtSkin.Faction = faction; ApplyAll(); SetStatus($"Faction skin: {factionNames[faction]}"); };
+            button.Pressed += () =>
+            {
+                HudFactionSkinLibrary.Apply(_profile, faction);
+                ApplyAll();
+                SetStatus($"Faction HUD kit: {factionNames[faction]}");
+            };
             factions.AddChild(button);
         }
         AddToggle(box, "Faction chrome", () => _profile.ArtSkin.Enabled, value => _profile.ArtSkin.Enabled = value);
@@ -327,19 +309,19 @@ public partial class M7HudLab : Node3D
     private void SetScenario(M7HudScenario scenario)
     {
         _scenario = scenario;
-        _profile.ArtSkin.Faction = FactionForScenario(scenario);
+        BindFactionToScenario(scenario);
         ApplyAll();
         SetStatus($"Scenario {M7HudFixtures.Slug(scenario)}");
     }
 
-    private static int FactionForScenario(M7HudScenario scenario) => scenario switch
+    private void BindFactionToScenario(M7HudScenario scenario)
     {
-        M7HudScenario.AstronautTransform => 1,
-        M7HudScenario.AlienResonance => 2,
-        M7HudScenario.CriticalTooltip => 3,
-        M7HudScenario.MartianNetwork => 4,
-        _ => 0
-    };
+        int faction = HudFactionSkinLibrary.IndexFor(M7HudFixtures.Create(scenario).Faction);
+        if (_profile.ArtSkin.SurfacePalette == HudSurfacePalette.FactionBound)
+            HudFactionSkinLibrary.Apply(_profile, faction);
+        else
+            _profile.ArtSkin.Faction = faction;
+    }
 
     private void ApplyPreviewAspect()
     {
@@ -388,15 +370,15 @@ public partial class M7HudLab : Node3D
         bool schemaSixMigration = M7HudProfile.TryFromJson(schemaSix, out M7HudProfile migratedSix, out _) &&
             migratedSix.SchemaVersion == M7HudProfile.CurrentSchemaVersion &&
             migratedSix.ArtSkin.Finish == HudArtFinish.HybridConsole &&
-            migratedSix.ArtSkin.SurfacePalette == HudSurfacePalette.OxideWorkshop &&
+            migratedSix.ArtSkin.SurfacePalette == HudSurfacePalette.FactionBound &&
             Math.Abs(migratedSix.ArtSkin.ChromeIntensity - 0.73f) < 0.001f &&
             Math.Abs(migratedSix.ArtSkin.ChromeScale - 1.08f) < 0.001f &&
-            migratedSix.Colors.Background == "#522419" && migratedSix.Colors.Accent == "#ff8a36" &&
+            migratedSix.Colors.Background == "#303534" && migratedSix.Colors.Accent == "#a76538" &&
             M7HudProfile.TryFromJson(migratedSix.ToJson(), out M7HudProfile schemaSixRoundTrip, out _) &&
             schemaSixRoundTrip.SchemaVersion == M7HudProfile.CurrentSchemaVersion &&
             schemaSixRoundTrip.ArtSkin.Finish == HudArtFinish.HybridConsole &&
-            schemaSixRoundTrip.ArtSkin.SurfacePalette == HudSurfacePalette.OxideWorkshop &&
-            schemaSixRoundTrip.Colors.Background == "#522419";
+            schemaSixRoundTrip.ArtSkin.SurfacePalette == HudSurfacePalette.FactionBound &&
+            schemaSixRoundTrip.Colors.Background == "#303534";
         const string malformedColors = "{\"schemaVersion\":2,\"colors\":{\"background\":\"invalid\",\"accent\":null},\"minimap\":{\"enemyColor\":\"not-a-color\"}}";
         bool profileSanitization = M7HudProfile.TryFromJson(malformedColors, out M7HudProfile sanitized, out _) &&
             sanitized.Colors.Background == "#cfc6ae" && sanitized.Colors.Accent == "#d95f24" &&
@@ -409,8 +391,9 @@ public partial class M7HudLab : Node3D
             _hud.FindChild("MinimapSlot", true, false) is HudMinimapView &&
             _hud.FindChild("TacticalPortrait", true, false) is HudPortraitView &&
             _hud.FindChild("PortraitSlot", true, false) is PanelContainer &&
-            _hud.FindChild("SelectionPanelRasterSurface", true, false) is HudRasterSurfaceOverlay &&
-            _hud.FindChild("CommandPanelRasterSurface", true, false) is HudRasterSurfaceOverlay &&
+            _hud.FindChild("BottomDeckRasterSurface", true, false) is HudRasterSurfaceOverlay &&
+            _hud.FindChild("SelectionPanelRasterSurface", true, false) is null &&
+            _hud.FindChild("CommandPanelRasterSurface", true, false) is null &&
             _hud.FindChild("SelectionPanel", true, false) is PanelContainer && _hud.FindChild("CommandGrid", true, false) is GridContainer &&
             _hud.FindChild("EventFeed", true, false) is PanelContainer && _hud.FindChild("HudTooltip", true, false) is PanelContainer;
         HudFactionChrome? topChrome = _hud?.FindChild("ResourceStripFactionChrome", true, false) as HudFactionChrome;
@@ -419,14 +402,13 @@ public partial class M7HudLab : Node3D
         HudStructuralChrome? deckStructural = _hud?.FindChild("BottomDeckStructuralChrome", true, false) as HudStructuralChrome;
         bool factionArt = HudFactionChrome.ValidateRecipes(out _) &&
             topChrome is { IsConfigured: true, Role: HudFactionChromeRole.TopStrip, UsesFixedSquareCorners: true,
-                UsesProtectedSourceModules: true, UsesTiledEdgeWalls: true } &&
-            deckChrome is { IsConfigured: true, Role: HudFactionChromeRole.BottomDeck, UsesSparseJunctionModules: true,
-                UsesTiledEdgeWalls: true } &&
-            topStructural is { IsConfigured: true, Role: HudFactionChromeRole.TopStrip, UsesTiledConsoleSurface: true } &&
-            deckStructural is { IsConfigured: true, Role: HudFactionChromeRole.BottomDeck, UsesTiledConsoleSurface: true } &&
-            _hud?.FindChild("SelectionPanelRasterSurface", true, false) is HudRasterSurfaceOverlay
+                UsesProtectedSourceModules: true } &&
+            deckChrome is { IsConfigured: true, Role: HudFactionChromeRole.BottomDeck } &&
+            topStructural is { IsConfigured: true, Role: HudFactionChromeRole.TopStrip } &&
+            deckStructural is { IsConfigured: true, Role: HudFactionChromeRole.BottomDeck } &&
+            _hud?.FindChild("BottomDeckRasterSurface", true, false) is HudRasterSurfaceOverlay
                 { IsConfigured: true, UsesBoundedRasterPlates: true, UsesUnstretchedSourceRegions: true,
-                    UsesSingleContinuousSurfaceField: true } &&
+                    UsesSingleContinuousSurfaceField: true, UsesSingleDeckWideSurface: true } &&
             _hud?.FindChild("MinimapRegionFactionChrome", true, false) is null &&
             _hud?.FindChild("SelectionPanelFactionChrome", true, false) is null &&
             _hud?.FindChild("CommandPanelFactionChrome", true, false) is null &&
@@ -441,7 +423,7 @@ public partial class M7HudLab : Node3D
         bool objectiveBounded = _hud?.FindChild("ObjectiveTracker", true, false) is Control objective &&
             objective.Size.Y <= 100f * PreviewRenderScale();
         bool finishModes = ValidateFinishModes();
-        bool paletteModes = ValidatePaletteModes();
+        bool factionSkinModes = ValidateFactionSkinModes();
         bool layoutContained = ValidateSafeAreaContainment();
         bool interactionBindings = ValidateInteractiveBindings();
         bool productionKnowledge = ValidateProductionMinimapKnowledge();
@@ -463,10 +445,10 @@ public partial class M7HudLab : Node3D
             Kind = HudMinimapMarkerKind.GroundMobile, Relation = HudMinimapRelation.Enemy
         });
         bool leakGuard = !illegal.ValidateClientKnowledge(0, out _);
-        if (!(fixtures && roundTrip && migration && chromeMigration && schemaFiveMigration && schemaSixMigration && profileSanitization && mapping && tree && factionArt && finishModes && paletteModes && states && actionableBinding &&
+        if (!(fixtures && roundTrip && migration && chromeMigration && schemaFiveMigration && schemaSixMigration && profileSanitization && mapping && tree && factionArt && finishModes && factionSkinModes && states && actionableBinding &&
               objectiveBounded && layoutContained && interactionBindings && minimap && leakGuard && productionKnowledge))
-            GD.PrintErr($"M7 HUD LAB DETAIL: fixtures={fixtures} roundTrip={roundTrip} migration={migration} chromeMigration={chromeMigration} schema5={schemaFiveMigration} schema6={schemaSixMigration} sanitization={profileSanitization} mapping={mapping} tree={tree} factionArt={factionArt} finishes={finishModes} palettes={paletteModes} states={states} actionable={actionableBinding} objectiveBounded={objectiveBounded} layoutContained={layoutContained} interactions={interactionBindings} minimap={minimap} leakGuard={leakGuard} productionKnowledge={productionKnowledge}");
-        return fixtures && roundTrip && migration && chromeMigration && schemaFiveMigration && schemaSixMigration && profileSanitization && mapping && tree && factionArt && finishModes && paletteModes && states && actionableBinding &&
+            GD.PrintErr($"M7 HUD LAB DETAIL: fixtures={fixtures} roundTrip={roundTrip} migration={migration} chromeMigration={chromeMigration} schema5={schemaFiveMigration} schema6={schemaSixMigration} sanitization={profileSanitization} mapping={mapping} tree={tree} factionArt={factionArt} finishes={finishModes} factionSkins={factionSkinModes} states={states} actionable={actionableBinding} objectiveBounded={objectiveBounded} layoutContained={layoutContained} interactions={interactionBindings} minimap={minimap} leakGuard={leakGuard} productionKnowledge={productionKnowledge}");
+        return fixtures && roundTrip && migration && chromeMigration && schemaFiveMigration && schemaSixMigration && profileSanitization && mapping && tree && factionArt && finishModes && factionSkinModes && states && actionableBinding &&
             objectiveBounded && layoutContained && interactionBindings && minimap && leakGuard && productionKnowledge;
     }
 
@@ -524,21 +506,23 @@ public partial class M7HudLab : Node3D
             _hud.ApplyFrame(frame, true);
             HudFactionChrome? rasterFrame = _hud.FindChild("BottomDeckFactionChrome", true, false) as HudFactionChrome;
             HudStructuralChrome? structural = _hud.FindChild("BottomDeckStructuralChrome", true, false) as HudStructuralChrome;
-            HudRasterSurfaceOverlay? raster = _hud.FindChild("SelectionPanelRasterSurface", true, false) as HudRasterSurfaceOverlay;
+            HudRasterSurfaceOverlay? raster = _hud.FindChild("BottomDeckRasterSurface", true, false) as HudRasterSurfaceOverlay;
             valid &= finish switch
             {
                 HudArtFinish.HybridConsole =>
                     structural is { Visible: true, UsesInteriorOnlyHybrid: true, UsesSculptedShoulders: false,
-                        UsesFactionRasterModules: false } &&
+                        UsesFactionRasterModules: false, UsesCleanHybridSeparators: true } &&
                     rasterFrame is { Visible: true, IsFrameOnly: true, UsesFactionSurfaceFill: false,
-                        UsesVectorAccentRails: false } &&
-                    raster is { Visible: true, UsesSingleContinuousSurfaceField: true },
+                        UsesVectorAccentRails: true, UsesContinuousHybridRails: true, UsesTiledEdgeWalls: false,
+                        UsesSparseJunctionModules: false } &&
+                    raster is { Visible: true, UsesSingleContinuousSurfaceField: true, UsesSingleDeckWideSurface: true },
                 HudArtFinish.StructuralConsole =>
                     structural is { Visible: true, UsesInteriorOnlyHybrid: false, UsesSculptedShoulders: true,
                         UsesFactionRasterModules: false } && rasterFrame is { Visible: false } && raster is { Visible: false },
                 HudArtFinish.LegacyFrames =>
                     rasterFrame is { Visible: true, IsFrameOnly: false, UsesFactionSurfaceFill: true,
-                        UsesVectorAccentRails: true } && structural is { Visible: false } && raster is { Visible: false },
+                        UsesVectorAccentRails: true, UsesTiledEdgeWalls: true, UsesSparseJunctionModules: true } &&
+                    structural is { Visible: false } && raster is { Visible: false },
                 _ => rasterFrame is { Visible: false } && structural is { Visible: false } && raster is { Visible: false }
             };
             Rect2[]? rects = CapturePrimaryRects();
@@ -554,24 +538,31 @@ public partial class M7HudLab : Node3D
         return valid;
     }
 
-    private bool ValidatePaletteModes()
+    private bool ValidateFactionSkinModes()
     {
         if (_hud is null) return false;
         M7HudProfile original = _profile.Clone();
-        HudFrame frame = M7HudFixtures.Create(_scenario);
+        M7HudScenario[] scenarios =
+        {
+            M7HudScenario.RockRaiderUnit,
+            M7HudScenario.AstronautTransform,
+            M7HudScenario.AlienResonance,
+            M7HudScenario.MartianNetwork
+        };
         HashSet<string> signatures = new(StringComparer.Ordinal);
         Rect2[]? baseline = null;
         bool valid = true;
-        foreach (HudSurfacePalette palette in Enum.GetValues<HudSurfacePalette>())
+        for (int faction = 0; faction < HudFactionSkinLibrary.Count; faction++)
         {
-            if (palette == HudSurfacePalette.Custom) continue;
             M7HudProfile candidate = original.Clone();
             candidate.ArtSkin.Finish = HudArtFinish.HybridConsole;
-            HudSurfacePaletteLibrary.Apply(candidate, palette);
+            HudFactionSkinLibrary.Apply(candidate, faction);
             candidate.Normalize();
-            signatures.Add($"{candidate.Colors.Background}/{candidate.Colors.Raised}/{candidate.Colors.Recessed}/{candidate.Colors.TextPrimary}");
+            valid &= candidate.ArtSkin.SurfacePalette == HudSurfacePalette.FactionBound &&
+                candidate.ArtSkin.Faction == faction;
+            signatures.Add($"{candidate.Colors.Background}/{candidate.Colors.Raised}/{candidate.Colors.Recessed}/{candidate.Colors.Accent}/{candidate.Colors.TextPrimary}");
             _hud.ApplyProfile(candidate);
-            _hud.ApplyFrame(frame, true);
+            _hud.ApplyFrame(M7HudFixtures.Create(scenarios[faction]), true);
             Rect2[]? rects = CapturePrimaryRects();
             if (rects is null) valid = false;
             else if (baseline is null) baseline = rects;
@@ -579,9 +570,11 @@ public partial class M7HudLab : Node3D
                 for (int i = 0; i < baseline.Length; i++)
                     valid &= RectNearlyEqual(baseline[i], rects[i]);
         }
-        valid &= signatures.Count == 6;
+        HudFactionSkinRecipe alien = HudFactionSkinLibrary.RecipeFor((int)HudFaction.Aliens);
+        valid &= signatures.Count == HudFactionSkinLibrary.Count &&
+            alien.Background == "#111315" && alien.Accent == "#78b82a" && alien.Secondary == "#6f777b";
         _hud.ApplyProfile(original);
-        _hud.ApplyFrame(frame, true);
+        _hud.ApplyFrame(M7HudFixtures.Create(_scenario), true);
         ApplySyntheticCameraPolygon();
         return valid;
     }
@@ -648,7 +641,7 @@ public partial class M7HudLab : Node3D
                 commandButtonBounds.End.Y > commandBounds.End.Y + 0.5f)
                 return false;
         }
-        if (visibleWells != 12 || populatedCommands != expectedVisibleCommands ||
+        if (visibleWells != expectedVisibleCommands || populatedCommands != expectedVisibleCommands ||
             _hud.FindChild("BottomDeck", true, false) is not Control bottomDeck) return false;
 
         if (_hud.FindChild("MinimapRegion", true, false) is not Control minimapPanel ||
@@ -779,8 +772,9 @@ public partial class M7HudLab : Node3D
     private void ResetProfile()
     {
         _profile = M7HudProfile.CreateDefault();
+        BindFactionToScenario(_scenario);
         ApplyAll();
-        SetStatus("Reset to neutral functional baseline.");
+        SetStatus("Reset to the scenario's faction-bound HUD kit.");
     }
 
     private void AddSlider(Container parent, string name, double min, double max, double step, Func<double> getter, Action<double> setter)
@@ -829,31 +823,6 @@ public partial class M7HudLab : Node3D
     }
 
     private static Button LabButton(string text) => new() { Text = text, CustomMinimumSize = new Vector2(0, 30) };
-    private static Button PaletteButton(string text, HudSurfacePalette palette)
-    {
-        M7HudProfile preview = M7HudProfile.CreateDefault();
-        HudSurfacePaletteLibrary.Apply(preview, palette);
-        Color background = new(preview.Colors.Background);
-        Color raised = new(preview.Colors.Raised);
-        Color accent = new(preview.Colors.Accent);
-        Color foreground = new(preview.Colors.TextPrimary);
-        Button button = LabButton(text);
-        button.AddThemeColorOverride("font_color", foreground);
-        button.AddThemeColorOverride("font_hover_color", foreground);
-        button.AddThemeStyleboxOverride("normal", new StyleBoxFlat
-        {
-            BgColor = background, BorderColor = accent,
-            BorderWidthLeft = 2, BorderWidthTop = 2, BorderWidthRight = 2, BorderWidthBottom = 2,
-            ContentMarginLeft = 7, ContentMarginRight = 7, ContentMarginTop = 5, ContentMarginBottom = 5
-        });
-        button.AddThemeStyleboxOverride("hover", new StyleBoxFlat
-        {
-            BgColor = raised, BorderColor = accent,
-            BorderWidthLeft = 2, BorderWidthTop = 2, BorderWidthRight = 2, BorderWidthBottom = 2,
-            ContentMarginLeft = 7, ContentMarginRight = 7, ContentMarginTop = 5, ContentMarginBottom = 5
-        });
-        return button;
-    }
     private static Label LabLabel(string text, int size, Color color) { Label label = new() { Text = text }; label.AddThemeFontSizeOverride("font_size", size); label.AddThemeColorOverride("font_color", color); return label; }
     private static StyleBoxFlat PanelStyle(Color background, Color border) => new() { BgColor = new Color(background, 0.96f), BorderColor = border, BorderWidthLeft = 1, BorderWidthTop = 1, BorderWidthRight = 1, BorderWidthBottom = 1, CornerRadiusTopLeft = 7, CornerRadiusTopRight = 7, CornerRadiusBottomLeft = 7, CornerRadiusBottomRight = 7, ContentMarginLeft = 12, ContentMarginRight = 12, ContentMarginTop = 10, ContentMarginBottom = 10 };
     private void SetStatus(string text, bool error = false) { if (_status is null) return; _status.Text = text; _status.AddThemeColorOverride("font_color", error ? new Color("ff6b45") : new Color("65c987")); }
@@ -877,7 +846,8 @@ public partial class M7HudLab : Node3D
         "alien" or "alien-porcelain" => HudSurfacePalette.AlienPorcelain,
         "graphite" or "neutral-graphite" => HudSurfacePalette.NeutralGraphite,
         "custom" => HudSurfacePalette.Custom,
-        _ => HudSurfacePalette.LightCeramic
+        "faction" or "faction-bound" or "auto" or "canonical" => HudSurfacePalette.FactionBound,
+        _ => HudSurfacePalette.FactionBound
     };
 
     private void AddBuilding(Vector3 position, Vector3 size, Color color, string name)

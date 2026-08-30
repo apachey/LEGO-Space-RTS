@@ -35,7 +35,13 @@ required = [
     'GodotClient/Assets/M7/Textures/painted_shell_macro_v2.png',
     'GodotClient/Assets/M7/Textures/painted_shell_macro_v2.png.import',
     'GodotClient/Scripts/UI/BasicHud.cs','GodotClient/Scripts/UI/DebugHud.cs','GodotClient/Scripts/UI/M5PlaytestHud.cs',
-    'GodotClient/Scripts/UI/HudPortraitView.cs',
+    'GodotClient/Scripts/UI/HudPortraitView.cs','GodotClient/Scripts/UI/M7HudProfile.cs',
+    'GodotClient/Scripts/UI/HudFactionSkinLibrary.cs','GodotClient/Scripts/UI/HudFactionChrome.cs',
+    'GodotClient/Assets/M7/Hud/rock_raiders_frame.png','GodotClient/Assets/M7/Hud/astronauts_frame.png',
+    'GodotClient/Assets/M7/Hud/aliens_frame.png','GodotClient/Assets/M7/Hud/martians_frame.png',
+    'GodotClient/Assets/M7/Hud/astronauts_unified_frame_v2.png','GodotClient/Assets/M7/Hud/aliens_frame_v2.png',
+    'GodotClient/Assets/M7/Hud/astronauts_unified_frame_v2.png.import',
+    'GodotClient/Assets/M7/Hud/aliens_frame_v2.png.import',
     'SimCore/Runtime/Scenarios/M5AcceptanceScenarioFactory.cs','Docs/IMPLEMENTATION_REPORT.md',
     'tools/doctor.sh','tools/verify.sh','tools/run-game.sh','tools/build-mac.sh','tools/capture-visual-smoke.sh',
     'tools/setup-git-hooks.sh','.githooks/pre-commit','.githooks/pre-push',
@@ -108,10 +114,42 @@ hud_chrome = (ROOT/'GodotClient/Scripts/UI/HudFactionChrome.cs').read_text()
 hud_structural = (ROOT/'GodotClient/Scripts/UI/HudStructuralChrome.cs').read_text()
 hud_raster_surface = (ROOT/'GodotClient/Scripts/UI/HudRasterSurfaceOverlay.cs').read_text()
 hud_profile = (ROOT/'GodotClient/Scripts/UI/M7HudProfile.cs').read_text()
-check('CurrentSchemaVersion = 7' in hud_profile and 'Clamp(ArtSkin.Faction, 0, 4)' in hud_profile and
+hud_faction_skins = (ROOT/'GodotClient/Scripts/UI/HudFactionSkinLibrary.cs').read_text()
+check('CurrentSchemaVersion = 8' in hud_profile and
+      'Clamp(ArtSkin.Faction, 0, HudFactionSkinLibrary.Count - 1)' in hud_profile and
       'HudArtFinish Finish' in hud_profile and 'HybridConsole' in hud_profile and
-      'HudSurfacePalette SurfacePalette' in hud_profile and 'HudSurfacePaletteLibrary' in hud_profile,
-      'M7 HUD Profile schema 7 polished hybrid/palette domain missing')
+      'HudSurfacePalette SurfacePalette' in hud_profile and 'FactionBound' in hud_profile and
+      'HudSurfacePaletteLibrary' in hud_profile and 'HudFactionSkinLibrary.Apply' in hud_profile,
+      'M7 HUD Profile schema 8 faction-bound skin domain missing')
+for token in ['sourceSchemaVersion <= 7','parsed.ArtSkin.Faction switch','3 => 1','4 => 3',
+              'parsed.ArtSkin.SurfacePalette = HudSurfacePalette.FactionBound',
+              'parsed.ArtSkin.Finish = HudArtFinish.LegacyFrames']:
+    check(token in hud_profile, f'M7 HUD schema-8/Legacy migration coverage missing: {token}')
+for faction in ['RockRaiders','Astronauts','Aliens','Martians']:
+    check(hud_faction_skins.count(f'HudFaction.{faction}') == 1,
+          f'M7 HUD must define exactly one complete skin recipe for {faction}')
+for token in ['Count = 4','HudFactionSkinRecipe','HybridFramePath','LegacyFramePath',
+              'HudFactionRailStyle.Industrial','HudFactionRailStyle.Expedition',
+              'HudFactionRailStyle.Resonance','HudFactionRailStyle.Pneumatic',
+              'SharedGood','SharedWarning','SharedDanger','Validate(out string error)',
+              'profile.ArtSkin.Faction = (int)recipe.Faction',
+              'profile.ArtSkin.SurfacePalette = HudSurfacePalette.FactionBound',
+              'profile.Colors.Background = recipe.Background','profile.Colors.Accent = recipe.Accent',
+              'profile.Colors.Selection = recipe.Selection',
+              'astronauts_unified_frame_v2.png','aliens_frame_v2.png']:
+    check(token in hud_faction_skins, f'M7 four-faction HUD recipe library missing: {token}')
+check('life_on_mars_astronauts_frame.png' not in hud_faction_skins,
+      'retired Life on Mars astronaut sub-skin remains a fifth faction recipe')
+alien_recipe = hud_faction_skins.split('HudFaction.Aliens', 1)[-1].split('HudFaction.Martians', 1)[0]
+check('7754a6' not in alien_recipe.lower() and 'purple' not in alien_recipe.lower() and 'violet' not in alien_recipe.lower(),
+      'Alien HUD recipe reintroduced the rejected purple/violet palette')
+for frame_import in ['rock_raiders_frame.png.import','astronauts_frame.png.import',
+                     'aliens_frame.png.import','martians_frame.png.import',
+                     'astronauts_unified_frame_v2.png.import','aliens_frame_v2.png.import']:
+    import_path = ROOT/'GodotClient/Assets/M7/Hud'/frame_import
+    if import_path.exists():
+        check('mipmaps/generate=true' in import_path.read_text(),
+              f'M7 HUD frame must import with RTS-zoom mipmaps: {frame_import}')
 hud_minimap = (ROOT/'GodotClient/Scripts/UI/HudMinimapView.cs').read_text()
 minimap_source = (ROOT/'GodotClient/Scripts/Presentation/MinimapPresentationSource.cs').read_text()
 input_controller = (ROOT/'GodotClient/Scripts/Presentation/RtsInputController.cs').read_text()
@@ -124,21 +162,28 @@ for token in ['HudPortraitView','DrawVehicle','DrawGroup','DrawStructure','DrawT
     check(token in hud_portrait, f'M7 code-native tactical portrait missing: {token}')
 for token in ['HudFactionChromeRole.BottomDeck','UsesSparseJunctionModules','UsesTiledEdgeWalls',
               'UsesFactionSurfaceFill','DrawTiledEdgeWalls','DrawHorizontalTiles','DrawVerticalTiles',
-              'DrawSurfaceFill','SurfaceForFaction','DrawFunctionalModules','SetJunctions']:
+              'DrawLegacySurfaceFill','DrawLegacyRails','DrawFunctionalModules','SetJunctions']:
     check(token in hud_view + hud_chrome, f'M7 continuous faction control-deck chrome missing: {token}')
+for token in ['UsesContinuousHybridRails','DrawContinuousHybridRails',
+              'UsesTiledEdgeWalls => !_frameOnly','UsesSparseJunctionModules => !_frameOnly',
+              'UsesFactionSurfaceFill => !_frameOnly','ClipContents = true']:
+    check(token in hud_chrome, f'M7 clean hybrid/retained Legacy composition missing: {token}')
 for token in ['ConsoleSurfaceTexturePath','UsesTiledConsoleSurface','UsesSculptedShoulders',
               'UsesInteriorOnlyHybrid','DrawHybridInterior','ProtectedSourceSizeForFaction',
               'CreateChassisShape','DrawRecessedBays','DrawLayeredRails','SetJunctions']:
     check(token in hud_structural + hud_chrome, f'M7 structural RTS console chrome missing: {token}')
-for token in ['IsFrameOnly','UsesVectorAccentRails','if (!_frameOnly) DrawSurfaceFill',
-              'if (!_frameOnly) DrawRails','rasterFrameFinish','hybridFinish']:
+for token in ['IsFrameOnly','UsesVectorAccentRails','rasterFrameFinish','hybridFinish']:
     check(token in hud_chrome + hud_view, f'M7 hybrid legacy-frame/vector-interior composition missing: {token}')
 check((ROOT/'GodotClient/Assets/M7/Hud/console_surface_v1.png').exists(),
       'M7 structural console raster surface missing')
 for token in ['HudRasterSurfaceOverlay','UsesBoundedRasterPlates','UsesUnstretchedSourceRegions',
-              'UsesSingleContinuousSurfaceField','CropToAspect','HudRasterSurfaceRole.Selection','HudRasterSurfaceRole.Command',
+              'UsesSingleContinuousSurfaceField','UsesSingleDeckWideSurface','CropToAspect',
+              'HudRasterSurfaceRole.BottomDeck',
               'Name = $"{name}RasterSurface"']:
     check(token in hud_raster_surface + hud_view, f'M7 hybrid raster fill detail missing: {token}')
+check('HudRasterSurfaceRole.Selection' not in hud_raster_surface + hud_view and
+      'HudRasterSurfaceRole.Command' not in hud_raster_surface + hud_view,
+      'M7 Hybrid still layers competing selection/command raster surface systems')
 check('HudFactionChromeRole.SquarePanel' not in hud_view + hud_chrome and
       'HudFactionChromeRole.MainPanel' not in hud_view + hud_chrome,
       'M7 HUD returned to separately framed/stretched inner panels')
@@ -157,10 +202,14 @@ for token in ['ResponsiveWidthRatio','EffectiveLayoutScale','EffectiveInnerPaddi
     check(token not in hud_view, f'M7 HUD control is silently capped by viewport width: {token}')
 check('ValidateInteractiveBindings' in hud_lab and 'outlineAlpha' in hud_lab and 'alertRequests' in hud_lab,
       'M7 HUD interaction regression gate missing')
-for token in ['ValidatePaletteModes','HudSurfacePalette.LightCeramic','HudSurfacePalette.WarmSandstone',
-              'HudSurfacePalette.OxideWorkshop','HudSurfacePalette.FieldOlive',
-              'HudSurfacePalette.AlienPorcelain','HudSurfacePalette.NeutralGraphite']:
-    check(token in hud_lab + hud_profile, f'M7 HUD broad palette comparison missing: {token}')
+for token in ['ValidateFactionSkinModes','HudSurfacePalette.FactionBound',
+              'HudFactionSkinLibrary.Apply','HudFactionSkinLibrary.Validate',
+              'HudFactionChrome.ValidateRecipes','factionSkins=4']:
+    check(token in hud_lab + hud_profile + hud_faction_skins + hud_chrome,
+          f'M7 HUD faction-bound skin validation missing: {token}')
+check('factionSkins=5' not in hud_lab, 'M7 HUD lab still reports a retired fifth faction skin')
+check('SURFACE FAMILY' not in hud_lab,
+      'M7 HUD lab still presents frame and surface family as independent normal-use systems')
 for token in ['SafeAreaPercent { get; set; } = 98f','UiScale','TextScale','CommandPanelWidth','SelectionMaxWidth']:
     check(token in hud_profile, f'T068 responsive HUD profile missing: {token}')
 check('CommandCapacity = 12' in hud_view and 'GroupCapacity = 8' in hud_view,

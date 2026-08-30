@@ -17,14 +17,18 @@ an A/B between map-scale authored terrain composition and a new visible
 Raster Forward treatment, five world-specific exploratory surface identities,
 depressed tracks and complete JSON copy/paste. The prior raster treatment is
 retained only for copied-profile migration. T068 now
-provides a separate responsive full-HUD framework and
-T069 replaces its minimap placeholder with a client-legal north-up tactical map;
-the HUD Lab is now schema 6 with a full-width RTS command console and four
-same-geometry finishes: Hybrid Vector + Raster, Structural Console, all five
-preserved Legacy Frames and Clean. Six independent broad surface families make
-the console body a separate art-direction axis from faction identity; the old
-dark-navy test baseline is neither default nor canon. Its visual language
-remains explicitly non-canonical. A post-T069
+provides a separate responsive full-HUD framework and T069 replaces its minimap
+placeholder with a client-legal north-up tactical map. The HUD Lab is now schema
+8 with a full-width RTS command console and four same-geometry finishes: Hybrid
+Vector + Raster, Structural Console, preserved Legacy Frames and Clean. Normal
+use exposes exactly four faction-bound visual recipes: Rock Raiders, one unified
+Astronaut kit, corrected black/lime Aliens without purple, and Martians. Frame,
+shell surfaces and accents change together; the former six independent surface
+families survive only as migration/debug history. Hybrid keeps authored raster
+detail in protected modules, joins it with responsive vector structure, uses one
+continuous bounded console interior and assigns each divider to one renderer.
+The old dark-navy test baseline is neither default nor canon. HUD visual
+language remains explicitly non-canonical. A post-T069
 quality revision makes outline/halo independent from
 the style post-pass, hardens profile paste, bounds VFX event memory and avoids
 unrelated live material rebuilds. HUD and health visuals remain excluded from the world Look Lab. The
@@ -273,26 +277,31 @@ live; the current schema-9 copy/paste retains the complete experiment.
   3×4 command card; the local production queue is a compact strip above it.
 - `F8` → **M7 HUD Lab** provides eight information-density fixtures, four
   aspect previews, live layout/type/surface/content/color tokens and complete
-  schema-7 JSON copy/paste, including schemas 1–6 migration. Hybrid,
+  schema-8 JSON copy/paste, including schemas 1–7 migration. Hybrid,
   Structural, Legacy and Clean finishes share invariant panel geometry and hit
-  targets. Hybrid now reuses the complete tiled raster edge walls, protected
-  corners and junction modules from Legacy Frames as its only visible outer
-  frame; it removes their old faction-dark fill and extra vector rails. A quiet
-  code-native interior retains adaptive junctions, and one continuous,
-  aspect-cropped console raster fills each selection/command bay without
-  stretching or repeated boxed plates. Structural isolates the earlier vector
-  chassis, Legacy remains an unmodified comparison and Clean exposes the
-  functional skeleton. Six
-  broad surface families—Light Ceramic, Warm Sandstone, Oxide Workshop, Field
-  Olive, Alien Porcelain and Neutral Graphite—are independent from faction art
-  and alter the full console mass rather than tinting one navy theme. One
-  continuous bottom control deck joins minimap, selection, portrait and
-  commands. A code-native faction-coloured blueprint portrait distinguishes units, groups,
-  structures and transformations. Rock Raiders, Mars Mission
-  Astronauts/Aliens and Life on Mars Astronauts/Martians remain visually
-  distinct without changing the locked HUD anchors.
+  targets. Hybrid protects authored raster corner/material detail, bridges it
+  with responsive code-native rails, clips decoration behind content and uses
+  one continuous interior with a single owner for every functional divider.
+  Complete square frames are no longer repeated as edge tiles or re-cropped into
+  duplicate ornaments. Structural isolates the earlier vector chassis, Legacy
+  preserves the old full-frame renderer for direct comparison and Clean exposes
+  the functional skeleton.
+
+  Schema 8 replaces independent named surface palettes in normal use with one
+  complete recipe per playable faction. Rock Raiders bind industrial grey,
+  dark turquoise and meaningful earth brown; Astronauts use one coherent
+  white/light-grey, medium-blue and restrained-orange kit spanning both human
+  source traditions; Aliens bind black/lime without the erroneous purple; and
+  Martians bind tan, sand-red and blue pneumatic construction with controlled
+  lime energy. Frame, shell and accents cannot drift apart unless the lab is
+  explicitly switched to **Custom** audit colors. Shared warning/danger semantics
+  remain stable. The retired fifth Life on Mars human art slot migrates to the
+  unified Astronaut recipe. A code-native faction-coloured blueprint portrait
+  still distinguishes units, groups, structures and transformations without
+  changing the locked HUD anchors.
   Details are in
-  `Docs/Development/M7_HUD_LAB.md`.
+  `Docs/Development/M7_HUD_LAB.md`; source and regeneration rules are in
+  `Docs/Development/M7_HUD_FRAME_AUDIT.md`.
 - T068 does not approve HUD art direction. Authored icons, portraits,
   typography, faction framing, alert motion/audio and health-bar visuals remain
   game-director review work. T073 still owns the complete command catalog.
@@ -355,11 +364,15 @@ live; the current schema-9 copy/paste retains the complete experiment.
   reviewed desert/sand-covered-slab identity; Mars, Moon, Planet U and
   Underground route distinct exploratory ground palettes and track dust.
   Schema 1–8 profiles retain their prior treatment meanings through migration.
-  The HUD Lab now uses the retained Legacy raster wall as Hybrid's sole outer
-  frame, with a code-native adaptive interior, continuous aspect-cropped raster
-  fields and broad non-faction surface palettes;
-  minimap, selection and commands remain code-native contiguous sections rather
-  than separately framed texture cards. Automation asserts that major panels
+  The HUD Lab schema-8 revision replaces the dirty repeated-frame composition
+  with protected raster modules, responsive vector rails, a clipped continuous
+  interior and one divider owner. The frame and complete shell palette now bind
+  to exactly four playable-faction recipes; the Astronaut sources share one kit
+  and Alien purple is removed. Legacy retains the old frame renderer for honest
+  A/B comparison, while the former named non-faction palettes are migration or
+  explicit Custom-audit history. Minimap, selection and commands remain
+  code-native contiguous sections rather than separately framed texture cards.
+  Automation asserts that major panels
   and every visible command remain inside the safe area, including all 12 slots
   in the mixed-army fixture, across the four supported default-profile aspect
   fixtures. Laboratory scale, type, opacity, padding, spacing and command-fill
@@ -383,7 +396,17 @@ live; the current schema-9 copy/paste retains the complete experiment.
 
 ## Verification state
 
-The current M7 logical-hybrid-ground/polished-hybrid-HUD revision passed
+The schema-8 faction-bound HUD revision passed `./tools/verify.sh --full` on
+2026-08-30 with **zero blocking failures**: 278 NUnit tests, all retained M6/M7
+smokes, all four faction-bound Hybrid recipes, Structural/Legacy/Clean
+comparisons, 16:9/16:10/21:9/4:3 HUD containment, 100-repeat determinism,
+replay/snapshot continuation, content regeneration and a launchable macOS
+export. Exact summary:
+`Artifacts/Verification/20260829T223757Z-full-summary.txt`. The preserved
+60-mover M9 diagnostic again reported 2/60 completion and remains
+`BLOCKING_LATER`; it does not block M7 and no movement architecture was changed.
+
+The preceding schema-7 logical-hybrid-ground/polished-hybrid-HUD revision passed
 `./tools/verify.sh --full` on 2026-08-29 with **zero blocking failures**: 278
 NUnit tests, 24/24 representative mover acceptance, every T058–T063 ENet
 smoke, all visual/palette pages, schema-9 Look Lab cases covering Authored
@@ -517,9 +540,9 @@ blocking only when M9 must prove its stable-large-battle exit.
 1. Begin M8 T070: import all 35 canonical unit definitions without inventing or
    rebalancing roster content.
 2. The game director may independently explore `F8` → **M7 HUD Lab** and return
-   its Hybrid/Structural/Legacy/Clean comparison and six surface families, then
-   return a **COPY JSON** profile later; no HUD visual canon is required to
-   begin T070.
+   its Hybrid/Structural/Legacy/Clean comparison across the four faction-bound
+   recipes, then return a **COPY JSON** profile later; no HUD visual canon is
+   required to begin T070.
 3. The gameplay-scale **M7 Look Lab** remains available for world-style review;
    compare the named Authored surface with Raster Forward rather than the
    migration-only Legacy result. Do not record T064 acceptance until the game
