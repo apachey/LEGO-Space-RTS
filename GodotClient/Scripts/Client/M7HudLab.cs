@@ -18,9 +18,13 @@ public partial class M7HudLab : Node3D
     private Label? _status;
     private bool _controlsVisible = true;
     private bool _smoke;
+    private bool _smokeValidated;
+    private bool _smokeValidationResult;
     private bool _finished;
     private int _smokeExitCode;
     private int _frames;
+    private int _captureReadyFrame;
+    private int _quitReadyFrame;
     private string? _capturePath;
     private Vector2 _labCameraCenter = new(83f, 80f);
 
@@ -65,18 +69,27 @@ public partial class M7HudLab : Node3D
         _frames++;
         if (_finished)
         {
-            // Validation changes finishes, faction masks and preview sizes in
-            // one frame. Let the rendering server consume those queued canvas
-            // updates before destroying the headless viewport; otherwise the
-            // alpha-mask backbuffer can race Godot's shutdown on macOS.
-            if (_frames >= 32) GetTree().Quit(_smokeExitCode);
+            if (_frames >= _quitReadyFrame) GetTree().Quit(_smokeExitCode);
             return;
         }
         if (_frames < 24) return;
-        bool valid = ValidateLab();
+        if (!_smokeValidated)
+        {
+            // Validation intentionally cycles every finish and faction before
+            // restoring the requested state. A same-frame capture can contain
+            // stale canvas layers from one of those probes. Give the renderer
+            // several complete frames to redraw the restored composition.
+            _smokeValidationResult = ValidateLab();
+            _smokeValidated = true;
+            _captureReadyFrame = _frames + 4;
+            return;
+        }
+        if (_frames < _captureReadyFrame) return;
+        bool valid = _smokeValidationResult;
         if (valid && _capturePath is not null) valid = CaptureViewport(_capturePath);
         _finished = true;
         _smokeExitCode = valid ? 0 : 2;
+        _quitReadyFrame = _frames + 4;
         if (valid)
             GD.Print($"M7 HUD LAB: PASS scenarios=8 commands=12 minimap=legal markers=11 remembered=2 factionSkins=4 finishes=4 safeArea={_profile.Layout.SafeAreaPercent:0.#} uiScale={_profile.Layout.UiScale:0.00} aspect={_aspect} schema={M7HudProfile.CurrentSchemaVersion} active={M7HudFixtures.Slug(_scenario)} finish={_profile.ArtSkin.Finish} palette={_profile.ArtSkin.SurfacePalette} apertureMasks=4 kitSwitch=interactive kit={HudFactionSkinLibrary.RecipeFor(_profile.ArtSkin.Faction).Name}");
         else GD.PrintErr("M7 HUD LAB: FAIL");
@@ -575,11 +588,12 @@ public partial class M7HudLab : Node3D
                     structural is { Visible: true, UsesInteriorOnlyHybrid: true, UsesSculptedShoulders: false,
                         UsesFactionRasterModules: false, UsesCleanHybridSeparators: true } &&
                     rasterFrame is { Visible: true, IsFrameOnly: true, UsesFactionSurfaceFill: false,
-                        UsesVectorAccentRails: true, UsesContinuousHybridRails: true, UsesTiledEdgeWalls: false,
+                        UsesVectorAccentRails: false, UsesContinuousHybridRails: false, UsesTiledEdgeWalls: true,
                         UsesSparseJunctionModules: false, UsesCompleteHybridPerimeter: true,
                         UsesIsotropicRasterModules: true, AvoidsFullSpanRasterStretch: true } &&
                     mask is { UsesFactionApertureMask: true, UsesShaderApertureMask: true,
                         UsesShapedApertureCorners: true, HasTransparentOuterCorners: true,
+                        HasTransparentOuterBorder: true, ApertureCoverage: > 0.20f,
                         UsesFullBleedBottomDeck: true,
                         ClipsRasterAndContent: true, RegisteredMaskedSurfaceCount: >= 4 } &&
                     raster is { Visible: true, UsesSingleContinuousSurfaceField: true, UsesSingleDeckWideSurface: true },
@@ -593,6 +607,7 @@ public partial class M7HudLab : Node3D
                         UsesVectorAccentRails: true, UsesTiledEdgeWalls: true, UsesSparseJunctionModules: true } &&
                     mask is { UsesFactionApertureMask: true, UsesShaderApertureMask: true,
                         UsesShapedApertureCorners: true, HasTransparentOuterCorners: true,
+                        HasTransparentOuterBorder: true, ApertureCoverage: > 0.20f,
                         UsesFullBleedBottomDeck: true,
                         ClipsRasterAndContent: true, RegisteredMaskedSurfaceCount: >= 4 } &&
                     structural is { Visible: false } && raster is { Visible: false },
@@ -649,6 +664,8 @@ public partial class M7HudLab : Node3D
                 deckMask.UsesShaderApertureMask == expectsApertureMask &&
                 topMask.UsesShapedApertureCorners && deckMask.UsesShapedApertureCorners &&
                 topMask.HasTransparentOuterCorners && deckMask.HasTransparentOuterCorners &&
+                topMask.HasTransparentOuterBorder && deckMask.HasTransparentOuterBorder &&
+                topMask.ApertureCoverage > 0.20f && deckMask.ApertureCoverage > 0.20f &&
                 deckMask.UsesFullBleedBottomDeck && deckMask.RegisteredMaskedSurfaceCount >= 4 &&
                 topMask.Faction == recipe.Faction && deckMask.Faction == recipe.Faction &&
                 (faction != (int)HudFaction.RockRaiders ||
@@ -656,7 +673,7 @@ public partial class M7HudLab : Node3D
                     RelativeLuminance(deckMask.SurfaceFillColor) < 0.18f) &&
                 kitButton is not null;
             signatures.Add($"{_profile.Colors.Background}/{_profile.Colors.Raised}/{_profile.Colors.Recessed}/{_profile.Colors.Accent}/{_profile.Colors.TextPrimary}");
-            apertureSignatures.Add($"{recipe.ApertureInsetRatios}/{recipe.DestinationScale:0.00}/{recipe.ApertureCornerRadiusFraction:0.00}");
+            apertureSignatures.Add($"{recipe.ApertureInsetRatios}/{recipe.DestinationScale:0.00}");
 
             if (_hud.FindChild("ResourceStrip", true, false) is not Control top ||
                 _hud.FindChild("BottomDeck", true, false) is not Control deck) valid = false;

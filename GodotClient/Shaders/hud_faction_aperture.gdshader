@@ -1,7 +1,7 @@
 shader_type canvas_item;
 render_mode unshaded;
 
-uniform sampler2D aperture_mask : filter_linear_mipmap, repeat_disable;
+uniform sampler2D aperture_mask : filter_linear, repeat_disable;
 uniform vec2 mask_source_size = vec2(256.0);
 uniform float mask_source_corner = 48.0;
 uniform vec4 mask_screen_rect = vec4(0.0, 0.0, 1.0, 1.0);

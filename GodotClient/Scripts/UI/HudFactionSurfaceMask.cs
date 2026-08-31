@@ -25,6 +25,9 @@ public partial class HudFactionSurfaceMask : Control
     private float _panelOpacity = 1f;
     private Color _surfaceColor = new("171b1a");
     private int _fallbackPadding;
+    private bool _hasTransparentOuterCorners;
+    private bool _hasTransparentOuterBorder;
+    private float _apertureCoverage;
 
     public HudFactionChromeRole Role { get; private set; }
     public HudFaction Faction => _recipe.Faction;
@@ -36,8 +39,10 @@ public partial class HudFactionSurfaceMask : Control
     public bool UsesShaderApertureMask => UsesFactionApertureMask &&
         ClipChildren == ClipChildrenMode.Disabled;
     public bool ClipsRasterAndContent => UsesFactionApertureMask;
-    public bool UsesShapedApertureCorners => _recipe.ApertureCornerRadiusFraction > 0f;
-    public bool HasTransparentOuterCorners => MaskCornersAreTransparent(_maskTexture);
+    public bool UsesShapedApertureCorners => IsConfigured;
+    public bool HasTransparentOuterCorners => _hasTransparentOuterCorners;
+    public bool HasTransparentOuterBorder => _hasTransparentOuterBorder;
+    public float ApertureCoverage => _apertureCoverage;
     public bool UsesFullBleedBottomDeck => Role == HudFactionChromeRole.BottomDeck;
     public Color SurfaceFillColor => new(_surfaceColor, _panelOpacity);
     public int RegisteredMaskedSurfaceCount => _registeredSurfaceMaterials.Count;
@@ -69,8 +74,10 @@ public partial class HudFactionSurfaceMask : Control
             : null;
         _maskTexture = _frameTexture is null
             ? null
-            : GetOrCreateMask(framePath, _frameTexture, _recipe,
-                _recipe.ApertureCornerRadiusFraction);
+            : GetOrCreateMask(framePath, _frameTexture);
+        _hasTransparentOuterCorners = MaskCornersAreTransparent(_maskTexture);
+        _hasTransparentOuterBorder = MaskOuterBorderIsTransparent(_maskTexture);
+        _apertureCoverage = MaskCoverage(_maskTexture);
         EnsureApertureMaterial();
         ClipChildren = ClipChildrenMode.Disabled;
         Material = null;
@@ -247,10 +254,9 @@ public partial class HudFactionSurfaceMask : Control
         }
     }
 
-    private static Texture2D? GetOrCreateMask(string path, Texture2D frameTexture,
-        HudFactionSkinRecipe recipe, float cornerRadiusFraction)
+    private static Texture2D? GetOrCreateMask(string path, Texture2D frameTexture)
     {
-        string cacheKey = $"{path}|{cornerRadiusFraction:0.000}";
+        string cacheKey = $"{path}|authored-aperture-v2";
         if (MaskCache.TryGetValue(cacheKey, out Texture2D? cached)) return cached;
         Image sourceImage = frameTexture.GetImage();
         if (sourceImage.IsEmpty()) return null;
@@ -270,20 +276,12 @@ public partial class HudFactionSurfaceMask : Control
         int write = 0;
         queue[write++] = center;
         aperture[center] = 1;
-        int minX = width / 2;
-        int maxX = minX;
-        int minY = height / 2;
-        int maxY = minY;
         bool touchesExterior = false;
         while (read < write)
         {
             int index = queue[read++];
             int x = index % width;
             int y = index / width;
-            minX = Math.Min(minX, x);
-            maxX = Math.Max(maxX, x);
-            minY = Math.Min(minY, y);
-            maxY = Math.Max(maxY, y);
             if (x == 0 || y == 0 || x == width - 1 || y == height - 1) touchesExterior = true;
             Visit(index - 1, x > 0);
             Visit(index + 1, x + 1 < width);
@@ -292,62 +290,19 @@ public partial class HudFactionSurfaceMask : Control
         }
         if (touchesExterior || write < pixelCount / 20) return null;
 
-        int sourceCorner = HudFactionChrome.SourceCornerSize(frameTexture, recipe);
-        if (cornerRadiusFraction > 0.001f)
-        {
-            int apertureRadius = Math.Max(2,
-                Mathf.RoundToInt(sourceCorner * cornerRadiusFraction));
-            apertureRadius = Math.Min(apertureRadius,
-                Math.Max(2, Math.Min(maxX - minX + 1, maxY - minY + 1) / 3));
-            for (int y = minY; y <= maxY; y++)
-            for (int x = minX; x <= maxX; x++)
-            {
-                int index = y * width + x;
-                if (aperture[index] != 0 &&
-                    !InsideRoundedRect(x, y, minX, minY, maxX, maxY, apertureRadius))
-                    aperture[index] = 0;
-            }
-        }
-
-        int overlap = Math.Max(1, Mathf.RoundToInt(sourceCorner * 0.07f));
-        byte[] horizontal = new byte[pixelCount];
-        for (int y = 0; y < height; y++)
-        {
-            int row = y * width;
-            int count = 0;
-            for (int x = 0; x <= Math.Min(overlap, width - 1); x++) count += aperture[row + x];
-            for (int x = 0; x < width; x++)
-            {
-                horizontal[row + x] = count > 0 ? (byte)1 : (byte)0;
-                int remove = x - overlap;
-                int add = x + overlap + 1;
-                if (remove >= 0) count -= aperture[row + remove];
-                if (add < width) count += aperture[row + add];
-            }
-        }
-
+        // The connected transparent center is the authored aperture. Do not
+        // round or dilate it: dilation crossed thin frame sections and leaked
+        // the black inner border / light plate into the exterior, while the
+        // synthetic rounded rectangle cut valid Rock Raiders content away.
         byte[] rgba = new byte[pixelCount * 4];
-        for (int x = 0; x < width; x++)
+        for (int index = 0; index < pixelCount; index++)
         {
-            int count = 0;
-            for (int y = 0; y <= Math.Min(overlap, height - 1); y++) count += horizontal[y * width + x];
-            for (int y = 0; y < height; y++)
-            {
-                int index = y * width + x;
-                if (count > 0)
-                {
-                    int target = index * 4;
-                    rgba[target] = rgba[target + 1] = rgba[target + 2] = rgba[target + 3] = 255;
-                }
-                int remove = y - overlap;
-                int add = y + overlap + 1;
-                if (remove >= 0) count -= horizontal[remove * width + x];
-                if (add < height) count += horizontal[add * width + x];
-            }
+            if (aperture[index] == 0) continue;
+            int target = index * 4;
+            rgba[target] = rgba[target + 1] = rgba[target + 2] = rgba[target + 3] = 255;
         }
 
         Image maskImage = Image.CreateFromData(width, height, false, Image.Format.Rgba8, rgba);
-        maskImage.GenerateMipmaps();
         Texture2D mask = ImageTexture.CreateFromImage(maskImage);
         MaskCache[cacheKey] = mask;
         return mask;
@@ -373,13 +328,31 @@ public partial class HudFactionSurfaceMask : Control
             image.GetPixel(right, bottom).A <= 0.02f;
     }
 
-    private static bool InsideRoundedRect(int x, int y, int minX, int minY,
-        int maxX, int maxY, int radius)
+    private static bool MaskOuterBorderIsTransparent(Texture2D? texture)
     {
-        int nearestX = Math.Clamp(x, minX + radius, maxX - radius);
-        int nearestY = Math.Clamp(y, minY + radius, maxY - radius);
-        long dx = x - nearestX;
-        long dy = y - nearestY;
-        return dx * dx + dy * dy <= (long)radius * radius;
+        if (texture is null) return false;
+        Image image = texture.GetImage();
+        if (image.IsEmpty() || image.GetWidth() < 2 || image.GetHeight() < 2) return false;
+        int right = image.GetWidth() - 1;
+        int bottom = image.GetHeight() - 1;
+        for (int x = 0; x <= right; x++)
+            if (image.GetPixel(x, 0).A > 0.02f || image.GetPixel(x, bottom).A > 0.02f) return false;
+        for (int y = 0; y <= bottom; y++)
+            if (image.GetPixel(0, y).A > 0.02f || image.GetPixel(right, y).A > 0.02f) return false;
+        return true;
+    }
+
+    private static float MaskCoverage(Texture2D? texture)
+    {
+        if (texture is null) return 0f;
+        Image image = texture.GetImage();
+        if (image.IsEmpty()) return 0f;
+        int width = image.GetWidth();
+        int height = image.GetHeight();
+        int covered = 0;
+        for (int y = 0; y < height; y++)
+        for (int x = 0; x < width; x++)
+            if (image.GetPixel(x, y).A > 0.5f) covered++;
+        return covered / (float)(width * height);
     }
 }

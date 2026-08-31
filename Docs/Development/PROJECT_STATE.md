@@ -25,8 +25,9 @@ use exposes exactly four faction-bound visual recipes: Rock Raiders, one unified
 Astronaut kit, corrected black/lime Aliens without purple, and Martians. Frame,
 shell surfaces and accents change together; the former six independent surface
 families survive only as migration/debug history. Hybrid keeps authored raster
-detail in protected modules, joins it with responsive vector structure, uses one
-continuous bounded console interior and assigns each divider to one renderer.
+detail in protected corner modules, continues the actual faction frame along
+every side with unstretched isotropic edge tiling, uses one continuous bounded
+console interior and assigns each divider to one renderer.
 The old dark-navy test baseline is neither default nor canon. HUD visual
 language remains explicitly non-canonical. A post-T069
 quality revision makes outline/halo independent from
@@ -279,23 +280,24 @@ live; the current schema-9 copy/paste retains the complete experiment.
   aspect previews, live layout/type/surface/content/color tokens and complete
   schema-8 JSON copy/paste, including schemas 1–7 migration. Hybrid,
   Structural, Legacy and Clean finishes share invariant outer chassis geometry
-  and hit targets. Hybrid derives a separate alpha aperture from each faction's
-  actual frame, applies a faction-tuned rounded inner corner, and draws the
-  complete perimeter last. The lower plate is full-bleed beneath the frame;
+  and hit targets. Hybrid derives the exact closed inner alpha aperture from
+  each faction's actual frame and draws the complete perimeter last. It adds no
+  generic corner radius or dilation that can cut into controls or cross the
+  authored wall. The lower plate is full-bleed beneath the frame;
   one nine-slice shader masks its raster field, minimap, fog/markers and outer
   command surface without relying on Godot's Z-sensitive backbuffer clipping.
-  The surface fill and those registered edge surfaces share the same rounded
+  The surface fill and those registered edge surfaces share the same authored
   aperture, leaving its exterior corner pixels transparent rather than restoring
-  a square backing. Hybrid vector rails stop at the protected raster-corner
-  boundary, and the generic panel style preserves an explicitly transparent
-  source alpha, so neither a dark rail rectangle nor a white fallback plate can
-  show through the authored cut-outs. A separate per-faction interactive rectangle keeps minimap,
+  a square backing. Hybrid repeats the source frame's middle edge strips at
+  their native aspect ratio between protected corners; no flat black or light
+  vector slab sits behind the frame's transparent cut-outs. The generic panel
+  style also preserves an explicitly transparent source alpha. A separate
+  per-faction interactive rectangle keeps minimap,
   selection, portrait and command controls clear of all four authored rails
   while the visual plate stays full-bleed. Rock Raiders top and lower surfaces remain dark rather
-  than inheriting a technical white mask. Authored raster corners, shoulders and
-  one central clasp remain proportionally correct; thick code-native rails
-  continue between the corner modules on every side without stretching or
-  repeating the raster edge.
+  than inheriting a technical white mask. Authored raster corners and edge
+  strips remain proportionally correct and form an uninterrupted four-sided
+  frame without full-span raster stretching.
   Structural isolates the earlier vector chassis, Legacy preserves the old full-frame
   renderer for direct comparison and Clean exposes the functional skeleton.
 
@@ -384,9 +386,9 @@ live; the current schema-9 copy/paste retains the complete experiment.
   reviewed desert/sand-covered-slab identity; Mars, Moon, Planet U and
   Underground route distinct exploratory ground palettes and track dust.
   Schema 1–8 profiles retain their prior treatment meanings through migration.
-  The HUD Lab schema-8 revision replaces the dirty repeated-frame composition
-  with protected, proportion-preserving raster modules, responsive four-sided
-  vector rails, a faction-derived rounded aperture, shader-masked full-bleed
+  The HUD Lab schema-8 revision replaces the dirty stretched-frame composition
+  with protected, proportion-preserving raster corners, isotropically tiled
+  authored edges, an exact faction-frame aperture, shader-masked full-bleed
   edge surfaces, transparent exterior corners, one shared fill/content
   silhouette, a per-faction frame-safe interactive rectangle and one divider owner. The frame and
   complete shell palette now bind
@@ -422,15 +424,15 @@ live; the current schema-9 copy/paste retains the complete experiment.
 
 ## Verification state
 
-The frame-mask, corner-backing, responsive-layout and curated-typography HUD correction passed
-the complete fast suite on 2026-08-31 UTC with **zero blocking or diagnostic
-failures**: 278 NUnit tests, all retained M6/M7 smokes, the four faction recipes,
-all Hybrid/Structural/Legacy/Clean comparisons, 16:9/16:10/21:9/4:3 containment,
-transparent-corner mask validation, zero-alpha Hybrid/Legacy parent backings,
-surface-correct text contrast across all 32
-faction/finish/command-fill combinations and the same-scenario Alien-kit
-override. Exact summary:
-`Artifacts/Verification/20260831T132322Z-fast-summary.txt`.
+The exact-aperture and uninterrupted-frame HUD correction passed the complete
+fast suite on 2026-08-31 UTC with **zero blocking or diagnostic failures**: 278
+NUnit tests, all retained M6/M7 smokes, all four faction kits, the complete
+Hybrid/Structural/Legacy/Clean comparison, 16:9/16:10/21:9/4:3 containment,
+transparent full-border mask validation, non-destructive aperture coverage,
+zero-alpha Hybrid/Legacy parent backings and the same-scenario Alien-kit
+override. The capture harness now waits for the requested faction/finish to be
+redrawn after its internal switching probes. Exact summary:
+`Artifacts/Verification/20260831T172412Z-fast-summary.txt`.
 
 The schema-8 rounded-aperture HUD revision passed `./tools/verify.sh --full` on
 2026-08-30 UTC with **zero blocking failures**: 278 NUnit tests, all retained

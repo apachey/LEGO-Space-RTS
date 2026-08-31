@@ -145,7 +145,7 @@ for faction in ['RockRaiders','Astronauts','Aliens','Martians']:
     check(hud_faction_skins.count(f'HudFaction.{faction}') == 1,
           f'M7 HUD must define exactly one complete skin recipe for {faction}')
 for token in ['Count = 4','HudFactionSkinRecipe','HybridFramePath','LegacyFramePath',
-              'ApertureInsetRatios','DestinationScale','ApertureCornerRadiusFraction',
+              'ApertureInsetRatios','DestinationScale',
               'HudFactionRailStyle.Industrial','HudFactionRailStyle.Expedition',
               'HudFactionRailStyle.Resonance','HudFactionRailStyle.Pneumatic',
               'SharedGood','SharedWarning','SharedDanger','Validate(out string error)',
@@ -181,28 +181,36 @@ for token in ['HudFactionChromeRole.BottomDeck','UsesSparseJunctionModules','Use
               'UsesFactionSurfaceFill','DrawTiledEdgeWalls','DrawHorizontalTiles','DrawVerticalTiles',
               'DrawLegacySurfaceFill','DrawLegacyRails','DrawFunctionalModules','SetJunctions']:
     check(token in hud_view + hud_chrome, f'M7 continuous faction control-deck chrome missing: {token}')
-for token in ['UsesContinuousHybridRails','DrawContinuousHybridRails',
+for token in ['UsesContinuousHybridRails => false',
               'UsesCompleteHybridPerimeter','UsesIsotropicRasterModules','AvoidsFullSpanRasterStretch',
-              'DrawAuthoredEdgeModules','DestinationCornerSize',
-              'UsesTiledEdgeWalls => !_frameOnly','UsesSparseJunctionModules => !_frameOnly',
+              'DestinationCornerSize','DrawTiledEdgeWalls(outer, corner, modulate)',
+              'UsesTiledEdgeWalls => true','UsesSparseJunctionModules => !_frameOnly',
               'UsesFactionSurfaceFill => !_frameOnly','ClipContents = true']:
     check(token in hud_chrome, f'M7 clean hybrid/retained Legacy composition missing: {token}')
+for rejected in ['DrawContinuousHybridRails','DrawAuthoredEdgeModules']:
+    check(rejected not in hud_chrome,
+          f'M7 hybrid still contains the interrupted flat-rail composition: {rejected}')
 check('256f * recipe.ProtectedFraction' not in hud_chrome,
       'M7 frame source guides still assume every faction texture is 256px')
 for token in ['HudFactionSurfaceMask','TransparentThreshold','GetOrCreateMask',
               'ClipChildrenMode.Disabled','RegisterMaskedSurface','UsesFactionApertureMask',
               'UsesShaderApertureMask','ClipsRasterAndContent','UsesShapedApertureCorners',
               'HasTransparentOuterCorners','MaskCornersAreTransparent',
+              'HasTransparentOuterBorder','MaskOuterBorderIsTransparent','ApertureCoverage',
               'UsesFullBleedBottomDeck','RegisteredMaskedSurfaceCount',
               'UsesSharedNineSliceGeometry','ContentRectFor','InteractiveRectFor',
-              'DrawNineSlice','InsideRoundedRect',
-              'ApertureCornerRadiusFraction',
+              'DrawNineSlice','authored-aperture-v2',
               'source[center * 4 + 3]','touchesExterior','ApertureInsetRatios',
               'HudArtFinish.LegacyFrames','_recipe.LegacyFramePath','_recipe.HybridFramePath']:
     check(token in hud_surface_mask + hud_view,
           f'M7 faction-specific aperture mask missing: {token}')
 check('_gutterMaskTexture' not in hud_surface_mask,
       'M7 rounded aperture still restores an opaque square corner gutter')
+for rejected in ['InsideRoundedRect','cornerRadiusFraction','GenerateMipmaps','int overlap =']:
+    check(rejected not in hud_surface_mask,
+          f'M7 authored aperture reintroduced synthetic clipping/dilation: {rejected}')
+check('ApertureCornerRadiusFraction' not in hud_faction_skins + hud_surface_mask,
+      'M7 faction recipe still exposes the retired synthetic aperture radius')
 for token in ['shader_type canvas_item','aperture_mask','mask_screen_rect','mask_source_corner',
               'mask_destination_corner','SCREEN_UV','source_axis','discard']:
     check(token in hud_aperture_shader, f'M7 faction aperture shader missing: {token}')
