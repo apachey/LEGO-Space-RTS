@@ -422,9 +422,10 @@ The frame-mask, responsive-layout and curated-typography HUD correction passed
 the complete fast suite on 2026-08-31 UTC with **zero blocking or diagnostic
 failures**: 278 NUnit tests, all retained M6/M7 smokes, the four faction recipes,
 all Hybrid/Structural/Legacy/Clean comparisons, 16:9/16:10/21:9/4:3 containment,
-transparent-corner mask validation, surface-correct text contrast across all 16
-faction/finish combinations and the same-scenario Alien-kit override. Exact
-summary: `Artifacts/Verification/20260831T081400Z-fast-summary.txt`.
+transparent-corner mask validation, surface-correct text contrast across all 32
+faction/finish/command-fill combinations and the same-scenario Alien-kit
+override. Exact summary:
+`Artifacts/Verification/20260831T094426Z-fast-summary.txt`.
 
 The schema-8 rounded-aperture HUD revision passed `./tools/verify.sh --full` on
 2026-08-30 UTC with **zero blocking failures**: 278 NUnit tests, all retained

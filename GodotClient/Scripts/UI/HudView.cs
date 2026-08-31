@@ -913,10 +913,11 @@ public partial class HudView : Control
         SetLabelColor(_energyPopoverTitle, textColors.RaisedPrimary);
         for (int i = 0; i < _commandHotkeyLabels.Length; i++)
         {
-            _commandHotkeyLabels[i]?.AddThemeColorOverride("font_color", textColors.DeckAccent);
+            _commandIconLabels[i]?.AddThemeColorOverride("font_color", textColors.CommandPrimary);
+            _commandHotkeyLabels[i]?.AddThemeColorOverride("font_color", textColors.CommandAccent);
             _commandCostLabels[i]?.AddThemeColorOverride("font_color", HudTextPalette.EnsureReadable(
-                Parse(_profile.Colors.Warning, Colors.Orange), HudTextPalette.DeckSurface(_profile),
-                textColors.DeckPrimary));
+                Parse(_profile.Colors.Warning, Colors.Orange), HudTextPalette.CommandSurface(_profile),
+                textColors.CommandPrimary));
         }
         for (int i = 0; i < _topDividers.Count; i++)
             _topDividers[i].Color = new Color(secondaryAccent, 0.32f);
@@ -935,17 +936,19 @@ public partial class HudView : Control
             button.AddThemeColorOverride("font_disabled_color", new Color(textColors.RaisedMuted, 0.52f));
             if (commandButton)
             {
-                Color commandNormal = _profile.Surface.SolidCommandButtons
-                    ? raised.Darkened(0.10f)
-                    : Colors.Transparent;
+                Color commandSurface = HudTextPalette.CommandSurface(_profile);
+                Color commandNormal = _profile.Surface.SolidCommandButtons ? commandSurface : Colors.Transparent;
+                Color commandHover = HudTextPalette.CommandHoverSurface(_profile);
+                Color commandPressed = HudTextPalette.CommandPressedSurface(_profile);
                 Color commandDisabled = _profile.Surface.SolidCommandButtons
-                    ? new Color(recessed, 0.72f)
+                    ? new Color(commandSurface, 0.62f)
                     : Colors.Transparent;
                 button.AddThemeStyleboxOverride("normal", ButtonStyle(commandNormal, new Color(secondaryAccent, 0.58f)));
-                button.AddThemeStyleboxOverride("hover", ButtonStyle(raised.Lightened(0.08f), displayAccent));
-                button.AddThemeStyleboxOverride("pressed", ButtonStyle(recessed, displayAccent));
-                button.AddThemeStyleboxOverride("focus", ButtonStyle(recessed, displayAccent));
-                button.AddThemeStyleboxOverride("disabled", ButtonStyle(commandDisabled, new Color(muted, 0.20f)));
+                button.AddThemeStyleboxOverride("hover", ButtonStyle(commandHover, displayAccent));
+                button.AddThemeStyleboxOverride("pressed", ButtonStyle(commandPressed, displayAccent));
+                button.AddThemeStyleboxOverride("focus", ButtonStyle(commandPressed, displayAccent));
+                button.AddThemeStyleboxOverride("disabled", ButtonStyle(commandDisabled,
+                    new Color(textColors.CommandMuted, 0.28f)));
             }
             else if (groupButton)
             {
@@ -1069,6 +1072,11 @@ public partial class HudView : Control
                 : $"{command.Name}\n{command.Tooltip}";
             button.Disabled = !command.Enabled;
             button.ButtonPressed = command.Active;
+            float overlayAlpha = command.Enabled ? 1f : 0.52f;
+            Color overlayModulate = new(1f, 1f, 1f, overlayAlpha);
+            _commandIconLabels[i].Modulate = overlayModulate;
+            _commandHotkeyLabels[i].Modulate = overlayModulate;
+            _commandCostLabels[i].Modulate = overlayModulate;
         }
     }
 

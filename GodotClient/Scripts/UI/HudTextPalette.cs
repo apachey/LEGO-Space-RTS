@@ -16,9 +16,12 @@ public readonly record struct HudTextColorSet(
     Color SelectionMuted,
     Color RaisedPrimary,
     Color RaisedMuted,
+    Color CommandPrimary,
+    Color CommandMuted,
     Color TopAccent,
     Color DeckAccent,
-    Color SelectionAccent);
+    Color SelectionAccent,
+    Color CommandAccent);
 
 public static class HudTextPalette
 {
@@ -31,6 +34,9 @@ public static class HudTextPalette
         Color deck = DeckSurface(profile);
         Color selection = SelectionSurface(profile);
         Color raised = Parse(profile.Colors.Raised, new Color("545b58"));
+        Color command = CommandSurface(profile);
+        Color commandHover = CommandHoverSurface(profile);
+        Color commandPressed = CommandPressedSurface(profile);
         Color preferred = Parse(profile.Colors.TextPrimary, LightFallback);
         Color accent = Parse(profile.Colors.Accent, new Color("a76538"));
 
@@ -38,16 +44,25 @@ public static class HudTextPalette
         Color deckPrimary = EnsureContrast(preferred, deck, 4.5f);
         Color selectionPrimary = EnsureContrast(preferred, selection, 4.5f);
         Color raisedPrimary = EnsureContrast(preferred, raised, 4.5f);
+        Color commandPrimary = EnsureContrastAcross(preferred, 4.5f,
+            command, commandHover, commandPressed);
         Color topMuted = MutedFor(background, topPrimary);
         Color deckMuted = MutedFor(deck, deckPrimary);
         Color selectionMuted = MutedFor(selection, selectionPrimary);
         Color raisedMuted = MutedFor(raised, raisedPrimary);
+        Color commandMuted = MutedFor(command, commandPrimary);
+        commandMuted = EnsureContrastAcross(commandMuted, 3f,
+            command, commandHover, commandPressed);
         Color topAccent = AccentFor(background, accent, topPrimary);
         Color deckAccent = AccentFor(deck, accent, deckPrimary);
         Color selectionAccent = AccentFor(selection, accent, selectionPrimary);
+        Color commandAccent = AccentFor(command, accent, commandPrimary);
+        commandAccent = EnsureContrastAcross(commandAccent, 3f,
+            command, commandHover, commandPressed);
         return new HudTextColorSet(topPrimary, topMuted, deckPrimary, deckMuted,
             selectionPrimary, selectionMuted, raisedPrimary, raisedMuted,
-            topAccent, deckAccent, selectionAccent);
+            commandPrimary, commandMuted, topAccent, deckAccent, selectionAccent,
+            commandAccent);
     }
 
     public static Color DeckSurface(M7HudProfile profile)
@@ -55,6 +70,19 @@ public static class HudTextPalette
 
     public static Color SelectionSurface(M7HudProfile profile)
         => CompositeSectionSurface(profile, SelectionPlateSurface(profile));
+
+    public static Color CommandSurface(M7HudProfile profile)
+    {
+        if (!profile.Surface.SolidCommandButtons) return DeckSurface(profile);
+        Color raised = Parse(profile.Colors.Raised, new Color("545b58"));
+        return raised.Darkened(0.10f);
+    }
+
+    public static Color CommandHoverSurface(M7HudProfile profile)
+        => ShiftInteractive(CommandSurface(profile), 0.065f);
+
+    public static Color CommandPressedSurface(M7HudProfile profile)
+        => ShiftInteractive(CommandSurface(profile), 0.12f);
 
     public static Color DeckPlateSurface(M7HudProfile profile)
     {
@@ -81,30 +109,39 @@ public static class HudTextPalette
             HudArtFinish.LegacyFrames,
             HudArtFinish.Clean
         };
+        bool[] commandFillModes = { true, false };
         for (int faction = 0; faction < HudFactionSkinLibrary.Count; faction++)
         foreach (HudArtFinish finish in finishes)
+        foreach (bool solidCommands in commandFillModes)
         {
             M7HudProfile profile = M7HudProfile.CreateDefault();
             HudFactionSkinLibrary.Apply(profile, faction);
             profile.ArtSkin.Finish = finish;
+            profile.Surface.SolidCommandButtons = solidCommands;
             HudTextColorSet set = Resolve(profile);
             Color top = Parse(profile.Colors.Background, Colors.Black);
             Color deck = DeckSurface(profile);
             Color selection = SelectionSurface(profile);
             Color raised = Parse(profile.Colors.Raised, Colors.Black);
+            Color command = CommandSurface(profile);
+            Color commandHover = CommandHoverSurface(profile);
+            Color commandPressed = CommandPressedSurface(profile);
             if (ContrastRatio(set.TopPrimary, top) < 4.5f ||
                 ContrastRatio(set.DeckPrimary, deck) < 4.5f ||
                 ContrastRatio(set.SelectionPrimary, selection) < 4.5f ||
                 ContrastRatio(set.RaisedPrimary, raised) < 4.5f ||
+                !MeetsContrast(set.CommandPrimary, 4.5f, command, commandHover, commandPressed) ||
                 ContrastRatio(set.TopMuted, top) < 3f ||
                 ContrastRatio(set.DeckMuted, deck) < 3f ||
                 ContrastRatio(set.SelectionMuted, selection) < 3f ||
                 ContrastRatio(set.RaisedMuted, raised) < 3f ||
+                !MeetsContrast(set.CommandMuted, 3f, command, commandHover, commandPressed) ||
                 ContrastRatio(set.TopAccent, top) < 3f ||
                 ContrastRatio(set.DeckAccent, deck) < 3f ||
-                ContrastRatio(set.SelectionAccent, selection) < 3f)
+                ContrastRatio(set.SelectionAccent, selection) < 3f ||
+                !MeetsContrast(set.CommandAccent, 3f, command, commandHover, commandPressed))
             {
-                error = $"Faction HUD text palette {faction}/{finish} does not meet its surface contrast floor.";
+                error = $"Faction HUD text palette {faction}/{finish}/solidCommands={solidCommands} does not meet its surface contrast floor.";
                 return false;
             }
         }
@@ -164,6 +201,36 @@ public static class HudTextPalette
             ? LightFallback
             : DarkFallback;
     }
+
+    private static Color EnsureContrastAcross(Color candidate, float target,
+        params Color[] surfaces)
+    {
+        if (MeetsContrast(candidate, target, surfaces)) return candidate;
+        float lightFloor = MinimumContrast(LightFallback, surfaces);
+        float darkFloor = MinimumContrast(DarkFallback, surfaces);
+        return lightFloor >= darkFloor ? LightFallback : DarkFallback;
+    }
+
+    private static bool MeetsContrast(Color candidate, float target,
+        params Color[] surfaces)
+    {
+        for (int i = 0; i < surfaces.Length; i++)
+            if (ContrastRatio(candidate, surfaces[i]) < target) return false;
+        return true;
+    }
+
+    private static float MinimumContrast(Color candidate, params Color[] surfaces)
+    {
+        float minimum = float.MaxValue;
+        for (int i = 0; i < surfaces.Length; i++)
+            minimum = Math.Min(minimum, ContrastRatio(candidate, surfaces[i]));
+        return minimum;
+    }
+
+    private static Color ShiftInteractive(Color surface, float amount) =>
+        RelativeLuminance(surface) >= 0.42f
+            ? surface.Darkened(amount)
+            : surface.Lightened(amount);
 
     private static float RelativeLuminance(Color color) =>
         0.2126f * LinearChannel(color.R) +

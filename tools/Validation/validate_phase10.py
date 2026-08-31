@@ -246,6 +246,7 @@ for token in ['Oxanium-SemiBold.ttf','IBMPlexSans-Regular.ttf','IBMPlexSans-Medi
               'Validate(out string error)']:
     check(token in hud_typography, f'M7 curated HUD typography asset binding missing: {token}')
 for token in ['HudTextColorSet','TopPrimary','DeckPrimary','SelectionPrimary','RaisedPrimary',
+              'CommandPrimary','CommandSurface','CommandHoverSurface','CommandPressedSurface',
               'SelectionSurface','SelectionPlateSurface','CompositeSectionSurface','ContrastRatio',
               'ValidateFactionRecipes','4.5f','3f']:
     check(token in hud_text_palette + hud_view + hud_lab,
