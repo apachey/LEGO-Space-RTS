@@ -223,18 +223,22 @@ public sealed class HudLayoutProfile
 {
     public float SafeAreaPercent { get; set; } = 98f;
     public float UiScale { get; set; } = 1f;
-    public float TopStripHeight { get; set; } = 48f;
-    public float BottomRegionHeight { get; set; } = 220f;
-    public float MinimapSize { get; set; } = 210f;
-    public float CommandPanelWidth { get; set; } = 280f;
-    public float SelectionMaxWidth { get; set; } = 1200f;
-    public float PanelGap { get; set; } = 6f;
+    public float TopStripHeight { get; set; } = 58f;
+    public float BottomRegionHeight { get; set; } = 244f;
+    public float MinimapSize { get; set; } = 216f;
+    public float CommandPanelWidth { get; set; } = 304f;
+    // Retained for schema compatibility. The selection bay now consumes the
+    // available framed space; its inner cards have their own readable limits.
+    public float SelectionMaxWidth { get; set; } = 820f;
+    public float PanelGap { get; set; } = 8f;
 }
 
 public sealed class HudTypographyProfile
 {
     public float TextScale { get; set; } = 1f;
-    public int HeadingSize { get; set; } = 16;
+    // Retained so schema 1-8 profiles still round-trip. HudView now owns the
+    // curated semantic baseline (18/12/14/15/11) and applies only TextScale.
+    public int HeadingSize { get; set; } = 18;
     public int BodySize { get; set; } = 14;
     public int MicroSize { get; set; } = 11;
 }
@@ -244,8 +248,8 @@ public sealed class HudSurfaceProfile
     public float PanelOpacity { get; set; } = 0.92f;
     public int BorderWidth { get; set; } = 1;
     public int CornerRadius { get; set; } = 2;
-    public int InnerPadding { get; set; } = 8;
-    public int Separation { get; set; } = 5;
+    public int InnerPadding { get; set; } = 10;
+    public int Separation { get; set; } = 6;
     public bool SolidCommandButtons { get; set; } = true;
     public bool HealthStateColors { get; set; } = true;
 }
@@ -351,7 +355,7 @@ public static class HudSurfacePaletteLibrary
 
 public sealed class HudContentProfile
 {
-    public bool ShowResourceLabels { get; set; }
+    public bool ShowResourceLabels { get; set; } = true;
     public bool ShowHotkeys { get; set; } = true;
     public bool ShowPortrait { get; set; } = true;
     public bool ShowEventFeed { get; set; } = true;

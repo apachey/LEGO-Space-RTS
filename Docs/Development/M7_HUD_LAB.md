@@ -91,13 +91,13 @@ The same geometry supports four finishes:
   faction-tuned inner-corner radius. The lower plate is full-bleed beneath the
   frame: its raster field, minimap, fog, markers and outer command surface use
   one nine-slice shader aperture while functional labels retain a safe inset.
-  A darker aperture-derived gutter closes transparent square gaps in the source
-  PNG without restoring a square interior. This avoids Godot's backbuffer
-  `Clip Children` Z-order limitation and keeps the frame as the actual visible
-  boundary. Long rails therefore remain continuous on all four sides without
-  stretching or repeating raster detail. The bottom console is one bounded
-  chassis with a continuous interior surface, and one renderer owns each
-  divider.
+  The plate and every edge surface share that same rounded silhouette; pixels
+  outside it stay transparent instead of receiving a hidden square backing.
+  This avoids Godot's backbuffer `Clip Children` Z-order limitation and keeps
+  the frame as the actual visible boundary. Long rails therefore remain
+  continuous on all four sides without stretching or repeating raster detail.
+  The bottom console is one bounded chassis with a continuous interior surface,
+  and one renderer owns each divider.
 - **Structural Console** isolates the earlier vector chassis and its responsive
   construction without the generated faction frame.
 - **Legacy Frames** preserves the previous full raster-frame renderer and old
@@ -109,10 +109,18 @@ The same geometry supports four finishes:
 
 Art-finish changes never move panels or hit targets. Faction changes preserve
 the outer top-strip/deck geometry, functional bay order and minimum hit sizes.
-The lower visual field reaches the faction aperture while selection, portrait
-and command content use one finish-invariant top clearance; the top resource
-row uses its authored inset. This keeps the comparison about presentation
-without allowing a raster surface or minimap element to leak beyond its frame.
+The lower visual field reaches the faction aperture while an independently
+computed per-faction interactive rectangle keeps minimap input, selection,
+portrait and commands clear of all four illustrated rails. The top resource
+row uses the same frame-aware contract. This keeps the comparison about
+presentation without allowing content to leak under a sculpted corner.
+
+Typography is curated rather than faction-generated: Oxanium SemiBold gives
+titles and section labels a compact technical character, while IBM Plex Sans
+Regular/Medium owns body copy, values and buttons. Six semantic roles replace
+the old global Heading/Body/Micro treatment. Text colour is resolved separately
+for top, recessed deck and raised surfaces with contrast floors; faction accent
+is reserved for hierarchy and state instead of tinting every heading.
 
 The useful lesson from StarCraft II is functional hierarchy and the legibility
 of a full-width command console, not its specific frame art, iconography or
@@ -126,10 +134,11 @@ readability:
 
 - responsive preview: 16:9, 16:10, 21:9 and 4:3;
 - safe area, independent UI/text scale and top/bottom region size;
-- minimap, command and selection width targets;
+- minimap and command width targets; selection adapts to the remaining framed
+  field instead of creating a blank bridge;
 - panel gap, padding, separation, opacity, border and corner radius;
 - solid/outlined command buttons and health-state color mapping;
-- heading, body and micro text sizes;
+- one global text scale over the curated type hierarchy;
 - content-density toggles for labels, hotkeys, portrait, event feed,
   objectives, minimap legend and command costs;
 - minimap marker scale, motion smoothing, fog/contact opacity, grid, viewport,
@@ -137,7 +146,8 @@ readability:
 - independently previewable faction recipe, Hybrid/Structural/Legacy/Clean
   finish, chrome intensity and scale; changing a preview kit preserves the
   active density fixture until Reset;
-- complete color tokens for explicit **Custom** audits.
+- structural/semantic color tokens for explicit **Custom** audits; readable
+  text colours are derived automatically from the resulting surfaces.
 
 The code-native tactical portrait remains functional scaffolding. It shows a
 faction-colored blueprint with distinct single-unit, grouped-force, structure
@@ -204,10 +214,10 @@ The schema-8 smoke contract must cover:
 - identical outer chassis across all finishes and factions, finish-invariant
   hit geometry, and bounded faction-specific inner offsets;
 - four independently switchable kits on one unchanged fixture;
-- Hybrid's faction-specific rounded shader apertures, dark inner gutters,
-  full-bleed lower plate with safe functional clearance, masked minimap raster
-  and markers, complete four-sided perimeter, isotropic raster modules and a
-  single divider system;
+- Hybrid's faction-specific rounded shader apertures, transparent exterior
+  corners, one shared fill/content silhouette, full-bleed lower plate with safe
+  functional clearance, masked minimap raster and markers, complete four-sided
+  perimeter, isotropic raster modules and a single divider system;
 - Legacy availability without treating its retired fifth art slot as a
   playable faction;
 - all visible command buttons inside the safe area, including the 12-command

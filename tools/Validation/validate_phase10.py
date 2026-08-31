@@ -38,6 +38,16 @@ required = [
     'GodotClient/Scripts/UI/HudPortraitView.cs','GodotClient/Scripts/UI/M7HudProfile.cs',
     'GodotClient/Scripts/UI/HudFactionSkinLibrary.cs','GodotClient/Scripts/UI/HudFactionChrome.cs',
     'GodotClient/Scripts/UI/HudFactionSurfaceMask.cs',
+    'GodotClient/Scripts/UI/HudTypographyLibrary.cs','GodotClient/Scripts/UI/HudTypographyLibrary.cs.uid',
+    'GodotClient/Scripts/UI/HudTextPalette.cs','GodotClient/Scripts/UI/HudTextPalette.cs.uid',
+    'GodotClient/Assets/M7/Fonts/Oxanium-SemiBold.ttf',
+    'GodotClient/Assets/M7/Fonts/Oxanium-SemiBold.ttf.import',
+    'GodotClient/Assets/M7/Fonts/IBMPlexSans-Regular.ttf',
+    'GodotClient/Assets/M7/Fonts/IBMPlexSans-Regular.ttf.import',
+    'GodotClient/Assets/M7/Fonts/IBMPlexSans-Medium.ttf',
+    'GodotClient/Assets/M7/Fonts/IBMPlexSans-Medium.ttf.import',
+    'GodotClient/Assets/M7/Fonts/Oxanium-OFL.txt','GodotClient/Assets/M7/Fonts/IBM-Plex-OFL.txt',
+    'GodotClient/Assets/M7/Fonts/README.md',
     'GodotClient/Shaders/hud_faction_aperture.gdshader',
     'GodotClient/Assets/M7/Hud/rock_raiders_frame.png','GodotClient/Assets/M7/Hud/astronauts_frame.png',
     'GodotClient/Assets/M7/Hud/aliens_frame.png','GodotClient/Assets/M7/Hud/martians_frame.png',
@@ -119,6 +129,8 @@ hud_structural = (ROOT/'GodotClient/Scripts/UI/HudStructuralChrome.cs').read_tex
 hud_raster_surface = (ROOT/'GodotClient/Scripts/UI/HudRasterSurfaceOverlay.cs').read_text()
 hud_profile = (ROOT/'GodotClient/Scripts/UI/M7HudProfile.cs').read_text()
 hud_faction_skins = (ROOT/'GodotClient/Scripts/UI/HudFactionSkinLibrary.cs').read_text()
+hud_typography = (ROOT/'GodotClient/Scripts/UI/HudTypographyLibrary.cs').read_text()
+hud_text_palette = (ROOT/'GodotClient/Scripts/UI/HudTextPalette.cs').read_text()
 check('CurrentSchemaVersion = 8' in hud_profile and
       'Clamp(ArtSkin.Faction, 0, HudFactionSkinLibrary.Count - 1)' in hud_profile and
       'HudArtFinish Finish' in hud_profile and 'HybridConsole' in hud_profile and
@@ -180,13 +192,17 @@ check('256f * recipe.ProtectedFraction' not in hud_chrome,
 for token in ['HudFactionSurfaceMask','TransparentThreshold','GetOrCreateMask',
               'ClipChildrenMode.Disabled','RegisterMaskedSurface','UsesFactionApertureMask',
               'UsesShaderApertureMask','ClipsRasterAndContent','UsesShapedApertureCorners',
+              'HasTransparentOuterCorners','MaskCornersAreTransparent',
               'UsesFullBleedBottomDeck','RegisteredMaskedSurfaceCount',
-              'UsesSharedNineSliceGeometry','ContentRectFor','DrawNineSlice','InsideRoundedRect',
-              '_gutterMaskTexture','ApertureCornerRadiusFraction',
+              'UsesSharedNineSliceGeometry','ContentRectFor','InteractiveRectFor',
+              'DrawNineSlice','InsideRoundedRect',
+              'ApertureCornerRadiusFraction',
               'source[center * 4 + 3]','touchesExterior','ApertureInsetRatios',
               'HudArtFinish.LegacyFrames','_recipe.LegacyFramePath','_recipe.HybridFramePath']:
     check(token in hud_surface_mask + hud_view,
           f'M7 faction-specific aperture mask missing: {token}')
+check('_gutterMaskTexture' not in hud_surface_mask,
+      'M7 rounded aperture still restores an opaque square corner gutter')
 for token in ['shader_type canvas_item','aperture_mask','mask_screen_rect','mask_source_corner',
               'mask_destination_corner','SCREEN_UV','source_axis','discard']:
     check(token in hud_aperture_shader, f'M7 faction aperture shader missing: {token}')
@@ -219,11 +235,27 @@ for token in ['AlertRequested += FocusCurrentAlert','FocusCurrentAlert','_alertF
     check(token in basic_hud, f'T068 actionable production alert focus missing: {token}')
 for token in ['button.AddThemeStyleboxOverride("disabled", transparent)',
               'float scale = ResponsiveScale()',
-              '_profile.Surface.Separation * ResponsiveScale()',
+              'ResponsiveTextScale()',
+              'SetBoxSpacing("ResourceRow"',
               'paddingOverride ?? _profile.Surface.InnerPadding',
               '_profile.Surface.SolidCommandButtons',
               'Layout.UiScale * Mathf.Clamp(height / 1080f']:
     check(token in hud_view, f'M7 direct art-director HUD control binding missing: {token}')
+for token in ['Oxanium-SemiBold.ttf','IBMPlexSans-Regular.ttf','IBMPlexSans-Medium.ttf',
+              'public static Font? Heading','public static Font? Body','public static Font? BodyMedium',
+              'Validate(out string error)']:
+    check(token in hud_typography, f'M7 curated HUD typography asset binding missing: {token}')
+for token in ['HudTextColorSet','TopPrimary','DeckPrimary','SelectionPrimary','RaisedPrimary',
+              'SelectionSurface','SelectionPlateSurface','CompositeSectionSurface','ContrastRatio',
+              'ValidateFactionRecipes','4.5f','3f']:
+    check(token in hud_text_palette + hud_view + hud_lab,
+          f'M7 semantic readable text palette missing: {token}')
+check('AddSlider(box, "Heading"' not in hud_lab and
+      'AddSlider(box, "Body"' not in hud_lab and
+      'AddSlider(box, "Micro"' not in hud_lab and
+      'AddColor(box, "Text"' not in hud_lab and
+      'AddColor(box, "Muted"' not in hud_lab,
+      'M7 lab still delegates curated baseline typography/text contrast to manual sliders')
 for token in ['ResponsiveWidthRatio','EffectiveLayoutScale','EffectiveInnerPadding','ResponsiveFontSize']:
     check(token not in hud_view, f'M7 HUD control is silently capped by viewport width: {token}')
 check('ValidateInteractiveBindings' in hud_lab and 'outlineAlpha' in hud_lab and 'alertRequests' in hud_lab,

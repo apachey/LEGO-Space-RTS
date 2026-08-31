@@ -19,7 +19,6 @@ public partial class HudFactionSurfaceMask : Control
     private HudFactionSkinRecipe _recipe = HudFactionSkinLibrary.RecipeFor(0);
     private Texture2D? _frameTexture;
     private Texture2D? _maskTexture;
-    private Texture2D? _gutterMaskTexture;
     private ShaderMaterial? _apertureMaterial;
     private HudArtFinish _finish = HudArtFinish.HybridConsole;
     private float _chromeScale = 1f;
@@ -30,7 +29,6 @@ public partial class HudFactionSurfaceMask : Control
     public HudFactionChromeRole Role { get; private set; }
     public HudFaction Faction => _recipe.Faction;
     public bool IsConfigured => _frameTexture is not null && _maskTexture is not null &&
-        _gutterMaskTexture is not null &&
         _apertureMaterial?.Shader is not null;
     public bool UsesFactionApertureMask =>
         _finish is HudArtFinish.HybridConsole or HudArtFinish.LegacyFrames && IsConfigured;
@@ -39,6 +37,7 @@ public partial class HudFactionSurfaceMask : Control
         ClipChildren == ClipChildrenMode.Disabled;
     public bool ClipsRasterAndContent => UsesFactionApertureMask;
     public bool UsesShapedApertureCorners => _recipe.ApertureCornerRadiusFraction > 0f;
+    public bool HasTransparentOuterCorners => MaskCornersAreTransparent(_maskTexture);
     public bool UsesFullBleedBottomDeck => Role == HudFactionChromeRole.BottomDeck;
     public Color SurfaceFillColor => new(_surfaceColor, _panelOpacity);
     public int RegisteredMaskedSurfaceCount => _registeredSurfaceMaterials.Count;
@@ -72,9 +71,6 @@ public partial class HudFactionSurfaceMask : Control
             ? null
             : GetOrCreateMask(framePath, _frameTexture, _recipe,
                 _recipe.ApertureCornerRadiusFraction);
-        _gutterMaskTexture = _frameTexture is null
-            ? null
-            : GetOrCreateMask(framePath, _frameTexture, _recipe, 0f);
         EnsureApertureMaterial();
         ClipChildren = ClipChildrenMode.Disabled;
         Material = null;
@@ -113,6 +109,17 @@ public partial class HudFactionSurfaceMask : Control
         if (Role == HudFactionChromeRole.BottomDeck)
             return new Rect2(Vector2.Zero, destinationSize);
 
+        return InteractiveRectFor(destinationSize);
+    }
+
+    /// <summary>
+    /// Returns the conservative rectangular field in which interactive
+    /// controls remain clear of the authored chrome. This is intentionally
+    /// separate from the full-bleed visual aperture returned by
+    /// <see cref="ContentRectFor"/> for the lower deck.
+    /// </summary>
+    public Rect2 InteractiveRectFor(Vector2 destinationSize)
+    {
         if (_frameTexture is null || destinationSize.X <= 2f || destinationSize.Y <= 2f)
         {
             float fallback = Math.Min(_fallbackPadding,
@@ -124,13 +131,14 @@ public partial class HudFactionSurfaceMask : Control
 
         float corner = HudFactionChrome.DestinationCornerSize(_recipe, Role, destinationSize, _chromeScale);
         Vector4 ratios = _recipe.ApertureInsetRatios;
-        // Top-strip labels clear the illustrated rail. The lower deck takes
-        // the full-bleed branch above because its section controls provide
-        // their own readable margins beneath the visible frame.
-        const float horizontalFactor = 0.82f;
-        const float topFactor = 0.60f;
-        const float bottomFactor = 0.60f;
-        float breathingRoom = 1f;
+        bool lowerDeck = Role == HudFactionChromeRole.BottomDeck;
+        // Bottom controls need to clear large illustrated corners on both
+        // vertical edges. The resource strip can retain its established,
+        // shallower vertical clearance because it contains only one text row.
+        float horizontalFactor = lowerDeck ? 0.90f : 0.82f;
+        float topFactor = lowerDeck ? 0.82f : 0.60f;
+        float bottomFactor = lowerDeck ? 0.78f : 0.60f;
+        float breathingRoom = lowerDeck ? 2f : 1f;
         float left = Mathf.Round(corner * ratios.X * horizontalFactor + breathingRoom);
         float top = Mathf.Round(corner * ratios.Y * topFactor + breathingRoom);
         float right = Mathf.Round(corner * ratios.Z * horizontalFactor + breathingRoom);
@@ -160,15 +168,13 @@ public partial class HudFactionSurfaceMask : Control
 
     public override void _Draw()
     {
-        if (!UsesFactionApertureMask || _maskTexture is null || _gutterMaskTexture is null ||
-            Size.X < 4f || Size.Y < 4f) return;
+        if (!UsesFactionApertureMask || _maskTexture is null || Size.X < 4f || Size.Y < 4f) return;
         int sourceCorner = HudFactionChrome.SourceCornerSize(_maskTexture, _recipe);
         float destinationCorner = HudFactionChrome.DestinationCornerSize(_recipe, Role, Size, _chromeScale);
-        // The generated frame PNGs leave a square transparent opening behind
-        // their sculpted corners. A darker aperture-derived gutter prevents
-        // the game world from shining through the deliberately round plate.
-        DrawNineSlice(_gutterMaskTexture, new Rect2(Vector2.Zero, Size), sourceCorner,
-            destinationCorner, new Color(_surfaceColor.Darkened(0.58f), Math.Max(0.96f, _panelOpacity)));
+        // One rounded aperture owns both the plate silhouette and every
+        // registered edge surface. Nothing opaque is drawn outside it, so the
+        // authored corner remains transparent instead of regaining a square
+        // backing layer.
         DrawNineSlice(_maskTexture, new Rect2(Vector2.Zero, Size), sourceCorner, destinationCorner,
             new Color(_surfaceColor, _panelOpacity));
     }
@@ -352,6 +358,19 @@ public partial class HudFactionSurfaceMask : Control
             aperture[candidate] = 1;
             queue[write++] = candidate;
         }
+    }
+
+    private static bool MaskCornersAreTransparent(Texture2D? texture)
+    {
+        if (texture is null) return false;
+        Image image = texture.GetImage();
+        if (image.IsEmpty() || image.GetWidth() < 2 || image.GetHeight() < 2) return false;
+        int right = image.GetWidth() - 1;
+        int bottom = image.GetHeight() - 1;
+        return image.GetPixel(0, 0).A <= 0.02f &&
+            image.GetPixel(right, 0).A <= 0.02f &&
+            image.GetPixel(0, bottom).A <= 0.02f &&
+            image.GetPixel(right, bottom).A <= 0.02f;
     }
 
     private static bool InsideRoundedRect(int x, int y, int minX, int minY,

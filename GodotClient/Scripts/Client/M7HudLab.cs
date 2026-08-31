@@ -242,14 +242,11 @@ public partial class M7HudLab : Node3D
         AddSlider(box, "Bottom height", 172, 280, 1, () => _profile.Layout.BottomRegionHeight, value => _profile.Layout.BottomRegionHeight = (float)value);
         AddSlider(box, "Minimap width target", 164, 260, 1, () => _profile.Layout.MinimapSize, value => _profile.Layout.MinimapSize = (float)value);
         AddSlider(box, "Command width target", 220, 380, 1, () => _profile.Layout.CommandPanelWidth, value => _profile.Layout.CommandPanelWidth = (float)value);
-        AddSlider(box, "Selection max width", 540, 1200, 5, () => _profile.Layout.SelectionMaxWidth, value => _profile.Layout.SelectionMaxWidth = (float)value);
         AddSlider(box, "Panel gap", 4, 24, 1, () => _profile.Layout.PanelGap, value => _profile.Layout.PanelGap = (float)value);
 
         AddSection(box, "TYPE & SURFACES");
+        AddNote(box, "Типографічна ієрархія, базові розміри й контраст тексту тепер дизайнерськи визначені. Лабораторія лишає тільки загальний масштаб.");
         AddSlider(box, "Text scale", 0.8, 1.4, 0.01, () => _profile.Typography.TextScale, value => _profile.Typography.TextScale = (float)value);
-        AddSlider(box, "Heading", 12, 26, 1, () => _profile.Typography.HeadingSize, value => _profile.Typography.HeadingSize = (int)value);
-        AddSlider(box, "Body", 11, 22, 1, () => _profile.Typography.BodySize, value => _profile.Typography.BodySize = (int)value);
-        AddSlider(box, "Micro", 9, 18, 1, () => _profile.Typography.MicroSize, value => _profile.Typography.MicroSize = (int)value);
         AddSlider(box, "Panel opacity", 0.35, 1, 0.01, () => _profile.Surface.PanelOpacity, value => _profile.Surface.PanelOpacity = (float)value);
         AddSlider(box, "Border", 0, 5, 1, () => _profile.Surface.BorderWidth, value => _profile.Surface.BorderWidth = (int)value);
         AddSlider(box, "Corner radius", 0, 20, 1, () => _profile.Surface.CornerRadius, value => _profile.Surface.CornerRadius = (int)value);
@@ -296,8 +293,6 @@ public partial class M7HudLab : Node3D
         AddColor(box, "Raised", () => _profile.Colors.Raised, value => SetCustomColor(v => _profile.Colors.Raised = v, value));
         AddColor(box, "Recessed", () => _profile.Colors.Recessed, value => SetCustomColor(v => _profile.Colors.Recessed = v, value));
         AddColor(box, "Accent", () => _profile.Colors.Accent, value => SetCustomColor(v => _profile.Colors.Accent = v, value));
-        AddColor(box, "Text", () => _profile.Colors.TextPrimary, value => SetCustomColor(v => _profile.Colors.TextPrimary = v, value));
-        AddColor(box, "Muted", () => _profile.Colors.TextMuted, value => SetCustomColor(v => _profile.Colors.TextMuted = v, value));
         AddColor(box, "Good", () => _profile.Colors.Good, value => SetCustomColor(v => _profile.Colors.Good = v, value));
         AddColor(box, "Warning", () => _profile.Colors.Warning, value => SetCustomColor(v => _profile.Colors.Warning = v, value));
         AddColor(box, "Danger", () => _profile.Colors.Danger, value => SetCustomColor(v => _profile.Colors.Danger = v, value));
@@ -445,10 +440,11 @@ public partial class M7HudLab : Node3D
             deckChrome is { IsConfigured: true, Role: HudFactionChromeRole.BottomDeck,
                 SupportsCompleteHybridPerimeter: true, SupportsIsotropicRasterModules: true } &&
             topMask is { IsConfigured: true, Role: HudFactionChromeRole.TopStrip,
-                UsesSharedNineSliceGeometry: true, UsesShapedApertureCorners: true } &&
+                UsesSharedNineSliceGeometry: true, UsesShapedApertureCorners: true,
+                HasTransparentOuterCorners: true } &&
             deckMask is { IsConfigured: true, Role: HudFactionChromeRole.BottomDeck,
                 UsesSharedNineSliceGeometry: true, UsesShapedApertureCorners: true,
-                UsesFullBleedBottomDeck: true,
+                HasTransparentOuterCorners: true, UsesFullBleedBottomDeck: true,
                 RegisteredMaskedSurfaceCount: >= 4 } &&
             topMask.UsesFactionApertureMask == expectsApertureMask &&
             deckMask.UsesFactionApertureMask == expectsApertureMask &&
@@ -474,6 +470,8 @@ public partial class M7HudLab : Node3D
         bool actionableBinding = actionableSignature != brownout.ContentSignature();
         bool objectiveBounded = _hud?.FindChild("ObjectiveTracker", true, false) is Control objective &&
             objective.Size.Y <= 100f * PreviewRenderScale();
+        bool typography = HudTypographyLibrary.Validate(out string typographyError);
+        bool textContrast = HudTextPalette.ValidateFactionRecipes(out string textContrastError);
         bool finishModes = ValidateFinishModes();
         bool factionSkinModes = ValidateFactionSkinModes();
         bool layoutContained = ValidateSafeAreaContainment();
@@ -498,10 +496,10 @@ public partial class M7HudLab : Node3D
         });
         bool leakGuard = !illegal.ValidateClientKnowledge(0, out _);
         if (!(fixtures && roundTrip && migration && chromeMigration && schemaFiveMigration && schemaSixMigration && profileSanitization && mapping && tree && factionArt && finishModes && factionSkinModes && states && actionableBinding &&
-              objectiveBounded && layoutContained && interactionBindings && minimap && leakGuard && productionKnowledge))
-            GD.PrintErr($"M7 HUD LAB DETAIL: fixtures={fixtures} roundTrip={roundTrip} migration={migration} chromeMigration={chromeMigration} schema5={schemaFiveMigration} schema6={schemaSixMigration} sanitization={profileSanitization} mapping={mapping} tree={tree} factionArt={factionArt} finishes={finishModes} factionSkins={factionSkinModes} states={states} actionable={actionableBinding} objectiveBounded={objectiveBounded} layoutContained={layoutContained} interactions={interactionBindings} minimap={minimap} leakGuard={leakGuard} productionKnowledge={productionKnowledge}");
+              objectiveBounded && typography && textContrast && layoutContained && interactionBindings && minimap && leakGuard && productionKnowledge))
+            GD.PrintErr($"M7 HUD LAB DETAIL: fixtures={fixtures} roundTrip={roundTrip} migration={migration} chromeMigration={chromeMigration} schema5={schemaFiveMigration} schema6={schemaSixMigration} sanitization={profileSanitization} mapping={mapping} tree={tree} factionArt={factionArt} finishes={finishModes} factionSkins={factionSkinModes} states={states} actionable={actionableBinding} objectiveBounded={objectiveBounded} typography={typography}:{typographyError} textContrast={textContrast}:{textContrastError} layoutContained={layoutContained} interactions={interactionBindings} minimap={minimap} leakGuard={leakGuard} productionKnowledge={productionKnowledge}");
         return fixtures && roundTrip && migration && chromeMigration && schemaFiveMigration && schemaSixMigration && profileSanitization && mapping && tree && factionArt && finishModes && factionSkinModes && states && actionableBinding &&
-            objectiveBounded && layoutContained && interactionBindings && minimap && leakGuard && productionKnowledge;
+            objectiveBounded && typography && textContrast && layoutContained && interactionBindings && minimap && leakGuard && productionKnowledge;
     }
 
     private bool ValidateInteractiveBindings()
@@ -571,7 +569,8 @@ public partial class M7HudLab : Node3D
                         UsesSparseJunctionModules: false, UsesCompleteHybridPerimeter: true,
                         UsesIsotropicRasterModules: true, AvoidsFullSpanRasterStretch: true } &&
                     mask is { UsesFactionApertureMask: true, UsesShaderApertureMask: true,
-                        UsesShapedApertureCorners: true, UsesFullBleedBottomDeck: true,
+                        UsesShapedApertureCorners: true, HasTransparentOuterCorners: true,
+                        UsesFullBleedBottomDeck: true,
                         ClipsRasterAndContent: true, RegisteredMaskedSurfaceCount: >= 4 } &&
                     raster is { Visible: true, UsesSingleContinuousSurfaceField: true, UsesSingleDeckWideSurface: true },
                 HudArtFinish.StructuralConsole =>
@@ -583,7 +582,8 @@ public partial class M7HudLab : Node3D
                     rasterFrame is { Visible: true, IsFrameOnly: false, UsesFactionSurfaceFill: true,
                         UsesVectorAccentRails: true, UsesTiledEdgeWalls: true, UsesSparseJunctionModules: true } &&
                     mask is { UsesFactionApertureMask: true, UsesShaderApertureMask: true,
-                        UsesShapedApertureCorners: true, UsesFullBleedBottomDeck: true,
+                        UsesShapedApertureCorners: true, HasTransparentOuterCorners: true,
+                        UsesFullBleedBottomDeck: true,
                         ClipsRasterAndContent: true, RegisteredMaskedSurfaceCount: >= 4 } &&
                     structural is { Visible: false } && raster is { Visible: false },
                 _ => rasterFrame is { Visible: false } && structural is { Visible: false } &&
@@ -638,6 +638,7 @@ public partial class M7HudLab : Node3D
                 topMask.UsesShaderApertureMask == expectsApertureMask &&
                 deckMask.UsesShaderApertureMask == expectsApertureMask &&
                 topMask.UsesShapedApertureCorners && deckMask.UsesShapedApertureCorners &&
+                topMask.HasTransparentOuterCorners && deckMask.HasTransparentOuterCorners &&
                 deckMask.UsesFullBleedBottomDeck && deckMask.RegisteredMaskedSurfaceCount >= 4 &&
                 topMask.Faction == recipe.Faction && deckMask.Faction == recipe.Faction &&
                 (faction != (int)HudFaction.RockRaiders ||
@@ -746,7 +747,7 @@ public partial class M7HudLab : Node3D
         Rect2 minimapBounds = minimapPanel.GetGlobalRect();
         Rect2 selectionBounds = selectionPanel.GetGlobalRect();
         Rect2 portraitBounds = portraitPanel.GetGlobalRect();
-        Rect2 expectedContent = deckMask.ContentRectFor(deckMask.Size);
+        Rect2 expectedContent = deckMask.InteractiveRectFor(deckMask.Size);
         if (!ContainsRect(deckBounds, contentBounds) || !ContainsRect(contentBounds, minimapBounds) ||
             !ContainsRect(contentBounds, selectionBounds) || !ContainsRect(contentBounds, portraitBounds) ||
             !ContainsRect(contentBounds, commandBounds) ||
@@ -755,9 +756,9 @@ public partial class M7HudLab : Node3D
             Math.Abs(minimapBounds.Position.X - contentBounds.Position.X) > 0.5f ||
             Math.Abs(commandBounds.End.X - contentBounds.End.X) > 0.5f ||
             Math.Abs(minimapBounds.Position.Y - contentBounds.Position.Y) > 0.5f ||
-            selectionBounds.Position.Y <= contentBounds.Position.Y + 0.5f ||
-            portraitBounds.Position.Y <= contentBounds.Position.Y + 0.5f ||
-            commandBounds.Position.Y <= contentBounds.Position.Y + 0.5f ||
+            Math.Abs(selectionBounds.Position.Y - contentBounds.Position.Y) > 0.5f ||
+            Math.Abs(portraitBounds.Position.Y - contentBounds.Position.Y) > 0.5f ||
+            Math.Abs(commandBounds.Position.Y - contentBounds.Position.Y) > 0.5f ||
             minimapBounds.End.X > selectionBounds.Position.X || selectionBounds.End.X > portraitBounds.Position.X ||
             portraitBounds.End.X > commandBounds.Position.X) return false;
 

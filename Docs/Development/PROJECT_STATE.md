@@ -271,8 +271,8 @@ live; the current schema-9 copy/paste retains the complete experiment.
   interaction. T069 now owns the implemented minimap inside this retained slot.
 - Mixed selections aggregate up to 128 selected entities by gameplay type and
   bind to eight reusable cards rather than generating portrait walls.
-- The full-width skeleton supports 90–100% safe area, 98% default, independent
-  UI/text scale and height-relative responsive scaling. Functional bay order is
+- The centered bounded console supports 90–100% safe area, 98% default,
+  independent UI/text scale and height-relative responsive scaling. Functional bay order is
   minimap, adaptive selection, dedicated tactical portrait and an icon-first
   3×4 command card; the local production queue is a compact strip above it.
 - `F8` → **M7 HUD Lab** provides eight information-density fixtures, four
@@ -284,13 +284,15 @@ live; the current schema-9 copy/paste retains the complete experiment.
   complete perimeter last. The lower plate is full-bleed beneath the frame;
   one nine-slice shader masks its raster field, minimap, fog/markers and outer
   command surface without relying on Godot's Z-sensitive backbuffer clipping.
-  A dark aperture-derived gutter fills square transparency left by the source
-  PNG, while functional selection/portrait/command content receives one stable
-  top clearance. Rock Raiders top and lower surfaces remain dark rather than
-  inheriting a technical white mask. Authored raster corners, shoulders and one
-  central clasp remain proportionally correct; thick code-native rails continue
-  along every side without stretching or repeating the raster edge. Structural
-  isolates the earlier vector chassis, Legacy preserves the old full-frame
+  The surface fill and those registered edge surfaces share the same rounded
+  aperture, leaving its exterior corner pixels transparent rather than restoring
+  a square backing. A separate per-faction interactive rectangle keeps minimap,
+  selection, portrait and command controls clear of all four authored rails
+  while the visual plate stays full-bleed. Rock Raiders top and lower surfaces remain dark rather
+  than inheriting a technical white mask. Authored raster corners, shoulders and
+  one central clasp remain proportionally correct; thick code-native rails
+  continue along every side without stretching or repeating the raster edge.
+  Structural isolates the earlier vector chassis, Legacy preserves the old full-frame
   renderer for direct comparison and Clean exposes the functional skeleton.
 
   Schema 8 replaces independent named surface palettes in normal use with one
@@ -307,11 +309,17 @@ live; the current schema-9 copy/paste retains the complete experiment.
   changing the locked HUD anchors. The laboratory can now override the faction
   kit while leaving a scenario's content untouched; production auto-binding is
   unchanged and Reset restores it.
+  HUD typography now uses vendored OFL-licensed Oxanium SemiBold for titles and
+  IBM Plex Sans Regular/Medium for body text and numeric values. Six semantic
+  roles, a 900p readability floor and surface-specific contrast resolution
+  replace blanket accent/muted colouring and recursive one-size-fits-all gaps.
+  The lab exposes overall text scale but no longer delegates baseline type size
+  or text-colour correction to the art director.
   Details are in
   `Docs/Development/M7_HUD_LAB.md`; source and regeneration rules are in
   `Docs/Development/M7_HUD_FRAME_AUDIT.md`.
-- T068 does not approve HUD art direction. Authored icons, portraits,
-  typography, faction framing, alert motion/audio and health-bar visuals remain
+- T068 does not approve HUD art direction. Authored icons, portraits, final
+  typography acceptance, faction framing, alert motion/audio and health-bar visuals remain
   game-director review work. T073 still owns the complete command catalog.
 
 ## M7 T069 fog-correct minimap
@@ -375,18 +383,22 @@ live; the current schema-9 copy/paste retains the complete experiment.
   The HUD Lab schema-8 revision replaces the dirty repeated-frame composition
   with protected, proportion-preserving raster modules, responsive four-sided
   vector rails, a faction-derived rounded aperture, shader-masked full-bleed
-  edge surfaces, a dark inner gutter, safe functional clearance and one divider
-  owner. The frame and complete shell palette now bind
+  edge surfaces, transparent exterior corners, one shared fill/content
+  silhouette, a per-faction frame-safe interactive rectangle and one divider owner. The frame and
+  complete shell palette now bind
   to exactly four playable-faction recipes; the Astronaut sources share one kit
   and Alien purple is removed. Legacy retains the old frame renderer for honest
   A/B comparison, while the former named non-faction palettes are migration or
   explicit Custom-audit history. Minimap, selection and commands remain
   code-native contiguous sections rather than separately framed texture cards.
-  Automation asserts that major panels
+  The layout is centered and bounded on wide displays, resource labels are
+  visible by default, selection cards fill their assigned bay, and semantic
+  spacing replaces recursive uniform gaps. Automation asserts that major panels
   and every visible command remain inside the safe area, including all 12 slots
   in the mixed-army fixture, across the four supported default-profile aspect
-  fixtures. Laboratory scale, type, opacity, padding, spacing and command-fill
+  fixtures. Laboratory scale, opacity, padding, spacing and command-fill
   values now apply directly instead of being silently capped by viewport width;
+  baseline type roles, sizes and surface-aware text contrast are curated in code;
   geometric deck widths are labelled as safe-area-constrained targets. Production Energy and alert buttons
   retain reliable hit targets; actionable brownout/capacity alerts center their
   associated Worksite. Structural Console keeps its complete vector chassis
@@ -405,6 +417,14 @@ live; the current schema-9 copy/paste retains the complete experiment.
 - network replay chunk format **1**.
 
 ## Verification state
+
+The frame-mask, responsive-layout and curated-typography HUD correction passed
+the complete fast suite on 2026-08-31 UTC with **zero blocking or diagnostic
+failures**: 278 NUnit tests, all retained M6/M7 smokes, the four faction recipes,
+all Hybrid/Structural/Legacy/Clean comparisons, 16:9/16:10/21:9/4:3 containment,
+transparent-corner mask validation, surface-correct text contrast across all 16
+faction/finish combinations and the same-scenario Alien-kit override. Exact
+summary: `Artifacts/Verification/20260831T081400Z-fast-summary.txt`.
 
 The schema-8 rounded-aperture HUD revision passed `./tools/verify.sh --full` on
 2026-08-30 UTC with **zero blocking failures**: 278 NUnit tests, all retained
