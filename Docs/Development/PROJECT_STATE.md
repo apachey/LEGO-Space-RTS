@@ -3,11 +3,14 @@
 This file is the short repository handoff. Canon and current Git evidence remain
 authoritative when anything here becomes stale.
 
+The dense M7 cross-thread continuity index is
+`Docs/Development/M7_THREAD_HANDOFF.md`.
+
 ## Current milestone
 
 **M0–M6 are implemented, verified and game-director accepted. M7 visual canon
 remains deliberately open. Preset-style comparisons are retired as the primary
-workflow; the gameplay-scale realtime Look Lab is now at schema 8 with free
+workflow; the gameplay-scale realtime Look Lab is now at schema 9 with free
 camera control, ten reproducible surface/glare assets, exact shader-bound role-authored material
 families with color-only art controls, per-function emission, automatic
 dusk/night spot headlights and work lamps, direct fire lighting, five presentation-only world-light
