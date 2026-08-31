@@ -286,12 +286,16 @@ live; the current schema-9 copy/paste retains the complete experiment.
   command surface without relying on Godot's Z-sensitive backbuffer clipping.
   The surface fill and those registered edge surfaces share the same rounded
   aperture, leaving its exterior corner pixels transparent rather than restoring
-  a square backing. A separate per-faction interactive rectangle keeps minimap,
+  a square backing. Hybrid vector rails stop at the protected raster-corner
+  boundary, and the generic panel style preserves an explicitly transparent
+  source alpha, so neither a dark rail rectangle nor a white fallback plate can
+  show through the authored cut-outs. A separate per-faction interactive rectangle keeps minimap,
   selection, portrait and command controls clear of all four authored rails
   while the visual plate stays full-bleed. Rock Raiders top and lower surfaces remain dark rather
   than inheriting a technical white mask. Authored raster corners, shoulders and
   one central clasp remain proportionally correct; thick code-native rails
-  continue along every side without stretching or repeating the raster edge.
+  continue between the corner modules on every side without stretching or
+  repeating the raster edge.
   Structural isolates the earlier vector chassis, Legacy preserves the old full-frame
   renderer for direct comparison and Clean exposes the functional skeleton.
 
@@ -418,14 +422,15 @@ live; the current schema-9 copy/paste retains the complete experiment.
 
 ## Verification state
 
-The frame-mask, responsive-layout and curated-typography HUD correction passed
+The frame-mask, corner-backing, responsive-layout and curated-typography HUD correction passed
 the complete fast suite on 2026-08-31 UTC with **zero blocking or diagnostic
 failures**: 278 NUnit tests, all retained M6/M7 smokes, the four faction recipes,
 all Hybrid/Structural/Legacy/Clean comparisons, 16:9/16:10/21:9/4:3 containment,
-transparent-corner mask validation, surface-correct text contrast across all 32
+transparent-corner mask validation, zero-alpha Hybrid/Legacy parent backings,
+surface-correct text contrast across all 32
 faction/finish/command-fill combinations and the same-scenario Alien-kit
 override. Exact summary:
-`Artifacts/Verification/20260831T094426Z-fast-summary.txt`.
+`Artifacts/Verification/20260831T132322Z-fast-summary.txt`.
 
 The schema-8 rounded-aperture HUD revision passed `./tools/verify.sh --full` on
 2026-08-30 UTC with **zero blocking failures**: 278 NUnit tests, all retained

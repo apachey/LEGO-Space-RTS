@@ -1355,7 +1355,11 @@ public partial class HudView : Control
         int padding = Mathf.RoundToInt((paddingOverride ?? _profile.Surface.InnerPadding) * scale);
         return new StyleBoxFlat
         {
-            BgColor = new Color(background, _profile.Surface.PanelOpacity), BorderColor = border,
+            // Preserve an explicitly transparent or translucent source color.
+            // Replacing its alpha with PanelOpacity turns Colors.Transparent
+            // into an almost-opaque white rectangle behind authored corners.
+            BgColor = new Color(background.R, background.G, background.B,
+                background.A * _profile.Surface.PanelOpacity), BorderColor = border,
             BorderWidthLeft = borderWidth, BorderWidthTop = borderWidth, BorderWidthRight = borderWidth, BorderWidthBottom = borderWidth,
             CornerRadiusTopLeft = radius, CornerRadiusTopRight = radius, CornerRadiusBottomLeft = radius, CornerRadiusBottomRight = radius,
             ContentMarginLeft = padding, ContentMarginRight = padding, ContentMarginTop = padding, ContentMarginBottom = padding

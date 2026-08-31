@@ -205,19 +205,39 @@ public partial class HudFactionChrome : Control
         Color edge = WithAlpha(recess.Darkened(0.34f), 0.96f);
         Color plate = WithAlpha(shell, top ? 0.92f : 0.96f);
 
-        DrawRect(new Rect2(outer.Position, new Vector2(outer.Size.X, topRail)), edge);
-        DrawRect(new Rect2(new Vector2(outer.Position.X, outer.End.Y - bottomRail),
-            new Vector2(outer.Size.X, bottomRail)), edge);
-        DrawRect(new Rect2(outer.Position, new Vector2(leftRail, outer.Size.Y)), edge);
-        DrawRect(new Rect2(new Vector2(outer.End.X - rightRail, outer.Position.Y),
-            new Vector2(rightRail, outer.Size.Y)), edge);
+        // The raster corner modules contain intentional transparent exterior
+        // cut-outs. Rails that run underneath the complete corner square show
+        // through those cut-outs as a dark rectangular backing (or, for a
+        // light shell, as a bright inner wedge). Keep every vector span between
+        // the protected corner modules; the authored pixels own the joins.
+        float horizontalSpan = Mathf.Max(0f, outer.Size.X - corner * 2f);
+        float verticalSpan = Mathf.Max(0f, outer.Size.Y - corner * 2f);
+        float horizontalStart = outer.Position.X + corner;
+        float verticalStart = outer.Position.Y + corner;
+        if (horizontalSpan > 0f)
+        {
+            DrawRect(new Rect2(new Vector2(horizontalStart, outer.Position.Y),
+                new Vector2(horizontalSpan, topRail)), edge);
+            DrawRect(new Rect2(new Vector2(horizontalStart, outer.End.Y - bottomRail),
+                new Vector2(horizontalSpan, bottomRail)), edge);
+        }
+        if (verticalSpan > 0f)
+        {
+            DrawRect(new Rect2(new Vector2(outer.Position.X, verticalStart),
+                new Vector2(leftRail, verticalSpan)), edge);
+            DrawRect(new Rect2(new Vector2(outer.End.X - rightRail, verticalStart),
+                new Vector2(rightRail, verticalSpan)), edge);
+        }
 
         float inner = Mathf.Max(1f, topRail * 0.35f);
         float bottomInner = Mathf.Max(1f, bottomRail * 0.35f);
-        DrawRect(new Rect2(new Vector2(outer.Position.X + corner * 0.60f, outer.Position.Y + 1f),
-            new Vector2(Mathf.Max(0f, outer.Size.X - corner * 1.20f), inner)), plate);
-        DrawRect(new Rect2(new Vector2(outer.Position.X + corner * 0.60f, outer.End.Y - bottomInner - 1f),
-            new Vector2(Mathf.Max(0f, outer.Size.X - corner * 1.20f), bottomInner)), plate.Darkened(0.22f));
+        if (horizontalSpan > 0f)
+        {
+            DrawRect(new Rect2(new Vector2(horizontalStart, outer.Position.Y + 1f),
+                new Vector2(horizontalSpan, inner)), plate);
+            DrawRect(new Rect2(new Vector2(horizontalStart, outer.End.Y - bottomInner - 1f),
+                new Vector2(horizontalSpan, bottomInner)), plate.Darkened(0.22f));
+        }
 
         float signal = Mathf.Max(1f, (top ? 1.1f : 1.7f) * _chromeScale);
         DrawFactionSignals(outer, corner, topRail, bottomRail, signal, accent, secondary);
@@ -296,8 +316,8 @@ public partial class HudFactionChrome : Control
     private void DrawFactionSignals(Rect2 outer, float corner, float topRail, float bottomRail, float width,
         Color accent, Color secondary)
     {
-        float left = outer.Position.X + corner * 0.82f;
-        float right = outer.End.X - corner * 0.82f;
+        float left = outer.Position.X + corner;
+        float right = outer.End.X - corner;
         if (right <= left) return;
         float topY = outer.Position.Y + Mathf.Min(topRail - 1f, topRail * 0.58f);
         float bottomY = outer.End.Y - Mathf.Min(bottomRail - 1f, bottomRail * 0.48f);

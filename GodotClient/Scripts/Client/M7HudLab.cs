@@ -559,6 +559,16 @@ public partial class M7HudLab : Node3D
             HudStructuralChrome? structural = _hud.FindChild("BottomDeckStructuralChrome", true, false) as HudStructuralChrome;
             HudRasterSurfaceOverlay? raster = _hud.FindChild("BottomDeckRasterSurface", true, false) as HudRasterSurfaceOverlay;
             HudFactionSurfaceMask? mask = _hud.FindChild("BottomDeckFactionSurfaceMask", true, false) as HudFactionSurfaceMask;
+            PanelContainer? topPanel = _hud.FindChild("ResourceStrip", true, false) as PanelContainer;
+            PanelContainer? bottomPanel = _hud.FindChild("BottomDeck", true, false) as PanelContainer;
+            float topBackingAlpha = topPanel?.GetThemeStylebox("panel") is StyleBoxFlat topBacking
+                ? topBacking.BgColor.A : -1f;
+            float bottomBackingAlpha = bottomPanel?.GetThemeStylebox("panel") is StyleBoxFlat bottomBacking
+                ? bottomBacking.BgColor.A : -1f;
+            bool expectsTransparentBacking = finish is HudArtFinish.HybridConsole or HudArtFinish.LegacyFrames;
+            finishValid &= expectsTransparentBacking
+                ? topBackingAlpha <= 0.001f && bottomBackingAlpha <= 0.001f
+                : topBackingAlpha >= 0.25f && bottomBackingAlpha >= 0.25f;
             finishValid &= finish switch
             {
                 HudArtFinish.HybridConsole =>
