@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 16,
+  "schemaVersion": 17,
   "contentKind": "prototype_entities",
   "policy": "M8 T071 canonical 35-unit and 31-infrastructure roster definitions with accepted M3-M6 gameplay metadata and retained technical fixtures.",
   "movementProfiles": [
@@ -3099,6 +3099,326 @@
         "armorRating": 3
       },
       "viewProfile": "view.placeholder.rock_raiders.tunnel_transport"
+    }
+  ],
+  "researchDefinitions": [
+    {
+      "stableId": "research.ali.advanced_resonance_architecture",
+      "faction": "Aliens", "categories": ["Progression"], "sourceBuilding": "building.ali.reconfiguration_dock",
+      "cost": {"ore": 240, "energy": 110, "crystals": 5}, "researchTicks": 1600,
+      "prerequisiteGroups": [{"anyOf": [{"kind": "StateThreshold", "target": "state.ali.committed_crystals", "minimum": 4, "persistence": "WhileResearching"}]}],
+      "unlockTags": ["unit.aliens.alien_mothership"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.ali.advanced_resonance_architecture", "displayNameLocKey": "loc.research.ali.advanced_resonance_architecture.name"
+    },
+    {
+      "stableId": "research.ali.defense_resonance_shunt",
+      "faction": "Aliens", "categories": ["FactionSystem"], "sourceBuilding": "building.ali.resonance_core",
+      "cost": {"ore": 120, "energy": 50, "crystals": 1}, "researchTicks": 900,
+      "prerequisiteGroups": [], "unlockTags": ["capability.ali.etx_defense_node.charge_shunt"],
+      "parameterModifiers": [
+        {"target": "parameter.ali.etx_defense_node.cooldown", "operation": "MultiplyBasisPoints", "value": 7500},
+        {"target": "parameter.ali.etx_defense_node.tracking", "operation": "MultiplyBasisPoints", "value": 13000}
+      ],
+      "presentationProfile": "presentation.research.ali.defense_resonance_shunt", "displayNameLocKey": "loc.research.ali.defense_resonance_shunt.name"
+    },
+    {
+      "stableId": "research.ali.etx_reconfiguration_matrix",
+      "faction": "Aliens", "categories": ["Progression"], "sourceBuilding": "building.ali.resonance_core",
+      "cost": {"ore": 160, "energy": 65, "crystals": 2}, "researchTicks": 1100,
+      "prerequisiteGroups": [{"anyOf": [{"kind": "Building", "target": "building.ali.etx_fabricator", "minimum": 1, "persistence": "AtStart"}]}],
+      "unlockTags": ["building.ali.reconfiguration_dock"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.ali.etx_reconfiguration_matrix", "displayNameLocKey": "loc.research.ali.etx_reconfiguration_matrix.name"
+    },
+    {
+      "stableId": "research.ali.expanded_resonance_lattice",
+      "faction": "Aliens", "categories": ["FactionSystem"], "sourceBuilding": "building.ali.resonance_core",
+      "cost": {"ore": 170, "energy": 70, "crystals": 3}, "researchTicks": 1200,
+      "prerequisiteGroups": [{"anyOf": [{"kind": "Research", "target": "research.ali.etx_reconfiguration_matrix", "minimum": 1, "persistence": "AtStart"}]}],
+      "unlockTags": [], "parameterModifiers": [{"target": "parameter.ali.resonance_core.commitment_slots", "operation": "Set", "value": 6}],
+      "presentationProfile": "presentation.research.ali.expanded_resonance_lattice", "displayNameLocKey": "loc.research.ali.expanded_resonance_lattice.name"
+    },
+    {
+      "stableId": "research.ali.infiltration_matrix",
+      "faction": "Aliens", "categories": ["Combat", "Operational"], "sourceBuilding": "building.ali.reconfiguration_dock",
+      "cost": {"ore": 150, "energy": 55, "crystals": 2}, "researchTicks": 1000,
+      "prerequisiteGroups": [], "unlockTags": ["unit.aliens.etx_alien_infiltrator"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.ali.infiltration_matrix", "displayNameLocKey": "loc.research.ali.infiltration_matrix.name"
+    },
+    {
+      "stableId": "research.ali.mothership_resonance_relay",
+      "faction": "Aliens", "categories": ["Operational"], "sourceBuilding": "building.ali.reconfiguration_dock",
+      "cost": {"ore": 190, "energy": 80, "crystals": 3}, "researchTicks": 1200,
+      "prerequisiteGroups": [{"anyOf": [{"kind": "Research", "target": "research.ali.advanced_resonance_architecture", "minimum": 1, "persistence": "AtStart"}]}],
+      "unlockTags": ["capability.ali.alien_mothership.mobile_surge_anchor"],
+      "parameterModifiers": [{"target": "parameter.ali.alien_mothership.surge_anchor_range_cells", "operation": "Set", "value": 10}],
+      "presentationProfile": "presentation.research.ali.mothership_resonance_relay", "displayNameLocKey": "loc.research.ali.mothership_resonance_relay.name"
+    },
+    {
+      "stableId": "research.ali.rapid_fabrication_conduits",
+      "faction": "Aliens", "categories": ["Economic", "Operational"], "sourceBuilding": "building.ali.resonance_core",
+      "cost": {"ore": 120, "energy": 50, "crystals": 1}, "researchTicks": 900,
+      "prerequisiteGroups": [], "unlockTags": ["capability.ali.charge_production_injection"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.ali.rapid_fabrication_conduits", "displayNameLocKey": "loc.research.ali.rapid_fabrication_conduits.name"
+    },
+    {
+      "stableId": "research.ali.resonance_initiation",
+      "faction": "Aliens", "categories": ["FactionSystem"], "sourceBuilding": "building.ali.resonance_core",
+      "cost": {"ore": 90, "energy": 40, "crystals": 1}, "researchTicks": 800,
+      "prerequisiteGroups": [], "unlockTags": ["capability.ali.surge_window"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.ali.resonance_initiation", "displayNameLocKey": "loc.research.ali.resonance_initiation.name"
+    },
+    {
+      "stableId": "research.ali.resonant_recovery_latches",
+      "faction": "Aliens", "categories": ["Economic", "Recovery"], "sourceBuilding": "building.ali.resonance_core",
+      "cost": {"ore": 120, "energy": 45, "crystals": 1}, "researchTicks": 900,
+      "prerequisiteGroups": [], "unlockTags": [],
+      "parameterModifiers": [{"target": "parameter.ali.resonance_core.additional_intact_salvage_crystals", "operation": "Add", "value": 1}],
+      "presentationProfile": "presentation.research.ali.resonant_recovery_latches", "displayNameLocKey": "loc.research.ali.resonant_recovery_latches.name"
+    },
+    {
+      "stableId": "research.ali.siege_phase_coupling",
+      "faction": "Aliens", "categories": ["Combat", "Operational"], "sourceBuilding": "building.ali.reconfiguration_dock",
+      "cost": {"ore": 150, "energy": 55, "crystals": 2}, "researchTicks": 1000,
+      "prerequisiteGroups": [], "unlockTags": ["capability.ali.etx_alien_strike.siege_deployment", "unit.aliens.etx_alien_strike"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.ali.siege_phase_coupling", "displayNameLocKey": "loc.research.ali.siege_phase_coupling.name"
+    },
+    {
+      "stableId": "research.ast.aerospace_coordination",
+      "faction": "Astronauts", "categories": ["Operational"], "sourceBuilding": "building.ast.service_refit_hub",
+      "cost": {"ore": 150, "energy": 60, "crystals": 2}, "researchTicks": 1100,
+      "prerequisiteGroups": [{"anyOf": [{"kind": "Research", "target": "research.ast.mission_operations_integration", "minimum": 1, "persistence": "AtStart"}]}],
+      "unlockTags": ["unit.astronauts.mission_fighter", "unit.astronauts.mx71_recon_dropship"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.ast.aerospace_coordination", "displayNameLocKey": "loc.research.ast.aerospace_coordination.name"
+    },
+    {
+      "stableId": "research.ast.deep_mission_drilling",
+      "faction": "Astronauts", "categories": ["Combat"], "sourceBuilding": "building.ast.service_refit_hub",
+      "cost": {"ore": 220, "energy": 80, "crystals": 3}, "researchTicks": 1400,
+      "prerequisiteGroups": [{"anyOf": [{"kind": "Research", "target": "research.ast.heavy_mission_chassis", "minimum": 1, "persistence": "AtStart"}]}],
+      "unlockTags": ["unit.astronauts.mt201_ultra_drill_walker"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.ast.deep_mission_drilling", "displayNameLocKey": "loc.research.ast.deep_mission_drilling.name"
+    },
+    {
+      "stableId": "research.ast.field_survey_package",
+      "faction": "Astronauts", "categories": ["Operational"], "sourceBuilding": "building.ast.service_refit_hub",
+      "cost": {"ore": 80, "energy": 15, "crystals": 0}, "researchTicks": 700,
+      "prerequisiteGroups": [], "unlockTags": ["capability.ast.field_survey_package", "capability.ast.t3_trike.survey_configuration"],
+      "parameterModifiers": [
+        {"target": "parameter.ast.rover.sight_cells", "operation": "Add", "value": 1},
+        {"target": "parameter.ast.rover.detection_cells", "operation": "Add", "value": 2}
+      ],
+      "presentationProfile": "presentation.research.ast.field_survey_package", "displayNameLocKey": "loc.research.ast.field_survey_package.name"
+    },
+    {
+      "stableId": "research.ast.field_sustainment_package",
+      "faction": "Astronauts", "categories": ["Operational"], "sourceBuilding": "building.ast.service_refit_hub",
+      "cost": {"ore": 120, "energy": 30, "crystals": 0}, "researchTicks": 900,
+      "prerequisiteGroups": [], "unlockTags": ["capability.ast.solar_explorer.deployed_forward_service", "unit.astronauts.solar_explorer"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.ast.field_sustainment_package", "displayNameLocKey": "loc.research.ast.field_sustainment_package.name"
+    },
+    {
+      "stableId": "research.ast.heavy_mission_chassis",
+      "faction": "Astronauts", "categories": ["Combat", "Operational"], "sourceBuilding": "building.ast.service_refit_hub",
+      "cost": {"ore": 180, "energy": 60, "crystals": 2}, "researchTicks": 1200,
+      "prerequisiteGroups": [{"anyOf": [{"kind": "Research", "target": "research.ast.mission_operations_integration", "minimum": 1, "persistence": "AtStart"}]}],
+      "unlockTags": ["unit.astronauts.mt101_armored_drilling_unit"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.ast.heavy_mission_chassis", "displayNameLocKey": "loc.research.ast.heavy_mission_chassis.name"
+    },
+    {
+      "stableId": "research.ast.integrated_expedition_command",
+      "faction": "Astronauts", "categories": ["Progression", "FactionSystem"], "sourceBuilding": "building.ast.service_refit_hub",
+      "cost": {"ore": 240, "energy": 90, "crystals": 3}, "researchTicks": 1500,
+      "prerequisiteGroups": [
+        {"anyOf": [{"kind": "Research", "target": "research.ast.field_sustainment_package", "minimum": 1, "persistence": "AtStart"}]},
+        {"anyOf": [{"kind": "Research", "target": "research.ast.mission_operations_integration", "minimum": 1, "persistence": "AtStart"}]},
+        {"anyOf": [
+          {"kind": "Research", "target": "research.ast.aerospace_coordination", "minimum": 1, "persistence": "AtStart"},
+          {"kind": "Research", "target": "research.ast.deep_mission_drilling", "minimum": 1, "persistence": "AtStart"},
+          {"kind": "Research", "target": "research.ast.heavy_mission_chassis", "minimum": 1, "persistence": "AtStart"},
+          {"kind": "Research", "target": "research.ast.specialized_extraction_modules", "minimum": 1, "persistence": "AtStart"},
+          {"kind": "Research", "target": "research.ast.switchframe_actuation", "minimum": 1, "persistence": "AtStart"}
+        ]}
+      ],
+      "unlockTags": ["unit.astronauts.mx81_operations_aircraft"],
+      "parameterModifiers": [{"target": "parameter.ast.service_refit_hub.refit_bays", "operation": "Set", "value": 2}],
+      "presentationProfile": "presentation.research.ast.integrated_expedition_command", "displayNameLocKey": "loc.research.ast.integrated_expedition_command.name"
+    },
+    {
+      "stableId": "research.ast.mission_operations_integration",
+      "faction": "Astronauts", "categories": ["Progression"], "sourceBuilding": "building.ast.service_refit_hub",
+      "cost": {"ore": 150, "energy": 50, "crystals": 1}, "researchTicks": 1100,
+      "prerequisiteGroups": [], "unlockTags": ["building.ast.flight_operations_pad", "building.ast.mission_vehicle_bay"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.ast.mission_operations_integration", "displayNameLocKey": "loc.research.ast.mission_operations_integration.name"
+    },
+    {
+      "stableId": "research.ast.mission_refit_protocols",
+      "faction": "Astronauts", "categories": ["FactionSystem"], "sourceBuilding": "building.ast.service_refit_hub",
+      "cost": {"ore": 120, "energy": 35, "crystals": 1}, "researchTicks": 900,
+      "prerequisiteGroups": [], "unlockTags": ["capability.ast.mission_refit"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.ast.mission_refit_protocols", "displayNameLocKey": "loc.research.ast.mission_refit_protocols.name"
+    },
+    {
+      "stableId": "research.ast.specialized_extraction_modules",
+      "faction": "Astronauts", "categories": ["Economic"], "sourceBuilding": "building.ast.service_refit_hub",
+      "cost": {"ore": 130, "energy": 40, "crystals": 1}, "researchTicks": 1000,
+      "prerequisiteGroups": [{"anyOf": [{"kind": "Research", "target": "research.ast.mission_operations_integration", "minimum": 1, "persistence": "AtStart"}]}],
+      "unlockTags": ["capability.ast.mobile_mining_platform.crystal_reaper_configuration"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.ast.specialized_extraction_modules", "displayNameLocKey": "loc.research.ast.specialized_extraction_modules.name"
+    },
+    {
+      "stableId": "research.ast.switchframe_actuation",
+      "faction": "Astronauts", "categories": ["Operational"], "sourceBuilding": "building.ast.service_refit_hub",
+      "cost": {"ore": 140, "energy": 55, "crystals": 1}, "researchTicks": 1000,
+      "prerequisiteGroups": [{"anyOf": [{"kind": "Research", "target": "research.ast.mission_operations_integration", "minimum": 1, "persistence": "AtStart"}]}],
+      "unlockTags": ["unit.astronauts.mx41_switch_fighter"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.ast.switchframe_actuation", "displayNameLocKey": "loc.research.ast.switchframe_actuation.name"
+    },
+    {
+      "stableId": "research.mar.advanced_excavation_systems",
+      "faction": "Martians", "categories": ["Economic", "Combat"], "sourceBuilding": "building.mar.routing_laboratory",
+      "cost": {"ore": 190, "energy": 65, "crystals": 2}, "researchTicks": 1200,
+      "prerequisiteGroups": [], "unlockTags": ["capability.mar.excavation_searcher.advanced_excavation_systems", "capability.mar.excavation_searcher.excavation_clamp"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.mar.advanced_excavation_systems", "displayNameLocKey": "loc.research.mar.advanced_excavation_systems.name"
+    },
+    {
+      "stableId": "research.mar.aero_handling_decks",
+      "faction": "Martians", "categories": ["Operational"], "sourceBuilding": "building.mar.routing_laboratory",
+      "cost": {"ore": 100, "energy": 30, "crystals": 0}, "researchTicks": 800,
+      "prerequisiteGroups": [], "unlockTags": ["unit.martians.aero_skiff"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.mar.aero_handling_decks", "displayNameLocKey": "loc.research.mar.aero_handling_decks.name"
+    },
+    {
+      "stableId": "research.mar.grand_network_integration",
+      "faction": "Martians", "categories": ["Progression"], "sourceBuilding": "building.mar.routing_laboratory",
+      "cost": {"ore": 230, "energy": 80, "crystals": 3}, "researchTicks": 1500,
+      "prerequisiteGroups": [
+        {"anyOf": [{"kind": "Research", "target": "research.mar.redundant_routing", "minimum": 1, "persistence": "AtStart"}]},
+        {"anyOf": [{"kind": "StateThreshold", "target": "state.mar.connected_station_nodes", "minimum": 2, "persistence": "AtStart"}]}
+      ],
+      "unlockTags": ["capability.mar.excavation_searcher.grand_network_integration"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.mar.grand_network_integration", "displayNameLocKey": "loc.research.mar.grand_network_integration.name"
+    },
+    {
+      "stableId": "research.mar.hypersled_throughput",
+      "faction": "Martians", "categories": ["FactionSystem"], "sourceBuilding": "building.mar.routing_laboratory",
+      "cost": {"ore": 120, "energy": 30, "crystals": 0}, "researchTicks": 900,
+      "prerequisiteGroups": [], "unlockTags": [],
+      "parameterModifiers": [{"target": "parameter.mar.station.simultaneous_transfer_capacity", "operation": "Set", "value": 3}],
+      "presentationProfile": "presentation.research.mar.hypersled_throughput", "displayNameLocKey": "loc.research.mar.hypersled_throughput.name"
+    },
+    {
+      "stableId": "research.mar.mechanical_worker_toolset",
+      "faction": "Martians", "categories": ["Economic", "Operational"], "sourceBuilding": "building.mar.routing_laboratory",
+      "cost": {"ore": 100, "energy": 20, "crystals": 0}, "researchTicks": 800,
+      "prerequisiteGroups": [], "unlockTags": ["capability.mar.worker_robot.station_area_automatic_maintenance"],
+      "parameterModifiers": [{"target": "parameter.mar.worker_robot.automatic_maintenance_hp_per_second", "operation": "Set", "value": 3}],
+      "presentationProfile": "presentation.research.mar.mechanical_worker_toolset", "displayNameLocKey": "loc.research.mar.mechanical_worker_toolset.name"
+    },
+    {
+      "stableId": "research.mar.pressure_equalization_valves",
+      "faction": "Martians", "categories": ["Economic"], "sourceBuilding": "building.mar.routing_laboratory",
+      "cost": {"ore": 130, "energy": 40, "crystals": 1}, "researchTicks": 1000,
+      "prerequisiteGroups": [], "unlockTags": [],
+      "parameterModifiers": [{"target": "parameter.mar.tube_network.active_links_per_energy_demand", "operation": "Set", "value": 2}],
+      "presentationProfile": "presentation.research.mar.pressure_equalization_valves", "displayNameLocKey": "loc.research.mar.pressure_equalization_valves.name"
+    },
+    {
+      "stableId": "research.mar.redundant_routing",
+      "faction": "Martians", "categories": ["FactionSystem"], "sourceBuilding": "building.mar.routing_laboratory",
+      "cost": {"ore": 150, "energy": 45, "crystals": 1}, "researchTicks": 1000,
+      "prerequisiteGroups": [], "unlockTags": ["capability.mar.tube_network.automatic_rerouting"],
+      "parameterModifiers": [{"target": "parameter.mar.station.connection_capacity", "operation": "Add", "value": 1}],
+      "presentationProfile": "presentation.research.mar.redundant_routing", "displayNameLocKey": "loc.research.mar.redundant_routing.name"
+    },
+    {
+      "stableId": "research.mar.utility_mechanisms",
+      "faction": "Martians", "categories": ["FactionSystem", "Combat"], "sourceBuilding": "building.mar.routing_laboratory",
+      "cost": {"ore": 170, "energy": 50, "crystals": 2}, "researchTicks": 1100,
+      "prerequisiteGroups": [], "unlockTags": ["building.mar.deflector_arm", "capability.mar.red_planet_protector.guard_sweep", "capability.mar.red_planet_protector.positional_resistance"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.mar.utility_mechanisms", "displayNameLocKey": "loc.research.mar.utility_mechanisms.name"
+    },
+    {
+      "stableId": "research.mar.walker_articulation",
+      "faction": "Martians", "categories": ["Operational", "Combat"], "sourceBuilding": "building.mar.routing_laboratory",
+      "cost": {"ore": 160, "energy": 45, "crystals": 1}, "researchTicks": 1100,
+      "prerequisiteGroups": [], "unlockTags": ["unit.martians.recon_mech_rp", "unit.martians.red_planet_protector"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.mar.walker_articulation", "displayNameLocKey": "loc.research.mar.walker_articulation.name"
+    },
+    {
+      "stableId": "research.rr.advanced_power_distribution",
+      "faction": "RockRaiders", "categories": ["Economic"], "sourceBuilding": "building.rock_raiders.engineering_workshop",
+      "cost": {"ore": 160, "energy": 50, "crystals": 1}, "researchTicks": 1100,
+      "prerequisiteGroups": [], "unlockTags": [],
+      "parameterModifiers": [{"target": "parameter.rr.power_station.energy_generation_per_second", "operation": "Add", "value": 3}],
+      "presentationProfile": "presentation.research.rr.advanced_power_distribution", "displayNameLocKey": "loc.research.rr.advanced_power_distribution.name"
+    },
+    {
+      "stableId": "research.rr.cutter_package",
+      "faction": "RockRaiders", "categories": ["Combat"], "sourceBuilding": "building.rock_raiders.vehicle_service_bay",
+      "cost": {"ore": 90, "energy": 20, "crystals": 0}, "researchTicks": 700,
+      "prerequisiteGroups": [], "unlockTags": ["capability.rr.loader_dozer.cutter_package"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.rr.cutter_package", "displayNameLocKey": "loc.research.rr.cutter_package.name"
+    },
+    {
+      "stableId": "research.rr.deep_core_engineering",
+      "faction": "RockRaiders", "categories": ["Progression"], "sourceBuilding": "building.rock_raiders.crystal_vault",
+      "cost": {"ore": 220, "energy": 90, "crystals": 4}, "researchTicks": 1500,
+      "prerequisiteGroups": [
+        {"anyOf": [{"kind": "Building", "target": "building.rock_raiders.engineering_workshop", "minimum": 1, "persistence": "AtStart"}]},
+        {"anyOf": [{"kind": "Building", "target": "building.rock_raiders.crystal_vault", "minimum": 1, "persistence": "AtStart"}]}
+      ],
+      "unlockTags": ["unit.rock_raiders.chrome_crusher", "unit.rock_raiders.tunnel_transport"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.rr.deep_core_engineering", "displayNameLocKey": "loc.research.rr.deep_core_engineering.name"
+    },
+    {
+      "stableId": "research.rr.geological_survey_calibration",
+      "faction": "RockRaiders", "categories": ["Economic"], "sourceBuilding": "building.rock_raiders.hq",
+      "cost": {"ore": 80, "energy": 20, "crystals": 0}, "researchTicks": 700,
+      "prerequisiteGroups": [], "unlockTags": ["capability.rr.hover_scout.extended_resource_and_excavation_survey"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.rr.geological_survey_calibration", "displayNameLocKey": "loc.research.rr.geological_survey_calibration.name"
+    },
+    {
+      "stableId": "research.rr.high_capacity_processing",
+      "faction": "RockRaiders", "categories": ["Economic"], "sourceBuilding": "building.rock_raiders.engineering_workshop",
+      "cost": {"ore": 140, "energy": 35, "crystals": 0}, "researchTicks": 1000,
+      "prerequisiteGroups": [], "unlockTags": ["capability.rr.ore_processing_plant.full_rich_ore_exploitation"],
+      "parameterModifiers": [{"target": "parameter.rr.ore_processing_plant.active_raw_batches", "operation": "Set", "value": 2}],
+      "presentationProfile": "presentation.research.rr.high_capacity_processing", "displayNameLocKey": "loc.research.rr.high_capacity_processing.name"
+    },
+    {
+      "stableId": "research.rr.industrial_expansion_program",
+      "faction": "RockRaiders", "categories": ["Progression"], "sourceBuilding": "building.rock_raiders.hq",
+      "cost": {"ore": 150, "energy": 50, "crystals": 0}, "researchTicks": 1100,
+      "prerequisiteGroups": [
+        {"anyOf": [{"kind": "Building", "target": "building.rock_raiders.ore_processing_plant", "minimum": 1, "persistence": "AtStart"}]},
+        {"anyOf": [{"kind": "Building", "target": "building.rock_raiders.power_station", "minimum": 1, "persistence": "AtStart"}]},
+        {"anyOf": [{"kind": "Building", "target": "building.rock_raiders.vehicle_service_bay", "minimum": 1, "persistence": "AtStart"}]}
+      ],
+      "unlockTags": ["building.rock_raiders.crystal_vault", "building.rock_raiders.cutter_mast", "building.rock_raiders.engineering_workshop"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.rr.industrial_expansion_program", "displayNameLocKey": "loc.research.rr.industrial_expansion_program.name"
+    },
+    {
+      "stableId": "research.rr.reinforced_drilling_assemblies",
+      "faction": "RockRaiders", "categories": ["Combat", "Operational"], "sourceBuilding": "building.rock_raiders.engineering_workshop",
+      "cost": {"ore": 160, "energy": 45, "crystals": 1}, "researchTicks": 1100,
+      "prerequisiteGroups": [], "unlockTags": ["capability.rr.drill_craft.reinforced_excavation", "unit.rock_raiders.granite_grinder"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.rr.reinforced_drilling_assemblies", "displayNameLocKey": "loc.research.rr.reinforced_drilling_assemblies.name"
+    },
+    {
+      "stableId": "research.rr.service_gantries",
+      "faction": "RockRaiders", "categories": ["Operational"], "sourceBuilding": "building.rock_raiders.vehicle_service_bay",
+      "cost": {"ore": 140, "energy": 40, "crystals": 0}, "researchTicks": 1000,
+      "prerequisiteGroups": [], "unlockTags": [],
+      "parameterModifiers": [{"target": "parameter.rr.vehicle_service_bay.concurrent_repair_jobs", "operation": "Set", "value": 2}],
+      "presentationProfile": "presentation.research.rr.service_gantries", "displayNameLocKey": "loc.research.rr.service_gantries.name"
+    },
+    {
+      "stableId": "research.rr.worksite_automation",
+      "faction": "RockRaiders", "categories": ["FactionSystem"], "sourceBuilding": "building.rock_raiders.ore_processing_plant",
+      "cost": {"ore": 120, "energy": 30, "crystals": 0}, "researchTicks": 900,
+      "prerequisiteGroups": [], "unlockTags": [],
+      "parameterModifiers": [{"target": "parameter.rr.ore_processing_plant.automated_receiving_lanes", "operation": "Set", "value": 2}],
+      "presentationProfile": "presentation.research.rr.worksite_automation", "displayNameLocKey": "loc.research.rr.worksite_automation.name"
     }
   ],
   "transformationDefinitions": [

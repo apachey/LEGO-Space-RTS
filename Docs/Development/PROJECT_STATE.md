@@ -9,9 +9,10 @@ The dense M7 cross-thread continuity index is
 ## Current milestone
 
 **M0–M6 are implemented, verified and game-director accepted. M7 visual canon
-remains deliberately open. M8 T070–T071 are implemented and fully verified:
-the compiled gameplay catalog now contains all 35 canonical unit chassis and
-all 31 canonical infrastructure definitions across the four factions.
+remains deliberately open. M8 T070–T072 are implemented and fully verified:
+the compiled gameplay catalog now contains all 35 canonical unit chassis, all
+31 canonical infrastructure definitions and all 38 canonical research
+definitions across the four factions.
 Preset-style comparisons are retired as the primary
 workflow; the gameplay-scale realtime Look Lab is now at schema 9 with free
 camera control, ten reproducible surface/glare assets, exact shader-bound role-authored material
@@ -417,7 +418,7 @@ live; the current schema-9 copy/paste retains the complete experiment.
   while Legacy Frames and Clean remain direct same-layout comparisons. These
   remain review tools, not approved visual canon.
 
-## M8 T070–T071 canonical roster definitions
+## M8 T070–T072 canonical roster and research definitions
 
 - The source content and built-in fallback catalog now contain exactly 35
   canonical buildable units: 8 Rock Raiders, 13 Astronauts, 6 Aliens and 8
@@ -443,6 +444,26 @@ live; the current schema-9 copy/paste retains the complete experiment.
   Pad and 9×9 Aero Tube Hangar. Formats 2–16 remain readable; a compiler parity
   guard requires checked-in JSON and the built-in fallback to serialize
   identically.
+- The catalog now contains exactly 38 canonical technologies: 9 Rock Raider,
+  10 Astronaut, 10 Alien and 9 Martian definitions. Every entry carries its
+  faction, physical research provider, canonical categories, Ore/Energy/Crystal
+  cost, 20-Hz duration, stable presentation/localization references and at
+  least one validated unlock or parameter effect.
+- T072 prerequisite groups encode AND between groups and OR within a group.
+  Completed-research, building and state-threshold requirements are distinct;
+  Alien Advanced Resonance Architecture preserves four committed Crystals for
+  the whole research job, Astronaut Integrated Expedition Command preserves its
+  Field + Mission + one-of-five Mission specialization relationship, and
+  Martian Grand Network Integration preserves Redundant Routing plus two
+  connected Stations.
+- The research validator rejects duplicate IDs, invalid factions/providers,
+  unresolved or cross-faction content effects and every possible prerequisite
+  cycle. Advanced Excavation Systems and Grand Network Integration expose
+  separate Searcher gates so the later command definition can require both.
+- Source schema 17 / compiled format 18 append the research DAG after the T071
+  payload. Formats 2–17 remain readable; format 17 yields an empty research
+  catalog. Checked-in JSON, the built-in fallback and tracked content binary
+  compile byte-identically at content hash `93530AA6EC0E2742`.
 - Importing data does not expand the pre-T073 construction catalog. Local and
   network authority still expose only the four accepted M3 Rock Raiders
   structures; the other 27 definitions remain command-locked until the complete
@@ -452,22 +473,34 @@ live; the current schema-9 copy/paste retains the complete experiment.
   nonrectangular masks, structure sight, production exits, Settlement reserve
   and configurable-defense defaults were not available in canon and were not
   invented.
-- T070–T071 do not claim the later M8 closures: T072 owns the research DAG,
-  T073 the complete command catalog and T074 complete roster-reference
-  validation.
+- T072 remains data-only: it does not add research queues/jobs, completion
+  state, commands, UI, network payloads or effect application, and it does not
+  rewire the retained M5 proof flags. T070–T072 do not claim the later M8
+  closures: T073 owns the complete command/runtime binding and T074 complete
+  roster-reference validation.
 
 ## Integration format boundary
 
 - authoritative snapshot format **20**;
 - simulation protocol **18**;
 - replay format **16** (backward reader for 15);
-- compiled content format **17** / source schema **16**;
+- compiled content format **18** / source schema **17**;
 - command packet format **1**;
 - recipient snapshot packet format **3**;
 - reconnect packet format **1**;
 - network replay chunk format **1**.
 
 ## Verification state
+
+M8 T072 passed `./tools/verify.sh --full` on 2026-09-01 UTC with **zero
+blocking failures**: 289 NUnit tests, exact 38-technology roster and 9/10/10/9
+faction split, canonical costs/ticks/providers, AND/OR and maintained-threshold
+DAG coverage, cycle/unresolved-effect rejection, format-17 backward reading,
+source/fallback/binary parity, 24/24 representative mover acceptance, all
+retained M6/M7 smokes, 100-repeat determinism, replay/snapshot continuation and
+a fresh launchable macOS export. The preserved Stress60 M9 diagnostic again
+reported 2/60 completion and remains `BLOCKING_LATER`. Exact summary:
+`Artifacts/Verification/20260901T171512Z-full-summary.txt`.
 
 M8 T071 passed `./tools/verify.sh --full` on 2026-09-01 UTC with **zero
 blocking failures**: 285 NUnit tests, exact 35-unit and 31-infrastructure
@@ -631,8 +664,9 @@ blocking only when M9 must prove its stable-large-battle exit.
 
 ## Next approved action
 
-1. Begin M8 T072: implement and validate the canonical research DAG without
-   inventing prerequisites, unlocks or faction technology.
+1. Begin M8 T073: implement the complete canonical command catalog and bind
+   legal construction, production and research actions to the T070–T072 data
+   without inventing actions, requirements or faction behavior.
 2. The game director may independently explore `F8` → **M7 HUD Lab** and return
    its Hybrid/Structural/Legacy/Clean comparison across the four faction-bound
    recipes, then return a **COPY JSON** profile later; no HUD visual canon is

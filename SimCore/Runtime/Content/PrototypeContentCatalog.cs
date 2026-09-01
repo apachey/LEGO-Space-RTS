@@ -334,8 +334,9 @@ public sealed class PrototypeContentCatalog
     public UnitProductionDefinition[] Production { get; }
     public WeaponDefinition[] Weapons { get; }
     public TransformationDefinition[] Transformations { get; }
+    public ResearchDefinition[] Research { get; }
     public ulong ContentHash { get; internal set; }
-    public PrototypeContentCatalog(PrototypeMovementProfile[] movementProfiles, PrototypeEntityDefinition[] entities, ResourceNodeDefinition[]? resourceNodes = null, BuildingDefinition[]? buildings = null, UnitProductionDefinition[]? production = null, WeaponDefinition[]? weapons = null, TransformationDefinition[]? transformations = null)
+    public PrototypeContentCatalog(PrototypeMovementProfile[] movementProfiles, PrototypeEntityDefinition[] entities, ResourceNodeDefinition[]? resourceNodes = null, BuildingDefinition[]? buildings = null, UnitProductionDefinition[]? production = null, WeaponDefinition[]? weapons = null, TransformationDefinition[]? transformations = null, ResearchDefinition[]? research = null)
     {
         MovementProfiles = movementProfiles ?? Array.Empty<PrototypeMovementProfile>();
         Entities = entities ?? Array.Empty<PrototypeEntityDefinition>();
@@ -344,6 +345,7 @@ public sealed class PrototypeContentCatalog
         Production = production ?? Array.Empty<UnitProductionDefinition>();
         Weapons = weapons ?? Array.Empty<WeaponDefinition>();
         Transformations = transformations ?? Array.Empty<TransformationDefinition>();
+        Research = research ?? Array.Empty<ResearchDefinition>();
         for (int i = 0; i < Entities.Length; i++)
         {
             ContentId weaponProfile = Entities[i].Combat.WeaponProfile;
@@ -360,6 +362,7 @@ public sealed class PrototypeContentCatalog
             ValidateTransformationMode(transformation, entity, transformation.ModeA, authoredMode: true);
             ValidateTransformationMode(transformation, entity, transformation.ModeB, authoredMode: false);
         }
+        ResearchDefinitionValidator.Validate(this);
     }
 
     public bool ContainsEntityKey(string stableKey) => TryGetEntity(stableKey, out _);
@@ -409,6 +412,12 @@ public sealed class PrototypeContentCatalog
     public bool TryGetTransformation(ContentId entityType, out TransformationDefinition definition)
     {
         for (int i = 0; i < Transformations.Length; i++) if (Transformations[i].EntityType == entityType) { definition = Transformations[i]; return true; }
+        definition = default; return false;
+    }
+    public bool TryGetResearch(string stableKey, out ResearchDefinition definition) => TryGetResearch(StableId.FromKey(stableKey), out definition);
+    public bool TryGetResearch(ContentId id, out ResearchDefinition definition)
+    {
+        for (int i = 0; i < Research.Length; i++) if (Research[i].Id == id) { definition = Research[i]; return true; }
         definition = default; return false;
     }
 
@@ -609,7 +618,8 @@ public static class PrototypeContentFactory
                 new TransformationModeDefinition("state.astronauts.mx41.flight", "Flight", "movement.prototype.mx41_flight", FootprintClass.Medium, 10, "view.placeholder.astronauts.mx41_flight", mx41FlightCombat),
                 45, 45, 4_000, 12, 160, false, false, TargetLayerMask.All)
         };
-        PrototypeContentCatalog catalog = new PrototypeContentCatalog(profiles, entities, resources, buildings, production, weapons, transformations);
+        ResearchDefinition[] research = CanonicalResearchDefinitions.Create();
+        PrototypeContentCatalog catalog = new PrototypeContentCatalog(profiles, entities, resources, buildings, production, weapons, transformations, research);
         PrototypeContentCodec.Write(catalog);
         return catalog;
     }
@@ -619,7 +629,7 @@ public static class PrototypeContentFactory
 public static class PrototypeContentCodec
 {
     private const int Magic = 0x4350534C; // LSPC little-endian bytes.
-    public const int FormatVersion = 17;
+    public const int FormatVersion = 18;
 
     public static byte[] Write(PrototypeContentCatalog catalog)
     {
@@ -686,6 +696,8 @@ public static class PrototypeContentCodec
         }
         writer.Write(catalog.Transformations.Length);
         for (int i = 0; i < catalog.Transformations.Length; i++) WriteTransformation(writer, catalog.Transformations[i]);
+        writer.Write(catalog.Research.Length);
+        for (int i = 0; i < catalog.Research.Length; i++) WriteResearch(writer, catalog.Research[i]);
         writer.Flush();
         byte[] bytes = stream.ToArray(); catalog.ContentHash = DeterministicHash.Fnv1A64(bytes); return bytes;
     }
@@ -772,9 +784,92 @@ public static class PrototypeContentCodec
         }
         WeaponDefinition[] weapons = formatVersion >= 11 ? ReadWeapons(reader, formatVersion >= 12, formatVersion >= 14) : LegacyWeapons();
         TransformationDefinition[] transformations = formatVersion >= 15 ? ReadTransformations(reader) : Array.Empty<TransformationDefinition>();
+        ResearchDefinition[] research = formatVersion >= 18 ? ReadResearch(reader) : Array.Empty<ResearchDefinition>();
         if (stream.Position != stream.Length) throw new InvalidDataException("Trailing prototype content bytes.");
-        PrototypeContentCatalog result = new PrototypeContentCatalog(profiles, entities, resourceNodes, buildings, production, weapons, transformations) { ContentHash = DeterministicHash.Fnv1A64(bytes) };
+        PrototypeContentCatalog result = new PrototypeContentCatalog(profiles, entities, resourceNodes, buildings, production, weapons, transformations, research) { ContentHash = DeterministicHash.Fnv1A64(bytes) };
         return result;
+    }
+
+    private static void WriteResearch(BinaryWriter writer, ResearchDefinition definition)
+    {
+        writer.Write(definition.StableKey); writer.Write(definition.Id.Value); writer.Write(definition.FactionKey); writer.Write((byte)definition.Categories);
+        writer.Write(definition.SourceBuildingStableKey); writer.Write(definition.SourceBuildingType.Value);
+        writer.Write(definition.OreCost); writer.Write(definition.EnergyCost); writer.Write(definition.CrystalCost); writer.Write(definition.ResearchTicks);
+        writer.Write(definition.PrerequisiteGroups.Length);
+        for (int groupIndex = 0; groupIndex < definition.PrerequisiteGroups.Length; groupIndex++)
+        {
+            ResearchPrerequisiteDefinition[] alternatives = definition.PrerequisiteGroups[groupIndex].Alternatives;
+            writer.Write(alternatives.Length);
+            for (int i = 0; i < alternatives.Length; i++)
+            {
+                ResearchPrerequisiteDefinition prerequisite = alternatives[i];
+                writer.Write((byte)prerequisite.Kind); writer.Write(prerequisite.TargetStableKey); writer.Write(prerequisite.TargetId.Value);
+                writer.Write(prerequisite.MinimumValue); writer.Write((byte)prerequisite.Persistence);
+            }
+        }
+        writer.Write(definition.UnlockTags.Length);
+        for (int i = 0; i < definition.UnlockTags.Length; i++)
+        {
+            writer.Write(definition.UnlockTags[i]); writer.Write(StableId.FromKey(definition.UnlockTags[i]).Value);
+        }
+        writer.Write(definition.ParameterModifiers.Length);
+        for (int i = 0; i < definition.ParameterModifiers.Length; i++)
+        {
+            ResearchParameterModifier modifier = definition.ParameterModifiers[i];
+            writer.Write(modifier.TargetStableKey); writer.Write(modifier.TargetId.Value); writer.Write((byte)modifier.Operation); writer.Write(modifier.Value);
+        }
+        writer.Write(definition.MutuallyExclusiveGroupKey); writer.Write(definition.PresentationProfileKey); writer.Write(definition.DisplayNameLocKey);
+    }
+
+    private static ResearchDefinition[] ReadResearch(BinaryReader reader)
+    {
+        int count = reader.ReadInt32();
+        if (count < 0 || count > 1024) throw new InvalidDataException("Invalid research definition count.");
+        ResearchDefinition[] definitions = new ResearchDefinition[count];
+        for (int definitionIndex = 0; definitionIndex < count; definitionIndex++)
+        {
+            string key = reader.ReadString(); uint id = reader.ReadUInt32(); string faction = reader.ReadString(); ResearchCategory categories = (ResearchCategory)reader.ReadByte();
+            string sourceBuilding = reader.ReadString(); uint sourceBuildingId = reader.ReadUInt32();
+            ushort ore = reader.ReadUInt16(), energy = reader.ReadUInt16(); byte crystals = reader.ReadByte(); ushort ticks = reader.ReadUInt16();
+            int groupCount = reader.ReadInt32();
+            if (groupCount < 0 || groupCount > 256) throw new InvalidDataException("Invalid research prerequisite group count.");
+            ResearchPrerequisiteGroup[] groups = new ResearchPrerequisiteGroup[groupCount];
+            for (int groupIndex = 0; groupIndex < groupCount; groupIndex++)
+            {
+                int alternativeCount = reader.ReadInt32();
+                if (alternativeCount <= 0 || alternativeCount > 256) throw new InvalidDataException("Invalid research prerequisite alternative count.");
+                ResearchPrerequisiteDefinition[] alternatives = new ResearchPrerequisiteDefinition[alternativeCount];
+                for (int i = 0; i < alternativeCount; i++)
+                {
+                    ResearchPrerequisiteKind kind = (ResearchPrerequisiteKind)reader.ReadByte(); string target = reader.ReadString(); uint targetId = reader.ReadUInt32();
+                    alternatives[i] = new ResearchPrerequisiteDefinition(kind, target, reader.ReadUInt16(), (ResearchPrerequisitePersistence)reader.ReadByte());
+                    if (alternatives[i].TargetId.Value != targetId) throw new InvalidDataException("Stable research prerequisite ID mismatch.");
+                }
+                groups[groupIndex] = new ResearchPrerequisiteGroup(alternatives);
+            }
+            int unlockCount = reader.ReadInt32();
+            if (unlockCount < 0 || unlockCount > 1024) throw new InvalidDataException("Invalid research unlock count.");
+            string[] unlocks = new string[unlockCount];
+            for (int i = 0; i < unlockCount; i++)
+            {
+                unlocks[i] = reader.ReadString(); uint unlockId = reader.ReadUInt32();
+                if (StableId.FromKey(unlocks[i]).Value != unlockId) throw new InvalidDataException("Stable research unlock ID mismatch.");
+            }
+            int modifierCount = reader.ReadInt32();
+            if (modifierCount < 0 || modifierCount > 1024) throw new InvalidDataException("Invalid research modifier count.");
+            ResearchParameterModifier[] modifiers = new ResearchParameterModifier[modifierCount];
+            for (int i = 0; i < modifierCount; i++)
+            {
+                string target = reader.ReadString(); uint targetId = reader.ReadUInt32();
+                modifiers[i] = new ResearchParameterModifier(target, (ResearchModifierOperation)reader.ReadByte(), reader.ReadInt32());
+                if (modifiers[i].TargetId.Value != targetId) throw new InvalidDataException("Stable research modifier ID mismatch.");
+            }
+            definitions[definitionIndex] = new ResearchDefinition(key, faction, categories, sourceBuilding, ore, energy, crystals, ticks, groups, unlocks, modifiers,
+                reader.ReadString(), reader.ReadString(), reader.ReadString());
+            if (definitions[definitionIndex].Id.Value != id || definitions[definitionIndex].SourceBuildingType.Value != sourceBuildingId)
+                throw new InvalidDataException("Stable research or source-building ID mismatch.");
+        }
+        return definitions;
     }
 
     private static void WriteTransformation(BinaryWriter writer, TransformationDefinition definition)

@@ -1024,3 +1024,42 @@ rules, network formats, replay formats and visual canon are unchanged.
 This is a backward-readable content-format evolution required to represent
 existing canon. It changes no gameplay canon, snapshot/network protocol,
 dependency or visual direction.
+
+## 2026-09-01 — T072 data-only research DAG and effect-reference boundary
+
+- The canonical Phase 04 research roster is 38 definitions: 9 Rock Raider, 10
+  Astronaut, 10 Alien and 9 Martian technologies. Each definition stores its
+  faction, physical source building, exact Ore/Energy/Crystal cost, 20-Hz
+  research duration, categories, prerequisite groups, unlock tags, parameter
+  modifiers and stable presentation/localization references.
+- Prerequisite groups are ANDed; alternatives inside a group are ORed. The
+  schema distinguishes completed research, owned buildings and authoritative
+  state thresholds. It also preserves whether a threshold is checked at start
+  or maintained while researching, which is required for the Alien four-
+  committed-Crystal gate.
+- Source-building bindings come from the Phase 04 Rock Raider structure column
+  and technology trees together with Phase 03's faction technology roles:
+  Astronaut research uses the Service & Refit Hub, Alien research uses the
+  Resonance Core or Reconfiguration Dock branch, and Martian research uses the
+  Routing Laboratory. The five alternatives for Integrated Expedition Command
+  are exactly the five technologies listed under Phase 04 `MISSION SYSTEMS`.
+- Content unlocks resolve against the imported unit/building catalog. Capability
+  tags and parameter targets use explicit stable namespaces. The catalog rejects
+  duplicate technologies, invalid factions/providers, unresolved or
+  cross-faction content effects, malformed prerequisites and every possible
+  research cycle, including edges inside an any-of group.
+- Advanced Excavation Systems and Grand Network Integration retain separate
+  Searcher capability tags. T073 must require both when it defines the Searcher
+  production command; T072 does not incorrectly make either technology
+  sufficient on its own.
+- Prototype source schema 17 adds the research source. Compiled content format
+  18 appends the research payload after format-17 data; formats 2–17 remain
+  readable with an empty research catalog.
+- T072 is intentionally data-only. It does not add research jobs, queues,
+  completion state, commands, UI, network payloads or effect application, and
+  it does not rewire the retained M5 proof flags. Those runtime bindings belong
+  to T073 and later complete-reference closure.
+
+This changes compiled gameplay content and its compatibility hash without
+changing gameplay canon, snapshot/network/replay formats, dependencies or
+visual direction.

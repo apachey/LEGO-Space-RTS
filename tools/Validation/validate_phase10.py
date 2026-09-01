@@ -414,7 +414,7 @@ check(len(source.get('resourceReceivers',[])) == 2, 'M3 starting HQ resource rec
 check(len(source.get('visionTestGeometry',[])) >= 4, 'vision test geometry missing')
 
 content_source = json.loads((ROOT/'Content/PrototypeEntities.json').read_text())
-check(content_source.get('schemaVersion') == 16 and content_source.get('contentKind') == 'prototype_entities', 'prototype content schema mismatch')
+check(content_source.get('schemaVersion') == 17 and content_source.get('contentKind') == 'prototype_entities', 'prototype content schema mismatch')
 entity_keys = [e.get('stableId') for e in content_source.get('entities',[])]
 check(len(entity_keys) >= 5 and len(entity_keys) == len(set(entity_keys)), 'prototype content entries missing/duplicated')
 unit_entries = [e for e in content_source.get('entities',[]) if e.get('stableId','').startswith('unit.')]
@@ -559,6 +559,94 @@ expected_worksite_radii = {
     'building.rock_raiders.vehicle_service_bay': 12,
 }
 check({key:building_by_key.get(key,{}).get('worksiteServiceRadius') for key in expected_worksite_radii} == expected_worksite_radii, 'canonical M5 Worksite service radii missing or incorrect')
+
+research_by_key={r.get('stableId'):r for r in content_source.get('researchDefinitions',[])}
+expected_research={
+    # faction, source building, cost O/E/C, ticks
+    'research.ali.advanced_resonance_architecture':('Aliens','building.ali.reconfiguration_dock',[240,110,5],1600),
+    'research.ali.defense_resonance_shunt':('Aliens','building.ali.resonance_core',[120,50,1],900),
+    'research.ali.etx_reconfiguration_matrix':('Aliens','building.ali.resonance_core',[160,65,2],1100),
+    'research.ali.expanded_resonance_lattice':('Aliens','building.ali.resonance_core',[170,70,3],1200),
+    'research.ali.infiltration_matrix':('Aliens','building.ali.reconfiguration_dock',[150,55,2],1000),
+    'research.ali.mothership_resonance_relay':('Aliens','building.ali.reconfiguration_dock',[190,80,3],1200),
+    'research.ali.rapid_fabrication_conduits':('Aliens','building.ali.resonance_core',[120,50,1],900),
+    'research.ali.resonance_initiation':('Aliens','building.ali.resonance_core',[90,40,1],800),
+    'research.ali.resonant_recovery_latches':('Aliens','building.ali.resonance_core',[120,45,1],900),
+    'research.ali.siege_phase_coupling':('Aliens','building.ali.reconfiguration_dock',[150,55,2],1000),
+    'research.ast.aerospace_coordination':('Astronauts','building.ast.service_refit_hub',[150,60,2],1100),
+    'research.ast.deep_mission_drilling':('Astronauts','building.ast.service_refit_hub',[220,80,3],1400),
+    'research.ast.field_survey_package':('Astronauts','building.ast.service_refit_hub',[80,15,0],700),
+    'research.ast.field_sustainment_package':('Astronauts','building.ast.service_refit_hub',[120,30,0],900),
+    'research.ast.heavy_mission_chassis':('Astronauts','building.ast.service_refit_hub',[180,60,2],1200),
+    'research.ast.integrated_expedition_command':('Astronauts','building.ast.service_refit_hub',[240,90,3],1500),
+    'research.ast.mission_operations_integration':('Astronauts','building.ast.service_refit_hub',[150,50,1],1100),
+    'research.ast.mission_refit_protocols':('Astronauts','building.ast.service_refit_hub',[120,35,1],900),
+    'research.ast.specialized_extraction_modules':('Astronauts','building.ast.service_refit_hub',[130,40,1],1000),
+    'research.ast.switchframe_actuation':('Astronauts','building.ast.service_refit_hub',[140,55,1],1000),
+    'research.mar.advanced_excavation_systems':('Martians','building.mar.routing_laboratory',[190,65,2],1200),
+    'research.mar.aero_handling_decks':('Martians','building.mar.routing_laboratory',[100,30,0],800),
+    'research.mar.grand_network_integration':('Martians','building.mar.routing_laboratory',[230,80,3],1500),
+    'research.mar.hypersled_throughput':('Martians','building.mar.routing_laboratory',[120,30,0],900),
+    'research.mar.mechanical_worker_toolset':('Martians','building.mar.routing_laboratory',[100,20,0],800),
+    'research.mar.pressure_equalization_valves':('Martians','building.mar.routing_laboratory',[130,40,1],1000),
+    'research.mar.redundant_routing':('Martians','building.mar.routing_laboratory',[150,45,1],1000),
+    'research.mar.utility_mechanisms':('Martians','building.mar.routing_laboratory',[170,50,2],1100),
+    'research.mar.walker_articulation':('Martians','building.mar.routing_laboratory',[160,45,1],1100),
+    'research.rr.advanced_power_distribution':('RockRaiders','building.rock_raiders.engineering_workshop',[160,50,1],1100),
+    'research.rr.cutter_package':('RockRaiders','building.rock_raiders.vehicle_service_bay',[90,20,0],700),
+    'research.rr.deep_core_engineering':('RockRaiders','building.rock_raiders.crystal_vault',[220,90,4],1500),
+    'research.rr.geological_survey_calibration':('RockRaiders','building.rock_raiders.hq',[80,20,0],700),
+    'research.rr.high_capacity_processing':('RockRaiders','building.rock_raiders.engineering_workshop',[140,35,0],1000),
+    'research.rr.industrial_expansion_program':('RockRaiders','building.rock_raiders.hq',[150,50,0],1100),
+    'research.rr.reinforced_drilling_assemblies':('RockRaiders','building.rock_raiders.engineering_workshop',[160,45,1],1100),
+    'research.rr.service_gantries':('RockRaiders','building.rock_raiders.vehicle_service_bay',[140,40,0],1000),
+    'research.rr.worksite_automation':('RockRaiders','building.rock_raiders.ore_processing_plant',[120,30,0],900),
+}
+expected_research_counts={'RockRaiders':9,'Astronauts':10,'Aliens':10,'Martians':9}
+actual_research_counts={faction:sum(1 for research in research_by_key.values() if research.get('faction')==faction) for faction in expected_research_counts}
+check(len(research_by_key)==38 and set(research_by_key)==set(expected_research), 'M8 T072 must contain exactly the 38 canonical research definitions')
+check(actual_research_counts==expected_research_counts, 'M8 T072 faction research counts must be RockRaiders=9, Astronauts=10, Aliens=10, Martians=9')
+for key,(faction,source_building,cost,ticks) in expected_research.items():
+    definition=research_by_key.get(key,{})
+    check(definition.get('faction')==faction and definition.get('sourceBuilding')==source_building, f'canonical research faction/source mismatch: {key}')
+    check(definition.get('cost')=={'ore':cost[0],'energy':cost[1],'crystals':cost[2]} and definition.get('researchTicks')==ticks, f'canonical research cost/time mismatch: {key}')
+    check(source_building in building_by_key and by_key.get(source_building,{}).get('faction')==faction, f'research source building unresolved or cross-faction: {key}')
+    check(bool(definition.get('categories')) and bool(definition.get('presentationProfile')) and bool(definition.get('displayNameLocKey')), f'research presentation/category metadata missing: {key}')
+    check(bool(definition.get('unlockTags')) or bool(definition.get('parameterModifiers')), f'research effect metadata missing: {key}')
+    for unlock in definition.get('unlockTags',[]):
+        check(unlock.startswith('capability.') or unlock in by_key, f'unresolved research unlock reference: {key} -> {unlock}')
+        if unlock in by_key: check(by_key[unlock].get('faction')==faction, f'cross-faction research unlock reference: {key} -> {unlock}')
+    for modifier in definition.get('parameterModifiers',[]):
+        check(modifier.get('target','').startswith('parameter.') and modifier.get('operation') in {'Add','Set','MultiplyBasisPoints'}, f'invalid research parameter modifier: {key}')
+research_edges={key:[] for key in research_by_key}
+for key,definition in research_by_key.items():
+    for group in definition.get('prerequisiteGroups',[]):
+        alternatives=group.get('anyOf',[])
+        check(bool(alternatives), f'empty research prerequisite group: {key}')
+        for prerequisite in alternatives:
+            kind,target=prerequisite.get('kind'),prerequisite.get('target')
+            check(prerequisite.get('minimum',0)>0 and prerequisite.get('persistence') in {'AtStart','WhileResearching'}, f'invalid research prerequisite metadata: {key}')
+            if kind=='Research':
+                check(target in research_by_key and research_by_key.get(target,{}).get('faction')==definition.get('faction'), f'unresolved/cross-faction research prerequisite: {key} -> {target}')
+                research_edges[key].append(target)
+            elif kind=='Building': check(target in building_by_key and by_key.get(target,{}).get('faction')==definition.get('faction'), f'unresolved/cross-faction building prerequisite: {key} -> {target}')
+            elif kind=='StateThreshold': check(str(target).startswith('state.'), f'invalid research state prerequisite: {key} -> {target}')
+            else: check(False, f'invalid research prerequisite kind: {key}')
+research_visit={}
+def visit_research(key):
+    if research_visit.get(key)==1: return False
+    if research_visit.get(key)==2: return True
+    research_visit[key]=1
+    if not all(visit_research(target) for target in research_edges[key]): return False
+    research_visit[key]=2
+    return True
+check(all(visit_research(key) for key in research_edges), 'M8 T072 research prerequisite graph contains a cycle')
+integrated=research_by_key['research.ast.integrated_expedition_command']['prerequisiteGroups']
+check(len(integrated)==3 and len(integrated[2]['anyOf'])==5, 'Integrated Expedition Command must retain Field + Mission + one-of-five Mission specialization requirements')
+alien_advanced=research_by_key['research.ali.advanced_resonance_architecture']['prerequisiteGroups'][0]['anyOf'][0]
+check(alien_advanced=={'kind':'StateThreshold','target':'state.ali.committed_crystals','minimum':4,'persistence':'WhileResearching'}, 'Advanced Resonance Architecture must maintain four committed Crystals while researching')
+grand_targets={entry['target'] for group in research_by_key['research.mar.grand_network_integration']['prerequisiteGroups'] for entry in group['anyOf']}
+check(grand_targets=={'research.mar.redundant_routing','state.mar.connected_station_nodes'}, 'Grand Network Integration must require Redundant Routing and two connected Stations')
 
 forward_service = (ROOT/'SimCore/Runtime/Simulation/ForwardServiceSystem.cs').read_text()
 for token in ['building.ast.service_refit_hub','unit.ast.solar_explorer','unit.ast.t3_trike','ServiceHubRadius = 18','DeployedSolarExplorerRadius = 10','ProviderBucketBuildCells = 4']:
