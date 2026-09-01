@@ -988,3 +988,39 @@ networking and serialization formats are unchanged.
 
 This changes Godot presentation/input integration only. SimCore, gameplay
 rules, network formats, replay formats and visual canon are unchanged.
+
+## 2026-09-01 — T071 versioned wide infrastructure footprints and Crystal costs
+
+- The canonical infrastructure roster includes a 10×8 Flight Operations Pad
+  and a 9×9 Aero Tube Hangar, so the former single-`ulong` 8×8 building mask
+  cannot represent all 31 entries. `BuildingDefinition` now stores low and high
+  64-bit mask words and bounds the current source to 10×10 cells.
+- Four canonical structures cost one Crystal. Building costs therefore now
+  carry Ore, Energy and Crystals consistently with unit-production costs.
+- Prototype source schema 16 requires the explicit Crystal field. The compiler
+  remains able to read schema 15, defaulting missing Crystal costs to zero.
+- Compiled content format 17 writes the second mask word and Crystal cost. Its
+  reader remains backward-compatible with formats 2–16, treating their masks
+  as the low word and their building Crystal cost as zero.
+- Aero Tube Link stores its canonical base cost/time and 1×1 span archetype in
+  the generic definition. Its existing authoritative Tube system continues to
+  apply the canonical per-length cost/time rules. The generic entity definition
+  preserves the canonical 320-HP functional-span durability reference; a
+  damageable placed-span realization remains later command/reference/system
+  binding rather than a T071 claim. Resonance demand per committed Crystal
+  likewise remains authoritative in the existing Resonance system rather than
+  being flattened into static data.
+- Canon does not provide final nonrectangular masks, structure sight values,
+  production-exit geometry or default configurable-defense modes. T071 does
+  not invent them; later M8 command/reference work may bind only values already
+  established by canon.
+- Importing definitions does not make the new infrastructure legally
+  constructible. Until T073 supplies the complete faction/research command
+  catalog, authoritative placement and network validation retain the four
+  already playable M3 Rock Raiders structures. This also keeps Crystal-bearing
+  infrastructure data-only until its legal command path can reserve and refund
+  every canonical resource cost.
+
+This is a backward-readable content-format evolution required to represent
+existing canon. It changes no gameplay canon, snapshot/network protocol,
+dependency or visual direction.

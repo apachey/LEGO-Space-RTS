@@ -1,5 +1,6 @@
 using LegoSpaceRTS.SimCore;
 using NUnit.Framework;
+using System.IO;
 
 namespace LegoSpaceRTS.SimCore.Tests
 {
@@ -96,6 +97,106 @@ public sealed class PrototypeContentTests
     }
 
     [Test]
+    public void M8T071CatalogContainsExactlyTheCanonicalThirtyOneInfrastructureRoster()
+    {
+        PrototypeContentCatalog catalog = PrototypeContentFactory.CreateM2Catalog();
+        PrototypeEntityDefinition[] infrastructure = catalog.Entities.Where(entity => entity.SelectableKind == SelectableKind.Building).ToArray();
+        string[] expectedKeys =
+        {
+            "building.ali.etx_command_core",
+            "building.ali.etx_defense_node",
+            "building.ali.etx_fabricator",
+            "building.ali.power_coupler",
+            "building.ali.reconfiguration_dock",
+            "building.ali.resonance_core",
+            "building.ast.field_systems_garage",
+            "building.ast.flight_operations_pad",
+            "building.ast.frontier_extraction_station",
+            "building.ast.mb01_eagle_command_base",
+            "building.ast.mission_vehicle_bay",
+            "building.ast.modular_sentinel_defense",
+            "building.ast.service_refit_hub",
+            "building.ast.solar_energy_array",
+            "building.mar.aero_guard_tower",
+            "building.mar.aero_tube_hangar",
+            "building.mar.aero_tube_link",
+            "building.mar.deflector_arm",
+            "building.mar.excavation_plant",
+            "building.mar.mechanical_workshop",
+            "building.mar.pressure_generator",
+            "building.mar.routing_laboratory",
+            "building.mar.settlement_station",
+            "building.rock_raiders.crusher_barrier",
+            "building.rock_raiders.crystal_vault",
+            "building.rock_raiders.cutter_mast",
+            "building.rock_raiders.engineering_workshop",
+            "building.rock_raiders.hq",
+            "building.rock_raiders.ore_processing_plant",
+            "building.rock_raiders.power_station",
+            "building.rock_raiders.vehicle_service_bay"
+        };
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(catalog.Buildings.Select(building => building.StableKey), Is.EqualTo(expectedKeys));
+            Assert.That(infrastructure.Select(building => building.StableKey), Is.EqualTo(expectedKeys));
+            Assert.That(infrastructure.Count(building => building.FactionKey == "RockRaiders"), Is.EqualTo(8));
+            Assert.That(infrastructure.Count(building => building.FactionKey == "Astronauts"), Is.EqualTo(8));
+            Assert.That(infrastructure.Count(building => building.FactionKey == "Aliens"), Is.EqualTo(6));
+            Assert.That(infrastructure.Count(building => building.FactionKey == "Martians"), Is.EqualTo(9));
+            Assert.That(infrastructure, Has.All.Matches<PrototypeEntityDefinition>(building => building.OperationsCapacity == 0 && building.Combat.IsTargetable));
+            Assert.That(catalog.Buildings, Has.All.Matches<BuildingDefinition>(building => catalog.TryGetEntity(building.Id, out PrototypeEntityDefinition entity) && entity.SelectableKind == SelectableKind.Building));
+        });
+    }
+
+    [Test]
+    public void M8T071WideFootprintsAndCrystalCostsSurviveBinaryRoundTrip()
+    {
+        PrototypeContentCatalog restored = PrototypeContentCodec.Read(PrototypeContentCodec.Write(PrototypeContentFactory.CreateM2Catalog()));
+
+        Assert.That(restored.TryGetBuilding("building.ast.flight_operations_pad", out BuildingDefinition flightPad), Is.True);
+        Assert.That(restored.TryGetBuilding("building.mar.aero_tube_hangar", out BuildingDefinition hangar), Is.True);
+        Assert.That(restored.TryGetBuilding("building.ast.mission_vehicle_bay", out BuildingDefinition missionBay), Is.True);
+        Assert.That(restored.TryGetBuilding("building.ali.reconfiguration_dock", out BuildingDefinition alienDock), Is.True);
+        Assert.That(restored.TryGetBuilding("building.mar.routing_laboratory", out BuildingDefinition routingLab), Is.True);
+        Assert.That(restored.TryGetBuilding("building.mar.aero_tube_link", out BuildingDefinition tubeLink), Is.True);
+        Assert.Multiple(() =>
+        {
+            Assert.That((flightPad.FootprintWidth, flightPad.FootprintHeight), Is.EqualTo((10, 8)));
+            Assert.That(flightPad.FootprintMaskHigh, Is.EqualTo(0xFFFFUL));
+            Assert.That(flightPad.Occupies(9, 7, 0), Is.True);
+            Assert.That((flightPad.RotatedWidth(1), flightPad.RotatedHeight(1)), Is.EqualTo((8, 10)));
+            Assert.That(flightPad.Occupies(7, 9, 1), Is.True);
+            Assert.That((hangar.FootprintWidth, hangar.FootprintHeight), Is.EqualTo((9, 9)));
+            Assert.That(hangar.FootprintMaskHigh, Is.EqualTo(0x1FFFFUL));
+            Assert.That(hangar.Occupies(8, 8, 0), Is.True);
+            Assert.That(flightPad.CrystalCost, Is.EqualTo(1));
+            Assert.That(missionBay.CrystalCost, Is.EqualTo(1));
+            Assert.That(alienDock.CrystalCost, Is.EqualTo(1));
+            Assert.That(routingLab.CrystalCost, Is.EqualTo(1));
+            Assert.That(tubeLink.OreCost, Is.EqualTo(TubeGraphSystem.LinkBaseOreCost));
+            Assert.That(tubeLink.EnergyCost, Is.EqualTo(TubeGraphSystem.LinkActivationEnergyCost));
+            Assert.That(tubeLink.BuildTicks, Is.EqualTo(10 * EnergyDomainSystem.TicksPerSecond));
+        });
+    }
+
+    [Test]
+    public void Format16BuildingDefinitionsRemainReadableWithLegacyDefaults()
+    {
+        PrototypeContentCatalog restored = PrototypeContentCodec.Read(CreateFormat16BuildingCatalog());
+
+        Assert.That(restored.TryGetBuilding("building.legacy", out BuildingDefinition building), Is.True);
+        Assert.Multiple(() =>
+        {
+            Assert.That((building.FootprintWidth, building.FootprintHeight), Is.EqualTo((3, 2)));
+            Assert.That(building.FootprintMask, Is.EqualTo(0b11_1111UL));
+            Assert.That(building.FootprintMaskHigh, Is.Zero);
+            Assert.That(building.CrystalCost, Is.Zero);
+            Assert.That(building.WorksiteServiceRadius, Is.EqualTo(12));
+        });
+    }
+
+    [Test]
     public void PrototypeContentBinaryRoundTripsAndHashesIdentically()
     {
         PrototypeContentCatalog source = new PrototypeContentCatalog(
@@ -140,6 +241,7 @@ public sealed class PrototypeContentTests
         Assert.That(building.RotatedWidth(1), Is.EqualTo(2));
         Assert.That(building.OreCost, Is.EqualTo(140));
         Assert.That(building.EnergyCost, Is.EqualTo(15));
+        Assert.That(building.CrystalCost, Is.Zero);
         Assert.That(building.ProductionExitFootprint, Is.EqualTo(FootprintClass.Medium));
         Assert.That(building.OperationsCapacityProvided, Is.EqualTo(4));
         Assert.That(building.EnergyGenerationPerSecond, Is.EqualTo(10));
@@ -208,6 +310,41 @@ public sealed class PrototypeContentTests
     {
         string[] expected = keys.OrderBy(key => key, System.StringComparer.Ordinal).ToArray();
         Assert.That(keys, Is.EqualTo(expected));
+    }
+
+    private static byte[] CreateFormat16BuildingCatalog()
+    {
+        using MemoryStream stream = new();
+        using BinaryWriter writer = new(stream);
+        writer.Write(0x4350534C);
+        writer.Write(16);
+        writer.Write(0); // Movement profiles.
+        writer.Write(0); // Entities.
+        writer.Write(0); // Resource nodes.
+        writer.Write(1); // Buildings.
+        writer.Write("building.legacy");
+        writer.Write(StableId.FromKey("building.legacy").Value);
+        writer.Write((byte)3);
+        writer.Write((byte)2);
+        writer.Write(0b11_1111UL);
+        writer.Write(true);
+        writer.Write((ushort)140);
+        writer.Write((ushort)15);
+        writer.Write((ushort)600);
+        writer.Write((byte)2);
+        writer.Write((byte)1);
+        writer.Write((byte)FootprintClass.Medium);
+        writer.Write((byte)4);
+        writer.Write((ushort)10);
+        writer.Write((ushort)120);
+        writer.Write((ushort)3);
+        writer.Write((byte)EnergyFunctionalClass.ProductionAndResearch);
+        writer.Write((byte)12);
+        writer.Write(0); // Production definitions.
+        writer.Write(0); // Weapon definitions.
+        writer.Write(0); // Transformation definitions.
+        writer.Flush();
+        return stream.ToArray();
     }
 }
 }

@@ -1,7 +1,7 @@
 {
-  "schemaVersion": 15,
+  "schemaVersion": 16,
   "contentKind": "prototype_entities",
-  "policy": "M8 T070 canonical 35-unit roster definitions with accepted M3-M6 gameplay metadata and retained technical fixtures.",
+  "policy": "M8 T071 canonical 35-unit and 31-infrastructure roster definitions with accepted M3-M6 gameplay metadata and retained technical fixtures.",
   "movementProfiles": [
     {
       "stableId": "movement.prototype.crew",
@@ -961,6 +961,604 @@
   ],
   "buildingDefinitions": [
     {
+      "stableId": "building.ali.etx_command_core",
+      "footprintMask": [
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 230,
+        "energy": 60,
+        "crystals": 0
+      },
+      "buildTicks": 800,
+      "operationsCapacityProvided": 16,
+      "energyGenerationPerSecond": 2,
+      "energyReserveCapacity": 150,
+      "continuousEnergyDemandPerSecond": 0,
+      "energyFunctionalClass": "CommandAndBasicEconomy"
+    },
+    {
+      "stableId": "building.ali.etx_defense_node",
+      "footprintMask": [
+        "11",
+        "11"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 120,
+        "energy": 30,
+        "crystals": 0
+      },
+      "buildTicks": 600,
+      "operationsCapacityProvided": 0,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 2,
+      "energyFunctionalClass": "StaticDefenseAndNonessential"
+    },
+    {
+      "stableId": "building.ali.etx_fabricator",
+      "footprintMask": [
+        "111111",
+        "111111",
+        "111111",
+        "111111",
+        "111111",
+        "111111"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 140,
+        "energy": 25,
+        "crystals": 0
+      },
+      "buildTicks": 640,
+      "operationsCapacityProvided": 4,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 2,
+      "energyFunctionalClass": "ProductionAndResearch"
+    },
+    {
+      "stableId": "building.ali.power_coupler",
+      "footprintMask": [
+        "1111",
+        "1111",
+        "1111",
+        "1111"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 130,
+        "energy": 10,
+        "crystals": 0
+      },
+      "buildTicks": 560,
+      "operationsCapacityProvided": 0,
+      "energyGenerationPerSecond": 12,
+      "energyReserveCapacity": 100,
+      "continuousEnergyDemandPerSecond": 0,
+      "energyFunctionalClass": "StaticDefenseAndNonessential"
+    },
+    {
+    "stableId": "building.ali.reconfiguration_dock",
+      "footprintMask": [
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111"
+      ],
+      "rotatable": true,
+      "cost": {
+        "ore": 210,
+        "energy": 60,
+        "crystals": 1
+      },
+      "buildTicks": 1000,
+      "operationsCapacityProvided": 6,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 4,
+      "energyFunctionalClass": "ProductionAndResearch"
+    },
+    {
+      "stableId": "building.ali.resonance_core",
+      "footprintMask": [
+        "1111",
+        "1111",
+        "1111",
+        "1111"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 160,
+        "energy": 50,
+        "crystals": 0
+      },
+      "buildTicks": 800,
+      "operationsCapacityProvided": 0,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 3,
+      "energyFunctionalClass": "ServiceAndFactionSystems"
+    },
+    {
+      "stableId": "building.ast.field_systems_garage",
+      "footprintMask": [
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111"
+      ],
+      "rotatable": true,
+      "cost": {
+        "ore": 130,
+        "energy": 10,
+        "crystals": 0
+      },
+      "buildTicks": 600,
+      "operationsCapacityProvided": 4,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 1,
+      "energyFunctionalClass": "ProductionAndResearch"
+    },
+    {
+      "stableId": "building.ast.flight_operations_pad",
+      "footprintMask": [
+        "1111111111",
+        "1111111111",
+        "1111111111",
+        "1111111111",
+        "1111111111",
+        "1111111111",
+        "1111111111",
+        "1111111111"
+      ],
+      "rotatable": true,
+      "cost": {
+        "ore": 200,
+        "energy": 45,
+        "crystals": 1
+      },
+      "buildTicks": 900,
+      "operationsCapacityProvided": 5,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 3,
+      "energyFunctionalClass": "ProductionAndResearch"
+    },
+    {
+      "stableId": "building.ast.frontier_extraction_station",
+      "footprintMask": [
+        "111111",
+        "111111",
+        "111111",
+        "111111",
+        "111111",
+        "111111"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 140,
+        "energy": 15,
+        "crystals": 0
+      },
+      "buildTicks": 640,
+      "operationsCapacityProvided": 0,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 1,
+      "energyFunctionalClass": "ResourceProcessing"
+    },
+    {
+      "stableId": "building.ast.mb01_eagle_command_base",
+      "footprintMask": [
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 260,
+        "energy": 40,
+        "crystals": 0
+      },
+      "buildTicks": 900,
+      "operationsCapacityProvided": 16,
+      "energyGenerationPerSecond": 2,
+      "energyReserveCapacity": 150,
+      "continuousEnergyDemandPerSecond": 0,
+      "energyFunctionalClass": "CommandAndBasicEconomy"
+    },
+    {
+      "stableId": "building.ast.mission_vehicle_bay",
+      "footprintMask": [
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111"
+      ],
+      "rotatable": true,
+      "cost": {
+        "ore": 190,
+        "energy": 35,
+        "crystals": 1
+      },
+      "buildTicks": 900,
+      "operationsCapacityProvided": 5,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 2,
+      "energyFunctionalClass": "ProductionAndResearch"
+    },
+    {
+      "stableId": "building.ast.modular_sentinel_defense",
+      "footprintMask": [
+        "11",
+        "11"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 110,
+        "energy": 20,
+        "crystals": 0
+      },
+      "buildTicks": 560,
+      "operationsCapacityProvided": 0,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 1,
+      "energyFunctionalClass": "StaticDefenseAndNonessential"
+    },
+    {
+      "stableId": "building.ast.service_refit_hub",
+      "footprintMask": [
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 170,
+        "energy": 30,
+        "crystals": 0
+      },
+      "buildTicks": 760,
+      "operationsCapacityProvided": 4,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 2,
+      "energyFunctionalClass": "ServiceAndFactionSystems"
+    },
+    {
+      "stableId": "building.ast.solar_energy_array",
+      "footprintMask": [
+        "111111",
+        "111111",
+        "111111",
+        "111111",
+        "111111"
+      ],
+      "rotatable": true,
+      "cost": {
+        "ore": 120,
+        "energy": 0,
+        "crystals": 0
+      },
+      "buildTicks": 560,
+      "operationsCapacityProvided": 0,
+      "energyGenerationPerSecond": 8,
+      "energyReserveCapacity": 100,
+      "continuousEnergyDemandPerSecond": 0,
+      "energyFunctionalClass": "StaticDefenseAndNonessential"
+    },
+    {
+      "stableId": "building.mar.aero_guard_tower",
+      "footprintMask": [
+        "11",
+        "11"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 120,
+        "energy": 25,
+        "crystals": 0
+      },
+      "buildTicks": 560,
+      "operationsCapacityProvided": 0,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 2,
+      "energyFunctionalClass": "StaticDefenseAndNonessential"
+    },
+    {
+      "stableId": "building.mar.aero_tube_hangar",
+      "footprintMask": [
+        "111111111",
+        "111111111",
+        "111111111",
+        "111111111",
+        "111111111",
+        "111111111",
+        "111111111",
+        "111111111",
+        "111111111"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 280,
+        "energy": 40,
+        "crystals": 0
+      },
+      "buildTicks": 1000,
+      "operationsCapacityProvided": 16,
+      "energyGenerationPerSecond": 2,
+      "energyReserveCapacity": 150,
+      "continuousEnergyDemandPerSecond": 0,
+      "energyFunctionalClass": "CommandAndBasicEconomy"
+    },
+    {
+      "stableId": "building.mar.aero_tube_link",
+      "footprintMask": [
+        "1"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 50,
+        "energy": 10,
+        "crystals": 0
+      },
+      "buildTicks": 200,
+      "operationsCapacityProvided": 0,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 1,
+      "energyFunctionalClass": "ServiceAndFactionSystems"
+    },
+    {
+      "stableId": "building.mar.deflector_arm",
+      "footprintMask": [
+        "111",
+        "111",
+        "111"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 100,
+        "energy": 15,
+        "crystals": 0
+      },
+      "buildTicks": 500,
+      "operationsCapacityProvided": 0,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 1,
+      "energyFunctionalClass": "StaticDefenseAndNonessential"
+    },
+    {
+      "stableId": "building.mar.excavation_plant",
+      "footprintMask": [
+        "111111",
+        "111111",
+        "111111",
+        "111111",
+        "111111",
+        "111111"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 130,
+        "energy": 15,
+        "crystals": 0
+      },
+      "buildTicks": 600,
+      "operationsCapacityProvided": 0,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 1,
+      "energyFunctionalClass": "ResourceProcessing"
+    },
+    {
+      "stableId": "building.mar.mechanical_workshop",
+      "footprintMask": [
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111"
+      ],
+      "rotatable": true,
+      "cost": {
+        "ore": 150,
+        "energy": 20,
+        "crystals": 0
+      },
+      "buildTicks": 700,
+      "operationsCapacityProvided": 5,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 1,
+      "energyFunctionalClass": "ProductionAndResearch"
+    },
+    {
+      "stableId": "building.mar.pressure_generator",
+      "footprintMask": [
+        "1111",
+        "1111",
+        "1111",
+        "1111"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 130,
+        "energy": 10,
+        "crystals": 0
+      },
+      "buildTicks": 600,
+      "operationsCapacityProvided": 0,
+      "energyGenerationPerSecond": 9,
+      "energyReserveCapacity": 100,
+      "continuousEnergyDemandPerSecond": 0,
+      "energyFunctionalClass": "StaticDefenseAndNonessential"
+    },
+    {
+      "stableId": "building.mar.routing_laboratory",
+      "footprintMask": [
+        "111111",
+        "111111",
+        "111111",
+        "111111",
+        "111111",
+        "111111"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 170,
+        "energy": 35,
+        "crystals": 1
+      },
+      "buildTicks": 840,
+      "operationsCapacityProvided": 4,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 2,
+      "energyFunctionalClass": "ProductionAndResearch"
+    },
+    {
+      "stableId": "building.mar.settlement_station",
+      "footprintMask": [
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 220,
+        "energy": 30,
+        "crystals": 0
+      },
+      "buildTicks": 800,
+      "operationsCapacityProvided": 12,
+      "energyGenerationPerSecond": 1,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 0,
+      "energyFunctionalClass": "CommandAndBasicEconomy"
+    },
+    {
+      "stableId": "building.rock_raiders.crusher_barrier",
+      "footprintMask": [
+        "111"
+      ],
+      "rotatable": true,
+      "cost": {
+        "ore": 90,
+        "energy": 10,
+        "crystals": 0
+      },
+      "buildTicks": 480,
+      "operationsCapacityProvided": 0,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 0,
+      "energyFunctionalClass": "StaticDefenseAndNonessential"
+    },
+    {
+      "stableId": "building.rock_raiders.crystal_vault",
+      "footprintMask": [
+        "11111",
+        "11111",
+        "11111",
+        "11111",
+        "11111"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 180,
+        "energy": 40,
+        "crystals": 0
+      },
+      "buildTicks": 900,
+      "operationsCapacityProvided": 0,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 1,
+      "energyFunctionalClass": "ResourceProcessing"
+    },
+    {
+      "stableId": "building.rock_raiders.cutter_mast",
+      "footprintMask": [
+        "11",
+        "11"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 120,
+        "energy": 25,
+        "crystals": 0
+      },
+      "buildTicks": 600,
+      "operationsCapacityProvided": 0,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 2,
+      "energyFunctionalClass": "StaticDefenseAndNonessential"
+    },
+    {
+      "stableId": "building.rock_raiders.engineering_workshop",
+      "footprintMask": [
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 220,
+        "energy": 50,
+        "crystals": 0
+      },
+      "buildTicks": 1100,
+      "operationsCapacityProvided": 6,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 3,
+      "energyFunctionalClass": "ProductionAndResearch"
+    },
+    {
       "stableId": "building.rock_raiders.hq",
       "footprintMask": [
         "11111111",
@@ -975,7 +1573,8 @@
       "rotatable": false,
       "cost": {
         "ore": 320,
-        "energy": 40
+        "energy": 40,
+        "crystals": 0
       },
       "buildTicks": 1200,
       "operationsCapacityProvided": 16,
@@ -1003,7 +1602,8 @@
       "rotatable": false,
       "cost": {
         "ore": 140,
-        "energy": 15
+        "energy": 15,
+        "crystals": 0
       },
       "buildTicks": 600,
       "operationsCapacityProvided": 0,
@@ -1024,7 +1624,8 @@
       "rotatable": false,
       "cost": {
         "ore": 150,
-        "energy": 20
+        "energy": 20,
+        "crystals": 0
       },
       "buildTicks": 700,
       "operationsCapacityProvided": 0,
@@ -1046,7 +1647,8 @@
       "rotatable": true,
       "cost": {
         "ore": 160,
-        "energy": 20
+        "energy": 20,
+        "crystals": 0
       },
       "buildTicks": 800,
       "operationsCapacityProvided": 4,
@@ -1110,6 +1712,554 @@
   ],
   "entities": [
     {
+      "stableId": "building.ali.etx_command_core",
+      "faction": "Aliens",
+      "sourceClassification": "NEW_GAME_CONTENT",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Huge",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "FortifiedStructure",
+        "layer": "Ground",
+        "flags": [
+          "Command"
+        ],
+        "hitPoints": 2400,
+        "armorRating": 3
+      },
+      "viewProfile": "view.placeholder.ali.etx_command_core"
+    },
+    {
+      "stableId": "building.ali.etx_defense_node",
+      "faction": "Aliens",
+      "sourceClassification": "NEW_GAME_CONTENT",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Small",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "FortifiedStructure",
+        "layer": "Ground",
+        "flags": [
+          "DefensiveStructure"
+        ],
+        "hitPoints": 700,
+        "armorRating": 1
+      },
+      "viewProfile": "view.placeholder.ali.etx_defense_node"
+    },
+    {
+      "stableId": "building.ali.etx_fabricator",
+      "faction": "Aliens",
+      "sourceClassification": "NEW_GAME_CONTENT",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Large",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+        "flags": [
+          "Production"
+        ],
+        "hitPoints": 1350,
+        "armorRating": 2
+      },
+      "viewProfile": "view.placeholder.ali.etx_fabricator"
+    },
+    {
+      "stableId": "building.ali.power_coupler",
+      "faction": "Aliens",
+      "sourceClassification": "NEW_GAME_CONTENT",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Small",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+        "flags": [
+          "EconomicInfrastructure"
+        ],
+        "hitPoints": 850,
+        "armorRating": 1
+      },
+      "viewProfile": "view.placeholder.ali.power_coupler"
+    },
+    {
+      "stableId": "building.ali.reconfiguration_dock",
+      "faction": "Aliens",
+      "sourceClassification": "NEW_GAME_CONTENT",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Huge",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+      "flags": [
+        "Production",
+        "Support"
+      ],
+        "hitPoints": 1600,
+        "armorRating": 2
+      },
+      "viewProfile": "view.placeholder.ali.reconfiguration_dock"
+    },
+    {
+      "stableId": "building.ali.resonance_core",
+      "faction": "Aliens",
+      "sourceClassification": "NEW_GAME_CONTENT",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Small",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+        "flags": [
+          "EconomicInfrastructure",
+          "Support"
+        ],
+        "hitPoints": 1200,
+        "armorRating": 2
+      },
+      "viewProfile": "view.placeholder.ali.resonance_core"
+    },
+    {
+      "stableId": "building.ast.field_systems_garage",
+      "faction": "Astronauts",
+      "sourceClassification": "COMPOSITE_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Huge",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+        "flags": [
+          "Production"
+        ],
+        "hitPoints": 1450,
+        "armorRating": 2
+      },
+      "viewProfile": "view.placeholder.ast.field_systems_garage"
+    },
+    {
+      "stableId": "building.ast.flight_operations_pad",
+      "faction": "Astronauts",
+      "sourceClassification": "COMPOSITE_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Huge",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+        "flags": [
+          "Production"
+        ],
+        "hitPoints": 1400,
+        "armorRating": 2
+      },
+      "viewProfile": "view.placeholder.ast.flight_operations_pad"
+    },
+    {
+      "stableId": "building.ast.frontier_extraction_station",
+      "faction": "Astronauts",
+      "sourceClassification": "COMPOSITE_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Large",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+        "flags": [
+          "EconomicInfrastructure"
+        ],
+        "hitPoints": 1250,
+        "armorRating": 2
+      },
+      "viewProfile": "view.placeholder.ast.frontier_extraction_station"
+    },
+    {
+      "stableId": "building.ast.mb01_eagle_command_base",
+      "faction": "Astronauts",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Huge",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "FortifiedStructure",
+        "layer": "Ground",
+        "flags": [
+          "Command"
+        ],
+        "hitPoints": 2700,
+        "armorRating": 4
+      },
+      "viewProfile": "view.placeholder.ast.mb01_eagle_command_base"
+    },
+    {
+      "stableId": "building.ast.mission_vehicle_bay",
+      "faction": "Astronauts",
+      "sourceClassification": "COMPOSITE_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Huge",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+        "flags": [
+          "Production"
+        ],
+        "hitPoints": 1700,
+        "armorRating": 3
+      },
+      "viewProfile": "view.placeholder.ast.mission_vehicle_bay"
+    },
+    {
+      "stableId": "building.ast.modular_sentinel_defense",
+      "faction": "Astronauts",
+      "sourceClassification": "NEW_GAME_CONTENT",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Small",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "FortifiedStructure",
+        "layer": "Ground",
+        "flags": [
+          "DefensiveStructure"
+        ],
+        "hitPoints": 800,
+        "armorRating": 2
+      },
+      "viewProfile": "view.placeholder.ast.modular_sentinel_defense"
+    },
+    {
+      "stableId": "building.ast.service_refit_hub",
+      "faction": "Astronauts",
+      "sourceClassification": "COMPOSITE_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Huge",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+        "flags": [
+          "Production",
+          "Support"
+        ],
+        "hitPoints": 1650,
+        "armorRating": 3
+      },
+      "viewProfile": "view.placeholder.ast.service_refit_hub"
+    },
+    {
+      "stableId": "building.ast.solar_energy_array",
+      "faction": "Astronauts",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Large",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+        "flags": [
+          "EconomicInfrastructure"
+        ],
+        "hitPoints": 900,
+        "armorRating": 1
+      },
+      "viewProfile": "view.placeholder.ast.solar_energy_array"
+    },
+    {
+      "stableId": "building.mar.aero_guard_tower",
+      "faction": "Martians",
+      "sourceClassification": "NEW_GAME_CONTENT",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Small",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "FortifiedStructure",
+        "layer": "Ground",
+        "flags": [
+          "DefensiveStructure"
+        ],
+        "hitPoints": 760,
+        "armorRating": 2
+      },
+      "viewProfile": "view.placeholder.mar.aero_guard_tower"
+    },
+    {
+      "stableId": "building.mar.aero_tube_hangar",
+      "faction": "Martians",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Huge",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "FortifiedStructure",
+        "layer": "Ground",
+        "flags": [
+          "Command",
+          "Production"
+        ],
+        "hitPoints": 2800,
+        "armorRating": 4
+      },
+      "viewProfile": "view.placeholder.mar.aero_tube_hangar"
+    },
+    {
+      "stableId": "building.mar.aero_tube_link",
+      "faction": "Martians",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Tiny",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+        "flags": [
+          "EconomicInfrastructure",
+          "Support"
+        ],
+        "hitPoints": 320,
+        "armorRating": 1
+      },
+      "viewProfile": "view.placeholder.mar.aero_tube_link"
+    },
+    {
+      "stableId": "building.mar.deflector_arm",
+      "faction": "Martians",
+      "sourceClassification": "NEW_GAME_CONTENT",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Small",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "FortifiedStructure",
+        "layer": "Ground",
+        "flags": [
+          "DefensiveStructure"
+        ],
+        "hitPoints": 850,
+        "armorRating": 3
+      },
+      "viewProfile": "view.placeholder.mar.deflector_arm"
+    },
+    {
+      "stableId": "building.mar.excavation_plant",
+      "faction": "Martians",
+      "sourceClassification": "COMPOSITE_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Large",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+        "flags": [
+          "EconomicInfrastructure"
+        ],
+        "hitPoints": 1250,
+        "armorRating": 2
+      },
+      "viewProfile": "view.placeholder.mar.excavation_plant"
+    },
+    {
+      "stableId": "building.mar.mechanical_workshop",
+      "faction": "Martians",
+      "sourceClassification": "COMPOSITE_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Huge",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+        "flags": [
+          "Production",
+          "Support"
+        ],
+        "hitPoints": 1450,
+        "armorRating": 2
+      },
+      "viewProfile": "view.placeholder.mar.mechanical_workshop"
+    },
+    {
+      "stableId": "building.mar.pressure_generator",
+      "faction": "Martians",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Small",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+        "flags": [
+          "EconomicInfrastructure"
+        ],
+        "hitPoints": 900,
+        "armorRating": 1
+      },
+      "viewProfile": "view.placeholder.mar.pressure_generator"
+    },
+    {
+      "stableId": "building.mar.routing_laboratory",
+      "faction": "Martians",
+      "sourceClassification": "COMPOSITE_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Large",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+        "flags": [
+          "Production",
+          "Support"
+        ],
+        "hitPoints": 1500,
+        "armorRating": 2
+      },
+      "viewProfile": "view.placeholder.mar.routing_laboratory"
+    },
+    {
+      "stableId": "building.mar.settlement_station",
+      "faction": "Martians",
+      "sourceClassification": "COMPOSITE_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Huge",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "FortifiedStructure",
+        "layer": "Ground",
+        "flags": [
+          "Command",
+          "EconomicInfrastructure"
+        ],
+        "hitPoints": 1900,
+        "armorRating": 3
+      },
+      "viewProfile": "view.placeholder.mar.settlement_station"
+    },
+    {
+      "stableId": "building.rock_raiders.crusher_barrier",
+      "faction": "RockRaiders",
+      "sourceClassification": "NEW_GAME_CONTENT",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Small",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "FortifiedStructure",
+        "layer": "Ground",
+        "flags": [
+          "DefensiveStructure"
+        ],
+        "hitPoints": 1100,
+        "armorRating": 4
+      },
+      "viewProfile": "view.placeholder.rock_raiders.crusher_barrier"
+    },
+    {
+      "stableId": "building.rock_raiders.crystal_vault",
+      "faction": "RockRaiders",
+      "sourceClassification": "COMPOSITE_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Large",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "FortifiedStructure",
+        "layer": "Ground",
+        "flags": [
+          "EconomicInfrastructure"
+        ],
+        "hitPoints": 1600,
+        "armorRating": 4
+      },
+      "viewProfile": "view.placeholder.rock_raiders.crystal_vault"
+    },
+    {
+      "stableId": "building.rock_raiders.cutter_mast",
+      "faction": "RockRaiders",
+      "sourceClassification": "NEW_GAME_CONTENT",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Small",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "FortifiedStructure",
+        "layer": "Ground",
+        "flags": [
+          "DefensiveStructure"
+        ],
+        "hitPoints": 800,
+        "armorRating": 2
+      },
+      "viewProfile": "view.placeholder.rock_raiders.cutter_mast"
+    },
+    {
+      "stableId": "building.rock_raiders.engineering_workshop",
+      "faction": "RockRaiders",
+      "sourceClassification": "COMPOSITE_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Huge",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+        "flags": [
+          "Production"
+        ],
+        "hitPoints": 1900,
+        "armorRating": 3
+      },
+      "viewProfile": "view.placeholder.rock_raiders.engineering_workshop"
+    },
+    {
       "stableId": "building.rock_raiders.hq",
       "faction": "RockRaiders",
       "sourceClassification": "OFFICIAL_ADAPTED",
@@ -1170,7 +2320,7 @@
       "viewProfile": "view.placeholder.rock_raiders.power_station"
     },
     {
-      "stableId": "building.rock_raiders.vehicle_service_bay",
+    "stableId": "building.rock_raiders.vehicle_service_bay",
       "faction": "RockRaiders",
       "sourceClassification": "COMPOSITE_ADAPTED",
       "movementProfile": "movement.prototype.static",
@@ -1181,8 +2331,8 @@
       "combatTarget": {
         "class": "Structure",
         "layer": "Ground",
-        "flags": [
-          "Production"
+      "flags": [
+        "Production"
         ],
         "hitPoints": 1700,
         "armorRating": 3

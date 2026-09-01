@@ -26,7 +26,9 @@ public sealed class M5MissionRefitTests
             Assert.That(job.CommittedOre, Is.EqualTo(25));
             Assert.That(job.CommittedEnergy, Is.EqualTo(10));
             Assert.That(fixture.World.Entities.ResourceBank.Get(fixture.Bank).ProcessedAmount, Is.EqualTo(oreBefore - 25));
-            Assert.That(fixture.World.Entities.EnergyDomain.Get(fixture.EnergyRoot).Reserve, Is.EqualTo(Fix32.FromInt(90) + Fix32.FromRatio(1, 10)));
+            Assert.That(fixture.World.Entities.EnergyDomain.Get(fixture.EnergyRoot).Reserve, Is.EqualTo(Fix32.FromInt(90)));
+            Assert.That(fixture.World.Entities.EnergyDomain.Get(fixture.EnergyRoot).GenerationPerSecond, Is.EqualTo(2));
+            Assert.That(fixture.World.Entities.EnergyDomain.Get(fixture.EnergyRoot).ContinuousDemandPerSecond, Is.EqualTo(2));
             Assert.That(ResourceConservation.Measure(fixture.World, ResourceType.Ore).Total, Is.EqualTo(fixture.OreConservationBefore));
         });
 

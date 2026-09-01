@@ -14,6 +14,9 @@ Directory.CreateDirectory(outputDirectory);
 
 PrototypeContentCatalog catalog = CompilePrototypeCatalog(contentSource);
 byte[] contentBytes = PrototypeContentCodec.Write(catalog);
+byte[] builtInBytes = PrototypeContentCodec.Write(PrototypeContentFactory.CreateM2Catalog());
+if (!contentBytes.AsSpan().SequenceEqual(builtInBytes))
+    throw new InvalidDataException("Checked-in prototype source and built-in fallback catalog disagree.");
 string contentOutput = Path.Combine(outputDirectory, "PrototypeEntities.contentbin");
 File.WriteAllBytes(contentOutput, contentBytes);
 PrototypeContentCatalog contentRoundTrip = PrototypeContentCodec.Read(contentBytes);
@@ -36,7 +39,8 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
 {
     using JsonDocument document = JsonDocument.Parse(File.ReadAllText(path));
     JsonElement root = document.RootElement;
-    if (root.GetProperty("schemaVersion").GetInt32() != 15) throw new InvalidDataException("Unsupported prototype content schema.");
+    int schemaVersion = root.GetProperty("schemaVersion").GetInt32();
+    if (schemaVersion < 15 || schemaVersion > 16) throw new InvalidDataException("Unsupported prototype content schema.");
     if (!string.Equals(root.GetProperty("contentKind").GetString(), "prototype_entities", StringComparison.Ordinal)) throw new InvalidDataException("Unexpected contentKind.");
 
     List<PrototypeMovementProfile> profiles = new();
@@ -146,18 +150,23 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
         if (!entityKeys.Contains(key)) throw new InvalidDataException($"{key}: building definition has no matching entity definition.");
         JsonElement rows = item.GetProperty("footprintMask");
         byte height = checked((byte)rows.GetArrayLength());
-        if (height == 0 || height > 8) throw new InvalidDataException($"{key}: footprintMask height must be 1..8.");
+        if (height == 0 || height > 10) throw new InvalidDataException($"{key}: footprintMask height must be 1..10.");
         string firstRow = rows[0].GetString() ?? string.Empty;
         byte width = checked((byte)firstRow.Length);
-        if (width == 0 || width > 8) throw new InvalidDataException($"{key}: footprintMask width must be 1..8.");
-        ulong mask = 0;
+        if (width == 0 || width > 10) throw new InvalidDataException($"{key}: footprintMask width must be 1..10.");
+        ulong mask = 0, maskHigh = 0;
         for (int y = 0; y < height; y++)
         {
             string row = rows[y].GetString() ?? string.Empty;
             if (row.Length != width) throw new InvalidDataException($"{key}: footprintMask rows must share one width.");
             for (int x = 0; x < width; x++)
             {
-                if (row[x] == '1') mask |= 1UL << (y * width + x);
+                int bitIndex = y * width + x;
+                if (row[x] == '1')
+                {
+                    if (bitIndex < 64) mask |= 1UL << bitIndex;
+                    else maskHigh |= 1UL << (bitIndex - 64);
+                }
                 else if (row[x] != '0') throw new InvalidDataException($"{key}: footprintMask accepts only 0 and 1.");
             }
         }
@@ -169,6 +178,9 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
             exitDepth = checked((byte)exit.GetProperty("depth").GetInt32());
             exitFootprint = Enum.Parse<FootprintClass>(RequiredString(exit, "largestFootprint"), false);
         }
+        byte crystalCost = cost.TryGetProperty("crystals", out JsonElement crystals)
+            ? checked((byte)crystals.GetInt32()) : (byte)0;
+        if (schemaVersion >= 16 && !cost.TryGetProperty("crystals", out _)) throw new InvalidDataException($"{key}: schema 16 building cost requires crystals.");
         buildings.Add(new BuildingDefinition(key, width, height, mask, item.GetProperty("rotatable").GetBoolean(),
             checked((ushort)cost.GetProperty("ore").GetInt32()), checked((ushort)cost.GetProperty("energy").GetInt32()),
             checked((ushort)item.GetProperty("buildTicks").GetInt32()), exitWidth, exitDepth, exitFootprint,
@@ -178,7 +190,8 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
             checked((ushort)item.GetProperty("continuousEnergyDemandPerSecond").GetInt32()),
             Enum.Parse<EnergyFunctionalClass>(RequiredString(item, "energyFunctionalClass"), false),
             item.TryGetProperty("worksiteServiceRadius", out JsonElement serviceRadius)
-                ? checked((byte)serviceRadius.GetInt32()) : (byte)0));
+                ? checked((byte)serviceRadius.GetInt32()) : (byte)0,
+            crystalCost, maskHigh));
     }
     buildings.Sort((a, b) => string.CompareOrdinal(a.StableKey, b.StableKey));
     List<UnitProductionDefinition> production = new();

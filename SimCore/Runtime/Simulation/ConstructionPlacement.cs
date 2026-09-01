@@ -18,7 +18,8 @@ public enum PlacementFailure : byte
     NoLegalProductionExit = 10,
     InsufficientOre = 11,
     NoEnergyDomain = 12,
-    InsufficientEnergy = 13
+    InsufficientEnergy = 13,
+    CommandUnavailable = 14
 }
 
 public readonly struct PlacementValidation
@@ -35,12 +36,23 @@ public readonly struct PlacementValidation
 public static class ConstructionPlacement
 {
     private static readonly ContentId HqType = StableId.FromKey("building.rock_raiders.hq");
+    private static readonly ContentId OreProcessingPlantType = StableId.FromKey("building.rock_raiders.ore_processing_plant");
+    private static readonly ContentId PowerStationType = StableId.FromKey("building.rock_raiders.power_station");
+    private static readonly ContentId VehicleServiceBayType = StableId.FromKey("building.rock_raiders.vehicle_service_bay");
+
+    // T071 imports the complete infrastructure roster as data. T073 owns the
+    // complete faction/research command catalog, so preserve the accepted M3
+    // construction surface until that authoritative availability layer exists.
+    public static bool IsBuildCommandAvailable(ContentId buildingType)
+        => buildingType == HqType || buildingType == OreProcessingPlantType ||
+           buildingType == PowerStationType || buildingType == VehicleServiceBayType;
 
     public static PlacementValidation Validate(SimulationWorld world, byte playerSlot, IReadOnlyList<EntityId> builders,
         ContentId buildingType, short anchorX, short anchorY, byte orientation)
     {
         if (!world.Content.TryGetBuilding(buildingType, out BuildingDefinition definition)) return new PlacementValidation(PlacementFailure.UnknownBuilding);
         if (orientation > 3 || (!definition.Rotatable && orientation != 0)) return new PlacementValidation(PlacementFailure.InvalidOrientation);
+        if (!IsBuildCommandAvailable(buildingType)) return new PlacementValidation(PlacementFailure.CommandUnavailable);
         EntityId builder = FindEligibleBuilder(world, playerSlot, builders);
         if (builder == EntityId.None) return new PlacementValidation(PlacementFailure.NoEligibleBuilder);
         if (buildingType != HqType && !HasCompletedHq(world, playerSlot)) return new PlacementValidation(PlacementFailure.MissingPrerequisite);

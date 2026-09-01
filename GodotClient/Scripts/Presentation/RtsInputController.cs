@@ -778,6 +778,7 @@ public partial class RtsInputController : Node
     private static string PlacementFailureText(PlacementFailure failure) => failure switch
     {
         PlacementFailure.None => "Valid — left click to place",
+        PlacementFailure.CommandUnavailable => "Command unavailable until roster integration",
         PlacementFailure.NoEligibleBuilder => "Select a Crew builder",
         PlacementFailure.MissingPrerequisite => "Requires a completed HQ",
         PlacementFailure.OutsideMap => "Outside map",

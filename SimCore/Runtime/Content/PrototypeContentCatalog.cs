@@ -237,9 +237,11 @@ public readonly struct BuildingDefinition
     public readonly byte FootprintWidth;
     public readonly byte FootprintHeight;
     public readonly ulong FootprintMask;
+    public readonly ulong FootprintMaskHigh;
     public readonly bool Rotatable;
     public readonly ushort OreCost;
     public readonly ushort EnergyCost;
+    public readonly byte CrystalCost;
     public readonly ushort BuildTicks;
     public readonly byte ProductionExitWidth;
     public readonly byte ProductionExitDepth;
@@ -255,17 +257,21 @@ public readonly struct BuildingDefinition
         ushort oreCost, ushort energyCost, ushort buildTicks, byte productionExitWidth = 0, byte productionExitDepth = 0,
         FootprintClass productionExitFootprint = FootprintClass.Tiny, byte operationsCapacityProvided = 0,
         ushort energyGenerationPerSecond = 0, ushort energyReserveCapacity = 0, ushort continuousEnergyDemandPerSecond = 0,
-        EnergyFunctionalClass energyFunctionalClass = EnergyFunctionalClass.StaticDefenseAndNonessential, byte worksiteServiceRadius = 0)
+        EnergyFunctionalClass energyFunctionalClass = EnergyFunctionalClass.StaticDefenseAndNonessential, byte worksiteServiceRadius = 0,
+        byte crystalCost = 0, ulong footprintMaskHigh = 0)
     {
-        if (footprintWidth == 0 || footprintHeight == 0 || footprintWidth > 8 || footprintHeight > 8) throw new ArgumentOutOfRangeException(nameof(footprintWidth));
+        if (footprintWidth == 0 || footprintHeight == 0 || footprintWidth > 10 || footprintHeight > 10) throw new ArgumentOutOfRangeException(nameof(footprintWidth));
         int cells = footprintWidth * footprintHeight;
-        ulong allowedMask = cells == 64 ? ulong.MaxValue : (1UL << cells) - 1UL;
-        if (footprintMask == 0 || (footprintMask & ~allowedMask) != 0) throw new ArgumentOutOfRangeException(nameof(footprintMask));
+        ulong allowedMask = cells >= 64 ? ulong.MaxValue : (1UL << cells) - 1UL;
+        int highCells = cells - 64;
+        ulong allowedMaskHigh = highCells <= 0 ? 0UL : highCells == 64 ? ulong.MaxValue : (1UL << highCells) - 1UL;
+        if ((footprintMask == 0 && footprintMaskHigh == 0) || (footprintMask & ~allowedMask) != 0 || (footprintMaskHigh & ~allowedMaskHigh) != 0)
+            throw new ArgumentOutOfRangeException(nameof(footprintMask));
         if ((productionExitWidth == 0) != (productionExitDepth == 0)) throw new ArgumentException("Production exit width and depth must both be present or absent.");
         StableKey = stableKey ?? throw new ArgumentNullException(nameof(stableKey));
         Id = StableId.FromKey(stableKey);
-        FootprintWidth = footprintWidth; FootprintHeight = footprintHeight; FootprintMask = footprintMask; Rotatable = rotatable;
-        OreCost = oreCost; EnergyCost = energyCost; BuildTicks = buildTicks;
+        FootprintWidth = footprintWidth; FootprintHeight = footprintHeight; FootprintMask = footprintMask; FootprintMaskHigh = footprintMaskHigh; Rotatable = rotatable;
+        OreCost = oreCost; EnergyCost = energyCost; CrystalCost = crystalCost; BuildTicks = buildTicks;
         ProductionExitWidth = productionExitWidth; ProductionExitDepth = productionExitDepth; ProductionExitFootprint = productionExitFootprint;
         OperationsCapacityProvided = operationsCapacityProvided;
         EnergyGenerationPerSecond = energyGenerationPerSecond; EnergyReserveCapacity = energyReserveCapacity;
@@ -287,7 +293,10 @@ public readonly struct BuildingDefinition
             case 2: sourceX = FootprintWidth - 1 - x; sourceY = FootprintHeight - 1 - y; break;
             default: sourceX = FootprintWidth - 1 - y; sourceY = x; break;
         }
-        return (FootprintMask & (1UL << (sourceY * FootprintWidth + sourceX))) != 0;
+        int bitIndex = sourceY * FootprintWidth + sourceX;
+        return bitIndex < 64
+            ? (FootprintMask & (1UL << bitIndex)) != 0
+            : (FootprintMaskHigh & (1UL << (bitIndex - 64))) != 0;
     }
 }
 
@@ -473,6 +482,33 @@ public static class PrototypeContentFactory
         };
         PrototypeEntityDefinition[] entities =
         {
+            new PrototypeEntityDefinition("building.ali.etx_command_core", "Aliens", "NEW_GAME_CONTENT", "movement.prototype.static", FootprintClass.Huge, SelectableKind.Building, 0, "view.placeholder.ali.etx_command_core", 0, 0, 0, new PrototypeCombatProfile(CombatTargetClass.FortifiedStructure, CombatTargetLayer.Ground, CombatTargetFlags.Command, 2400, 3)),
+            new PrototypeEntityDefinition("building.ali.etx_defense_node", "Aliens", "NEW_GAME_CONTENT", "movement.prototype.static", FootprintClass.Small, SelectableKind.Building, 0, "view.placeholder.ali.etx_defense_node", 0, 0, 0, new PrototypeCombatProfile(CombatTargetClass.FortifiedStructure, CombatTargetLayer.Ground, CombatTargetFlags.DefensiveStructure, 700, 1)),
+            new PrototypeEntityDefinition("building.ali.etx_fabricator", "Aliens", "NEW_GAME_CONTENT", "movement.prototype.static", FootprintClass.Large, SelectableKind.Building, 0, "view.placeholder.ali.etx_fabricator", 0, 0, 0, new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.Production, 1350, 2)),
+            new PrototypeEntityDefinition("building.ali.power_coupler", "Aliens", "NEW_GAME_CONTENT", "movement.prototype.static", FootprintClass.Small, SelectableKind.Building, 0, "view.placeholder.ali.power_coupler", 0, 0, 0, new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.EconomicInfrastructure, 850, 1)),
+            new PrototypeEntityDefinition("building.ali.reconfiguration_dock", "Aliens", "NEW_GAME_CONTENT", "movement.prototype.static", FootprintClass.Huge, SelectableKind.Building, 0, "view.placeholder.ali.reconfiguration_dock", 0, 0, 0, new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.Production | CombatTargetFlags.Support, 1600, 2)),
+            new PrototypeEntityDefinition("building.ali.resonance_core", "Aliens", "NEW_GAME_CONTENT", "movement.prototype.static", FootprintClass.Small, SelectableKind.Building, 0, "view.placeholder.ali.resonance_core", 0, 0, 0, new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.EconomicInfrastructure | CombatTargetFlags.Support, 1200, 2)),
+            new PrototypeEntityDefinition("building.ast.field_systems_garage", "Astronauts", "COMPOSITE_ADAPTED", "movement.prototype.static", FootprintClass.Huge, SelectableKind.Building, 0, "view.placeholder.ast.field_systems_garage", 0, 0, 0, new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.Production, 1450, 2)),
+            new PrototypeEntityDefinition("building.ast.flight_operations_pad", "Astronauts", "COMPOSITE_ADAPTED", "movement.prototype.static", FootprintClass.Huge, SelectableKind.Building, 0, "view.placeholder.ast.flight_operations_pad", 0, 0, 0, new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.Production, 1400, 2)),
+            new PrototypeEntityDefinition("building.ast.frontier_extraction_station", "Astronauts", "COMPOSITE_ADAPTED", "movement.prototype.static", FootprintClass.Large, SelectableKind.Building, 0, "view.placeholder.ast.frontier_extraction_station", 0, 0, 0, new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.EconomicInfrastructure, 1250, 2)),
+            new PrototypeEntityDefinition("building.ast.mb01_eagle_command_base", "Astronauts", "OFFICIAL_ADAPTED", "movement.prototype.static", FootprintClass.Huge, SelectableKind.Building, 0, "view.placeholder.ast.mb01_eagle_command_base", 0, 0, 0, new PrototypeCombatProfile(CombatTargetClass.FortifiedStructure, CombatTargetLayer.Ground, CombatTargetFlags.Command, 2700, 4)),
+            new PrototypeEntityDefinition("building.ast.mission_vehicle_bay", "Astronauts", "COMPOSITE_ADAPTED", "movement.prototype.static", FootprintClass.Huge, SelectableKind.Building, 0, "view.placeholder.ast.mission_vehicle_bay", 0, 0, 0, new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.Production, 1700, 3)),
+            new PrototypeEntityDefinition("building.ast.modular_sentinel_defense", "Astronauts", "NEW_GAME_CONTENT", "movement.prototype.static", FootprintClass.Small, SelectableKind.Building, 0, "view.placeholder.ast.modular_sentinel_defense", 0, 0, 0, new PrototypeCombatProfile(CombatTargetClass.FortifiedStructure, CombatTargetLayer.Ground, CombatTargetFlags.DefensiveStructure, 800, 2)),
+            new PrototypeEntityDefinition("building.ast.service_refit_hub", "Astronauts", "COMPOSITE_ADAPTED", "movement.prototype.static", FootprintClass.Huge, SelectableKind.Building, 0, "view.placeholder.ast.service_refit_hub", 0, 0, 0, new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.Production | CombatTargetFlags.Support, 1650, 3)),
+            new PrototypeEntityDefinition("building.ast.solar_energy_array", "Astronauts", "OFFICIAL_ADAPTED", "movement.prototype.static", FootprintClass.Large, SelectableKind.Building, 0, "view.placeholder.ast.solar_energy_array", 0, 0, 0, new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.EconomicInfrastructure, 900, 1)),
+            new PrototypeEntityDefinition("building.mar.aero_guard_tower", "Martians", "NEW_GAME_CONTENT", "movement.prototype.static", FootprintClass.Small, SelectableKind.Building, 0, "view.placeholder.mar.aero_guard_tower", 0, 0, 0, new PrototypeCombatProfile(CombatTargetClass.FortifiedStructure, CombatTargetLayer.Ground, CombatTargetFlags.DefensiveStructure, 760, 2)),
+            new PrototypeEntityDefinition("building.mar.aero_tube_hangar", "Martians", "OFFICIAL_ADAPTED", "movement.prototype.static", FootprintClass.Huge, SelectableKind.Building, 0, "view.placeholder.mar.aero_tube_hangar", 0, 0, 0, new PrototypeCombatProfile(CombatTargetClass.FortifiedStructure, CombatTargetLayer.Ground, CombatTargetFlags.Command | CombatTargetFlags.Production, 2800, 4)),
+            new PrototypeEntityDefinition("building.mar.aero_tube_link", "Martians", "OFFICIAL_ADAPTED", "movement.prototype.static", FootprintClass.Tiny, SelectableKind.Building, 0, "view.placeholder.mar.aero_tube_link", 0, 0, 0, new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.EconomicInfrastructure | CombatTargetFlags.Support, 320, 1)),
+            new PrototypeEntityDefinition("building.mar.deflector_arm", "Martians", "NEW_GAME_CONTENT", "movement.prototype.static", FootprintClass.Small, SelectableKind.Building, 0, "view.placeholder.mar.deflector_arm", 0, 0, 0, new PrototypeCombatProfile(CombatTargetClass.FortifiedStructure, CombatTargetLayer.Ground, CombatTargetFlags.DefensiveStructure, 850, 3)),
+            new PrototypeEntityDefinition("building.mar.excavation_plant", "Martians", "COMPOSITE_ADAPTED", "movement.prototype.static", FootprintClass.Large, SelectableKind.Building, 0, "view.placeholder.mar.excavation_plant", 0, 0, 0, new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.EconomicInfrastructure, 1250, 2)),
+            new PrototypeEntityDefinition("building.mar.mechanical_workshop", "Martians", "COMPOSITE_ADAPTED", "movement.prototype.static", FootprintClass.Huge, SelectableKind.Building, 0, "view.placeholder.mar.mechanical_workshop", 0, 0, 0, new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.Production | CombatTargetFlags.Support, 1450, 2)),
+            new PrototypeEntityDefinition("building.mar.pressure_generator", "Martians", "OFFICIAL_ADAPTED", "movement.prototype.static", FootprintClass.Small, SelectableKind.Building, 0, "view.placeholder.mar.pressure_generator", 0, 0, 0, new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.EconomicInfrastructure, 900, 1)),
+            new PrototypeEntityDefinition("building.mar.routing_laboratory", "Martians", "COMPOSITE_ADAPTED", "movement.prototype.static", FootprintClass.Large, SelectableKind.Building, 0, "view.placeholder.mar.routing_laboratory", 0, 0, 0, new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.Production | CombatTargetFlags.Support, 1500, 2)),
+            new PrototypeEntityDefinition("building.mar.settlement_station", "Martians", "COMPOSITE_ADAPTED", "movement.prototype.static", FootprintClass.Huge, SelectableKind.Building, 0, "view.placeholder.mar.settlement_station", 0, 0, 0, new PrototypeCombatProfile(CombatTargetClass.FortifiedStructure, CombatTargetLayer.Ground, CombatTargetFlags.Command | CombatTargetFlags.EconomicInfrastructure, 1900, 3)),
+            new PrototypeEntityDefinition("building.rock_raiders.crusher_barrier", "RockRaiders", "NEW_GAME_CONTENT", "movement.prototype.static", FootprintClass.Small, SelectableKind.Building, 0, "view.placeholder.rock_raiders.crusher_barrier", 0, 0, 0, new PrototypeCombatProfile(CombatTargetClass.FortifiedStructure, CombatTargetLayer.Ground, CombatTargetFlags.DefensiveStructure, 1100, 4)),
+            new PrototypeEntityDefinition("building.rock_raiders.crystal_vault", "RockRaiders", "COMPOSITE_ADAPTED", "movement.prototype.static", FootprintClass.Large, SelectableKind.Building, 0, "view.placeholder.rock_raiders.crystal_vault", 0, 0, 0, new PrototypeCombatProfile(CombatTargetClass.FortifiedStructure, CombatTargetLayer.Ground, CombatTargetFlags.EconomicInfrastructure, 1600, 4)),
+            new PrototypeEntityDefinition("building.rock_raiders.cutter_mast", "RockRaiders", "NEW_GAME_CONTENT", "movement.prototype.static", FootprintClass.Small, SelectableKind.Building, 0, "view.placeholder.rock_raiders.cutter_mast", 0, 0, 0, new PrototypeCombatProfile(CombatTargetClass.FortifiedStructure, CombatTargetLayer.Ground, CombatTargetFlags.DefensiveStructure, 800, 2)),
+            new PrototypeEntityDefinition("building.rock_raiders.engineering_workshop", "RockRaiders", "COMPOSITE_ADAPTED", "movement.prototype.static", FootprintClass.Huge, SelectableKind.Building, 0, "view.placeholder.rock_raiders.engineering_workshop", 0, 0, 0, new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.Production, 1900, 3)),
             new PrototypeEntityDefinition("building.rock_raiders.hq", "RockRaiders", "OFFICIAL_ADAPTED", "movement.prototype.static", FootprintClass.Huge, SelectableKind.Building, 0, "view.placeholder.rock_raiders.hq", 0, 0, 0, new PrototypeCombatProfile(CombatTargetClass.FortifiedStructure, CombatTargetLayer.Ground, CombatTargetFlags.Command, 3000, 5)),
             new PrototypeEntityDefinition("building.rock_raiders.ore_processing_plant", "RockRaiders", "COMPOSITE_ADAPTED", "movement.prototype.static", FootprintClass.Large, SelectableKind.Building, 0, "view.placeholder.rock_raiders.ore_processing_plant", 0, 0, 0, new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.EconomicInfrastructure, 1350, 2)),
             new PrototypeEntityDefinition("building.rock_raiders.power_station", "RockRaiders", "COMPOSITE_ADAPTED", "movement.prototype.static", FootprintClass.Large, SelectableKind.Building, 0, "view.placeholder.rock_raiders.power_station", 0, 0, 0, new PrototypeCombatProfile(CombatTargetClass.Structure, CombatTargetLayer.Ground, CombatTargetFlags.EconomicInfrastructure, 1000, 1)),
@@ -523,10 +559,37 @@ public static class PrototypeContentFactory
         };
         BuildingDefinition[] buildings =
         {
-            new BuildingDefinition("building.rock_raiders.hq", 8, 8, ulong.MaxValue, false, 320, 40, 1200, 2, 2, FootprintClass.Tiny, 16, 2, 150, energyFunctionalClass: EnergyFunctionalClass.CommandAndBasicEconomy, worksiteServiceRadius: 18),
-            new BuildingDefinition("building.rock_raiders.ore_processing_plant", 6, 6, (1UL << 36) - 1UL, false, 140, 15, 600, continuousEnergyDemandPerSecond: 1, energyFunctionalClass: EnergyFunctionalClass.ResourceProcessing),
-            new BuildingDefinition("building.rock_raiders.power_station", 5, 5, (1UL << 25) - 1UL, false, 150, 20, 700, energyGenerationPerSecond: 10, energyReserveCapacity: 120),
-            new BuildingDefinition("building.rock_raiders.vehicle_service_bay", 8, 6, (1UL << 48) - 1UL, true, 160, 20, 800, 3, 3, FootprintClass.Medium, 4, continuousEnergyDemandPerSecond: 1, energyFunctionalClass: EnergyFunctionalClass.ProductionAndResearch, worksiteServiceRadius: 12)
+            new BuildingDefinition("building.ali.etx_command_core", 7, 7, 0x1FFFFFFFFFFFFUL, false, 230, 60, 800, operationsCapacityProvided: 16, energyGenerationPerSecond: 2, energyReserveCapacity: 150, energyFunctionalClass: EnergyFunctionalClass.CommandAndBasicEconomy),
+            new BuildingDefinition("building.ali.etx_defense_node", 2, 2, 0xFUL, false, 120, 30, 600, continuousEnergyDemandPerSecond: 2),
+            new BuildingDefinition("building.ali.etx_fabricator", 6, 6, 0xFFFFFFFFFUL, false, 140, 25, 640, operationsCapacityProvided: 4, continuousEnergyDemandPerSecond: 2, energyFunctionalClass: EnergyFunctionalClass.ProductionAndResearch),
+            new BuildingDefinition("building.ali.power_coupler", 4, 4, 0xFFFFUL, false, 130, 10, 560, energyGenerationPerSecond: 12, energyReserveCapacity: 100),
+            new BuildingDefinition("building.ali.reconfiguration_dock", 8, 7, 0xFFFFFFFFFFFFFFUL, true, 210, 60, 1000, operationsCapacityProvided: 6, continuousEnergyDemandPerSecond: 4, energyFunctionalClass: EnergyFunctionalClass.ProductionAndResearch, crystalCost: 1),
+            new BuildingDefinition("building.ali.resonance_core", 4, 4, 0xFFFFUL, false, 160, 50, 800, continuousEnergyDemandPerSecond: 3, energyFunctionalClass: EnergyFunctionalClass.ServiceAndFactionSystems),
+            new BuildingDefinition("building.ast.field_systems_garage", 7, 6, 0x3FFFFFFFFFFUL, true, 130, 10, 600, operationsCapacityProvided: 4, continuousEnergyDemandPerSecond: 1, energyFunctionalClass: EnergyFunctionalClass.ProductionAndResearch),
+            new BuildingDefinition("building.ast.flight_operations_pad", 10, 8, ulong.MaxValue, true, 200, 45, 900, operationsCapacityProvided: 5, continuousEnergyDemandPerSecond: 3, energyFunctionalClass: EnergyFunctionalClass.ProductionAndResearch, crystalCost: 1, footprintMaskHigh: 0xFFFFUL),
+            new BuildingDefinition("building.ast.frontier_extraction_station", 6, 6, 0xFFFFFFFFFUL, false, 140, 15, 640, continuousEnergyDemandPerSecond: 1, energyFunctionalClass: EnergyFunctionalClass.ResourceProcessing),
+            new BuildingDefinition("building.ast.mb01_eagle_command_base", 8, 8, ulong.MaxValue, false, 260, 40, 900, operationsCapacityProvided: 16, energyGenerationPerSecond: 2, energyReserveCapacity: 150, energyFunctionalClass: EnergyFunctionalClass.CommandAndBasicEconomy),
+            new BuildingDefinition("building.ast.mission_vehicle_bay", 8, 7, 0xFFFFFFFFFFFFFFUL, true, 190, 35, 900, operationsCapacityProvided: 5, continuousEnergyDemandPerSecond: 2, energyFunctionalClass: EnergyFunctionalClass.ProductionAndResearch, crystalCost: 1),
+            new BuildingDefinition("building.ast.modular_sentinel_defense", 2, 2, 0xFUL, false, 110, 20, 560, continuousEnergyDemandPerSecond: 1),
+            new BuildingDefinition("building.ast.service_refit_hub", 7, 7, 0x1FFFFFFFFFFFFUL, false, 170, 30, 760, operationsCapacityProvided: 4, continuousEnergyDemandPerSecond: 2, energyFunctionalClass: EnergyFunctionalClass.ServiceAndFactionSystems),
+            new BuildingDefinition("building.ast.solar_energy_array", 6, 5, 0x3FFFFFFFUL, true, 120, 0, 560, energyGenerationPerSecond: 8, energyReserveCapacity: 100),
+            new BuildingDefinition("building.mar.aero_guard_tower", 2, 2, 0xFUL, false, 120, 25, 560, continuousEnergyDemandPerSecond: 2),
+            new BuildingDefinition("building.mar.aero_tube_hangar", 9, 9, ulong.MaxValue, false, 280, 40, 1000, operationsCapacityProvided: 16, energyGenerationPerSecond: 2, energyReserveCapacity: 150, energyFunctionalClass: EnergyFunctionalClass.CommandAndBasicEconomy, footprintMaskHigh: 0x1FFFFUL),
+            new BuildingDefinition("building.mar.aero_tube_link", 1, 1, 0x1UL, false, 50, 10, 200, continuousEnergyDemandPerSecond: 1, energyFunctionalClass: EnergyFunctionalClass.ServiceAndFactionSystems),
+            new BuildingDefinition("building.mar.deflector_arm", 3, 3, 0x1FFUL, false, 100, 15, 500, continuousEnergyDemandPerSecond: 1),
+            new BuildingDefinition("building.mar.excavation_plant", 6, 6, 0xFFFFFFFFFUL, false, 130, 15, 600, continuousEnergyDemandPerSecond: 1, energyFunctionalClass: EnergyFunctionalClass.ResourceProcessing),
+            new BuildingDefinition("building.mar.mechanical_workshop", 7, 6, 0x3FFFFFFFFFFUL, true, 150, 20, 700, operationsCapacityProvided: 5, continuousEnergyDemandPerSecond: 1, energyFunctionalClass: EnergyFunctionalClass.ProductionAndResearch),
+            new BuildingDefinition("building.mar.pressure_generator", 4, 4, 0xFFFFUL, false, 130, 10, 600, energyGenerationPerSecond: 9, energyReserveCapacity: 100),
+            new BuildingDefinition("building.mar.routing_laboratory", 6, 6, 0xFFFFFFFFFUL, false, 170, 35, 840, operationsCapacityProvided: 4, continuousEnergyDemandPerSecond: 2, energyFunctionalClass: EnergyFunctionalClass.ProductionAndResearch, crystalCost: 1),
+            new BuildingDefinition("building.mar.settlement_station", 7, 7, 0x1FFFFFFFFFFFFUL, false, 220, 30, 800, operationsCapacityProvided: 12, energyGenerationPerSecond: 1, energyFunctionalClass: EnergyFunctionalClass.CommandAndBasicEconomy),
+            new BuildingDefinition("building.rock_raiders.crusher_barrier", 3, 1, 0x7UL, true, 90, 10, 480),
+            new BuildingDefinition("building.rock_raiders.crystal_vault", 5, 5, 0x1FFFFFFUL, false, 180, 40, 900, continuousEnergyDemandPerSecond: 1, energyFunctionalClass: EnergyFunctionalClass.ResourceProcessing),
+            new BuildingDefinition("building.rock_raiders.cutter_mast", 2, 2, 0xFUL, false, 120, 25, 600, continuousEnergyDemandPerSecond: 2),
+            new BuildingDefinition("building.rock_raiders.engineering_workshop", 8, 8, ulong.MaxValue, false, 220, 50, 1100, operationsCapacityProvided: 6, continuousEnergyDemandPerSecond: 3, energyFunctionalClass: EnergyFunctionalClass.ProductionAndResearch),
+            new BuildingDefinition("building.rock_raiders.hq", 8, 8, ulong.MaxValue, false, 320, 40, 1200, productionExitWidth: 2, productionExitDepth: 2, productionExitFootprint: FootprintClass.Tiny, operationsCapacityProvided: 16, energyGenerationPerSecond: 2, energyReserveCapacity: 150, energyFunctionalClass: EnergyFunctionalClass.CommandAndBasicEconomy, worksiteServiceRadius: 18),
+            new BuildingDefinition("building.rock_raiders.ore_processing_plant", 6, 6, 0xFFFFFFFFFUL, false, 140, 15, 600, continuousEnergyDemandPerSecond: 1, energyFunctionalClass: EnergyFunctionalClass.ResourceProcessing),
+            new BuildingDefinition("building.rock_raiders.power_station", 5, 5, 0x1FFFFFFUL, false, 150, 20, 700, energyGenerationPerSecond: 10, energyReserveCapacity: 120),
+            new BuildingDefinition("building.rock_raiders.vehicle_service_bay", 8, 6, 0xFFFFFFFFFFFFUL, true, 160, 20, 800, productionExitWidth: 3, productionExitDepth: 3, productionExitFootprint: FootprintClass.Medium, operationsCapacityProvided: 4, continuousEnergyDemandPerSecond: 1, energyFunctionalClass: EnergyFunctionalClass.ProductionAndResearch, worksiteServiceRadius: 12),
         };
         UnitProductionDefinition[] production =
         {
@@ -556,7 +619,7 @@ public static class PrototypeContentFactory
 public static class PrototypeContentCodec
 {
     private const int Magic = 0x4350534C; // LSPC little-endian bytes.
-    public const int FormatVersion = 16;
+    public const int FormatVersion = 17;
 
     public static byte[] Write(PrototypeContentCatalog catalog)
     {
@@ -598,8 +661,8 @@ public static class PrototypeContentCodec
         for (int i = 0; i < catalog.Buildings.Length; i++)
         {
             BuildingDefinition b = catalog.Buildings[i];
-            writer.Write(b.StableKey); writer.Write(b.Id.Value); writer.Write(b.FootprintWidth); writer.Write(b.FootprintHeight); writer.Write(b.FootprintMask); writer.Write(b.Rotatable);
-            writer.Write(b.OreCost); writer.Write(b.EnergyCost); writer.Write(b.BuildTicks); writer.Write(b.ProductionExitWidth); writer.Write(b.ProductionExitDepth); writer.Write((byte)b.ProductionExitFootprint);
+            writer.Write(b.StableKey); writer.Write(b.Id.Value); writer.Write(b.FootprintWidth); writer.Write(b.FootprintHeight); writer.Write(b.FootprintMask); writer.Write(b.FootprintMaskHigh); writer.Write(b.Rotatable);
+            writer.Write(b.OreCost); writer.Write(b.EnergyCost); writer.Write(b.CrystalCost); writer.Write(b.BuildTicks); writer.Write(b.ProductionExitWidth); writer.Write(b.ProductionExitDepth); writer.Write((byte)b.ProductionExitFootprint);
             writer.Write(b.OperationsCapacityProvided);
             writer.Write(b.EnergyGenerationPerSecond); writer.Write(b.EnergyReserveCapacity); writer.Write(b.ContinuousEnergyDemandPerSecond);
             writer.Write((byte)b.EnergyFunctionalClass);
@@ -679,15 +742,19 @@ public static class PrototypeContentCodec
             for (int i = 0; i < buildingCount; i++)
             {
                 string key = reader.ReadString(); uint id = reader.ReadUInt32();
-                byte width = reader.ReadByte(), height = reader.ReadByte(); ulong mask = reader.ReadUInt64(); bool rotatable = reader.ReadBoolean();
-                ushort oreCost = reader.ReadUInt16(), energyCost = reader.ReadUInt16(), buildTicks = reader.ReadUInt16();
+                byte width = reader.ReadByte(), height = reader.ReadByte(); ulong mask = reader.ReadUInt64();
+                ulong maskHigh = formatVersion >= 17 ? reader.ReadUInt64() : 0UL;
+                bool rotatable = reader.ReadBoolean();
+                ushort oreCost = reader.ReadUInt16(), energyCost = reader.ReadUInt16();
+                byte crystalCost = formatVersion >= 17 ? reader.ReadByte() : (byte)0;
+                ushort buildTicks = reader.ReadUInt16();
                 byte exitWidth = reader.ReadByte(), exitDepth = reader.ReadByte(); FootprintClass exitFootprint = (FootprintClass)reader.ReadByte();
                 byte capacityProvided = formatVersion >= 7 ? reader.ReadByte() : LegacyOperationsCapacityProvided(key);
                 LegacyEnergyDefinition(key, out ushort generation, out ushort reserveCapacity, out ushort demand);
                 if (formatVersion >= 8) { generation = reader.ReadUInt16(); reserveCapacity = reader.ReadUInt16(); demand = reader.ReadUInt16(); }
                 EnergyFunctionalClass functionalClass = formatVersion >= 9 ? (EnergyFunctionalClass)reader.ReadByte() : LegacyEnergyFunctionalClass(key);
                 byte worksiteServiceRadius = formatVersion >= 16 ? reader.ReadByte() : LegacyWorksiteServiceRadius(key);
-                buildings[i] = new BuildingDefinition(key, width, height, mask, rotatable, oreCost, energyCost, buildTicks, exitWidth, exitDepth, exitFootprint, capacityProvided, generation, reserveCapacity, demand, functionalClass, worksiteServiceRadius);
+                buildings[i] = new BuildingDefinition(key, width, height, mask, rotatable, oreCost, energyCost, buildTicks, exitWidth, exitDepth, exitFootprint, capacityProvided, generation, reserveCapacity, demand, functionalClass, worksiteServiceRadius, crystalCost, maskHigh);
                 if (buildings[i].Id.Value != id) throw new InvalidDataException("Stable building ID mismatch.");
             }
         }

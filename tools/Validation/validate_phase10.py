@@ -414,7 +414,7 @@ check(len(source.get('resourceReceivers',[])) == 2, 'M3 starting HQ resource rec
 check(len(source.get('visionTestGeometry',[])) >= 4, 'vision test geometry missing')
 
 content_source = json.loads((ROOT/'Content/PrototypeEntities.json').read_text())
-check(content_source.get('schemaVersion') == 15 and content_source.get('contentKind') == 'prototype_entities', 'prototype content schema mismatch')
+check(content_source.get('schemaVersion') == 16 and content_source.get('contentKind') == 'prototype_entities', 'prototype content schema mismatch')
 entity_keys = [e.get('stableId') for e in content_source.get('entities',[])]
 check(len(entity_keys) >= 5 and len(entity_keys) == len(set(entity_keys)), 'prototype content entries missing/duplicated')
 unit_entries = [e for e in content_source.get('entities',[]) if e.get('stableId','').startswith('unit.')]
@@ -502,32 +502,58 @@ for unit,(producer,ore,energy,oc,ticks) in expected_production.items():
     check(production.get('producer')==producer and production.get('cost')=={'ore':ore,'energy':energy,'crystals':0} and production.get('operationsCapacity')==oc and production.get('buildTicks')==ticks, f'canonical production definition mismatch: {unit}')
 building_by_key={b.get('stableId'):b for b in content_source.get('buildingDefinitions',[])}
 expected_buildings={
-    'building.rock_raiders.hq':([8,8],320,40,1200),
-    'building.rock_raiders.ore_processing_plant':([6,6],140,15,600),
-    'building.rock_raiders.power_station':([5,5],150,20,700),
-    'building.rock_raiders.vehicle_service_bay':([8,6],160,20,800),
+    # size, cost O/E/C, ticks, OC, energy generation/reserve/demand, brownout class, HP, target class, armor, source
+    'building.ali.etx_command_core':([7,7],[230,60,0],800,16,[2,150,0],'CommandAndBasicEconomy',2400,'FortifiedStructure',3,'NEW_GAME_CONTENT'),
+    'building.ali.etx_defense_node':([2,2],[120,30,0],600,0,[0,0,2],'StaticDefenseAndNonessential',700,'FortifiedStructure',1,'NEW_GAME_CONTENT'),
+    'building.ali.etx_fabricator':([6,6],[140,25,0],640,4,[0,0,2],'ProductionAndResearch',1350,'Structure',2,'NEW_GAME_CONTENT'),
+    'building.ali.power_coupler':([4,4],[130,10,0],560,0,[12,100,0],'StaticDefenseAndNonessential',850,'Structure',1,'NEW_GAME_CONTENT'),
+    'building.ali.reconfiguration_dock':([8,7],[210,60,1],1000,6,[0,0,4],'ProductionAndResearch',1600,'Structure',2,'NEW_GAME_CONTENT'),
+    'building.ali.resonance_core':([4,4],[160,50,0],800,0,[0,0,3],'ServiceAndFactionSystems',1200,'Structure',2,'NEW_GAME_CONTENT'),
+    'building.ast.field_systems_garage':([7,6],[130,10,0],600,4,[0,0,1],'ProductionAndResearch',1450,'Structure',2,'COMPOSITE_ADAPTED'),
+    'building.ast.flight_operations_pad':([10,8],[200,45,1],900,5,[0,0,3],'ProductionAndResearch',1400,'Structure',2,'COMPOSITE_ADAPTED'),
+    'building.ast.frontier_extraction_station':([6,6],[140,15,0],640,0,[0,0,1],'ResourceProcessing',1250,'Structure',2,'COMPOSITE_ADAPTED'),
+    'building.ast.mb01_eagle_command_base':([8,8],[260,40,0],900,16,[2,150,0],'CommandAndBasicEconomy',2700,'FortifiedStructure',4,'OFFICIAL_ADAPTED'),
+    'building.ast.mission_vehicle_bay':([8,7],[190,35,1],900,5,[0,0,2],'ProductionAndResearch',1700,'Structure',3,'COMPOSITE_ADAPTED'),
+    'building.ast.modular_sentinel_defense':([2,2],[110,20,0],560,0,[0,0,1],'StaticDefenseAndNonessential',800,'FortifiedStructure',2,'NEW_GAME_CONTENT'),
+    'building.ast.service_refit_hub':([7,7],[170,30,0],760,4,[0,0,2],'ServiceAndFactionSystems',1650,'Structure',3,'COMPOSITE_ADAPTED'),
+    'building.ast.solar_energy_array':([6,5],[120,0,0],560,0,[8,100,0],'StaticDefenseAndNonessential',900,'Structure',1,'OFFICIAL_ADAPTED'),
+    'building.mar.aero_guard_tower':([2,2],[120,25,0],560,0,[0,0,2],'StaticDefenseAndNonessential',760,'FortifiedStructure',2,'NEW_GAME_CONTENT'),
+    'building.mar.aero_tube_hangar':([9,9],[280,40,0],1000,16,[2,150,0],'CommandAndBasicEconomy',2800,'FortifiedStructure',4,'OFFICIAL_ADAPTED'),
+    'building.mar.aero_tube_link':([1,1],[50,10,0],200,0,[0,0,1],'ServiceAndFactionSystems',320,'Structure',1,'OFFICIAL_ADAPTED'),
+    'building.mar.deflector_arm':([3,3],[100,15,0],500,0,[0,0,1],'StaticDefenseAndNonessential',850,'FortifiedStructure',3,'NEW_GAME_CONTENT'),
+    'building.mar.excavation_plant':([6,6],[130,15,0],600,0,[0,0,1],'ResourceProcessing',1250,'Structure',2,'COMPOSITE_ADAPTED'),
+    'building.mar.mechanical_workshop':([7,6],[150,20,0],700,5,[0,0,1],'ProductionAndResearch',1450,'Structure',2,'COMPOSITE_ADAPTED'),
+    'building.mar.pressure_generator':([4,4],[130,10,0],600,0,[9,100,0],'StaticDefenseAndNonessential',900,'Structure',1,'OFFICIAL_ADAPTED'),
+    'building.mar.routing_laboratory':([6,6],[170,35,1],840,4,[0,0,2],'ProductionAndResearch',1500,'Structure',2,'COMPOSITE_ADAPTED'),
+    'building.mar.settlement_station':([7,7],[220,30,0],800,12,[1,0,0],'CommandAndBasicEconomy',1900,'FortifiedStructure',3,'COMPOSITE_ADAPTED'),
+    'building.rock_raiders.crusher_barrier':([3,1],[90,10,0],480,0,[0,0,0],'StaticDefenseAndNonessential',1100,'FortifiedStructure',4,'NEW_GAME_CONTENT'),
+    'building.rock_raiders.crystal_vault':([5,5],[180,40,0],900,0,[0,0,1],'ResourceProcessing',1600,'FortifiedStructure',4,'COMPOSITE_ADAPTED'),
+    'building.rock_raiders.cutter_mast':([2,2],[120,25,0],600,0,[0,0,2],'StaticDefenseAndNonessential',800,'FortifiedStructure',2,'NEW_GAME_CONTENT'),
+    'building.rock_raiders.engineering_workshop':([8,8],[220,50,0],1100,6,[0,0,3],'ProductionAndResearch',1900,'Structure',3,'COMPOSITE_ADAPTED'),
+    'building.rock_raiders.hq':([8,8],[320,40,0],1200,16,[2,150,0],'CommandAndBasicEconomy',3000,'FortifiedStructure',5,'OFFICIAL_ADAPTED'),
+    'building.rock_raiders.ore_processing_plant':([6,6],[140,15,0],600,0,[0,0,1],'ResourceProcessing',1350,'Structure',2,'COMPOSITE_ADAPTED'),
+    'building.rock_raiders.power_station':([5,5],[150,20,0],700,0,[10,120,0],'StaticDefenseAndNonessential',1000,'Structure',1,'COMPOSITE_ADAPTED'),
+    'building.rock_raiders.vehicle_service_bay':([8,6],[160,20,0],800,4,[0,0,1],'ProductionAndResearch',1700,'Structure',3,'COMPOSITE_ADAPTED'),
 }
-for key,(size,ore,energy,ticks) in expected_buildings.items():
+building_entries=[e for e in content_source.get('entities',[]) if e.get('selectableKind') == 'Building']
+expected_m8_building_counts={'RockRaiders':8,'Astronauts':8,'Aliens':6,'Martians':9}
+actual_m8_building_counts={faction:sum(1 for building in building_entries if building.get('faction') == faction) for faction in expected_m8_building_counts}
+check(len(building_by_key)==31 and set(building_by_key)==set(expected_buildings), 'M8 T071 must contain exactly the 31 canonical infrastructure definitions')
+check(len(building_entries)==31 and {e.get('stableId') for e in building_entries}==set(expected_buildings), 'M8 T071 infrastructure entities must exactly match building definitions')
+check(actual_m8_building_counts==expected_m8_building_counts, 'M8 T071 faction infrastructure counts must be RockRaiders=8, Astronauts=8, Aliens=6, Martians=9')
+for key,(size,cost,ticks,oc,energy_values,functional_class,hp,target_class,armor,source_classification) in expected_buildings.items():
     definition=building_by_key.get(key,{})
     mask=definition.get('footprintMask',[])
     actual_size=[len(mask[0]) if mask else 0,len(mask)]
-    check(actual_size==size and definition.get('cost')=={'ore':ore,'energy':energy} and definition.get('buildTicks')==ticks, f'canonical M3 building definition mismatch: {key}')
-expected_capacity_providers={'building.rock_raiders.hq':16,'building.rock_raiders.ore_processing_plant':0,'building.rock_raiders.power_station':0,'building.rock_raiders.vehicle_service_bay':4}
-check({key:building_by_key.get(key,{}).get('operationsCapacityProvided') for key in expected_capacity_providers} == expected_capacity_providers, 'canonical Rock Raider Operations Capacity providers missing or incorrect')
-expected_energy={
-    'building.rock_raiders.hq':(2,150,0),
-    'building.rock_raiders.ore_processing_plant':(0,0,1),
-    'building.rock_raiders.power_station':(10,120,0),
-    'building.rock_raiders.vehicle_service_bay':(0,0,1),
-}
-check({key:(building_by_key.get(key,{}).get('energyGenerationPerSecond'),building_by_key.get(key,{}).get('energyReserveCapacity'),building_by_key.get(key,{}).get('continuousEnergyDemandPerSecond')) for key in expected_energy} == expected_energy, 'canonical Rock Raider Energy generation, reserve or demand metadata missing or incorrect')
-expected_energy_classes = {
-    'building.rock_raiders.hq': 'CommandAndBasicEconomy',
-    'building.rock_raiders.ore_processing_plant': 'ResourceProcessing',
-    'building.rock_raiders.power_station': 'StaticDefenseAndNonessential',
-    'building.rock_raiders.vehicle_service_bay': 'ProductionAndResearch',
-}
-check({key:building_by_key.get(key,{}).get('energyFunctionalClass') for key in expected_energy_classes} == expected_energy_classes, 'canonical Brownout functional classes missing or incorrect')
+    expected_cost={'ore':cost[0],'energy':cost[1],'crystals':cost[2]}
+    actual_energy=[definition.get('energyGenerationPerSecond'),definition.get('energyReserveCapacity'),definition.get('continuousEnergyDemandPerSecond')]
+    entity=by_key.get(key,{})
+    combat=entity.get('combatTarget',{})
+    check(actual_size==size and all(len(row)==size[0] and set(row)=={'1'} for row in mask), f'canonical initial rectangular footprint mismatch: {key}')
+    check(definition.get('cost')==expected_cost and definition.get('buildTicks')==ticks, f'canonical infrastructure cost/time mismatch: {key}')
+    check(definition.get('operationsCapacityProvided')==oc and actual_energy==energy_values and definition.get('energyFunctionalClass')==functional_class, f'canonical infrastructure OC/Energy mismatch: {key}')
+    check((combat.get('hitPoints'),combat.get('class'),combat.get('armorRating'),entity.get('sourceClassification'))==(hp,target_class,armor,source_classification), f'canonical infrastructure durability/source mismatch: {key}')
+check(building_by_key['building.ast.flight_operations_pad']['cost']['crystals']==1 and building_by_key['building.mar.aero_tube_hangar']['footprintMask'][0]=='1'*9, 'T071 wide-footprint/Crystal-cost schema coverage missing')
 expected_worksite_radii = {
     'building.rock_raiders.hq': 18,
     'building.rock_raiders.vehicle_service_bay': 12,

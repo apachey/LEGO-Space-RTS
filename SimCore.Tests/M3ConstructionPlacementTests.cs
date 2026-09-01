@@ -21,6 +21,32 @@ public sealed class M3ConstructionPlacementTests
     }
 
     [Test]
+    public void T071DefinitionsDoNotExpandTheBuildCommandSurfaceBeforeT073()
+    {
+        SimulationWorld world = ScenarioFactory.CreateFirstControllable(1);
+        string[] available = world.Content.Buildings
+            .Where(building => ConstructionPlacement.IsBuildCommandAvailable(building.Id))
+            .Select(building => building.StableKey)
+            .ToArray();
+        ContentId importedCrystalBuilding = StableId.FromKey("building.ast.mission_vehicle_bay");
+
+        Assert.That(world.Content.TryGetBuilding(importedCrystalBuilding, out BuildingDefinition definition), Is.True);
+        Assert.Multiple(() =>
+        {
+            Assert.That(available, Is.EqualTo(new[]
+            {
+                "building.rock_raiders.hq",
+                "building.rock_raiders.ore_processing_plant",
+                "building.rock_raiders.power_station",
+                "building.rock_raiders.vehicle_service_bay"
+            }));
+            Assert.That(definition.CrystalCost, Is.EqualTo(1));
+            Assert.That(ConstructionPlacement.Validate(world, 0, Array.Empty<EntityId>(), importedCrystalBuilding, 0, 0, 0).Failure,
+                Is.EqualTo(PlacementFailure.CommandUnavailable));
+        });
+    }
+
+    [Test]
     public void ServerValidationRejectsMissingBuilderResourcesOccupancyAndTerrain()
     {
         SimulationWorld world = ScenarioFactory.CreateFirstControllable(1);

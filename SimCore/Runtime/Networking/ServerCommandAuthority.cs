@@ -392,6 +392,7 @@ public static class ServerCommandValidator
             return NetworkCommandRejection.InvalidPlacement;
         if (!world.Content.TryGetBuilding(command.ContentType, out BuildingDefinition definition) || command.Orientation > 3 ||
             (!definition.Rotatable && command.Orientation != 0)) return NetworkCommandRejection.InvalidPlacement;
+        if (!ConstructionPlacement.IsBuildCommandAvailable(command.ContentType)) return NetworkCommandRejection.TechnologyLocked;
         byte width = definition.RotatedWidth(command.Orientation), height = definition.RotatedHeight(command.Orientation);
         if (x < 0 || y < 0 || x + width > MapGrid.BuildWidth || y + height > MapGrid.BuildHeight)
             return NetworkCommandRejection.InvalidPlacement;
@@ -404,7 +405,7 @@ public static class ServerCommandValidator
         return placement.Failure switch
         {
             PlacementFailure.NoEligibleBuilder => NetworkCommandRejection.CommandIneligible,
-            PlacementFailure.MissingPrerequisite => NetworkCommandRejection.TechnologyLocked,
+            PlacementFailure.MissingPrerequisite or PlacementFailure.CommandUnavailable => NetworkCommandRejection.TechnologyLocked,
             PlacementFailure.InsufficientOre => NetworkCommandRejection.InsufficientResources,
             PlacementFailure.NoEnergyDomain or PlacementFailure.InsufficientEnergy => NetworkCommandRejection.InsufficientEnergyOrCharge,
             _ => NetworkCommandRejection.InvalidPlacement

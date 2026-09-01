@@ -9,9 +9,10 @@ The dense M7 cross-thread continuity index is
 ## Current milestone
 
 **M0–M6 are implemented, verified and game-director accepted. M7 visual canon
-remains deliberately open. M8 T070 is implemented and fully verified: the
-compiled gameplay catalog now contains all 35 canonical unit chassis
-definitions across the four factions. Preset-style comparisons are retired as the primary
+remains deliberately open. M8 T070–T071 are implemented and fully verified:
+the compiled gameplay catalog now contains all 35 canonical unit chassis and
+all 31 canonical infrastructure definitions across the four factions.
+Preset-style comparisons are retired as the primary
 workflow; the gameplay-scale realtime Look Lab is now at schema 9 with free
 camera control, ten reproducible surface/glare assets, exact shader-bound role-authored material
 families with color-only art controls, per-function emission, automatic
@@ -416,7 +417,7 @@ live; the current schema-9 copy/paste retains the complete experiment.
   while Legacy Frames and Clean remain direct same-layout comparisons. These
   remain review tools, not approved visual canon.
 
-## M8 T070 canonical unit definitions
+## M8 T070–T071 canonical roster definitions
 
 - The source content and built-in fallback catalog now contain exactly 35
   canonical buildable units: 8 Rock Raiders, 13 Astronauts, 6 Aliens and 8
@@ -431,17 +432,36 @@ live; the current schema-9 copy/paste retains the complete experiment.
   Strict authored-spawn agreement remains enabled.
 - Static validation and NUnit regression coverage assert the exact 8/13/6/8
   faction split, all 35 stable keys, positive OC/durability and representative
-  binary round-trips. Source schema 15 and compiled format 16 are unchanged.
-- T070 does not claim the later M8 closures: T071 still owns all 31
-  infrastructure definitions, T072 the research DAG, T073 the complete command
-  catalog and T074 complete roster-reference validation.
+  binary round-trips.
+- The same source and built-in fallback catalog now contain exactly 31
+  canonical infrastructure definitions: 8 Rock Raiders, 8 Astronaut, 6 Alien
+  and 9 Martian structures. Entries carry the Phase 03/04/06 faction/source,
+  footprint, Ore/Crystal/Energy costs, build time, OC, energy and durability
+  data without inventing missing values.
+- Source schema 16 and compiled format 17 add explicit building Crystal costs
+  plus low/high footprint-mask words for the canonical 10×8 Flight Operations
+  Pad and 9×9 Aero Tube Hangar. Formats 2–16 remain readable; a compiler parity
+  guard requires checked-in JSON and the built-in fallback to serialize
+  identically.
+- Importing data does not expand the pre-T073 construction catalog. Local and
+  network authority still expose only the four accepted M3 Rock Raiders
+  structures; the other 27 definitions remain command-locked until the complete
+  faction/research command path can charge and refund every canonical cost.
+- Aero Tube Link length-dependent cost/time and Resonance Core committed-Crystal
+  demand remain delegated to their existing authoritative systems. Final
+  nonrectangular masks, structure sight, production exits, Settlement reserve
+  and configurable-defense defaults were not available in canon and were not
+  invented.
+- T070–T071 do not claim the later M8 closures: T072 owns the research DAG,
+  T073 the complete command catalog and T074 complete roster-reference
+  validation.
 
 ## Integration format boundary
 
 - authoritative snapshot format **20**;
 - simulation protocol **18**;
 - replay format **16** (backward reader for 15);
-- compiled content format **16** / source schema **15**;
+- compiled content format **17** / source schema **16**;
 - command packet format **1**;
 - recipient snapshot packet format **3**;
 - reconnect packet format **1**;
@@ -449,13 +469,15 @@ live; the current schema-9 copy/paste retains the complete experiment.
 
 ## Verification state
 
-M8 T070 passed `./tools/verify.sh --full` on 2026-09-01 UTC with **zero
-blocking failures**: 280 NUnit tests, exact 35-unit/8-13-6-8 roster validation,
-24/24 representative mover acceptance, content regeneration, all retained
-M6/M7 smokes, 100-repeat determinism, replay/snapshot continuation and a fresh
-launchable macOS export. The preserved Stress60 M9 diagnostic again reported
-2/60 completion and remains `BLOCKING_LATER`. Exact summary:
-`Artifacts/Verification/20260901T061144Z-full-summary.txt`.
+M8 T071 passed `./tools/verify.sh --full` on 2026-09-01 UTC with **zero
+blocking failures**: 285 NUnit tests, exact 35-unit and 31-infrastructure
+rosters, wide-footprint/Crystal round-trips, format-16 backward reading,
+pre-T073 local/network command gating, 24/24 representative mover acceptance,
+content regeneration, all retained M6/M7 smokes, 100-repeat determinism,
+replay/snapshot continuation and a fresh launchable macOS export. The preserved
+Stress60 M9 diagnostic again reported 2/60 completion and remains
+`BLOCKING_LATER`. Exact summary:
+`Artifacts/Verification/20260901T112740Z-full-summary.txt`.
 
 The exact-aperture and uninterrupted-frame HUD correction passed the complete
 fast suite on 2026-08-31 UTC with **zero blocking or diagnostic failures**: 278
@@ -609,12 +631,12 @@ blocking only when M9 must prove its stable-large-battle exit.
 
 ## Next approved action
 
-1. Begin M8 T071: import all 31 canonical infrastructure definitions without
-   inventing or rebalancing roster content.
+1. Begin M8 T072: implement and validate the canonical research DAG without
+   inventing prerequisites, unlocks or faction technology.
 2. The game director may independently explore `F8` → **M7 HUD Lab** and return
    its Hybrid/Structural/Legacy/Clean comparison across the four faction-bound
    recipes, then return a **COPY JSON** profile later; no HUD visual canon is
-   required to begin T071.
+   required to begin T072.
 3. The gameplay-scale **M7 Look Lab** remains available for world-style review;
    compare the named Authored surface with Raster Forward rather than the
    migration-only Legacy result. Do not record T064 acceptance until the game
