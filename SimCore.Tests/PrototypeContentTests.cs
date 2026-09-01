@@ -19,6 +19,83 @@ public sealed class PrototypeContentTests
     }
 
     [Test]
+    public void M8T070CatalogContainsExactlyTheCanonicalThirtyFiveUnitRoster()
+    {
+        PrototypeContentCatalog catalog = PrototypeContentFactory.CreateM2Catalog();
+        PrototypeEntityDefinition[] units = catalog.Entities.Where(entity => entity.StableKey.StartsWith("unit.", System.StringComparison.Ordinal)).ToArray();
+        string[] expectedKeys =
+        {
+            "unit.aliens.alien_jet",
+            "unit.aliens.alien_mothership",
+            "unit.aliens.etx_alien_infiltrator",
+            "unit.aliens.etx_alien_strike",
+            "unit.aliens.etx_servitor",
+            "unit.aliens.razor_skimmer",
+            "unit.astronauts.expedition_crew",
+            "unit.astronauts.mission_fighter",
+            "unit.astronauts.mobile_mining_platform",
+            "unit.astronauts.mono_jet",
+            "unit.astronauts.mt101_armored_drilling_unit",
+            "unit.astronauts.mt201_ultra_drill_walker",
+            "unit.astronauts.mt51_claw_tank",
+            "unit.astronauts.mx41_switch_fighter",
+            "unit.astronauts.mx71_recon_dropship",
+            "unit.astronauts.mx81_operations_aircraft",
+            "unit.astronauts.rover",
+            "unit.astronauts.solar_explorer",
+            "unit.astronauts.t3_trike",
+            "unit.martians.aero_skiff",
+            "unit.martians.double_hover",
+            "unit.martians.excavation_searcher",
+            "unit.martians.jet_scooter",
+            "unit.martians.recon_mech_rp",
+            "unit.martians.red_planet_cruiser",
+            "unit.martians.red_planet_protector",
+            "unit.martians.worker_robot",
+            "unit.rock_raiders.chrome_crusher",
+            "unit.rock_raiders.crew",
+            "unit.rock_raiders.drill_craft",
+            "unit.rock_raiders.granite_grinder",
+            "unit.rock_raiders.hover_scout",
+            "unit.rock_raiders.loader_dozer",
+            "unit.rock_raiders.rapid_rider",
+            "unit.rock_raiders.tunnel_transport"
+        };
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(units.Select(unit => unit.StableKey), Is.EqualTo(expectedKeys));
+            Assert.That(units.Count(unit => unit.FactionKey == "RockRaiders"), Is.EqualTo(8));
+            Assert.That(units.Count(unit => unit.FactionKey == "Astronauts"), Is.EqualTo(13));
+            Assert.That(units.Count(unit => unit.FactionKey == "Aliens"), Is.EqualTo(6));
+            Assert.That(units.Count(unit => unit.FactionKey == "Martians"), Is.EqualTo(8));
+            Assert.That(units, Has.All.Matches<PrototypeEntityDefinition>(unit => unit.OperationsCapacity > 0 && unit.Combat.IsTargetable));
+        });
+    }
+
+    [Test]
+    public void M8T070CanonicalChassisValuesSurviveBinaryRoundTrip()
+    {
+        PrototypeContentCatalog restored = PrototypeContentCodec.Read(PrototypeContentCodec.Write(PrototypeContentFactory.CreateM2Catalog()));
+
+        Assert.That(restored.TryGetEntity("unit.rock_raiders.tunnel_transport", out PrototypeEntityDefinition tunnel), Is.True);
+        Assert.That(restored.TryGetEntity("unit.astronauts.mx81_operations_aircraft", out PrototypeEntityDefinition mx81), Is.True);
+        Assert.That(restored.TryGetEntity("unit.aliens.alien_mothership", out PrototypeEntityDefinition mothership), Is.True);
+        Assert.That(restored.TryGetEntity("unit.martians.excavation_searcher", out PrototypeEntityDefinition searcher), Is.True);
+        Assert.Multiple(() =>
+        {
+            Assert.That(tunnel.Combat.MaximumHitPoints, Is.EqualTo(650));
+            Assert.That(tunnel.OperationsCapacity, Is.EqualTo(5));
+            Assert.That(mx81.VisionRadius, Is.EqualTo(15));
+            Assert.That(mx81.Combat.TargetLayer, Is.EqualTo(CombatTargetLayer.TrueAir));
+            Assert.That(mothership.Combat.MaximumHitPoints, Is.EqualTo(1200));
+            Assert.That(mothership.OperationsCapacity, Is.EqualTo(8));
+            Assert.That(searcher.Footprint, Is.EqualTo(FootprintClass.Huge));
+            Assert.That(searcher.Combat.ArmorRating, Is.EqualTo(4));
+        });
+    }
+
+    [Test]
     public void PrototypeContentBinaryRoundTripsAndHashesIdentically()
     {
         PrototypeContentCatalog source = new PrototypeContentCatalog(

@@ -95,10 +95,10 @@ public static class DevMapFactory
             string contentKey; FootprintClass fp; MovementLayer layer; SelectableKind kind; byte vision;
             switch (profile)
             {
-                case 0: contentKey = "unit.rock_raiders.crew"; fp = FootprintClass.Tiny; layer = MovementLayer.Ground; kind = SelectableKind.Worker; vision = 7; break;
-                case 1: contentKey = "unit.rock_raiders.hover_scout"; fp = FootprintClass.Small; layer = MovementLayer.GroundHover; kind = SelectableKind.CombatSupport; vision = 9; break;
-                case 2: contentKey = "unit.rock_raiders.loader_dozer"; fp = FootprintClass.Medium; layer = MovementLayer.Ground; kind = SelectableKind.CombatSupport; vision = 7; break;
-                default: contentKey = "unit.rock_raiders.chrome_crusher"; fp = FootprintClass.Large; layer = MovementLayer.Ground; kind = SelectableKind.CombatSupport; vision = 8; break;
+                case 0: contentKey = "unit.rock_raiders.crew"; fp = FootprintClass.Tiny; layer = MovementLayer.Ground; kind = SelectableKind.Worker; vision = 8; break;
+                case 1: contentKey = "unit.rock_raiders.hover_scout"; fp = FootprintClass.Small; layer = MovementLayer.GroundHover; kind = SelectableKind.CombatSupport; vision = 12; break;
+                case 2: contentKey = "unit.rock_raiders.loader_dozer"; fp = FootprintClass.Medium; layer = MovementLayer.Ground; kind = SelectableKind.CombatSupport; vision = 9; break;
+                default: contentKey = "unit.rock_raiders.chrome_crusher"; fp = FootprintClass.Large; layer = MovementLayer.Ground; kind = SelectableKind.CombatSupport; vision = 9; break;
             }
             FixVec2 position = FixVec2.FromInts(originX + (i % columns) * 2, originY + (i / columns) * 2);
             output[at++] = new InitialEntitySpawn(player, contentKey, position, fp, layer, kind, vision);

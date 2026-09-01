@@ -417,6 +417,12 @@ content_source = json.loads((ROOT/'Content/PrototypeEntities.json').read_text())
 check(content_source.get('schemaVersion') == 15 and content_source.get('contentKind') == 'prototype_entities', 'prototype content schema mismatch')
 entity_keys = [e.get('stableId') for e in content_source.get('entities',[])]
 check(len(entity_keys) >= 5 and len(entity_keys) == len(set(entity_keys)), 'prototype content entries missing/duplicated')
+unit_entries = [e for e in content_source.get('entities',[]) if e.get('stableId','').startswith('unit.')]
+expected_m8_unit_counts = {'RockRaiders':8, 'Astronauts':13, 'Aliens':6, 'Martians':8}
+actual_m8_unit_counts = {faction:sum(1 for unit in unit_entries if unit.get('faction') == faction) for faction in expected_m8_unit_counts}
+check(len(unit_entries) == 35, 'M8 T070 must contain exactly 35 canonical unit definitions')
+check(actual_m8_unit_counts == expected_m8_unit_counts, 'M8 T070 faction unit counts must be RockRaiders=8, Astronauts=13, Aliens=6, Martians=8')
+check(all(unit.get('operationsCapacity',0) > 0 and unit.get('combatTarget',{}).get('hitPoints',0) > 0 for unit in unit_entries), 'M8 T070 unit definitions require canonical OC and durability metadata')
 for required_key in ['building.rock_raiders.hq','building.rock_raiders.ore_processing_plant','building.rock_raiders.power_station','building.rock_raiders.vehicle_service_bay','unit.rock_raiders.crew','unit.rock_raiders.hover_scout','unit.rock_raiders.rapid_rider','unit.rock_raiders.loader_dozer','unit.rock_raiders.chrome_crusher','prototype.nav.huge']:
     check(required_key in entity_keys, f'prototype content key missing: {required_key}')
 by_key={e.get('stableId'):e for e in content_source.get('entities',[])}

@@ -9,7 +9,9 @@ The dense M7 cross-thread continuity index is
 ## Current milestone
 
 **M0–M6 are implemented, verified and game-director accepted. M7 visual canon
-remains deliberately open. Preset-style comparisons are retired as the primary
+remains deliberately open. M8 T070 is implemented and fully verified: the
+compiled gameplay catalog now contains all 35 canonical unit chassis
+definitions across the four factions. Preset-style comparisons are retired as the primary
 workflow; the gameplay-scale realtime Look Lab is now at schema 9 with free
 camera control, ten reproducible surface/glare assets, exact shader-bound role-authored material
 families with color-only art controls, per-function emission, automatic
@@ -414,6 +416,26 @@ live; the current schema-9 copy/paste retains the complete experiment.
   while Legacy Frames and Clean remain direct same-layout comparisons. These
   remain review tools, not approved visual canon.
 
+## M8 T070 canonical unit definitions
+
+- The source content and built-in fallback catalog now contain exactly 35
+  canonical buildable units: 8 Rock Raiders, 13 Astronauts, 6 Aliens and 8
+  Martians. No unit was invented, removed, split or rebalanced.
+- Every entry carries its canonical faction/source classification, base
+  footprint, movement layer and profile, Operations Capacity, HP, armor, sight,
+  target class and presentation key. The 38 movement profiles encode the
+  accepted Phase 06 speed, acceleration and turn classes for all base chassis
+  plus the retained MX-41 alternate mode and technical/static fixtures.
+- The source map, generated map binary and repository-local fallback map share
+  the final Phase 06 sight values for the four existing Raider opening units.
+  Strict authored-spawn agreement remains enabled.
+- Static validation and NUnit regression coverage assert the exact 8/13/6/8
+  faction split, all 35 stable keys, positive OC/durability and representative
+  binary round-trips. Source schema 15 and compiled format 16 are unchanged.
+- T070 does not claim the later M8 closures: T071 still owns all 31
+  infrastructure definitions, T072 the research DAG, T073 the complete command
+  catalog and T074 complete roster-reference validation.
+
 ## Integration format boundary
 
 - authoritative snapshot format **20**;
@@ -426,6 +448,14 @@ live; the current schema-9 copy/paste retains the complete experiment.
 - network replay chunk format **1**.
 
 ## Verification state
+
+M8 T070 passed `./tools/verify.sh --full` on 2026-09-01 UTC with **zero
+blocking failures**: 280 NUnit tests, exact 35-unit/8-13-6-8 roster validation,
+24/24 representative mover acceptance, content regeneration, all retained
+M6/M7 smokes, 100-repeat determinism, replay/snapshot continuation and a fresh
+launchable macOS export. The preserved Stress60 M9 diagnostic again reported
+2/60 completion and remains `BLOCKING_LATER`. Exact summary:
+`Artifacts/Verification/20260901T061144Z-full-summary.txt`.
 
 The exact-aperture and uninterrupted-frame HUD correction passed the complete
 fast suite on 2026-08-31 UTC with **zero blocking or diagnostic failures**: 278
@@ -579,12 +609,12 @@ blocking only when M9 must prove its stable-large-battle exit.
 
 ## Next approved action
 
-1. Begin M8 T070: import all 35 canonical unit definitions without inventing or
-   rebalancing roster content.
+1. Begin M8 T071: import all 31 canonical infrastructure definitions without
+   inventing or rebalancing roster content.
 2. The game director may independently explore `F8` → **M7 HUD Lab** and return
    its Hybrid/Structural/Legacy/Clean comparison across the four faction-bound
    recipes, then return a **COPY JSON** profile later; no HUD visual canon is
-   required to begin T070.
+   required to begin T071.
 3. The gameplay-scale **M7 Look Lab** remains available for world-style review;
    compare the named Authored surface with Raster Forward rather than the
    migration-only Legacy result. Do not record T064 acceptance until the game
