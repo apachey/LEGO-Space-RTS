@@ -16,6 +16,7 @@ def check(cond, message):
 required = [
     'SimCore/Runtime/Core/Fix32.cs','SimCore/Runtime/Core/FixVec2.cs','SimCore/Runtime/Core/Angle16.cs',
     'SimCore/Runtime/Ecs/EntityStore.cs','SimCore/Runtime/Commands/Commands.cs',
+    'SimCore/Runtime/Content/CanonicalActionDefinitions.cs','SimCore/Runtime/Content/CommandDefinition.cs',
     'SimCore/Runtime/Serialization/SnapshotSerializer.cs','SimCore/Runtime/Replay/ReplayLog.cs',
     'SimCore/Runtime/Navigation/HierarchicalPathfinder.cs','SimCore/Runtime/Simulation/SimulationRunner.cs',
     'HeadlessSim/Program.cs','Content/PrototypeEntities.json','Content/Maps/DEV_FirstControllableRTS.map.json',
@@ -84,7 +85,9 @@ check('../SimCore/LegoSpaceRTS.SimCore.csproj' in godotproj, 'Godot client does 
 content_bin=require('GodotClient/Compiled/PrototypeEntities.contentbin')
 map_bin=require('GodotClient/Compiled/DEV_FirstControllableRTS.mapbin')
 if content_bin.exists():
-    data=content_bin.read_bytes(); check(len(data)>=8 and data[:4]==bytes.fromhex('4c535043'), 'compiled content magic/size mismatch')
+    data=content_bin.read_bytes()
+    check(len(data)>=8 and data[:4]==bytes.fromhex('4c535043'), 'compiled content magic/size mismatch')
+    check(len(data)>=8 and int.from_bytes(data[4:8], 'little', signed=True)==19, 'compiled content format version is not 19')
 if map_bin.exists():
     data=map_bin.read_bytes(); check(len(data)>=6 and data[:4]==bytes.fromhex('5354524d'), 'compiled map magic/size mismatch')
 
@@ -414,7 +417,9 @@ check(len(source.get('resourceReceivers',[])) == 2, 'M3 starting HQ resource rec
 check(len(source.get('visionTestGeometry',[])) >= 4, 'vision test geometry missing')
 
 content_source = json.loads((ROOT/'Content/PrototypeEntities.json').read_text())
-check(content_source.get('schemaVersion') == 17 and content_source.get('contentKind') == 'prototype_entities', 'prototype content schema mismatch')
+check(content_source.get('schemaVersion') == 18 and content_source.get('contentKind') == 'prototype_entities', 'prototype content schema mismatch')
+content_catalog_text = (ROOT/'SimCore/Runtime/Content/PrototypeContentCatalog.cs').read_text()
+check('public const int FormatVersion = 19;' in content_catalog_text, 'PrototypeContentCodec format version is not 19')
 entity_keys = [e.get('stableId') for e in content_source.get('entities',[])]
 check(len(entity_keys) >= 5 and len(entity_keys) == len(set(entity_keys)), 'prototype content entries missing/duplicated')
 unit_entries = [e for e in content_source.get('entities',[]) if e.get('stableId','').startswith('unit.')]
@@ -489,17 +494,20 @@ check(all(k in resource_by_key for k in resource_map_keys), 'map source contains
 check(resource_map_keys.count('resource.ore.standard') == 4, 'prototype map must provide two Standard Ore deposits per start')
 receiver_map_keys=[e.get('contentKey') for e in source.get('resourceReceivers',[])]
 check(receiver_map_keys == ['building.rock_raiders.hq','building.rock_raiders.hq'], 'prototype map must provide one HQ receiver per start')
-production_by_unit={p.get('unit'):p for p in content_source.get('productionDefinitions',[])}
+production_entries=content_source.get('productionDefinitions',[])
+production_by_unit={p.get('unit'):p for p in production_entries}
+check(len(production_entries)==35 and len(production_by_unit)==35 and set(production_by_unit)=={unit.get('stableId') for unit in unit_entries}, 'M8 T073 must contain exactly one production recipe for each of the 35 canonical units')
 expected_production={
     'unit.rock_raiders.crew':('building.rock_raiders.hq',50,0,1,320),
     'unit.rock_raiders.hover_scout':('building.rock_raiders.vehicle_service_bay',75,10,1,400),
     'unit.rock_raiders.rapid_rider':('building.rock_raiders.vehicle_service_bay',90,10,2,560),
     'unit.rock_raiders.loader_dozer':('building.rock_raiders.vehicle_service_bay',125,15,3,720),
 }
-check(len(production_by_unit)==4,'first-playable production definitions missing or duplicated')
 for unit,(producer,ore,energy,oc,ticks) in expected_production.items():
     production=production_by_unit.get(unit,{})
-    check(production.get('producer')==producer and production.get('cost')=={'ore':ore,'energy':energy,'crystals':0} and production.get('operationsCapacity')==oc and production.get('buildTicks')==ticks, f'canonical production definition mismatch: {unit}')
+    check(production.get('producers')==[producer] and production.get('cost')=={'ore':ore,'energy':energy,'crystals':0} and production.get('operationsCapacity')==oc and production.get('buildTicks')==ticks, f'canonical production definition mismatch: {unit}')
+check(production_by_unit.get('unit.aliens.etx_servitor',{}).get('producers')==['building.ali.etx_command_core','building.ali.etx_fabricator'], 'ETX Servitor must retain both canonical producer references')
+check(production_by_unit.get('unit.martians.worker_robot',{}).get('producers')==['building.mar.aero_tube_hangar','building.mar.settlement_station'], 'Worker Robot must retain both canonical producer references')
 building_by_key={b.get('stableId'):b for b in content_source.get('buildingDefinitions',[])}
 expected_buildings={
     # size, cost O/E/C, ticks, OC, energy generation/reserve/demand, brownout class, HP, target class, armor, source
@@ -647,6 +655,170 @@ alien_advanced=research_by_key['research.ali.advanced_resonance_architecture']['
 check(alien_advanced=={'kind':'StateThreshold','target':'state.ali.committed_crystals','minimum':4,'persistence':'WhileResearching'}, 'Advanced Resonance Architecture must maintain four committed Crystals while researching')
 grand_targets={entry['target'] for group in research_by_key['research.mar.grand_network_integration']['prerequisiteGroups'] for entry in group['anyOf']}
 check(grand_targets=={'research.mar.redundant_routing','state.mar.connected_station_nodes'}, 'Grand Network Integration must require Redundant Routing and two connected Stations')
+
+# T073 action data uses an AND of prerequisite groups, each containing one or
+# more OR alternatives. Validate the source graph directly so broken references
+# or cross-faction gates fail before the content compiler is invoked.
+def validate_action_prerequisites(owner, owner_faction, groups, action_kind):
+    if not isinstance(groups, list):
+        check(False, f'{action_kind} prerequisiteGroups must be an array: {owner}')
+        return ()
+    signature=[]
+    for group_index,group in enumerate(groups):
+        alternatives=group.get('anyOf') if isinstance(group,dict) else None
+        if not isinstance(alternatives,list) or not alternatives:
+            check(False, f'{action_kind} prerequisite group must contain OR alternatives: {owner} group {group_index}')
+            signature.append(())
+            continue
+        group_signature=[]
+        for prerequisite in alternatives:
+            kind=prerequisite.get('kind') if isinstance(prerequisite,dict) else None
+            target=prerequisite.get('target') if isinstance(prerequisite,dict) else None
+            group_signature.append((kind,target))
+            check(kind in {'Building','Research'} and isinstance(target,str) and bool(target), f'invalid {action_kind} prerequisite: {owner} group {group_index}')
+            if kind=='Building':
+                resolved=target in building_by_key
+                target_faction=by_key.get(target,{}).get('faction')
+            elif kind=='Research':
+                resolved=target in research_by_key
+                target_faction=research_by_key.get(target,{}).get('faction')
+            else:
+                resolved=False
+                target_faction=None
+            check(resolved, f'unresolved {action_kind} prerequisite: {owner} -> {target}')
+            if resolved:
+                check(target_faction==owner_faction, f'cross-faction {action_kind} prerequisite: {owner} -> {target}')
+        check(len(group_signature)==len(set(group_signature)), f'duplicate {action_kind} prerequisite alternative: {owner} group {group_index}')
+        signature.append(tuple(group_signature))
+    return tuple(signature)
+
+construction_actions=content_source.get('constructionActionDefinitions',[])
+construction_action_by_building={action.get('building'):action for action in construction_actions}
+check(len(construction_actions)==31 and len(construction_action_by_building)==31 and set(construction_action_by_building)==set(building_by_key), 'M8 T073 must contain exactly one construction action definition for each of the 31 canonical buildings')
+construction_shapes={}
+for building,action in construction_action_by_building.items():
+    owner_faction=by_key.get(building,{}).get('faction')
+    check(building in building_by_key and owner_faction in expected_m8_building_counts, f'construction action references unknown building: {building}')
+    construction_shapes[building]=validate_action_prerequisites(building,owner_faction,action.get('prerequisiteGroups'),'construction action')
+check(construction_shapes.get('building.ast.service_refit_hub')==(
+    (('Building','building.ast.field_systems_garage'),),
+    (('Building','building.ast.solar_energy_array'),('Building','building.ast.frontier_extraction_station'))),
+    'Service & Refit Hub must retain Field Garage AND (Solar Array OR Frontier Extraction Station)')
+check(construction_shapes.get('building.mar.mechanical_workshop')==(
+    (('Building','building.mar.aero_tube_hangar'),('Building','building.mar.settlement_station')),),
+    'Mechanical Workshop must retain Hangar OR Settlement construction access')
+
+production_shapes={}
+for unit,production in production_by_unit.items():
+    owner_faction=by_key.get(unit,{}).get('faction')
+    producers=production.get('producers')
+    check(unit in by_key and unit.startswith('unit.') and owner_faction in expected_m8_unit_counts, f'production recipe references unknown unit: {unit}')
+    check(isinstance(producers,list) and bool(producers) and len(producers)==len(set(producers)), f'production recipe requires unique producer references: {unit}')
+    for producer in producers if isinstance(producers,list) else []:
+        check(producer in building_by_key, f'production recipe references unknown producer: {unit} -> {producer}')
+        if producer in building_by_key:
+            check(by_key.get(producer,{}).get('faction')==owner_faction, f'production recipe uses a cross-faction producer: {unit} -> {producer}')
+    cost=production.get('cost',{})
+    check(isinstance(cost,dict) and set(cost)=={'ore','energy','crystals'} and cost.get('ore',0)>0 and cost.get('energy',-1)>=0 and cost.get('crystals',-1)>=0, f'production recipe has invalid canonical cost fields: {unit}')
+    check(production.get('operationsCapacity')==by_key.get(unit,{}).get('operationsCapacity') and production.get('buildTicks',0)>0, f'production recipe OC/time disagrees with canonical unit data: {unit}')
+    production_shapes[unit]=validate_action_prerequisites(unit,owner_faction,production.get('prerequisiteGroups'),'production action')
+check(production_shapes.get('unit.martians.excavation_searcher')==(
+    (('Research','research.mar.grand_network_integration'),),
+    (('Research','research.mar.advanced_excavation_systems'),)),
+    'Excavation Searcher must retain Grand Network Integration AND Advanced Excavation Systems')
+
+command_entries=content_source.get('commandDefinitions',[])
+command_keys=[command.get('stableId') for command in command_entries]
+command_types=[command.get('commandType') for command in command_entries]
+check(len(command_entries)==35, 'M8 T073 must contain exactly 35 public command definitions')
+check(len(command_keys)==len(set(command_keys))==len({key.lower() for key in command_keys if isinstance(key,str)}), 'M8 T073 command stable keys must be unique, including case-insensitively')
+check(len(command_types)==len(set(command_types)), 'M8 T073 command types must be unique')
+check(all(isinstance(key,str) and re.fullmatch(r'command\.[a-z0-9_]+',key) for key in command_keys), 'M8 T073 command stable keys must use canonical command.* ASCII form')
+check(command_keys==sorted(command_keys), 'M8 T073 JSON command definitions must be sorted by stable key')
+
+enum_match=re.search(r'public enum SimCommandType\s*:\s*ushort\s*\{(.*?)\n\}',commands,re.S)
+enum_entries=re.findall(r'^\s*([A-Za-z_]\w*)\s*=\s*(\d+)\s*,?',enum_match.group(1),re.M) if enum_match else []
+public_enum_entries=[(name,int(code)) for name,code in enum_entries if int(code)<1000]
+public_enum_names=[name for name,_ in public_enum_entries]
+public_enum_codes=[code for _,code in public_enum_entries]
+expected_public_command_types=[
+    'Move','Stop','HoldPosition','Harvest','Build','CancelConstruction','AssistConstruction','QueueProduction',
+    'SetRallyPoint','SetEnergyPriority','Attack','Repair','Load','Unload','StateChange','MissionRefit',
+    'SetResonanceCommitment','StartSurge','AttackMove','Patrol','SetSpread','Excavate','StartResearch',
+    'CancelResearch','CancelProduction','TubeTransfer','TubeBuild','DefenseResonanceShunt','ProtectorStance',
+    'SearcherBrace','ExcavationClamp','Ping','RapidFabrication','ReorderProduction','CancelMissionRefit'
+]
+expected_public_command_codes={name:code for code,name in enumerate(expected_public_command_types,1)}
+check(len(public_enum_entries)==35 and len(set(public_enum_names))==35, 'SimCommandType must define exactly 35 unique public command names')
+check(len(set(public_enum_codes))==35 and set(public_enum_codes)==set(range(1,36)), 'SimCommandType public network codes must be unique and contiguous from 1 through 35')
+check(dict(public_enum_entries)==expected_public_command_codes, 'SimCommandType public command names or stable network-code assignments changed')
+check(set(command_types)==set(public_enum_names), 'JSON command definitions do not cover the complete public SimCommandType enum')
+
+def stable_content_id(key):
+    value=2166136261
+    for byte in key.lower().encode('ascii'):
+        value=((value ^ byte) * 16777619) & 0xffffffff
+    return value or 1
+
+other_stable_keys=[]
+for section in ['movementProfiles','entities','resourceNodeDefinitions','weaponDefinitions','researchDefinitions']:
+    other_stable_keys.extend(item.get('stableId') for item in content_source.get(section,[]))
+for transformation in content_source.get('transformationDefinitions',[]):
+    other_stable_keys.append(transformation.get('stableId'))
+    other_stable_keys.extend(mode.get('stableId') for mode in transformation.get('modes',[]))
+stable_id_owners={}
+for key in other_stable_keys + command_keys:
+    if not isinstance(key,str) or not key.isascii() or not key:
+        continue
+    stable_id=stable_content_id(key)
+    prior=stable_id_owners.get(stable_id)
+    check(prior is None, f'duplicate or colliding stable content ID: {prior} / {key}')
+    stable_id_owners[stable_id]=key
+
+command_by_key={command.get('stableId'):command for command in command_entries}
+allowed_eligibility_prefixes=('component.','capability.','tag.','unit.','building.')
+for key,command in command_by_key.items():
+    tags=command.get('eligibleEntityTags')
+    check(isinstance(tags,list) and bool(tags) and len(tags)==len(set(tags)), f'command requires unique eligibility tags: {key}')
+    referenced_factions=set()
+    for tag in tags if isinstance(tags,list) else []:
+        check(isinstance(tag,str) and tag.startswith(allowed_eligibility_prefixes), f'invalid command eligibility tag: {key} -> {tag}')
+        if isinstance(tag,str) and tag.startswith('unit.'):
+            check(tag in by_key and tag.startswith('unit.'), f'command references unknown eligible unit: {key} -> {tag}')
+            if tag in by_key: referenced_factions.add(by_key[tag].get('faction'))
+        elif isinstance(tag,str) and tag.startswith('building.'):
+            check(tag in building_by_key, f'command references unknown eligible building: {key} -> {tag}')
+            if tag in building_by_key: referenced_factions.add(by_key.get(tag,{}).get('faction'))
+    required_research=command.get('requiredResearch','')
+    check(not required_research or required_research in research_by_key, f'command references unknown required research: {key} -> {required_research}')
+    if required_research in research_by_key and referenced_factions:
+        check(referenced_factions=={research_by_key[required_research].get('faction')}, f'command research gate conflicts with eligible faction: {key}')
+    for field,prefix in [('validationHandler','validate.'),('executionHandler','execute.'),('uiSlotProfile','slot.'),('targetingPreviewProfile','preview.')]:
+        check(isinstance(command.get(field),str) and command[field].startswith(prefix), f'command {field} is missing or malformed: {key}')
+
+# Compare every authored command field with the repository-local C# fallback.
+# The fallback uses named eligibility arrays, which are simple enough to resolve
+# lexically without duplicating the command catalog in this validator.
+command_definition_text=(ROOT/'SimCore/Runtime/Content/CommandDefinition.cs').read_text()
+csharp_tag_sets={name:tuple(re.findall(r'"([^"]+)"',values)) for name,values in re.findall(
+    r'private static readonly string\[\]\s+(\w+)\s*=\s*\{([^}]*)\};',command_definition_text,re.S)}
+csharp_command_pattern=re.compile(
+    r'Def\(\s*"([^"]+)"\s*,\s*SimCommandType\.(\w+)\s*,\s*(\w+)\s*,\s*'
+    r'CommandTargetType\.(\w+)\s*,\s*CommandQueuePolicy\.(\w+)\s*,\s*"([^"]*)"\s*,\s*'
+    r'"([^"]+)"\s*,\s*"([^"]+)"\s*,\s*"([^"]+)"\s*,\s*"([^"]+)"\s*\)',re.S)
+csharp_command_rows=[]
+for match in csharp_command_pattern.finditer(command_definition_text):
+    stable_key,command_type,tag_set,target_type,queue_policy,required_research,validator,executor,slot,preview=match.groups()
+    check(tag_set in csharp_tag_sets, f'C# command uses an unresolved eligibility tag set: {stable_key} -> {tag_set}')
+    csharp_command_rows.append((stable_key,command_type,csharp_tag_sets.get(tag_set,()),target_type,queue_policy,required_research,validator,executor,slot,preview))
+json_command_rows=[]
+for command in command_entries:
+    tags=command.get('eligibleEntityTags')
+    json_command_rows.append((command.get('stableId'),command.get('commandType'),tuple(tags) if isinstance(tags,list) else (),
+        command.get('targetType'),command.get('queuePolicy'),command.get('requiredResearch',''),command.get('validationHandler'),
+        command.get('executionHandler'),command.get('uiSlotProfile'),command.get('targetingPreviewProfile')))
+check(len(csharp_command_rows)==35 and len({row[0] for row in csharp_command_rows})==35 and len({row[1] for row in csharp_command_rows})==35, 'C# canonical command catalog must contain exactly 35 unique definitions')
+check(sorted(json_command_rows)==sorted(csharp_command_rows), 'JSON and C# canonical command catalogs differ')
 
 forward_service = (ROOT/'SimCore/Runtime/Simulation/ForwardServiceSystem.cs').read_text()
 for token in ['building.ast.service_refit_hub','unit.ast.solar_explorer','unit.ast.t3_trike','ServiceHubRadius = 18','DeployedSolarExplorerRadius = 10','ProviderBucketBuildCells = 4']:

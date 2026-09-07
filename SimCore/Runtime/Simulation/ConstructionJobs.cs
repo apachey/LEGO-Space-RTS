@@ -151,7 +151,7 @@ public sealed class ConstructionSystem : ISimSystem
         ref Building building = ref world.Entities.Building.Get(siteId);
         building.State = BuildingState.Completed;
         world.Entities.ConstructionSite.Remove(siteId);
-        if (world.Content.IsProducer(building.Type)) world.Entities.Production.Set(siteId, new Production());
+        if (ProductionSystem.IsRuntimeEnabledProducer(world.Content, building.Type)) world.Entities.Production.Set(siteId, new Production());
         if (building.Type == HqType)
         {
             if (!world.Entities.ResourceReceiver.Has(siteId)) world.Entities.ResourceReceiver.Set(siteId, new ResourceReceiver { AcceptedType = ResourceType.Ore, IsHqEmergencyReceiver = true });

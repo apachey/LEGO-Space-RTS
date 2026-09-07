@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace LegoSpaceRTS.SimCore
@@ -252,13 +253,14 @@ public readonly struct BuildingDefinition
     public readonly ushort ContinuousEnergyDemandPerSecond;
     public readonly EnergyFunctionalClass EnergyFunctionalClass;
     public readonly byte WorksiteServiceRadius;
+    public readonly ContentActionPrerequisiteGroup[] PrerequisiteGroups;
 
     public BuildingDefinition(string stableKey, byte footprintWidth, byte footprintHeight, ulong footprintMask, bool rotatable,
         ushort oreCost, ushort energyCost, ushort buildTicks, byte productionExitWidth = 0, byte productionExitDepth = 0,
         FootprintClass productionExitFootprint = FootprintClass.Tiny, byte operationsCapacityProvided = 0,
         ushort energyGenerationPerSecond = 0, ushort energyReserveCapacity = 0, ushort continuousEnergyDemandPerSecond = 0,
         EnergyFunctionalClass energyFunctionalClass = EnergyFunctionalClass.StaticDefenseAndNonessential, byte worksiteServiceRadius = 0,
-        byte crystalCost = 0, ulong footprintMaskHigh = 0)
+        byte crystalCost = 0, ulong footprintMaskHigh = 0, ContentActionPrerequisiteGroup[]? prerequisiteGroups = null)
     {
         if (footprintWidth == 0 || footprintHeight == 0 || footprintWidth > 10 || footprintHeight > 10) throw new ArgumentOutOfRangeException(nameof(footprintWidth));
         int cells = footprintWidth * footprintHeight;
@@ -278,6 +280,7 @@ public readonly struct BuildingDefinition
         ContinuousEnergyDemandPerSecond = continuousEnergyDemandPerSecond;
         EnergyFunctionalClass = energyFunctionalClass;
         WorksiteServiceRadius = worksiteServiceRadius;
+        PrerequisiteGroups = prerequisiteGroups ?? Array.Empty<ContentActionPrerequisiteGroup>();
     }
 
     public byte RotatedWidth(byte orientation) => (orientation & 1) == 0 ? FootprintWidth : FootprintHeight;
@@ -306,21 +309,45 @@ public readonly struct UnitProductionDefinition
     public readonly string UnitStableKey;
     public readonly ContentId ProducerType;
     public readonly string ProducerStableKey;
+    public readonly ContentId[] ProducerTypes;
+    public readonly string[] ProducerStableKeys;
     public readonly ushort OreCost;
     public readonly ushort EnergyCost;
     public readonly byte CrystalCost;
     public readonly byte OperationsCapacity;
     public readonly ushort BuildTicks;
+    public readonly ContentActionPrerequisiteGroup[] PrerequisiteGroups;
 
     public UnitProductionDefinition(string unitStableKey, string producerStableKey, ushort oreCost, ushort energyCost,
-        byte crystalCost, byte operationsCapacity, ushort buildTicks)
+        byte crystalCost, byte operationsCapacity, ushort buildTicks, ContentActionPrerequisiteGroup[]? prerequisiteGroups = null)
+        : this(unitStableKey, new[] { producerStableKey }, oreCost, energyCost, crystalCost, operationsCapacity, buildTicks, prerequisiteGroups)
+    {
+    }
+
+    public UnitProductionDefinition(string unitStableKey, string[] producerStableKeys, ushort oreCost, ushort energyCost,
+        byte crystalCost, byte operationsCapacity, ushort buildTicks, ContentActionPrerequisiteGroup[]? prerequisiteGroups = null)
     {
         if (string.IsNullOrWhiteSpace(unitStableKey)) throw new ArgumentNullException(nameof(unitStableKey));
-        if (string.IsNullOrWhiteSpace(producerStableKey)) throw new ArgumentNullException(nameof(producerStableKey));
+        if (producerStableKeys == null || producerStableKeys.Length == 0) throw new ArgumentException("At least one producer is required.", nameof(producerStableKeys));
         if (buildTicks == 0 || operationsCapacity == 0) throw new ArgumentOutOfRangeException(nameof(buildTicks));
+        ProducerStableKeys = new string[producerStableKeys.Length];
+        ProducerTypes = new ContentId[producerStableKeys.Length];
+        for (int i = 0; i < producerStableKeys.Length; i++)
+        {
+            if (string.IsNullOrWhiteSpace(producerStableKeys[i])) throw new ArgumentException("Producer keys cannot be empty.", nameof(producerStableKeys));
+            ProducerStableKeys[i] = producerStableKeys[i];
+            ProducerTypes[i] = StableId.FromKey(producerStableKeys[i]);
+        }
         UnitStableKey = unitStableKey; UnitType = StableId.FromKey(unitStableKey);
-        ProducerStableKey = producerStableKey; ProducerType = StableId.FromKey(producerStableKey);
+        ProducerStableKey = ProducerStableKeys[0]; ProducerType = ProducerTypes[0];
         OreCost = oreCost; EnergyCost = energyCost; CrystalCost = crystalCost; OperationsCapacity = operationsCapacity; BuildTicks = buildTicks;
+        PrerequisiteGroups = prerequisiteGroups ?? Array.Empty<ContentActionPrerequisiteGroup>();
+    }
+
+    public bool CanProduceAt(ContentId buildingType)
+    {
+        for (int i = 0; i < ProducerTypes.Length; i++) if (ProducerTypes[i] == buildingType) return true;
+        return false;
     }
 }
 
@@ -335,8 +362,9 @@ public sealed class PrototypeContentCatalog
     public WeaponDefinition[] Weapons { get; }
     public TransformationDefinition[] Transformations { get; }
     public ResearchDefinition[] Research { get; }
+    public CommandDefinition[] Commands { get; }
     public ulong ContentHash { get; internal set; }
-    public PrototypeContentCatalog(PrototypeMovementProfile[] movementProfiles, PrototypeEntityDefinition[] entities, ResourceNodeDefinition[]? resourceNodes = null, BuildingDefinition[]? buildings = null, UnitProductionDefinition[]? production = null, WeaponDefinition[]? weapons = null, TransformationDefinition[]? transformations = null, ResearchDefinition[]? research = null)
+    public PrototypeContentCatalog(PrototypeMovementProfile[] movementProfiles, PrototypeEntityDefinition[] entities, ResourceNodeDefinition[]? resourceNodes = null, BuildingDefinition[]? buildings = null, UnitProductionDefinition[]? production = null, WeaponDefinition[]? weapons = null, TransformationDefinition[]? transformations = null, ResearchDefinition[]? research = null, CommandDefinition[]? commands = null)
     {
         MovementProfiles = movementProfiles ?? Array.Empty<PrototypeMovementProfile>();
         Entities = entities ?? Array.Empty<PrototypeEntityDefinition>();
@@ -346,6 +374,7 @@ public sealed class PrototypeContentCatalog
         Weapons = weapons ?? Array.Empty<WeaponDefinition>();
         Transformations = transformations ?? Array.Empty<TransformationDefinition>();
         Research = research ?? Array.Empty<ResearchDefinition>();
+        Commands = commands ?? Array.Empty<CommandDefinition>();
         for (int i = 0; i < Entities.Length; i++)
         {
             ContentId weaponProfile = Entities[i].Combat.WeaponProfile;
@@ -363,6 +392,8 @@ public sealed class PrototypeContentCatalog
             ValidateTransformationMode(transformation, entity, transformation.ModeB, authoredMode: false);
         }
         ResearchDefinitionValidator.Validate(this);
+        ValidateActionPrerequisites();
+        CommandDefinitionValidator.Validate(this);
     }
 
     public bool ContainsEntityKey(string stableKey) => TryGetEntity(stableKey, out _);
@@ -400,7 +431,7 @@ public sealed class PrototypeContentCatalog
     }
     public bool IsProducer(ContentId buildingType)
     {
-        for (int i = 0; i < Production.Length; i++) if (Production[i].ProducerType == buildingType) return true;
+        for (int i = 0; i < Production.Length; i++) if (Production[i].CanProduceAt(buildingType)) return true;
         return false;
     }
     public bool TryGetWeapon(string stableKey, out WeaponDefinition definition) => TryGetWeapon(StableId.FromKey(stableKey), out definition);
@@ -419,6 +450,125 @@ public sealed class PrototypeContentCatalog
     {
         for (int i = 0; i < Research.Length; i++) if (Research[i].Id == id) { definition = Research[i]; return true; }
         definition = default; return false;
+    }
+
+    public bool TryGetCommand(SimCommandType type, out CommandDefinition definition)
+    {
+        for (int i = 0; i < Commands.Length; i++) if (Commands[i].CommandType == type) { definition = Commands[i]; return true; }
+        definition = default; return false;
+    }
+
+    private void ValidateActionPrerequisites()
+    {
+        HashSet<uint> buildingIds = new();
+        Dictionary<string, BuildingDefinition> buildingsByKey = new(StringComparer.Ordinal);
+        for (int i = 0; i < Buildings.Length; i++)
+        {
+            BuildingDefinition building = Buildings[i];
+            if (!buildingIds.Add(building.Id.Value) || !buildingsByKey.TryAdd(building.StableKey, building))
+                throw new ArgumentException($"Duplicate building action definition {building.StableKey}.");
+            if (building.PrerequisiteGroups.Length == 0) continue;
+            if (!TryGetEntity(building.Id, out PrototypeEntityDefinition owner) || owner.SelectableKind != SelectableKind.Building)
+                throw new ArgumentException($"Construction action {building.StableKey} has no matching building entity.");
+            ValidatePrerequisiteGroups(building.StableKey, owner.FactionKey, building.PrerequisiteGroups);
+        }
+        ValidateBuildingPrerequisiteDag(buildingsByKey);
+
+        HashSet<uint> productionUnits = new();
+        for (int i = 0; i < Production.Length; i++)
+        {
+            UnitProductionDefinition production = Production[i];
+            if (!productionUnits.Add(production.UnitType.Value))
+                throw new ArgumentException($"Duplicate production definition {production.UnitStableKey}.");
+            if (!TryGetEntity(production.UnitType, out PrototypeEntityDefinition unit) || unit.SelectableKind == SelectableKind.Building ||
+                !string.Equals(unit.StableKey, production.UnitStableKey, StringComparison.Ordinal))
+                throw new ArgumentException($"Production {production.UnitStableKey} references a missing unit.");
+            if (unit.OperationsCapacity != production.OperationsCapacity)
+                throw new ArgumentException($"Production {production.UnitStableKey} Operations Capacity disagrees with the unit definition.");
+            HashSet<uint> producerIds = new();
+            for (int producer = 0; producer < production.ProducerTypes.Length; producer++)
+            {
+                ContentId producerType = production.ProducerTypes[producer];
+                if (!producerIds.Add(producerType.Value))
+                    throw new ArgumentException($"Production {production.UnitStableKey} repeats producer {production.ProducerStableKeys[producer]}.");
+                if (!TryGetBuilding(producerType, out BuildingDefinition producerBuilding) ||
+                    !TryGetEntity(producerType, out PrototypeEntityDefinition producerEntity) ||
+                    producerEntity.SelectableKind != SelectableKind.Building ||
+                    !string.Equals(producerBuilding.StableKey, production.ProducerStableKeys[producer], StringComparison.Ordinal) ||
+                    !string.Equals(producerEntity.FactionKey, unit.FactionKey, StringComparison.Ordinal))
+                    throw new ArgumentException($"Production {production.UnitStableKey} references missing producer {production.ProducerStableKeys[producer]}.");
+            }
+            ValidatePrerequisiteGroups(production.UnitStableKey, unit.FactionKey, production.PrerequisiteGroups);
+        }
+    }
+
+    private void ValidatePrerequisiteGroups(string owner, string ownerFaction, ContentActionPrerequisiteGroup[] groups)
+    {
+        HashSet<string> seen = new(StringComparer.Ordinal);
+        for (int groupIndex = 0; groupIndex < groups.Length; groupIndex++)
+        {
+            ContentActionPrerequisite[] alternatives = groups[groupIndex].Alternatives;
+            if (alternatives == null || alternatives.Length == 0) throw new ArgumentException($"Action {owner} has an empty prerequisite group.");
+            for (int alternativeIndex = 0; alternativeIndex < alternatives.Length; alternativeIndex++)
+            {
+                ContentActionPrerequisite requirement = alternatives[alternativeIndex];
+                string uniqueKey = ((byte)requirement.Kind).ToString() + ":" + requirement.TargetStableKey;
+                if (!seen.Add(uniqueKey)) throw new ArgumentException($"Action {owner} repeats prerequisite {requirement.TargetStableKey}.");
+                bool resolved;
+                string targetFaction;
+                switch (requirement.Kind)
+                {
+                    case ContentActionPrerequisiteKind.Building:
+                        PrototypeEntityDefinition buildingEntity = default;
+                        resolved = TryGetBuilding(requirement.TargetId, out BuildingDefinition building) &&
+                            string.Equals(building.StableKey, requirement.TargetStableKey, StringComparison.Ordinal) &&
+                            TryGetEntity(requirement.TargetId, out buildingEntity) &&
+                            buildingEntity.SelectableKind == SelectableKind.Building;
+                        targetFaction = resolved ? buildingEntity.FactionKey ?? string.Empty : string.Empty;
+                        break;
+                    case ContentActionPrerequisiteKind.Research:
+                        resolved = TryGetResearch(requirement.TargetId, out ResearchDefinition research) &&
+                            string.Equals(research.StableKey, requirement.TargetStableKey, StringComparison.Ordinal);
+                        targetFaction = resolved ? research.FactionKey ?? string.Empty : string.Empty;
+                        break;
+                    default:
+                        resolved = false;
+                        targetFaction = string.Empty;
+                        break;
+                }
+                if (!resolved) throw new ArgumentException($"Action {owner} references missing prerequisite {requirement.TargetStableKey}.");
+                if (!string.Equals(targetFaction, ownerFaction, StringComparison.Ordinal))
+                    throw new ArgumentException($"Action {owner} references cross-faction prerequisite {requirement.TargetStableKey}.");
+            }
+        }
+    }
+
+    private static void ValidateBuildingPrerequisiteDag(Dictionary<string, BuildingDefinition> byKey)
+    {
+        Dictionary<string, byte> state = new(StringComparer.Ordinal);
+        foreach (string key in byKey.Keys) VisitBuildingPrerequisites(key, byKey, state);
+    }
+
+    private static void VisitBuildingPrerequisites(string key, Dictionary<string, BuildingDefinition> byKey, Dictionary<string, byte> state)
+    {
+        if (state.TryGetValue(key, out byte existing))
+        {
+            if (existing == 1) throw new ArgumentException($"Construction prerequisite cycle includes {key}.");
+            if (existing == 2) return;
+        }
+        state[key] = 1;
+        BuildingDefinition definition = byKey[key];
+        for (int groupIndex = 0; groupIndex < definition.PrerequisiteGroups.Length; groupIndex++)
+        {
+            ContentActionPrerequisite[] alternatives = definition.PrerequisiteGroups[groupIndex].Alternatives;
+            for (int i = 0; i < alternatives.Length; i++)
+            {
+                ContentActionPrerequisite prerequisite = alternatives[i];
+                if (prerequisite.Kind == ContentActionPrerequisiteKind.Building && byKey.ContainsKey(prerequisite.TargetStableKey))
+                    VisitBuildingPrerequisites(prerequisite.TargetStableKey, byKey, state);
+            }
+        }
+        state[key] = 2;
     }
 
     private void ValidateTransformationMode(TransformationDefinition transformation, PrototypeEntityDefinition entity, TransformationModeDefinition mode, bool authoredMode)
@@ -600,13 +750,8 @@ public static class PrototypeContentFactory
             new BuildingDefinition("building.rock_raiders.power_station", 5, 5, 0x1FFFFFFUL, false, 150, 20, 700, energyGenerationPerSecond: 10, energyReserveCapacity: 120),
             new BuildingDefinition("building.rock_raiders.vehicle_service_bay", 8, 6, 0xFFFFFFFFFFFFUL, true, 160, 20, 800, productionExitWidth: 3, productionExitDepth: 3, productionExitFootprint: FootprintClass.Medium, operationsCapacityProvided: 4, continuousEnergyDemandPerSecond: 1, energyFunctionalClass: EnergyFunctionalClass.ProductionAndResearch, worksiteServiceRadius: 12),
         };
-        UnitProductionDefinition[] production =
-        {
-            new UnitProductionDefinition("unit.rock_raiders.crew", "building.rock_raiders.hq", 50, 0, 0, 1, 320),
-            new UnitProductionDefinition("unit.rock_raiders.hover_scout", "building.rock_raiders.vehicle_service_bay", 75, 10, 0, 1, 400),
-            new UnitProductionDefinition("unit.rock_raiders.loader_dozer", "building.rock_raiders.vehicle_service_bay", 125, 15, 0, 3, 720),
-            new UnitProductionDefinition("unit.rock_raiders.rapid_rider", "building.rock_raiders.vehicle_service_bay", 90, 10, 0, 2, 560)
-        };
+        buildings = CanonicalActionDefinitions.BindBuildingPrerequisites(buildings);
+        UnitProductionDefinition[] production = CanonicalActionDefinitions.CreateProduction();
         PrototypeCombatProfile mx41GroundCombat = new(CombatTargetClass.MediumMachine, CombatTargetLayer.Ground, CombatTargetFlags.CombatThreat, 320, 2,
             TargetPriorityProfile.AntiLight, TargetLayerMask.Ground, TargetClassMask.All, Fix32.FromRatio(17,2), StableId.FromKey("weapon.ast.mx41.pursuit_projector"));
         PrototypeCombatProfile mx41FlightCombat = new(CombatTargetClass.MediumMachine, CombatTargetLayer.TrueAir, CombatTargetFlags.CombatThreat, 320, 2,
@@ -619,7 +764,7 @@ public static class PrototypeContentFactory
                 45, 45, 4_000, 12, 160, false, false, TargetLayerMask.All)
         };
         ResearchDefinition[] research = CanonicalResearchDefinitions.Create();
-        PrototypeContentCatalog catalog = new PrototypeContentCatalog(profiles, entities, resources, buildings, production, weapons, transformations, research);
+        PrototypeContentCatalog catalog = new PrototypeContentCatalog(profiles, entities, resources, buildings, production, weapons, transformations, research, CanonicalCommandDefinitions.Create());
         PrototypeContentCodec.Write(catalog);
         return catalog;
     }
@@ -629,7 +774,7 @@ public static class PrototypeContentFactory
 public static class PrototypeContentCodec
 {
     private const int Magic = 0x4350534C; // LSPC little-endian bytes.
-    public const int FormatVersion = 18;
+    public const int FormatVersion = 19;
 
     public static byte[] Write(PrototypeContentCatalog catalog)
     {
@@ -677,13 +822,19 @@ public static class PrototypeContentCodec
             writer.Write(b.EnergyGenerationPerSecond); writer.Write(b.EnergyReserveCapacity); writer.Write(b.ContinuousEnergyDemandPerSecond);
             writer.Write((byte)b.EnergyFunctionalClass);
             writer.Write(b.WorksiteServiceRadius);
+            WriteActionPrerequisites(writer, b.PrerequisiteGroups);
         }
         writer.Write(catalog.Production.Length);
         for (int i = 0; i < catalog.Production.Length; i++)
         {
             UnitProductionDefinition p = catalog.Production[i];
-            writer.Write(p.UnitStableKey); writer.Write(p.UnitType.Value); writer.Write(p.ProducerStableKey); writer.Write(p.ProducerType.Value);
+            writer.Write(p.UnitStableKey); writer.Write(p.UnitType.Value); writer.Write(p.ProducerStableKeys.Length);
+            for (int producer = 0; producer < p.ProducerStableKeys.Length; producer++)
+            {
+                writer.Write(p.ProducerStableKeys[producer]); writer.Write(p.ProducerTypes[producer].Value);
+            }
             writer.Write(p.OreCost); writer.Write(p.EnergyCost); writer.Write(p.CrystalCost); writer.Write(p.OperationsCapacity); writer.Write(p.BuildTicks);
+            WriteActionPrerequisites(writer, p.PrerequisiteGroups);
         }
         writer.Write(catalog.Weapons.Length);
         for (int i = 0; i < catalog.Weapons.Length; i++)
@@ -698,6 +849,8 @@ public static class PrototypeContentCodec
         for (int i = 0; i < catalog.Transformations.Length; i++) WriteTransformation(writer, catalog.Transformations[i]);
         writer.Write(catalog.Research.Length);
         for (int i = 0; i < catalog.Research.Length; i++) WriteResearch(writer, catalog.Research[i]);
+        writer.Write(catalog.Commands.Length);
+        for (int i = 0; i < catalog.Commands.Length; i++) WriteCommand(writer, catalog.Commands[i]);
         writer.Flush();
         byte[] bytes = stream.ToArray(); catalog.ContentHash = DeterministicHash.Fnv1A64(bytes); return bytes;
     }
@@ -766,7 +919,8 @@ public static class PrototypeContentCodec
                 if (formatVersion >= 8) { generation = reader.ReadUInt16(); reserveCapacity = reader.ReadUInt16(); demand = reader.ReadUInt16(); }
                 EnergyFunctionalClass functionalClass = formatVersion >= 9 ? (EnergyFunctionalClass)reader.ReadByte() : LegacyEnergyFunctionalClass(key);
                 byte worksiteServiceRadius = formatVersion >= 16 ? reader.ReadByte() : LegacyWorksiteServiceRadius(key);
-                buildings[i] = new BuildingDefinition(key, width, height, mask, rotatable, oreCost, energyCost, buildTicks, exitWidth, exitDepth, exitFootprint, capacityProvided, generation, reserveCapacity, demand, functionalClass, worksiteServiceRadius, crystalCost, maskHigh);
+                ContentActionPrerequisiteGroup[] prerequisites = formatVersion >= 19 ? ReadActionPrerequisites(reader) : Array.Empty<ContentActionPrerequisiteGroup>();
+                buildings[i] = new BuildingDefinition(key, width, height, mask, rotatable, oreCost, energyCost, buildTicks, exitWidth, exitDepth, exitFootprint, capacityProvided, generation, reserveCapacity, demand, functionalClass, worksiteServiceRadius, crystalCost, maskHigh, prerequisites);
                 if (buildings[i].Id.Value != id) throw new InvalidDataException("Stable building ID mismatch.");
             }
         }
@@ -777,17 +931,102 @@ public static class PrototypeContentCodec
             production = new UnitProductionDefinition[productionCount];
             for (int i = 0; i < productionCount; i++)
             {
-                string unitKey = reader.ReadString(); uint unitId = reader.ReadUInt32(); string producerKey = reader.ReadString(); uint producerId = reader.ReadUInt32();
-                production[i] = new UnitProductionDefinition(unitKey, producerKey, reader.ReadUInt16(), reader.ReadUInt16(), reader.ReadByte(), reader.ReadByte(), reader.ReadUInt16());
-                if (production[i].UnitType.Value != unitId || production[i].ProducerType.Value != producerId) throw new InvalidDataException("Stable production ID mismatch.");
+                string unitKey = reader.ReadString(); uint unitId = reader.ReadUInt32();
+                if (formatVersion >= 19)
+                {
+                    int producerCount = reader.ReadInt32();
+                    if (producerCount <= 0 || producerCount > 16) throw new InvalidDataException("Invalid production producer count.");
+                    string[] producerKeys = new string[producerCount]; uint[] producerIds = new uint[producerCount];
+                    for (int producer = 0; producer < producerCount; producer++) { producerKeys[producer] = reader.ReadString(); producerIds[producer] = reader.ReadUInt32(); }
+                    ushort ore = reader.ReadUInt16(), energy = reader.ReadUInt16(); byte crystals = reader.ReadByte(), capacity = reader.ReadByte(); ushort ticks = reader.ReadUInt16();
+                    ContentActionPrerequisiteGroup[] prerequisites = ReadActionPrerequisites(reader);
+                    production[i] = new UnitProductionDefinition(unitKey, producerKeys, ore, energy, crystals, capacity, ticks, prerequisites);
+                    for (int producer = 0; producer < producerCount; producer++)
+                        if (production[i].ProducerTypes[producer].Value != producerIds[producer]) throw new InvalidDataException("Stable production producer ID mismatch.");
+                }
+                else
+                {
+                    string producerKey = reader.ReadString(); uint producerId = reader.ReadUInt32();
+                    production[i] = new UnitProductionDefinition(unitKey, producerKey, reader.ReadUInt16(), reader.ReadUInt16(), reader.ReadByte(), reader.ReadByte(), reader.ReadUInt16());
+                    if (production[i].ProducerType.Value != producerId) throw new InvalidDataException("Stable production producer ID mismatch.");
+                }
+                if (production[i].UnitType.Value != unitId) throw new InvalidDataException("Stable production unit ID mismatch.");
             }
         }
         WeaponDefinition[] weapons = formatVersion >= 11 ? ReadWeapons(reader, formatVersion >= 12, formatVersion >= 14) : LegacyWeapons();
         TransformationDefinition[] transformations = formatVersion >= 15 ? ReadTransformations(reader) : Array.Empty<TransformationDefinition>();
         ResearchDefinition[] research = formatVersion >= 18 ? ReadResearch(reader) : Array.Empty<ResearchDefinition>();
+        CommandDefinition[] commands = formatVersion >= 19 ? ReadCommands(reader) : Array.Empty<CommandDefinition>();
         if (stream.Position != stream.Length) throw new InvalidDataException("Trailing prototype content bytes.");
-        PrototypeContentCatalog result = new PrototypeContentCatalog(profiles, entities, resourceNodes, buildings, production, weapons, transformations, research) { ContentHash = DeterministicHash.Fnv1A64(bytes) };
+        PrototypeContentCatalog result = new PrototypeContentCatalog(profiles, entities, resourceNodes, buildings, production, weapons, transformations, research, commands) { ContentHash = DeterministicHash.Fnv1A64(bytes) };
         return result;
+    }
+
+    private static void WriteActionPrerequisites(BinaryWriter writer, ContentActionPrerequisiteGroup[] groups)
+    {
+        writer.Write(groups.Length);
+        for (int group = 0; group < groups.Length; group++)
+        {
+            ContentActionPrerequisite[] alternatives = groups[group].Alternatives;
+            writer.Write(alternatives.Length);
+            for (int alternative = 0; alternative < alternatives.Length; alternative++)
+            {
+                ContentActionPrerequisite prerequisite = alternatives[alternative];
+                writer.Write((byte)prerequisite.Kind); writer.Write(prerequisite.TargetStableKey); writer.Write(prerequisite.TargetId.Value);
+            }
+        }
+    }
+
+    private static ContentActionPrerequisiteGroup[] ReadActionPrerequisites(BinaryReader reader)
+    {
+        int groupCount = reader.ReadInt32();
+        if (groupCount < 0 || groupCount > 32) throw new InvalidDataException("Invalid action prerequisite group count.");
+        ContentActionPrerequisiteGroup[] groups = new ContentActionPrerequisiteGroup[groupCount];
+        for (int group = 0; group < groupCount; group++)
+        {
+            int alternativeCount = reader.ReadInt32();
+            if (alternativeCount <= 0 || alternativeCount > 32) throw new InvalidDataException("Invalid action prerequisite alternative count.");
+            ContentActionPrerequisite[] alternatives = new ContentActionPrerequisite[alternativeCount];
+            for (int alternative = 0; alternative < alternativeCount; alternative++)
+            {
+                ContentActionPrerequisiteKind kind = (ContentActionPrerequisiteKind)reader.ReadByte(); string key = reader.ReadString(); uint id = reader.ReadUInt32();
+                alternatives[alternative] = new ContentActionPrerequisite(kind, key);
+                if (alternatives[alternative].TargetId.Value != id) throw new InvalidDataException("Stable action prerequisite ID mismatch.");
+            }
+            groups[group] = new ContentActionPrerequisiteGroup(alternatives);
+        }
+        return groups;
+    }
+
+    private static void WriteCommand(BinaryWriter writer, CommandDefinition command)
+    {
+        writer.Write(command.StableKey); writer.Write(command.Id.Value); writer.Write((ushort)command.CommandType);
+        writer.Write(command.EligibleEntityTags.Length);
+        for (int i = 0; i < command.EligibleEntityTags.Length; i++) writer.Write(command.EligibleEntityTags[i]);
+        writer.Write((byte)command.TargetType); writer.Write((byte)command.QueuePolicy);
+        writer.Write(command.RequiredResearchStableKey); writer.Write(command.RequiredResearch.Value);
+        writer.Write(command.ValidationHandlerId); writer.Write(command.ExecutionHandlerId); writer.Write(command.UiSlotProfile); writer.Write(command.TargetingPreviewProfile);
+    }
+
+    private static CommandDefinition[] ReadCommands(BinaryReader reader)
+    {
+        int count = reader.ReadInt32();
+        if (count < 0 || count > 256) throw new InvalidDataException("Invalid command definition count.");
+        CommandDefinition[] commands = new CommandDefinition[count];
+        for (int commandIndex = 0; commandIndex < count; commandIndex++)
+        {
+            string key = reader.ReadString(); uint id = reader.ReadUInt32(); SimCommandType type = (SimCommandType)reader.ReadUInt16();
+            int tagCount = reader.ReadInt32();
+            if (tagCount <= 0 || tagCount > 32) throw new InvalidDataException("Invalid command eligibility tag count.");
+            string[] tags = new string[tagCount]; for (int tag = 0; tag < tagCount; tag++) tags[tag] = reader.ReadString();
+            CommandTargetType target = (CommandTargetType)reader.ReadByte(); CommandQueuePolicy queue = (CommandQueuePolicy)reader.ReadByte();
+            string requiredResearch = reader.ReadString(); uint requiredResearchId = reader.ReadUInt32();
+            commands[commandIndex] = new CommandDefinition(key, type, tags, target, queue, requiredResearch,
+                reader.ReadString(), reader.ReadString(), reader.ReadString(), reader.ReadString());
+            if (commands[commandIndex].Id.Value != id || commands[commandIndex].RequiredResearch.Value != requiredResearchId)
+                throw new InvalidDataException("Stable command ID mismatch.");
+        }
+        return commands;
     }
 
     private static void WriteResearch(BinaryWriter writer, ResearchDefinition definition)

@@ -981,7 +981,8 @@ public static class SnapshotSerializer
         for (int i = 0; i < alive.Count; i++)
         {
             EntityId id = alive[i];
-            if (world.Entities.Building.TryGet(id, out Building building) && building.State == BuildingState.Completed && world.Content.IsProducer(building.Type))
+            if (world.Entities.Building.TryGet(id, out Building building) && building.State == BuildingState.Completed &&
+                ProductionSystem.IsRuntimeEnabledProducer(world.Content, building.Type))
                 world.Entities.Production.Set(id, new Production());
         }
     }

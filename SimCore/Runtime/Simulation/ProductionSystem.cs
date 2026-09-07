@@ -4,7 +4,24 @@ namespace LegoSpaceRTS.SimCore
 {
 public sealed class ProductionSystem : ISimSystem
 {
+    private static readonly ContentId Crew = StableId.FromKey("unit.rock_raiders.crew");
+    private static readonly ContentId HoverScout = StableId.FromKey("unit.rock_raiders.hover_scout");
+    private static readonly ContentId RapidRider = StableId.FromKey("unit.rock_raiders.rapid_rider");
+    private static readonly ContentId LoaderDozer = StableId.FromKey("unit.rock_raiders.loader_dozer");
     private readonly List<SpawnReservation> _spawnReservations = new(16);
+
+    // T073 compiles the complete production catalog before the remaining faction
+    // economy, technology and authored-exit runtime bindings exist. Keep the
+    // accepted M3 production surface explicit until those bindings land.
+    public static bool IsRuntimeEnabledUnit(ContentId unitType)
+        => unitType == Crew || unitType == HoverScout || unitType == RapidRider || unitType == LoaderDozer;
+
+    public static bool IsRuntimeEnabledProducer(PrototypeContentCatalog content, ContentId buildingType)
+    {
+        for (int i = 0; i < content.Production.Length; i++)
+            if (IsRuntimeEnabledUnit(content.Production[i].UnitType) && content.Production[i].CanProduceAt(buildingType)) return true;
+        return false;
+    }
 
     public void Step(SimulationWorld world)
     {
@@ -37,7 +54,8 @@ public sealed class ProductionSystem : ISimSystem
     {
         if (!world.Entities.Production.Has(facilityId) || !world.Entities.Building.TryGet(facilityId, out Building building) || building.State != BuildingState.Completed ||
             !world.Entities.Ownership.TryGet(facilityId, out Ownership ownership) || ownership.PlayerSlot != playerSlot ||
-            !world.Content.TryGetProduction(unitType, out UnitProductionDefinition definition) || definition.ProducerType != building.Type) return false;
+            !IsRuntimeEnabledUnit(unitType) || !world.Content.TryGetProduction(unitType, out UnitProductionDefinition definition) ||
+            !definition.CanProduceAt(building.Type)) return false;
         ref Production production = ref world.Entities.Production.Get(facilityId);
         if (production.Count >= Production.Capacity) return false;
         if (!OperationsCapacitySystem.CanReserve(world, playerSlot, definition.OperationsCapacity)) return false;

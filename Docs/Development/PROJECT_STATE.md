@@ -9,10 +9,14 @@ The dense M7 cross-thread continuity index is
 ## Current milestone
 
 **M0–M6 are implemented, verified and game-director accepted. M7 visual canon
-remains deliberately open. M8 T070–T072 are implemented and fully verified:
+remains deliberately open. M8 T070–T072 are implemented and fully verified;
+the current T073 task branch has completed its guarded data/catalog checkpoint:
 the compiled gameplay catalog now contains all 35 canonical unit chassis, all
 31 canonical infrastructure definitions and all 38 canonical research
-definitions across the four factions.
+definitions across the four factions, plus 35 stable command families and the
+complete construction/production prerequisite bindings. Full runtime binding
+remains open pending the explicit non-canonical values collected in
+`Docs/Development/M8_T073_BINDING_REVIEW.md`.
 Preset-style comparisons are retired as the primary
 workflow; the gameplay-scale realtime Look Lab is now at schema 9 with free
 camera control, ten reproducible surface/glare assets, exact shader-bound role-authored material
@@ -418,7 +422,7 @@ live; the current schema-9 copy/paste retains the complete experiment.
   while Legacy Frames and Clean remain direct same-layout comparisons. These
   remain review tools, not approved visual canon.
 
-## M8 T070–T072 canonical roster and research definitions
+## M8 T070–T073 canonical roster, research and command data
 
 - The source content and built-in fallback catalog now contain exactly 35
   canonical buildable units: 8 Rock Raiders, 13 Astronauts, 6 Aliens and 8
@@ -464,7 +468,14 @@ live; the current schema-9 copy/paste retains the complete experiment.
   payload. Formats 2–17 remain readable; format 17 yields an empty research
   catalog. Checked-in JSON, the built-in fallback and tracked content binary
   compile byte-identically at content hash `93530AA6EC0E2742`.
-- Importing data does not expand the pre-T073 construction catalog. Local and
+- T073 source schema 18 / compiled format 19 add all 31 construction action
+  bindings, all 35 production recipes and 35 stable command definitions. The
+  action prerequisites resolve against same-faction building/research data and
+  preserve AND-of-OR semantics. The tracked binary and built-in fallback remain
+  byte-identical at content hash `73759C8968ACB05E`; formats 2–18 remain
+  readable.
+- Importing data does not yet expand the accepted runtime construction catalog.
+  Local and
   network authority still expose only the four accepted M3 Rock Raiders
   structures; the other 27 definitions remain command-locked until the complete
   faction/research command path can charge and refund every canonical cost.
@@ -473,10 +484,16 @@ live; the current schema-9 copy/paste retains the complete experiment.
   nonrectangular masks, structure sight, production exits, Settlement reserve
   and configurable-defense defaults were not available in canon and were not
   invented.
+- T073 reserves command codes 19–35 in the catalog, while the unchanged command
+  envelope and wire formats reject them until payload and handler binding. The
+  complete recipe table likewise retains an explicit runtime gate around the
+  four accepted Raider products, preventing accidental production without
+  canonical Crystal, research, Energy-domain and exit handling.
 - T072 remains data-only: it does not add research queues/jobs, completion
   state, commands, UI, network payloads or effect application, and it does not
   rewire the retained M5 proof flags. T070–T072 do not claim the later M8
-  closures: T073 owns the complete command/runtime binding and T074 complete
+  closures: the remainder of T073 owns complete command/runtime binding and
+  T074 complete
   roster-reference validation.
 
 ## Integration format boundary
@@ -484,7 +501,7 @@ live; the current schema-9 copy/paste retains the complete experiment.
 - authoritative snapshot format **20**;
 - simulation protocol **18**;
 - replay format **16** (backward reader for 15);
-- compiled content format **18** / source schema **17**;
+- compiled content format **19** / source schema **18**;
 - command packet format **1**;
 - recipient snapshot packet format **3**;
 - reconnect packet format **1**;
@@ -664,9 +681,9 @@ blocking only when M9 must prove its stable-large-battle exit.
 
 ## Next approved action
 
-1. Begin M8 T073: implement the complete canonical command catalog and bind
-   legal construction, production and research actions to the T070–T072 data
-   without inventing actions, requirements or faction behavior.
+1. Approve or amend `Docs/Development/M8_T073_BINDING_REVIEW.md`, then finish
+   T073 runtime binding for legal construction, production, research and faction
+   actions without inventing missing accounting, geometry or timing rules.
 2. The game director may independently explore `F8` → **M7 HUD Lab** and return
    its Hybrid/Structural/Legacy/Clean comparison across the four faction-bound
    recipes, then return a **COPY JSON** profile later; no HUD visual canon is

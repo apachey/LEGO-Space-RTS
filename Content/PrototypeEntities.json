@@ -1,7 +1,7 @@
 {
-  "schemaVersion": 17,
+  "schemaVersion": 18,
   "contentKind": "prototype_entities",
-  "policy": "M8 T071 canonical 35-unit and 31-infrastructure roster definitions with accepted M3-M6 gameplay metadata and retained technical fixtures.",
+  "policy": "M8 T073 data checkpoint: canonical 35-unit, 31-infrastructure, 38-research and 35-family command catalog; unbound actions remain unavailable to runtime.",
   "movementProfiles": [
     {
       "stableId": "movement.prototype.crew",
@@ -1664,51 +1664,75 @@
       }
     }
   ],
+  "constructionActionDefinitions": [
+    {"building":"building.ali.etx_command_core","prerequisiteGroups":[]},
+    {"building":"building.ali.etx_defense_node","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.ali.etx_command_core"}]},{"anyOf":[{"kind":"Building","target":"building.ali.power_coupler"}]}]},
+    {"building":"building.ali.etx_fabricator","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.ali.etx_command_core"}]}]},
+    {"building":"building.ali.power_coupler","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.ali.etx_command_core"}]}]},
+    {"building":"building.ali.reconfiguration_dock","prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.ali.etx_reconfiguration_matrix"}]}]},
+    {"building":"building.ali.resonance_core","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.ali.etx_command_core"}]},{"anyOf":[{"kind":"Building","target":"building.ali.power_coupler"}]}]},
+    {"building":"building.ast.field_systems_garage","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.ast.mb01_eagle_command_base"}]}]},
+    {"building":"building.ast.flight_operations_pad","prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.ast.mission_operations_integration"}]}]},
+    {"building":"building.ast.frontier_extraction_station","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.ast.mb01_eagle_command_base"}]}]},
+    {"building":"building.ast.mb01_eagle_command_base","prerequisiteGroups":[]},
+    {"building":"building.ast.mission_vehicle_bay","prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.ast.mission_operations_integration"}]}]},
+    {"building":"building.ast.modular_sentinel_defense","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.ast.service_refit_hub"}]}]},
+    {"building":"building.ast.service_refit_hub","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.ast.field_systems_garage"}]},{"anyOf":[{"kind":"Building","target":"building.ast.solar_energy_array"},{"kind":"Building","target":"building.ast.frontier_extraction_station"}]}]},
+    {"building":"building.ast.solar_energy_array","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.ast.mb01_eagle_command_base"}]}]},
+    {"building":"building.mar.aero_guard_tower","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.mar.routing_laboratory"}]}]},
+    {"building":"building.mar.aero_tube_hangar","prerequisiteGroups":[]},
+    {"building":"building.mar.aero_tube_link","prerequisiteGroups":[]},
+    {"building":"building.mar.deflector_arm","prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.mar.utility_mechanisms"}]}]},
+    {"building":"building.mar.excavation_plant","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.mar.aero_tube_hangar"},{"kind":"Building","target":"building.mar.settlement_station"}]}]},
+    {"building":"building.mar.mechanical_workshop","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.mar.aero_tube_hangar"},{"kind":"Building","target":"building.mar.settlement_station"}]}]},
+    {"building":"building.mar.pressure_generator","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.mar.aero_tube_hangar"},{"kind":"Building","target":"building.mar.settlement_station"}]}]},
+    {"building":"building.mar.routing_laboratory","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.mar.mechanical_workshop"}]},{"anyOf":[{"kind":"Building","target":"building.mar.pressure_generator"}]},{"anyOf":[{"kind":"Building","target":"building.mar.excavation_plant"}]}]},
+    {"building":"building.mar.settlement_station","prerequisiteGroups":[]},
+    {"building":"building.rock_raiders.crusher_barrier","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.rock_raiders.hq"}]}]},
+    {"building":"building.rock_raiders.crystal_vault","prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.rr.industrial_expansion_program"}]}]},
+    {"building":"building.rock_raiders.cutter_mast","prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.rr.industrial_expansion_program"}]},{"anyOf":[{"kind":"Building","target":"building.rock_raiders.power_station"}]}]},
+    {"building":"building.rock_raiders.engineering_workshop","prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.rr.industrial_expansion_program"}]}]},
+    {"building":"building.rock_raiders.hq","prerequisiteGroups":[]},
+    {"building":"building.rock_raiders.ore_processing_plant","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.rock_raiders.hq"}]}]},
+    {"building":"building.rock_raiders.power_station","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.rock_raiders.hq"}]}]},
+    {"building":"building.rock_raiders.vehicle_service_bay","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.rock_raiders.hq"}]}]}
+  ],
   "productionDefinitions": [
-    {
-      "unit": "unit.rock_raiders.crew",
-      "producer": "building.rock_raiders.hq",
-      "cost": {
-        "ore": 50,
-        "energy": 0,
-        "crystals": 0
-      },
-      "operationsCapacity": 1,
-      "buildTicks": 320
-    },
-    {
-      "unit": "unit.rock_raiders.hover_scout",
-      "producer": "building.rock_raiders.vehicle_service_bay",
-      "cost": {
-        "ore": 75,
-        "energy": 10,
-        "crystals": 0
-      },
-      "operationsCapacity": 1,
-      "buildTicks": 400
-    },
-    {
-      "unit": "unit.rock_raiders.rapid_rider",
-      "producer": "building.rock_raiders.vehicle_service_bay",
-      "cost": {
-        "ore": 90,
-        "energy": 10,
-        "crystals": 0
-      },
-      "operationsCapacity": 2,
-      "buildTicks": 560
-    },
-    {
-      "unit": "unit.rock_raiders.loader_dozer",
-      "producer": "building.rock_raiders.vehicle_service_bay",
-      "cost": {
-        "ore": 125,
-        "energy": 15,
-        "crystals": 0
-      },
-      "operationsCapacity": 3,
-      "buildTicks": 720
-    }
+    {"unit":"unit.aliens.alien_jet","producers":["building.ali.etx_fabricator"],"cost":{"ore":95,"energy":35,"crystals":0},"operationsCapacity":2,"buildTicks":560,"prerequisiteGroups":[]},
+    {"unit":"unit.aliens.alien_mothership","producers":["building.ali.reconfiguration_dock"],"cost":{"ore":420,"energy":160,"crystals":6},"operationsCapacity":8,"buildTicks":1900,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.ali.advanced_resonance_architecture"}]}]},
+    {"unit":"unit.aliens.etx_alien_infiltrator","producers":["building.ali.reconfiguration_dock"],"cost":{"ore":210,"energy":65,"crystals":2},"operationsCapacity":4,"buildTicks":1100,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.ali.infiltration_matrix"}]}]},
+    {"unit":"unit.aliens.etx_alien_strike","producers":["building.ali.reconfiguration_dock"],"cost":{"ore":190,"energy":60,"crystals":1},"operationsCapacity":4,"buildTicks":1000,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.ali.siege_phase_coupling"}]}]},
+    {"unit":"unit.aliens.etx_servitor","producers":["building.ali.etx_command_core","building.ali.etx_fabricator"],"cost":{"ore":50,"energy":5,"crystals":0},"operationsCapacity":1,"buildTicks":320,"prerequisiteGroups":[]},
+    {"unit":"unit.aliens.razor_skimmer","producers":["building.ali.etx_fabricator"],"cost":{"ore":105,"energy":25,"crystals":0},"operationsCapacity":2,"buildTicks":600,"prerequisiteGroups":[]},
+    {"unit":"unit.astronauts.expedition_crew","producers":["building.ast.mb01_eagle_command_base"],"cost":{"ore":50,"energy":0,"crystals":0},"operationsCapacity":1,"buildTicks":320,"prerequisiteGroups":[]},
+    {"unit":"unit.astronauts.mission_fighter","producers":["building.ast.flight_operations_pad"],"cost":{"ore":140,"energy":55,"crystals":1},"operationsCapacity":2,"buildTicks":800,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.ast.aerospace_coordination"}]}]},
+    {"unit":"unit.astronauts.mobile_mining_platform","producers":["building.ast.mission_vehicle_bay"],"cost":{"ore":170,"energy":25,"crystals":0},"operationsCapacity":3,"buildTicks":960,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.ast.mission_operations_integration"}]}]},
+    {"unit":"unit.astronauts.mono_jet","producers":["building.ast.mb01_eagle_command_base"],"cost":{"ore":100,"energy":35,"crystals":0},"operationsCapacity":1,"buildTicks":640,"prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.ast.solar_energy_array"}]}]},
+    {"unit":"unit.astronauts.mt101_armored_drilling_unit","producers":["building.ast.mission_vehicle_bay"],"cost":{"ore":280,"energy":70,"crystals":2},"operationsCapacity":5,"buildTicks":1300,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.ast.heavy_mission_chassis"}]}]},
+    {"unit":"unit.astronauts.mt201_ultra_drill_walker","producers":["building.ast.mission_vehicle_bay"],"cost":{"ore":320,"energy":90,"crystals":3},"operationsCapacity":6,"buildTicks":1500,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.ast.deep_mission_drilling"}]}]},
+    {"unit":"unit.astronauts.mt51_claw_tank","producers":["building.ast.mission_vehicle_bay"],"cost":{"ore":180,"energy":35,"crystals":0},"operationsCapacity":3,"buildTicks":900,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.ast.mission_operations_integration"}]}]},
+    {"unit":"unit.astronauts.mx41_switch_fighter","producers":["building.ast.mission_vehicle_bay"],"cost":{"ore":170,"energy":60,"crystals":1},"operationsCapacity":3,"buildTicks":900,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.ast.switchframe_actuation"}]}]},
+    {"unit":"unit.astronauts.mx71_recon_dropship","producers":["building.ast.flight_operations_pad"],"cost":{"ore":200,"energy":70,"crystals":1},"operationsCapacity":4,"buildTicks":1100,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.ast.aerospace_coordination"}]}]},
+    {"unit":"unit.astronauts.mx81_operations_aircraft","producers":["building.ast.flight_operations_pad"],"cost":{"ore":380,"energy":130,"crystals":4},"operationsCapacity":6,"buildTicks":1800,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.ast.integrated_expedition_command"}]}]},
+    {"unit":"unit.astronauts.rover","producers":["building.ast.field_systems_garage"],"cost":{"ore":70,"energy":5,"crystals":0},"operationsCapacity":1,"buildTicks":360,"prerequisiteGroups":[]},
+    {"unit":"unit.astronauts.solar_explorer","producers":["building.ast.field_systems_garage"],"cost":{"ore":180,"energy":40,"crystals":1},"operationsCapacity":4,"buildTicks":1000,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.ast.field_sustainment_package"}]}]},
+    {"unit":"unit.astronauts.t3_trike","producers":["building.ast.field_systems_garage"],"cost":{"ore":110,"energy":15,"crystals":0},"operationsCapacity":2,"buildTicks":600,"prerequisiteGroups":[]},
+    {"unit":"unit.martians.aero_skiff","producers":["building.mar.aero_tube_hangar"],"cost":{"ore":120,"energy":40,"crystals":0},"operationsCapacity":2,"buildTicks":700,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.mar.aero_handling_decks"}]}]},
+    {"unit":"unit.martians.double_hover","producers":["building.mar.mechanical_workshop"],"cost":{"ore":65,"energy":10,"crystals":0},"operationsCapacity":1,"buildTicks":360,"prerequisiteGroups":[]},
+    {"unit":"unit.martians.excavation_searcher","producers":["building.mar.mechanical_workshop"],"cost":{"ore":330,"energy":80,"crystals":3},"operationsCapacity":6,"buildTicks":1560,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.mar.grand_network_integration"}]},{"anyOf":[{"kind":"Research","target":"research.mar.advanced_excavation_systems"}]}]},
+    {"unit":"unit.martians.jet_scooter","producers":["building.mar.mechanical_workshop"],"cost":{"ore":90,"energy":15,"crystals":0},"operationsCapacity":1,"buildTicks":500,"prerequisiteGroups":[]},
+    {"unit":"unit.martians.recon_mech_rp","producers":["building.mar.mechanical_workshop"],"cost":{"ore":170,"energy":35,"crystals":1},"operationsCapacity":3,"buildTicks":900,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.mar.walker_articulation"}]}]},
+    {"unit":"unit.martians.red_planet_cruiser","producers":["building.mar.mechanical_workshop"],"cost":{"ore":150,"energy":25,"crystals":0},"operationsCapacity":3,"buildTicks":800,"prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.mar.routing_laboratory"}]}]},
+    {"unit":"unit.martians.red_planet_protector","producers":["building.mar.mechanical_workshop"],"cost":{"ore":220,"energy":50,"crystals":2},"operationsCapacity":4,"buildTicks":1100,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.mar.walker_articulation"}]}]},
+    {"unit":"unit.martians.worker_robot","producers":["building.mar.aero_tube_hangar","building.mar.settlement_station"],"cost":{"ore":50,"energy":0,"crystals":0},"operationsCapacity":1,"buildTicks":320,"prerequisiteGroups":[]},
+    {"unit":"unit.rock_raiders.chrome_crusher","producers":["building.rock_raiders.engineering_workshop"],"cost":{"ore":330,"energy":90,"crystals":4},"operationsCapacity":6,"buildTicks":1560,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.rr.deep_core_engineering"}]}]},
+    {"unit":"unit.rock_raiders.crew","producers":["building.rock_raiders.hq"],"cost":{"ore":50,"energy":0,"crystals":0},"operationsCapacity":1,"buildTicks":320,"prerequisiteGroups":[]},
+    {"unit":"unit.rock_raiders.drill_craft","producers":["building.rock_raiders.engineering_workshop"],"cost":{"ore":95,"energy":15,"crystals":0},"operationsCapacity":2,"buildTicks":560,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.rr.industrial_expansion_program"}]}]},
+    {"unit":"unit.rock_raiders.granite_grinder","producers":["building.rock_raiders.engineering_workshop"],"cost":{"ore":190,"energy":35,"crystals":1},"operationsCapacity":4,"buildTicks":1000,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.rr.reinforced_drilling_assemblies"}]}]},
+    {"unit":"unit.rock_raiders.hover_scout","producers":["building.rock_raiders.vehicle_service_bay"],"cost":{"ore":75,"energy":10,"crystals":0},"operationsCapacity":1,"buildTicks":400,"prerequisiteGroups":[]},
+    {"unit":"unit.rock_raiders.loader_dozer","producers":["building.rock_raiders.vehicle_service_bay"],"cost":{"ore":125,"energy":15,"crystals":0},"operationsCapacity":3,"buildTicks":720,"prerequisiteGroups":[]},
+    {"unit":"unit.rock_raiders.rapid_rider","producers":["building.rock_raiders.vehicle_service_bay"],"cost":{"ore":90,"energy":10,"crystals":0},"operationsCapacity":2,"buildTicks":560,"prerequisiteGroups":[]},
+    {"unit":"unit.rock_raiders.tunnel_transport","producers":["building.rock_raiders.engineering_workshop"],"cost":{"ore":300,"energy":110,"crystals":3},"operationsCapacity":5,"buildTicks":1500,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.rr.deep_core_engineering"}]}]}
   ],
   "entities": [
     {
@@ -3420,6 +3444,43 @@
       "parameterModifiers": [{"target": "parameter.rr.ore_processing_plant.automated_receiving_lanes", "operation": "Set", "value": 2}],
       "presentationProfile": "presentation.research.rr.worksite_automation", "displayNameLocKey": "loc.research.rr.worksite_automation.name"
     }
+  ],
+  "commandDefinitions": [
+    {"stableId":"command.assist_construction","commandType":"AssistConstruction","eligibleEntityTags":["component.builder"],"targetType":"ConstructionSite","queuePolicy":"Optional","validationHandler":"validate.assist_construction","executionHandler":"execute.assist_construction","uiSlotProfile":"slot.economy","targetingPreviewProfile":"preview.assist"},
+    {"stableId":"command.attack","commandType":"Attack","eligibleEntityTags":["component.targeting"],"targetType":"EnemyEntity","queuePolicy":"Optional","validationHandler":"validate.attack","executionHandler":"execute.attack","uiSlotProfile":"slot.combat","targetingPreviewProfile":"preview.attack"},
+    {"stableId":"command.attack_move","commandType":"AttackMove","eligibleEntityTags":["component.navigation"],"targetType":"Ground","queuePolicy":"Optional","validationHandler":"validate.attack_move","executionHandler":"execute.attack_move","uiSlotProfile":"slot.combat","targetingPreviewProfile":"preview.attack_move"},
+    {"stableId":"command.build","commandType":"Build","eligibleEntityTags":["component.builder"],"targetType":"Ground","queuePolicy":"Optional","validationHandler":"validate.build","executionHandler":"execute.build","uiSlotProfile":"slot.economy","targetingPreviewProfile":"preview.build"},
+    {"stableId":"command.cancel_construction","commandType":"CancelConstruction","eligibleEntityTags":["tag.owned_selectable"],"targetType":"ConstructionSite","queuePolicy":"Never","validationHandler":"validate.cancel_construction","executionHandler":"execute.cancel_construction","uiSlotProfile":"slot.cancel","targetingPreviewProfile":"preview.none"},
+    {"stableId":"command.cancel_mission_refit","commandType":"CancelMissionRefit","eligibleEntityTags":["capability.ast.mission_refit"],"targetType":"FriendlyEntity","queuePolicy":"Never","validationHandler":"validate.cancel_mission_refit","executionHandler":"execute.cancel_mission_refit","uiSlotProfile":"slot.cancel","targetingPreviewProfile":"preview.refit"},
+    {"stableId":"command.cancel_production","commandType":"CancelProduction","eligibleEntityTags":["component.production"],"targetType":"Producer","queuePolicy":"Never","validationHandler":"validate.cancel_production","executionHandler":"execute.cancel_production","uiSlotProfile":"slot.cancel","targetingPreviewProfile":"preview.none"},
+    {"stableId":"command.cancel_research","commandType":"CancelResearch","eligibleEntityTags":["tag.research_provider"],"targetType":"ResearchProvider","queuePolicy":"Never","validationHandler":"validate.cancel_research","executionHandler":"execute.cancel_research","uiSlotProfile":"slot.cancel","targetingPreviewProfile":"preview.none"},
+    {"stableId":"command.defense_resonance_shunt","commandType":"DefenseResonanceShunt","eligibleEntityTags":["building.ali.etx_defense_node"],"targetType":"None","queuePolicy":"Never","requiredResearch":"research.ali.defense_resonance_shunt","validationHandler":"validate.defense_shunt","executionHandler":"execute.defense_shunt","uiSlotProfile":"slot.special","targetingPreviewProfile":"preview.defense_shunt"},
+    {"stableId":"command.excavate","commandType":"Excavate","eligibleEntityTags":["capability.rr.excavation"],"targetType":"ExcavatableFeature","queuePolicy":"Optional","validationHandler":"validate.excavate","executionHandler":"execute.excavate","uiSlotProfile":"slot.special","targetingPreviewProfile":"preview.excavate"},
+    {"stableId":"command.excavation_clamp","commandType":"ExcavationClamp","eligibleEntityTags":["unit.martians.excavation_searcher"],"targetType":"DisplacementTarget","queuePolicy":"Never","requiredResearch":"research.mar.advanced_excavation_systems","validationHandler":"validate.excavation_clamp","executionHandler":"execute.excavation_clamp","uiSlotProfile":"slot.special","targetingPreviewProfile":"preview.excavation_clamp"},
+    {"stableId":"command.harvest","commandType":"Harvest","eligibleEntityTags":["component.worker"],"targetType":"ResourceEntity","queuePolicy":"Optional","validationHandler":"validate.harvest","executionHandler":"execute.harvest","uiSlotProfile":"slot.economy","targetingPreviewProfile":"preview.harvest"},
+    {"stableId":"command.hold","commandType":"HoldPosition","eligibleEntityTags":["component.navigation"],"targetType":"None","queuePolicy":"Never","validationHandler":"validate.hold","executionHandler":"execute.hold","uiSlotProfile":"slot.movement","targetingPreviewProfile":"preview.none"},
+    {"stableId":"command.load","commandType":"Load","eligibleEntityTags":["component.passenger"],"targetType":"FriendlyEntity","queuePolicy":"Conditional","validationHandler":"validate.load","executionHandler":"execute.load","uiSlotProfile":"slot.transport","targetingPreviewProfile":"preview.load"},
+    {"stableId":"command.mission_refit","commandType":"MissionRefit","eligibleEntityTags":["capability.ast.mission_refit"],"targetType":"Configuration","queuePolicy":"Never","requiredResearch":"research.ast.mission_refit_protocols","validationHandler":"validate.mission_refit","executionHandler":"execute.mission_refit","uiSlotProfile":"slot.service","targetingPreviewProfile":"preview.refit"},
+    {"stableId":"command.move","commandType":"Move","eligibleEntityTags":["component.navigation"],"targetType":"Ground","queuePolicy":"Optional","validationHandler":"validate.move","executionHandler":"execute.move","uiSlotProfile":"slot.movement","targetingPreviewProfile":"preview.move"},
+    {"stableId":"command.patrol","commandType":"Patrol","eligibleEntityTags":["component.navigation"],"targetType":"Ground","queuePolicy":"Optional","validationHandler":"validate.patrol","executionHandler":"execute.patrol","uiSlotProfile":"slot.movement","targetingPreviewProfile":"preview.patrol"},
+    {"stableId":"command.ping","commandType":"Ping","eligibleEntityTags":["tag.player"],"targetType":"MapPoint","queuePolicy":"Never","validationHandler":"validate.ping","executionHandler":"execute.ping","uiSlotProfile":"slot.communication","targetingPreviewProfile":"preview.ping"},
+    {"stableId":"command.protector_stance","commandType":"ProtectorStance","eligibleEntityTags":["unit.martians.red_planet_protector"],"targetType":"None","queuePolicy":"Conditional","validationHandler":"validate.protector_stance","executionHandler":"execute.protector_stance","uiSlotProfile":"slot.state_change","targetingPreviewProfile":"preview.state_change"},
+    {"stableId":"command.queue_production","commandType":"QueueProduction","eligibleEntityTags":["component.production"],"targetType":"Producer","queuePolicy":"Never","validationHandler":"validate.queue_production","executionHandler":"execute.queue_production","uiSlotProfile":"slot.production","targetingPreviewProfile":"preview.none"},
+    {"stableId":"command.rapid_fabrication","commandType":"RapidFabrication","eligibleEntityTags":["building.ali.etx_fabricator","building.ali.reconfiguration_dock"],"targetType":"Producer","queuePolicy":"Never","requiredResearch":"research.ali.rapid_fabrication_conduits","validationHandler":"validate.rapid_fabrication","executionHandler":"execute.rapid_fabrication","uiSlotProfile":"slot.special","targetingPreviewProfile":"preview.none"},
+    {"stableId":"command.reorder_production","commandType":"ReorderProduction","eligibleEntityTags":["component.production"],"targetType":"Producer","queuePolicy":"Never","validationHandler":"validate.reorder_production","executionHandler":"execute.reorder_production","uiSlotProfile":"slot.production","targetingPreviewProfile":"preview.none"},
+    {"stableId":"command.repair","commandType":"Repair","eligibleEntityTags":["component.repairer"],"targetType":"FriendlyEntity","queuePolicy":"Optional","validationHandler":"validate.repair","executionHandler":"execute.repair","uiSlotProfile":"slot.service","targetingPreviewProfile":"preview.repair"},
+    {"stableId":"command.searcher_brace","commandType":"SearcherBrace","eligibleEntityTags":["unit.martians.excavation_searcher"],"targetType":"None","queuePolicy":"Conditional","validationHandler":"validate.searcher_brace","executionHandler":"execute.searcher_brace","uiSlotProfile":"slot.state_change","targetingPreviewProfile":"preview.state_change"},
+    {"stableId":"command.set_energy_priority","commandType":"SetEnergyPriority","eligibleEntityTags":["component.energy_domain_member"],"targetType":"None","queuePolicy":"Never","validationHandler":"validate.energy_priority","executionHandler":"execute.energy_priority","uiSlotProfile":"slot.status","targetingPreviewProfile":"preview.energy_domain"},
+    {"stableId":"command.set_rally_point","commandType":"SetRallyPoint","eligibleEntityTags":["component.production"],"targetType":"Ground","queuePolicy":"Never","validationHandler":"validate.set_rally","executionHandler":"execute.set_rally","uiSlotProfile":"slot.production","targetingPreviewProfile":"preview.rally"},
+    {"stableId":"command.set_resonance_commitment","commandType":"SetResonanceCommitment","eligibleEntityTags":["component.resonance_core"],"targetType":"Configuration","queuePolicy":"Never","validationHandler":"validate.resonance_commitment","executionHandler":"execute.resonance_commitment","uiSlotProfile":"slot.service","targetingPreviewProfile":"preview.resonance_commitment"},
+    {"stableId":"command.spread","commandType":"SetSpread","eligibleEntityTags":["component.navigation"],"targetType":"None","queuePolicy":"Never","validationHandler":"validate.spread","executionHandler":"execute.spread","uiSlotProfile":"slot.movement","targetingPreviewProfile":"preview.formation"},
+    {"stableId":"command.start_research","commandType":"StartResearch","eligibleEntityTags":["tag.research_provider"],"targetType":"ResearchProvider","queuePolicy":"Never","validationHandler":"validate.start_research","executionHandler":"execute.start_research","uiSlotProfile":"slot.research","targetingPreviewProfile":"preview.none"},
+    {"stableId":"command.start_surge","commandType":"StartSurge","eligibleEntityTags":["capability.ali.surge_anchor"],"targetType":"SurgeAnchor","queuePolicy":"Never","requiredResearch":"research.ali.resonance_initiation","validationHandler":"validate.surge","executionHandler":"execute.surge","uiSlotProfile":"slot.special","targetingPreviewProfile":"preview.surge"},
+    {"stableId":"command.state_change","commandType":"StateChange","eligibleEntityTags":["component.transformation","unit.astronauts.solar_explorer","unit.astronauts.mt201_ultra_drill_walker","unit.aliens.etx_alien_strike","unit.aliens.etx_alien_infiltrator","building.ali.etx_defense_node"],"targetType":"None","queuePolicy":"Conditional","validationHandler":"validate.state_change","executionHandler":"execute.state_change","uiSlotProfile":"slot.state_change","targetingPreviewProfile":"preview.state_change"},
+    {"stableId":"command.stop","commandType":"Stop","eligibleEntityTags":["component.navigation"],"targetType":"None","queuePolicy":"Never","validationHandler":"validate.stop","executionHandler":"execute.stop","uiSlotProfile":"slot.movement","targetingPreviewProfile":"preview.none"},
+    {"stableId":"command.tube_build","commandType":"TubeBuild","eligibleEntityTags":["component.tube_station"],"targetType":"TubeStation","queuePolicy":"Never","validationHandler":"validate.tube_build","executionHandler":"execute.tube_build","uiSlotProfile":"slot.service","targetingPreviewProfile":"preview.tube_build"},
+    {"stableId":"command.tube_transfer","commandType":"TubeTransfer","eligibleEntityTags":["capability.mar.tube_transfer"],"targetType":"TubeStation","queuePolicy":"Conditional","validationHandler":"validate.tube_transfer","executionHandler":"execute.tube_transfer","uiSlotProfile":"slot.special","targetingPreviewProfile":"preview.tube_transfer"},
+    {"stableId":"command.unload","commandType":"Unload","eligibleEntityTags":["component.transport"],"targetType":"Ground","queuePolicy":"Conditional","validationHandler":"validate.unload","executionHandler":"execute.unload","uiSlotProfile":"slot.transport","targetingPreviewProfile":"preview.unload"}
   ],
   "transformationDefinitions": [
     {

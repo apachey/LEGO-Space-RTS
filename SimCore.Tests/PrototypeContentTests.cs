@@ -18,6 +18,7 @@ public sealed class PrototypeContentTests
         AssertOrdered(catalog.Weapons.Select(w => w.StableKey).ToArray());
         AssertOrdered(catalog.Transformations.Select(t => t.StableKey).ToArray());
         AssertOrdered(catalog.Research.Select(r => r.StableKey).ToArray());
+        AssertOrdered(catalog.Commands.Select(c => c.StableKey).ToArray());
     }
 
     [Test]
@@ -305,6 +306,20 @@ public sealed class PrototypeContentTests
     }
 
     [Test]
+    public void Format18CatalogsRemainReadableWithoutActionOrCommandDefinitions()
+    {
+        PrototypeContentCatalog restored = PrototypeContentCodec.Read(CreateFormat18EmptyCatalog());
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(restored.Research, Is.Empty);
+            Assert.That(restored.Commands, Is.Empty);
+            Assert.That(restored.Production, Is.Empty);
+            Assert.That(restored.Buildings, Is.Empty);
+        });
+    }
+
+    [Test]
     public void PrototypeContentBinaryRoundTripsAndHashesIdentically()
     {
         PrototypeContentCatalog source = new PrototypeContentCatalog(
@@ -362,7 +377,13 @@ public sealed class PrototypeContentTests
     public void ProductionDefinitionsRoundTripCanonicalQueueMetadata()
     {
         UnitProductionDefinition sourceProduction = new("unit.test", "building.test", 90, 10, 0, 2, 560);
-        PrototypeContentCatalog source = new(System.Array.Empty<PrototypeMovementProfile>(), System.Array.Empty<PrototypeEntityDefinition>(), production: new[] { sourceProduction });
+        PrototypeMovementProfile movement = new("movement.test", Fix32.FromInt(1), MovementLayer.Ground);
+        PrototypeEntityDefinition unit = new("unit.test", "RockRaiders", "ENGINEERING_ONLY", movement.StableKey,
+            FootprintClass.Small, SelectableKind.CombatSupport, 1, "view.test.unit", operationsCapacity: 2);
+        PrototypeEntityDefinition producer = new("building.test", "RockRaiders", "ENGINEERING_ONLY", movement.StableKey,
+            FootprintClass.Small, SelectableKind.Building, 1, "view.test.producer");
+        BuildingDefinition building = new("building.test", 1, 1, 1UL, false, 1, 0, 1);
+        PrototypeContentCatalog source = new(new[] { movement }, new[] { unit, producer }, buildings: new[] { building }, production: new[] { sourceProduction });
         UnitProductionDefinition restored = PrototypeContentCodec.Read(PrototypeContentCodec.Write(source)).Production[0];
         Assert.Multiple(() =>
         {
@@ -458,6 +479,24 @@ public sealed class PrototypeContentTests
         writer.Write(0); // Production definitions.
         writer.Write(0); // Weapon definitions.
         writer.Write(0); // Transformation definitions.
+        writer.Flush();
+        return stream.ToArray();
+    }
+
+    private static byte[] CreateFormat18EmptyCatalog()
+    {
+        using MemoryStream stream = new();
+        using BinaryWriter writer = new(stream);
+        writer.Write(0x4350534C);
+        writer.Write(18);
+        writer.Write(0); // Movement profiles.
+        writer.Write(0); // Entities.
+        writer.Write(0); // Resource nodes.
+        writer.Write(0); // Buildings.
+        writer.Write(0); // Production definitions.
+        writer.Write(0); // Weapon definitions.
+        writer.Write(0); // Transformation definitions.
+        writer.Write(0); // Research definitions.
         writer.Flush();
         return stream.ToArray();
     }

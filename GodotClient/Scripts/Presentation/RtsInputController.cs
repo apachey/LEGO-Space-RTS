@@ -121,6 +121,7 @@ public partial class RtsInputController : Node
     public bool CanQueueProduction(string unitKey)
     {
         if (_bridge is null || _selection is null || !_bridge.World.Content.TryGetEntity(unitKey, out PrototypeEntityDefinition unit) ||
+            !ProductionSystem.IsRuntimeEnabledUnit(unit.Id) ||
             !_bridge.World.Content.TryGetProduction(unit.Id, out UnitProductionDefinition definition)) return false;
         OperationsCapacityState capacity = _bridge.World.GetOperationsCapacity(0);
         if (capacity.Used + definition.OperationsCapacity > capacity.Maximum) return false;
@@ -128,7 +129,7 @@ public partial class RtsInputController : Node
         {
             EntityId id = _selection.Selected[i];
             if (_bridge.World.Entities.Production.TryGet(id, out Production production) && production.Count < Production.Capacity &&
-                _bridge.World.Entities.Building.TryGet(id, out Building building) && building.State == BuildingState.Completed && building.Type == definition.ProducerType &&
+                _bridge.World.Entities.Building.TryGet(id, out Building building) && building.State == BuildingState.Completed && definition.CanProduceAt(building.Type) &&
                 EnergyDomainSystem.CanSpendForEntity(_bridge.World, id, 0, definition.EnergyCost)) return true;
         }
         return false;
@@ -137,6 +138,7 @@ public partial class RtsInputController : Node
     public void QueueProduction(string unitKey, bool fiveCopies = false)
     {
         if (_bridge is null || _selection is null || !_bridge.World.Content.TryGetEntity(unitKey, out PrototypeEntityDefinition unit) ||
+            !ProductionSystem.IsRuntimeEnabledUnit(unit.Id) ||
             !_bridge.World.Content.TryGetProduction(unit.Id, out UnitProductionDefinition definition)) return;
         Dictionary<uint, int> projected = new();
         Dictionary<uint, int> queuedNow = new();
@@ -145,7 +147,7 @@ public partial class RtsInputController : Node
         {
             EntityId id = _selection.Selected[i];
             if (!_bridge.World.Entities.Production.TryGet(id, out Production production) || production.Count >= Production.Capacity ||
-                !_bridge.World.Entities.Building.TryGet(id, out Building building) || building.State != BuildingState.Completed || building.Type != definition.ProducerType) continue;
+                !_bridge.World.Entities.Building.TryGet(id, out Building building) || building.State != BuildingState.Completed || !definition.CanProduceAt(building.Type)) continue;
             candidates.Add(id); projected[id.Value] = production.ProjectedTicks; queuedNow[id.Value] = 0;
         }
         candidates.Sort(static (a, b) => a.Value.CompareTo(b.Value));

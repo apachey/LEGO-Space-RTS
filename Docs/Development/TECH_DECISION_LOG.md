@@ -1063,3 +1063,31 @@ dependency or visual direction.
 This changes compiled gameplay content and its compatibility hash without
 changing gameplay canon, snapshot/network/replay formats, dependencies or
 visual direction.
+
+## 2026-09-07 — T073 guarded command/action catalog checkpoint
+
+- Prototype source schema 18 and compiled content format 19 add the complete
+  31-building construction prerequisite table, all 35 canonical unit-production
+  recipes and 35 stable command-family definitions. Formats 2–18 remain
+  readable.
+- Construction and production prerequisites use the same deterministic
+  AND-of-OR representation. Runtime validation rejects missing, duplicate,
+  cross-faction and cyclic building references, invalid producer/unit bindings,
+  OC disagreement, malformed command codes and incomplete command catalogs.
+- Public command enum values 1–18 retain their accepted byte representation.
+  Values 19–35 reserve stable catalog/network identities, but `CommandEnvelope`
+  intentionally rejects them until their payloads and authoritative handlers
+  land. Snapshot 20, simulation protocol 18, replay 16 and command packet 1 are
+  unchanged.
+- The complete recipe table does not silently activate unfinished production.
+  Scenario creation, construction completion, legacy snapshot hydration, local
+  input and server validation retain the four accepted M3 Raider products until
+  Crystal/research accounting, faction Energy domains and authored exits are
+  bound.
+- Missing numeric and accounting rules are isolated in
+  `Docs/Development/M8_T073_BINDING_REVIEW.md` as explicit proposals, not canon.
+  T073 remains open until the game director approves or amends them and the
+  affected runtime commands are implemented.
+
+This is a guarded data/compatibility checkpoint. It changes no gameplay canon,
+dependency, visual direction or existing network/snapshot/replay layout.

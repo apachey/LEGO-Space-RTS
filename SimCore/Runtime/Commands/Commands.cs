@@ -4,7 +4,53 @@ using System.IO;
 
 namespace LegoSpaceRTS.SimCore
 {
-public enum SimCommandType : ushort { Move = 1, Stop = 2, HoldPosition = 3, Harvest = 4, Build = 5, CancelConstruction = 6, AssistConstruction = 7, QueueProduction = 8, SetRallyPoint = 9, SetEnergyPriority = 10, Attack = 11, Repair = 12, Load = 13, Unload = 14, StateChange = 15, MissionRefit = 16, SetResonanceCommitment = 17, StartSurge = 18, DebugOpenExcavatable = 1000, DebugDrainEnergy = 1001, DebugDestroyVisibleEnemy = 1002, DebugPrepareConstructionTest = 1003, DebugPrepareDestructionTest = 1004, DebugPrepareRepairTest = 1005, DebugPrepareTransportTest = 1006, DebugDestroyPreparedTransport = 1007, DebugPrepareTransformationTest = 1008 }
+public enum SimCommandType : ushort
+{
+    Move = 1,
+    Stop = 2,
+    HoldPosition = 3,
+    Harvest = 4,
+    Build = 5,
+    CancelConstruction = 6,
+    AssistConstruction = 7,
+    QueueProduction = 8,
+    SetRallyPoint = 9,
+    SetEnergyPriority = 10,
+    Attack = 11,
+    Repair = 12,
+    Load = 13,
+    Unload = 14,
+    StateChange = 15,
+    MissionRefit = 16,
+    SetResonanceCommitment = 17,
+    StartSurge = 18,
+    AttackMove = 19,
+    Patrol = 20,
+    SetSpread = 21,
+    Excavate = 22,
+    StartResearch = 23,
+    CancelResearch = 24,
+    CancelProduction = 25,
+    TubeTransfer = 26,
+    TubeBuild = 27,
+    DefenseResonanceShunt = 28,
+    ProtectorStance = 29,
+    SearcherBrace = 30,
+    ExcavationClamp = 31,
+    Ping = 32,
+    RapidFabrication = 33,
+    ReorderProduction = 34,
+    CancelMissionRefit = 35,
+    DebugOpenExcavatable = 1000,
+    DebugDrainEnergy = 1001,
+    DebugDestroyVisibleEnemy = 1002,
+    DebugPrepareConstructionTest = 1003,
+    DebugPrepareDestructionTest = 1004,
+    DebugPrepareRepairTest = 1005,
+    DebugPrepareTransportTest = 1006,
+    DebugDestroyPreparedTransport = 1007,
+    DebugPrepareTransformationTest = 1008
+}
 [Flags] public enum CommandModifiers : byte { None = 0, Queue = 1 }
 
 public readonly struct CommandEnvelope
@@ -53,7 +99,11 @@ public readonly struct CommandEnvelope
 
     private static void ValidateType(SimCommandType type)
     {
-        if (type != SimCommandType.Move && type != SimCommandType.Stop && type != SimCommandType.HoldPosition && type != SimCommandType.Harvest && type != SimCommandType.Build && type != SimCommandType.CancelConstruction && type != SimCommandType.AssistConstruction && type != SimCommandType.QueueProduction && type != SimCommandType.SetRallyPoint && type != SimCommandType.SetEnergyPriority && type != SimCommandType.Attack && type != SimCommandType.Repair && type != SimCommandType.Load && type != SimCommandType.Unload && type != SimCommandType.StateChange && type != SimCommandType.MissionRefit && type != SimCommandType.SetResonanceCommitment && type != SimCommandType.StartSurge && type != SimCommandType.DebugOpenExcavatable && type != SimCommandType.DebugDrainEnergy && type != SimCommandType.DebugDestroyVisibleEnemy && type != SimCommandType.DebugPrepareConstructionTest && type != SimCommandType.DebugPrepareDestructionTest && type != SimCommandType.DebugPrepareRepairTest && type != SimCommandType.DebugPrepareTransportTest && type != SimCommandType.DebugDestroyPreparedTransport && type != SimCommandType.DebugPrepareTransformationTest)
+        // T073 reserves catalog codes before runtime binding. Unimplemented
+        // families must not enter snapshots, replays or network requests.
+        bool publicCommand = type >= SimCommandType.Move && type <= SimCommandType.StartSurge;
+        bool debugCommand = type >= SimCommandType.DebugOpenExcavatable && type <= SimCommandType.DebugPrepareTransformationTest;
+        if (!publicCommand && !debugCommand)
             throw new ArgumentOutOfRangeException(nameof(type), type, "Unknown command type.");
     }
 

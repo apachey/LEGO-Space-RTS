@@ -428,7 +428,8 @@ public static class ServerCommandValidator
         NetworkCommandRejection target = ValidateOwnedTarget(world, playerSlot, command.TargetEntity, id => world.Entities.Production.Has(id));
         if (target != NetworkCommandRejection.None) return target;
         if (!world.Entities.Building.TryGet(command.TargetEntity, out Building building) || building.State != BuildingState.Completed ||
-            !world.Content.TryGetProduction(command.ContentType, out UnitProductionDefinition definition) || definition.ProducerType != building.Type)
+            !ProductionSystem.IsRuntimeEnabledUnit(command.ContentType) ||
+            !world.Content.TryGetProduction(command.ContentType, out UnitProductionDefinition definition) || !definition.CanProduceAt(building.Type))
             return NetworkCommandRejection.CommandIneligible;
         Production production = world.Entities.Production.Get(command.TargetEntity);
         if (production.Count >= Production.Capacity || !OperationsCapacitySystem.CanReserve(world, playerSlot, definition.OperationsCapacity))

@@ -248,7 +248,7 @@ public static class ScenarioFactory
             State = BuildingState.Completed
         };
         world.Entities.Building.Set(id, building);
-        if (content.IsProducer(definition.Id)) world.Entities.Production.Set(id, new Production());
+        if (ProductionSystem.IsRuntimeEnabledProducer(content, definition.Id)) world.Entities.Production.Set(id, new Production());
         world.SetConstructionOccupied(building, true);
     }
 
