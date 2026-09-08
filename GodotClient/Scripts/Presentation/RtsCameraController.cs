@@ -1,4 +1,5 @@
 using Godot;
+using LegoSpaceRTS.SimCore;
 
 namespace LegoSpaceRTS.Presentation;
 
@@ -9,6 +10,7 @@ public partial class RtsCameraController : Camera3D
     private float _pitch = 58f;
     private float _yaw = 45f;
     private Vector2? _middleDragStart;
+    private readonly Vector2[] _groundViewportPolygon = new Vector2[4];
 
     public override void _Ready()
     {
@@ -119,6 +121,27 @@ public partial class RtsCameraController : Camera3D
         if (t < 0f) { point = default; return false; }
         point = origin + direction * t;
         return true;
+    }
+
+    public IReadOnlyList<Vector2> GetGroundViewportPolygon()
+    {
+        Vector2 size = GetViewport().GetVisibleRect().Size;
+        float scale = GodotConversions.WorldUnitsPerBuildCell;
+        for (int i = 0; i < _groundViewportPolygon.Length; i++)
+        {
+            Vector2 screen = i switch
+            {
+                0 => Vector2.Zero,
+                1 => new Vector2(size.X, 0f),
+                2 => size,
+                _ => new Vector2(0f, size.Y)
+            };
+            if (!TryProjectToGround(screen, out Vector3 ground)) ground = _focus;
+            _groundViewportPolygon[i] = new Vector2(
+                Mathf.Clamp(ground.X / scale, 0f, MapGrid.BuildWidth),
+                Mathf.Clamp(ground.Z / scale, 0f, MapGrid.BuildHeight));
+        }
+        return _groundViewportPolygon;
     }
 
     private void ApplyTransform()

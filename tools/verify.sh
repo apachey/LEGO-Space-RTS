@@ -226,8 +226,196 @@ godot_m6_replay_smoke() {
   fi
 }
 
+godot_m7_material_smoke() {
+  local godot output status
+  godot="$(discover_godot 2>/dev/null || true)"
+  if [[ -z "${godot}" ]]; then printf 'Godot executable not found.\n' >&2; return 1; fi
+  if ! godot_is_required_mono "${godot}"; then printf 'Godot is not the required 4.7.1 .NET build: %s\n' "${godot}" >&2; return 1; fi
+  output="$("${godot}" --headless --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-material-lab --m7-material-smoke 2>&1)"
+  status=$?
+  printf '%s\n' "${output}"
+  if (( status != 0 )); then return "${status}"; fi
+  if ! printf '%s\n' "${output}" | grep -q 'M7 T064 MATERIAL LAB: PASS families=6 factionSwatches=5 identificationTiles=5'; then
+    printf 'Godot exited without the required T064 material-master PASS marker.\n' >&2
+    return 1
+  fi
+}
+
+godot_m7_style_smoke() {
+  local godot import_output output status style
+  godot="$(discover_godot 2>/dev/null || true)"
+  if [[ -z "${godot}" ]]; then printf 'Godot executable not found.\n' >&2; return 1; fi
+  if ! godot_is_required_mono "${godot}"; then printf 'Godot is not the required 4.7.1 .NET build: %s\n' "${godot}" >&2; return 1; fi
+  import_output="$("${godot}" --headless --import --path "${ROOT}/GodotClient" 2>&1)"
+  status=$?
+  printf '%s\n' "${import_output}"
+  if (( status != 0 )); then return "${status}"; fi
+  for style in industrial-mass heroic-rts constructive-lego graphic-volume; do
+    output="$("${godot}" --headless --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-style-lab --m7-style-smoke --m7-style "${style}" --m7-outline off 2>&1)"
+    status=$?
+    printf '%s\n' "${output}"
+    if (( status != 0 )); then return "${status}"; fi
+    if ! printf '%s\n' "${output}" | grep -q "M7 STYLE LAB: PASS styles=4.*active=${style} outline=off"; then
+      printf 'Godot exited without the required controlled M7 Style Lab PASS marker for %s.\n' "${style}" >&2
+      return 1
+    fi
+  done
+  output="$("${godot}" --headless --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-style-lab --m7-style-smoke --m7-style heroic-rts --m7-outline on 2>&1)"
+  status=$?
+  printf '%s\n' "${output}"
+  if (( status != 0 )); then return "${status}"; fi
+  if ! printf '%s\n' "${output}" | grep -q 'M7 STYLE LAB: PASS styles=4.*active=heroic-rts outline=on'; then
+    printf 'Godot exited without the required independent outline-toggle PASS marker.\n' >&2
+    return 1
+  fi
+}
+
+godot_m7_palette_smoke() {
+  local godot output page status
+  godot="$(discover_godot 2>/dev/null || true)"
+  if [[ -z "${godot}" ]]; then printf 'Godot executable not found.\n' >&2; return 1; fi
+  if ! godot_is_required_mono "${godot}"; then printf 'Godot is not the required 4.7.1 .NET build: %s\n' "${godot}" >&2; return 1; fi
+  for page in factions martian-sources faction-models martian-models transparency light-language; do
+    output="$("${godot}" --headless --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-palette-lab --m7-palette-smoke --m7-palette-page "${page}" 2>&1)"
+    status=$?
+    printf '%s\n' "${output}"
+    if (( status != 0 )); then return "${status}"; fi
+    if ! printf '%s\n' "${output}" | grep -q "M7 PALETTE LAB: PASS factionGroups=5 martianGroups=5 nonEmissiveTransparent=5 luminousFunctions=10.*active=${page}"; then
+      printf 'Godot exited without the required M7 Palette Ratio Lab PASS marker for %s.\n' "${page}" >&2
+      return 1
+    fi
+  done
+}
+
+godot_m7_look_smoke() {
+  local godot output status controls zoom outline post ground world surface fixture
+  godot="$(discover_godot 2>/dev/null || true)"
+  if [[ -z "${godot}" ]]; then printf 'Godot executable not found.\n' >&2; return 1; fi
+  if ! godot_is_required_mono "${godot}"; then printf 'Godot is not the required 4.7.1 .NET build: %s\n' "${godot}" >&2; return 1; fi
+  for fixture in \
+    "visible 35 on on authored earth earth-desert" \
+    "hidden 35 off on authored mars mars-oxide" \
+    "hidden 72 on on authored moon moon-regolith" \
+    "hidden 35 on off authored planet-u planet-u-mineral" \
+    "hidden 35 on on authored underground underground-cavern" \
+    "hidden 35 on on raster earth earth-desert" \
+    "hidden 35 on on hybrid earth earth-desert" \
+    "hidden 72 on on hybrid earth earth-desert"; do
+    read -r controls zoom outline post ground world surface <<< "${fixture}"
+    output="$("${godot}" --headless --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-look-lab --m7-look-smoke --m7-look-controls "${controls}" --m7-look-zoom "${zoom}" --m7-look-post "${post}" --m7-look-outline "${outline}" --m7-look-ground "${ground}" --m7-look-world "${world}" 2>&1)"
+    status=$?
+    printf '%s\n' "${output}"
+    if (( status != 0 )); then return "${status}"; fi
+    if printf '%s\n' "${output}" | grep -qE 'SHADER ERROR|SCRIPT ERROR|ERROR: Shader compilation failed'; then
+      printf 'M7 Look Lab emitted a shader or script error.\n' >&2
+      return 1
+    fi
+    if ! printf '%s\n' "${output}" | grep -q "M7 LOOK LAB: PASS schema=9 units=4 meshes=192 triangles=31104 buildings=2 firing=on burning=on animationDrivers=4 destructionDriver=1 vfxPools=6 prewarmed=180 controls=${controls} zoom=${zoom} post=${post} outline=${outline}.*world=${world}.*ground=${ground} surface=${surface} materialView=combined audit=off"; then
+      printf 'Godot exited without the required M7 Look Lab PASS marker for controls=%s zoom=%s post=%s outline=%s ground=%s world=%s surface=%s.\n' "${controls}" "${zoom}" "${post}" "${outline}" "${ground}" "${world}" "${surface}" >&2
+      return 1
+    fi
+  done
+}
+
+godot_m7_hud_smoke() {
+  local godot output status fixture scenario aspect finish expected_finish kit expected_kit log_file
+  godot="$(discover_godot 2>/dev/null || true)"
+  if [[ -z "${godot}" ]]; then printf 'Godot executable not found.\n' >&2; return 1; fi
+  if ! godot_is_required_mono "${godot}"; then printf 'Godot is not the required 4.7.1 .NET build: %s\n' "${godot}" >&2; return 1; fi
+  for fixture in "rock-unit 16-9 hybrid scenario" "astronaut-transform 16-9 hybrid scenario" "alien-resonance 16-9 hybrid scenario" "martian-network 16-9 hybrid scenario" "mixed-army 16-9 structural scenario" "mixed-army 16-9 legacy scenario" "mixed-army 16-9 clean scenario" "production 16-10 hybrid scenario" "brownout 21-9 hybrid scenario" "critical-tooltip 4-3 hybrid scenario" "rock-unit 16-9 hybrid aliens"; do
+    read -r scenario aspect finish kit <<< "${fixture}"
+    case "${finish}" in
+      hybrid) expected_finish="HybridConsole" ;;
+      structural) expected_finish="StructuralConsole" ;;
+      legacy) expected_finish="LegacyFrames" ;;
+      clean) expected_finish="Clean" ;;
+    esac
+    case "${kit}" in
+      aliens) expected_kit="Aliens" ;;
+      scenario)
+        case "${scenario}" in
+          astronaut-transform) expected_kit="Astronauts" ;;
+          alien-resonance) expected_kit="Aliens" ;;
+          martian-network) expected_kit="Martians" ;;
+          *) expected_kit="Rock Raiders" ;;
+        esac
+        ;;
+    esac
+    log_file="$(mktemp "${TMPDIR:-/tmp}/lego-space-rts-m7-hud-smoke.XXXXXX")"
+    if [[ "${kit}" == "scenario" ]]; then
+      output="$("${godot}" --headless --log-file "${log_file}" --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-hud-lab --m7-hud-smoke --m7-hud-scenario "${scenario}" --m7-hud-aspect "${aspect}" --m7-hud-finish "${finish}" 2>&1)"
+    else
+      output="$("${godot}" --headless --log-file "${log_file}" --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-hud-lab --m7-hud-smoke --m7-hud-scenario "${scenario}" --m7-hud-aspect "${aspect}" --m7-hud-finish "${finish}" --m7-hud-kit "${kit}" 2>&1)"
+    fi
+    status=$?
+    rm -f -- "${log_file}"
+    if (( status != 0 )); then
+      printf '%s\n' "${output}"
+      printf 'Retrying M7 HUD fixture once after host-process exit %s: scenario=%s aspect=%s finish=%s kit=%s.\n' \
+        "${status}" "${scenario}" "${aspect}" "${finish}" "${kit}" >&2
+      log_file="$(mktemp "${TMPDIR:-/tmp}/lego-space-rts-m7-hud-smoke.XXXXXX")"
+      sleep 5
+      if [[ "${kit}" == "scenario" ]]; then
+        output="$("${godot}" --headless --log-file "${log_file}" --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-hud-lab --m7-hud-smoke --m7-hud-scenario "${scenario}" --m7-hud-aspect "${aspect}" --m7-hud-finish "${finish}" 2>&1)"
+      else
+        output="$("${godot}" --headless --log-file "${log_file}" --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-hud-lab --m7-hud-smoke --m7-hud-scenario "${scenario}" --m7-hud-aspect "${aspect}" --m7-hud-finish "${finish}" --m7-hud-kit "${kit}" 2>&1)"
+      fi
+      status=$?
+      rm -f -- "${log_file}"
+    fi
+    printf '%s\n' "${output}"
+    if (( status != 0 )); then return "${status}"; fi
+    if printf '%s\n' "${output}" | grep -qE 'SCRIPT ERROR|ERROR:'; then
+      printf 'M7 HUD Lab emitted a script or runtime error.\n' >&2
+      return 1
+    fi
+    if ! printf '%s\n' "${output}" | grep -q "M7 HUD LAB: PASS scenarios=8 commands=12 minimap=legal.*factionSkins=4 finishes=4.*schema=8 active=${scenario} finish=${expected_finish} palette=FactionBound.*apertureMasks=4 kitSwitch=interactive kit=${expected_kit}"; then
+      printf 'Godot exited without the required T068/T069 schema-8 HUD Lab PASS marker for scenario=%s aspect=%s finish=%s kit=%s.\n' "${scenario}" "${aspect}" "${finish}" "${kit}" >&2
+      return 1
+    fi
+    sleep 2
+  done
+}
+
+godot_m7_acceptance_smoke() {
+  local godot output status look expected_look zoom outline fixture log_file
+  godot="$(discover_godot 2>/dev/null || true)"
+  if [[ -z "${godot}" ]]; then printf 'Godot executable not found.\n' >&2; return 1; fi
+  if ! godot_is_required_mono "${godot}"; then printf 'Godot is not the required 4.7.1 .NET build: %s\n' "${godot}" >&2; return 1; fi
+  for fixture in \
+    "default 84 on" \
+    "current 24 off" \
+    "current 72 on" \
+    "m7-final 44 off" \
+    "m7-final 44 on" \
+    "hybrid 44 off" \
+    "hybrid 44 on"; do
+    read -r look zoom outline <<< "${fixture}"
+    log_file="$(mktemp "${TMPDIR:-/tmp}/lego-space-rts-m7-acceptance-smoke.XXXXXX")"
+    if [[ "${look}" == "default" ]]; then
+      expected_look="m7-final"
+      output="$("${godot}" --headless --log-file "${log_file}" --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-acceptance-candidate --m7-acceptance-smoke --m7-acceptance-labels hidden --m7-acceptance-review hidden 2>&1)"
+    else
+      expected_look="${look}"
+      output="$("${godot}" --headless --log-file "${log_file}" --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-acceptance-candidate --m7-acceptance-smoke --m7-acceptance-zoom "${zoom}" --m7-acceptance-look "${look}" --m7-acceptance-outline "${outline}" --m7-acceptance-labels hidden --m7-acceptance-review hidden 2>&1)"
+    fi
+    status=$?
+    rm -f -- "${log_file}"
+    printf '%s\n' "${output}"
+    if (( status != 0 )); then return "${status}"; fi
+    if printf '%s\n' "${output}" | grep -qE 'SHADER ERROR|SCRIPT ERROR|ERROR: Shader compilation failed'; then
+      printf 'M7 visual acceptance candidate emitted a shader or script error for look=%s outline=%s zoom=%s.\n' "${look}" "${outline}" "${zoom}" >&2
+      return 1
+    fi
+    if ! printf '%s\n' "${output}" | grep -q "M7 ACCEPTANCE CANDIDATE: PASS factions=4 prototypes=4.*sources=4970,7647,7646,7313 zoom=${zoom} cameraBands=24,44,72 defaultZoom=84 scrollZoom=24-108 looks=3 activeLook=${expected_look} outline=${outline} materials=role-authored lighting=m7-shared animationDrivers=4 vfxPools=6 destruction=ready hud=HybridConsole minimap=legal acceptance=m7-final-outline-on"; then
+      printf 'Godot exited without the required accepted-direction marker for look=%s outline=%s zoom=%s.\n' "${expected_look}" "${outline}" "${zoom}" >&2
+      return 1
+    fi
+  done
+}
+
 run_stage "[BLOCKING_NOW] Static/source validation" "static" python3 "${ROOT}/tools/Validation/validate_phase10.py"
-run_stage "[BLOCKING_NOW] .NET restore" "restore" dotnet restore "${ROOT}/LEGO.SpaceRTS.Phase10.sln"
+run_stage "[BLOCKING_NOW] .NET restore" "restore" dotnet restore "${ROOT}/LEGO.SpaceRTS.Phase10.sln" --disable-build-servers
 run_stage "[BLOCKING_NOW] .NET solution build (warnings as errors)" "build" dotnet build "${ROOT}/LEGO.SpaceRTS.Phase10.sln" -c Release --no-restore --disable-build-servers -m:1
 run_stage "[BLOCKING_NOW] Godot C# Debug host build" "godot-build" dotnet build "${ROOT}/GodotClient/LEGO.SpaceRTS.Godot.csproj" -c Debug --no-restore --disable-build-servers -m:1
 run_stage "[BLOCKING_NOW] NUnit deterministic/snapshot/replay/stress suite" "tests" dotnet test "${ROOT}/SimCore.Tests/SimCore.Tests.csproj" -c Release --no-build --no-restore --disable-build-servers --verbosity minimal
@@ -240,6 +428,11 @@ run_stage "[BLOCKING_NOW T059] Godot server command authority over ENet" "m6-com
 run_stage "[BLOCKING_NOW T060/T061] Godot 10 Hz delta snapshots without hidden data" "m6-snapshot" godot_m6_snapshot_smoke
 run_stage "[BLOCKING_NOW T062] Godot reconnect restore over ENet" "m6-reconnect" godot_m6_reconnect_smoke
 run_stage "[BLOCKING_NOW T063] Godot authoritative server-log replay" "m6-replay" godot_m6_replay_smoke
+run_stage "[BLOCKING_NOW M7 VISUAL EXPLORATION] Controlled Godot Style Lab" "m7-style" godot_m7_style_smoke
+run_stage "[BLOCKING_NOW M7 VISUAL EXPLORATION] Six-page Palette Ratio Lab" "m7-palette" godot_m7_palette_smoke
+run_stage "[BLOCKING_NOW M7 VISUAL EXPLORATION] Realtime gameplay-scale Look Lab" "m7-look" godot_m7_look_smoke
+run_stage "[BLOCKING_NOW T068/T069] Responsive HUD and fog-correct minimap lab" "m7-hud" godot_m7_hud_smoke
+run_stage "[BLOCKING_NOW M7 VISUAL ACCEPTANCE CANDIDATE] Four-faction production-direction proof" "m7-acceptance" godot_m7_acceptance_smoke
 
 if [[ "${MODE}" != "fast" ]]; then
   run_stage "[BLOCKING_NOW] 100-repeat deterministic golden run" "golden100" dotnet "$(headless_dll)" --scenario golden --ticks 3200 --repeat 100

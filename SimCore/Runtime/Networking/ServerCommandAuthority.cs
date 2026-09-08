@@ -288,10 +288,13 @@ public static class ServerCommandValidator
         switch (command.Type)
         {
             case SimCommandType.Move:
+            case SimCommandType.AttackMove:
+            case SimCommandType.Patrol:
                 if (!IsPointInMap(command.TargetPosition)) return NetworkCommandRejection.TargetIllegal;
                 return ValidateMovers(world, command.Entities);
             case SimCommandType.Stop:
             case SimCommandType.HoldPosition:
+            case SimCommandType.SetSpread:
                 return ValidateMovers(world, command.Entities);
             case SimCommandType.Harvest:
                 return ValidateHarvest(world, playerSlot, command);
@@ -323,16 +326,48 @@ public static class ServerCommandValidator
                 return ValidateResonance(world, playerSlot, command);
             case SimCommandType.StartSurge:
                 return ValidateSurge(world, playerSlot, command.TargetEntity);
+            case SimCommandType.CancelProduction:
+                return ValidateOwnedTarget(world, playerSlot, command.TargetEntity, id => world.Entities.Production.Has(id) && command.Orientation < world.Entities.Production.Get(id).Count);
+            case SimCommandType.ReorderProduction:
+                return ValidateOwnedTarget(world, playerSlot, command.TargetEntity, id => world.Entities.Production.Has(id) && command.Orientation > 0 && command.DesiredResonanceCommitment > 0 && command.Orientation < world.Entities.Production.Get(id).Count && command.DesiredResonanceCommitment < world.Entities.Production.Get(id).Count);
+            case SimCommandType.StartResearch:
+                return ValidateOwnedTarget(world, playerSlot, command.TargetEntity, id => world.Entities.Building.TryGet(id, out Building b) && world.Content.TryGetResearch(command.ContentType, out ResearchDefinition research) && research.SourceBuildingType == b.Type && !world.ResearchJobs.ContainsKey(id.Value));
+            case SimCommandType.CancelResearch:
+                return ValidateOwnedTarget(world, playerSlot, command.TargetEntity, id => world.ResearchJobs.ContainsKey(id.Value));
+            case SimCommandType.CancelMissionRefit:
+                return ValidateOwnedTarget(world, playerSlot, command.TargetEntity, id => world.Entities.MissionRefitJob.Has(id));
+            case SimCommandType.Excavate:
+                if (!world.Entities.Excavatable.TryGet(command.TargetEntity, out Excavatable feature) || feature.State != ExcavatableFeatureState.Blocked) return NetworkCommandRejection.TargetIllegal;
+                for (int i = 0; i < command.Entities.Length; i++) if (!world.Entities.Selectable.TryGet(command.Entities[i], out Selectable s) || !ExcavationSystem.TryDuration(s.ContentType, feature.TerrainClass == ExcavatableTerrainClass.ReinforcedBedrockBarrier, out _)) return NetworkCommandRejection.CommandIneligible;
+                return NetworkCommandRejection.None;
+            case SimCommandType.TubeTransfer:
+                for (int i = 0; i < command.Entities.Length; i++) if (!TubeTransferSystem.IsEligible(world, command.Entities[i])) return NetworkCommandRejection.CommandIneligible;
+                return ValidateOwnedTarget(world, playerSlot, command.TargetEntity, id => world.Entities.TubeStation.Has(id));
+            case SimCommandType.TubeBuild:
+                return command.Entities.Length == 1 && world.Entities.TubeStation.Has(command.Entities[0]) ? ValidateOwnedTarget(world, playerSlot, command.TargetEntity, id => world.Entities.TubeStation.Has(id)) : NetworkCommandRejection.CommandIneligible;
+            case SimCommandType.DefenseResonanceShunt:
+                return ValidateOwnedTarget(world, playerSlot, command.TargetEntity, id => world.DefenseNodeStates.ContainsKey(id.Value));
+            case SimCommandType.RapidFabrication:
+                return ValidateOwnedTarget(world, playerSlot, command.TargetEntity, id => world.Entities.Production.TryGet(id, out Production p) && p.Count > 0);
+            case SimCommandType.ExcavationClamp:
+                return command.Entities.Length == 1 ? ValidateVisibleTarget(world, playerSlot, command.TargetEntity) : NetworkCommandRejection.CommandIneligible;
+            case SimCommandType.ProtectorStance:
+            case SimCommandType.SearcherBrace:
+                return command.Entities.Length > 0 ? NetworkCommandRejection.None : NetworkCommandRejection.EmptyEntitySet;
+            case SimCommandType.Ping:
+                return IsPointInMap(command.TargetPosition) ? NetworkCommandRejection.None : NetworkCommandRejection.TargetIllegal;
             default:
                 return NetworkCommandRejection.CommandIneligible;
         }
     }
 
     private static bool RequiresEntities(SimCommandType type)
-        => type == SimCommandType.Move || type == SimCommandType.Stop || type == SimCommandType.HoldPosition ||
+        => type == SimCommandType.Move || type == SimCommandType.AttackMove || type == SimCommandType.Patrol || type == SimCommandType.SetSpread || type == SimCommandType.Stop || type == SimCommandType.HoldPosition ||
            type == SimCommandType.Harvest || type == SimCommandType.Build || type == SimCommandType.AssistConstruction ||
            type == SimCommandType.SetRallyPoint || type == SimCommandType.SetEnergyPriority || type == SimCommandType.Attack ||
-           type == SimCommandType.Repair || type == SimCommandType.Load || type == SimCommandType.Unload || type == SimCommandType.StateChange;
+           type == SimCommandType.Repair || type == SimCommandType.Load || type == SimCommandType.Unload || type == SimCommandType.StateChange ||
+           type == SimCommandType.Excavate || type == SimCommandType.TubeTransfer || type == SimCommandType.TubeBuild ||
+           type == SimCommandType.ProtectorStance || type == SimCommandType.SearcherBrace || type == SimCommandType.ExcavationClamp;
 
     private static bool HasCanonicalPayloadShape(CommandEnvelope command)
     {
@@ -341,19 +376,23 @@ public static class ServerCommandValidator
             command.Type == SimCommandType.AssistConstruction || command.Type == SimCommandType.QueueProduction ||
             command.Type == SimCommandType.SetRallyPoint || command.Type == SimCommandType.Attack || command.Type == SimCommandType.Repair ||
             command.Type == SimCommandType.Load || command.Type == SimCommandType.MissionRefit ||
-            command.Type == SimCommandType.SetResonanceCommitment || command.Type == SimCommandType.StartSurge;
-        bool usesTargetPosition = command.Type == SimCommandType.Move || command.Type == SimCommandType.Build ||
+            command.Type == SimCommandType.SetResonanceCommitment || command.Type == SimCommandType.StartSurge || command.Type == SimCommandType.CancelProduction ||
+            command.Type == SimCommandType.ReorderProduction || command.Type == SimCommandType.StartResearch || command.Type == SimCommandType.CancelResearch ||
+            command.Type == SimCommandType.CancelMissionRefit || command.Type == SimCommandType.Excavate || command.Type == SimCommandType.TubeTransfer ||
+            command.Type == SimCommandType.TubeBuild || command.Type == SimCommandType.DefenseResonanceShunt || command.Type == SimCommandType.RapidFabrication ||
+            command.Type == SimCommandType.ExcavationClamp;
+        bool usesTargetPosition = command.Type == SimCommandType.Move || command.Type == SimCommandType.AttackMove || command.Type == SimCommandType.Patrol || command.Type == SimCommandType.Ping || command.Type == SimCommandType.Build ||
             command.Type == SimCommandType.SetRallyPoint || command.Type == SimCommandType.Unload;
-        bool usesContentType = command.Type == SimCommandType.Build || command.Type == SimCommandType.QueueProduction;
+        bool usesContentType = command.Type == SimCommandType.Build || command.Type == SimCommandType.QueueProduction || command.Type == SimCommandType.StartResearch;
         return (usesEntities || command.Entities.Length == 0) &&
                (usesTargetEntity || command.TargetEntity == EntityId.None) &&
                (usesTargetPosition || command.TargetPosition.Equals(FixVec2.Zero)) &&
                command.DebugFeatureId == 0 &&
                (usesContentType || command.ContentType.Value == 0) &&
-               (command.Type == SimCommandType.Build || command.Orientation == 0) &&
+               (command.Type == SimCommandType.Build || command.Type == SimCommandType.StateChange || command.Type == SimCommandType.CancelProduction || command.Type == SimCommandType.ReorderProduction || command.Orientation == 0) &&
                (command.Type == SimCommandType.SetEnergyPriority || command.EnergyPriority == EnergyPriority.Normal) &&
                (command.Type == SimCommandType.MissionRefit || command.MissionConfiguration == MissionConfiguration.None) &&
-               (command.Type == SimCommandType.SetResonanceCommitment || command.DesiredResonanceCommitment == 0);
+               (command.Type == SimCommandType.SetResonanceCommitment || command.Type == SimCommandType.ReorderProduction || command.DesiredResonanceCommitment == 0);
     }
 
     private static NetworkCommandRejection ValidateMovers(SimulationWorld world, EntityId[] entities)
@@ -391,7 +430,8 @@ public static class ServerCommandValidator
         if (x < short.MinValue || x > short.MaxValue || y < short.MinValue || y > short.MaxValue)
             return NetworkCommandRejection.InvalidPlacement;
         if (!world.Content.TryGetBuilding(command.ContentType, out BuildingDefinition definition) || command.Orientation > 3 ||
-            (!definition.Rotatable && command.Orientation != 0)) return NetworkCommandRejection.InvalidPlacement;
+            (!definition.Rotatable && command.Orientation != 0 && !(command.ContentType == DefenseNodeSystem.DefenseNodeType && command.Orientation <= 1))) return NetworkCommandRejection.InvalidPlacement;
+        if (!ConstructionPlacement.IsBuildCommandAvailable(command.ContentType)) return NetworkCommandRejection.TechnologyLocked;
         byte width = definition.RotatedWidth(command.Orientation), height = definition.RotatedHeight(command.Orientation);
         if (x < 0 || y < 0 || x + width > MapGrid.BuildWidth || y + height > MapGrid.BuildHeight)
             return NetworkCommandRejection.InvalidPlacement;
@@ -404,8 +444,8 @@ public static class ServerCommandValidator
         return placement.Failure switch
         {
             PlacementFailure.NoEligibleBuilder => NetworkCommandRejection.CommandIneligible,
-            PlacementFailure.MissingPrerequisite => NetworkCommandRejection.TechnologyLocked,
-            PlacementFailure.InsufficientOre => NetworkCommandRejection.InsufficientResources,
+            PlacementFailure.MissingPrerequisite or PlacementFailure.CommandUnavailable => NetworkCommandRejection.TechnologyLocked,
+            PlacementFailure.InsufficientOre or PlacementFailure.InsufficientCrystals => NetworkCommandRejection.InsufficientResources,
             PlacementFailure.NoEnergyDomain or PlacementFailure.InsufficientEnergy => NetworkCommandRejection.InsufficientEnergyOrCharge,
             _ => NetworkCommandRejection.InvalidPlacement
         };
@@ -427,16 +467,18 @@ public static class ServerCommandValidator
         NetworkCommandRejection target = ValidateOwnedTarget(world, playerSlot, command.TargetEntity, id => world.Entities.Production.Has(id));
         if (target != NetworkCommandRejection.None) return target;
         if (!world.Entities.Building.TryGet(command.TargetEntity, out Building building) || building.State != BuildingState.Completed ||
-            !world.Content.TryGetProduction(command.ContentType, out UnitProductionDefinition definition) || definition.ProducerType != building.Type)
+            !ProductionSystem.IsRuntimeEnabledUnit(command.ContentType) ||
+            !world.Content.TryGetProduction(command.ContentType, out UnitProductionDefinition definition) || !definition.CanProduceAt(building.Type) ||
+            !ActionPrerequisites.AreMet(world, playerSlot, definition.PrerequisiteGroups))
             return NetworkCommandRejection.CommandIneligible;
         Production production = world.Entities.Production.Get(command.TargetEntity);
         if (production.Count >= Production.Capacity || !OperationsCapacitySystem.CanReserve(world, playerSlot, definition.OperationsCapacity))
             return NetworkCommandRejection.StateBlocked;
         if (!EnergyDomainSystem.TryResolveForEntity(world, command.TargetEntity, playerSlot, out EntityId energyRoot) ||
             !EnergyDomainSystem.CanSpend(world, energyRoot, definition.EnergyCost)) return NetworkCommandRejection.InsufficientEnergyOrCharge;
-        if (!world.Entities.Transform.TryGet(command.TargetEntity, out SimTransform transform) ||
-            !WorksiteGraphSystem.TryGetComponentForEntity(world, command.TargetEntity, out EntityId componentRoot) ||
-            !WorksiteGraphSystem.TryFindFundingBank(world, playerSlot, componentRoot, ResourceType.Ore, definition.OreCost, transform.Position, out _))
+        EntityId componentRoot = WorksiteGraphSystem.TryGetComponentForEntity(world, command.TargetEntity, out EntityId component) ? component : EntityId.None;
+        if (!ProductionSystem.TryFindFundingBank(world, playerSlot, componentRoot, ResourceType.Ore, definition.OreCost, command.TargetEntity, out _) ||
+            !ProductionSystem.TryFindFundingBank(world, playerSlot, componentRoot, ResourceType.Crystal, definition.CrystalCost, command.TargetEntity, out _))
             return NetworkCommandRejection.InsufficientResources;
         return NetworkCommandRejection.None;
     }
@@ -534,6 +576,12 @@ public static class ServerCommandValidator
         for (int i = 0; i < command.Entities.Length; i++)
         {
             EntityId id = command.Entities[i];
+            if (world.DefenseNodeStates.TryGetValue(id.Value, out DefenseNodeState node))
+            {
+                if (command.Orientation > 1 || node.IsReconfiguring || node.CurrentMode == (DefenseNodeMode)command.Orientation ||
+                    DefenseNodeSystem.IsUnderPressure(world.Tick.Value, node.LastHostileCombatTick)) return NetworkCommandRejection.StateBlocked;
+                continue;
+            }
             if (!world.Entities.Transformation.TryGet(id, out Transformation state) || state.Phase == TransformationPhase.RollingBack ||
                 (world.Entities.Health.TryGet(id, out Health health) && health.IsDepleted) ||
                 (state.Phase == TransformationPhase.Idle && world.Tick.Value < state.ReversalLockedUntilTick))
@@ -546,7 +594,7 @@ public static class ServerCommandValidator
     {
         NetworkCommandRejection target = ValidateOwnedTarget(world, playerSlot, command.TargetEntity, id => world.Entities.Selectable.Has(id));
         if (target != NetworkCommandRejection.None) return target;
-        if (world.Entities.Selectable.Get(command.TargetEntity).ContentType != StableId.FromKey("unit.ast.t3_trike") ||
+        if (world.Entities.Selectable.Get(command.TargetEntity).ContentType != StableId.FromKey(CanonicalRosterReferences.T3Trike) ||
             world.Entities.MissionRefitJob.Has(command.TargetEntity)) return NetworkCommandRejection.CommandIneligible;
         if (!ForwardServiceSystem.TryGetProviderForMember(world, command.TargetEntity, out EntityId provider))
             return NetworkCommandRejection.ServiceMembershipRequired;

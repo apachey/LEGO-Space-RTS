@@ -18,9 +18,6 @@ public sealed class TubeTransferSystem : ISimSystem
     public const byte BaselineStationCapacity = 2;
     public const byte HypersledStationCapacity = 3;
 
-    private static readonly ContentId WorkerRobot = StableId.FromKey("unit.mar.worker_robot");
-    private static readonly ContentId DoubleHover = StableId.FromKey("unit.mar.double_hover");
-    private static readonly ContentId JetScooter = StableId.FromKey("unit.mar.jet_scooter");
     private static readonly Fix32 ApproachDistance = Fix32.FromRatio(3, 4);
 
     public static int GetTravelTicks(int lengthBuildCells)
@@ -30,8 +27,10 @@ public sealed class TubeTransferSystem : ISimSystem
     {
         if (!world.Entities.Selectable.TryGet(passenger, out Selectable selectable) ||
             (selectable.Kind != SelectableKind.Worker && selectable.Kind != SelectableKind.CombatSupport)) return false;
-        return selectable.ContentType == WorkerRobot || selectable.ContentType == DoubleHover || selectable.ContentType == JetScooter;
+        return IsEligibleContentType(selectable.ContentType);
     }
+
+    public static bool IsEligibleContentType(ContentId contentType) => CanonicalRosterReferences.IsTubeEligible(contentType);
 
     public static bool TryQueueTransfer(SimulationWorld world, byte playerSlot, EntityId passenger, EntityId origin, EntityId destination)
     {

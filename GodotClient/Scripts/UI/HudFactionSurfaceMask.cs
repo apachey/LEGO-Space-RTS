@@ -1,0 +1,358 @@
+using Godot;
+
+namespace LegoSpaceRTS.UI;
+
+/// <summary>
+/// Owns the faction-specific interior aperture below a top strip or command
+/// deck. The mask is derived from the transparent center component of the
+/// actual frame texture, then transformed with the exact same nine-slice
+/// guides as the visible frame. This keeps the plate, raster and HUD content
+/// inside the authored opening instead of clipping them to a generic rectangle.
+/// </summary>
+public partial class HudFactionSurfaceMask : Control
+{
+    private const byte TransparentThreshold = 48;
+    private const string ApertureShaderPath = "res://Shaders/hud_faction_aperture.gdshader";
+    private static readonly Dictionary<string, Texture2D> MaskCache = new(StringComparer.Ordinal);
+
+    private readonly Dictionary<CanvasItem, Material?> _registeredSurfaceMaterials = new();
+    private HudFactionSkinRecipe _recipe = HudFactionSkinLibrary.RecipeFor(0);
+    private Texture2D? _frameTexture;
+    private Texture2D? _maskTexture;
+    private ShaderMaterial? _apertureMaterial;
+    private HudArtFinish _finish = HudArtFinish.HybridConsole;
+    private float _chromeScale = 1f;
+    private float _panelOpacity = 1f;
+    private Color _surfaceColor = new("171b1a");
+    private int _fallbackPadding;
+    private bool _hasTransparentOuterCorners;
+    private bool _hasTransparentOuterBorder;
+    private float _apertureCoverage;
+
+    public HudFactionChromeRole Role { get; private set; }
+    public HudFaction Faction => _recipe.Faction;
+    public bool IsConfigured => _frameTexture is not null && _maskTexture is not null &&
+        _apertureMaterial?.Shader is not null;
+    public bool UsesFactionApertureMask =>
+        _finish is HudArtFinish.HybridConsole or HudArtFinish.LegacyFrames && IsConfigured;
+    public bool UsesSharedNineSliceGeometry => true;
+    public bool UsesShaderApertureMask => UsesFactionApertureMask &&
+        ClipChildren == ClipChildrenMode.Disabled;
+    public bool ClipsRasterAndContent => UsesFactionApertureMask;
+    public bool UsesShapedApertureCorners => IsConfigured;
+    public bool HasTransparentOuterCorners => _hasTransparentOuterCorners;
+    public bool HasTransparentOuterBorder => _hasTransparentOuterBorder;
+    public float ApertureCoverage => _apertureCoverage;
+    public bool UsesFullBleedBottomDeck => Role == HudFactionChromeRole.BottomDeck;
+    public Color SurfaceFillColor => new(_surfaceColor, _panelOpacity);
+    public int RegisteredMaskedSurfaceCount => _registeredSurfaceMaterials.Count;
+
+    public HudFactionSurfaceMask()
+    {
+        MouseFilter = MouseFilterEnum.Ignore;
+        ClipContents = true;
+        ClipChildren = ClipChildrenMode.Disabled;
+        TextureFilter = TextureFilterEnum.Linear;
+        SetNotifyTransform(true);
+    }
+
+    public void Configure(int faction, HudFactionChromeRole role, HudArtFinish finish,
+        float chromeScale, Color surfaceColor, float panelOpacity, int fallbackPadding)
+    {
+        _recipe = HudFactionSkinLibrary.RecipeFor(faction);
+        Role = role;
+        _finish = finish;
+        _chromeScale = Mathf.Clamp(chromeScale, 0.75f, 1.35f);
+        _surfaceColor = surfaceColor;
+        _panelOpacity = Mathf.Clamp(panelOpacity, 0f, 1f);
+        _fallbackPadding = Math.Max(0, fallbackPadding);
+        string framePath = _finish == HudArtFinish.LegacyFrames
+            ? _recipe.LegacyFramePath
+            : _recipe.HybridFramePath;
+        _frameTexture = ResourceLoader.Exists(framePath)
+            ? GD.Load<Texture2D>(framePath)
+            : null;
+        _maskTexture = _frameTexture is null
+            ? null
+            : GetOrCreateMask(framePath, _frameTexture);
+        _hasTransparentOuterCorners = MaskCornersAreTransparent(_maskTexture);
+        _hasTransparentOuterBorder = MaskOuterBorderIsTransparent(_maskTexture);
+        _apertureCoverage = MaskCoverage(_maskTexture);
+        EnsureApertureMaterial();
+        ClipChildren = ClipChildrenMode.Disabled;
+        Material = null;
+        ApplyRegisteredSurfaceMaterials();
+        UpdateApertureMaterialParameters();
+        QueueRedraw();
+    }
+
+    /// <summary>
+    /// Applies the aperture shader only to an edge surface that can meet the
+    /// outer frame. Masking the whole UI subtree makes Godot reinterpret GUI
+    /// primitive colors; inner controls already live inside readable margins.
+    /// </summary>
+    public void RegisterMaskedSurface(CanvasItem surface)
+    {
+        if (!_registeredSurfaceMaterials.TryAdd(surface, surface.Material)) return;
+        surface.Material = UsesFactionApertureMask ? _apertureMaterial : surface.Material;
+    }
+
+    public void RegisterMaskedSurfaceTree(CanvasItem surface)
+    {
+        RegisterMaskedSurface(surface);
+        foreach (Node child in surface.GetChildren())
+        {
+            if (child is CanvasItem canvasChild) RegisterMaskedSurfaceTree(canvasChild);
+            else RegisterCanvasDescendants(child);
+        }
+    }
+
+    public Rect2 ContentRectFor(Vector2 destinationSize)
+    {
+        // Lower-deck surfaces deliberately run under the authored frame. The
+        // per-faction alpha aperture is the boundary; introducing a second
+        // rectangular inset leaves a visible square minimap corner inside the
+        // sculpted frame. Functional children retain their own safe margins.
+        if (Role == HudFactionChromeRole.BottomDeck)
+            return new Rect2(Vector2.Zero, destinationSize);
+
+        return InteractiveRectFor(destinationSize);
+    }
+
+    /// <summary>
+    /// Returns the conservative rectangular field in which interactive
+    /// controls remain clear of the authored chrome. This is intentionally
+    /// separate from the full-bleed visual aperture returned by
+    /// <see cref="ContentRectFor"/> for the lower deck.
+    /// </summary>
+    public Rect2 InteractiveRectFor(Vector2 destinationSize)
+    {
+        if (_frameTexture is null || destinationSize.X <= 2f || destinationSize.Y <= 2f)
+        {
+            float fallback = Math.Min(_fallbackPadding,
+                Math.Max(0f, Math.Min(destinationSize.X, destinationSize.Y) * 0.25f));
+            return new Rect2(new Vector2(fallback, fallback),
+                new Vector2(Math.Max(0f, destinationSize.X - fallback * 2f),
+                    Math.Max(0f, destinationSize.Y - fallback * 2f)));
+        }
+
+        float corner = HudFactionChrome.DestinationCornerSize(_recipe, Role, destinationSize, _chromeScale);
+        Vector4 ratios = _recipe.ApertureInsetRatios;
+        bool lowerDeck = Role == HudFactionChromeRole.BottomDeck;
+        // Bottom controls need to clear large illustrated corners on both
+        // vertical edges. The resource strip can retain its established,
+        // shallower vertical clearance because it contains only one text row.
+        float horizontalFactor = lowerDeck ? 0.90f : 0.82f;
+        float topFactor = lowerDeck ? 0.82f : 0.60f;
+        float bottomFactor = lowerDeck ? 0.78f : 0.60f;
+        float breathingRoom = lowerDeck ? 2f : 1f;
+        float left = Mathf.Round(corner * ratios.X * horizontalFactor + breathingRoom);
+        float top = Mathf.Round(corner * ratios.Y * topFactor + breathingRoom);
+        float right = Mathf.Round(corner * ratios.Z * horizontalFactor + breathingRoom);
+        float bottom = Mathf.Round(corner * ratios.W * bottomFactor + breathingRoom);
+        float width = destinationSize.X - left - right;
+        float height = destinationSize.Y - top - bottom;
+        if (width < 8f || height < 8f)
+        {
+            float fallback = Math.Min(_fallbackPadding,
+                Math.Max(0f, Math.Min(destinationSize.X, destinationSize.Y) * 0.2f));
+            return new Rect2(new Vector2(fallback, fallback),
+                new Vector2(Math.Max(0f, destinationSize.X - fallback * 2f),
+                    Math.Max(0f, destinationSize.Y - fallback * 2f)));
+        }
+        return new Rect2(new Vector2(left, top), new Vector2(width, height));
+    }
+
+    public override void _Notification(int what)
+    {
+        if (what == (int)NotificationResized || what == (int)NotificationTransformChanged ||
+            what == (int)NotificationEnterCanvas)
+        {
+            UpdateApertureMaterialParameters();
+            if (what == (int)NotificationResized) QueueRedraw();
+        }
+    }
+
+    public override void _Draw()
+    {
+        if (!UsesFactionApertureMask || _maskTexture is null || Size.X < 4f || Size.Y < 4f) return;
+        int sourceCorner = HudFactionChrome.SourceCornerSize(_maskTexture, _recipe);
+        float destinationCorner = HudFactionChrome.DestinationCornerSize(_recipe, Role, Size, _chromeScale);
+        // One rounded aperture owns both the plate silhouette and every
+        // registered edge surface. Nothing opaque is drawn outside it, so the
+        // authored corner remains transparent instead of regaining a square
+        // backing layer.
+        DrawNineSlice(_maskTexture, new Rect2(Vector2.Zero, Size), sourceCorner, destinationCorner,
+            new Color(_surfaceColor, _panelOpacity));
+    }
+
+    private void EnsureApertureMaterial()
+    {
+        if (_apertureMaterial?.Shader is not null) return;
+        Shader? shader = ResourceLoader.Exists(ApertureShaderPath)
+            ? GD.Load<Shader>(ApertureShaderPath)
+            : null;
+        if (shader is not null) _apertureMaterial = new ShaderMaterial { Shader = shader };
+    }
+
+    private void UpdateApertureMaterialParameters()
+    {
+        if (_apertureMaterial is null || _maskTexture is null || !IsInsideTree() ||
+            Size.X < 2f || Size.Y < 2f) return;
+        Vector2 viewportSize = GetViewportRect().Size;
+        if (viewportSize.X < 2f || viewportSize.Y < 2f) return;
+        Rect2 global = GetGlobalRect();
+        _apertureMaterial.SetShaderParameter("aperture_mask", _maskTexture);
+        _apertureMaterial.SetShaderParameter("mask_source_size",
+            new Vector2(_maskTexture.GetWidth(), _maskTexture.GetHeight()));
+        _apertureMaterial.SetShaderParameter("mask_source_corner",
+            (float)HudFactionChrome.SourceCornerSize(_maskTexture, _recipe));
+        _apertureMaterial.SetShaderParameter("mask_screen_rect", new Vector4(
+            global.Position.X / viewportSize.X, global.Position.Y / viewportSize.Y,
+            global.Size.X / viewportSize.X, global.Size.Y / viewportSize.Y));
+        _apertureMaterial.SetShaderParameter("mask_destination_size", Size);
+        _apertureMaterial.SetShaderParameter("mask_destination_corner",
+            HudFactionChrome.DestinationCornerSize(_recipe, Role, Size, _chromeScale));
+    }
+
+    private void ApplyRegisteredSurfaceMaterials()
+    {
+        foreach ((CanvasItem surface, Material? original) in _registeredSurfaceMaterials)
+            surface.Material = UsesFactionApertureMask ? _apertureMaterial : original;
+    }
+
+    private void RegisterCanvasDescendants(Node root)
+    {
+        foreach (Node child in root.GetChildren())
+        {
+            if (child is CanvasItem canvasChild) RegisterMaskedSurfaceTree(canvasChild);
+            else RegisterCanvasDescendants(child);
+        }
+    }
+
+    private void DrawNineSlice(Texture2D texture, Rect2 destination, float sourceCorner,
+        float destinationCorner, Color modulate)
+    {
+        float[] sourceX = { 0f, sourceCorner, texture.GetWidth() - sourceCorner, texture.GetWidth() };
+        float[] sourceY = { 0f, sourceCorner, texture.GetHeight() - sourceCorner, texture.GetHeight() };
+        float[] destinationX = { destination.Position.X, destination.Position.X + destinationCorner,
+            destination.End.X - destinationCorner, destination.End.X };
+        float[] destinationY = { destination.Position.Y, destination.Position.Y + destinationCorner,
+            destination.End.Y - destinationCorner, destination.End.Y };
+
+        for (int y = 0; y < 3; y++)
+        for (int x = 0; x < 3; x++)
+        {
+            Vector2 sourceSize = new(sourceX[x + 1] - sourceX[x], sourceY[y + 1] - sourceY[y]);
+            Vector2 destinationPatchSize = new(destinationX[x + 1] - destinationX[x],
+                destinationY[y + 1] - destinationY[y]);
+            if (sourceSize.X <= 0f || sourceSize.Y <= 0f ||
+                destinationPatchSize.X <= 0f || destinationPatchSize.Y <= 0f) continue;
+            DrawTextureRectRegion(texture,
+                new Rect2(new Vector2(destinationX[x], destinationY[y]), destinationPatchSize),
+                new Rect2(new Vector2(sourceX[x], sourceY[y]), sourceSize), modulate);
+        }
+    }
+
+    private static Texture2D? GetOrCreateMask(string path, Texture2D frameTexture)
+    {
+        string cacheKey = $"{path}|authored-aperture-v2";
+        if (MaskCache.TryGetValue(cacheKey, out Texture2D? cached)) return cached;
+        Image sourceImage = frameTexture.GetImage();
+        if (sourceImage.IsEmpty()) return null;
+        if (sourceImage.IsCompressed() && sourceImage.Decompress() != Error.Ok) return null;
+        sourceImage.Convert(Image.Format.Rgba8);
+        int width = sourceImage.GetWidth();
+        int height = sourceImage.GetHeight();
+        byte[] source = sourceImage.GetData();
+        int pixelCount = checked(width * height);
+        if (source.Length < pixelCount * 4) return null;
+
+        int center = (height / 2) * width + width / 2;
+        if (source[center * 4 + 3] > TransparentThreshold) return null;
+        byte[] aperture = new byte[pixelCount];
+        int[] queue = new int[pixelCount];
+        int read = 0;
+        int write = 0;
+        queue[write++] = center;
+        aperture[center] = 1;
+        bool touchesExterior = false;
+        while (read < write)
+        {
+            int index = queue[read++];
+            int x = index % width;
+            int y = index / width;
+            if (x == 0 || y == 0 || x == width - 1 || y == height - 1) touchesExterior = true;
+            Visit(index - 1, x > 0);
+            Visit(index + 1, x + 1 < width);
+            Visit(index - width, y > 0);
+            Visit(index + width, y + 1 < height);
+        }
+        if (touchesExterior || write < pixelCount / 20) return null;
+
+        // The connected transparent center is the authored aperture. Do not
+        // round or dilate it: dilation crossed thin frame sections and leaked
+        // the black inner border / light plate into the exterior, while the
+        // synthetic rounded rectangle cut valid Rock Raiders content away.
+        byte[] rgba = new byte[pixelCount * 4];
+        for (int index = 0; index < pixelCount; index++)
+        {
+            if (aperture[index] == 0) continue;
+            int target = index * 4;
+            rgba[target] = rgba[target + 1] = rgba[target + 2] = rgba[target + 3] = 255;
+        }
+
+        Image maskImage = Image.CreateFromData(width, height, false, Image.Format.Rgba8, rgba);
+        Texture2D mask = ImageTexture.CreateFromImage(maskImage);
+        MaskCache[cacheKey] = mask;
+        return mask;
+
+        void Visit(int candidate, bool inBounds)
+        {
+            if (!inBounds || aperture[candidate] != 0 || source[candidate * 4 + 3] > TransparentThreshold) return;
+            aperture[candidate] = 1;
+            queue[write++] = candidate;
+        }
+    }
+
+    private static bool MaskCornersAreTransparent(Texture2D? texture)
+    {
+        if (texture is null) return false;
+        Image image = texture.GetImage();
+        if (image.IsEmpty() || image.GetWidth() < 2 || image.GetHeight() < 2) return false;
+        int right = image.GetWidth() - 1;
+        int bottom = image.GetHeight() - 1;
+        return image.GetPixel(0, 0).A <= 0.02f &&
+            image.GetPixel(right, 0).A <= 0.02f &&
+            image.GetPixel(0, bottom).A <= 0.02f &&
+            image.GetPixel(right, bottom).A <= 0.02f;
+    }
+
+    private static bool MaskOuterBorderIsTransparent(Texture2D? texture)
+    {
+        if (texture is null) return false;
+        Image image = texture.GetImage();
+        if (image.IsEmpty() || image.GetWidth() < 2 || image.GetHeight() < 2) return false;
+        int right = image.GetWidth() - 1;
+        int bottom = image.GetHeight() - 1;
+        for (int x = 0; x <= right; x++)
+            if (image.GetPixel(x, 0).A > 0.02f || image.GetPixel(x, bottom).A > 0.02f) return false;
+        for (int y = 0; y <= bottom; y++)
+            if (image.GetPixel(0, y).A > 0.02f || image.GetPixel(right, y).A > 0.02f) return false;
+        return true;
+    }
+
+    private static float MaskCoverage(Texture2D? texture)
+    {
+        if (texture is null) return 0f;
+        Image image = texture.GetImage();
+        if (image.IsEmpty()) return 0f;
+        int width = image.GetWidth();
+        int height = image.GetHeight();
+        int covered = 0;
+        for (int y = 0; y < height; y++)
+        for (int x = 0; x < width; x++)
+            if (image.GetPixel(x, y).A > 0.5f) covered++;
+        return covered / (float)(width * height);
+    }
+}

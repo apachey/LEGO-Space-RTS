@@ -7,9 +7,9 @@ public class M5TubeTransferTests
 {
     private static readonly ContentId HangarType = StableId.FromKey("building.mar.aero_tube_hangar");
     private static readonly ContentId StationType = StableId.FromKey("building.mar.settlement_station");
-    private static readonly ContentId WorkerRobot = StableId.FromKey("unit.mar.worker_robot");
-    private static readonly ContentId DoubleHover = StableId.FromKey("unit.mar.double_hover");
-    private static readonly ContentId JetScooter = StableId.FromKey("unit.mar.jet_scooter");
+    private static readonly ContentId WorkerRobot = StableId.FromKey(CanonicalRosterReferences.MartianWorkerRobot);
+    private static readonly ContentId DoubleHover = StableId.FromKey(CanonicalRosterReferences.MartianDoubleHover);
+    private static readonly ContentId JetScooter = StableId.FromKey(CanonicalRosterReferences.MartianJetScooter);
 
     [Test]
     public void EligibilityAndCanonicalPhaseTimingAreExact()
@@ -17,7 +17,7 @@ public class M5TubeTransferTests
         SimulationWorld world = CreateWorld(); EntityId a = AddStation(world, HangarType, 10, 20), b = AddStation(world, StationType, 40, 20);
         Assert.That(TubeGraphSystem.TryAddCompletedLink(world, 0, a, b, out EntityId link), Is.True);
         EntityId worker = AddPassenger(world, WorkerRobot, link, a), hover = AddPassenger(world, DoubleHover, link, a), scooter = AddPassenger(world, JetScooter, link, a);
-        EntityId heavy = AddPassenger(world, StableId.FromKey("unit.mar.mining_vehicle"), link, a);
+        EntityId heavy = AddPassenger(world, StableId.FromKey(CanonicalRosterReferences.MartianExcavationSearcher), link, a);
         Assert.Multiple(() =>
         {
             Assert.That(TubeTransferSystem.IsEligible(world, worker), Is.True);

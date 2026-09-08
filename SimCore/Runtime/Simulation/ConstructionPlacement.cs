@@ -18,7 +18,9 @@ public enum PlacementFailure : byte
     NoLegalProductionExit = 10,
     InsufficientOre = 11,
     NoEnergyDomain = 12,
-    InsufficientEnergy = 13
+    InsufficientEnergy = 13,
+    CommandUnavailable = 14,
+    InsufficientCrystals = 15
 }
 
 public readonly struct PlacementValidation
@@ -26,42 +28,55 @@ public readonly struct PlacementValidation
     public readonly PlacementFailure Failure;
     public readonly EntityId Builder;
     public readonly EntityId FundingBank;
+    public readonly EntityId CrystalFundingBank;
     public readonly EntityId EnergyDomainRoot;
     public bool IsValid => Failure == PlacementFailure.None;
-    public PlacementValidation(PlacementFailure failure, EntityId builder = default, EntityId fundingBank = default, EntityId energyDomainRoot = default)
-    { Failure = failure; Builder = builder; FundingBank = fundingBank; EnergyDomainRoot = energyDomainRoot; }
+    public PlacementValidation(PlacementFailure failure, EntityId builder = default, EntityId fundingBank = default,
+        EntityId crystalFundingBank = default, EntityId energyDomainRoot = default)
+    { Failure = failure; Builder = builder; FundingBank = fundingBank; CrystalFundingBank = crystalFundingBank; EnergyDomainRoot = energyDomainRoot; }
 }
 
 public static class ConstructionPlacement
 {
     private static readonly ContentId HqType = StableId.FromKey("building.rock_raiders.hq");
+    private static readonly ContentId OreProcessingPlantType = StableId.FromKey("building.rock_raiders.ore_processing_plant");
+    private static readonly ContentId PowerStationType = StableId.FromKey("building.rock_raiders.power_station");
+    private static readonly ContentId VehicleServiceBayType = StableId.FromKey("building.rock_raiders.vehicle_service_bay");
+    private static readonly ContentId DefenseNodeType = StableId.FromKey("building.ali.etx_defense_node");
+
+    public static bool IsBuildCommandAvailable(ContentId buildingType) => buildingType.Value != 0;
 
     public static PlacementValidation Validate(SimulationWorld world, byte playerSlot, IReadOnlyList<EntityId> builders,
         ContentId buildingType, short anchorX, short anchorY, byte orientation)
     {
         if (!world.Content.TryGetBuilding(buildingType, out BuildingDefinition definition)) return new PlacementValidation(PlacementFailure.UnknownBuilding);
-        if (orientation > 3 || (!definition.Rotatable && orientation != 0)) return new PlacementValidation(PlacementFailure.InvalidOrientation);
+        bool defenseMode = buildingType == DefenseNodeType && orientation <= 1;
+        if (orientation > 3 || (!definition.Rotatable && orientation != 0 && !defenseMode)) return new PlacementValidation(PlacementFailure.InvalidOrientation);
+        if (!IsBuildCommandAvailable(buildingType)) return new PlacementValidation(PlacementFailure.CommandUnavailable);
         EntityId builder = FindEligibleBuilder(world, playerSlot, builders);
         if (builder == EntityId.None) return new PlacementValidation(PlacementFailure.NoEligibleBuilder);
-        if (buildingType != HqType && !HasCompletedHq(world, playerSlot)) return new PlacementValidation(PlacementFailure.MissingPrerequisite);
-        byte width = definition.RotatedWidth(orientation), height = definition.RotatedHeight(orientation);
+        if (!ActionPrerequisites.AreMet(world, playerSlot, definition.PrerequisiteGroups)) return new PlacementValidation(PlacementFailure.MissingPrerequisite);
+        byte geometryOrientation = buildingType == DefenseNodeType ? (byte)0 : orientation;
+        byte width = definition.RotatedWidth(geometryOrientation), height = definition.RotatedHeight(geometryOrientation);
         if (anchorX < 0 || anchorY < 0 || anchorX + width > MapGrid.BuildWidth || anchorY + height > MapGrid.BuildHeight)
             return new PlacementValidation(PlacementFailure.OutsideMap);
 
-        PlacementFailure occupancy = ValidateFootprintOccupancy(world, definition, anchorX, anchorY, orientation);
+        PlacementFailure occupancy = ValidateFootprintOccupancy(world, definition, anchorX, anchorY, geometryOrientation);
         if (occupancy != PlacementFailure.None) return new PlacementValidation(occupancy);
-        PlacementFailure terrain = ValidateFootprintTerrain(world.Map, definition, anchorX, anchorY, orientation);
+        PlacementFailure terrain = ValidateFootprintTerrain(world.Map, definition, anchorX, anchorY, geometryOrientation);
         if (terrain != PlacementFailure.None) return new PlacementValidation(terrain);
-        if (definition.ProductionExitWidth > 0 && !ValidateProductionExit(world, definition, anchorX, anchorY, orientation))
+        if (definition.ProductionExitWidth > 0 && !ValidateProductionExit(world, definition, anchorX, anchorY, geometryOrientation))
             return new PlacementValidation(PlacementFailure.NoLegalProductionExit);
 
         FixVec2 siteCenter = SiteCenter(anchorX, anchorY, width, height);
         EntityId requiredComponent = WorksiteGraphSystem.TryGetComponentAt(world, playerSlot, siteCenter, out EntityId component) ? component : EntityId.None;
-        if (!WorksiteGraphSystem.TryFindFundingBank(world, playerSlot, requiredComponent, ResourceType.Ore, definition.OreCost, siteCenter, out EntityId bank))
+        if (!ProductionSystem.TryFindFundingBank(world, playerSlot, requiredComponent, ResourceType.Ore, definition.OreCost, builder, out EntityId bank))
             return new PlacementValidation(PlacementFailure.InsufficientOre);
+        if (!ProductionSystem.TryFindFundingBank(world, playerSlot, requiredComponent, ResourceType.Crystal, definition.CrystalCost, builder, out EntityId crystalBank))
+            return new PlacementValidation(PlacementFailure.InsufficientCrystals);
         if (!EnergyDomainSystem.TryResolveForEntity(world, bank, playerSlot, out EntityId energyDomain)) return new PlacementValidation(PlacementFailure.NoEnergyDomain);
         if (!EnergyDomainSystem.CanSpend(world, energyDomain, definition.EnergyCost)) return new PlacementValidation(PlacementFailure.InsufficientEnergy);
-        return new PlacementValidation(PlacementFailure.None, builder, bank, energyDomain);
+        return new PlacementValidation(PlacementFailure.None, builder, bank, crystalBank, energyDomain);
     }
 
     public static bool TryPlace(SimulationWorld world, byte playerSlot, IReadOnlyList<EntityId> builders, ContentId buildingType,
@@ -71,16 +86,25 @@ public static class ConstructionPlacement
         failure = validation.Failure; site = EntityId.None;
         if (!validation.IsValid || !world.Content.TryGetBuilding(buildingType, out BuildingDefinition definition)) return false;
         if (!EnergyDomainSystem.TrySpend(world, validation.EnergyDomainRoot, definition.EnergyCost)) { failure = PlacementFailure.InsufficientEnergy; return false; }
-        if (!WorksiteGraphSystem.TrySpendProcessedResource(world, playerSlot, validation.FundingBank, ResourceType.Ore, definition.OreCost))
+        if (!ProductionSystem.TrySpend(world, playerSlot, validation.FundingBank, ResourceType.Ore, definition.OreCost))
         {
             EnergyDomainSystem.Refund(world, validation.EnergyDomainRoot, definition.EnergyCost);
             failure = PlacementFailure.InsufficientOre;
             return false;
         }
-        byte width = definition.RotatedWidth(orientation), height = definition.RotatedHeight(orientation);
+        if (!ProductionSystem.TrySpend(world, playerSlot, validation.CrystalFundingBank, ResourceType.Crystal, definition.CrystalCost))
+        {
+            ProductionSystem.RefundResource(world, playerSlot, ResourceType.Ore, definition.OreCost, validation.FundingBank);
+            EnergyDomainSystem.Refund(world, validation.EnergyDomainRoot, definition.EnergyCost);
+            failure = PlacementFailure.InsufficientCrystals;
+            return false;
+        }
+        byte initialDefenseMode = orientation;
+        byte geometryOrientation = buildingType == DefenseNodeType ? (byte)0 : orientation;
+        byte width = definition.RotatedWidth(geometryOrientation), height = definition.RotatedHeight(geometryOrientation);
         Building building = new()
         {
-            Type = buildingType, AnchorX = anchorX, AnchorY = anchorY, Orientation = orientation,
+            Type = buildingType, AnchorX = anchorX, AnchorY = anchorY, Orientation = geometryOrientation,
             FootprintWidth = width, FootprintHeight = height, State = BuildingState.ConstructionSite
         };
         site = world.Entities.Create();
@@ -89,10 +113,12 @@ public static class ConstructionPlacement
         world.Entities.Selectable.Set(site, new Selectable { IsSelectable = true, ContentType = buildingType, Kind = SelectableKind.Building });
         if (world.Content.TryGetEntity(buildingType, out PrototypeEntityDefinition entityDefinition)) ScenarioFactory.AddCombatComponents(world, site, entityDefinition);
         world.Entities.Building.Set(site, building);
+        if (buildingType == DefenseNodeType) DefenseNodeSystem.Register(world, site, (DefenseNodeMode)initialDefenseMode);
         world.Entities.EnergyDomainMember.Set(site, new EnergyDomainMember { DomainRoot = validation.EnergyDomainRoot });
         world.Entities.ConstructionSite.Set(site, new ConstructionSite
         {
-            AssignedBuilder = EntityId.None, FundingBank = validation.FundingBank, ReservedOre = definition.OreCost, ConsumedOre = 0,
+            AssignedBuilder = EntityId.None, FundingBank = validation.FundingBank, CrystalFundingBank = validation.CrystalFundingBank,
+            ReservedOre = definition.OreCost, ConsumedOre = 0, RequiredCrystals = definition.CrystalCost,
             RequiredEnergy = definition.EnergyCost, ReservedEnergy = definition.EnergyCost, ConsumedEnergy = 0, EnergyDomainRoot = validation.EnergyDomainRoot,
             RequiredTicks = definition.BuildTicks, ProgressTicks = 0
         });
@@ -119,6 +145,8 @@ public static class ConstructionPlacement
         bank.ProcessedAmount = checked(bank.ProcessedAmount + checked(construction.ReservedOre + consumedRefund));
         int consumedEnergyRefund = construction.ProgressTicks == 0 ? construction.ConsumedEnergy : construction.ConsumedEnergy / 2;
         EnergyDomainSystem.Refund(world, construction.EnergyDomainRoot, checked(construction.ReservedEnergy + consumedEnergyRefund));
+        if (!CancellationAccounting.CrystalsCommitted(construction.ProgressTicks, construction.RequiredTicks))
+            ProductionSystem.RefundResource(world, playerSlot, ResourceType.Crystal, construction.RequiredCrystals, construction.CrystalFundingBank);
         world.Entities.ConstructionSite.Remove(site);
         ConstructionSystem.ReleaseSiteAssignments(world, site);
         world.SetConstructionOccupied(building, false);

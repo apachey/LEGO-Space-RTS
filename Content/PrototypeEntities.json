@@ -1,7 +1,7 @@
 {
-  "schemaVersion": 15,
+  "schemaVersion": 18,
   "contentKind": "prototype_entities",
-  "policy": "M2 movement, canonical M3 economy metadata and canonical M4 combat, transport and data-driven tactical transformation metadata.",
+  "policy": "M8 T073 approved runtime catalog: canonical 35-unit, 31-infrastructure, 38-research and 35-family command catalog with guarded authoritative action bindings.",
   "movementProfiles": [
     {
       "stableId": "movement.prototype.crew",
@@ -40,6 +40,42 @@
       "layer": "GroundHover"
     },
     {
+      "stableId": "movement.rock_raiders.drill_craft",
+      "speedRatio": [
+        155,
+        100
+      ],
+      "accelerationRatio": [
+        4,
+        1
+      ],
+      "decelerationRatio": [
+        5,
+        1
+      ],
+      "turnRatePerTick": 1229,
+      "reversePolicy": "Reduced",
+      "layer": "Ground"
+    },
+    {
+      "stableId": "movement.prototype.rapid_rider",
+      "speedRatio": [
+        210,
+        100
+      ],
+      "accelerationRatio": [
+        4,
+        1
+      ],
+      "decelerationRatio": [
+        5,
+        1
+      ],
+      "turnRatePerTick": 1638,
+      "reversePolicy": "Full",
+      "layer": "GroundHover"
+    },
+    {
       "stableId": "movement.prototype.loader_dozer",
       "speedRatio": [
         130,
@@ -58,31 +94,22 @@
       "layer": "Ground"
     },
     {
-      "stableId": "movement.prototype.mx41_ground",
-      "speedRatio": [175, 100],
-      "accelerationRatio": [4, 1],
-      "decelerationRatio": [5, 1],
-      "turnRatePerTick": 1229,
-      "reversePolicy": "Reduced",
+      "stableId": "movement.rock_raiders.granite_grinder",
+      "speedRatio": [
+        115,
+        100
+      ],
+      "accelerationRatio": [
+        3,
+        2
+      ],
+      "decelerationRatio": [
+        15,
+        8
+      ],
+      "turnRatePerTick": 865,
+      "reversePolicy": "Full",
       "layer": "Ground"
-    },
-    {
-      "stableId": "movement.prototype.mx41_flight",
-      "speedRatio": [245, 100],
-      "accelerationRatio": [4, 1],
-      "decelerationRatio": [5, 1],
-      "turnRatePerTick": 1229,
-      "reversePolicy": "Full",
-      "layer": "TrueAir"
-    },
-    {
-      "stableId": "movement.prototype.rapid_rider",
-      "speedRatio": [210, 100],
-      "accelerationRatio": [4, 1],
-      "decelerationRatio": [5, 1],
-      "turnRatePerTick": 1638,
-      "reversePolicy": "Full",
-      "layer": "GroundHover"
     },
     {
       "stableId": "movement.prototype.chrome_crusher",
@@ -103,10 +130,532 @@
       "layer": "Ground"
     },
     {
-      "stableId": "movement.prototype.nav_huge",
+      "stableId": "movement.rock_raiders.tunnel_transport",
       "speedRatio": [
+        175,
+        100
+      ],
+      "accelerationRatio": [
+        3,
+        2
+      ],
+      "decelerationRatio": [
+        15,
+        8
+      ],
+      "turnRatePerTick": 592,
+      "reversePolicy": "None",
+      "layer": "TrueAir"
+    },
+    {
+      "stableId": "movement.astronauts.expedition_crew",
+      "speedRatio": [
+        140,
+        100
+      ],
+      "accelerationRatio": [
+        4,
+        1
+      ],
+      "decelerationRatio": [
+        5,
+        1
+      ],
+      "turnRatePerTick": 1638,
+      "reversePolicy": "Full",
+      "layer": "Ground"
+    },
+    {
+      "stableId": "movement.astronauts.rover",
+      "speedRatio": [
+        215,
+        100
+      ],
+      "accelerationRatio": [
+        6,
+        1
+      ],
+      "decelerationRatio": [
+        15,
+        2
+      ],
+      "turnRatePerTick": 1638,
+      "reversePolicy": "Reduced",
+      "layer": "Ground"
+    },
+    {
+      "stableId": "movement.astronauts.t3_trike",
+      "speedRatio": [
+        170,
+        100
+      ],
+      "accelerationRatio": [
+        4,
+        1
+      ],
+      "decelerationRatio": [
+        5,
+        1
+      ],
+      "turnRatePerTick": 1229,
+      "reversePolicy": "Reduced",
+      "layer": "Ground"
+    },
+    {
+      "stableId": "movement.astronauts.mono_jet",
+      "speedRatio": [
+        285,
+        100
+      ],
+      "accelerationRatio": [
+        6,
+        1
+      ],
+      "decelerationRatio": [
+        15,
+        2
+      ],
+      "turnRatePerTick": 1638,
+      "reversePolicy": "None",
+      "layer": "TrueAir"
+    },
+    {
+      "stableId": "movement.astronauts.solar_explorer",
+      "speedRatio": [
+        110,
+        100
+      ],
+      "accelerationRatio": [
+        3,
+        2
+      ],
+      "decelerationRatio": [
+        15,
+        8
+      ],
+      "turnRatePerTick": 592,
+      "reversePolicy": "Reduced",
+      "layer": "Ground"
+    },
+    {
+      "stableId": "movement.astronauts.mission_fighter",
+      "speedRatio": [
+        315,
+        100
+      ],
+      "accelerationRatio": [
+        6,
+        1
+      ],
+      "decelerationRatio": [
+        15,
+        2
+      ],
+      "turnRatePerTick": 1638,
+      "reversePolicy": "None",
+      "layer": "TrueAir"
+    },
+    {
+      "stableId": "movement.prototype.mx41_ground",
+      "speedRatio": [
+        175,
+        100
+      ],
+      "accelerationRatio": [
+        4,
+        1
+      ],
+      "decelerationRatio": [
+        5,
+        1
+      ],
+      "turnRatePerTick": 1229,
+      "reversePolicy": "Reduced",
+      "layer": "Ground"
+    },
+    {
+      "stableId": "movement.prototype.mx41_flight",
+      "speedRatio": [
+        245,
+        100
+      ],
+      "accelerationRatio": [
+        4,
+        1
+      ],
+      "decelerationRatio": [
+        5,
+        1
+      ],
+      "turnRatePerTick": 1229,
+      "reversePolicy": "None",
+      "layer": "TrueAir"
+    },
+    {
+      "stableId": "movement.astronauts.mobile_mining_platform",
+      "speedRatio": [
+        95,
+        100
+      ],
+      "accelerationRatio": [
+        3,
+        2
+      ],
+      "decelerationRatio": [
+        15,
+        8
+      ],
+      "turnRatePerTick": 592,
+      "reversePolicy": "Reduced",
+      "layer": "Ground"
+    },
+    {
+      "stableId": "movement.astronauts.mx71_recon_dropship",
+      "speedRatio": [
+        215,
+        100
+      ],
+      "accelerationRatio": [
+        5,
+        2
+      ],
+      "decelerationRatio": [
+        25,
+        8
+      ],
+      "turnRatePerTick": 865,
+      "reversePolicy": "None",
+      "layer": "TrueAir"
+    },
+    {
+      "stableId": "movement.astronauts.mt51_claw_tank",
+      "speedRatio": [
+        130,
+        100
+      ],
+      "accelerationRatio": [
+        3,
+        2
+      ],
+      "decelerationRatio": [
+        15,
+        8
+      ],
+      "turnRatePerTick": 865,
+      "reversePolicy": "Reduced",
+      "layer": "Ground"
+    },
+    {
+      "stableId": "movement.astronauts.mt101_armored_drilling_unit",
+      "speedRatio": [
+        108,
+        100
+      ],
+      "accelerationRatio": [
+        3,
+        2
+      ],
+      "decelerationRatio": [
+        15,
+        8
+      ],
+      "turnRatePerTick": 592,
+      "reversePolicy": "Reduced",
+      "layer": "Ground"
+    },
+    {
+      "stableId": "movement.astronauts.mt201_ultra_drill_walker",
+      "speedRatio": [
+        92,
+        100
+      ],
+      "accelerationRatio": [
         9,
         10
+      ],
+      "decelerationRatio": [
+        9,
+        8
+      ],
+      "turnRatePerTick": 592,
+      "reversePolicy": "Full",
+      "layer": "Ground"
+    },
+    {
+      "stableId": "movement.astronauts.mx81_operations_aircraft",
+      "speedRatio": [
+        190,
+        100
+      ],
+      "accelerationRatio": [
+        3,
+        2
+      ],
+      "decelerationRatio": [
+        15,
+        8
+      ],
+      "turnRatePerTick": 592,
+      "reversePolicy": "None",
+      "layer": "TrueAir"
+    },
+    {
+      "stableId": "movement.aliens.etx_servitor",
+      "speedRatio": [
+        165,
+        100
+      ],
+      "accelerationRatio": [
+        4,
+        1
+      ],
+      "decelerationRatio": [
+        5,
+        1
+      ],
+      "turnRatePerTick": 1638,
+      "reversePolicy": "Full",
+      "layer": "GroundHover"
+    },
+    {
+      "stableId": "movement.aliens.alien_jet",
+      "speedRatio": [
+        310,
+        100
+      ],
+      "accelerationRatio": [
+        6,
+        1
+      ],
+      "decelerationRatio": [
+        15,
+        2
+      ],
+      "turnRatePerTick": 1638,
+      "reversePolicy": "None",
+      "layer": "TrueAir"
+    },
+    {
+      "stableId": "movement.aliens.razor_skimmer",
+      "speedRatio": [
+        230,
+        100
+      ],
+      "accelerationRatio": [
+        6,
+        1
+      ],
+      "decelerationRatio": [
+        15,
+        2
+      ],
+      "turnRatePerTick": 1638,
+      "reversePolicy": "Full",
+      "layer": "GroundHover"
+    },
+    {
+      "stableId": "movement.aliens.etx_alien_strike",
+      "speedRatio": [
+        235,
+        100
+      ],
+      "accelerationRatio": [
+        4,
+        1
+      ],
+      "decelerationRatio": [
+        5,
+        1
+      ],
+      "turnRatePerTick": 1229,
+      "reversePolicy": "None",
+      "layer": "TrueAir"
+    },
+    {
+      "stableId": "movement.aliens.etx_alien_infiltrator",
+      "speedRatio": [
+        205,
+        100
+      ],
+      "accelerationRatio": [
+        4,
+        1
+      ],
+      "decelerationRatio": [
+        5,
+        1
+      ],
+      "turnRatePerTick": 1229,
+      "reversePolicy": "Full",
+      "layer": "GroundHover"
+    },
+    {
+      "stableId": "movement.aliens.alien_mothership",
+      "speedRatio": [
+        165,
+        100
+      ],
+      "accelerationRatio": [
+        3,
+        2
+      ],
+      "decelerationRatio": [
+        15,
+        8
+      ],
+      "turnRatePerTick": 410,
+      "reversePolicy": "None",
+      "layer": "TrueAir"
+    },
+    {
+      "stableId": "movement.martians.worker_robot",
+      "speedRatio": [
+        130,
+        100
+      ],
+      "accelerationRatio": [
+        4,
+        1
+      ],
+      "decelerationRatio": [
+        5,
+        1
+      ],
+      "turnRatePerTick": 1229,
+      "reversePolicy": "Full",
+      "layer": "Ground"
+    },
+    {
+      "stableId": "movement.martians.double_hover",
+      "speedRatio": [
+        225,
+        100
+      ],
+      "accelerationRatio": [
+        6,
+        1
+      ],
+      "decelerationRatio": [
+        15,
+        2
+      ],
+      "turnRatePerTick": 1638,
+      "reversePolicy": "Full",
+      "layer": "GroundHover"
+    },
+    {
+      "stableId": "movement.martians.jet_scooter",
+      "speedRatio": [
+        240,
+        100
+      ],
+      "accelerationRatio": [
+        6,
+        1
+      ],
+      "decelerationRatio": [
+        15,
+        2
+      ],
+      "turnRatePerTick": 1638,
+      "reversePolicy": "Full",
+      "layer": "GroundHover"
+    },
+    {
+      "stableId": "movement.martians.aero_skiff",
+      "speedRatio": [
+        260,
+        100
+      ],
+      "accelerationRatio": [
+        6,
+        1
+      ],
+      "decelerationRatio": [
+        15,
+        2
+      ],
+      "turnRatePerTick": 1638,
+      "reversePolicy": "None",
+      "layer": "TrueAir"
+    },
+    {
+      "stableId": "movement.martians.red_planet_cruiser",
+      "speedRatio": [
+        150,
+        100
+      ],
+      "accelerationRatio": [
+        4,
+        1
+      ],
+      "decelerationRatio": [
+        5,
+        1
+      ],
+      "turnRatePerTick": 1229,
+      "reversePolicy": "Full",
+      "layer": "GroundHover"
+    },
+    {
+      "stableId": "movement.martians.recon_mech_rp",
+      "speedRatio": [
+        132,
+        100
+      ],
+      "accelerationRatio": [
+        4,
+        1
+      ],
+      "decelerationRatio": [
+        5,
+        1
+      ],
+      "turnRatePerTick": 865,
+      "reversePolicy": "Full",
+      "layer": "Ground"
+    },
+    {
+      "stableId": "movement.martians.red_planet_protector",
+      "speedRatio": [
+        118,
+        100
+      ],
+      "accelerationRatio": [
+        3,
+        2
+      ],
+      "decelerationRatio": [
+        15,
+        8
+      ],
+      "turnRatePerTick": 865,
+      "reversePolicy": "Full",
+      "layer": "Ground"
+    },
+    {
+      "stableId": "movement.martians.excavation_searcher",
+      "speedRatio": [
+        98,
+        100
+      ],
+      "accelerationRatio": [
+        9,
+        10
+      ],
+      "decelerationRatio": [
+        9,
+        8
+      ],
+      "turnRatePerTick": 592,
+      "reversePolicy": "Full",
+      "layer": "Ground"
+    },
+    {
+      "stableId": "movement.prototype.nav_huge",
+      "speedRatio": [
+        90,
+        100
       ],
       "accelerationRatio": [
         9,
@@ -122,9 +671,18 @@
     },
     {
       "stableId": "movement.prototype.static",
-      "speedRatio": [0, 1],
-      "accelerationRatio": [0, 1],
-      "decelerationRatio": [0, 1],
+      "speedRatio": [
+        0,
+        1
+      ],
+      "accelerationRatio": [
+        0,
+        1
+      ],
+      "decelerationRatio": [
+        0,
+        1
+      ],
       "turnRatePerTick": 0,
       "reversePolicy": "None",
       "layer": "Ground"
@@ -133,96 +691,211 @@
   "weaponDefinitions": [
     {
       "stableId": "weapon.ast.mx41.pursuit_projector",
-      "legalLayers": ["Ground"],
-      "legalClasses": ["Personnel", "LightMachine", "MediumMachine", "HeavyMachine", "MassiveMachine", "Structure", "FortifiedStructure"],
+      "legalLayers": [
+        "Ground"
+      ],
+      "legalClasses": [
+        "Personnel",
+        "LightMachine",
+        "MediumMachine",
+        "HeavyMachine",
+        "MassiveMachine",
+        "Structure",
+        "FortifiedStructure"
+      ],
       "priorityProfile": "AntiLight",
       "damage": 20,
       "damageType": "Light",
       "cooldownTicks": 21,
-      "rangeRatio": [9, 2],
-      "minimumRangeRatio": [0, 1],
+      "rangeRatio": [
+        9,
+        2
+      ],
+      "minimumRangeRatio": [
+        0,
+        1
+      ],
       "delivery": "Projectile",
-      "projectileSpeedRatio": [12, 1],
+      "projectileSpeedRatio": [
+        12,
+        1
+      ],
       "facingToleranceDegrees": 180,
       "maximumMovingFireSpeedBasisPoints": 10000,
       "requiresLineOfSight": true
     },
     {
       "stableId": "weapon.ast.mx41.flight_pulse",
-      "legalLayers": ["Ground", "TrueAir"],
-      "legalClasses": ["Personnel", "LightMachine", "MediumMachine", "HeavyMachine", "MassiveMachine", "Structure", "FortifiedStructure"],
+      "legalLayers": [
+        "Ground",
+        "TrueAir"
+      ],
+      "legalClasses": [
+        "Personnel",
+        "LightMachine",
+        "MediumMachine",
+        "HeavyMachine",
+        "MassiveMachine",
+        "Structure",
+        "FortifiedStructure"
+      ],
       "priorityProfile": "Generalist",
       "damage": 16,
       "damageType": "General",
       "cooldownTicks": 23,
-      "rangeRatio": [9, 2],
-      "minimumRangeRatio": [0, 1],
+      "rangeRatio": [
+        9,
+        2
+      ],
+      "minimumRangeRatio": [
+        0,
+        1
+      ],
       "delivery": "Projectile",
-      "projectileSpeedRatio": [12, 1],
+      "projectileSpeedRatio": [
+        12,
+        1
+      ],
       "facingToleranceDegrees": 180,
       "maximumMovingFireSpeedBasisPoints": 10000,
       "requiresLineOfSight": true
     },
     {
       "stableId": "weapon.rr.crew.portable_mining_tool",
-      "legalLayers": ["Ground"],
-      "legalClasses": ["Personnel", "LightMachine", "MediumMachine", "HeavyMachine", "MassiveMachine", "Structure", "FortifiedStructure"],
+      "legalLayers": [
+        "Ground"
+      ],
+      "legalClasses": [
+        "Personnel",
+        "LightMachine",
+        "MediumMachine",
+        "HeavyMachine",
+        "MassiveMachine",
+        "Structure",
+        "FortifiedStructure"
+      ],
       "priorityProfile": "Support",
       "damage": 6,
       "damageType": "General",
       "cooldownTicks": 24,
-      "rangeRatio": [4, 5],
-      "minimumRangeRatio": [0, 1],
+      "rangeRatio": [
+        4,
+        5
+      ],
+      "minimumRangeRatio": [
+        0,
+        1
+      ],
       "delivery": "Contact",
-      "projectileSpeedRatio": [0, 1],
+      "projectileSpeedRatio": [
+        0,
+        1
+      ],
       "facingToleranceDegrees": 45,
       "maximumMovingFireSpeedBasisPoints": 3500,
       "requiresLineOfSight": true
     },
     {
       "stableId": "weapon.rr.hover_scout.survey_pulse",
-      "legalLayers": ["Ground"],
-      "legalClasses": ["Personnel", "LightMachine", "MediumMachine", "HeavyMachine", "MassiveMachine", "Structure", "FortifiedStructure"],
+      "legalLayers": [
+        "Ground"
+      ],
+      "legalClasses": [
+        "Personnel",
+        "LightMachine",
+        "MediumMachine",
+        "HeavyMachine",
+        "MassiveMachine",
+        "Structure",
+        "FortifiedStructure"
+      ],
       "priorityProfile": "Scout",
       "damage": 6,
       "damageType": "General",
       "cooldownTicks": 30,
-      "rangeRatio": [3, 1],
-      "minimumRangeRatio": [0, 1],
+      "rangeRatio": [
+        3,
+        1
+      ],
+      "minimumRangeRatio": [
+        0,
+        1
+      ],
       "delivery": "Projectile",
-      "projectileSpeedRatio": [12, 1],
+      "projectileSpeedRatio": [
+        12,
+        1
+      ],
       "facingToleranceDegrees": 180,
       "maximumMovingFireSpeedBasisPoints": 10000,
       "requiresLineOfSight": true
     },
     {
       "stableId": "weapon.rr.loader_dozer.scoop_ram",
-      "legalLayers": ["Ground"],
-      "legalClasses": ["Personnel", "LightMachine", "MediumMachine", "HeavyMachine", "MassiveMachine", "Structure", "FortifiedStructure"],
+      "legalLayers": [
+        "Ground"
+      ],
+      "legalClasses": [
+        "Personnel",
+        "LightMachine",
+        "MediumMachine",
+        "HeavyMachine",
+        "MassiveMachine",
+        "Structure",
+        "FortifiedStructure"
+      ],
       "priorityProfile": "AntiLight",
       "damage": 18,
       "damageType": "General",
       "cooldownTicks": 27,
-      "rangeRatio": [9, 10],
-      "minimumRangeRatio": [0, 1],
+      "rangeRatio": [
+        9,
+        10
+      ],
+      "minimumRangeRatio": [
+        0,
+        1
+      ],
       "delivery": "Contact",
-      "projectileSpeedRatio": [0, 1],
+      "projectileSpeedRatio": [
+        0,
+        1
+      ],
       "facingToleranceDegrees": 45,
       "maximumMovingFireSpeedBasisPoints": 3500,
       "requiresLineOfSight": true
     },
     {
       "stableId": "weapon.rr.chrome_crusher.chrome_drill",
-      "legalLayers": ["Ground"],
-      "legalClasses": ["Personnel", "LightMachine", "MediumMachine", "HeavyMachine", "MassiveMachine", "Structure", "FortifiedStructure"],
+      "legalLayers": [
+        "Ground"
+      ],
+      "legalClasses": [
+        "Personnel",
+        "LightMachine",
+        "MediumMachine",
+        "HeavyMachine",
+        "MassiveMachine",
+        "Structure",
+        "FortifiedStructure"
+      ],
       "priorityProfile": "Siege",
       "damage": 55,
       "damageType": "Siege",
       "cooldownTicks": 32,
-      "rangeRatio": [21, 20],
-      "minimumRangeRatio": [0, 1],
+      "rangeRatio": [
+        21,
+        20
+      ],
+      "minimumRangeRatio": [
+        0,
+        1
+      ],
       "delivery": "Contact",
-      "projectileSpeedRatio": [0, 1],
+      "projectileSpeedRatio": [
+        0,
+        1
+      ],
       "facingToleranceDegrees": 30,
       "maximumMovingFireSpeedBasisPoints": 3500,
       "requiresLineOfSight": true
@@ -236,7 +909,11 @@
       "capacity": 600,
       "harvestInteraction": "Mine",
       "depletionProfile": "Finite",
-      "modelStateThresholdBasisPoints": [7500, 5000, 2500],
+      "modelStateThresholdBasisPoints": [
+        7500,
+        5000,
+        2500
+      ],
       "viewProfile": "view.placeholder.resource.ore.small"
     },
     {
@@ -246,7 +923,11 @@
       "capacity": 900,
       "harvestInteraction": "Mine",
       "depletionProfile": "Finite",
-      "modelStateThresholdBasisPoints": [7500, 5000, 2500],
+      "modelStateThresholdBasisPoints": [
+        7500,
+        5000,
+        2500
+      ],
       "viewProfile": "view.placeholder.resource.ore.standard"
     },
     {
@@ -256,7 +937,11 @@
       "capacity": 1350,
       "harvestInteraction": "Mine",
       "depletionProfile": "Finite",
-      "modelStateThresholdBasisPoints": [7500, 5000, 2500],
+      "modelStateThresholdBasisPoints": [
+        7500,
+        5000,
+        2500
+      ],
       "viewProfile": "view.placeholder.resource.ore.rich"
     },
     {
@@ -266,16 +951,642 @@
       "capacity": 2400,
       "harvestInteraction": "Mine",
       "depletionProfile": "Finite",
-      "modelStateThresholdBasisPoints": [7500, 5000, 2500],
+      "modelStateThresholdBasisPoints": [
+        7500,
+        5000,
+        2500
+      ],
       "viewProfile": "view.placeholder.resource.ore.deep_contested_seam"
     }
   ],
   "buildingDefinitions": [
     {
-      "stableId": "building.rock_raiders.hq",
-      "footprintMask": ["11111111", "11111111", "11111111", "11111111", "11111111", "11111111", "11111111", "11111111"],
+      "stableId": "building.ali.etx_command_core",
+      "footprintMask": [
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111"
+      ],
       "rotatable": false,
-      "cost": { "ore": 320, "energy": 40 },
+      "cost": {
+        "ore": 230,
+        "energy": 60,
+        "crystals": 0
+      },
+      "buildTicks": 800,
+      "productionExit": { "width": 2, "depth": 2, "largestFootprint": "Tiny" },
+      "operationsCapacityProvided": 16,
+      "energyGenerationPerSecond": 2,
+      "energyReserveCapacity": 150,
+      "continuousEnergyDemandPerSecond": 0,
+      "energyFunctionalClass": "CommandAndBasicEconomy"
+    },
+    {
+      "stableId": "building.ali.etx_defense_node",
+      "footprintMask": [
+        "11",
+        "11"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 120,
+        "energy": 30,
+        "crystals": 0
+      },
+      "buildTicks": 600,
+      "operationsCapacityProvided": 0,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 2,
+      "energyFunctionalClass": "StaticDefenseAndNonessential"
+    },
+    {
+      "stableId": "building.ali.etx_fabricator",
+      "footprintMask": [
+        "111111",
+        "111111",
+        "111111",
+        "111111",
+        "111111",
+        "111111"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 140,
+        "energy": 25,
+        "crystals": 0
+      },
+      "buildTicks": 640,
+      "productionExit": { "width": 3, "depth": 3, "largestFootprint": "Small" },
+      "operationsCapacityProvided": 4,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 2,
+      "energyFunctionalClass": "ProductionAndResearch"
+    },
+    {
+      "stableId": "building.ali.power_coupler",
+      "footprintMask": [
+        "1111",
+        "1111",
+        "1111",
+        "1111"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 130,
+        "energy": 10,
+        "crystals": 0
+      },
+      "buildTicks": 560,
+      "operationsCapacityProvided": 0,
+      "energyGenerationPerSecond": 12,
+      "energyReserveCapacity": 100,
+      "continuousEnergyDemandPerSecond": 0,
+      "energyFunctionalClass": "StaticDefenseAndNonessential"
+    },
+    {
+    "stableId": "building.ali.reconfiguration_dock",
+      "footprintMask": [
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111"
+      ],
+      "rotatable": true,
+      "cost": {
+        "ore": 210,
+        "energy": 60,
+        "crystals": 1
+      },
+      "buildTicks": 1000,
+      "productionExit": { "width": 5, "depth": 5, "largestFootprint": "Huge" },
+      "operationsCapacityProvided": 6,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 4,
+      "energyFunctionalClass": "ProductionAndResearch"
+    },
+    {
+      "stableId": "building.ali.resonance_core",
+      "footprintMask": [
+        "1111",
+        "1111",
+        "1111",
+        "1111"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 160,
+        "energy": 50,
+        "crystals": 0
+      },
+      "buildTicks": 800,
+      "operationsCapacityProvided": 0,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 3,
+      "energyFunctionalClass": "ServiceAndFactionSystems"
+    },
+    {
+      "stableId": "building.ast.field_systems_garage",
+      "footprintMask": [
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111"
+      ],
+      "rotatable": true,
+      "cost": {
+        "ore": 130,
+        "energy": 10,
+        "crystals": 0
+      },
+      "buildTicks": 600,
+      "productionExit": { "width": 4, "depth": 4, "largestFootprint": "Large" },
+      "operationsCapacityProvided": 4,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 1,
+      "energyFunctionalClass": "ProductionAndResearch"
+    },
+    {
+      "stableId": "building.ast.flight_operations_pad",
+      "footprintMask": [
+        "1111111111",
+        "1111111111",
+        "1111111111",
+        "1111111111",
+        "1111111111",
+        "1111111111",
+        "1111111111",
+        "1111111111"
+      ],
+      "rotatable": true,
+      "cost": {
+        "ore": 200,
+        "energy": 45,
+        "crystals": 1
+      },
+      "buildTicks": 900,
+      "productionExit": { "width": 5, "depth": 5, "largestFootprint": "Huge" },
+      "operationsCapacityProvided": 5,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 3,
+      "energyFunctionalClass": "ProductionAndResearch"
+    },
+    {
+      "stableId": "building.ast.frontier_extraction_station",
+      "footprintMask": [
+        "111111",
+        "111111",
+        "111111",
+        "111111",
+        "111111",
+        "111111"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 140,
+        "energy": 15,
+        "crystals": 0
+      },
+      "buildTicks": 640,
+      "operationsCapacityProvided": 0,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 1,
+      "energyFunctionalClass": "ResourceProcessing"
+    },
+    {
+      "stableId": "building.ast.mb01_eagle_command_base",
+      "footprintMask": [
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 260,
+        "energy": 40,
+        "crystals": 0
+      },
+      "buildTicks": 900,
+      "productionExit": { "width": 3, "depth": 3, "largestFootprint": "Small" },
+      "operationsCapacityProvided": 16,
+      "energyGenerationPerSecond": 2,
+      "energyReserveCapacity": 150,
+      "continuousEnergyDemandPerSecond": 0,
+      "energyFunctionalClass": "CommandAndBasicEconomy"
+    },
+    {
+      "stableId": "building.ast.mission_vehicle_bay",
+      "footprintMask": [
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111"
+      ],
+      "rotatable": true,
+      "cost": {
+        "ore": 190,
+        "energy": 35,
+        "crystals": 1
+      },
+      "buildTicks": 900,
+      "productionExit": { "width": 5, "depth": 5, "largestFootprint": "Huge" },
+      "operationsCapacityProvided": 5,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 2,
+      "energyFunctionalClass": "ProductionAndResearch"
+    },
+    {
+      "stableId": "building.ast.modular_sentinel_defense",
+      "footprintMask": [
+        "11",
+        "11"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 110,
+        "energy": 20,
+        "crystals": 0
+      },
+      "buildTicks": 560,
+      "operationsCapacityProvided": 0,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 1,
+      "energyFunctionalClass": "StaticDefenseAndNonessential"
+    },
+    {
+      "stableId": "building.ast.service_refit_hub",
+      "footprintMask": [
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 170,
+        "energy": 30,
+        "crystals": 0
+      },
+      "buildTicks": 760,
+      "operationsCapacityProvided": 4,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 2,
+      "energyFunctionalClass": "ServiceAndFactionSystems"
+    },
+    {
+      "stableId": "building.ast.solar_energy_array",
+      "footprintMask": [
+        "111111",
+        "111111",
+        "111111",
+        "111111",
+        "111111"
+      ],
+      "rotatable": true,
+      "cost": {
+        "ore": 120,
+        "energy": 0,
+        "crystals": 0
+      },
+      "buildTicks": 560,
+      "operationsCapacityProvided": 0,
+      "energyGenerationPerSecond": 8,
+      "energyReserveCapacity": 100,
+      "continuousEnergyDemandPerSecond": 0,
+      "energyFunctionalClass": "StaticDefenseAndNonessential"
+    },
+    {
+      "stableId": "building.mar.aero_guard_tower",
+      "footprintMask": [
+        "11",
+        "11"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 120,
+        "energy": 25,
+        "crystals": 0
+      },
+      "buildTicks": 560,
+      "operationsCapacityProvided": 0,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 2,
+      "energyFunctionalClass": "StaticDefenseAndNonessential"
+    },
+    {
+      "stableId": "building.mar.aero_tube_hangar",
+      "footprintMask": [
+        "111111111",
+        "111111111",
+        "111111111",
+        "111111111",
+        "111111111",
+        "111111111",
+        "111111111",
+        "111111111",
+        "111111111"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 280,
+        "energy": 40,
+        "crystals": 0
+      },
+      "buildTicks": 1000,
+      "productionExit": { "width": 3, "depth": 3, "largestFootprint": "Small" },
+      "operationsCapacityProvided": 16,
+      "energyGenerationPerSecond": 2,
+      "energyReserveCapacity": 150,
+      "continuousEnergyDemandPerSecond": 0,
+      "energyFunctionalClass": "CommandAndBasicEconomy"
+    },
+    {
+      "stableId": "building.mar.aero_tube_link",
+      "footprintMask": [
+        "1"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 50,
+        "energy": 10,
+        "crystals": 0
+      },
+      "buildTicks": 200,
+      "operationsCapacityProvided": 0,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 1,
+      "energyFunctionalClass": "ServiceAndFactionSystems"
+    },
+    {
+      "stableId": "building.mar.deflector_arm",
+      "footprintMask": [
+        "111",
+        "111",
+        "111"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 100,
+        "energy": 15,
+        "crystals": 0
+      },
+      "buildTicks": 500,
+      "operationsCapacityProvided": 0,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 1,
+      "energyFunctionalClass": "StaticDefenseAndNonessential"
+    },
+    {
+      "stableId": "building.mar.excavation_plant",
+      "footprintMask": [
+        "111111",
+        "111111",
+        "111111",
+        "111111",
+        "111111",
+        "111111"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 130,
+        "energy": 15,
+        "crystals": 0
+      },
+      "buildTicks": 600,
+      "operationsCapacityProvided": 0,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 1,
+      "energyFunctionalClass": "ResourceProcessing"
+    },
+    {
+      "stableId": "building.mar.mechanical_workshop",
+      "footprintMask": [
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111"
+      ],
+      "rotatable": true,
+      "cost": {
+        "ore": 150,
+        "energy": 20,
+        "crystals": 0
+      },
+      "buildTicks": 700,
+      "productionExit": { "width": 5, "depth": 5, "largestFootprint": "Huge" },
+      "operationsCapacityProvided": 5,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 1,
+      "energyFunctionalClass": "ProductionAndResearch"
+    },
+    {
+      "stableId": "building.mar.pressure_generator",
+      "footprintMask": [
+        "1111",
+        "1111",
+        "1111",
+        "1111"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 130,
+        "energy": 10,
+        "crystals": 0
+      },
+      "buildTicks": 600,
+      "operationsCapacityProvided": 0,
+      "energyGenerationPerSecond": 9,
+      "energyReserveCapacity": 100,
+      "continuousEnergyDemandPerSecond": 0,
+      "energyFunctionalClass": "StaticDefenseAndNonessential"
+    },
+    {
+      "stableId": "building.mar.routing_laboratory",
+      "footprintMask": [
+        "111111",
+        "111111",
+        "111111",
+        "111111",
+        "111111",
+        "111111"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 170,
+        "energy": 35,
+        "crystals": 1
+      },
+      "buildTicks": 840,
+      "operationsCapacityProvided": 4,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 2,
+      "energyFunctionalClass": "ProductionAndResearch"
+    },
+    {
+      "stableId": "building.mar.settlement_station",
+      "footprintMask": [
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111",
+        "1111111"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 220,
+        "energy": 30,
+        "crystals": 0
+      },
+      "buildTicks": 800,
+      "operationsCapacityProvided": 12,
+      "energyGenerationPerSecond": 1,
+      "energyReserveCapacity": 150,
+      "continuousEnergyDemandPerSecond": 0,
+      "energyFunctionalClass": "CommandAndBasicEconomy"
+      ,"productionExit": { "width": 2, "depth": 2, "largestFootprint": "Tiny" }
+    },
+    {
+      "stableId": "building.rock_raiders.crusher_barrier",
+      "footprintMask": [
+        "111"
+      ],
+      "rotatable": true,
+      "cost": {
+        "ore": 90,
+        "energy": 10,
+        "crystals": 0
+      },
+      "buildTicks": 480,
+      "operationsCapacityProvided": 0,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 0,
+      "energyFunctionalClass": "StaticDefenseAndNonessential"
+    },
+    {
+      "stableId": "building.rock_raiders.crystal_vault",
+      "footprintMask": [
+        "11111",
+        "11111",
+        "11111",
+        "11111",
+        "11111"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 180,
+        "energy": 40,
+        "crystals": 0
+      },
+      "buildTicks": 900,
+      "operationsCapacityProvided": 0,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 1,
+      "energyFunctionalClass": "ResourceProcessing"
+    },
+    {
+      "stableId": "building.rock_raiders.cutter_mast",
+      "footprintMask": [
+        "11",
+        "11"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 120,
+        "energy": 25,
+        "crystals": 0
+      },
+      "buildTicks": 600,
+      "operationsCapacityProvided": 0,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 2,
+      "energyFunctionalClass": "StaticDefenseAndNonessential"
+    },
+    {
+      "stableId": "building.rock_raiders.engineering_workshop",
+      "footprintMask": [
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 220,
+        "energy": 50,
+        "crystals": 0
+      },
+      "buildTicks": 1100,
+      "productionExit": { "width": 5, "depth": 5, "largestFootprint": "Huge" },
+      "operationsCapacityProvided": 6,
+      "energyGenerationPerSecond": 0,
+      "energyReserveCapacity": 0,
+      "continuousEnergyDemandPerSecond": 3,
+      "energyFunctionalClass": "ProductionAndResearch"
+    },
+    {
+      "stableId": "building.rock_raiders.hq",
+      "footprintMask": [
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111"
+      ],
+      "rotatable": false,
+      "cost": {
+        "ore": 320,
+        "energy": 40,
+        "crystals": 0
+      },
       "buildTicks": 1200,
       "operationsCapacityProvided": 16,
       "energyGenerationPerSecond": 2,
@@ -283,13 +1594,28 @@
       "continuousEnergyDemandPerSecond": 0,
       "energyFunctionalClass": "CommandAndBasicEconomy",
       "worksiteServiceRadius": 18,
-      "productionExit": { "width": 2, "depth": 2, "largestFootprint": "Tiny" }
+      "productionExit": {
+        "width": 2,
+        "depth": 2,
+        "largestFootprint": "Tiny"
+      }
     },
     {
       "stableId": "building.rock_raiders.ore_processing_plant",
-      "footprintMask": ["111111", "111111", "111111", "111111", "111111", "111111"],
+      "footprintMask": [
+        "111111",
+        "111111",
+        "111111",
+        "111111",
+        "111111",
+        "111111"
+      ],
       "rotatable": false,
-      "cost": { "ore": 140, "energy": 15 },
+      "cost": {
+        "ore": 140,
+        "energy": 15,
+        "crystals": 0
+      },
       "buildTicks": 600,
       "operationsCapacityProvided": 0,
       "energyGenerationPerSecond": 0,
@@ -299,9 +1625,19 @@
     },
     {
       "stableId": "building.rock_raiders.power_station",
-      "footprintMask": ["11111", "11111", "11111", "11111", "11111"],
+      "footprintMask": [
+        "11111",
+        "11111",
+        "11111",
+        "11111",
+        "11111"
+      ],
       "rotatable": false,
-      "cost": { "ore": 150, "energy": 20 },
+      "cost": {
+        "ore": 150,
+        "energy": 20,
+        "crystals": 0
+      },
       "buildTicks": 700,
       "operationsCapacityProvided": 0,
       "energyGenerationPerSecond": 10,
@@ -311,9 +1647,20 @@
     },
     {
       "stableId": "building.rock_raiders.vehicle_service_bay",
-      "footprintMask": ["11111111", "11111111", "11111111", "11111111", "11111111", "11111111"],
+      "footprintMask": [
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111",
+        "11111111"
+      ],
       "rotatable": true,
-      "cost": { "ore": 160, "energy": 20 },
+      "cost": {
+        "ore": 160,
+        "energy": 20,
+        "crystals": 0
+      },
       "buildTicks": 800,
       "operationsCapacityProvided": 4,
       "energyGenerationPerSecond": 0,
@@ -321,40 +1668,632 @@
       "continuousEnergyDemandPerSecond": 1,
       "energyFunctionalClass": "ProductionAndResearch",
       "worksiteServiceRadius": 12,
-      "productionExit": { "width": 3, "depth": 3, "largestFootprint": "Medium" }
+      "productionExit": {
+        "width": 3,
+        "depth": 3,
+        "largestFootprint": "Medium"
+      }
     }
+  ],
+  "constructionActionDefinitions": [
+    {"building":"building.ali.etx_command_core","prerequisiteGroups":[]},
+    {"building":"building.ali.etx_defense_node","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.ali.etx_command_core"}]},{"anyOf":[{"kind":"Building","target":"building.ali.power_coupler"}]}]},
+    {"building":"building.ali.etx_fabricator","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.ali.etx_command_core"}]}]},
+    {"building":"building.ali.power_coupler","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.ali.etx_command_core"}]}]},
+    {"building":"building.ali.reconfiguration_dock","prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.ali.etx_reconfiguration_matrix"}]}]},
+    {"building":"building.ali.resonance_core","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.ali.etx_command_core"}]},{"anyOf":[{"kind":"Building","target":"building.ali.power_coupler"}]}]},
+    {"building":"building.ast.field_systems_garage","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.ast.mb01_eagle_command_base"}]}]},
+    {"building":"building.ast.flight_operations_pad","prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.ast.mission_operations_integration"}]}]},
+    {"building":"building.ast.frontier_extraction_station","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.ast.mb01_eagle_command_base"}]}]},
+    {"building":"building.ast.mb01_eagle_command_base","prerequisiteGroups":[]},
+    {"building":"building.ast.mission_vehicle_bay","prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.ast.mission_operations_integration"}]}]},
+    {"building":"building.ast.modular_sentinel_defense","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.ast.service_refit_hub"}]}]},
+    {"building":"building.ast.service_refit_hub","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.ast.field_systems_garage"}]},{"anyOf":[{"kind":"Building","target":"building.ast.solar_energy_array"},{"kind":"Building","target":"building.ast.frontier_extraction_station"}]}]},
+    {"building":"building.ast.solar_energy_array","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.ast.mb01_eagle_command_base"}]}]},
+    {"building":"building.mar.aero_guard_tower","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.mar.routing_laboratory"}]}]},
+    {"building":"building.mar.aero_tube_hangar","prerequisiteGroups":[]},
+    {"building":"building.mar.aero_tube_link","prerequisiteGroups":[]},
+    {"building":"building.mar.deflector_arm","prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.mar.utility_mechanisms"}]}]},
+    {"building":"building.mar.excavation_plant","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.mar.aero_tube_hangar"},{"kind":"Building","target":"building.mar.settlement_station"}]}]},
+    {"building":"building.mar.mechanical_workshop","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.mar.aero_tube_hangar"},{"kind":"Building","target":"building.mar.settlement_station"}]}]},
+    {"building":"building.mar.pressure_generator","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.mar.aero_tube_hangar"},{"kind":"Building","target":"building.mar.settlement_station"}]}]},
+    {"building":"building.mar.routing_laboratory","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.mar.mechanical_workshop"}]},{"anyOf":[{"kind":"Building","target":"building.mar.pressure_generator"}]},{"anyOf":[{"kind":"Building","target":"building.mar.excavation_plant"}]}]},
+    {"building":"building.mar.settlement_station","prerequisiteGroups":[]},
+    {"building":"building.rock_raiders.crusher_barrier","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.rock_raiders.hq"}]}]},
+    {"building":"building.rock_raiders.crystal_vault","prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.rr.industrial_expansion_program"}]}]},
+    {"building":"building.rock_raiders.cutter_mast","prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.rr.industrial_expansion_program"}]},{"anyOf":[{"kind":"Building","target":"building.rock_raiders.power_station"}]}]},
+    {"building":"building.rock_raiders.engineering_workshop","prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.rr.industrial_expansion_program"}]}]},
+    {"building":"building.rock_raiders.hq","prerequisiteGroups":[]},
+    {"building":"building.rock_raiders.ore_processing_plant","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.rock_raiders.hq"}]}]},
+    {"building":"building.rock_raiders.power_station","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.rock_raiders.hq"}]}]},
+    {"building":"building.rock_raiders.vehicle_service_bay","prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.rock_raiders.hq"}]}]}
   ],
   "productionDefinitions": [
-    {
-      "unit": "unit.rock_raiders.crew",
-      "producer": "building.rock_raiders.hq",
-      "cost": { "ore": 50, "energy": 0, "crystals": 0 },
-      "operationsCapacity": 1,
-      "buildTicks": 320
-    },
-    {
-      "unit": "unit.rock_raiders.hover_scout",
-      "producer": "building.rock_raiders.vehicle_service_bay",
-      "cost": { "ore": 75, "energy": 10, "crystals": 0 },
-      "operationsCapacity": 1,
-      "buildTicks": 400
-    },
-    {
-      "unit": "unit.rock_raiders.rapid_rider",
-      "producer": "building.rock_raiders.vehicle_service_bay",
-      "cost": { "ore": 90, "energy": 10, "crystals": 0 },
-      "operationsCapacity": 2,
-      "buildTicks": 560
-    },
-    {
-      "unit": "unit.rock_raiders.loader_dozer",
-      "producer": "building.rock_raiders.vehicle_service_bay",
-      "cost": { "ore": 125, "energy": 15, "crystals": 0 },
-      "operationsCapacity": 3,
-      "buildTicks": 720
-    }
+    {"unit":"unit.aliens.alien_jet","producers":["building.ali.etx_fabricator"],"cost":{"ore":95,"energy":35,"crystals":0},"operationsCapacity":2,"buildTicks":560,"prerequisiteGroups":[]},
+    {"unit":"unit.aliens.alien_mothership","producers":["building.ali.reconfiguration_dock"],"cost":{"ore":420,"energy":160,"crystals":6},"operationsCapacity":8,"buildTicks":1900,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.ali.advanced_resonance_architecture"}]}]},
+    {"unit":"unit.aliens.etx_alien_infiltrator","producers":["building.ali.reconfiguration_dock"],"cost":{"ore":210,"energy":65,"crystals":2},"operationsCapacity":4,"buildTicks":1100,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.ali.infiltration_matrix"}]}]},
+    {"unit":"unit.aliens.etx_alien_strike","producers":["building.ali.reconfiguration_dock"],"cost":{"ore":190,"energy":60,"crystals":1},"operationsCapacity":4,"buildTicks":1000,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.ali.siege_phase_coupling"}]}]},
+    {"unit":"unit.aliens.etx_servitor","producers":["building.ali.etx_command_core","building.ali.etx_fabricator"],"cost":{"ore":50,"energy":5,"crystals":0},"operationsCapacity":1,"buildTicks":320,"prerequisiteGroups":[]},
+    {"unit":"unit.aliens.razor_skimmer","producers":["building.ali.etx_fabricator"],"cost":{"ore":105,"energy":25,"crystals":0},"operationsCapacity":2,"buildTicks":600,"prerequisiteGroups":[]},
+    {"unit":"unit.astronauts.expedition_crew","producers":["building.ast.mb01_eagle_command_base"],"cost":{"ore":50,"energy":0,"crystals":0},"operationsCapacity":1,"buildTicks":320,"prerequisiteGroups":[]},
+    {"unit":"unit.astronauts.mission_fighter","producers":["building.ast.flight_operations_pad"],"cost":{"ore":140,"energy":55,"crystals":1},"operationsCapacity":2,"buildTicks":800,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.ast.aerospace_coordination"}]}]},
+    {"unit":"unit.astronauts.mobile_mining_platform","producers":["building.ast.mission_vehicle_bay"],"cost":{"ore":170,"energy":25,"crystals":0},"operationsCapacity":3,"buildTicks":960,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.ast.mission_operations_integration"}]}]},
+    {"unit":"unit.astronauts.mono_jet","producers":["building.ast.mb01_eagle_command_base"],"cost":{"ore":100,"energy":35,"crystals":0},"operationsCapacity":1,"buildTicks":640,"prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.ast.solar_energy_array"}]}]},
+    {"unit":"unit.astronauts.mt101_armored_drilling_unit","producers":["building.ast.mission_vehicle_bay"],"cost":{"ore":280,"energy":70,"crystals":2},"operationsCapacity":5,"buildTicks":1300,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.ast.heavy_mission_chassis"}]}]},
+    {"unit":"unit.astronauts.mt201_ultra_drill_walker","producers":["building.ast.mission_vehicle_bay"],"cost":{"ore":320,"energy":90,"crystals":3},"operationsCapacity":6,"buildTicks":1500,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.ast.deep_mission_drilling"}]}]},
+    {"unit":"unit.astronauts.mt51_claw_tank","producers":["building.ast.mission_vehicle_bay"],"cost":{"ore":180,"energy":35,"crystals":0},"operationsCapacity":3,"buildTicks":900,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.ast.mission_operations_integration"}]}]},
+    {"unit":"unit.astronauts.mx41_switch_fighter","producers":["building.ast.mission_vehicle_bay"],"cost":{"ore":170,"energy":60,"crystals":1},"operationsCapacity":3,"buildTicks":900,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.ast.switchframe_actuation"}]}]},
+    {"unit":"unit.astronauts.mx71_recon_dropship","producers":["building.ast.flight_operations_pad"],"cost":{"ore":200,"energy":70,"crystals":1},"operationsCapacity":4,"buildTicks":1100,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.ast.aerospace_coordination"}]}]},
+    {"unit":"unit.astronauts.mx81_operations_aircraft","producers":["building.ast.flight_operations_pad"],"cost":{"ore":380,"energy":130,"crystals":4},"operationsCapacity":6,"buildTicks":1800,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.ast.integrated_expedition_command"}]}]},
+    {"unit":"unit.astronauts.rover","producers":["building.ast.field_systems_garage"],"cost":{"ore":70,"energy":5,"crystals":0},"operationsCapacity":1,"buildTicks":360,"prerequisiteGroups":[]},
+    {"unit":"unit.astronauts.solar_explorer","producers":["building.ast.field_systems_garage"],"cost":{"ore":180,"energy":40,"crystals":1},"operationsCapacity":4,"buildTicks":1000,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.ast.field_sustainment_package"}]}]},
+    {"unit":"unit.astronauts.t3_trike","producers":["building.ast.field_systems_garage"],"cost":{"ore":110,"energy":15,"crystals":0},"operationsCapacity":2,"buildTicks":600,"prerequisiteGroups":[]},
+    {"unit":"unit.martians.aero_skiff","producers":["building.mar.aero_tube_hangar"],"cost":{"ore":120,"energy":40,"crystals":0},"operationsCapacity":2,"buildTicks":700,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.mar.aero_handling_decks"}]}]},
+    {"unit":"unit.martians.double_hover","producers":["building.mar.mechanical_workshop"],"cost":{"ore":65,"energy":10,"crystals":0},"operationsCapacity":1,"buildTicks":360,"prerequisiteGroups":[]},
+    {"unit":"unit.martians.excavation_searcher","producers":["building.mar.mechanical_workshop"],"cost":{"ore":330,"energy":80,"crystals":3},"operationsCapacity":6,"buildTicks":1560,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.mar.grand_network_integration"}]},{"anyOf":[{"kind":"Research","target":"research.mar.advanced_excavation_systems"}]}]},
+    {"unit":"unit.martians.jet_scooter","producers":["building.mar.mechanical_workshop"],"cost":{"ore":90,"energy":15,"crystals":0},"operationsCapacity":1,"buildTicks":500,"prerequisiteGroups":[]},
+    {"unit":"unit.martians.recon_mech_rp","producers":["building.mar.mechanical_workshop"],"cost":{"ore":170,"energy":35,"crystals":1},"operationsCapacity":3,"buildTicks":900,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.mar.walker_articulation"}]}]},
+    {"unit":"unit.martians.red_planet_cruiser","producers":["building.mar.mechanical_workshop"],"cost":{"ore":150,"energy":25,"crystals":0},"operationsCapacity":3,"buildTicks":800,"prerequisiteGroups":[{"anyOf":[{"kind":"Building","target":"building.mar.routing_laboratory"}]}]},
+    {"unit":"unit.martians.red_planet_protector","producers":["building.mar.mechanical_workshop"],"cost":{"ore":220,"energy":50,"crystals":2},"operationsCapacity":4,"buildTicks":1100,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.mar.walker_articulation"}]}]},
+    {"unit":"unit.martians.worker_robot","producers":["building.mar.aero_tube_hangar","building.mar.settlement_station"],"cost":{"ore":50,"energy":0,"crystals":0},"operationsCapacity":1,"buildTicks":320,"prerequisiteGroups":[]},
+    {"unit":"unit.rock_raiders.chrome_crusher","producers":["building.rock_raiders.engineering_workshop"],"cost":{"ore":330,"energy":90,"crystals":4},"operationsCapacity":6,"buildTicks":1560,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.rr.deep_core_engineering"}]}]},
+    {"unit":"unit.rock_raiders.crew","producers":["building.rock_raiders.hq"],"cost":{"ore":50,"energy":0,"crystals":0},"operationsCapacity":1,"buildTicks":320,"prerequisiteGroups":[]},
+    {"unit":"unit.rock_raiders.drill_craft","producers":["building.rock_raiders.engineering_workshop"],"cost":{"ore":95,"energy":15,"crystals":0},"operationsCapacity":2,"buildTicks":560,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.rr.industrial_expansion_program"}]}]},
+    {"unit":"unit.rock_raiders.granite_grinder","producers":["building.rock_raiders.engineering_workshop"],"cost":{"ore":190,"energy":35,"crystals":1},"operationsCapacity":4,"buildTicks":1000,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.rr.reinforced_drilling_assemblies"}]}]},
+    {"unit":"unit.rock_raiders.hover_scout","producers":["building.rock_raiders.vehicle_service_bay"],"cost":{"ore":75,"energy":10,"crystals":0},"operationsCapacity":1,"buildTicks":400,"prerequisiteGroups":[]},
+    {"unit":"unit.rock_raiders.loader_dozer","producers":["building.rock_raiders.vehicle_service_bay"],"cost":{"ore":125,"energy":15,"crystals":0},"operationsCapacity":3,"buildTicks":720,"prerequisiteGroups":[]},
+    {"unit":"unit.rock_raiders.rapid_rider","producers":["building.rock_raiders.vehicle_service_bay"],"cost":{"ore":90,"energy":10,"crystals":0},"operationsCapacity":2,"buildTicks":560,"prerequisiteGroups":[]},
+    {"unit":"unit.rock_raiders.tunnel_transport","producers":["building.rock_raiders.engineering_workshop"],"cost":{"ore":300,"energy":110,"crystals":3},"operationsCapacity":5,"buildTicks":1500,"prerequisiteGroups":[{"anyOf":[{"kind":"Research","target":"research.rr.deep_core_engineering"}]}]}
   ],
   "entities": [
+    {
+      "stableId": "building.ali.etx_command_core",
+      "faction": "Aliens",
+      "sourceClassification": "NEW_GAME_CONTENT",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Huge",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "FortifiedStructure",
+        "layer": "Ground",
+        "flags": [
+          "Command"
+        ],
+        "hitPoints": 2400,
+        "armorRating": 3
+      },
+      "viewProfile": "view.placeholder.ali.etx_command_core"
+    },
+    {
+      "stableId": "building.ali.etx_defense_node",
+      "faction": "Aliens",
+      "sourceClassification": "NEW_GAME_CONTENT",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Small",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "FortifiedStructure",
+        "layer": "Ground",
+        "flags": [
+          "DefensiveStructure"
+        ],
+        "hitPoints": 700,
+        "armorRating": 1
+      },
+      "viewProfile": "view.placeholder.ali.etx_defense_node"
+    },
+    {
+      "stableId": "building.ali.etx_fabricator",
+      "faction": "Aliens",
+      "sourceClassification": "NEW_GAME_CONTENT",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Large",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+        "flags": [
+          "Production"
+        ],
+        "hitPoints": 1350,
+        "armorRating": 2
+      },
+      "viewProfile": "view.placeholder.ali.etx_fabricator"
+    },
+    {
+      "stableId": "building.ali.power_coupler",
+      "faction": "Aliens",
+      "sourceClassification": "NEW_GAME_CONTENT",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Small",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+        "flags": [
+          "EconomicInfrastructure"
+        ],
+        "hitPoints": 850,
+        "armorRating": 1
+      },
+      "viewProfile": "view.placeholder.ali.power_coupler"
+    },
+    {
+      "stableId": "building.ali.reconfiguration_dock",
+      "faction": "Aliens",
+      "sourceClassification": "NEW_GAME_CONTENT",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Huge",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+      "flags": [
+        "Production",
+        "Support"
+      ],
+        "hitPoints": 1600,
+        "armorRating": 2
+      },
+      "viewProfile": "view.placeholder.ali.reconfiguration_dock"
+    },
+    {
+      "stableId": "building.ali.resonance_core",
+      "faction": "Aliens",
+      "sourceClassification": "NEW_GAME_CONTENT",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Small",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+        "flags": [
+          "EconomicInfrastructure",
+          "Support"
+        ],
+        "hitPoints": 1200,
+        "armorRating": 2
+      },
+      "viewProfile": "view.placeholder.ali.resonance_core"
+    },
+    {
+      "stableId": "building.ast.field_systems_garage",
+      "faction": "Astronauts",
+      "sourceClassification": "COMPOSITE_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Huge",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+        "flags": [
+          "Production"
+        ],
+        "hitPoints": 1450,
+        "armorRating": 2
+      },
+      "viewProfile": "view.placeholder.ast.field_systems_garage"
+    },
+    {
+      "stableId": "building.ast.flight_operations_pad",
+      "faction": "Astronauts",
+      "sourceClassification": "COMPOSITE_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Huge",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+        "flags": [
+          "Production"
+        ],
+        "hitPoints": 1400,
+        "armorRating": 2
+      },
+      "viewProfile": "view.placeholder.ast.flight_operations_pad"
+    },
+    {
+      "stableId": "building.ast.frontier_extraction_station",
+      "faction": "Astronauts",
+      "sourceClassification": "COMPOSITE_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Large",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+        "flags": [
+          "EconomicInfrastructure"
+        ],
+        "hitPoints": 1250,
+        "armorRating": 2
+      },
+      "viewProfile": "view.placeholder.ast.frontier_extraction_station"
+    },
+    {
+      "stableId": "building.ast.mb01_eagle_command_base",
+      "faction": "Astronauts",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Huge",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "FortifiedStructure",
+        "layer": "Ground",
+        "flags": [
+          "Command"
+        ],
+        "hitPoints": 2700,
+        "armorRating": 4
+      },
+      "viewProfile": "view.placeholder.ast.mb01_eagle_command_base"
+    },
+    {
+      "stableId": "building.ast.mission_vehicle_bay",
+      "faction": "Astronauts",
+      "sourceClassification": "COMPOSITE_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Huge",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+        "flags": [
+          "Production"
+        ],
+        "hitPoints": 1700,
+        "armorRating": 3
+      },
+      "viewProfile": "view.placeholder.ast.mission_vehicle_bay"
+    },
+    {
+      "stableId": "building.ast.modular_sentinel_defense",
+      "faction": "Astronauts",
+      "sourceClassification": "NEW_GAME_CONTENT",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Small",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "FortifiedStructure",
+        "layer": "Ground",
+        "flags": [
+          "DefensiveStructure"
+        ],
+        "hitPoints": 800,
+        "armorRating": 2
+      },
+      "viewProfile": "view.placeholder.ast.modular_sentinel_defense"
+    },
+    {
+      "stableId": "building.ast.service_refit_hub",
+      "faction": "Astronauts",
+      "sourceClassification": "COMPOSITE_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Huge",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+        "flags": [
+          "Production",
+          "Support"
+        ],
+        "hitPoints": 1650,
+        "armorRating": 3
+      },
+      "viewProfile": "view.placeholder.ast.service_refit_hub"
+    },
+    {
+      "stableId": "building.ast.solar_energy_array",
+      "faction": "Astronauts",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Large",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+        "flags": [
+          "EconomicInfrastructure"
+        ],
+        "hitPoints": 900,
+        "armorRating": 1
+      },
+      "viewProfile": "view.placeholder.ast.solar_energy_array"
+    },
+    {
+      "stableId": "building.mar.aero_guard_tower",
+      "faction": "Martians",
+      "sourceClassification": "NEW_GAME_CONTENT",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Small",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "FortifiedStructure",
+        "layer": "Ground",
+        "flags": [
+          "DefensiveStructure"
+        ],
+        "hitPoints": 760,
+        "armorRating": 2
+      },
+      "viewProfile": "view.placeholder.mar.aero_guard_tower"
+    },
+    {
+      "stableId": "building.mar.aero_tube_hangar",
+      "faction": "Martians",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Huge",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "FortifiedStructure",
+        "layer": "Ground",
+        "flags": [
+          "Command",
+          "Production"
+        ],
+        "hitPoints": 2800,
+        "armorRating": 4
+      },
+      "viewProfile": "view.placeholder.mar.aero_tube_hangar"
+    },
+    {
+      "stableId": "building.mar.aero_tube_link",
+      "faction": "Martians",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Tiny",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+        "flags": [
+          "EconomicInfrastructure",
+          "Support"
+        ],
+        "hitPoints": 320,
+        "armorRating": 1
+      },
+      "viewProfile": "view.placeholder.mar.aero_tube_link"
+    },
+    {
+      "stableId": "building.mar.deflector_arm",
+      "faction": "Martians",
+      "sourceClassification": "NEW_GAME_CONTENT",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Small",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "FortifiedStructure",
+        "layer": "Ground",
+        "flags": [
+          "DefensiveStructure"
+        ],
+        "hitPoints": 850,
+        "armorRating": 3
+      },
+      "viewProfile": "view.placeholder.mar.deflector_arm"
+    },
+    {
+      "stableId": "building.mar.excavation_plant",
+      "faction": "Martians",
+      "sourceClassification": "COMPOSITE_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Large",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+        "flags": [
+          "EconomicInfrastructure"
+        ],
+        "hitPoints": 1250,
+        "armorRating": 2
+      },
+      "viewProfile": "view.placeholder.mar.excavation_plant"
+    },
+    {
+      "stableId": "building.mar.mechanical_workshop",
+      "faction": "Martians",
+      "sourceClassification": "COMPOSITE_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Huge",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+        "flags": [
+          "Production",
+          "Support"
+        ],
+        "hitPoints": 1450,
+        "armorRating": 2
+      },
+      "viewProfile": "view.placeholder.mar.mechanical_workshop"
+    },
+    {
+      "stableId": "building.mar.pressure_generator",
+      "faction": "Martians",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Small",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+        "flags": [
+          "EconomicInfrastructure"
+        ],
+        "hitPoints": 900,
+        "armorRating": 1
+      },
+      "viewProfile": "view.placeholder.mar.pressure_generator"
+    },
+    {
+      "stableId": "building.mar.routing_laboratory",
+      "faction": "Martians",
+      "sourceClassification": "COMPOSITE_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Large",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+        "flags": [
+          "Production",
+          "Support"
+        ],
+        "hitPoints": 1500,
+        "armorRating": 2
+      },
+      "viewProfile": "view.placeholder.mar.routing_laboratory"
+    },
+    {
+      "stableId": "building.mar.settlement_station",
+      "faction": "Martians",
+      "sourceClassification": "COMPOSITE_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Huge",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "FortifiedStructure",
+        "layer": "Ground",
+        "flags": [
+          "Command",
+          "EconomicInfrastructure"
+        ],
+        "hitPoints": 1900,
+        "armorRating": 3
+      },
+      "viewProfile": "view.placeholder.mar.settlement_station"
+    },
+    {
+      "stableId": "building.rock_raiders.crusher_barrier",
+      "faction": "RockRaiders",
+      "sourceClassification": "NEW_GAME_CONTENT",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Small",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "FortifiedStructure",
+        "layer": "Ground",
+        "flags": [
+          "DefensiveStructure"
+        ],
+        "hitPoints": 1100,
+        "armorRating": 4
+      },
+      "viewProfile": "view.placeholder.rock_raiders.crusher_barrier"
+    },
+    {
+      "stableId": "building.rock_raiders.crystal_vault",
+      "faction": "RockRaiders",
+      "sourceClassification": "COMPOSITE_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Large",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "FortifiedStructure",
+        "layer": "Ground",
+        "flags": [
+          "EconomicInfrastructure"
+        ],
+        "hitPoints": 1600,
+        "armorRating": 4
+      },
+      "viewProfile": "view.placeholder.rock_raiders.crystal_vault"
+    },
+    {
+      "stableId": "building.rock_raiders.cutter_mast",
+      "faction": "RockRaiders",
+      "sourceClassification": "NEW_GAME_CONTENT",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Small",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "FortifiedStructure",
+        "layer": "Ground",
+        "flags": [
+          "DefensiveStructure"
+        ],
+        "hitPoints": 800,
+        "armorRating": 2
+      },
+      "viewProfile": "view.placeholder.rock_raiders.cutter_mast"
+    },
+    {
+      "stableId": "building.rock_raiders.engineering_workshop",
+      "faction": "RockRaiders",
+      "sourceClassification": "COMPOSITE_ADAPTED",
+      "movementProfile": "movement.prototype.static",
+      "footprint": "Huge",
+      "selectableKind": "Building",
+      "visionRadius": 0,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+        "flags": [
+          "Production"
+        ],
+        "hitPoints": 1900,
+        "armorRating": 3
+      },
+      "viewProfile": "view.placeholder.rock_raiders.engineering_workshop"
+    },
     {
       "stableId": "building.rock_raiders.hq",
       "faction": "RockRaiders",
@@ -364,7 +2303,15 @@
       "selectableKind": "Building",
       "visionRadius": 0,
       "operationsCapacity": 0,
-      "combatTarget": { "class": "FortifiedStructure", "layer": "Ground", "flags": ["Command"], "hitPoints": 3000, "armorRating": 5 },
+      "combatTarget": {
+        "class": "FortifiedStructure",
+        "layer": "Ground",
+        "flags": [
+          "Command"
+        ],
+        "hitPoints": 3000,
+        "armorRating": 5
+      },
       "viewProfile": "view.placeholder.rock_raiders.hq"
     },
     {
@@ -376,7 +2323,15 @@
       "selectableKind": "Building",
       "visionRadius": 0,
       "operationsCapacity": 0,
-      "combatTarget": { "class": "Structure", "layer": "Ground", "flags": ["EconomicInfrastructure"], "hitPoints": 1350, "armorRating": 2 },
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+        "flags": [
+          "EconomicInfrastructure"
+        ],
+        "hitPoints": 1350,
+        "armorRating": 2
+      },
       "viewProfile": "view.placeholder.rock_raiders.ore_processing_plant"
     },
     {
@@ -388,11 +2343,19 @@
       "selectableKind": "Building",
       "visionRadius": 0,
       "operationsCapacity": 0,
-      "combatTarget": { "class": "Structure", "layer": "Ground", "flags": ["EconomicInfrastructure"], "hitPoints": 1000, "armorRating": 1 },
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+        "flags": [
+          "EconomicInfrastructure"
+        ],
+        "hitPoints": 1000,
+        "armorRating": 1
+      },
       "viewProfile": "view.placeholder.rock_raiders.power_station"
     },
     {
-      "stableId": "building.rock_raiders.vehicle_service_bay",
+    "stableId": "building.rock_raiders.vehicle_service_bay",
       "faction": "RockRaiders",
       "sourceClassification": "COMPOSITE_ADAPTED",
       "movementProfile": "movement.prototype.static",
@@ -400,8 +2363,309 @@
       "selectableKind": "Building",
       "visionRadius": 0,
       "operationsCapacity": 0,
-      "combatTarget": { "class": "Structure", "layer": "Ground", "flags": ["Production"], "hitPoints": 1700, "armorRating": 3 },
+      "combatTarget": {
+        "class": "Structure",
+        "layer": "Ground",
+      "flags": [
+        "Production"
+        ],
+        "hitPoints": 1700,
+        "armorRating": 3
+      },
       "viewProfile": "view.placeholder.rock_raiders.vehicle_service_bay"
+    },
+    {
+      "stableId": "prototype.nav.huge",
+      "faction": "Technical",
+      "sourceClassification": "ENGINEERING_ONLY",
+      "movementProfile": "movement.prototype.nav_huge",
+      "footprint": "Huge",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 8,
+      "operationsCapacity": 0,
+      "combatTarget": {
+        "class": "MassiveMachine",
+        "layer": "Ground",
+        "flags": [],
+        "hitPoints": 880,
+        "armorRating": 5
+      },
+      "viewProfile": "view.placeholder.navigation.huge"
+    },
+    {
+      "stableId": "unit.aliens.alien_jet",
+      "faction": "Aliens",
+      "sourceClassification": "OFFICIAL_DIRECT",
+      "movementProfile": "movement.aliens.alien_jet",
+      "footprint": "Small",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 12,
+      "operationsCapacity": 2,
+      "combatTarget": {
+        "class": "LightMachine",
+        "layer": "TrueAir",
+        "flags": [
+          "CombatThreat"
+        ],
+        "hitPoints": 180,
+        "armorRating": 0
+      },
+      "viewProfile": "view.placeholder.aliens.alien_jet"
+    },
+    {
+      "stableId": "unit.aliens.alien_mothership",
+      "faction": "Aliens",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.aliens.alien_mothership",
+      "footprint": "Huge",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 14,
+      "operationsCapacity": 8,
+      "combatTarget": {
+        "class": "MassiveMachine",
+        "layer": "TrueAir",
+        "flags": [
+          "CombatThreat",
+          "Transport",
+          "Support"
+        ],
+        "hitPoints": 1200,
+        "armorRating": 4
+      },
+      "viewProfile": "view.placeholder.aliens.alien_mothership"
+    },
+    {
+      "stableId": "unit.aliens.etx_alien_infiltrator",
+      "faction": "Aliens",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.aliens.etx_alien_infiltrator",
+      "footprint": "Medium",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 13,
+      "operationsCapacity": 4,
+      "combatTarget": {
+        "class": "MediumMachine",
+        "layer": "Ground",
+        "flags": [
+          "CombatThreat",
+          "Support"
+        ],
+        "hitPoints": 360,
+        "armorRating": 2
+      },
+      "viewProfile": "view.placeholder.aliens.etx_alien_infiltrator"
+    },
+    {
+      "stableId": "unit.aliens.etx_alien_strike",
+      "faction": "Aliens",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.aliens.etx_alien_strike",
+      "footprint": "Medium",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 10,
+      "operationsCapacity": 4,
+      "combatTarget": {
+        "class": "MediumMachine",
+        "layer": "TrueAir",
+        "flags": [
+          "CombatThreat"
+        ],
+        "hitPoints": 330,
+        "armorRating": 1
+      },
+      "viewProfile": "view.placeholder.aliens.etx_alien_strike"
+    },
+    {
+      "stableId": "unit.aliens.etx_servitor",
+      "faction": "Aliens",
+      "sourceClassification": "NEW_GAME_CONTENT",
+      "movementProfile": "movement.aliens.etx_servitor",
+      "footprint": "Tiny",
+      "selectableKind": "Worker",
+      "visionRadius": 8,
+      "operationsCapacity": 1,
+      "workerHarvest": {
+        "oreTicksPerUnit": 30,
+        "oreCarryCapacity": 8
+      },
+      "combatTarget": {
+        "class": "LightMachine",
+        "layer": "Ground",
+        "flags": [
+          "Worker",
+          "Support"
+        ],
+        "hitPoints": 110,
+        "armorRating": 0
+      },
+      "viewProfile": "view.placeholder.aliens.etx_servitor"
+    },
+    {
+      "stableId": "unit.aliens.razor_skimmer",
+      "faction": "Aliens",
+      "sourceClassification": "COMPOSITE_ADAPTED",
+      "movementProfile": "movement.aliens.razor_skimmer",
+      "footprint": "Small",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 10,
+      "operationsCapacity": 2,
+      "combatTarget": {
+        "class": "LightMachine",
+        "layer": "Ground",
+        "flags": [
+          "CombatThreat"
+        ],
+        "hitPoints": 210,
+        "armorRating": 1
+      },
+      "viewProfile": "view.placeholder.aliens.razor_skimmer"
+    },
+    {
+      "stableId": "unit.astronauts.expedition_crew",
+      "faction": "Astronauts",
+      "sourceClassification": "COMPOSITE_ADAPTED",
+      "movementProfile": "movement.astronauts.expedition_crew",
+      "footprint": "Tiny",
+      "selectableKind": "Worker",
+      "visionRadius": 8,
+      "operationsCapacity": 1,
+      "workerHarvest": {
+        "oreTicksPerUnit": 30,
+        "oreCarryCapacity": 8
+      },
+      "combatTarget": {
+        "class": "Personnel",
+        "layer": "Ground",
+        "flags": [
+          "CombatThreat",
+          "Worker",
+          "Support"
+        ],
+        "hitPoints": 110,
+        "armorRating": 0
+      },
+      "viewProfile": "view.placeholder.astronauts.expedition_crew"
+    },
+    {
+      "stableId": "unit.astronauts.mission_fighter",
+      "faction": "Astronauts",
+      "sourceClassification": "COMPOSITE_ADAPTED",
+      "movementProfile": "movement.astronauts.mission_fighter",
+      "footprint": "Small",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 11,
+      "operationsCapacity": 2,
+      "combatTarget": {
+        "class": "LightMachine",
+        "layer": "TrueAir",
+        "flags": [
+          "CombatThreat"
+        ],
+        "hitPoints": 240,
+        "armorRating": 1
+      },
+      "viewProfile": "view.placeholder.astronauts.mission_fighter"
+    },
+    {
+      "stableId": "unit.astronauts.mobile_mining_platform",
+      "faction": "Astronauts",
+      "sourceClassification": "COMPOSITE_ADAPTED",
+      "movementProfile": "movement.astronauts.mobile_mining_platform",
+      "footprint": "Large",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 9,
+      "operationsCapacity": 3,
+      "combatTarget": {
+        "class": "HeavyMachine",
+        "layer": "Ground",
+        "flags": [
+          "CombatThreat",
+          "Support"
+        ],
+        "hitPoints": 400,
+        "armorRating": 2
+      },
+      "viewProfile": "view.placeholder.astronauts.mobile_mining_platform"
+    },
+    {
+      "stableId": "unit.astronauts.mono_jet",
+      "faction": "Astronauts",
+      "sourceClassification": "OFFICIAL_DIRECT",
+      "movementProfile": "movement.astronauts.mono_jet",
+      "footprint": "Small",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 13,
+      "operationsCapacity": 1,
+      "combatTarget": {
+        "class": "LightMachine",
+        "layer": "TrueAir",
+        "flags": [
+          "CombatThreat"
+        ],
+        "hitPoints": 150,
+        "armorRating": 0
+      },
+      "viewProfile": "view.placeholder.astronauts.mono_jet"
+    },
+    {
+      "stableId": "unit.astronauts.mt101_armored_drilling_unit",
+      "faction": "Astronauts",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.astronauts.mt101_armored_drilling_unit",
+      "footprint": "Large",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 9,
+      "operationsCapacity": 5,
+      "combatTarget": {
+        "class": "HeavyMachine",
+        "layer": "Ground",
+        "flags": [
+          "CombatThreat"
+        ],
+        "hitPoints": 700,
+        "armorRating": 4
+      },
+      "viewProfile": "view.placeholder.astronauts.mt101_armored_drilling_unit"
+    },
+    {
+      "stableId": "unit.astronauts.mt201_ultra_drill_walker",
+      "faction": "Astronauts",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.astronauts.mt201_ultra_drill_walker",
+      "footprint": "Huge",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 9,
+      "operationsCapacity": 6,
+      "combatTarget": {
+        "class": "HeavyMachine",
+        "layer": "Ground",
+        "flags": [
+          "CombatThreat"
+        ],
+        "hitPoints": 760,
+        "armorRating": 4
+      },
+      "viewProfile": "view.placeholder.astronauts.mt201_ultra_drill_walker"
+    },
+    {
+      "stableId": "unit.astronauts.mt51_claw_tank",
+      "faction": "Astronauts",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.astronauts.mt51_claw_tank",
+      "footprint": "Large",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 9,
+      "operationsCapacity": 3,
+      "combatTarget": {
+        "class": "HeavyMachine",
+        "layer": "Ground",
+        "flags": [
+          "CombatThreat"
+        ],
+        "hitPoints": 460,
+        "armorRating": 3
+      },
+      "viewProfile": "view.placeholder.astronauts.mt51_claw_tank"
     },
     {
       "stableId": "unit.astronauts.mx41_switch_fighter",
@@ -412,9 +2676,313 @@
       "selectableKind": "CombatSupport",
       "visionRadius": 10,
       "operationsCapacity": 3,
-      "combatTarget": { "class": "MediumMachine", "layer": "Ground", "flags": ["CombatThreat"], "hitPoints": 320, "armorRating": 2 },
+      "combatTarget": {
+        "class": "MediumMachine",
+        "layer": "Ground",
+        "flags": [
+          "CombatThreat"
+        ],
+        "hitPoints": 320,
+        "armorRating": 2
+      },
       "weaponProfile": "weapon.ast.mx41.pursuit_projector",
-      "viewProfile": "view.placeholder.astronauts.mx41_ground"
+      "viewProfile": "view.placeholder.astronauts.mx41_switch_fighter"
+    },
+    {
+      "stableId": "unit.astronauts.mx71_recon_dropship",
+      "faction": "Astronauts",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.astronauts.mx71_recon_dropship",
+      "footprint": "Large",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 12,
+      "operationsCapacity": 4,
+      "combatTarget": {
+        "class": "HeavyMachine",
+        "layer": "TrueAir",
+        "flags": [
+          "CombatThreat",
+          "Transport",
+          "Support"
+        ],
+        "hitPoints": 420,
+        "armorRating": 2
+      },
+      "viewProfile": "view.placeholder.astronauts.mx71_recon_dropship"
+    },
+    {
+      "stableId": "unit.astronauts.mx81_operations_aircraft",
+      "faction": "Astronauts",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.astronauts.mx81_operations_aircraft",
+      "footprint": "Huge",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 15,
+      "operationsCapacity": 6,
+      "combatTarget": {
+        "class": "MassiveMachine",
+        "layer": "TrueAir",
+        "flags": [
+          "CombatThreat",
+          "Support"
+        ],
+        "hitPoints": 720,
+        "armorRating": 3
+      },
+      "viewProfile": "view.placeholder.astronauts.mx81_operations_aircraft"
+    },
+    {
+      "stableId": "unit.astronauts.rover",
+      "faction": "Astronauts",
+      "sourceClassification": "OFFICIAL_DIRECT",
+      "movementProfile": "movement.astronauts.rover",
+      "footprint": "Small",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 13,
+      "operationsCapacity": 1,
+      "combatTarget": {
+        "class": "LightMachine",
+        "layer": "Ground",
+        "flags": [
+          "CombatThreat",
+          "Support"
+        ],
+        "hitPoints": 130,
+        "armorRating": 0
+      },
+      "viewProfile": "view.placeholder.astronauts.rover"
+    },
+    {
+      "stableId": "unit.astronauts.solar_explorer",
+      "faction": "Astronauts",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.astronauts.solar_explorer",
+      "footprint": "Large",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 11,
+      "operationsCapacity": 4,
+      "combatTarget": {
+        "class": "HeavyMachine",
+        "layer": "Ground",
+        "flags": [
+          "CombatThreat",
+          "Support",
+          "Transport"
+        ],
+        "hitPoints": 520,
+        "armorRating": 2
+      },
+      "viewProfile": "view.placeholder.astronauts.solar_explorer"
+    },
+    {
+      "stableId": "unit.astronauts.t3_trike",
+      "faction": "Astronauts",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.astronauts.t3_trike",
+      "footprint": "Medium",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 9,
+      "operationsCapacity": 2,
+      "combatTarget": {
+        "class": "LightMachine",
+        "layer": "Ground",
+        "flags": [
+          "CombatThreat"
+        ],
+        "hitPoints": 260,
+        "armorRating": 1
+      },
+      "viewProfile": "view.placeholder.astronauts.t3_trike"
+    },
+    {
+      "stableId": "unit.martians.aero_skiff",
+      "faction": "Martians",
+      "sourceClassification": "COMPOSITE_ADAPTED",
+      "movementProfile": "movement.martians.aero_skiff",
+      "footprint": "Small",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 12,
+      "operationsCapacity": 2,
+      "combatTarget": {
+        "class": "LightMachine",
+        "layer": "TrueAir",
+        "flags": [
+          "Transport",
+          "Support"
+        ],
+        "hitPoints": 190,
+        "armorRating": 0
+      },
+      "viewProfile": "view.placeholder.martians.aero_skiff"
+    },
+    {
+      "stableId": "unit.martians.double_hover",
+      "faction": "Martians",
+      "sourceClassification": "OFFICIAL_DIRECT",
+      "movementProfile": "movement.martians.double_hover",
+      "footprint": "Small",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 12,
+      "operationsCapacity": 1,
+      "combatTarget": {
+        "class": "LightMachine",
+        "layer": "Ground",
+        "flags": [
+          "Support"
+        ],
+        "hitPoints": 120,
+        "armorRating": 0
+      },
+      "viewProfile": "view.placeholder.martians.double_hover"
+    },
+    {
+      "stableId": "unit.martians.excavation_searcher",
+      "faction": "Martians",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.martians.excavation_searcher",
+      "footprint": "Huge",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 11,
+      "operationsCapacity": 6,
+      "combatTarget": {
+        "class": "MassiveMachine",
+        "layer": "Ground",
+        "flags": [
+          "CombatThreat",
+          "Support"
+        ],
+        "hitPoints": 760,
+        "armorRating": 4
+      },
+      "viewProfile": "view.placeholder.martians.excavation_searcher"
+    },
+    {
+      "stableId": "unit.martians.jet_scooter",
+      "faction": "Martians",
+      "sourceClassification": "OFFICIAL_DIRECT",
+      "movementProfile": "movement.martians.jet_scooter",
+      "footprint": "Small",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 10,
+      "operationsCapacity": 1,
+      "combatTarget": {
+        "class": "LightMachine",
+        "layer": "Ground",
+        "flags": [
+          "CombatThreat"
+        ],
+        "hitPoints": 180,
+        "armorRating": 0
+      },
+      "viewProfile": "view.placeholder.martians.jet_scooter"
+    },
+    {
+      "stableId": "unit.martians.recon_mech_rp",
+      "faction": "Martians",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.martians.recon_mech_rp",
+      "footprint": "Medium",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 13,
+      "operationsCapacity": 3,
+      "combatTarget": {
+        "class": "MediumMachine",
+        "layer": "Ground",
+        "flags": [
+          "CombatThreat",
+          "Support"
+        ],
+        "hitPoints": 300,
+        "armorRating": 2
+      },
+      "viewProfile": "view.placeholder.martians.recon_mech_rp"
+    },
+    {
+      "stableId": "unit.martians.red_planet_cruiser",
+      "faction": "Martians",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.martians.red_planet_cruiser",
+      "footprint": "Medium",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 9,
+      "operationsCapacity": 3,
+      "combatTarget": {
+        "class": "MediumMachine",
+        "layer": "Ground",
+        "flags": [
+          "CombatThreat"
+        ],
+        "hitPoints": 400,
+        "armorRating": 2
+      },
+      "viewProfile": "view.placeholder.martians.red_planet_cruiser"
+    },
+    {
+      "stableId": "unit.martians.red_planet_protector",
+      "faction": "Martians",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.martians.red_planet_protector",
+      "footprint": "Large",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 10,
+      "operationsCapacity": 4,
+      "combatTarget": {
+        "class": "HeavyMachine",
+        "layer": "Ground",
+        "flags": [
+          "CombatThreat"
+        ],
+        "hitPoints": 560,
+        "armorRating": 3
+      },
+      "viewProfile": "view.placeholder.martians.red_planet_protector"
+    },
+    {
+      "stableId": "unit.martians.worker_robot",
+      "faction": "Martians",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.martians.worker_robot",
+      "footprint": "Tiny",
+      "selectableKind": "Worker",
+      "visionRadius": 8,
+      "operationsCapacity": 1,
+      "workerHarvest": {
+        "oreTicksPerUnit": 30,
+        "oreCarryCapacity": 8
+      },
+      "combatTarget": {
+        "class": "LightMachine",
+        "layer": "Ground",
+        "flags": [
+          "CombatThreat",
+          "Worker",
+          "Support"
+        ],
+        "hitPoints": 115,
+        "armorRating": 1
+      },
+      "viewProfile": "view.placeholder.martians.worker_robot"
+    },
+    {
+      "stableId": "unit.rock_raiders.chrome_crusher",
+      "faction": "RockRaiders",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.prototype.chrome_crusher",
+      "footprint": "Large",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 9,
+      "operationsCapacity": 6,
+      "combatTarget": {
+        "class": "MassiveMachine",
+        "layer": "Ground",
+        "flags": [
+          "CombatThreat"
+        ],
+        "hitPoints": 880,
+        "armorRating": 5
+      },
+      "weaponProfile": "weapon.rr.chrome_crusher.chrome_drill",
+      "viewProfile": "view.placeholder.rock_raiders.chrome_crusher"
     },
     {
       "stableId": "unit.rock_raiders.crew",
@@ -423,15 +2991,66 @@
       "movementProfile": "movement.prototype.crew",
       "footprint": "Tiny",
       "selectableKind": "Worker",
-      "visionRadius": 7,
+      "visionRadius": 8,
       "operationsCapacity": 1,
       "workerHarvest": {
         "oreTicksPerUnit": 30,
         "oreCarryCapacity": 8
       },
-      "combatTarget": { "class": "Personnel", "layer": "Ground", "flags": ["CombatThreat", "Worker", "Support"], "hitPoints": 110, "armorRating": 0 },
+      "combatTarget": {
+        "class": "Personnel",
+        "layer": "Ground",
+        "flags": [
+          "CombatThreat",
+          "Worker",
+          "Support"
+        ],
+        "hitPoints": 110,
+        "armorRating": 0
+      },
       "weaponProfile": "weapon.rr.crew.portable_mining_tool",
       "viewProfile": "view.placeholder.rock_raiders.crew"
+    },
+    {
+      "stableId": "unit.rock_raiders.drill_craft",
+      "faction": "RockRaiders",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.rock_raiders.drill_craft",
+      "footprint": "Small",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 8,
+      "operationsCapacity": 2,
+      "combatTarget": {
+        "class": "LightMachine",
+        "layer": "Ground",
+        "flags": [
+          "CombatThreat",
+          "Support"
+        ],
+        "hitPoints": 190,
+        "armorRating": 1
+      },
+      "viewProfile": "view.placeholder.rock_raiders.drill_craft"
+    },
+    {
+      "stableId": "unit.rock_raiders.granite_grinder",
+      "faction": "RockRaiders",
+      "sourceClassification": "OFFICIAL_ADAPTED",
+      "movementProfile": "movement.rock_raiders.granite_grinder",
+      "footprint": "Medium",
+      "selectableKind": "CombatSupport",
+      "visionRadius": 9,
+      "operationsCapacity": 4,
+      "combatTarget": {
+        "class": "HeavyMachine",
+        "layer": "Ground",
+        "flags": [
+          "CombatThreat"
+        ],
+        "hitPoints": 480,
+        "armorRating": 3
+      },
+      "viewProfile": "view.placeholder.rock_raiders.granite_grinder"
     },
     {
       "stableId": "unit.rock_raiders.hover_scout",
@@ -440,9 +3059,18 @@
       "movementProfile": "movement.prototype.hover_scout",
       "footprint": "Small",
       "selectableKind": "CombatSupport",
-      "visionRadius": 9,
+      "visionRadius": 12,
       "operationsCapacity": 1,
-      "combatTarget": { "class": "LightMachine", "layer": "Ground", "flags": ["CombatThreat", "Support"], "hitPoints": 120, "armorRating": 0 },
+      "combatTarget": {
+        "class": "LightMachine",
+        "layer": "Ground",
+        "flags": [
+          "CombatThreat",
+          "Support"
+        ],
+        "hitPoints": 120,
+        "armorRating": 0
+      },
       "weaponProfile": "weapon.rr.hover_scout.survey_pulse",
       "viewProfile": "view.placeholder.rock_raiders.hover_scout"
     },
@@ -453,9 +3081,17 @@
       "movementProfile": "movement.prototype.loader_dozer",
       "footprint": "Medium",
       "selectableKind": "CombatSupport",
-      "visionRadius": 7,
+      "visionRadius": 9,
       "operationsCapacity": 3,
-      "combatTarget": { "class": "MediumMachine", "layer": "Ground", "flags": ["CombatThreat"], "hitPoints": 360, "armorRating": 2 },
+      "combatTarget": {
+        "class": "MediumMachine",
+        "layer": "Ground",
+        "flags": [
+          "CombatThreat"
+        ],
+        "hitPoints": 360,
+        "armorRating": 2
+      },
       "weaponProfile": "weapon.rr.loader_dozer.scoop_ram",
       "viewProfile": "view.placeholder.rock_raiders.loader_dozer"
     },
@@ -468,34 +3104,394 @@
       "selectableKind": "CombatSupport",
       "visionRadius": 9,
       "operationsCapacity": 2,
-      "combatTarget": { "class": "LightMachine", "layer": "Ground", "flags": ["Transport"], "hitPoints": 170, "armorRating": 0 },
+      "combatTarget": {
+        "class": "LightMachine",
+        "layer": "Ground",
+        "flags": [
+          "Transport"
+        ],
+        "hitPoints": 170,
+        "armorRating": 0
+      },
       "viewProfile": "view.placeholder.rock_raiders.rapid_rider"
     },
     {
-      "stableId": "unit.rock_raiders.chrome_crusher",
+      "stableId": "unit.rock_raiders.tunnel_transport",
       "faction": "RockRaiders",
       "sourceClassification": "OFFICIAL_ADAPTED",
-      "movementProfile": "movement.prototype.chrome_crusher",
-      "footprint": "Large",
-      "selectableKind": "CombatSupport",
-      "visionRadius": 8,
-      "operationsCapacity": 6,
-      "combatTarget": { "class": "MassiveMachine", "layer": "Ground", "flags": ["CombatThreat"], "hitPoints": 880, "armorRating": 5 },
-      "weaponProfile": "weapon.rr.chrome_crusher.chrome_drill",
-      "viewProfile": "view.placeholder.rock_raiders.chrome_crusher"
-    },
-    {
-      "stableId": "prototype.nav.huge",
-      "faction": "Technical",
-      "sourceClassification": "ENGINEERING_ONLY",
-      "movementProfile": "movement.prototype.nav_huge",
+      "movementProfile": "movement.rock_raiders.tunnel_transport",
       "footprint": "Huge",
       "selectableKind": "CombatSupport",
-      "visionRadius": 8,
-      "operationsCapacity": 0,
-      "combatTarget": { "class": "MassiveMachine", "layer": "Ground", "flags": [], "hitPoints": 880, "armorRating": 5 },
-      "viewProfile": "view.placeholder.navigation.huge"
+      "visionRadius": 11,
+      "operationsCapacity": 5,
+      "combatTarget": {
+        "class": "MassiveMachine",
+        "layer": "TrueAir",
+        "flags": [
+          "Transport"
+        ],
+        "hitPoints": 650,
+        "armorRating": 3
+      },
+      "viewProfile": "view.placeholder.rock_raiders.tunnel_transport"
     }
+  ],
+  "researchDefinitions": [
+    {
+      "stableId": "research.ali.advanced_resonance_architecture",
+      "faction": "Aliens", "categories": ["Progression"], "sourceBuilding": "building.ali.reconfiguration_dock",
+      "cost": {"ore": 240, "energy": 110, "crystals": 5}, "researchTicks": 1600,
+      "prerequisiteGroups": [{"anyOf": [{"kind": "StateThreshold", "target": "state.ali.committed_crystals", "minimum": 4, "persistence": "WhileResearching"}]}],
+      "unlockTags": ["unit.aliens.alien_mothership"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.ali.advanced_resonance_architecture", "displayNameLocKey": "loc.research.ali.advanced_resonance_architecture.name"
+    },
+    {
+      "stableId": "research.ali.defense_resonance_shunt",
+      "faction": "Aliens", "categories": ["FactionSystem"], "sourceBuilding": "building.ali.resonance_core",
+      "cost": {"ore": 120, "energy": 50, "crystals": 1}, "researchTicks": 900,
+      "prerequisiteGroups": [], "unlockTags": ["capability.ali.etx_defense_node.charge_shunt"],
+      "parameterModifiers": [
+        {"target": "parameter.ali.etx_defense_node.cooldown", "operation": "MultiplyBasisPoints", "value": 7500},
+        {"target": "parameter.ali.etx_defense_node.tracking", "operation": "MultiplyBasisPoints", "value": 13000}
+      ],
+      "presentationProfile": "presentation.research.ali.defense_resonance_shunt", "displayNameLocKey": "loc.research.ali.defense_resonance_shunt.name"
+    },
+    {
+      "stableId": "research.ali.etx_reconfiguration_matrix",
+      "faction": "Aliens", "categories": ["Progression"], "sourceBuilding": "building.ali.resonance_core",
+      "cost": {"ore": 160, "energy": 65, "crystals": 2}, "researchTicks": 1100,
+      "prerequisiteGroups": [{"anyOf": [{"kind": "Building", "target": "building.ali.etx_fabricator", "minimum": 1, "persistence": "AtStart"}]}],
+      "unlockTags": ["building.ali.reconfiguration_dock"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.ali.etx_reconfiguration_matrix", "displayNameLocKey": "loc.research.ali.etx_reconfiguration_matrix.name"
+    },
+    {
+      "stableId": "research.ali.expanded_resonance_lattice",
+      "faction": "Aliens", "categories": ["FactionSystem"], "sourceBuilding": "building.ali.resonance_core",
+      "cost": {"ore": 170, "energy": 70, "crystals": 3}, "researchTicks": 1200,
+      "prerequisiteGroups": [{"anyOf": [{"kind": "Research", "target": "research.ali.etx_reconfiguration_matrix", "minimum": 1, "persistence": "AtStart"}]}],
+      "unlockTags": [], "parameterModifiers": [{"target": "parameter.ali.resonance_core.commitment_slots", "operation": "Set", "value": 6}],
+      "presentationProfile": "presentation.research.ali.expanded_resonance_lattice", "displayNameLocKey": "loc.research.ali.expanded_resonance_lattice.name"
+    },
+    {
+      "stableId": "research.ali.infiltration_matrix",
+      "faction": "Aliens", "categories": ["Combat", "Operational"], "sourceBuilding": "building.ali.reconfiguration_dock",
+      "cost": {"ore": 150, "energy": 55, "crystals": 2}, "researchTicks": 1000,
+      "prerequisiteGroups": [], "unlockTags": ["unit.aliens.etx_alien_infiltrator"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.ali.infiltration_matrix", "displayNameLocKey": "loc.research.ali.infiltration_matrix.name"
+    },
+    {
+      "stableId": "research.ali.mothership_resonance_relay",
+      "faction": "Aliens", "categories": ["Operational"], "sourceBuilding": "building.ali.reconfiguration_dock",
+      "cost": {"ore": 190, "energy": 80, "crystals": 3}, "researchTicks": 1200,
+      "prerequisiteGroups": [{"anyOf": [{"kind": "Research", "target": "research.ali.advanced_resonance_architecture", "minimum": 1, "persistence": "AtStart"}]}],
+      "unlockTags": ["capability.ali.alien_mothership.mobile_surge_anchor"],
+      "parameterModifiers": [{"target": "parameter.ali.alien_mothership.surge_anchor_range_cells", "operation": "Set", "value": 10}],
+      "presentationProfile": "presentation.research.ali.mothership_resonance_relay", "displayNameLocKey": "loc.research.ali.mothership_resonance_relay.name"
+    },
+    {
+      "stableId": "research.ali.rapid_fabrication_conduits",
+      "faction": "Aliens", "categories": ["Economic", "Operational"], "sourceBuilding": "building.ali.resonance_core",
+      "cost": {"ore": 120, "energy": 50, "crystals": 1}, "researchTicks": 900,
+      "prerequisiteGroups": [], "unlockTags": ["capability.ali.charge_production_injection"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.ali.rapid_fabrication_conduits", "displayNameLocKey": "loc.research.ali.rapid_fabrication_conduits.name"
+    },
+    {
+      "stableId": "research.ali.resonance_initiation",
+      "faction": "Aliens", "categories": ["FactionSystem"], "sourceBuilding": "building.ali.resonance_core",
+      "cost": {"ore": 90, "energy": 40, "crystals": 1}, "researchTicks": 800,
+      "prerequisiteGroups": [], "unlockTags": ["capability.ali.surge_window"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.ali.resonance_initiation", "displayNameLocKey": "loc.research.ali.resonance_initiation.name"
+    },
+    {
+      "stableId": "research.ali.resonant_recovery_latches",
+      "faction": "Aliens", "categories": ["Economic", "Recovery"], "sourceBuilding": "building.ali.resonance_core",
+      "cost": {"ore": 120, "energy": 45, "crystals": 1}, "researchTicks": 900,
+      "prerequisiteGroups": [], "unlockTags": [],
+      "parameterModifiers": [{"target": "parameter.ali.resonance_core.additional_intact_salvage_crystals", "operation": "Add", "value": 1}],
+      "presentationProfile": "presentation.research.ali.resonant_recovery_latches", "displayNameLocKey": "loc.research.ali.resonant_recovery_latches.name"
+    },
+    {
+      "stableId": "research.ali.siege_phase_coupling",
+      "faction": "Aliens", "categories": ["Combat", "Operational"], "sourceBuilding": "building.ali.reconfiguration_dock",
+      "cost": {"ore": 150, "energy": 55, "crystals": 2}, "researchTicks": 1000,
+      "prerequisiteGroups": [], "unlockTags": ["capability.ali.etx_alien_strike.siege_deployment", "unit.aliens.etx_alien_strike"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.ali.siege_phase_coupling", "displayNameLocKey": "loc.research.ali.siege_phase_coupling.name"
+    },
+    {
+      "stableId": "research.ast.aerospace_coordination",
+      "faction": "Astronauts", "categories": ["Operational"], "sourceBuilding": "building.ast.service_refit_hub",
+      "cost": {"ore": 150, "energy": 60, "crystals": 2}, "researchTicks": 1100,
+      "prerequisiteGroups": [{"anyOf": [{"kind": "Research", "target": "research.ast.mission_operations_integration", "minimum": 1, "persistence": "AtStart"}]}],
+      "unlockTags": ["unit.astronauts.mission_fighter", "unit.astronauts.mx71_recon_dropship"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.ast.aerospace_coordination", "displayNameLocKey": "loc.research.ast.aerospace_coordination.name"
+    },
+    {
+      "stableId": "research.ast.deep_mission_drilling",
+      "faction": "Astronauts", "categories": ["Combat"], "sourceBuilding": "building.ast.service_refit_hub",
+      "cost": {"ore": 220, "energy": 80, "crystals": 3}, "researchTicks": 1400,
+      "prerequisiteGroups": [{"anyOf": [{"kind": "Research", "target": "research.ast.heavy_mission_chassis", "minimum": 1, "persistence": "AtStart"}]}],
+      "unlockTags": ["unit.astronauts.mt201_ultra_drill_walker"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.ast.deep_mission_drilling", "displayNameLocKey": "loc.research.ast.deep_mission_drilling.name"
+    },
+    {
+      "stableId": "research.ast.field_survey_package",
+      "faction": "Astronauts", "categories": ["Operational"], "sourceBuilding": "building.ast.service_refit_hub",
+      "cost": {"ore": 80, "energy": 15, "crystals": 0}, "researchTicks": 700,
+      "prerequisiteGroups": [], "unlockTags": ["capability.ast.field_survey_package", "capability.ast.t3_trike.survey_configuration"],
+      "parameterModifiers": [
+        {"target": "parameter.ast.rover.sight_cells", "operation": "Add", "value": 1},
+        {"target": "parameter.ast.rover.detection_cells", "operation": "Add", "value": 2}
+      ],
+      "presentationProfile": "presentation.research.ast.field_survey_package", "displayNameLocKey": "loc.research.ast.field_survey_package.name"
+    },
+    {
+      "stableId": "research.ast.field_sustainment_package",
+      "faction": "Astronauts", "categories": ["Operational"], "sourceBuilding": "building.ast.service_refit_hub",
+      "cost": {"ore": 120, "energy": 30, "crystals": 0}, "researchTicks": 900,
+      "prerequisiteGroups": [], "unlockTags": ["capability.ast.solar_explorer.deployed_forward_service", "unit.astronauts.solar_explorer"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.ast.field_sustainment_package", "displayNameLocKey": "loc.research.ast.field_sustainment_package.name"
+    },
+    {
+      "stableId": "research.ast.heavy_mission_chassis",
+      "faction": "Astronauts", "categories": ["Combat", "Operational"], "sourceBuilding": "building.ast.service_refit_hub",
+      "cost": {"ore": 180, "energy": 60, "crystals": 2}, "researchTicks": 1200,
+      "prerequisiteGroups": [{"anyOf": [{"kind": "Research", "target": "research.ast.mission_operations_integration", "minimum": 1, "persistence": "AtStart"}]}],
+      "unlockTags": ["unit.astronauts.mt101_armored_drilling_unit"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.ast.heavy_mission_chassis", "displayNameLocKey": "loc.research.ast.heavy_mission_chassis.name"
+    },
+    {
+      "stableId": "research.ast.integrated_expedition_command",
+      "faction": "Astronauts", "categories": ["Progression", "FactionSystem"], "sourceBuilding": "building.ast.service_refit_hub",
+      "cost": {"ore": 240, "energy": 90, "crystals": 3}, "researchTicks": 1500,
+      "prerequisiteGroups": [
+        {"anyOf": [{"kind": "Research", "target": "research.ast.field_sustainment_package", "minimum": 1, "persistence": "AtStart"}]},
+        {"anyOf": [{"kind": "Research", "target": "research.ast.mission_operations_integration", "minimum": 1, "persistence": "AtStart"}]},
+        {"anyOf": [
+          {"kind": "Research", "target": "research.ast.aerospace_coordination", "minimum": 1, "persistence": "AtStart"},
+          {"kind": "Research", "target": "research.ast.deep_mission_drilling", "minimum": 1, "persistence": "AtStart"},
+          {"kind": "Research", "target": "research.ast.heavy_mission_chassis", "minimum": 1, "persistence": "AtStart"},
+          {"kind": "Research", "target": "research.ast.specialized_extraction_modules", "minimum": 1, "persistence": "AtStart"},
+          {"kind": "Research", "target": "research.ast.switchframe_actuation", "minimum": 1, "persistence": "AtStart"}
+        ]}
+      ],
+      "unlockTags": ["unit.astronauts.mx81_operations_aircraft"],
+      "parameterModifiers": [{"target": "parameter.ast.service_refit_hub.refit_bays", "operation": "Set", "value": 2}],
+      "presentationProfile": "presentation.research.ast.integrated_expedition_command", "displayNameLocKey": "loc.research.ast.integrated_expedition_command.name"
+    },
+    {
+      "stableId": "research.ast.mission_operations_integration",
+      "faction": "Astronauts", "categories": ["Progression"], "sourceBuilding": "building.ast.service_refit_hub",
+      "cost": {"ore": 150, "energy": 50, "crystals": 1}, "researchTicks": 1100,
+      "prerequisiteGroups": [], "unlockTags": ["building.ast.flight_operations_pad", "building.ast.mission_vehicle_bay"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.ast.mission_operations_integration", "displayNameLocKey": "loc.research.ast.mission_operations_integration.name"
+    },
+    {
+      "stableId": "research.ast.mission_refit_protocols",
+      "faction": "Astronauts", "categories": ["FactionSystem"], "sourceBuilding": "building.ast.service_refit_hub",
+      "cost": {"ore": 120, "energy": 35, "crystals": 1}, "researchTicks": 900,
+      "prerequisiteGroups": [], "unlockTags": ["capability.ast.mission_refit"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.ast.mission_refit_protocols", "displayNameLocKey": "loc.research.ast.mission_refit_protocols.name"
+    },
+    {
+      "stableId": "research.ast.specialized_extraction_modules",
+      "faction": "Astronauts", "categories": ["Economic"], "sourceBuilding": "building.ast.service_refit_hub",
+      "cost": {"ore": 130, "energy": 40, "crystals": 1}, "researchTicks": 1000,
+      "prerequisiteGroups": [{"anyOf": [{"kind": "Research", "target": "research.ast.mission_operations_integration", "minimum": 1, "persistence": "AtStart"}]}],
+      "unlockTags": ["capability.ast.mobile_mining_platform.crystal_reaper_configuration"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.ast.specialized_extraction_modules", "displayNameLocKey": "loc.research.ast.specialized_extraction_modules.name"
+    },
+    {
+      "stableId": "research.ast.switchframe_actuation",
+      "faction": "Astronauts", "categories": ["Operational"], "sourceBuilding": "building.ast.service_refit_hub",
+      "cost": {"ore": 140, "energy": 55, "crystals": 1}, "researchTicks": 1000,
+      "prerequisiteGroups": [{"anyOf": [{"kind": "Research", "target": "research.ast.mission_operations_integration", "minimum": 1, "persistence": "AtStart"}]}],
+      "unlockTags": ["unit.astronauts.mx41_switch_fighter"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.ast.switchframe_actuation", "displayNameLocKey": "loc.research.ast.switchframe_actuation.name"
+    },
+    {
+      "stableId": "research.mar.advanced_excavation_systems",
+      "faction": "Martians", "categories": ["Economic", "Combat"], "sourceBuilding": "building.mar.routing_laboratory",
+      "cost": {"ore": 190, "energy": 65, "crystals": 2}, "researchTicks": 1200,
+      "prerequisiteGroups": [], "unlockTags": ["capability.mar.excavation_searcher.advanced_excavation_systems", "capability.mar.excavation_searcher.excavation_clamp"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.mar.advanced_excavation_systems", "displayNameLocKey": "loc.research.mar.advanced_excavation_systems.name"
+    },
+    {
+      "stableId": "research.mar.aero_handling_decks",
+      "faction": "Martians", "categories": ["Operational"], "sourceBuilding": "building.mar.routing_laboratory",
+      "cost": {"ore": 100, "energy": 30, "crystals": 0}, "researchTicks": 800,
+      "prerequisiteGroups": [], "unlockTags": ["unit.martians.aero_skiff"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.mar.aero_handling_decks", "displayNameLocKey": "loc.research.mar.aero_handling_decks.name"
+    },
+    {
+      "stableId": "research.mar.grand_network_integration",
+      "faction": "Martians", "categories": ["Progression"], "sourceBuilding": "building.mar.routing_laboratory",
+      "cost": {"ore": 230, "energy": 80, "crystals": 3}, "researchTicks": 1500,
+      "prerequisiteGroups": [
+        {"anyOf": [{"kind": "Research", "target": "research.mar.redundant_routing", "minimum": 1, "persistence": "AtStart"}]},
+        {"anyOf": [{"kind": "StateThreshold", "target": "state.mar.connected_station_nodes", "minimum": 2, "persistence": "AtStart"}]}
+      ],
+      "unlockTags": ["capability.mar.excavation_searcher.grand_network_integration"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.mar.grand_network_integration", "displayNameLocKey": "loc.research.mar.grand_network_integration.name"
+    },
+    {
+      "stableId": "research.mar.hypersled_throughput",
+      "faction": "Martians", "categories": ["FactionSystem"], "sourceBuilding": "building.mar.routing_laboratory",
+      "cost": {"ore": 120, "energy": 30, "crystals": 0}, "researchTicks": 900,
+      "prerequisiteGroups": [], "unlockTags": [],
+      "parameterModifiers": [{"target": "parameter.mar.station.simultaneous_transfer_capacity", "operation": "Set", "value": 3}],
+      "presentationProfile": "presentation.research.mar.hypersled_throughput", "displayNameLocKey": "loc.research.mar.hypersled_throughput.name"
+    },
+    {
+      "stableId": "research.mar.mechanical_worker_toolset",
+      "faction": "Martians", "categories": ["Economic", "Operational"], "sourceBuilding": "building.mar.routing_laboratory",
+      "cost": {"ore": 100, "energy": 20, "crystals": 0}, "researchTicks": 800,
+      "prerequisiteGroups": [], "unlockTags": ["capability.mar.worker_robot.station_area_automatic_maintenance"],
+      "parameterModifiers": [{"target": "parameter.mar.worker_robot.automatic_maintenance_hp_per_second", "operation": "Set", "value": 3}],
+      "presentationProfile": "presentation.research.mar.mechanical_worker_toolset", "displayNameLocKey": "loc.research.mar.mechanical_worker_toolset.name"
+    },
+    {
+      "stableId": "research.mar.pressure_equalization_valves",
+      "faction": "Martians", "categories": ["Economic"], "sourceBuilding": "building.mar.routing_laboratory",
+      "cost": {"ore": 130, "energy": 40, "crystals": 1}, "researchTicks": 1000,
+      "prerequisiteGroups": [], "unlockTags": [],
+      "parameterModifiers": [{"target": "parameter.mar.tube_network.active_links_per_energy_demand", "operation": "Set", "value": 2}],
+      "presentationProfile": "presentation.research.mar.pressure_equalization_valves", "displayNameLocKey": "loc.research.mar.pressure_equalization_valves.name"
+    },
+    {
+      "stableId": "research.mar.redundant_routing",
+      "faction": "Martians", "categories": ["FactionSystem"], "sourceBuilding": "building.mar.routing_laboratory",
+      "cost": {"ore": 150, "energy": 45, "crystals": 1}, "researchTicks": 1000,
+      "prerequisiteGroups": [], "unlockTags": ["capability.mar.tube_network.automatic_rerouting"],
+      "parameterModifiers": [{"target": "parameter.mar.station.connection_capacity", "operation": "Add", "value": 1}],
+      "presentationProfile": "presentation.research.mar.redundant_routing", "displayNameLocKey": "loc.research.mar.redundant_routing.name"
+    },
+    {
+      "stableId": "research.mar.utility_mechanisms",
+      "faction": "Martians", "categories": ["FactionSystem", "Combat"], "sourceBuilding": "building.mar.routing_laboratory",
+      "cost": {"ore": 170, "energy": 50, "crystals": 2}, "researchTicks": 1100,
+      "prerequisiteGroups": [], "unlockTags": ["building.mar.deflector_arm", "capability.mar.red_planet_protector.guard_sweep", "capability.mar.red_planet_protector.positional_resistance"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.mar.utility_mechanisms", "displayNameLocKey": "loc.research.mar.utility_mechanisms.name"
+    },
+    {
+      "stableId": "research.mar.walker_articulation",
+      "faction": "Martians", "categories": ["Operational", "Combat"], "sourceBuilding": "building.mar.routing_laboratory",
+      "cost": {"ore": 160, "energy": 45, "crystals": 1}, "researchTicks": 1100,
+      "prerequisiteGroups": [], "unlockTags": ["unit.martians.recon_mech_rp", "unit.martians.red_planet_protector"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.mar.walker_articulation", "displayNameLocKey": "loc.research.mar.walker_articulation.name"
+    },
+    {
+      "stableId": "research.rr.advanced_power_distribution",
+      "faction": "RockRaiders", "categories": ["Economic"], "sourceBuilding": "building.rock_raiders.engineering_workshop",
+      "cost": {"ore": 160, "energy": 50, "crystals": 1}, "researchTicks": 1100,
+      "prerequisiteGroups": [], "unlockTags": [],
+      "parameterModifiers": [{"target": "parameter.rr.power_station.energy_generation_per_second", "operation": "Add", "value": 3}],
+      "presentationProfile": "presentation.research.rr.advanced_power_distribution", "displayNameLocKey": "loc.research.rr.advanced_power_distribution.name"
+    },
+    {
+      "stableId": "research.rr.cutter_package",
+      "faction": "RockRaiders", "categories": ["Combat"], "sourceBuilding": "building.rock_raiders.vehicle_service_bay",
+      "cost": {"ore": 90, "energy": 20, "crystals": 0}, "researchTicks": 700,
+      "prerequisiteGroups": [], "unlockTags": ["capability.rr.loader_dozer.cutter_package"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.rr.cutter_package", "displayNameLocKey": "loc.research.rr.cutter_package.name"
+    },
+    {
+      "stableId": "research.rr.deep_core_engineering",
+      "faction": "RockRaiders", "categories": ["Progression"], "sourceBuilding": "building.rock_raiders.crystal_vault",
+      "cost": {"ore": 220, "energy": 90, "crystals": 4}, "researchTicks": 1500,
+      "prerequisiteGroups": [
+        {"anyOf": [{"kind": "Building", "target": "building.rock_raiders.engineering_workshop", "minimum": 1, "persistence": "AtStart"}]},
+        {"anyOf": [{"kind": "Building", "target": "building.rock_raiders.crystal_vault", "minimum": 1, "persistence": "AtStart"}]}
+      ],
+      "unlockTags": ["unit.rock_raiders.chrome_crusher", "unit.rock_raiders.tunnel_transport"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.rr.deep_core_engineering", "displayNameLocKey": "loc.research.rr.deep_core_engineering.name"
+    },
+    {
+      "stableId": "research.rr.geological_survey_calibration",
+      "faction": "RockRaiders", "categories": ["Economic"], "sourceBuilding": "building.rock_raiders.hq",
+      "cost": {"ore": 80, "energy": 20, "crystals": 0}, "researchTicks": 700,
+      "prerequisiteGroups": [], "unlockTags": ["capability.rr.hover_scout.extended_resource_and_excavation_survey"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.rr.geological_survey_calibration", "displayNameLocKey": "loc.research.rr.geological_survey_calibration.name"
+    },
+    {
+      "stableId": "research.rr.high_capacity_processing",
+      "faction": "RockRaiders", "categories": ["Economic"], "sourceBuilding": "building.rock_raiders.engineering_workshop",
+      "cost": {"ore": 140, "energy": 35, "crystals": 0}, "researchTicks": 1000,
+      "prerequisiteGroups": [], "unlockTags": ["capability.rr.ore_processing_plant.full_rich_ore_exploitation"],
+      "parameterModifiers": [{"target": "parameter.rr.ore_processing_plant.active_raw_batches", "operation": "Set", "value": 2}],
+      "presentationProfile": "presentation.research.rr.high_capacity_processing", "displayNameLocKey": "loc.research.rr.high_capacity_processing.name"
+    },
+    {
+      "stableId": "research.rr.industrial_expansion_program",
+      "faction": "RockRaiders", "categories": ["Progression"], "sourceBuilding": "building.rock_raiders.hq",
+      "cost": {"ore": 150, "energy": 50, "crystals": 0}, "researchTicks": 1100,
+      "prerequisiteGroups": [
+        {"anyOf": [{"kind": "Building", "target": "building.rock_raiders.ore_processing_plant", "minimum": 1, "persistence": "AtStart"}]},
+        {"anyOf": [{"kind": "Building", "target": "building.rock_raiders.power_station", "minimum": 1, "persistence": "AtStart"}]},
+        {"anyOf": [{"kind": "Building", "target": "building.rock_raiders.vehicle_service_bay", "minimum": 1, "persistence": "AtStart"}]}
+      ],
+      "unlockTags": ["building.rock_raiders.crystal_vault", "building.rock_raiders.cutter_mast", "building.rock_raiders.engineering_workshop"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.rr.industrial_expansion_program", "displayNameLocKey": "loc.research.rr.industrial_expansion_program.name"
+    },
+    {
+      "stableId": "research.rr.reinforced_drilling_assemblies",
+      "faction": "RockRaiders", "categories": ["Combat", "Operational"], "sourceBuilding": "building.rock_raiders.engineering_workshop",
+      "cost": {"ore": 160, "energy": 45, "crystals": 1}, "researchTicks": 1100,
+      "prerequisiteGroups": [], "unlockTags": ["capability.rr.drill_craft.reinforced_excavation", "unit.rock_raiders.granite_grinder"], "parameterModifiers": [],
+      "presentationProfile": "presentation.research.rr.reinforced_drilling_assemblies", "displayNameLocKey": "loc.research.rr.reinforced_drilling_assemblies.name"
+    },
+    {
+      "stableId": "research.rr.service_gantries",
+      "faction": "RockRaiders", "categories": ["Operational"], "sourceBuilding": "building.rock_raiders.vehicle_service_bay",
+      "cost": {"ore": 140, "energy": 40, "crystals": 0}, "researchTicks": 1000,
+      "prerequisiteGroups": [], "unlockTags": [],
+      "parameterModifiers": [{"target": "parameter.rr.vehicle_service_bay.concurrent_repair_jobs", "operation": "Set", "value": 2}],
+      "presentationProfile": "presentation.research.rr.service_gantries", "displayNameLocKey": "loc.research.rr.service_gantries.name"
+    },
+    {
+      "stableId": "research.rr.worksite_automation",
+      "faction": "RockRaiders", "categories": ["FactionSystem"], "sourceBuilding": "building.rock_raiders.ore_processing_plant",
+      "cost": {"ore": 120, "energy": 30, "crystals": 0}, "researchTicks": 900,
+      "prerequisiteGroups": [], "unlockTags": [],
+      "parameterModifiers": [{"target": "parameter.rr.ore_processing_plant.automated_receiving_lanes", "operation": "Set", "value": 2}],
+      "presentationProfile": "presentation.research.rr.worksite_automation", "displayNameLocKey": "loc.research.rr.worksite_automation.name"
+    }
+  ],
+  "commandDefinitions": [
+    {"stableId":"command.assist_construction","commandType":"AssistConstruction","eligibleEntityTags":["component.builder"],"targetType":"ConstructionSite","queuePolicy":"Optional","validationHandler":"validate.assist_construction","executionHandler":"execute.assist_construction","uiSlotProfile":"slot.economy","targetingPreviewProfile":"preview.assist"},
+    {"stableId":"command.attack","commandType":"Attack","eligibleEntityTags":["component.targeting"],"targetType":"EnemyEntity","queuePolicy":"Optional","validationHandler":"validate.attack","executionHandler":"execute.attack","uiSlotProfile":"slot.combat","targetingPreviewProfile":"preview.attack"},
+    {"stableId":"command.attack_move","commandType":"AttackMove","eligibleEntityTags":["component.navigation"],"targetType":"Ground","queuePolicy":"Optional","validationHandler":"validate.attack_move","executionHandler":"execute.attack_move","uiSlotProfile":"slot.combat","targetingPreviewProfile":"preview.attack_move"},
+    {"stableId":"command.build","commandType":"Build","eligibleEntityTags":["component.builder"],"targetType":"Ground","queuePolicy":"Optional","validationHandler":"validate.build","executionHandler":"execute.build","uiSlotProfile":"slot.economy","targetingPreviewProfile":"preview.build"},
+    {"stableId":"command.cancel_construction","commandType":"CancelConstruction","eligibleEntityTags":["tag.owned_selectable"],"targetType":"ConstructionSite","queuePolicy":"Never","validationHandler":"validate.cancel_construction","executionHandler":"execute.cancel_construction","uiSlotProfile":"slot.cancel","targetingPreviewProfile":"preview.none"},
+    {"stableId":"command.cancel_mission_refit","commandType":"CancelMissionRefit","eligibleEntityTags":["capability.ast.mission_refit"],"targetType":"FriendlyEntity","queuePolicy":"Never","validationHandler":"validate.cancel_mission_refit","executionHandler":"execute.cancel_mission_refit","uiSlotProfile":"slot.cancel","targetingPreviewProfile":"preview.refit"},
+    {"stableId":"command.cancel_production","commandType":"CancelProduction","eligibleEntityTags":["component.production"],"targetType":"Producer","queuePolicy":"Never","validationHandler":"validate.cancel_production","executionHandler":"execute.cancel_production","uiSlotProfile":"slot.cancel","targetingPreviewProfile":"preview.none"},
+    {"stableId":"command.cancel_research","commandType":"CancelResearch","eligibleEntityTags":["tag.research_provider"],"targetType":"ResearchProvider","queuePolicy":"Never","validationHandler":"validate.cancel_research","executionHandler":"execute.cancel_research","uiSlotProfile":"slot.cancel","targetingPreviewProfile":"preview.none"},
+    {"stableId":"command.defense_resonance_shunt","commandType":"DefenseResonanceShunt","eligibleEntityTags":["building.ali.etx_defense_node"],"targetType":"None","queuePolicy":"Never","requiredResearch":"research.ali.defense_resonance_shunt","validationHandler":"validate.defense_shunt","executionHandler":"execute.defense_shunt","uiSlotProfile":"slot.special","targetingPreviewProfile":"preview.defense_shunt"},
+    {"stableId":"command.excavate","commandType":"Excavate","eligibleEntityTags":["capability.rr.excavation"],"targetType":"ExcavatableFeature","queuePolicy":"Optional","validationHandler":"validate.excavate","executionHandler":"execute.excavate","uiSlotProfile":"slot.special","targetingPreviewProfile":"preview.excavate"},
+    {"stableId":"command.excavation_clamp","commandType":"ExcavationClamp","eligibleEntityTags":["unit.martians.excavation_searcher"],"targetType":"DisplacementTarget","queuePolicy":"Never","requiredResearch":"research.mar.advanced_excavation_systems","validationHandler":"validate.excavation_clamp","executionHandler":"execute.excavation_clamp","uiSlotProfile":"slot.special","targetingPreviewProfile":"preview.excavation_clamp"},
+    {"stableId":"command.harvest","commandType":"Harvest","eligibleEntityTags":["component.worker"],"targetType":"ResourceEntity","queuePolicy":"Optional","validationHandler":"validate.harvest","executionHandler":"execute.harvest","uiSlotProfile":"slot.economy","targetingPreviewProfile":"preview.harvest"},
+    {"stableId":"command.hold","commandType":"HoldPosition","eligibleEntityTags":["component.navigation"],"targetType":"None","queuePolicy":"Never","validationHandler":"validate.hold","executionHandler":"execute.hold","uiSlotProfile":"slot.movement","targetingPreviewProfile":"preview.none"},
+    {"stableId":"command.load","commandType":"Load","eligibleEntityTags":["component.passenger"],"targetType":"FriendlyEntity","queuePolicy":"Conditional","validationHandler":"validate.load","executionHandler":"execute.load","uiSlotProfile":"slot.transport","targetingPreviewProfile":"preview.load"},
+    {"stableId":"command.mission_refit","commandType":"MissionRefit","eligibleEntityTags":["capability.ast.mission_refit"],"targetType":"Configuration","queuePolicy":"Never","requiredResearch":"research.ast.mission_refit_protocols","validationHandler":"validate.mission_refit","executionHandler":"execute.mission_refit","uiSlotProfile":"slot.service","targetingPreviewProfile":"preview.refit"},
+    {"stableId":"command.move","commandType":"Move","eligibleEntityTags":["component.navigation"],"targetType":"Ground","queuePolicy":"Optional","validationHandler":"validate.move","executionHandler":"execute.move","uiSlotProfile":"slot.movement","targetingPreviewProfile":"preview.move"},
+    {"stableId":"command.patrol","commandType":"Patrol","eligibleEntityTags":["component.navigation"],"targetType":"Ground","queuePolicy":"Optional","validationHandler":"validate.patrol","executionHandler":"execute.patrol","uiSlotProfile":"slot.movement","targetingPreviewProfile":"preview.patrol"},
+    {"stableId":"command.ping","commandType":"Ping","eligibleEntityTags":["tag.player"],"targetType":"MapPoint","queuePolicy":"Never","validationHandler":"validate.ping","executionHandler":"execute.ping","uiSlotProfile":"slot.communication","targetingPreviewProfile":"preview.ping"},
+    {"stableId":"command.protector_stance","commandType":"ProtectorStance","eligibleEntityTags":["unit.martians.red_planet_protector"],"targetType":"None","queuePolicy":"Conditional","validationHandler":"validate.protector_stance","executionHandler":"execute.protector_stance","uiSlotProfile":"slot.state_change","targetingPreviewProfile":"preview.state_change"},
+    {"stableId":"command.queue_production","commandType":"QueueProduction","eligibleEntityTags":["component.production"],"targetType":"Producer","queuePolicy":"Never","validationHandler":"validate.queue_production","executionHandler":"execute.queue_production","uiSlotProfile":"slot.production","targetingPreviewProfile":"preview.none"},
+    {"stableId":"command.rapid_fabrication","commandType":"RapidFabrication","eligibleEntityTags":["building.ali.etx_fabricator","building.ali.reconfiguration_dock"],"targetType":"Producer","queuePolicy":"Never","requiredResearch":"research.ali.rapid_fabrication_conduits","validationHandler":"validate.rapid_fabrication","executionHandler":"execute.rapid_fabrication","uiSlotProfile":"slot.special","targetingPreviewProfile":"preview.none"},
+    {"stableId":"command.reorder_production","commandType":"ReorderProduction","eligibleEntityTags":["component.production"],"targetType":"Producer","queuePolicy":"Never","validationHandler":"validate.reorder_production","executionHandler":"execute.reorder_production","uiSlotProfile":"slot.production","targetingPreviewProfile":"preview.none"},
+    {"stableId":"command.repair","commandType":"Repair","eligibleEntityTags":["component.repairer"],"targetType":"FriendlyEntity","queuePolicy":"Optional","validationHandler":"validate.repair","executionHandler":"execute.repair","uiSlotProfile":"slot.service","targetingPreviewProfile":"preview.repair"},
+    {"stableId":"command.searcher_brace","commandType":"SearcherBrace","eligibleEntityTags":["unit.martians.excavation_searcher"],"targetType":"None","queuePolicy":"Conditional","validationHandler":"validate.searcher_brace","executionHandler":"execute.searcher_brace","uiSlotProfile":"slot.state_change","targetingPreviewProfile":"preview.state_change"},
+    {"stableId":"command.set_energy_priority","commandType":"SetEnergyPriority","eligibleEntityTags":["component.energy_domain_member"],"targetType":"None","queuePolicy":"Never","validationHandler":"validate.energy_priority","executionHandler":"execute.energy_priority","uiSlotProfile":"slot.status","targetingPreviewProfile":"preview.energy_domain"},
+    {"stableId":"command.set_rally_point","commandType":"SetRallyPoint","eligibleEntityTags":["component.production"],"targetType":"Ground","queuePolicy":"Never","validationHandler":"validate.set_rally","executionHandler":"execute.set_rally","uiSlotProfile":"slot.production","targetingPreviewProfile":"preview.rally"},
+    {"stableId":"command.set_resonance_commitment","commandType":"SetResonanceCommitment","eligibleEntityTags":["component.resonance_core"],"targetType":"Configuration","queuePolicy":"Never","validationHandler":"validate.resonance_commitment","executionHandler":"execute.resonance_commitment","uiSlotProfile":"slot.service","targetingPreviewProfile":"preview.resonance_commitment"},
+    {"stableId":"command.spread","commandType":"SetSpread","eligibleEntityTags":["component.navigation"],"targetType":"None","queuePolicy":"Never","validationHandler":"validate.spread","executionHandler":"execute.spread","uiSlotProfile":"slot.movement","targetingPreviewProfile":"preview.formation"},
+    {"stableId":"command.start_research","commandType":"StartResearch","eligibleEntityTags":["tag.research_provider"],"targetType":"ResearchProvider","queuePolicy":"Never","validationHandler":"validate.start_research","executionHandler":"execute.start_research","uiSlotProfile":"slot.research","targetingPreviewProfile":"preview.none"},
+    {"stableId":"command.start_surge","commandType":"StartSurge","eligibleEntityTags":["capability.ali.surge_anchor"],"targetType":"SurgeAnchor","queuePolicy":"Never","requiredResearch":"research.ali.resonance_initiation","validationHandler":"validate.surge","executionHandler":"execute.surge","uiSlotProfile":"slot.special","targetingPreviewProfile":"preview.surge"},
+    {"stableId":"command.state_change","commandType":"StateChange","eligibleEntityTags":["component.transformation","unit.astronauts.solar_explorer","unit.astronauts.mt201_ultra_drill_walker","unit.aliens.etx_alien_strike","unit.aliens.etx_alien_infiltrator","building.ali.etx_defense_node"],"targetType":"None","queuePolicy":"Conditional","validationHandler":"validate.state_change","executionHandler":"execute.state_change","uiSlotProfile":"slot.state_change","targetingPreviewProfile":"preview.state_change"},
+    {"stableId":"command.stop","commandType":"Stop","eligibleEntityTags":["component.navigation"],"targetType":"None","queuePolicy":"Never","validationHandler":"validate.stop","executionHandler":"execute.stop","uiSlotProfile":"slot.movement","targetingPreviewProfile":"preview.none"},
+    {"stableId":"command.tube_build","commandType":"TubeBuild","eligibleEntityTags":["component.tube_station"],"targetType":"TubeStation","queuePolicy":"Never","validationHandler":"validate.tube_build","executionHandler":"execute.tube_build","uiSlotProfile":"slot.service","targetingPreviewProfile":"preview.tube_build"},
+    {"stableId":"command.tube_transfer","commandType":"TubeTransfer","eligibleEntityTags":["capability.mar.tube_transfer"],"targetType":"TubeStation","queuePolicy":"Conditional","validationHandler":"validate.tube_transfer","executionHandler":"execute.tube_transfer","uiSlotProfile":"slot.special","targetingPreviewProfile":"preview.tube_transfer"},
+    {"stableId":"command.unload","commandType":"Unload","eligibleEntityTags":["component.transport"],"targetType":"Ground","queuePolicy":"Conditional","validationHandler":"validate.unload","executionHandler":"execute.unload","uiSlotProfile":"slot.transport","targetingPreviewProfile":"preview.unload"}
   ],
   "transformationDefinitions": [
     {
@@ -509,9 +3505,20 @@
           "footprint": "Medium",
           "visionRadius": 10,
           "viewProfile": "view.placeholder.astronauts.mx41_ground",
-          "combatTarget": { "class": "MediumMachine", "layer": "Ground", "flags": ["CombatThreat"], "hitPoints": 320, "armorRating": 2 },
+          "combatTarget": {
+            "class": "MediumMachine",
+            "layer": "Ground",
+            "flags": [
+              "CombatThreat"
+            ],
+            "hitPoints": 320,
+            "armorRating": 2
+          },
           "weaponProfile": "weapon.ast.mx41.pursuit_projector",
-          "acquisitionRadiusRatio": [17, 2]
+          "acquisitionRadiusRatio": [
+            17,
+            2
+          ]
         },
         {
           "stableId": "state.astronauts.mx41.flight",
@@ -520,9 +3527,20 @@
           "footprint": "Medium",
           "visionRadius": 10,
           "viewProfile": "view.placeholder.astronauts.mx41_flight",
-          "combatTarget": { "class": "MediumMachine", "layer": "TrueAir", "flags": ["CombatThreat"], "hitPoints": 320, "armorRating": 2 },
+          "combatTarget": {
+            "class": "MediumMachine",
+            "layer": "TrueAir",
+            "flags": [
+              "CombatThreat"
+            ],
+            "hitPoints": 320,
+            "armorRating": 2
+          },
           "weaponProfile": "weapon.ast.mx41.flight_pulse",
-          "acquisitionRadiusRatio": [17, 2]
+          "acquisitionRadiusRatio": [
+            17,
+            2
+          ]
         }
       ],
       "aToBDurationTicks": 45,
@@ -532,7 +3550,10 @@
       "reversalLockTicks": 160,
       "moveDuringTransition": false,
       "attackDuringTransition": false,
-      "transitionTargetLayers": ["Ground", "TrueAir"]
+      "transitionTargetLayers": [
+        "Ground",
+        "TrueAir"
+      ]
     }
   ]
 }

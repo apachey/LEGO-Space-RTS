@@ -4,7 +4,53 @@ using System.IO;
 
 namespace LegoSpaceRTS.SimCore
 {
-public enum SimCommandType : ushort { Move = 1, Stop = 2, HoldPosition = 3, Harvest = 4, Build = 5, CancelConstruction = 6, AssistConstruction = 7, QueueProduction = 8, SetRallyPoint = 9, SetEnergyPriority = 10, Attack = 11, Repair = 12, Load = 13, Unload = 14, StateChange = 15, MissionRefit = 16, SetResonanceCommitment = 17, StartSurge = 18, DebugOpenExcavatable = 1000, DebugDrainEnergy = 1001, DebugDestroyVisibleEnemy = 1002, DebugPrepareConstructionTest = 1003, DebugPrepareDestructionTest = 1004, DebugPrepareRepairTest = 1005, DebugPrepareTransportTest = 1006, DebugDestroyPreparedTransport = 1007, DebugPrepareTransformationTest = 1008 }
+public enum SimCommandType : ushort
+{
+    Move = 1,
+    Stop = 2,
+    HoldPosition = 3,
+    Harvest = 4,
+    Build = 5,
+    CancelConstruction = 6,
+    AssistConstruction = 7,
+    QueueProduction = 8,
+    SetRallyPoint = 9,
+    SetEnergyPriority = 10,
+    Attack = 11,
+    Repair = 12,
+    Load = 13,
+    Unload = 14,
+    StateChange = 15,
+    MissionRefit = 16,
+    SetResonanceCommitment = 17,
+    StartSurge = 18,
+    AttackMove = 19,
+    Patrol = 20,
+    SetSpread = 21,
+    Excavate = 22,
+    StartResearch = 23,
+    CancelResearch = 24,
+    CancelProduction = 25,
+    TubeTransfer = 26,
+    TubeBuild = 27,
+    DefenseResonanceShunt = 28,
+    ProtectorStance = 29,
+    SearcherBrace = 30,
+    ExcavationClamp = 31,
+    Ping = 32,
+    RapidFabrication = 33,
+    ReorderProduction = 34,
+    CancelMissionRefit = 35,
+    DebugOpenExcavatable = 1000,
+    DebugDrainEnergy = 1001,
+    DebugDestroyVisibleEnemy = 1002,
+    DebugPrepareConstructionTest = 1003,
+    DebugPrepareDestructionTest = 1004,
+    DebugPrepareRepairTest = 1005,
+    DebugPrepareTransportTest = 1006,
+    DebugDestroyPreparedTransport = 1007,
+    DebugPrepareTransformationTest = 1008
+}
 [Flags] public enum CommandModifiers : byte { None = 0, Queue = 1 }
 
 public readonly struct CommandEnvelope
@@ -33,7 +79,10 @@ public readonly struct CommandEnvelope
         if (entities == null) throw new ArgumentNullException(nameof(entities));
         if (entities.Length > 128) throw new ArgumentOutOfRangeException(nameof(entities), "A command may address at most 128 entities.");
         if ((modifiers & ~CommandModifiers.Queue) != 0) throw new ArgumentOutOfRangeException(nameof(modifiers), "Unknown command modifier bits.");
-        if (type != SimCommandType.Move && type != SimCommandType.Harvest && type != SimCommandType.Build && type != SimCommandType.AssistConstruction && type != SimCommandType.Attack && type != SimCommandType.Repair && type != SimCommandType.Load && modifiers != CommandModifiers.None) throw new ArgumentException("Only Move, Attack, Harvest, Build, AssistConstruction, Repair and Load may be queued.", nameof(modifiers));
+        if (type != SimCommandType.Move && type != SimCommandType.AttackMove && type != SimCommandType.Patrol && type != SimCommandType.Harvest &&
+            type != SimCommandType.Build && type != SimCommandType.AssistConstruction && type != SimCommandType.Attack && type != SimCommandType.Repair &&
+            type != SimCommandType.Load && type != SimCommandType.Unload && type != SimCommandType.StateChange && type != SimCommandType.TubeTransfer &&
+            type != SimCommandType.Excavate && modifiers != CommandModifiers.None) throw new ArgumentException("This command family cannot be queued.", nameof(modifiers));
         if (type == SimCommandType.Harvest && targetEntity == EntityId.None) throw new ArgumentException("Harvest requires a resource target.", nameof(targetEntity));
         if (type == SimCommandType.Build && contentType.Value == 0) throw new ArgumentException("Build requires a building content type.", nameof(contentType));
         if (type == SimCommandType.CancelConstruction && targetEntity == EntityId.None) throw new ArgumentException("CancelConstruction requires a site target.", nameof(targetEntity));
@@ -46,6 +95,11 @@ public readonly struct CommandEnvelope
         if (type == SimCommandType.MissionRefit && (targetEntity == EntityId.None || (missionConfiguration != MissionConfiguration.T3Escort && missionConfiguration != MissionConfiguration.T3Survey))) throw new ArgumentException("MissionRefit requires a target and legal configuration.");
         if (type == SimCommandType.SetResonanceCommitment && (targetEntity == EntityId.None || desiredResonanceCommitment > ResonanceCoreSystem.ExpandedSlots)) throw new ArgumentException("SetResonanceCommitment requires a target and legal desired count.");
         if (type == SimCommandType.StartSurge && targetEntity == EntityId.None) throw new ArgumentException("StartSurge requires an anchor target.", nameof(targetEntity));
+        if ((type == SimCommandType.Excavate || type == SimCommandType.StartResearch || type == SimCommandType.CancelResearch ||
+             type == SimCommandType.CancelProduction || type == SimCommandType.TubeTransfer || type == SimCommandType.TubeBuild ||
+             type == SimCommandType.ExcavationClamp || type == SimCommandType.RapidFabrication || type == SimCommandType.DefenseResonanceShunt || type == SimCommandType.CancelMissionRefit) && targetEntity == EntityId.None)
+            throw new ArgumentException($"{type} requires a target.", nameof(targetEntity));
+        if (type == SimCommandType.StartResearch && contentType.Value == 0) throw new ArgumentException("StartResearch requires a research content type.", nameof(contentType));
         if (energyPriority < EnergyPriority.High || energyPriority > EnergyPriority.Low) throw new ArgumentOutOfRangeException(nameof(energyPriority));
         ExecutionTick = executionTick; PlayerSlot = playerSlot; Sequence = sequence; Type = type; Entities = entities;
         TargetEntity = targetEntity; TargetPosition = targetPosition; Modifiers = modifiers; DebugFeatureId = debugFeatureId; ContentType = contentType; Orientation = orientation; EnergyPriority = energyPriority; MissionConfiguration = missionConfiguration; DesiredResonanceCommitment = desiredResonanceCommitment;
@@ -53,7 +107,9 @@ public readonly struct CommandEnvelope
 
     private static void ValidateType(SimCommandType type)
     {
-        if (type != SimCommandType.Move && type != SimCommandType.Stop && type != SimCommandType.HoldPosition && type != SimCommandType.Harvest && type != SimCommandType.Build && type != SimCommandType.CancelConstruction && type != SimCommandType.AssistConstruction && type != SimCommandType.QueueProduction && type != SimCommandType.SetRallyPoint && type != SimCommandType.SetEnergyPriority && type != SimCommandType.Attack && type != SimCommandType.Repair && type != SimCommandType.Load && type != SimCommandType.Unload && type != SimCommandType.StateChange && type != SimCommandType.MissionRefit && type != SimCommandType.SetResonanceCommitment && type != SimCommandType.StartSurge && type != SimCommandType.DebugOpenExcavatable && type != SimCommandType.DebugDrainEnergy && type != SimCommandType.DebugDestroyVisibleEnemy && type != SimCommandType.DebugPrepareConstructionTest && type != SimCommandType.DebugPrepareDestructionTest && type != SimCommandType.DebugPrepareRepairTest && type != SimCommandType.DebugPrepareTransportTest && type != SimCommandType.DebugDestroyPreparedTransport && type != SimCommandType.DebugPrepareTransformationTest)
+        bool publicCommand = type >= SimCommandType.Move && type <= SimCommandType.CancelMissionRefit;
+        bool debugCommand = type >= SimCommandType.DebugOpenExcavatable && type <= SimCommandType.DebugPrepareTransformationTest;
+        if (!publicCommand && !debugCommand)
             throw new ArgumentOutOfRangeException(nameof(type), type, "Unknown command type.");
     }
 

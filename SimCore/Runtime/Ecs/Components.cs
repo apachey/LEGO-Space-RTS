@@ -502,8 +502,10 @@ public struct ConstructionSite
 {
     public EntityId AssignedBuilder;
     public EntityId FundingBank;
+    public EntityId CrystalFundingBank;
     public int ReservedOre;
     public int ConsumedOre;
+    public byte RequiredCrystals;
     public int RequiredEnergy;
     public int ReservedEnergy;
     public int ConsumedEnergy;
@@ -516,12 +518,15 @@ public struct ProductionQueueItem
 {
     public ContentId UnitType;
     public EntityId FundingBank;
+    public EntityId CrystalFundingBank;
+    public EntityId EnergyDomainRoot;
     public ushort ReservedOre;
     public ushort RequiredEnergy;
     public byte RequiredCrystals;
     public byte ReservedOperationsCapacity;
     public ushort TotalTicks;
     public ushort RemainingTicks;
+    public bool RapidFabricationUsed;
 }
 
 public struct Production
@@ -569,6 +574,23 @@ public struct Production
         if (Count == 0) return;
         for (int i = 1; i < Count; i++) Set(i - 1, Get(i));
         Count--; Set(Count, default); SpawnBlocked = false;
+    }
+
+    public void RemoveAt(int index)
+    {
+        if (index < 0 || index >= Count) throw new System.ArgumentOutOfRangeException(nameof(index));
+        for (int i = index + 1; i < Count; i++) Set(i - 1, Get(i));
+        Count--; Set(Count, default); SpawnBlocked = false;
+    }
+
+    public bool TryReorder(byte fromIndex, byte toIndex)
+    {
+        if (fromIndex == 0 || toIndex == 0 || fromIndex >= Count || toIndex >= Count || fromIndex == toIndex) return false;
+        ProductionQueueItem moved = Get(fromIndex);
+        if (fromIndex < toIndex) for (int i = fromIndex; i < toIndex; i++) Set(i, Get(i + 1));
+        else for (int i = fromIndex; i > toIndex; i--) Set(i, Get(i - 1));
+        Set(toIndex, moved);
+        return true;
     }
 
     public int ProjectedTicks

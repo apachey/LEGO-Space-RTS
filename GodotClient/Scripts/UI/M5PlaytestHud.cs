@@ -297,7 +297,7 @@ public partial class M5PlaytestHud : CanvasLayer
             _text.Append(zone.BuildupRemainingTicks > 0 ? "Сплеск: ПІДГОТОВКА " : "Сплеск: АКТИВНИЙ ")
                 .Append((zone.BuildupRemainingTicks > 0 ? zone.BuildupRemainingTicks : zone.ActiveRemainingTicks) / 20.0f).Append("с\n");
         else _text.Append("Сплеск: ЗАВЕРШЕНО\n");
-        bool boosted = M5AcceptanceScenarioFactory.TryFindFirst(world, "unit.ali.razor_skimmer", out EntityId receiver) && AlienChargeSystem.IsSurged(world, receiver);
+        bool boosted = M5AcceptanceScenarioFactory.TryFindFirst(world, CanonicalRosterReferences.AlienRazorSkimmer, out EntityId receiver) && AlienChargeSystem.IsSurged(world, receiver);
         _text.Append("Razor Skimmer у зоні: ").Append(boosted ? "ПІДСИЛЕНИЙ" : "ЩЕ НЕ ПІДСИЛЕНИЙ").Append("\n");
         _text.Append("Ефект: атаки перезаряджаються на 20% швидше; трансформації ETX — на 30% швидше. Бойові постріли ще не видно, бо M4 Combat відкладений.");
     }

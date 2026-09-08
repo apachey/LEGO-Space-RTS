@@ -52,7 +52,8 @@ public sealed class WeaponSystem : ISimSystem
             state.FireSequence = checked(state.FireSequence + 1);
             state.LastFiredTarget = targeting.CurrentTarget;
             state.LastFiredTick = world.Tick.Value;
-            state.CooldownRemainingTicks = weapon.CooldownTicks;
+            state.CooldownRemainingTicks = world.DefenseNodeStates.TryGetValue(source.Value, out DefenseNodeState node) && node.ShuntRemainingTicks > 0
+                ? checked((ushort)((weapon.CooldownTicks * 3 + 3) / 4)) : weapon.CooldownTicks;
         }
     }
 }

@@ -7,7 +7,7 @@ namespace LegoSpaceRTS.SimCore.Tests
 public sealed class M5MissionRefitTests
 {
     private static readonly ContentId HubType = StableId.FromKey("building.ast.service_refit_hub");
-    private static readonly ContentId T3Type = StableId.FromKey("unit.ast.t3_trike");
+    private static readonly ContentId T3Type = StableId.FromKey(CanonicalRosterReferences.T3Trike);
 
     [Test]
     public void FirstSurveyInstallCommitsCanonicalCostAndCompletesOnSameEntity()
@@ -26,7 +26,9 @@ public sealed class M5MissionRefitTests
             Assert.That(job.CommittedOre, Is.EqualTo(25));
             Assert.That(job.CommittedEnergy, Is.EqualTo(10));
             Assert.That(fixture.World.Entities.ResourceBank.Get(fixture.Bank).ProcessedAmount, Is.EqualTo(oreBefore - 25));
-            Assert.That(fixture.World.Entities.EnergyDomain.Get(fixture.EnergyRoot).Reserve, Is.EqualTo(Fix32.FromInt(90) + Fix32.FromRatio(1, 10)));
+            Assert.That(fixture.World.Entities.EnergyDomain.Get(fixture.EnergyRoot).Reserve, Is.EqualTo(Fix32.FromInt(90)));
+            Assert.That(fixture.World.Entities.EnergyDomain.Get(fixture.EnergyRoot).GenerationPerSecond, Is.EqualTo(2));
+            Assert.That(fixture.World.Entities.EnergyDomain.Get(fixture.EnergyRoot).ContinuousDemandPerSecond, Is.EqualTo(2));
             Assert.That(ResourceConservation.Measure(fixture.World, ResourceType.Ore).Total, Is.EqualTo(fixture.OreConservationBefore));
         });
 
@@ -121,8 +123,8 @@ public sealed class M5MissionRefitTests
         ExcavationTopologySystem.InitializeFeatures(world);
         EntityId energyRoot = world.Entities.Create();
         world.Entities.Ownership.Set(energyRoot, new Ownership { PlayerSlot = 0 });
-        ContentId hqType = StableId.FromKey("building.rock_raiders.hq");
-        world.Entities.Transform.Set(energyRoot, new SimTransform { Position = FixVec2.FromInts(12, 12), Orientation = Angle16.Zero });
+        ContentId hqType = StableId.FromKey("building.ast.mb01_eagle_command_base");
+        world.Entities.Transform.Set(energyRoot, new SimTransform { Position = FixVec2.FromInts(25, 40), Orientation = Angle16.Zero });
         world.Entities.Selectable.Set(energyRoot, new Selectable { IsSelectable = true, ContentType = hqType, Kind = SelectableKind.Building });
         world.Entities.Building.Set(energyRoot, new Building { Type = hqType, AnchorX = 8, AnchorY = 8, FootprintWidth = 8, FootprintHeight = 8, State = BuildingState.Completed });
         world.Entities.EnergyDomainMember.Set(energyRoot, new EnergyDomainMember { DomainRoot = energyRoot });

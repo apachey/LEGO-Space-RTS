@@ -189,6 +189,22 @@ public class M6ServerCommandAuthorityTests
     }
 
     [Test]
+    public void T073InfrastructureReachesItsAuthoredPrerequisiteValidation()
+    {
+        SimulationWorld world = ScenarioFactory.CreateFirstControllable(1);
+        EntityId[] builders = ScenarioFactory.OwnedIds(world, 0).Where(world.Entities.Builder.Has).ToArray();
+        ContentId importedBuilding = StableId.FromKey("building.rock_raiders.engineering_workshop");
+        Assert.That(world.Content.TryGetBuilding(importedBuilding, out BuildingDefinition definition), Is.True);
+        for (int y = 82; y < 82 + definition.FootprintHeight; y++)
+        for (int x = 6; x < 6 + definition.FootprintWidth; x++) world.Fog.AddVisible(0, x, y);
+
+        CommandEnvelope build = new(new SimTick(1), 0, 1, SimCommandType.Build, builders,
+            FixVec2.FromInts(6, 82), contentType: importedBuilding);
+
+        Assert.That(ServerCommandValidator.Validate(world, 0, build), Is.EqualTo(NetworkCommandRejection.TechnologyLocked));
+    }
+
+    [Test]
     public void UnusedPayloadFieldsCannotEnterTheAuthoritativeCommandLog()
     {
         SimulationWorld world = ScenarioFactory.CreateFirstControllable(1);

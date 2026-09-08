@@ -26,7 +26,7 @@ public partial class MapPresenter : Node3D
     private void BuildGround()
     {
         BoxMesh mesh = new() { Size = new Vector3(MapGrid.BuildWidth * 2f, 0.2f, MapGrid.BuildHeight * 2f) };
-        mesh.Material = new StandardMaterial3D { AlbedoColor = new Color(0.24f, 0.23f, 0.21f), Roughness = 0.92f };
+        mesh.Material = LegoMaterialLibrary.Terrain(new Color(0.24f, 0.23f, 0.21f));
         MeshInstance3D ground = new() { Name = "PrototypeGround", Mesh = mesh, Position = new Vector3(160f, -0.12f, 160f) };
         AddChild(ground);
     }
@@ -72,7 +72,7 @@ public partial class MapPresenter : Node3D
     private static MultiMeshInstance3D? BuildMultiMesh(string name, List<Transform3D> transforms, PrimitiveMesh mesh, Color color)
     {
         if (transforms.Count == 0) return null;
-        mesh.Material = new StandardMaterial3D { AlbedoColor = color, Roughness = 0.95f };
+        mesh.Material = LegoMaterialLibrary.Terrain(color);
         MultiMesh mm = new() { TransformFormat = MultiMesh.TransformFormatEnum.Transform3D, Mesh = mesh, InstanceCount = transforms.Count };
         for (int i = 0; i < transforms.Count; i++) mm.SetInstanceTransform(i, transforms[i]);
         return new MultiMeshInstance3D { Name = name, Multimesh = mm };

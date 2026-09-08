@@ -11,8 +11,8 @@ public sealed class ForwardServiceSystem : ISimSystem
     public const int ProviderBucketBuildCells = 4;
 
     private static readonly ContentId ServiceHubType = StableId.FromKey("building.ast.service_refit_hub");
-    private static readonly ContentId SolarExplorerType = StableId.FromKey("unit.ast.solar_explorer");
-    private static readonly ContentId T3TrikeType = StableId.FromKey("unit.ast.t3_trike");
+    private static readonly ContentId SolarExplorerType = StableId.FromKey(CanonicalRosterReferences.SolarExplorer);
+    private static readonly ContentId T3TrikeType = StableId.FromKey(CanonicalRosterReferences.T3Trike);
     private const int BucketWidth = MapGrid.BuildWidth / ProviderBucketBuildCells;
     private const int BucketHeight = MapGrid.BuildHeight / ProviderBucketBuildCells;
 

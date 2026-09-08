@@ -749,3 +749,431 @@ canon or the authoritative 20-Hz simulation.
 
 This is an explicitly approved technical-canon gate reclassification. It does
 not change gameplay, movement behavior, thresholds or performance targets.
+
+---
+
+## 2026-08-20 — M7 T064 Godot-native LEGO material masters
+
+- The Unity/URP task label is implemented on the approved Godot host as a small
+  centralized `StandardMaterial3D` family: molded polymer, tool metal, rubber,
+  transparent polymer, Crystal and terrain.
+- Built-in Godot PBR is the baseline because it already provides the required
+  albedo, metallic, roughness, transparency and emission controls. A custom
+  shader is deferred until a measured visual or performance need justifies it.
+- Faction body colors are parameters. Team identity remains a separate small
+  Identification Tile material rather than a body recolor.
+- A fixed presentation-only Material Lab displays all six families,
+  five source-palette swatches and the complete canonical polymer roughness
+  range under one fixed neutral lighting rig. Its automated smoke validates
+  configuration, not subjective art quality.
+- The existing prototype terrain and placeholder entity materials now consume
+  the same centralized family. SimCore, content formats, gameplay and network
+  state remain unchanged.
+
+The exact palette match, highlight width, dark-value lift, transparency and
+emission remain game-director art-direction gates before T064 is accepted.
+
+---
+
+## 2026-08-20 — Reopen visual art direction and replace generated comparisons
+
+- The game director explicitly suspended Phase 08 rendering, material,
+  lighting, palette and general visual-style authority. The document remains a
+  historical/source-research reference; no replacement visual canon exists
+  during M7 exploration.
+- The first T064 Material Lab remains useful engineering infrastructure but is
+  not accepted as the art-direction method or final material system.
+- Image-generated style comparisons are rejected as representative evidence
+  because they did not preserve scene invariants, used infeasible detail and
+  collapsed distinct prompts into near-identical results.
+- M7 now uses one code-native Style Lab: the same optimized Blender test model,
+  animation, camera and composition under genuinely different Godot materials,
+  shaders, light rigs, effects and terrain treatments.
+- Palette ratios and transparent-material semantics are reviewed separately.
+  Saturated transparent elements are non-emissive unless their authored
+  function is energy, lighting or a luminous resource.
+
+This changes presentation direction only. SimCore, gameplay, networking,
+formats, Phase 07 functional UX and deterministic architecture are unchanged.
+
+---
+
+## 2026-08-21 — Palette massing correction and explicit faction light language
+
+- Inventory part counts are rejected as a color-ratio proxy. Palette candidates
+  must be weighted by assembled visible surface area; small pins and connectors
+  cannot outweigh large hull panels.
+- Rock Raiders earth brown is restored as a major 18% vehicle surface. The 7316
+  Excavation Searcher is corrected to a dominant 42% tan/beige surface.
+- Two identical abstract 3D carriers use exactly 100 equal visible panels per
+  model so one panel equals one percentage point and color massing can be
+  reviewed on an object rather than only in bars.
+- Emission is role-bound, not hue-bound. The implemented light map is Rock
+  Raiders neon orange/lime; Mars Mission astronauts blue; Mars Mission aliens
+  neon lime; Life on Mars astronauts red plus warm light through clear lenses;
+  and Life on Mars Martians red/orange/lime/blue.
+- The first four-style review selected no direction. Material realism and
+  graphic toon remain weak candidates; clean PBR and hand-painted/retro are
+  retained only as comparison anchors.
+
+This is non-canonical art-direction exploration. No visual style or palette is
+locked, and gameplay, SimCore and network architecture remain unchanged.
+
+---
+
+## 2026-08-22 — Research-driven M7 Style Lab round 2
+
+- Round 1's clean PBR, material realism, graphic toon and hand-painted/retro
+  categories are retired as forward candidates after selecting no direction.
+- The game director's new visual research is stored as a non-canonical
+  development brief. It centers the search on volumetric mechanical 3D,
+  readable broad forms, visible LEGO construction logic and clean RTS-scale
+  presentation without photoreal or tabletop premises.
+- One invariant Raider carrier now compares Industrial Mass, Heroic RTS,
+  Constructive LEGO and Graphic Volume. Geometry, camera, animation, semantic
+  palette and timing remain fixed; only materials, shaders, lighting, terrain
+  and VFX rendering vary.
+- The carrier uses the accepted Rock Raiders massing and semantic light roles:
+  earth brown is structural, orange/lime signals are emissive, and canopy glass
+  is not emissive.
+- All four treatments passed the real Godot renderer, full regression and direct
+  exported-build capture. This makes them valid review evidence, not accepted
+  art direction.
+
+This is non-canonical presentation research. It changes no gameplay, SimCore,
+networking, format or deterministic architecture, and it locks no visual style.
+
+---
+
+## 2026-08-22 — Separate outline from M7 rendering direction
+
+- First Round 2 review currently favors Heroic RTS without accepting it. The
+  useful ingredients are Industrial color depth, Heroic color/bloom and
+  Constructive molded highlights.
+- Overt warm key lighting is rejected. Industrial is moved close to neutral and
+  Heroic retains only a restrained warm key against its cool fill.
+- Outline is no longer bundled with Graphic Volume. It is an independent,
+  off-by-default presentation toggle available on every treatment through `O`
+  or `--m7-outline off|on`.
+- Automated smoke covers all four styles with outline off and Heroic RTS with
+  outline on. Exported-build captures provide the same-style A/B evidence.
+
+This is non-canonical presentation refinement. It locks no rendering style and
+changes no gameplay, SimCore, networking, formats or deterministic behavior.
+
+---
+
+## 2026-08-22 — Replace preset-style selection with a realtime Look Profile
+
+- Bundled style variants are retired as the primary art-direction workflow.
+  They did not let the game director isolate material, light, post, outline and
+  VFX decisions or judge them in a representative gameplay composition.
+- The new M7 Look Lab is presentation-only and uses the Phase 07 camera contract:
+  36-degree perspective, 24–72 build-cell zoom and the normal 44-cell default.
+- One continuous `schemaVersion: 1` JSON profile owns independent camera, scene,
+  shading, material-family, glass, emission, lighting, post, outline, VFX,
+  ground and HUD parameters. Copy exports the full state, never a diff.
+- Material identity is semantic rather than a recolor: painted shell,
+  structural earth, accent, dark mechanisms, tool steel, rubber, building shell
+  and ground rock have separate physical responses.
+- Outline uses Forward+ depth and normal/roughness buffers. The old inverted-hull
+  pass is retired; silhouettes and creases are controlled independently, and
+  rough terrain is excluded from crease noise.
+- The legacy Style, Palette and Material labs remain preserved. The Palette Lab
+  stays accepted; no rendering profile becomes canon without explicit
+  game-director approval.
+
+This is non-canonical presentation tooling. It adds no dependency and changes no
+gameplay, SimCore authority, networking, format or deterministic behavior.
+
+---
+
+## 2026-08-22 — Repair the Look Lab around observable controls
+
+- The game director's schema-1 profile becomes the schema-2 review baseline,
+  except for a bright-blue background selected while that control was not
+  observable. Schema 1 remains paste-compatible and migrates forward.
+- HUD, health, selection and target fixtures are removed because interface art
+  direction is a separate phase. The arbitrary scorch overlay is removed rather
+  than polished without an accepted damage language.
+- Every emissive role now writes HDR emission and may drive same-hue edge/halo
+  and local-light response. Tracer and fire use the same observable energy
+  language; muzzle/impact/fire move to GPU particles.
+- Film grain and posterization dither are static. Ground tracks use depth-tested
+  tread geometry. Impact position is derived from the target's exterior face.
+- Four generated grayscale detail maps are accepted only as non-canonical
+  look-development inputs for paint, brushed metal, rubber and quarry ground.
+  They do not establish a production texture or normal/ORM pipeline.
+- A live ground normal-strength control is not shipped after two materially
+  different shader implementations produced invalid terrain rendering. A later
+  normal/ORM pipeline requires a separately reviewed implementation task.
+
+This changes presentation tooling only. It changes no gameplay, SimCore,
+networking, serialization format, dependency or visual canon.
+
+---
+
+## 2026-08-22 — T065/T066 shared animation drivers and bounded VFX pools
+
+- Godot presentation now owns a reusable animation-state driver and mechanical
+  rig binding. Inputs are immutable presentation state; output controls wheel,
+  suspension, functional tool, recoil, transformation and damage presentation
+  only and never writes authoritative state.
+- Animation parameter significance follows the preserved architecture: Tier A
+  every render frame, Tier B approximately 30 Hz and Tier C approximately 15
+  Hz. Transform interpolation and entity placement remain independent.
+- Weapon-fire effects use a per-source monotonic high-watermark so repeated
+  snapshots, reconnect restore or presentation rebuild do not replay already
+  observed cosmetic events.
+- The Godot host prewarms fixed-capacity generic pools. Projectile views,
+  particle muzzle bursts and contact impacts are reused; budget overflow drops
+  only cosmetic presentation and records telemetry.
+- The M7 Look Lab consumes the same implementations, advances to schema 3 and
+  exposes independent animation response, tier override, VFX budget, preview
+  load and live pool telemetry controls. Schema 1 and 2 remain paste-compatible.
+
+This implements T065/T066 presentation infrastructure without a new dependency,
+gameplay change, SimCore mutation, network-format change or visual-canon choice.
+
+## 2026-08-22 — T068 retained HUD frame and separate art-direction profile
+
+- Phase 09A supersedes the old Unity `UI Toolkit` name with Godot
+  `Control`/container UI in C#. T068 implements the intended architecture, not
+  the superseded host technology.
+- Production HUD state is projected into a one-way `HudFrame`. A retained
+  `HudView` owns layout and widgets and only updates when the frame signature
+  changes; it does not rebuild the visual tree per render frame.
+- Mixed selections are bounded to eight pooled type cards and commands to the
+  canonical 3×4 grid. The implementation never creates one elaborate portrait
+  per selected entity.
+- The view owns the Phase 07 anchors, 96% default safe area, independent UI/text
+  scaling and central-width bounds. Godot's project base remains 1920×1080 with
+  `canvas_items` stretch; HUD dimensions remain presentation-only.
+- HUD art direction uses its own schema-1 `M7HudProfile` and laboratory rather
+  than re-entering the world-rendering Look Lab. This keeps currently open
+  visual choices editable without weakening the canonical functional layout.
+- T069 owns the real minimap. T068 only reserves and labels its bottom-left
+  view contract. T073 still owns the complete command catalog; unavailable
+  target-mode slots remain explicit rather than silently inventing commands.
+
+This changes Godot presentation architecture only. SimCore, commands, gameplay,
+networking and serialization formats are unchanged.
+
+## 2026-08-22 — T069 client-legal retained minimap layers
+
+- The production HUD and HUD Lab share one retained `HudMinimapView`; T069 does
+  not create a separate debug renderer that could drift from player behavior.
+- Static terrain is cached by topology revision. Viewer fog and bounded marker,
+  line and ping frames update at the HUD's 10-Hz cadence; marker positions are
+  visually interpolated while the camera viewport polygon updates every render
+  frame.
+- Current contacts come from the existing viewer-filtered
+  `PresentationSnapshot`. Presentation memory retains only last-observed enemy
+  structures and resources under explored fog. Hidden enemy mobiles and true
+  air are never reconstructed from `SimulationWorld`.
+- Enemy Tube memory is segment-based: adjacent route cells are learned only
+  while visible, remain as known infrastructure under explored fog and are
+  removed when renewed visibility disproves them. Visible enemy Surge anchors
+  likewise originate only from the filtered presentation snapshot.
+- Four bounded `MultiMeshInstance2D` channels encode mobile, true-air,
+  structure and resource symbol shapes. This avoids a `Control`/node per marker
+  while leaving all readability colors and opacities in schema-2
+  `M7HudProfile`.
+- Minimap left-click/drag uses the presentation camera. Right-click reuses the
+  existing Move/rally commands and queued modifier after converting the pixel
+  to the exact canonical build-cell center.
+- Attack-move targeting and networked team pings remain T073 work because no
+  current target-mode/ping command path exists. T069 does not change the command
+  packet, recipient snapshot or replay format to approximate them.
+
+This changes Godot presentation/input integration only. SimCore, gameplay
+rules, network formats, replay formats and visual canon are unchanged.
+
+## 2026-09-01 — T071 versioned wide infrastructure footprints and Crystal costs
+
+- The canonical infrastructure roster includes a 10×8 Flight Operations Pad
+  and a 9×9 Aero Tube Hangar, so the former single-`ulong` 8×8 building mask
+  cannot represent all 31 entries. `BuildingDefinition` now stores low and high
+  64-bit mask words and bounds the current source to 10×10 cells.
+- Four canonical structures cost one Crystal. Building costs therefore now
+  carry Ore, Energy and Crystals consistently with unit-production costs.
+- Prototype source schema 16 requires the explicit Crystal field. The compiler
+  remains able to read schema 15, defaulting missing Crystal costs to zero.
+- Compiled content format 17 writes the second mask word and Crystal cost. Its
+  reader remains backward-compatible with formats 2–16, treating their masks
+  as the low word and their building Crystal cost as zero.
+- Aero Tube Link stores its canonical base cost/time and 1×1 span archetype in
+  the generic definition. Its existing authoritative Tube system continues to
+  apply the canonical per-length cost/time rules. The generic entity definition
+  preserves the canonical 320-HP functional-span durability reference; a
+  damageable placed-span realization remains later command/reference/system
+  binding rather than a T071 claim. Resonance demand per committed Crystal
+  likewise remains authoritative in the existing Resonance system rather than
+  being flattened into static data.
+- Canon does not provide final nonrectangular masks, structure sight values,
+  production-exit geometry or default configurable-defense modes. T071 does
+  not invent them; later M8 command/reference work may bind only values already
+  established by canon.
+- Importing definitions does not make the new infrastructure legally
+  constructible. Until T073 supplies the complete faction/research command
+  catalog, authoritative placement and network validation retain the four
+  already playable M3 Rock Raiders structures. This also keeps Crystal-bearing
+  infrastructure data-only until its legal command path can reserve and refund
+  every canonical resource cost.
+
+This is a backward-readable content-format evolution required to represent
+existing canon. It changes no gameplay canon, snapshot/network protocol,
+dependency or visual direction.
+
+## 2026-09-01 — T072 data-only research DAG and effect-reference boundary
+
+- The canonical Phase 04 research roster is 38 definitions: 9 Rock Raider, 10
+  Astronaut, 10 Alien and 9 Martian technologies. Each definition stores its
+  faction, physical source building, exact Ore/Energy/Crystal cost, 20-Hz
+  research duration, categories, prerequisite groups, unlock tags, parameter
+  modifiers and stable presentation/localization references.
+- Prerequisite groups are ANDed; alternatives inside a group are ORed. The
+  schema distinguishes completed research, owned buildings and authoritative
+  state thresholds. It also preserves whether a threshold is checked at start
+  or maintained while researching, which is required for the Alien four-
+  committed-Crystal gate.
+- Source-building bindings come from the Phase 04 Rock Raider structure column
+  and technology trees together with Phase 03's faction technology roles:
+  Astronaut research uses the Service & Refit Hub, Alien research uses the
+  Resonance Core or Reconfiguration Dock branch, and Martian research uses the
+  Routing Laboratory. The five alternatives for Integrated Expedition Command
+  are exactly the five technologies listed under Phase 04 `MISSION SYSTEMS`.
+- Content unlocks resolve against the imported unit/building catalog. Capability
+  tags and parameter targets use explicit stable namespaces. The catalog rejects
+  duplicate technologies, invalid factions/providers, unresolved or
+  cross-faction content effects, malformed prerequisites and every possible
+  research cycle, including edges inside an any-of group.
+- Advanced Excavation Systems and Grand Network Integration retain separate
+  Searcher capability tags. T073 must require both when it defines the Searcher
+  production command; T072 does not incorrectly make either technology
+  sufficient on its own.
+- Prototype source schema 17 adds the research source. Compiled content format
+  18 appends the research payload after format-17 data; formats 2–17 remain
+  readable with an empty research catalog.
+- T072 is intentionally data-only. It does not add research jobs, queues,
+  completion state, commands, UI, network payloads or effect application, and
+  it does not rewire the retained M5 proof flags. Those runtime bindings belong
+  to T073 and later complete-reference closure.
+
+This changes compiled gameplay content and its compatibility hash without
+changing gameplay canon, snapshot/network/replay formats, dependencies or
+visual direction.
+
+## 2026-09-07 — T073 guarded command/action catalog checkpoint
+
+- Prototype source schema 18 and compiled content format 19 add the complete
+  31-building construction prerequisite table, all 35 canonical unit-production
+  recipes and 35 stable command-family definitions. Formats 2–18 remain
+  readable.
+- Construction and production prerequisites use the same deterministic
+  AND-of-OR representation. Runtime validation rejects missing, duplicate,
+  cross-faction and cyclic building references, invalid producer/unit bindings,
+  OC disagreement, malformed command codes and incomplete command catalogs.
+- Public command enum values 1–18 retain their accepted byte representation.
+  Values 19–35 reserve stable catalog/network identities, but `CommandEnvelope`
+  intentionally rejects them until their payloads and authoritative handlers
+  land. Snapshot 20, simulation protocol 18, replay 16 and command packet 1 are
+  unchanged.
+- The complete recipe table does not silently activate unfinished production.
+  Scenario creation, construction completion, legacy snapshot hydration, local
+  input and server validation retain the four accepted M3 Raider products until
+  Crystal/research accounting, faction Energy domains and authored exits are
+  bound.
+- Missing numeric and accounting rules are isolated in
+  `Docs/Development/M8_T073_BINDING_REVIEW.md` as explicit proposals, not canon.
+  T073 remains open until the game director approves or amends them and the
+  affected runtime commands are implemented.
+
+This is a guarded data/compatibility checkpoint. It changes no gameplay canon,
+dependency, visual direction or existing network/snapshot/replay layout.
+
+## 2026-09-08 — T073 approved guarded runtime bindings
+
+- The game director approved the six implementation decisions recorded in
+  `M8_T073_BINDING_REVIEW.md`: cancellation accounting, 13 production exits,
+  explicit excavation durations, Astronaut/Alien Energy membership, Settlement
+  Station reserve and the exact Defense Node combat-pressure rule.
+- Production, research and Mission Refit use one deterministic cancellation
+  calculation: no-progress jobs refund fully; active jobs commit 20% of
+  Ore/Energy and consume the remaining 80% linearly; cancellation returns
+  unspent plus half consumed; Crystals commit at 50% progress. Existing
+  Service/Refit facility-destruction handling remains separate and unchanged.
+- Crystal-bearing construction now reserves its authored Crystal rather than
+  receiving a free runtime path when the 31-building catalog is enabled.
+- Astronaut 18-cell areas merge transitively while remaining separate from
+  Forward Service. Alien membership uses nearest operational Command Core,
+  distance then `EntityId`, and deterministically preserves one Resonance Core
+  per Command Core. Faction topology merges and splits preserve pooled reserve.
+- Settlement Station stores 150 Energy and retains Self +1 Energy/s. Defense
+  Node mode changes take 120 ticks and pause until 80 ticks have elapsed since
+  the most recent hostile damage dealt or received.
+- Snapshot format 21 and simulation protocol 19 serialize the new job and
+  faction state. Snapshot 20 remains readable; replay 16 and command packet 1
+  remain unchanged.
+- Focused T073 tests pass 30/30. The relevant deterministic, snapshot/replay,
+  content, M5-faction and M6-network compatibility selection passes 107/107.
+- The requested single full verification run passed 308/308 NUnit tests and
+  every runtime/build/content/M6/M7 blocking stage. Its summary retained one
+  blocking static-validation failure because the validator still expected the
+  former Settlement Station reserve of 0. After aligning that guard with the
+  approved 150 reserve, standalone static/source validation passes. The prior
+  HUD-lab mutex teardown did not recur. Stress60 remains the known 2/60
+  `BLOCKING_LATER` M9 diagnostic.
+
+This implements approved gameplay canon without a dependency, visual-direction
+change or T074 work.
+
+## 2026-09-08 — T074 complete roster-reference gate
+
+- The shipping content compiler now runs one aggregate closure gate after both
+  the canonical catalog and authored map are compiled. Generic and legacy
+  catalogs remain readable; strict 35-unit/31-building/38-research/35-command
+  counts apply only to the shipping M8 build path.
+- The gate validates cross-section stable-ID uniqueness, faction and roster
+  completeness, movement/weapon/presentation/localization references,
+  production coverage, the approved producer exits, exact Aero Tube eligibility
+  and authored map starts/spawns/resources/features.
+- Runtime systems and the retained M5 acceptance fixture now share canonical
+  T070 roster IDs instead of older faction abbreviations. The engineering-only
+  synthetic M5 target IDs remain local fixture identities and do not represent
+  shipping roster entries.
+- Eight intentionally broken fixtures cover duplicate IDs, missing visuals,
+  invalid weapons, research cycles, missing producers, illegal Tube units, bad
+  starts and impossible producer exits with explicit diagnostics.
+- Targeted roster/M5 coverage passes 57/57. Full verification passes 317/317
+  tests and every T074-relevant runtime, content, network and export stage, with
+  one known Godot HUD-process mutex failure after that fixture printed PASS;
+  the affected and remaining HUD fixtures pass when rerun separately. Stress60
+  remains the preserved 2/60 `BLOCKING_LATER` M9 diagnostic.
+
+This changes no gameplay values, dependency, content/snapshot/network/replay
+format or visual direction.
+
+## 2026-09-08 — Insert M8.5 full content and presentation production
+
+- The game director explicitly approved a new blocking production milestone
+  between M8 and M9. The previous sequence established a limited M7 vertical
+  slice and complete M8 gameplay data but left the production of the full
+  player-facing roster, interface art and audio without a milestone owner.
+- `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
+  defines M8.5 and tasks T081–T091. Existing T001–T080 IDs remain stable; task
+  number order does not override milestone dependency order.
+- M8.5 covers production design and integrated models for all 35 units and 31
+  infrastructure entries, full-roster animation/VFX/destruction, complete
+  icons/cards/portraits, the M9-required frontend/menu/UI presentation, audio
+  SFX/ambience and final integrated acceptance.
+- M7 still owns selection and game-director acceptance of the visual production
+  standard. M8 still owns functional roster data. Neither a style laboratory
+  nor a data definition may be presented as a substitute for a completed
+  player-facing asset.
+- M9 retains T075–T080 and its AI, save/load, performance, network soak and
+  Skirmish Alpha responsibilities, but cannot close with primitive full-roster
+  placeholders or unresolved production presentation.
+- Music, voice acting and localization recording are not made blocking by this
+  decision. They require separate approved scope if added later. No dependency,
+  external asset pack or service is authorized by the roadmap amendment.

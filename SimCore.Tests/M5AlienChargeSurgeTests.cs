@@ -109,11 +109,15 @@ public sealed class M5AlienChargeSurgeTests
 
         EntityId secondCommandCore = AddBuilding(fixture.World, CommandCoreType, fixture.EnergyRoot, 0, FixVec2.FromInts(20, 0));
         EntityId secondCore = AddBuilding(fixture.World, ResonanceCoreType, fixture.EnergyRoot, 0, FixVec2.FromInts(10, 0));
+        AddBuilding(fixture.World, StableId.FromKey("building.ali.power_coupler"), secondCommandCore, 0, FixVec2.FromInts(20, 4));
         Assert.That(ResonanceCoreSystem.TryAttachCore(fixture.World, secondCore, secondCommandCore), Is.True);
         ref ResonanceCore second = ref fixture.World.Entities.ResonanceCore.Get(secondCore);
         second.CommittedSlotMask = 0b0000_1111;
         second.DesiredCommittedCrystals = 4;
-        EnergyDomainSystem.Recalculate(fixture.World, fixture.EnergyRoot);
+        FactionEnergyDomainSystem.Rebuild(fixture.World);
+        EnergyDomainSystem.Recalculate(fixture.World, secondCommandCore);
+        fixture.World.Entities.EnergyDomain.Get(secondCommandCore).Reserve = Fix32.FromInt(100);
+        BrownoutSystem.Recalculate(fixture.World, secondCommandCore);
         AlienChargeSystem.RecalculateAll(fixture.World);
         fixture.Runner.StepTicks(313);
         Assert.That(AlienChargeSystem.TryStartSurge(fixture.World, 0, fixture.Core), Is.True);
@@ -172,18 +176,17 @@ public sealed class M5AlienChargeSurgeTests
     {
         SimulationWorld world = new(DevMapFactory.Create(), 2);
         ExcavationTopologySystem.InitializeFeatures(world);
-        EntityId energyRoot = AddBuilding(world, StableId.FromKey("building.rock_raiders.hq"), EntityId.None, 0, FixVec2.FromInts(-12, 0));
+        EntityId energyRoot = AddBuilding(world, CommandCoreType, EntityId.None, 0, FixVec2.FromInts(-12, 0));
         world.Entities.EnergyDomainMember.Set(energyRoot, new EnergyDomainMember { DomainRoot = energyRoot });
         world.Entities.EnergyDomain.Set(energyRoot, new EnergyDomain());
-        AddBuilding(world, StableId.FromKey("building.rock_raiders.power_station"), energyRoot, 0, FixVec2.FromInts(-12, 4));
-        AddBuilding(world, StableId.FromKey("building.rock_raiders.power_station"), energyRoot, 0, FixVec2.FromInts(-12, 8));
-        AddBuilding(world, StableId.FromKey("building.rock_raiders.power_station"), energyRoot, 0, FixVec2.FromInts(-12, 12));
-        EntityId commandCore = AddBuilding(world, CommandCoreType, energyRoot, 0, FixVec2.FromInts(-4, 0));
+        AddBuilding(world, StableId.FromKey("building.ali.power_coupler"), energyRoot, 0, FixVec2.FromInts(-12, 4));
+        AddBuilding(world, StableId.FromKey("building.ali.power_coupler"), energyRoot, 0, FixVec2.FromInts(-12, 8));
+        AddBuilding(world, StableId.FromKey("building.ali.power_coupler"), energyRoot, 0, FixVec2.FromInts(-12, 12));
         EntityId core = AddBuilding(world, ResonanceCoreType, energyRoot, 0, FixVec2.Zero);
         EntityId crystalBank = world.Entities.Create();
         world.Entities.Ownership.Set(crystalBank, new Ownership { PlayerSlot = 0 });
         world.Entities.ResourceBank.Set(crystalBank, new ResourceBank { Type = ResourceType.Crystal });
-        Assert.That(ResonanceCoreSystem.TryAttachCore(world, core, commandCore), Is.True);
+        Assert.That(ResonanceCoreSystem.TryAttachCore(world, core, energyRoot), Is.True);
         ref ResonanceCore resonance = ref world.Entities.ResonanceCore.Get(core);
         resonance.CommittedSlotMask = (byte)((1 << committedCrystals) - 1);
         resonance.DesiredCommittedCrystals = committedCrystals;

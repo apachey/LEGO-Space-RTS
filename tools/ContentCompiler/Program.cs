@@ -14,13 +14,17 @@ Directory.CreateDirectory(outputDirectory);
 
 PrototypeContentCatalog catalog = CompilePrototypeCatalog(contentSource);
 byte[] contentBytes = PrototypeContentCodec.Write(catalog);
+byte[] builtInBytes = PrototypeContentCodec.Write(PrototypeContentFactory.CreateM2Catalog());
+if (!contentBytes.AsSpan().SequenceEqual(builtInBytes))
+    throw new InvalidDataException("Checked-in prototype source and built-in fallback catalog disagree.");
 string contentOutput = Path.Combine(outputDirectory, "PrototypeEntities.contentbin");
 File.WriteAllBytes(contentOutput, contentBytes);
 PrototypeContentCatalog contentRoundTrip = PrototypeContentCodec.Read(contentBytes);
-if (contentRoundTrip.ContentHash != catalog.ContentHash || contentRoundTrip.Entities.Length != catalog.Entities.Length || contentRoundTrip.ResourceNodes.Length != catalog.ResourceNodes.Length || contentRoundTrip.Buildings.Length != catalog.Buildings.Length || contentRoundTrip.Production.Length != catalog.Production.Length || contentRoundTrip.Weapons.Length != catalog.Weapons.Length || contentRoundTrip.Transformations.Length != catalog.Transformations.Length)
+if (contentRoundTrip.ContentHash != catalog.ContentHash || contentRoundTrip.Entities.Length != catalog.Entities.Length || contentRoundTrip.ResourceNodes.Length != catalog.ResourceNodes.Length || contentRoundTrip.Buildings.Length != catalog.Buildings.Length || contentRoundTrip.Production.Length != catalog.Production.Length || contentRoundTrip.Weapons.Length != catalog.Weapons.Length || contentRoundTrip.Transformations.Length != catalog.Transformations.Length || contentRoundTrip.Research.Length != catalog.Research.Length || contentRoundTrip.Commands.Length != catalog.Commands.Length)
     throw new InvalidDataException("Prototype content round-trip validation failed.");
 
 MapDefinition definition = CompileMap(mapSource, catalog);
+CanonicalRosterValidator.Validate(catalog, definition);
 byte[] mapBytes = CompiledMapCodec.Write(definition);
 string mapOutput = Path.Combine(outputDirectory, "DEV_FirstControllableRTS.mapbin");
 File.WriteAllBytes(mapOutput, mapBytes);
@@ -28,7 +32,7 @@ MapDefinition mapRoundTrip = CompiledMapCodec.ReadDefinition(mapBytes);
 if (mapRoundTrip.Grid.Id.Value != definition.Grid.Id.Value || mapRoundTrip.InitialEntities.Length != definition.InitialEntities.Length || mapRoundTrip.InitialResourceNodes.Length != definition.InitialResourceNodes.Length || mapRoundTrip.InitialResourceReceivers.Length != definition.InitialResourceReceivers.Length)
     throw new InvalidDataException("Compiled map round-trip validation failed.");
 
-Console.WriteLine($"Prototype content: {contentOutput} ({contentBytes.Length} bytes), hash={catalog.ContentHash:X16}, entities={catalog.Entities.Length}, resourceDefinitions={catalog.ResourceNodes.Length}, buildingDefinitions={catalog.Buildings.Length}, productionDefinitions={catalog.Production.Length}, weaponDefinitions={catalog.Weapons.Length}, transformationDefinitions={catalog.Transformations.Length}");
+Console.WriteLine($"Prototype content: {contentOutput} ({contentBytes.Length} bytes), hash={catalog.ContentHash:X16}, entities={catalog.Entities.Length}, resourceDefinitions={catalog.ResourceNodes.Length}, buildingDefinitions={catalog.Buildings.Length}, productionDefinitions={catalog.Production.Length}, weaponDefinitions={catalog.Weapons.Length}, transformationDefinitions={catalog.Transformations.Length}, researchDefinitions={catalog.Research.Length}, commandDefinitions={catalog.Commands.Length}");
 Console.WriteLine($"Map: {mapOutput} ({mapBytes.Length} bytes), starts={definition.Starts.Length}, spawns={definition.InitialEntities.Length}, resourceNodes={definition.InitialResourceNodes.Length}, resourceReceivers={definition.InitialResourceReceivers.Length}, features={definition.Grid.Features.Count}");
 return 0;
 
@@ -36,7 +40,8 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
 {
     using JsonDocument document = JsonDocument.Parse(File.ReadAllText(path));
     JsonElement root = document.RootElement;
-    if (root.GetProperty("schemaVersion").GetInt32() != 15) throw new InvalidDataException("Unsupported prototype content schema.");
+    int schemaVersion = root.GetProperty("schemaVersion").GetInt32();
+    if (schemaVersion < 15 || schemaVersion > 18) throw new InvalidDataException("Unsupported prototype content schema.");
     if (!string.Equals(root.GetProperty("contentKind").GetString(), "prototype_entities", StringComparison.Ordinal)) throw new InvalidDataException("Unexpected contentKind.");
 
     List<PrototypeMovementProfile> profiles = new();
@@ -137,6 +142,16 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
     }
     entities.Sort((a, b) => string.CompareOrdinal(a.StableKey, b.StableKey));
 
+    Dictionary<string, ContentActionPrerequisiteGroup[]> constructionPrerequisites = new(StringComparer.Ordinal);
+    if (schemaVersion >= 18)
+    {
+        foreach (JsonElement item in root.GetProperty("constructionActionDefinitions").EnumerateArray())
+        {
+            string building = RequiredString(item, "building");
+            if (!constructionPrerequisites.TryAdd(building, ReadActionPrerequisites(item, building)))
+                throw new InvalidDataException($"Duplicate construction action definition for {building}.");
+        }
+    }
     List<BuildingDefinition> buildings = new();
     HashSet<string> buildingKeys = new(StringComparer.Ordinal);
     foreach (JsonElement item in root.GetProperty("buildingDefinitions").EnumerateArray())
@@ -146,18 +161,23 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
         if (!entityKeys.Contains(key)) throw new InvalidDataException($"{key}: building definition has no matching entity definition.");
         JsonElement rows = item.GetProperty("footprintMask");
         byte height = checked((byte)rows.GetArrayLength());
-        if (height == 0 || height > 8) throw new InvalidDataException($"{key}: footprintMask height must be 1..8.");
+        if (height == 0 || height > 10) throw new InvalidDataException($"{key}: footprintMask height must be 1..10.");
         string firstRow = rows[0].GetString() ?? string.Empty;
         byte width = checked((byte)firstRow.Length);
-        if (width == 0 || width > 8) throw new InvalidDataException($"{key}: footprintMask width must be 1..8.");
-        ulong mask = 0;
+        if (width == 0 || width > 10) throw new InvalidDataException($"{key}: footprintMask width must be 1..10.");
+        ulong mask = 0, maskHigh = 0;
         for (int y = 0; y < height; y++)
         {
             string row = rows[y].GetString() ?? string.Empty;
             if (row.Length != width) throw new InvalidDataException($"{key}: footprintMask rows must share one width.");
             for (int x = 0; x < width; x++)
             {
-                if (row[x] == '1') mask |= 1UL << (y * width + x);
+                int bitIndex = y * width + x;
+                if (row[x] == '1')
+                {
+                    if (bitIndex < 64) mask |= 1UL << bitIndex;
+                    else maskHigh |= 1UL << (bitIndex - 64);
+                }
                 else if (row[x] != '0') throw new InvalidDataException($"{key}: footprintMask accepts only 0 and 1.");
             }
         }
@@ -169,6 +189,13 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
             exitDepth = checked((byte)exit.GetProperty("depth").GetInt32());
             exitFootprint = Enum.Parse<FootprintClass>(RequiredString(exit, "largestFootprint"), false);
         }
+        byte crystalCost = cost.TryGetProperty("crystals", out JsonElement crystals)
+            ? checked((byte)crystals.GetInt32()) : (byte)0;
+        if (schemaVersion >= 16 && !cost.TryGetProperty("crystals", out _)) throw new InvalidDataException($"{key}: schema 16 building cost requires crystals.");
+        ContentActionPrerequisiteGroup[] prerequisites = schemaVersion >= 18
+            ? constructionPrerequisites.TryGetValue(key, out ContentActionPrerequisiteGroup[]? authoredPrerequisites)
+                ? authoredPrerequisites : throw new InvalidDataException($"{key}: missing construction action definition.")
+            : Array.Empty<ContentActionPrerequisiteGroup>();
         buildings.Add(new BuildingDefinition(key, width, height, mask, item.GetProperty("rotatable").GetBoolean(),
             checked((ushort)cost.GetProperty("ore").GetInt32()), checked((ushort)cost.GetProperty("energy").GetInt32()),
             checked((ushort)item.GetProperty("buildTicks").GetInt32()), exitWidth, exitDepth, exitFootprint,
@@ -178,25 +205,40 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
             checked((ushort)item.GetProperty("continuousEnergyDemandPerSecond").GetInt32()),
             Enum.Parse<EnergyFunctionalClass>(RequiredString(item, "energyFunctionalClass"), false),
             item.TryGetProperty("worksiteServiceRadius", out JsonElement serviceRadius)
-                ? checked((byte)serviceRadius.GetInt32()) : (byte)0));
+                ? checked((byte)serviceRadius.GetInt32()) : (byte)0,
+            crystalCost, maskHigh, prerequisites));
     }
+    if (schemaVersion >= 18 && constructionPrerequisites.Count != buildings.Count)
+        throw new InvalidDataException("Construction action definitions contain an unknown or missing building.");
     buildings.Sort((a, b) => string.CompareOrdinal(a.StableKey, b.StableKey));
     List<UnitProductionDefinition> production = new();
     HashSet<string> producedUnits = new(StringComparer.Ordinal);
     foreach (JsonElement item in root.GetProperty("productionDefinitions").EnumerateArray())
     {
-        string unit = RequiredString(item, "unit"), producer = RequiredString(item, "producer");
+        string unit = RequiredString(item, "unit");
         if (!entityKeys.Contains(unit)) throw new InvalidDataException($"Production references unknown unit {unit}.");
-        if (!buildingKeys.Contains(producer)) throw new InvalidDataException($"Production references unknown producer {producer}.");
+        string[] producers;
+        if (schemaVersion >= 18)
+        {
+            List<string> producerKeys = new();
+            foreach (JsonElement producerElement in item.GetProperty("producers").EnumerateArray())
+                producerKeys.Add(producerElement.GetString() ?? throw new InvalidDataException($"{unit}: producer must be a string."));
+            producers = producerKeys.ToArray();
+        }
+        else producers = new[] { RequiredString(item, "producer") };
+        if (producers.Length == 0) throw new InvalidDataException($"{unit}: at least one producer is required.");
+        for (int producer = 0; producer < producers.Length; producer++)
+            if (!buildingKeys.Contains(producers[producer])) throw new InvalidDataException($"Production references unknown producer {producers[producer]}.");
         if (!producedUnits.Add(unit)) throw new InvalidDataException($"Duplicate production definition for {unit}.");
         JsonElement cost = item.GetProperty("cost");
         byte operationsCapacity = checked((byte)item.GetProperty("operationsCapacity").GetInt32());
         PrototypeEntityDefinition unitDefinition = entities.Find(e => string.Equals(e.StableKey, unit, StringComparison.Ordinal));
         if (unitDefinition.OperationsCapacity != operationsCapacity) throw new InvalidDataException($"{unit}: production and unit Operations Capacity disagree.");
-        production.Add(new UnitProductionDefinition(unit, producer,
+        production.Add(new UnitProductionDefinition(unit, producers,
             checked((ushort)cost.GetProperty("ore").GetInt32()), checked((ushort)cost.GetProperty("energy").GetInt32()),
             checked((byte)cost.GetProperty("crystals").GetInt32()), operationsCapacity,
-            checked((ushort)item.GetProperty("buildTicks").GetInt32())));
+            checked((ushort)item.GetProperty("buildTicks").GetInt32()),
+            schemaVersion >= 18 ? ReadActionPrerequisites(item, unit) : Array.Empty<ContentActionPrerequisiteGroup>()));
     }
     production.Sort((a, b) => string.CompareOrdinal(a.UnitStableKey, b.UnitStableKey));
     List<TransformationDefinition> transformations = new();
@@ -218,7 +260,70 @@ static PrototypeContentCatalog CompilePrototypeCatalog(string path)
             item.GetProperty("attackDuringTransition").GetBoolean(), ReadTargetLayerMask(item.GetProperty("transitionTargetLayers"))));
     }
     transformations.Sort((a, b) => string.CompareOrdinal(a.StableKey, b.StableKey));
-    return new PrototypeContentCatalog(profiles.ToArray(), entities.ToArray(), resourceNodes.ToArray(), buildings.ToArray(), production.ToArray(), weapons.ToArray(), transformations.ToArray());
+    List<ResearchDefinition> research = new();
+    if (schemaVersion >= 17)
+    {
+        HashSet<string> researchKeys = new(StringComparer.Ordinal);
+        foreach (JsonElement item in root.GetProperty("researchDefinitions").EnumerateArray())
+        {
+            string key = RequiredString(item, "stableId");
+            if (!researchKeys.Add(key)) throw new InvalidDataException($"Duplicate research definition key {key}.");
+            uint id = StableId.FromKey(key).Value; if (!stableIds.Add(id)) throw new InvalidDataException($"Stable ID collision at research {key}.");
+            JsonElement cost = item.GetProperty("cost");
+            List<ResearchPrerequisiteGroup> prerequisiteGroups = new();
+            foreach (JsonElement group in item.GetProperty("prerequisiteGroups").EnumerateArray())
+            {
+                List<ResearchPrerequisiteDefinition> alternatives = new();
+                foreach (JsonElement prerequisite in group.GetProperty("anyOf").EnumerateArray())
+                {
+                    alternatives.Add(new ResearchPrerequisiteDefinition(
+                        Enum.Parse<ResearchPrerequisiteKind>(RequiredString(prerequisite, "kind"), false),
+                        RequiredString(prerequisite, "target"),
+                        checked((ushort)prerequisite.GetProperty("minimum").GetInt32()),
+                        Enum.Parse<ResearchPrerequisitePersistence>(RequiredString(prerequisite, "persistence"), false)));
+                }
+                prerequisiteGroups.Add(new ResearchPrerequisiteGroup(alternatives.ToArray()));
+            }
+            List<string> unlockTags = new();
+            foreach (JsonElement unlock in item.GetProperty("unlockTags").EnumerateArray())
+                unlockTags.Add(unlock.GetString() ?? throw new InvalidDataException($"{key}: unlockTags entries must be strings."));
+            List<ResearchParameterModifier> modifiers = new();
+            foreach (JsonElement modifier in item.GetProperty("parameterModifiers").EnumerateArray())
+            {
+                modifiers.Add(new ResearchParameterModifier(RequiredString(modifier, "target"),
+                    Enum.Parse<ResearchModifierOperation>(RequiredString(modifier, "operation"), false), modifier.GetProperty("value").GetInt32()));
+            }
+            string exclusiveGroup = item.TryGetProperty("mutuallyExclusiveGroup", out JsonElement exclusive)
+                ? exclusive.GetString() ?? throw new InvalidDataException($"{key}: mutuallyExclusiveGroup must be a string.") : string.Empty;
+            research.Add(new ResearchDefinition(key, RequiredString(item, "faction"), ReadResearchCategories(item.GetProperty("categories")),
+                RequiredString(item, "sourceBuilding"), checked((ushort)cost.GetProperty("ore").GetInt32()),
+                checked((ushort)cost.GetProperty("energy").GetInt32()), checked((byte)cost.GetProperty("crystals").GetInt32()),
+                checked((ushort)item.GetProperty("researchTicks").GetInt32()), prerequisiteGroups.ToArray(), unlockTags.ToArray(), modifiers.ToArray(),
+                exclusiveGroup, RequiredString(item, "presentationProfile"), RequiredString(item, "displayNameLocKey")));
+        }
+    }
+    research.Sort((a, b) => string.CompareOrdinal(a.StableKey, b.StableKey));
+    List<CommandDefinition> commands = new();
+    if (schemaVersion >= 18)
+    {
+        foreach (JsonElement item in root.GetProperty("commandDefinitions").EnumerateArray())
+        {
+            string key = RequiredString(item, "stableId");
+            uint id = StableId.FromKey(key).Value; if (!stableIds.Add(id)) throw new InvalidDataException($"Stable ID collision at command {key}.");
+            List<string> tags = new();
+            foreach (JsonElement tag in item.GetProperty("eligibleEntityTags").EnumerateArray())
+                tags.Add(tag.GetString() ?? throw new InvalidDataException($"{key}: eligibility tag must be a string."));
+            commands.Add(new CommandDefinition(key, Enum.Parse<SimCommandType>(RequiredString(item, "commandType"), false), tags.ToArray(),
+                Enum.Parse<CommandTargetType>(RequiredString(item, "targetType"), false),
+                Enum.Parse<CommandQueuePolicy>(RequiredString(item, "queuePolicy"), false),
+                item.TryGetProperty("requiredResearch", out JsonElement requiredResearch)
+                    ? requiredResearch.GetString() ?? throw new InvalidDataException($"{key}: requiredResearch must be a string.") : string.Empty,
+                RequiredString(item, "validationHandler"), RequiredString(item, "executionHandler"),
+                RequiredString(item, "uiSlotProfile"), RequiredString(item, "targetingPreviewProfile")));
+        }
+    }
+    commands.Sort((a, b) => string.CompareOrdinal(a.StableKey, b.StableKey));
+    return new PrototypeContentCatalog(profiles.ToArray(), entities.ToArray(), resourceNodes.ToArray(), buildings.ToArray(), production.ToArray(), weapons.ToArray(), transformations.ToArray(), research.ToArray(), commands.ToArray());
 }
 
 static TransformationModeDefinition ReadTransformationMode(JsonElement item, string definitionKey, HashSet<string> profileKeys,
@@ -238,6 +343,30 @@ static TransformationModeDefinition ReadTransformationMode(JsonElement item, str
     return new TransformationModeDefinition(stateKey, RequiredString(item, "displayName"), movement,
         Enum.Parse<FootprintClass>(RequiredString(item, "footprint"), false), checked((byte)item.GetProperty("visionRadius").GetInt32()),
         RequiredString(item, "viewProfile"), combatProfile);
+}
+
+static ResearchCategory ReadResearchCategories(JsonElement values)
+{
+    ResearchCategory result = ResearchCategory.None;
+    foreach (JsonElement value in values.EnumerateArray())
+        result |= Enum.Parse<ResearchCategory>(value.GetString() ?? throw new InvalidDataException("Research category must be a string."), false);
+    return result;
+}
+
+static ContentActionPrerequisiteGroup[] ReadActionPrerequisites(JsonElement item, string owner)
+{
+    List<ContentActionPrerequisiteGroup> groups = new();
+    foreach (JsonElement group in item.GetProperty("prerequisiteGroups").EnumerateArray())
+    {
+        List<ContentActionPrerequisite> alternatives = new();
+        foreach (JsonElement prerequisite in group.GetProperty("anyOf").EnumerateArray())
+            alternatives.Add(new ContentActionPrerequisite(
+                Enum.Parse<ContentActionPrerequisiteKind>(RequiredString(prerequisite, "kind"), false),
+                RequiredString(prerequisite, "target")));
+        if (alternatives.Count == 0) throw new InvalidDataException($"{owner}: prerequisite group cannot be empty.");
+        groups.Add(new ContentActionPrerequisiteGroup(alternatives.ToArray()));
+    }
+    return groups.ToArray();
 }
 
 static MapDefinition CompileMap(string path, PrototypeContentCatalog catalog)

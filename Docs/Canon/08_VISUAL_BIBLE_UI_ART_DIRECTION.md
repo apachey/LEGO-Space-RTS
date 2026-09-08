@@ -1,14 +1,26 @@
 # LEGO SPACE RTS — VISUAL BIBLE & UI ART DIRECTION v1.0
 
 **Phase:** 08 — Visual Bible & UI Art Direction  
-**Status:** AUTHORITATIVE PROJECT CANON  
+**Status:** VISUAL AUTHORITY SUSPENDED — HISTORICAL RESEARCH REFERENCE
 **Authority:** Project Instructions + Phase 00 Canon Set Registry + Phase 01 Game Bible Foundation + Phase 02 Faction Bible & Asymmetry + Phase 03 Unit & Building Roster + Phase 04 Economy, Technology & Progression + Phase 05 World & Map Bible + Phase 06 Combat, Damage & Balance Framework + Phase 07 Controls, Camera, UX & Interface
+
+---
+
+> **2026-08-20 game-director amendment:** the rendering, material, lighting,
+> palette and general visual-style conclusions in this document are not current
+> implementation constraints. They are preserved for source research and
+> historical comparison while M7 conducts a code-native art-direction search.
+> No alternate visual direction becomes canon merely by appearing in a test.
+> A new visual canon will exist only after explicit game-director selection.
+> Phase 07 functional UX requirements and all non-visual gameplay canon remain
+> authoritative.
 
 ---
 
 # CANON STATUS
 
-Phase 08 defines the authoritative visual language of LEGO Space RTS.
+Phase 08 historically defined the visual language of LEGO Space RTS. Its visual
+conclusions are currently suspended as described above.
 
 It does not alter:
 
