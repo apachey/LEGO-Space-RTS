@@ -13,7 +13,8 @@ public partial class DebugHud : CanvasLayer
     private double _nextUpdate;
 
     public void Configure(GodotSimBridge bridge, RtsInputController input, DebugRenderer debug, FogPresenter fog,
-        Action prepareM5Acceptance, Action openM7LookLab, Action openM7HudLab, Action openM7PaletteLab, Action openM7MaterialLab)
+        Action prepareM5Acceptance, Action openM7AcceptanceCandidate, Action openM7LookLab, Action openM7HudLab,
+        Action openM7PaletteLab, Action openM7MaterialLab)
     {
         _bridge = bridge; _input = input; Name = "DeveloperHUD"; Layer = 20; ProcessPriority = 210;
         _panel = new PanelContainer { Name = "DeveloperPanel", Position = new Vector2(12, 90), CustomMinimumSize = new Vector2(760, 0), Visible = false };
@@ -39,6 +40,10 @@ public partial class DebugHud : CanvasLayer
         oldM7.Pressed += openM7MaterialLab;
         header.AddChild(oldM7);
         HFlowContainer actions = new() { Name = "PreparedPlaytestActions" }; box.AddChild(actions);
+        Button visualAcceptance = new() { Name = "OpenM7VisualAcceptanceCandidate", Text = "Review M7 visual direction" };
+        visualAcceptance.TooltipText = "Opens the non-canonical four-faction production-direction candidate at the 24/44/72-cell gameplay camera bands.";
+        visualAcceptance.Pressed += openM7AcceptanceCandidate;
+        actions.AddChild(visualAcceptance);
         Button prepareConstruction = new() { Name = "PrepareConstructionTest", Text = "Prepare construction test" };
         prepareConstruction.TooltipText = "Supplies resources, creates a progressing construction site, selects it and centers the camera.";
         prepareConstruction.Pressed += input.DebugPrepareConstructionPlaytest; actions.AddChild(prepareConstruction);

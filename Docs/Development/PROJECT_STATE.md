@@ -48,7 +48,11 @@ detail in protected corner modules, continues the actual faction frame along
 every side with unstretched isotropic edge tiling, uses one continuous bounded
 console interior and assigns each divider to one renderer.
 The old dark-navy test baseline is neither default nor canon. HUD visual
-language remains explicitly non-canonical. A post-T069
+language remains explicitly non-canonical outside the accepted combination. A
+minimum four-faction M7 visual-direction review flow combines the strongest
+existing Look Lab and HUD Lab directions at a wide 84-cell opening plus exact
+24/44/72-cell checks. The game director accepted M7 Final with outline on as the
+production visual direction; T081 has not started. A post-T069
 quality revision makes outline/halo independent from
 the style post-pass, hardens profile paste, bounds VFX event memory and avoids
 unrelated live material rebuilds. HUD and health visuals remain excluded from the world Look Lab. The
@@ -430,6 +434,46 @@ live; the current schema-9 copy/paste retains the complete experiment.
   while Legacy Frames and Clean remain direct same-layout comparisons. These
   remain review tools, not approved visual canon.
 
+## M7 visual-direction acceptance
+
+- A directly launchable four-faction review flow is
+  available from `F8` → **Review M7 visual direction**. It presents bounded
+  prototypes for 4970 Chrome Crusher, 7647 MX-41 Switch Fighter, 7646 ETX Alien
+  Infiltrator and 7313 Red Planet Protector without treating them as final M8.5
+  production models.
+- The scene exposes three like-for-like world treatments over the same
+  four-faction proof: the original acceptance-candidate presentation, the exact
+  final M7 schema-9 Earth Hybrid stack reused directly from Look Lab code, and a
+  hybrid that retains the current Filmic response over the M7 terrain/sky/post
+  stack. The final M7 screen-space outline is an independent on/off comparison
+  in all three modes. The scene also retains mechanical animation, pooled combat
+  VFX, LEGO destruction, the Hybrid Vector + Raster HUD and legal minimap.
+  On-screen controls expose faction focus, continuous 24–108-cell wheel zoom and
+  exact 24/44/72-cell camera checks; the review checklist is documented in
+  `Docs/Development/M7_VISUAL_ACCEPTANCE_CANDIDATE.md`.
+- The revised three-look candidate passed the complete full suite with zero
+  blocking failures at
+  `Artifacts/Verification/20260908T213822Z-full-summary.txt`: 317 NUnit tests,
+  retained M6/M7 gates, all three candidate camera bands, all three look modes
+  with outline off/on, determinism, replay/snapshot checks, content regeneration
+  and a fresh macOS export. The exported app also passed a direct M7 Final +
+  outline-on candidate smoke. The preserved M9 60-mover diagnostic remains the
+  only non-blocking diagnostic failure at 2/60 completion.
+- **Game-director acceptance is recorded:** M7 Final is the production visual
+  direction, with the screen-space outline enabled by default. The review flow
+  starts at 84 cells and retains continuous mouse-wheel zoom from 24 to 108
+  cells. Current and Hybrid remain comparison modes only. This accepts the
+  direction, not the bounded prototype geometry as final production art. The
+  Phase 09C visual-direction dependency is satisfied; T081 has not started.
+- The accepted default, exact 24/44/72 checks, all three comparison modes and
+  both outline states pass their Godot smoke fixtures, and a fresh exported app
+  starts at `zoom=84 look=m7-final outline=on`. The latest general fast run is
+  `Artifacts/Verification/20260908T221707Z-fast-summary.txt`: every stage except
+  the pre-existing HUD Lab process teardown passed. That HUD fixture printed its
+  complete PASS marker on both attempts, then Godot exited with its intermittent
+  macOS mutex teardown error; this is not visual acceptance and was not hidden
+  by weakening the gate.
+
 ## M8 T070–T074 canonical roster, research and command data
 
 - The source content and built-in fallback catalog now contain exactly 35
@@ -727,20 +771,20 @@ blocking only when M9 must prove its stable-large-battle exit.
 
 ## Next approved action
 
-1. T074 is complete on the current implementation baseline. T081 is now the
-   next approved implementation task; no T081 work has started here. Its Phase
-   09C entry gate still requires explicit M7 visual-direction acceptance.
+1. T074 is complete on the current implementation baseline. The game director
+   accepted M7 Final with outline on, an 84-cell starting view and continuous
+   24–108-cell mouse-wheel zoom. The Phase 09C visual-direction entry dependency
+   is satisfied. T081 is the next approved implementation task, but it has not
+   started in this change.
 2. Execute Phase 09C M8.5 T081–T091 before final M9 Skirmish Alpha acceptance.
    Do not treat T070 data definitions as substitutes for production models or
    presentation.
-3. The game director may independently explore `F8` → **M7 HUD Lab** and return
-   its Hybrid/Structural/Legacy/Clean comparison across the four faction-bound
-   recipes, then return a **COPY JSON** profile later; no HUD visual canon is
-   required to begin T072.
-4. The gameplay-scale **M7 Look Lab** remains available for world-style review;
-   compare the named Authored surface with Raster Forward rather than the
-   migration-only Legacy result. Do not record T064 acceptance until the game
-   director explicitly locks a direction.
+3. Launch the accepted direction from `F8` → **Review M7 visual direction**. It
+   opens on M7 Final + outline at 84 cells; use the wheel for continuous zoom and
+   Z/X/C for exact 24/44/72 checks. Current / Hybrid and outline-off remain
+   regression comparisons.
+4. Use the separate Look/HUD/Palette labs only to investigate a rejected aspect;
+   they remain exploratory tools and do not independently record visual canon.
 5. Keep Stress60 visible without starting an unreviewed third movement attempt;
    revisit it for M9 or earlier only if a catastrophic movement regression
    appears.

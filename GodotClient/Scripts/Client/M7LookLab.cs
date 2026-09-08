@@ -1331,6 +1331,12 @@ public partial class M7LookLab : Node3D
     private void ApplyProceduralSky(M7WorldLightingFrame frame)
     {
         if (_skyMaterial is null || _environment is null) return;
+        ApplyProceduralSky(_skyMaterial, _environment, frame);
+    }
+
+    internal static void ApplyProceduralSky(ProceduralSkyMaterial skyMaterial,
+        Godot.Environment environment, M7WorldLightingFrame frame)
+    {
 
         Color top;
         Color horizon;
@@ -1381,18 +1387,18 @@ public partial class M7LookLab : Node3D
             energy = 0.72f + frame.DaylightFactor * 0.28f;
         }
 
-        _skyMaterial.SkyTopColor = top;
-        _skyMaterial.SkyHorizonColor = horizon;
-        _skyMaterial.GroundHorizonColor = groundHorizon;
-        _skyMaterial.GroundBottomColor = groundBottom;
-        _skyMaterial.SkyEnergyMultiplier = energy;
-        _skyMaterial.GroundEnergyMultiplier = energy * 0.72f;
-        _skyMaterial.EnergyMultiplier = 1f;
-        _skyMaterial.SunAngleMax = frame.Environment is M7WorldEnvironment.Underground
+        skyMaterial.SkyTopColor = top;
+        skyMaterial.SkyHorizonColor = horizon;
+        skyMaterial.GroundHorizonColor = groundHorizon;
+        skyMaterial.GroundBottomColor = groundBottom;
+        skyMaterial.SkyEnergyMultiplier = energy;
+        skyMaterial.GroundEnergyMultiplier = energy * 0.72f;
+        skyMaterial.EnergyMultiplier = 1f;
+        skyMaterial.SunAngleMax = frame.Environment is M7WorldEnvironment.Underground
             ? 0.1f
             : Mathf.Clamp(frame.KeyAngularSize, 0.35f, 2.8f);
-        _environment.BackgroundMode = Godot.Environment.BGMode.Sky;
-        _environment.ReflectedLightSource = Godot.Environment.ReflectionSource.Sky;
+        environment.BackgroundMode = Godot.Environment.BGMode.Sky;
+        environment.ReflectedLightSource = Godot.Environment.ReflectionSource.Sky;
     }
 
     private static float SmoothBand(float value, float start, float peak, float end)
@@ -1489,39 +1495,44 @@ public partial class M7LookLab : Node3D
         bool haloEnabled = _profile.Post.BloomEnabled && _profile.Emission.HaloIntensity > 0.001f;
         if (_postQuad is not null)
             _postQuad.Visible = _profile.Post.Enabled || _profile.Outline.Enabled || haloEnabled;
-        _postMaterial.SetShaderParameter("post_enabled", _profile.Post.Enabled);
-        _postMaterial.SetShaderParameter("brightness", _profile.Post.Brightness);
-        _postMaterial.SetShaderParameter("contrast", _profile.Post.Contrast);
-        _postMaterial.SetShaderParameter("saturation", _profile.Post.Saturation);
+        ApplyScreenCompositeParameters(_postMaterial, _profile);
+    }
+
+    internal static void ApplyScreenCompositeParameters(ShaderMaterial material, M7LookProfile profile)
+    {
+        material.SetShaderParameter("post_enabled", profile.Post.Enabled);
+        material.SetShaderParameter("brightness", profile.Post.Brightness);
+        material.SetShaderParameter("contrast", profile.Post.Contrast);
+        material.SetShaderParameter("saturation", profile.Post.Saturation);
         // World palettes already author their own warm/cool transition. A
         // global white-balance filter must not flatten that gradient.
-        float postTemperature = _profile.WorldCycle.Enabled
-            ? _profile.Post.Temperature * 0.25f
-            : _profile.Post.Temperature;
-        _postMaterial.SetShaderParameter("temperature", postTemperature);
-        _postMaterial.SetShaderParameter("tint", _profile.Post.Tint);
-        _postMaterial.SetShaderParameter("vignette", _profile.Post.Vignette);
-        _postMaterial.SetShaderParameter("film_grain", _profile.Post.FilmGrain);
-        _postMaterial.SetShaderParameter("grain_scale", _profile.Post.GrainScale);
+        float postTemperature = profile.WorldCycle.Enabled
+            ? profile.Post.Temperature * 0.25f
+            : profile.Post.Temperature;
+        material.SetShaderParameter("temperature", postTemperature);
+        material.SetShaderParameter("tint", profile.Post.Tint);
+        material.SetShaderParameter("vignette", profile.Post.Vignette);
+        material.SetShaderParameter("film_grain", profile.Post.FilmGrain);
+        material.SetShaderParameter("grain_scale", profile.Post.GrainScale);
         // The lab slider is perceptual: 1.0 is a useful clarity pass, not a
         // raw 100% Laplacian kernel that explodes texture noise.
-        _postMaterial.SetShaderParameter("sharpen", _profile.Post.Sharpen * 0.14f);
-        _postMaterial.SetShaderParameter("posterize_levels", (float)_profile.Post.PosterizeLevels);
-        _postMaterial.SetShaderParameter("dither_amount", _profile.Post.Dither);
-        _postMaterial.SetShaderParameter("halo_intensity", _profile.Emission.HaloIntensity);
-        _postMaterial.SetShaderParameter("halo_size", _profile.Emission.HaloSize);
-        _postMaterial.SetShaderParameter("emissive_edge_darkening", _profile.Emission.EdgeDarkening);
-        _postMaterial.SetShaderParameter("bloom_threshold", _profile.Post.BloomThreshold);
-        _postMaterial.SetShaderParameter("bloom_enabled", _profile.Post.BloomEnabled);
-        _postMaterial.SetShaderParameter("outline_enabled", _profile.Outline.Enabled);
-        _postMaterial.SetShaderParameter("outline_color", M7LookMaterialFactory.ParseColor(_profile.Outline.Color));
-        _postMaterial.SetShaderParameter("outline_width", _profile.Outline.WidthPixels);
-        _postMaterial.SetShaderParameter("outline_opacity", _profile.Outline.Opacity);
-        _postMaterial.SetShaderParameter("depth_threshold", _profile.Outline.DepthThreshold);
-        _postMaterial.SetShaderParameter("normal_threshold", _profile.Outline.NormalThreshold);
-        _postMaterial.SetShaderParameter("silhouette_strength", _profile.Outline.SilhouetteStrength);
-        _postMaterial.SetShaderParameter("crease_strength", _profile.Outline.CreaseStrength);
-        _postMaterial.SetShaderParameter("distance_fade", _profile.Outline.DistanceFade);
+        material.SetShaderParameter("sharpen", profile.Post.Sharpen * 0.14f);
+        material.SetShaderParameter("posterize_levels", (float)profile.Post.PosterizeLevels);
+        material.SetShaderParameter("dither_amount", profile.Post.Dither);
+        material.SetShaderParameter("halo_intensity", profile.Emission.HaloIntensity);
+        material.SetShaderParameter("halo_size", profile.Emission.HaloSize);
+        material.SetShaderParameter("emissive_edge_darkening", profile.Emission.EdgeDarkening);
+        material.SetShaderParameter("bloom_threshold", profile.Post.BloomThreshold);
+        material.SetShaderParameter("bloom_enabled", profile.Post.BloomEnabled);
+        material.SetShaderParameter("outline_enabled", profile.Outline.Enabled);
+        material.SetShaderParameter("outline_color", M7LookMaterialFactory.ParseColor(profile.Outline.Color));
+        material.SetShaderParameter("outline_width", profile.Outline.WidthPixels);
+        material.SetShaderParameter("outline_opacity", profile.Outline.Opacity);
+        material.SetShaderParameter("depth_threshold", profile.Outline.DepthThreshold);
+        material.SetShaderParameter("normal_threshold", profile.Outline.NormalThreshold);
+        material.SetShaderParameter("silhouette_strength", profile.Outline.SilhouetteStrength);
+        material.SetShaderParameter("crease_strength", profile.Outline.CreaseStrength);
+        material.SetShaderParameter("distance_fade", profile.Outline.DistanceFade);
     }
 
     private void ApplyVfxAppearance()
@@ -2979,7 +2990,7 @@ public partial class M7LookLab : Node3D
         ContentMarginLeft = 10f, ContentMarginTop = 8f, ContentMarginRight = 10f, ContentMarginBottom = 8f
     };
 
-    private static ArrayMesh BuildGroundMesh(int cells, float extent)
+    internal static ArrayMesh BuildGroundMesh(int cells, float extent)
     {
         SurfaceTool surface = new();
         surface.Begin(Mesh.PrimitiveType.Triangles);
@@ -3045,7 +3056,7 @@ void fragment() {
 }
 """;
 
-    private const string PostShader = """
+    internal const string PostShader = """
 shader_type spatial;
 render_mode unshaded, fog_disabled, depth_test_disabled, depth_draw_never, cull_disabled;
 uniform sampler2D screen_texture : hint_screen_texture, repeat_disable, filter_linear_mipmap;

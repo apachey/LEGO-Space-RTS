@@ -46,14 +46,31 @@ if [[ ! -d "${OUTPUT_APP}" || -z "${APP_EXECUTABLE}" ]]; then
 fi
 codesign --verify --deep --strict "${OUTPUT_APP}"
 SMOKE_LOG="$(mktemp "${TMPDIR:-/tmp}/lego-space-rts-app-smoke.XXXXXX")"
+SMOKE_ENGINE_LOG="$(mktemp "${TMPDIR:-/tmp}/lego-space-rts-app-smoke-engine.XXXXXX")"
 set +e
-"${APP_EXECUTABLE}" --headless --quit-after 600 -- --smoke 2>&1 | tee "${SMOKE_LOG}"
+"${APP_EXECUTABLE}" --headless --log-file "${SMOKE_ENGINE_LOG}" --quit-after 600 -- --smoke 2>&1 | tee "${SMOKE_LOG}"
 SMOKE_STATUS=${PIPESTATUS[0]}
 set -e
 if (( SMOKE_STATUS != 0 )) || ! grep -q 'Prototype content source: compiled runtime data' "${SMOKE_LOG}" || ! grep -q 'PHASE10 GODOT HEADLESS SMOKE: PASS' "${SMOKE_LOG}"; then
-  rm -f "${SMOKE_LOG}"
+  rm -f "${SMOKE_LOG}" "${SMOKE_ENGINE_LOG}"
   printf 'FAIL: exported app did not pass the compiled-content PrototypeRTS smoke.\n' >&2
   exit 1
 fi
-rm -f "${SMOKE_LOG}"
+rm -f "${SMOKE_LOG}" "${SMOKE_ENGINE_LOG}"
+
+CANDIDATE_LOG="$(mktemp "${TMPDIR:-/tmp}/lego-space-rts-m7-acceptance-app-smoke.XXXXXX")"
+CANDIDATE_ENGINE_LOG="$(mktemp "${TMPDIR:-/tmp}/lego-space-rts-m7-acceptance-app-engine.XXXXXX")"
+set +e
+"${APP_EXECUTABLE}" --headless --log-file "${CANDIDATE_ENGINE_LOG}" --quit-after 600 -- \
+  --m7-acceptance-candidate --m7-acceptance-smoke --m7-acceptance-zoom 44 \
+  --m7-acceptance-look m7-final --m7-acceptance-outline on \
+  --m7-acceptance-labels hidden --m7-acceptance-review hidden 2>&1 | tee "${CANDIDATE_LOG}"
+CANDIDATE_STATUS=${PIPESTATUS[0]}
+set -e
+if (( CANDIDATE_STATUS != 0 )) || ! grep -q 'M7 ACCEPTANCE CANDIDATE: PASS factions=4 prototypes=4.*zoom=44.*looks=3 activeLook=m7-final outline=on.*acceptance=m7-final-outline-on' "${CANDIDATE_LOG}"; then
+  rm -f "${CANDIDATE_LOG}" "${CANDIDATE_ENGINE_LOG}"
+  printf 'FAIL: exported app did not pass the accepted M7 visual-direction smoke.\n' >&2
+  exit 1
+fi
+rm -f "${CANDIDATE_LOG}" "${CANDIDATE_ENGINE_LOG}"
 if [[ "${VERIFY_ONLY}" == true ]]; then printf 'PASS: macOS export smoke produced a launchable app bundle.\n'; else printf 'PASS: playable debug build created at %s\n' "${OUTPUT_APP}"; fi
