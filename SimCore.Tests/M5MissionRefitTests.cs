@@ -7,7 +7,7 @@ namespace LegoSpaceRTS.SimCore.Tests
 public sealed class M5MissionRefitTests
 {
     private static readonly ContentId HubType = StableId.FromKey("building.ast.service_refit_hub");
-    private static readonly ContentId T3Type = StableId.FromKey("unit.ast.t3_trike");
+    private static readonly ContentId T3Type = StableId.FromKey(CanonicalRosterReferences.T3Trike);
 
     [Test]
     public void FirstSurveyInstallCommitsCanonicalCostAndCompletesOnSameEntity()

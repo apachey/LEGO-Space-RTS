@@ -24,6 +24,7 @@ if (contentRoundTrip.ContentHash != catalog.ContentHash || contentRoundTrip.Enti
     throw new InvalidDataException("Prototype content round-trip validation failed.");
 
 MapDefinition definition = CompileMap(mapSource, catalog);
+CanonicalRosterValidator.Validate(catalog, definition);
 byte[] mapBytes = CompiledMapCodec.Write(definition);
 string mapOutput = Path.Combine(outputDirectory, "DEV_FirstControllableRTS.mapbin");
 File.WriteAllBytes(mapOutput, mapBytes);

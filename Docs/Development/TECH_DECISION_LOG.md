@@ -1127,3 +1127,29 @@ dependency, visual direction or existing network/snapshot/replay layout.
 
 This implements approved gameplay canon without a dependency, visual-direction
 change or T074 work.
+
+## 2026-09-08 — T074 complete roster-reference gate
+
+- The shipping content compiler now runs one aggregate closure gate after both
+  the canonical catalog and authored map are compiled. Generic and legacy
+  catalogs remain readable; strict 35-unit/31-building/38-research/35-command
+  counts apply only to the shipping M8 build path.
+- The gate validates cross-section stable-ID uniqueness, faction and roster
+  completeness, movement/weapon/presentation/localization references,
+  production coverage, the approved producer exits, exact Aero Tube eligibility
+  and authored map starts/spawns/resources/features.
+- Runtime systems and the retained M5 acceptance fixture now share canonical
+  T070 roster IDs instead of older faction abbreviations. The engineering-only
+  synthetic M5 target IDs remain local fixture identities and do not represent
+  shipping roster entries.
+- Eight intentionally broken fixtures cover duplicate IDs, missing visuals,
+  invalid weapons, research cycles, missing producers, illegal Tube units, bad
+  starts and impossible producer exits with explicit diagnostics.
+- Targeted roster/M5 coverage passes 57/57. Full verification passes 317/317
+  tests and every T074-relevant runtime, content, network and export stage, with
+  one known Godot HUD-process mutex failure after that fixture printed PASS;
+  the affected and remaining HUD fixtures pass when rerun separately. Stress60
+  remains the preserved 2/60 `BLOCKING_LATER` M9 diagnostic.
+
+This changes no gameplay values, dependency, content/snapshot/network/replay
+format or visual direction.

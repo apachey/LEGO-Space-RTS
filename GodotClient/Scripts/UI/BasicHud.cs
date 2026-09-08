@@ -388,7 +388,7 @@ public partial class BasicHud : CanvasLayer
 
     private static string? DisplayNameById(ContentId id)
     {
-        string[] known = { "building.ast.service_refit_hub", "unit.ast.t3_trike", "building.ali.etx_command_core", "building.ali.resonance_core", "unit.ali.razor_skimmer", "building.mar.aero_tube_hangar", "building.mar.settlement_station", "unit.mar.worker_robot", "unit.mar.double_hover", "unit.mar.jet_scooter", "unit.mar.excavation_searcher", "unit.ast.t3_trike.displacement_target", "unit.rock_raiders.hover_scout.m5_excavation_runner" };
+        string[] known = { "building.ast.service_refit_hub", CanonicalRosterReferences.T3Trike, "building.ali.etx_command_core", "building.ali.resonance_core", CanonicalRosterReferences.AlienRazorSkimmer, "building.mar.aero_tube_hangar", "building.mar.settlement_station", CanonicalRosterReferences.MartianWorkerRobot, CanonicalRosterReferences.MartianDoubleHover, CanonicalRosterReferences.MartianJetScooter, CanonicalRosterReferences.MartianExcavationSearcher, "unit.ast.t3_trike.displacement_target", "unit.rock_raiders.hover_scout.m5_excavation_runner" };
         for (int i = 0; i < known.Length; i++) if (StableId.FromKey(known[i]) == id) return DisplayName(known[i]);
         return null;
     }
@@ -408,8 +408,8 @@ public partial class BasicHud : CanvasLayer
         "building.rock_raiders.hq" => "Rock Raiders HQ", "building.rock_raiders.ore_processing_plant" => "Ore Processing Plant", "building.rock_raiders.power_station" => "Power Station", "building.rock_raiders.vehicle_service_bay" => "Vehicle Service Bay",
         "unit.rock_raiders.crew" => "Crew", "unit.rock_raiders.hover_scout" => "Hover Scout", "unit.rock_raiders.rapid_rider" => "Rapid Rider", "unit.rock_raiders.loader_dozer" => "Loader Dozer", "unit.rock_raiders.chrome_crusher" => "Chrome Crusher",
         "unit.astronauts.mx41_switch_fighter" => "MX-41 Switch Fighter", "resource.ore.standard" => "Standard Ore Deposit", "resource.ore.small" => "Small Ore Deposit", "resource.ore.rich" => "Rich Ore Deposit", "resource.ore.deep_contested_seam" => "Deep Contested Ore Seam",
-        "building.ast.service_refit_hub" => "Service & Refit Hub", "unit.ast.t3_trike" => "T3-Trike", "building.ali.etx_command_core" => "ETX Command Core", "building.ali.resonance_core" => "Resonance Core", "unit.ali.razor_skimmer" => "Razor Skimmer",
-        "building.mar.aero_tube_hangar" => "Aero Tube Hangar", "building.mar.settlement_station" => "Settlement Station", "unit.mar.worker_robot" => "Worker Robot", "unit.mar.double_hover" => "Double Hover", "unit.mar.jet_scooter" => "Jet Scooter", "unit.mar.excavation_searcher" => "Excavation Searcher",
+        "building.ast.service_refit_hub" => "Service & Refit Hub", CanonicalRosterReferences.T3Trike => "T3-Trike", "building.ali.etx_command_core" => "ETX Command Core", "building.ali.resonance_core" => "Resonance Core", CanonicalRosterReferences.AlienRazorSkimmer => "Razor Skimmer",
+        "building.mar.aero_tube_hangar" => "Aero Tube Hangar", "building.mar.settlement_station" => "Settlement Station", CanonicalRosterReferences.MartianWorkerRobot => "Worker Robot", CanonicalRosterReferences.MartianDoubleHover => "Double Hover", CanonicalRosterReferences.MartianJetScooter => "Jet Scooter", CanonicalRosterReferences.MartianExcavationSearcher => "Excavation Searcher",
         "unit.ast.t3_trike.displacement_target" => "Enemy T3-Trike", "unit.rock_raiders.hover_scout.m5_excavation_runner" => "Hover Scout", _ => key
     };
 

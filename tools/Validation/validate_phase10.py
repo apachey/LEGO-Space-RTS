@@ -17,6 +17,7 @@ required = [
     'SimCore/Runtime/Core/Fix32.cs','SimCore/Runtime/Core/FixVec2.cs','SimCore/Runtime/Core/Angle16.cs',
     'SimCore/Runtime/Ecs/EntityStore.cs','SimCore/Runtime/Commands/Commands.cs',
     'SimCore/Runtime/Content/CanonicalActionDefinitions.cs','SimCore/Runtime/Content/CommandDefinition.cs',
+    'SimCore/Runtime/Content/CanonicalRosterValidator.cs',
     'SimCore/Runtime/Serialization/SnapshotSerializer.cs','SimCore/Runtime/Replay/ReplayLog.cs',
     'SimCore/Runtime/Navigation/HierarchicalPathfinder.cs','SimCore/Runtime/Simulation/SimulationRunner.cs',
     'HeadlessSim/Program.cs','Content/PrototypeEntities.json','Content/Maps/DEV_FirstControllableRTS.map.json',
@@ -411,6 +412,8 @@ excavatable=source.get('excavatableFeatures',[{}])[0] if source.get('excavatable
 check(excavatable.get('stableId') == 'feature.dev.fractured_shortcut', 'T050 Excavatable stable ID mismatch')
 check(excavatable.get('class') == 'FracturedRockWall' and excavatable.get('requiredEnergy') == 25, 'T050 Excavatable class/Energy metadata mismatch')
 check(excavatable.get('initialState') == 'Blocked' and excavatable.get('openBuildable') is False, 'T050 Excavatable topology metadata mismatch')
+check(excavatable.get('visualProfile') == 'view.placeholder.excavatable.fractured_rock_wall',
+      'T074 map feature visual profile is unresolved')
 check(len(source.get('initialEntities',[])) >= 26, 'initial prototype entity spawns missing')
 check(len(source.get('resourceNodes',[])) == 4, 'M3 starting Ore node spawns missing')
 check(len(source.get('resourceReceivers',[])) == 2, 'M3 starting HQ resource receivers missing')
@@ -420,6 +423,13 @@ content_source = json.loads((ROOT/'Content/PrototypeEntities.json').read_text())
 check(content_source.get('schemaVersion') == 18 and content_source.get('contentKind') == 'prototype_entities', 'prototype content schema mismatch')
 content_catalog_text = (ROOT/'SimCore/Runtime/Content/PrototypeContentCatalog.cs').read_text()
 check('public const int FormatVersion = 19;' in content_catalog_text, 'PrototypeContentCodec format version is not 19')
+roster_validator_text = (ROOT/'SimCore/Runtime/Content/CanonicalRosterValidator.cs').read_text()
+for diagnostic in ['T074_DUPLICATE_ID','T074_MISSING_VISUAL_PROFILE','T074_INVALID_WEAPON','T074_MISSING_PRODUCTION_SOURCE',
+                   'T074_ILLEGAL_TUBE_UNIT','T074_BAD_MAP_START','T074_IMPOSSIBLE_BUILDING_EXIT']:
+    check(diagnostic in roster_validator_text, f'T074 roster diagnostic missing: {diagnostic}')
+content_compiler_text = (ROOT/'tools/ContentCompiler/Program.cs').read_text()
+check('CanonicalRosterValidator.Validate(catalog, definition)' in content_compiler_text,
+      'content compiler does not run T074 complete roster-reference validation')
 entity_keys = [e.get('stableId') for e in content_source.get('entities',[])]
 check(len(entity_keys) >= 5 and len(entity_keys) == len(set(entity_keys)), 'prototype content entries missing/duplicated')
 unit_entries = [e for e in content_source.get('entities',[]) if e.get('stableId','').startswith('unit.')]
@@ -431,6 +441,12 @@ check(all(unit.get('operationsCapacity',0) > 0 and unit.get('combatTarget',{}).g
 for required_key in ['building.rock_raiders.hq','building.rock_raiders.ore_processing_plant','building.rock_raiders.power_station','building.rock_raiders.vehicle_service_bay','unit.rock_raiders.crew','unit.rock_raiders.hover_scout','unit.rock_raiders.rapid_rider','unit.rock_raiders.loader_dozer','unit.rock_raiders.chrome_crusher','prototype.nav.huge']:
     check(required_key in entity_keys, f'prototype content key missing: {required_key}')
 by_key={e.get('stableId'):e for e in content_source.get('entities',[])}
+for key,entity in by_key.items():
+    if isinstance(key,str) and (key.startswith('unit.') or key.startswith('building.')):
+        expected_view='view.placeholder.' + key.split('.',1)[1]
+        check(entity.get('viewProfile')==expected_view, f'unresolved canonical entity visual profile: {key}')
+check(by_key.get('prototype.nav.huge',{}).get('viewProfile')=='view.placeholder.navigation.huge',
+      'engineering Huge profile visual reference is unresolved')
 check(by_key.get('unit.rock_raiders.loader_dozer',{}).get('footprint')=='Medium','Loader Dozer M2 footprint must match Phase 06 Medium')
 check(by_key.get('unit.rock_raiders.chrome_crusher',{}).get('footprint')=='Large','Chrome Crusher M2 footprint must match Phase 06 Large')
 check(by_key.get('prototype.nav.huge',{}).get('sourceClassification')=='ENGINEERING_ONLY','Huge stress profile must remain engineering-only')
@@ -486,6 +502,8 @@ check(profile_by_key.get('movement.prototype.chrome_crusher',{}).get('speedRatio
 map_keys = [e.get('contentKey') for e in source.get('initialEntities',[])]
 check(all(k in set(entity_keys) for k in map_keys), 'map source contains unknown prototype entity reference')
 resource_by_key={r.get('stableId'):r for r in content_source.get('resourceNodeDefinitions',[])}
+for key,resource in resource_by_key.items():
+    check(resource.get('viewProfile')==f'view.placeholder.{key}', f'unresolved canonical resource visual profile: {key}')
 expected_ore={'resource.ore.small':600,'resource.ore.standard':900,'resource.ore.rich':1350,'resource.ore.deep_contested_seam':2400}
 check({key:resource_by_key.get(key,{}).get('capacity') for key in expected_ore} == expected_ore, 'canonical M3 Ore capacities missing or incorrect')
 check(all(resource_by_key.get(key,{}).get('type') == 'Ore' and resource_by_key.get(key,{}).get('depletionProfile') == 'Finite' for key in expected_ore), 'Ore resource nodes must use finite depletion')
@@ -569,6 +587,9 @@ expected_worksite_radii = {
 check({key:building_by_key.get(key,{}).get('worksiteServiceRadius') for key in expected_worksite_radii} == expected_worksite_radii, 'canonical M5 Worksite service radii missing or incorrect')
 
 research_by_key={r.get('stableId'):r for r in content_source.get('researchDefinitions',[])}
+for key,research in research_by_key.items():
+    check(research.get('presentationProfile')==f'presentation.{key}', f'unresolved research presentation profile: {key}')
+    check(research.get('displayNameLocKey')==f'loc.{key}.name', f'unresolved research localization key: {key}')
 expected_research={
     # faction, source building, cost O/E/C, ticks
     'research.ali.advanced_resonance_architecture':('Aliens','building.ali.reconfiguration_dock',[240,110,5],1600),
@@ -821,16 +842,34 @@ check(len(csharp_command_rows)==35 and len({row[0] for row in csharp_command_row
 check(sorted(json_command_rows)==sorted(csharp_command_rows), 'JSON and C# canonical command catalogs differ')
 
 forward_service = (ROOT/'SimCore/Runtime/Simulation/ForwardServiceSystem.cs').read_text()
-for token in ['building.ast.service_refit_hub','unit.ast.solar_explorer','unit.ast.t3_trike','ServiceHubRadius = 18','DeployedSolarExplorerRadius = 10','ProviderBucketBuildCells = 4']:
+for token in ['building.ast.service_refit_hub','CanonicalRosterReferences.SolarExplorer','CanonicalRosterReferences.T3Trike','ServiceHubRadius = 18','DeployedSolarExplorerRadius = 10','ProviderBucketBuildCells = 4']:
     check(token in forward_service, f'canonical T051 Forward Service contract missing: {token}')
 check('DeploymentState.Deployed' in forward_service and 'BrownoutSystem.IsOperational' in forward_service, 'T051 provider activation rules missing')
 check('world.Entities.Ownership' in forward_service and 'Contains(' in forward_service, 'T051 owner/radius membership validation missing')
 
 mission_refit = (ROOT/'SimCore/Runtime/Simulation/MissionRefitSystem.cs').read_text()
-for token in ['FirstSurveyInstallOre = 25','FirstSurveyInstallEnergy = 10','18 * EnergyDomainSystem.TicksPerSecond','LaterSwapOre = 8','LaterSwapEnergy = 5','10 * EnergyDomainSystem.TicksPerSecond','20 * EnergyDomainSystem.TicksPerSecond','unit.ast.t3_trike']:
+for token in ['FirstSurveyInstallOre = 25','FirstSurveyInstallEnergy = 10','18 * EnergyDomainSystem.TicksPerSecond','LaterSwapOre = 8','LaterSwapEnergy = 5','10 * EnergyDomainSystem.TicksPerSecond','20 * EnergyDomainSystem.TicksPerSecond','CanonicalRosterReferences.T3Trike']:
     check(token in mission_refit, f'canonical T052 Mission Refit contract missing: {token}')
 check('ForwardServiceSystem.TryGetProviderForMember' in mission_refit and 'world.Entities.MissionRefitJob.Set' in mission_refit, 'T052 service validation or authoritative job missing')
 check('state.CurrentConfiguration = job.NewConfiguration' in mission_refit and 'MissionRefitJob.Remove' in mission_refit, 'T052 identity-preserving completion missing')
+
+tube_transfer = (ROOT/'SimCore/Runtime/Simulation/TubeTransferSystem.cs').read_text()
+check('CanonicalRosterReferences.IsTubeEligible' in tube_transfer,
+      'T074 Aero Tube eligibility does not use the canonical three-unit roster closure')
+canonical_runtime_bindings='\n'.join((ROOT/path).read_text() for path in [
+    'SimCore/Runtime/Simulation/ForwardServiceSystem.cs',
+    'SimCore/Runtime/Simulation/MissionRefitSystem.cs',
+    'SimCore/Runtime/Simulation/TubeTransferSystem.cs',
+    'SimCore/Runtime/Scenarios/ScenarioFactory.cs',
+    'SimCore/Runtime/Scenarios/M5AcceptanceScenarioFactory.cs',
+    'SimCore/Runtime/Networking/ServerCommandAuthority.cs',
+    'GodotClient/Scripts/UI/BasicHud.cs',
+    'GodotClient/Scripts/UI/M5PlaytestHud.cs',
+])
+for stale_key in ['unit.ast.t3_trike','unit.ast.solar_explorer','unit.mar.worker_robot',
+                  'unit.mar.double_hover','unit.mar.jet_scooter','unit.mar.excavation_searcher',
+                  'unit.ali.razor_skimmer']:
+    check(f'"{stale_key}"' not in canonical_runtime_bindings, f'T074 stale runtime roster reference: {stale_key}')
 
 resonance = (ROOT/'SimCore/Runtime/Simulation/ResonanceCoreSystem.cs').read_text()
 for token in ['BaselineSlots = 4','ExpandedSlots = 6','8 * EnergyDomainSystem.TicksPerSecond','15 * EnergyDomainSystem.TicksPerSecond','BaseEnergyDemandPerSecond = 3','EnergyDemandPerInstalledCrystal = 2','building.ali.resonance_core','building.ali.etx_command_core']:

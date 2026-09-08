@@ -6,8 +6,8 @@ namespace LegoSpaceRTS.SimCore.Tests
 public sealed class M5ForwardServiceTests
 {
     private static readonly ContentId ServiceHub = StableId.FromKey("building.ast.service_refit_hub");
-    private static readonly ContentId SolarExplorer = StableId.FromKey("unit.ast.solar_explorer");
-    private static readonly ContentId T3Trike = StableId.FromKey("unit.ast.t3_trike");
+    private static readonly ContentId SolarExplorer = StableId.FromKey(CanonicalRosterReferences.SolarExplorer);
+    private static readonly ContentId T3Trike = StableId.FromKey(CanonicalRosterReferences.T3Trike);
 
     [Test]
     public void CanonicalProvidersExposeEighteenAndTenCellRadiiOnlyWhenActive()

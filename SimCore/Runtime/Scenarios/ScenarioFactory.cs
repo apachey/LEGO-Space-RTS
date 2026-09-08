@@ -124,7 +124,7 @@ public static class ScenarioFactory
         AddTransformationComponents(world, id, definition);
         AddWorkerComponents(world, id, definition);
         AddTransportComponents(world, id, definition);
-        if (definition.Id == StableId.FromKey("unit.ast.t3_trike")) MissionRefitSystem.EnsureState(world, id);
+        if (definition.Id == StableId.FromKey(CanonicalRosterReferences.T3Trike)) MissionRefitSystem.EnsureState(world, id);
         world.GetQueue(id);
     }
 
@@ -270,6 +270,7 @@ public static class ScenarioFactory
         AddTransformationComponents(world, id, definition);
         AddWorkerComponents(world, id, definition);
         AddTransportComponents(world, id, definition);
+        if (definition.Id == StableId.FromKey(CanonicalRosterReferences.T3Trike)) MissionRefitSystem.EnsureState(world, id);
         world.GetQueue(id);
         return id;
     }

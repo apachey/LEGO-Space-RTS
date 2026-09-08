@@ -12,7 +12,7 @@ public sealed class MissionRefitSystem : ISimSystem
     public const ushort LaterSwapTicks = 10 * EnergyDomainSystem.TicksPerSecond;
     public const ushort ConfigurationLockTicks = 20 * EnergyDomainSystem.TicksPerSecond;
 
-    private static readonly ContentId T3TrikeType = StableId.FromKey("unit.ast.t3_trike");
+    private static readonly ContentId T3TrikeType = StableId.FromKey(CanonicalRosterReferences.T3Trike);
 
     public void Step(SimulationWorld world)
     {

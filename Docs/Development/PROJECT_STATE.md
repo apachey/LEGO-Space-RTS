@@ -9,12 +9,14 @@ The dense M7 cross-thread continuity index is
 ## Current milestone
 
 **M0–M6 are implemented, verified and game-director accepted. M7 visual canon
-remains deliberately open. M8 T070–T072 are implemented and fully verified;
-the current T073 task branch implements the approved guarded command/runtime
+remains deliberately open. M8 T070–T073 are complete; the current T074 task
+branch adds the complete roster-reference gate to the approved command/runtime
 catalog: all 35 canonical unit chassis, 31 infrastructure definitions, 38
 research definitions and 35 stable command families are present, and legal
 construction, production, research and the affected faction actions now use
 their authoritative prerequisites, resources, timings and deterministic state.
+Content compilation now fails on unresolved or contradictory roster, map,
+presentation, production-exit and Aero Tube eligibility references.
 The formerly unresolved T073 values are approved and recorded in
 `Docs/Development/M8_T073_BINDING_REVIEW.md`.
 Preset-style comparisons are retired as the primary
@@ -422,7 +424,7 @@ live; the current schema-9 copy/paste retains the complete experiment.
   while Legacy Frames and Clean remain direct same-layout comparisons. These
   remain review tools, not approved visual canon.
 
-## M8 T070–T073 canonical roster, research and command data
+## M8 T070–T074 canonical roster, research and command data
 
 - The source content and built-in fallback catalog now contain exactly 35
   canonical buildable units: 8 Rock Raiders, 13 Astronauts, 6 Aliens and 8
@@ -497,7 +499,17 @@ live; the current schema-9 copy/paste retains the complete experiment.
 - Public command codes 19–35 now pass the unchanged command packet layout with
   guarded payload validation and the T073 action handlers. Research completion,
   production/research/excavation jobs and Defense Node state are authoritative
-  snapshot state. T074 complete roster-reference validation has not started.
+  snapshot state.
+- T074 closes the full shipping roster and authored-map reference graph during
+  content compilation. It checks stable-ID uniqueness, canonical counts,
+  movement/weapon/presentation/localization references, production coverage and
+  producer exits, the exact three Tube-eligible Martian units, map starts,
+  spawns, resource receivers and excavatable presentation. Eight deliberately
+  broken fixtures preserve specific diagnostics for every acceptance case.
+- Stale pre-roster shorthand IDs in the retained M5 Astronaut, Martian and Alien
+  runtime bindings now use the T070 canonical IDs. This lets newly produced
+  canonical T-3 Trikes receive Mission Refit state and keeps Forward Service,
+  Aero Tube eligibility and the M5 acceptance fixture bound to the actual roster.
 
 ## Integration format boundary
 
@@ -511,6 +523,18 @@ live; the current schema-9 copy/paste retains the complete experiment.
 - network replay chunk format **1**.
 
 ## Verification state
+
+M8 T074 targeted roster/M5 coverage passes 57/57. Static validation and the
+Godot C# host build pass after the final HUD-reference correction. The full
+`./tools/verify.sh --full` run on 2026-09-08 UTC passes all 317 NUnit tests,
+the 24-mover gate, content compilation/regeneration, deterministic and replay
+checks, all M6 network smokes, the Style/Palette/Look Labs and a launchable
+macOS export. Its summary reports one blocking HUD-Lab failure only because
+Godot raised its known mutex teardown error after the ninth fixture had already
+printed its PASS marker; the two remaining fixtures plus the affected brownout
+fixture then pass in isolated reruns. Stress60 remains the unchanged 2/60
+`BLOCKING_LATER` M9 diagnostic. Full-run summary:
+`Artifacts/Verification/20260908T073441Z-full-summary.txt`.
 
 M8 T073 targeted coverage passes 30/30 for command bindings/catalog,
 construction and Mission Refit, and 107/107 for the relevant deterministic,
@@ -697,8 +721,8 @@ blocking only when M9 must prove its stable-large-battle exit.
 
 ## Next approved action
 
-1. T073 is complete on its task branch. The next implementation task is T074
-   complete roster-reference validation; it has not started.
+1. T074 is complete on its task branch and awaits review/merge. T075 is the next
+   implementation task after acceptance; no T075 work has started here.
 2. The game director may independently explore `F8` → **M7 HUD Lab** and return
    its Hybrid/Structural/Legacy/Clean comparison across the four faction-bound
    recipes, then return a **COPY JSON** profile later; no HUD visual canon is

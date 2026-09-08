@@ -13,14 +13,14 @@ public static class M5AcceptanceScenarioFactory
     public const string StableMapKey = "map.dev.m5_acceptance";
     public const ushort ExcavatableFeatureId = 501;
 
-    public const string T3TrikeKey = "unit.ast.t3_trike";
+    public const string T3TrikeKey = CanonicalRosterReferences.T3Trike;
     public const string ResonanceCoreKey = "building.ali.resonance_core";
     public const string AeroTubeHangarKey = "building.mar.aero_tube_hangar";
     public const string SettlementStationKey = "building.mar.settlement_station";
-    public const string WorkerRobotKey = "unit.mar.worker_robot";
-    public const string DoubleHoverKey = "unit.mar.double_hover";
-    public const string JetScooterKey = "unit.mar.jet_scooter";
-    public const string DisplacementSourceKey = "unit.mar.excavation_searcher";
+    public const string WorkerRobotKey = CanonicalRosterReferences.MartianWorkerRobot;
+    public const string DoubleHoverKey = CanonicalRosterReferences.MartianDoubleHover;
+    public const string JetScooterKey = CanonicalRosterReferences.MartianJetScooter;
+    public const string DisplacementSourceKey = CanonicalRosterReferences.MartianExcavationSearcher;
     public const string DisplacementTargetKey = "unit.ast.t3_trike.displacement_target";
     public const string ExcavationRunnerKey = "unit.rock_raiders.hover_scout.m5_excavation_runner";
 
@@ -176,7 +176,7 @@ public static class M5AcceptanceScenarioFactory
         ref ResonanceCore resonance = ref world.Entities.ResonanceCore.Get(core);
         resonance.CommittedSlotMask = 0b0000_1111;
         resonance.DesiredCommittedCrystals = 4;
-        EntityId receiver = AddUnit(world, "unit.ali.razor_skimmer", 0, FixVec2.FromInts(121, 84), FootprintClass.Small, SelectableKind.CombatSupport, 9);
+        EntityId receiver = AddUnit(world, CanonicalRosterReferences.AlienRazorSkimmer, 0, FixVec2.FromInts(121, 84), FootprintClass.Small, SelectableKind.CombatSupport, 9);
         world.Entities.SurgeReceiver.Set(receiver, new SurgeReceiver());
         return core;
     }

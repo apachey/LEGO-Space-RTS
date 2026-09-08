@@ -594,7 +594,7 @@ public static class ServerCommandValidator
     {
         NetworkCommandRejection target = ValidateOwnedTarget(world, playerSlot, command.TargetEntity, id => world.Entities.Selectable.Has(id));
         if (target != NetworkCommandRejection.None) return target;
-        if (world.Entities.Selectable.Get(command.TargetEntity).ContentType != StableId.FromKey("unit.ast.t3_trike") ||
+        if (world.Entities.Selectable.Get(command.TargetEntity).ContentType != StableId.FromKey(CanonicalRosterReferences.T3Trike) ||
             world.Entities.MissionRefitJob.Has(command.TargetEntity)) return NetworkCommandRejection.CommandIneligible;
         if (!ForwardServiceSystem.TryGetProviderForMember(world, command.TargetEntity, out EntityId provider))
             return NetworkCommandRejection.ServiceMembershipRequired;
