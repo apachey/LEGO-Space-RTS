@@ -22,9 +22,15 @@ The formerly unresolved T073 values are approved and recorded in
 By explicit game-director decision, the roadmap now includes authoritative
 **M8.5 — Full Content & Presentation Production** between M8 and M9. Phase 09C
 requires complete production designs/models for all 35 units and 31
-infrastructure entries plus full-roster animation/VFX, icons/portraits,
-frontend/menu UI, audio and integrated human acceptance. M9 may no longer claim
-Skirmish Alpha presentation directly from the data-only M8 roster.
+infrastructure entries plus a blocking Super Scout reference-intelligence
+corpus, full-roster animation/VFX, icons/portraits, frontend/menu UI, audio and
+integrated human acceptance. M9 may no longer claim Skirmish Alpha presentation
+directly from the data-only M8 roster.
+Super Scout and production acceptance explicitly reject generic AI-looking
+forms: every major part must have understood identity/function, animation must
+be mechanically specified, texture needs must be planned and authored, and
+each final asset requires an iterative game-director review loop to explicit
+acceptance.
 Preset-style comparisons are retired as the primary
 workflow; the gameplay-scale realtime Look Lab is now at schema 9 with free
 camera control, ten reproducible surface/glare assets, exact shader-bound role-authored material
@@ -776,7 +782,9 @@ blocking only when M9 must prove its stable-large-battle exit.
    24–108-cell mouse-wheel zoom. The Phase 09C visual-direction entry dependency
    is satisfied. T081 is the next approved implementation task, but it has not
    started in this change.
-2. Execute Phase 09C M8.5 T081–T091 before final M9 Skirmish Alpha acceptance.
+2. Execute Phase 09C M8.5 T081–T092 before final M9 Skirmish Alpha acceptance.
+   T082 Super Scout must complete its 66 evidence-backed asset packets and
+   cross-roster identity audit before unit/building design production begins.
    Do not treat T070 data definitions as substitutes for production models or
    presentation.
 3. Launch the accepted direction from `F8` → **Review M7 visual direction**. It

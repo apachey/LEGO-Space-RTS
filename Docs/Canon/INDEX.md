@@ -25,8 +25,9 @@ Normal implementation agents may READ these files but may not modify them withou
 - `09A_GODOT_ENGINE_AMENDMENT.md` — authoritative Godot 4.7.x .NET engine-host amendment.
 - `09B_MOVEMENT_ARCHITECTURE_AND_PROTOTYPE_GATE_AMENDMENT.md` — authoritative Movement Architecture v2 and prototype-gate amendment.
 - `09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md` — authoritative
-  M8.5 full-roster models, buildings, animation, VFX, iconography, frontend/UI
-  and audio production milestone inserted between M8 and M9.
+  M8.5 full-roster reference intelligence, models, buildings, animation, VFX,
+  iconography, frontend/UI and audio production milestone inserted between M8
+  and M9.
 
 ## Precedence rule
 

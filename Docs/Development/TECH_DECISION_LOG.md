@@ -1161,8 +1161,9 @@ format or visual direction.
   slice and complete M8 gameplay data but left the production of the full
   player-facing roster, interface art and audio without a milestone owner.
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
-  defines M8.5 and tasks T081–T091. Existing T001–T080 IDs remain stable; task
-  number order does not override milestone dependency order.
+  initially defined M8.5 as tasks T081–T091. The 2026-09-09 Super Scout
+  decision below expands the current range to T081–T092. Existing T001–T080 IDs
+  remain stable; task number order does not override milestone dependency order.
 - M8.5 covers production design and integrated models for all 35 units and 31
   infrastructure entries, full-roster animation/VFX/destruction, complete
   icons/cards/portraits, the M9-required frontend/menu/UI presentation, audio
@@ -1177,3 +1178,35 @@ format or visual direction.
 - Music, voice acting and localization recording are not made blocking by this
   decision. They require separate approved scope if added later. No dependency,
   external asset pack or service is authorized by the roadmap amendment.
+
+## 2026-09-09 — Add M8.5 Super Scout reference-intelligence gate
+
+- The game director explicitly added a deep, detailed preproduction research
+  task for every unit and building so production does not begin from shallow
+  image boards or implicit assumptions.
+- Phase 09C now assigns T082 to Super Scout reference intelligence. Because no
+  M8.5 task has begun and Phase 09C is still isolated on its roadmap branch,
+  the former T082–T091 labels move to T083–T092 without colliding with an
+  implementation or merged public format. T001–T080 remain unchanged.
+- T082 produces 66 evidence-backed asset packets, multi-angle source ledgers,
+  silhouette/construction/scale/animation contracts and full-roster comparison
+  matrices. It explicitly identifies special source-supported mechanisms,
+  variants, common misrepresentations, genericization risks and unresolved
+  canon questions.
+- Acceptance is outcome-based: the complete representative roster must remain
+  identifiable in blind gameplay-scale silhouette review, animation intent must
+  be directly buildable, and consequential unknowns must be resolved or
+  escalated. Reference volume alone is not a pass.
+- `Docs/Development/M85_SUPER_SCOUT_REFERENCE_INTELLIGENCE.md` is the execution
+  specification and fixed packet template. Generated imagery may support later
+  ideation but is not accepted as source evidence.
+- The game director additionally requires an explicit anti-slop quality gate:
+  every major assembly must have understood identity, function and credible
+  LEGO-derived construction rather than unexplained generated detail.
+- Every packet includes a buildable animation/rig contract and a
+  geometry-versus-texture/material plan. Required texture sets must be generated,
+  integrated and reviewed with documented channels, scale and provenance.
+- Passing internal audits only makes an asset ready for director review. The
+  candidate is shown in reproducible gameplay and state/animation views,
+  corrected from game-director feedback and reaches PASS only after explicit
+  acceptance; unresolved consequential choices are asked rather than guessed.
