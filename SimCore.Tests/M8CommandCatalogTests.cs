@@ -119,24 +119,28 @@ public sealed class M8CommandCatalogTests
     }
 
     [Test]
-    public void ReservedCatalogCommandsCannotEnterTheAcceptedCommandWireFormat()
+    public void CompleteCatalogCommandsEnterTheAcceptedCommandWireFormat()
     {
         foreach (SimCommandType type in Enum.GetValues<SimCommandType>().Where(type =>
                      type >= SimCommandType.AttackMove && type <= SimCommandType.CancelMissionRefit))
-            Assert.Throws<ArgumentOutOfRangeException>(() => new CommandEnvelope(
-                new SimTick(1), 0, 1, type, Array.Empty<EntityId>(), FixVec2.Zero), type.ToString());
+        {
+            CommandEnvelope command = CreateMinimalCommand(type);
+            using MemoryStream stream = new(); using BinaryWriter writer = new(stream); command.Write(writer);
+            using BinaryReader reader = new(new MemoryStream(stream.ToArray(), false));
+            Assert.That(CommandEnvelope.Read(reader).Type, Is.EqualTo(type), type.ToString());
+        }
     }
 
     [Test]
-    public void CompleteProductionMetadataDoesNotPrematurelyEnableUnboundRecipes()
+    public void CompleteProductionMetadataEnablesBoundRecipes()
     {
         PrototypeContentCatalog catalog = PrototypeContentFactory.CreateM2Catalog();
         Assert.Multiple(() =>
         {
             Assert.That(ProductionSystem.IsRuntimeEnabledUnit(StableId.FromKey("unit.rock_raiders.crew")), Is.True);
-            Assert.That(ProductionSystem.IsRuntimeEnabledUnit(StableId.FromKey("unit.astronauts.rover")), Is.False);
+            Assert.That(ProductionSystem.IsRuntimeEnabledUnit(StableId.FromKey("unit.astronauts.rover")), Is.True);
             Assert.That(ProductionSystem.IsRuntimeEnabledProducer(catalog, StableId.FromKey("building.rock_raiders.hq")), Is.True);
-            Assert.That(ProductionSystem.IsRuntimeEnabledProducer(catalog, StableId.FromKey("building.ast.field_systems_garage")), Is.False);
+            Assert.That(ProductionSystem.IsRuntimeEnabledProducer(catalog, StableId.FromKey("building.ast.field_systems_garage")), Is.True);
         });
     }
 
@@ -243,5 +247,17 @@ public sealed class M8CommandCatalogTests
         => new(stableKey ?? source.StableKey, commandType ?? source.CommandType, source.EligibleEntityTags, source.TargetType,
             source.QueuePolicy, source.RequiredResearchStableKey, source.ValidationHandlerId, source.ExecutionHandlerId,
             source.UiSlotProfile, source.TargetingPreviewProfile);
+
+    private static CommandEnvelope CreateMinimalCommand(SimCommandType type)
+    {
+        EntityId target = new(1); EntityId[] entities = type is SimCommandType.AttackMove or SimCommandType.Patrol or SimCommandType.SetSpread or
+            SimCommandType.Excavate or SimCommandType.TubeTransfer or SimCommandType.TubeBuild or SimCommandType.ProtectorStance or
+            SimCommandType.SearcherBrace or SimCommandType.ExcavationClamp ? new[] { new EntityId(2) } : Array.Empty<EntityId>();
+        bool needsTarget = type is SimCommandType.Excavate or SimCommandType.StartResearch or SimCommandType.CancelResearch or SimCommandType.CancelProduction or
+            SimCommandType.TubeTransfer or SimCommandType.TubeBuild or SimCommandType.DefenseResonanceShunt or SimCommandType.ExcavationClamp or
+            SimCommandType.RapidFabrication or SimCommandType.CancelMissionRefit;
+        return new CommandEnvelope(new SimTick(1), 0, 1, type, entities, type is SimCommandType.AttackMove or SimCommandType.Patrol or SimCommandType.Ping ? FixVec2.FromInts(1, 1) : FixVec2.Zero,
+            targetEntity: needsTarget ? target : EntityId.None, contentType: type == SimCommandType.StartResearch ? new ContentId(1) : default);
+    }
 }
 }

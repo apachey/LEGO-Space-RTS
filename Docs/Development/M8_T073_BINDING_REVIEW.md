@@ -1,56 +1,26 @@
-# M8 T073 — COMMAND BINDING REVIEW
+# M8 T073 — APPROVED COMMAND BINDINGS
 
-This is a development review package, not gameplay canon. It records the
-smallest decisions still required to bind every T073 command without inventing
-rules that are absent from `Docs/Canon/`.
+This development record captures the game-director decisions approved for
+T073. It is implementation guidance, not a modification to gameplay canon.
+The earlier recommendations are resolved and implemented as follows.
 
-## Already determined by canon and implemented in the data checkpoint
+## 1. Cancellation accounting — approved
 
-- The catalog contains one stable definition for each of 35 command families.
-- Construction and production prerequisites preserve AND between groups and OR
-  within a group.
-- All 35 canonical units have exact Phase 04 production costs, times, OC and
-  producer bindings.
-- Attack-Move applies to mobile selections so noncombat support units move with
-  the group; Ping is player-scoped and does not require selection.
-- Production reordering is represented, with the active item immovable behind
-  waiting items.
-- Protector Stance itself is not gated by Utility Mechanisms. That research
-  gates Guard Sweep and the upgraded resistance effects.
-- Transform, Deploy and Reconfigure use the shared state-change family. Guard
-  Sweep and the Martian Deflector remain automatic rather than becoming extra
-  buttons.
+- Waiting production, research and Mission Refit jobs refund 100% of Ore,
+  Energy and Crystals.
+- An active job commits 20% of Ore/Energy when it starts, then consumes the
+  remaining 80% linearly with progress.
+- Cancellation returns all unspent Ore/Energy plus 50% of consumed Ore/Energy
+  with deterministic integer rounding.
+- Crystals commit at 50% progress. They refund fully before commitment and do
+  not refund afterward.
+- Mission Refit retains already owned modules.
+- The canonical Service/Refit facility-destruction handling is unchanged.
 
-The existing command packet remains byte-for-byte unchanged. New command codes
-19–35 are reserved in content but rejected by the runtime envelope until their
-payloads and handlers are implemented.
+The same Crystal reservation/50%-commit boundary is used by the newly enabled
+Crystal-bearing construction actions so their authored cost cannot be bypassed.
 
-## Director decisions required
-
-### 1. Cancellation accounting
-
-Phase 07 requires cancellation and a refund/loss preview for production,
-research and Mission Refit. Phase 04 defines the exact progressive accounting
-formula only for building construction.
-
-Recommended rule:
-
-- a waiting job returns 100% of Ore, Energy and Crystals;
-- an active job commits 20% of Ore/Energy on start and consumes the remaining
-  80% linearly over progress;
-- cancellation returns all unspent Ore/Energy plus half of consumed
-  Ore/Energy, using the existing deterministic integer rounding;
-- Crystals commit at 50%; before that point they return in full, and afterward
-  they do not return;
-- Mission Refit retains the old/owned module and uses the same accounting,
-  while facility destruction keeps its already canonical special handling.
-
-### 2. Authored production exits
-
-Phase 07 requires an authored, reserved exit area with clearance for the
-largest product. Canon does not provide dimensions for the newly imported
-producers. Recommended front-centered table, retaining the existing Raider
-entries:
+## 2. Authored production exits — approved
 
 | Producer | Exit | Largest footprint |
 |---|---:|---|
@@ -68,45 +38,63 @@ entries:
 | Settlement Station | 2×2 | Tiny |
 | Mechanical Workshop | 5×5 | Huge |
 
-### 3. Excavation duration
+All exits are front-centred, authored data and reserve clearance for the listed
+largest footprint.
 
-Canon gives 25 Energy and roughly 15–35 seconds for Standard excavation, and
-50 Energy and roughly 30–60 seconds for Reinforced excavation, but no exact
-feature duration or machine multiplier.
+## 3. Excavation duration — approved changed values
 
-Recommended exact values: Standard **25 seconds / 500 ticks** and Reinforced
-**45 seconds / 900 ticks**, with no hidden machine multiplier.
+There is no shared duration and no hidden machine multiplier.
 
-### 4. AST and Alien Energy-domain membership
+| Machine | Standard | Reinforced |
+|---|---:|---:|
+| Drill Craft | 20s / 400 ticks | 40s / 800 ticks |
+| Chrome Crusher | 25s / 500 ticks | 45s / 900 ticks |
+| Granite Grinder | 30s / 600 ticks | 55s / 1100 ticks |
 
-Canon requires generous Astronaut operating areas and Alien Command-Core
-membership, but supplies no association radius. The existing 18/10-cell
-Forward Service radii are a different system and do not answer this.
+Standard excavation costs 25 Energy and Reinforced excavation costs 50 Energy.
+Drill Craft remains the fastest dedicated route-opening asset in both classes.
 
-Recommended rule: Astronaut static Energy emitters use an 18-cell radius and
-join when their areas overlap; Alien structures join the nearest operational
-Command Core within 18 cells, breaking equal-distance ties by the lowest
-`EntityId`.
+## 4. Energy-domain membership — approved clarification
 
-### 5. Settlement Station local reserve
+Astronauts:
 
-Canon requires a local reserve for a disconnected Station but gives no
-capacity. Recommended value: **150 Energy**, matching a primary command reserve
-without turning the Station into a generator.
+- MB-01 Eagle Command Base, Service & Refit Hub and Solar Energy Array each
+  establish an 18-cell Energy-domain area.
+- Overlapping areas form one Energy Domain and pool generation/reserve.
+- Energy-domain topology remains separate from Forward Service topology.
 
-### 6. ETX Defense Node reconfiguration
+Aliens:
 
-Canon requires choosing Ground Pulse or Air Lance when built, and says later
-reconfiguration is slow and unavailable under direct combat pressure. It does
-not define duration or cost.
+- A structure associates with the nearest operational ETX Command Core within
+  18 cells; equal distances use the lowest `EntityId`.
+- Membership recalculates deterministically when relevant Core operational or
+  topology state changes.
+- Each Command Core owns at most one Resonance Core.
+- A Resonance Core cannot reassociate to an already claimed Command Core. It
+  remains without valid Command-Core membership until a valid Core is free.
 
-Recommended rule: the placement command requires the initial mode; later
-reconfiguration takes **6 seconds / 120 ticks**, costs no additional resources,
-and cannot start or progress while the Node is under direct combat pressure.
+## 5. Settlement Station local reserve — approved
 
-## Approval boundary
+- Reserve capacity is 150 Energy.
+- Existing Self +1 Energy/s auxiliary generation remains unchanged.
+- Connected Martian components pool generation/reserve through the existing
+  Aero Tube topology rules.
 
-Approving this package authorizes implementation of these exact values and
-rules in T073. Any changed value should be stated explicitly. Until approval,
-the catalog remains usable for validation while affected runtime actions stay
-unavailable.
+## 6. ETX Defense Node reconfiguration — approved exact pressure rule
+
+- Placement requires an initial Ground Pulse or Air Lance mode.
+- Later reconfiguration takes 6s / 120 ticks and costs no resources.
+- Direct combat pressure means that the Node dealt or received hostile combat
+  damage during the previous 4.0s / 80 ticks.
+- Reconfiguration cannot start under pressure. Pressure during an active change
+  pauses progress without resetting it; progress resumes after 80 ticks without
+  a new hostile combat interaction.
+
+## Implemented T073 boundary
+
+The runtime now accepts the reserved command identities, validates their legal
+payloads, binds construction/production/research and the affected faction
+actions, and serializes the new authoritative jobs and state. Snapshot format
+21 and simulation protocol 19 preserve deterministic continuation; snapshot
+format 20 remains readable. The command packet layout and replay container
+format remain unchanged.

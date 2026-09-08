@@ -123,6 +123,7 @@ public sealed class M5ForwardServiceTests
     public void SnapshotPreservesMembershipAndDeterministicContinuation()
     {
         SimulationWorld world = NewWorld();
+        AddAstCommand(world, 0, FixVec2.FromInts(25, 40));
         AddHub(world, 0, FixVec2.FromInts(40, 40), BuildingState.Completed);
         AddSolarExplorer(world, 0, FixVec2.FromInts(70, 40), DeploymentState.Deployed);
         EntityId trike = AddT3(world, 0, FixVec2.FromInts(45, 40));
@@ -158,6 +159,14 @@ public sealed class M5ForwardServiceTests
             Type = ServiceHub, AnchorX = checked((short)(position.X.FloorToInt() - 3)), AnchorY = checked((short)(position.Y.FloorToInt() - 3)),
             FootprintWidth = 7, FootprintHeight = 7, State = state
         });
+        return id;
+    }
+
+    private static EntityId AddAstCommand(SimulationWorld world, byte player, FixVec2 position)
+    {
+        ContentId type = StableId.FromKey("building.ast.mb01_eagle_command_base");
+        EntityId id = AddSelectable(world, player, position, type, SelectableKind.Building);
+        world.Entities.Building.Set(id, new Building { Type = type, AnchorX = 21, AnchorY = 36, FootprintWidth = 8, FootprintHeight = 8, State = BuildingState.Completed });
         return id;
     }
 

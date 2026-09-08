@@ -533,7 +533,7 @@ expected_buildings={
     'building.mar.mechanical_workshop':([7,6],[150,20,0],700,5,[0,0,1],'ProductionAndResearch',1450,'Structure',2,'COMPOSITE_ADAPTED'),
     'building.mar.pressure_generator':([4,4],[130,10,0],600,0,[9,100,0],'StaticDefenseAndNonessential',900,'Structure',1,'OFFICIAL_ADAPTED'),
     'building.mar.routing_laboratory':([6,6],[170,35,1],840,4,[0,0,2],'ProductionAndResearch',1500,'Structure',2,'COMPOSITE_ADAPTED'),
-    'building.mar.settlement_station':([7,7],[220,30,0],800,12,[1,0,0],'CommandAndBasicEconomy',1900,'FortifiedStructure',3,'COMPOSITE_ADAPTED'),
+    'building.mar.settlement_station':([7,7],[220,30,0],800,12,[1,150,0],'CommandAndBasicEconomy',1900,'FortifiedStructure',3,'COMPOSITE_ADAPTED'),
     'building.rock_raiders.crusher_barrier':([3,1],[90,10,0],480,0,[0,0,0],'StaticDefenseAndNonessential',1100,'FortifiedStructure',4,'NEW_GAME_CONTENT'),
     'building.rock_raiders.crystal_vault':([5,5],[180,40,0],900,0,[0,0,1],'ResourceProcessing',1600,'FortifiedStructure',4,'COMPOSITE_ADAPTED'),
     'building.rock_raiders.cutter_mast':([2,2],[120,25,0],600,0,[0,0,2],'StaticDefenseAndNonessential',800,'FortifiedStructure',2,'NEW_GAME_CONTENT'),

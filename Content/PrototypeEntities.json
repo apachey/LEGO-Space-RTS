@@ -1,7 +1,7 @@
 {
   "schemaVersion": 18,
   "contentKind": "prototype_entities",
-  "policy": "M8 T073 data checkpoint: canonical 35-unit, 31-infrastructure, 38-research and 35-family command catalog; unbound actions remain unavailable to runtime.",
+  "policy": "M8 T073 approved runtime catalog: canonical 35-unit, 31-infrastructure, 38-research and 35-family command catalog with guarded authoritative action bindings.",
   "movementProfiles": [
     {
       "stableId": "movement.prototype.crew",
@@ -978,6 +978,7 @@
         "crystals": 0
       },
       "buildTicks": 800,
+      "productionExit": { "width": 2, "depth": 2, "largestFootprint": "Tiny" },
       "operationsCapacityProvided": 16,
       "energyGenerationPerSecond": 2,
       "energyReserveCapacity": 150,
@@ -1020,6 +1021,7 @@
         "crystals": 0
       },
       "buildTicks": 640,
+      "productionExit": { "width": 3, "depth": 3, "largestFootprint": "Small" },
       "operationsCapacityProvided": 4,
       "energyGenerationPerSecond": 0,
       "energyReserveCapacity": 0,
@@ -1065,6 +1067,7 @@
         "crystals": 1
       },
       "buildTicks": 1000,
+      "productionExit": { "width": 5, "depth": 5, "largestFootprint": "Huge" },
       "operationsCapacityProvided": 6,
       "energyGenerationPerSecond": 0,
       "energyReserveCapacity": 0,
@@ -1109,6 +1112,7 @@
         "crystals": 0
       },
       "buildTicks": 600,
+      "productionExit": { "width": 4, "depth": 4, "largestFootprint": "Large" },
       "operationsCapacityProvided": 4,
       "energyGenerationPerSecond": 0,
       "energyReserveCapacity": 0,
@@ -1134,6 +1138,7 @@
         "crystals": 1
       },
       "buildTicks": 900,
+      "productionExit": { "width": 5, "depth": 5, "largestFootprint": "Huge" },
       "operationsCapacityProvided": 5,
       "energyGenerationPerSecond": 0,
       "energyReserveCapacity": 0,
@@ -1182,6 +1187,7 @@
         "crystals": 0
       },
       "buildTicks": 900,
+      "productionExit": { "width": 3, "depth": 3, "largestFootprint": "Small" },
       "operationsCapacityProvided": 16,
       "energyGenerationPerSecond": 2,
       "energyReserveCapacity": 150,
@@ -1206,6 +1212,7 @@
         "crystals": 1
       },
       "buildTicks": 900,
+      "productionExit": { "width": 5, "depth": 5, "largestFootprint": "Huge" },
       "operationsCapacityProvided": 5,
       "energyGenerationPerSecond": 0,
       "energyReserveCapacity": 0,
@@ -1316,6 +1323,7 @@
         "crystals": 0
       },
       "buildTicks": 1000,
+      "productionExit": { "width": 3, "depth": 3, "largestFootprint": "Small" },
       "operationsCapacityProvided": 16,
       "energyGenerationPerSecond": 2,
       "energyReserveCapacity": 150,
@@ -1400,6 +1408,7 @@
         "crystals": 0
       },
       "buildTicks": 700,
+      "productionExit": { "width": 5, "depth": 5, "largestFootprint": "Huge" },
       "operationsCapacityProvided": 5,
       "energyGenerationPerSecond": 0,
       "energyReserveCapacity": 0,
@@ -1470,9 +1479,10 @@
       "buildTicks": 800,
       "operationsCapacityProvided": 12,
       "energyGenerationPerSecond": 1,
-      "energyReserveCapacity": 0,
+      "energyReserveCapacity": 150,
       "continuousEnergyDemandPerSecond": 0,
       "energyFunctionalClass": "CommandAndBasicEconomy"
+      ,"productionExit": { "width": 2, "depth": 2, "largestFootprint": "Tiny" }
     },
     {
       "stableId": "building.rock_raiders.crusher_barrier",
@@ -1552,6 +1562,7 @@
         "crystals": 0
       },
       "buildTicks": 1100,
+      "productionExit": { "width": 5, "depth": 5, "largestFootprint": "Huge" },
       "operationsCapacityProvided": 6,
       "energyGenerationPerSecond": 0,
       "energyReserveCapacity": 0,

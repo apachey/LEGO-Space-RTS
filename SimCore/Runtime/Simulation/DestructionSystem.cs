@@ -78,6 +78,8 @@ public sealed class DestructionSystem : ISimSystem
         };
         world.Entities.Destruction.Set(id, destruction);
         if (isStructure) world.ClearDestroyedStructureFootprint(destruction);
+        if (isStructure && ownership.PlayerSlot != byte.MaxValue)
+            MissionRefitSystem.CancelForDestroyedProvider(world, id, ownership.PlayerSlot);
 
         if (world.Entities.Builder.Has(id)) ConstructionSystem.ReleaseBuilderAssignment(world, id);
         ReleaseBuildersTargeting(world, id);

@@ -201,6 +201,18 @@ public sealed class MapGrid
         return false;
     }
 
+    internal bool SetFeatureState(ushort featureId, ExcavatableFeatureState state)
+    {
+        for (int i = 0; i < _features.Count; i++)
+        {
+            if (_features[i].FeatureId != featureId) continue;
+            if (_features[i].Open || state == ExcavatableFeatureState.Open) return false;
+            _features[i].State = state;
+            return true;
+        }
+        return false;
+    }
+
     public bool TryGetFeature(ushort featureId, out ExcavatableFeature feature)
     {
         for (int i = 0; i < _features.Count; i++)

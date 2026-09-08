@@ -10,12 +10,12 @@ The dense M7 cross-thread continuity index is
 
 **M0–M6 are implemented, verified and game-director accepted. M7 visual canon
 remains deliberately open. M8 T070–T072 are implemented and fully verified;
-the current T073 task branch has completed its guarded data/catalog checkpoint:
-the compiled gameplay catalog now contains all 35 canonical unit chassis, all
-31 canonical infrastructure definitions and all 38 canonical research
-definitions across the four factions, plus 35 stable command families and the
-complete construction/production prerequisite bindings. Full runtime binding
-remains open pending the explicit non-canonical values collected in
+the current T073 task branch implements the approved guarded command/runtime
+catalog: all 35 canonical unit chassis, 31 infrastructure definitions, 38
+research definitions and 35 stable command families are present, and legal
+construction, production, research and the affected faction actions now use
+their authoritative prerequisites, resources, timings and deterministic state.
+The formerly unresolved T073 values are approved and recorded in
 `Docs/Development/M8_T073_BINDING_REVIEW.md`.
 Preset-style comparisons are retired as the primary
 workflow; the gameplay-scale realtime Look Lab is now at schema 9 with free
@@ -472,34 +472,37 @@ live; the current schema-9 copy/paste retains the complete experiment.
   bindings, all 35 production recipes and 35 stable command definitions. The
   action prerequisites resolve against same-faction building/research data and
   preserve AND-of-OR semantics. The tracked binary and built-in fallback remain
-  byte-identical at content hash `73759C8968ACB05E`; formats 2–18 remain
+  byte-identical at content hash `5C197B27F8C40EC8`; formats 2–18 remain
   readable.
-- Importing data does not yet expand the accepted runtime construction catalog.
-  Local and
-  network authority still expose only the four accepted M3 Rock Raiders
-  structures; the other 27 definitions remain command-locked until the complete
-  faction/research command path can charge and refund every canonical cost.
+- All 31 construction definitions and all 35 production recipes are now
+  runtime-eligible subject to their authored prerequisites. Ore, Energy and
+  Crystal costs are reserved deterministically; Crystal-bearing construction
+  cannot bypass its cost.
+- Production, research and Mission Refit cancellation use the approved 20%
+  initial Ore/Energy commitment, linear remaining consumption, half-consumed
+  refund and 50%-progress Crystal commitment. Waiting jobs refund fully;
+  Mission Refit retains owned modules and its facility-destruction exception.
+- The 13 producers use the approved front-centred exit dimensions. Excavation
+  uses the six explicit per-machine/per-terrain durations and 25/50 Energy.
+- Astronaut 18-cell Energy areas overlap into pooled domains without changing
+  Forward Service topology. Alien structures deterministically choose the
+  nearest operational Command Core within 18 cells while retaining the
+  absolute one-Resonance-Core-per-Command-Core rule. Martian Tube components
+  pool Energy, and Settlement Station retains +1 Energy/s with 150 reserve.
+- ETX Defense Node placement records its mandatory initial mode. Later mode
+  changes take 120 ticks, cost nothing and pause during the exact trailing
+  80-tick hostile-damage pressure window.
 - Aero Tube Link length-dependent cost/time and Resonance Core committed-Crystal
-  demand remain delegated to their existing authoritative systems. Final
-  nonrectangular masks, structure sight, production exits, Settlement reserve
-  and configurable-defense defaults were not available in canon and were not
-  invented.
-- T073 reserves command codes 19–35 in the catalog, while the unchanged command
-  envelope and wire formats reject them until payload and handler binding. The
-  complete recipe table likewise retains an explicit runtime gate around the
-  four accepted Raider products, preventing accidental production without
-  canonical Crystal, research, Energy-domain and exit handling.
-- T072 remains data-only: it does not add research queues/jobs, completion
-  state, commands, UI, network payloads or effect application, and it does not
-  rewire the retained M5 proof flags. T070–T072 do not claim the later M8
-  closures: the remainder of T073 owns complete command/runtime binding and
-  T074 complete
-  roster-reference validation.
+  demand remain delegated to their existing authoritative systems.
+- Public command codes 19–35 now pass the unchanged command packet layout with
+  guarded payload validation and the T073 action handlers. Research completion,
+  production/research/excavation jobs and Defense Node state are authoritative
+  snapshot state. T074 complete roster-reference validation has not started.
 
 ## Integration format boundary
 
-- authoritative snapshot format **20**;
-- simulation protocol **18**;
+- authoritative snapshot format **21** (backward reader for 20);
+- simulation protocol **19**;
 - replay format **16** (backward reader for 15);
 - compiled content format **19** / source schema **18**;
 - command packet format **1**;
@@ -508,6 +511,19 @@ live; the current schema-9 copy/paste retains the complete experiment.
 - network replay chunk format **1**.
 
 ## Verification state
+
+M8 T073 targeted coverage passes 30/30 for command bindings/catalog,
+construction and Mission Refit, and 107/107 for the relevant deterministic,
+snapshot/replay, content, faction-system and M6 network compatibility selection.
+The single requested `./tools/verify.sh --full` run on 2026-09-08 UTC passed
+308/308 NUnit tests, the 24-mover gate, content and deterministic/replay checks,
+all M6/M7 headless labs and a fresh macOS export. Its summary recorded one
+blocking failure because static validation still expected the pre-approval
+Settlement Station reserve of 0; after updating that guard to the approved 150,
+the standalone static/source validation passes. The prior M7 HUD-lab mutex
+teardown exit did not recur. Stress60 again completed 2/60 and remains the known
+`BLOCKING_LATER` M9 diagnostic rather than a T073 regression. Exact full-run
+summary: `Artifacts/Verification/20260908T005749Z-full-summary.txt`.
 
 M8 T072 passed `./tools/verify.sh --full` on 2026-09-01 UTC with **zero
 blocking failures**: 289 NUnit tests, exact 38-technology roster and 9/10/10/9
@@ -681,9 +697,8 @@ blocking only when M9 must prove its stable-large-battle exit.
 
 ## Next approved action
 
-1. Approve or amend `Docs/Development/M8_T073_BINDING_REVIEW.md`, then finish
-   T073 runtime binding for legal construction, production, research and faction
-   actions without inventing missing accounting, geometry or timing rules.
+1. T073 is complete on its task branch. The next implementation task is T074
+   complete roster-reference validation; it has not started.
 2. The game director may independently explore `F8` → **M7 HUD Lab** and return
    its Hybrid/Structural/Legacy/Clean comparison across the four faction-bound
    recipes, then return a **COPY JSON** profile later; no HUD visual canon is

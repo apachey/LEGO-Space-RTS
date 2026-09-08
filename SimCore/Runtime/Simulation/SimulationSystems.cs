@@ -90,6 +90,68 @@ public sealed class CommandExecutionSystem : ISimSystem
             AlienChargeSystem.TryStartSurge(world, command.PlayerSlot, command.TargetEntity);
             return;
         }
+        if (command.Type == SimCommandType.CancelProduction)
+        {
+            ProductionSystem.TryCancel(world, command.PlayerSlot, command.TargetEntity, command.Orientation);
+            return;
+        }
+        if (command.Type == SimCommandType.ReorderProduction)
+        {
+            ProductionSystem.TryReorder(world, command.PlayerSlot, command.TargetEntity, command.Orientation, command.DesiredResonanceCommitment);
+            return;
+        }
+        if (command.Type == SimCommandType.StartResearch)
+        {
+            ResearchSystem.TryStart(world, command.PlayerSlot, command.TargetEntity, command.ContentType);
+            return;
+        }
+        if (command.Type == SimCommandType.CancelResearch)
+        {
+            ResearchSystem.TryCancel(world, command.PlayerSlot, command.TargetEntity);
+            return;
+        }
+        if (command.Type == SimCommandType.CancelMissionRefit)
+        {
+            MissionRefitSystem.TryCancel(world, command.PlayerSlot, command.TargetEntity);
+            return;
+        }
+        if (command.Type == SimCommandType.Excavate)
+        {
+            for (int i = 0; i < command.Entities.Length; i++)
+                if (ExcavationSystem.TryStart(world, command.PlayerSlot, command.Entities[i], command.TargetEntity)) break;
+            return;
+        }
+        if (command.Type == SimCommandType.TubeTransfer)
+        {
+            for (int i = 0; i < command.Entities.Length; i++)
+            {
+                EntityId passenger = command.Entities[i]; EntityId origin = FindNearestOwnedTubeStation(world, command.PlayerSlot, passenger);
+                if (origin != EntityId.None) TubeTransferSystem.TryQueueTransfer(world, command.PlayerSlot, passenger, origin, command.TargetEntity);
+            }
+            return;
+        }
+        if (command.Type == SimCommandType.TubeBuild)
+        {
+            if (command.Entities.Length > 0) TubeGraphSystem.TryAddCompletedLink(world, command.PlayerSlot, command.Entities[0], command.TargetEntity, out _);
+            return;
+        }
+        if (command.Type == SimCommandType.ExcavationClamp)
+        {
+            if (command.Entities.Length > 0 && world.Entities.Transform.TryGet(command.Entities[0], out SimTransform source) && world.Entities.Transform.TryGet(command.TargetEntity, out SimTransform target))
+                DisplacementSystem.TryApply(world, command.Entities[0], command.TargetEntity, DisplacementEffect.ExcavationClamp, DisplacementRelation.Hostile,
+                    target.Position - source.Position, out _);
+            return;
+        }
+        if (command.Type == SimCommandType.RapidFabrication)
+        {
+            ProductionSystem.TryRapidFabrication(world, command.PlayerSlot, command.TargetEntity);
+            return;
+        }
+        if (command.Type == SimCommandType.DefenseResonanceShunt)
+        {
+            DefenseNodeSystem.TryStartShunt(world, command.PlayerSlot, command.TargetEntity);
+            return;
+        }
         if (command.Type == SimCommandType.Build)
         {
             if ((command.TargetPosition.X.Raw & (Fix32.OneRaw - 1)) != 0 || (command.TargetPosition.Y.Raw & (Fix32.OneRaw - 1)) != 0) return;
@@ -201,12 +263,15 @@ public sealed class CommandExecutionSystem : ISimSystem
             {
                 EntityId id = command.Entities[i];
                 if (world.Entities.Ownership.TryGet(id, out Ownership owner) && owner.PlayerSlot == command.PlayerSlot)
-                    TransformationSystem.TryToggle(world, id);
+                {
+                    if (world.DefenseNodeStates.ContainsKey(id.Value)) DefenseNodeSystem.TryStartReconfiguration(world, command.PlayerSlot, id, (DefenseNodeMode)command.Orientation);
+                    else TransformationSystem.TryToggle(world, id);
+                }
             }
             return;
         }
 
-        if (command.Type == SimCommandType.Move)
+        if (command.Type == SimCommandType.Move || command.Type == SimCommandType.AttackMove || command.Type == SimCommandType.Patrol)
         {
             for (int i = 0; i < command.Entities.Length; i++)
             {
@@ -258,7 +323,7 @@ public sealed class CommandExecutionSystem : ISimSystem
             return;
         }
 
-        if (command.Type == SimCommandType.Move)
+        if (command.Type == SimCommandType.Move || command.Type == SimCommandType.AttackMove || command.Type == SimCommandType.Patrol)
         {
             FixVec2 centroid = FormationPlanner.ComputeCentroid(world, world.ScratchEntities);
             FixVec2 heading = command.TargetPosition - centroid;
@@ -289,6 +354,8 @@ public sealed class CommandExecutionSystem : ISimSystem
                     CancelHarvest(world, id);
                     TargetingSystem.ClearTarget(world, id);
                     SetMove(world, id, slotTarget, formation);
+                    if (world.Entities.Targeting.Has(id) && command.Type != SimCommandType.Move)
+                        world.Entities.Targeting.Get(id).HasCombatMove = true;
                 }
             }
             return;
@@ -308,6 +375,21 @@ public sealed class CommandExecutionSystem : ISimSystem
             StopMovement(world, id, ref nav, ref move);
             move.State = command.Type == SimCommandType.HoldPosition ? MovementState.Holding : MovementState.Idle;
         }
+    }
+
+    private static EntityId FindNearestOwnedTubeStation(SimulationWorld world, byte playerSlot, EntityId passenger)
+    {
+        if (!world.Entities.Transform.TryGet(passenger, out SimTransform transform)) return EntityId.None;
+        EntityId best = EntityId.None; Fix32 bestDistance = Fix32.MaxValue;
+        IReadOnlyList<EntityId> alive = world.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            EntityId id = alive[i];
+            if (!world.Entities.TubeStation.Has(id) || !world.Entities.Ownership.TryGet(id, out Ownership owner) || owner.PlayerSlot != playerSlot || !world.Entities.Transform.TryGet(id, out SimTransform station)) continue;
+            Fix32 distance = FixVec2.Distance(transform.Position, station.Position);
+            if (best == EntityId.None || distance < bestDistance || (distance == bestDistance && id.Value < best.Value)) { best = id; bestDistance = distance; }
+        }
+        return best;
     }
 
     internal static bool IsBusy(SimulationWorld world, EntityId id)

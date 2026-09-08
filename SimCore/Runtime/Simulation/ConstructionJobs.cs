@@ -152,6 +152,11 @@ public sealed class ConstructionSystem : ISimSystem
         building.State = BuildingState.Completed;
         world.Entities.ConstructionSite.Remove(siteId);
         if (ProductionSystem.IsRuntimeEnabledProducer(world.Content, building.Type)) world.Entities.Production.Set(siteId, new Production());
+        if (building.Type == DefenseNodeSystem.DefenseNodeType && !world.DefenseNodeStates.ContainsKey(siteId.Value))
+            DefenseNodeSystem.Register(world, siteId, DefenseNodeMode.GroundPulse);
+        if ((building.Type == StableId.FromKey("building.mar.aero_tube_hangar") || building.Type == StableId.FromKey("building.mar.settlement_station")) &&
+            world.Entities.Ownership.TryGet(siteId, out Ownership stationOwner))
+            TubeGraphSystem.TryRegisterStation(world, siteId, ResearchSystem.HasCompleted(world, stationOwner.PlayerSlot, StableId.FromKey("research.mar.redundant_routing")));
         if (building.Type == HqType)
         {
             if (!world.Entities.ResourceReceiver.Has(siteId)) world.Entities.ResourceReceiver.Set(siteId, new ResourceReceiver { AcceptedType = ResourceType.Ore, IsHqEmergencyReceiver = true });

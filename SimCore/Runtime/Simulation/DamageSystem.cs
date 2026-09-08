@@ -40,6 +40,7 @@ public sealed class DamageSystem : ISimSystem
         Fix32 damage = CalculateDamage(request.BaseDamage, request.DamageType, targetable.Class, health.ArmorRating);
         health.Current = Fix32.Max(Fix32.Zero, health.Current - damage);
         health.LastDamageTick = world.Tick.Value;
+        DefenseNodeSystem.RecordHostileDamage(world, request.Source, request.Target);
         return damage;
     }
 

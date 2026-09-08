@@ -123,8 +123,8 @@ public sealed class M5MissionRefitTests
         ExcavationTopologySystem.InitializeFeatures(world);
         EntityId energyRoot = world.Entities.Create();
         world.Entities.Ownership.Set(energyRoot, new Ownership { PlayerSlot = 0 });
-        ContentId hqType = StableId.FromKey("building.rock_raiders.hq");
-        world.Entities.Transform.Set(energyRoot, new SimTransform { Position = FixVec2.FromInts(12, 12), Orientation = Angle16.Zero });
+        ContentId hqType = StableId.FromKey("building.ast.mb01_eagle_command_base");
+        world.Entities.Transform.Set(energyRoot, new SimTransform { Position = FixVec2.FromInts(25, 40), Orientation = Angle16.Zero });
         world.Entities.Selectable.Set(energyRoot, new Selectable { IsSelectable = true, ContentType = hqType, Kind = SelectableKind.Building });
         world.Entities.Building.Set(energyRoot, new Building { Type = hqType, AnchorX = 8, AnchorY = 8, FootprintWidth = 8, FootprintHeight = 8, State = BuildingState.Completed });
         world.Entities.EnergyDomainMember.Set(energyRoot, new EnergyDomainMember { DomainRoot = energyRoot });

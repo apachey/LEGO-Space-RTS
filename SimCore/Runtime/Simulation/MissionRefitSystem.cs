@@ -79,13 +79,36 @@ public sealed class MissionRefitSystem : ISimSystem
         return true;
     }
 
+    public static bool TryCancel(SimulationWorld world, byte playerSlot, EntityId unit, bool facilityDestroyed = false)
+    {
+        if (!world.Entities.MissionRefitJob.TryGet(unit, out MissionRefitJob job) ||
+            !world.Entities.Ownership.TryGet(unit, out Ownership owner) || owner.PlayerSlot != playerSlot) return false;
+        int progress = job.TotalTicks - job.RemainingTicks;
+        int oreRefund = facilityDestroyed ? job.CommittedOre / 2 : CancellationAccounting.Refund(job.CommittedOre, progress, job.TotalTicks);
+        int energyRefund = facilityDestroyed ? job.CommittedEnergy / 2 : CancellationAccounting.Refund(job.CommittedEnergy, progress, job.TotalTicks);
+        ProductionSystem.RefundResource(world, playerSlot, ResourceType.Ore, oreRefund, job.FundingBank);
+        if (world.Entities.EnergyDomain.Has(job.EnergyDomainRoot)) EnergyDomainSystem.Refund(world, job.EnergyDomainRoot, energyRefund);
+        world.Entities.MissionRefitJob.Remove(unit);
+        return true;
+    }
+
+    public static void CancelForDestroyedProvider(SimulationWorld world, EntityId provider, byte playerSlot)
+    {
+        IReadOnlyList<EntityId> alive = world.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+            if (world.Entities.MissionRefitJob.TryGet(alive[i], out MissionRefitJob job) && job.Provider == provider)
+                TryCancel(world, playerSlot, alive[i], facilityDestroyed: true);
+    }
+
     public static void EnsureState(SimulationWorld world, EntityId unit)
     {
         if (!world.Entities.MissionRefitState.Has(unit))
             world.Entities.MissionRefitState.Set(unit, new MissionRefitState
             {
                 CurrentConfiguration = MissionConfiguration.T3Escort,
-                OwnedConfigurationMask = ConfigurationBit(MissionConfiguration.T3Escort)
+                OwnedConfigurationMask = ConfigurationBit(MissionConfiguration.T3Escort),
+                SurveyUnlocked = world.Entities.Ownership.TryGet(unit, out Ownership owner) &&
+                    ResearchSystem.HasCompleted(world, owner.PlayerSlot, StableId.FromKey("research.ast.field_survey_package"))
             });
     }
 

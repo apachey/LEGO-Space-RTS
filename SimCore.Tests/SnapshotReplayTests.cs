@@ -5,8 +5,8 @@ public class SnapshotReplayTests
 {
     [Test] public void SnapshotFormatSupportsCombinedM4AndM5State() => Assert.Multiple(() =>
     {
-        Assert.That(SnapshotSerializer.FormatVersion,Is.EqualTo(20));
-        Assert.That(SnapshotSerializer.SimulationProtocolVersion,Is.EqualTo(18));
+        Assert.That(SnapshotSerializer.FormatVersion,Is.EqualTo(21));
+        Assert.That(SnapshotSerializer.SimulationProtocolVersion,Is.EqualTo(19));
         Assert.That(ReplayLog.Version,Is.EqualTo(16));
     });
     [Test] public void SnapshotRoundTripPreservesHash()

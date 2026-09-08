@@ -22,6 +22,7 @@ public sealed class SimulationWorld
     public uint NextProjectileValue { get; internal set; } = 1;
     public uint TubeTopologyRevision { get; internal set; }
     public uint TubeSegmentationRevision { get; internal set; }
+    internal ulong FactionEnergyTopologySignature;
     private readonly OperationsCapacityState[] _operationsCapacity;
     private readonly AlienChargeState[] _alienCharge;
 
@@ -30,6 +31,10 @@ public sealed class SimulationWorld
     internal readonly Dictionary<uint, RouteCorridor> Corridors = new();
     internal readonly Dictionary<uint, TubeRoute> TubeRoutes = new();
     internal readonly Dictionary<uint, TubeTransitRoute> TubeTransitRoutes = new();
+    internal readonly Dictionary<uint, ResearchJob> ResearchJobs = new();
+    internal readonly Dictionary<uint, ExcavationJob> ExcavationJobs = new();
+    internal readonly Dictionary<uint, DefenseNodeState> DefenseNodeStates = new();
+    internal readonly HashSet<ulong> CompletedResearch = new();
     internal readonly Dictionary<uint, UnitCommandQueue> Queues = new();
     internal readonly Dictionary<uint, FixVec2> PendingVelocity = new();
     // Rebuilt deterministically every tick. These temporary route goals never
@@ -200,6 +205,9 @@ public sealed class SimulationWorld
         CompressionUsed.Remove(id.Value);
         DiagnosticLastDelta.Remove(id.Value);
         DiagnosticLastReversalTick.Remove(id.Value);
+        ResearchJobs.Remove(id.Value);
+        ExcavationJobs.Remove(id.Value);
+        DefenseNodeStates.Remove(id.Value);
     }
 
     private void ApplyTopologyChange(IntRect rect)

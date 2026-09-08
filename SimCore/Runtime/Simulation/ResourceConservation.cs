@@ -46,6 +46,9 @@ public static class ResourceConservation
                 reserved = checked(reserved + site.ReservedOre);
                 consumed = checked(consumed + site.ConsumedOre);
             }
+            if (type == ResourceType.Crystal && world.Entities.ConstructionSite.TryGet(id, out ConstructionSite crystalSite) &&
+                !CancellationAccounting.CrystalsCommitted(crystalSite.ProgressTicks, crystalSite.RequiredTicks))
+                reserved = checked(reserved + crystalSite.RequiredCrystals);
             if (type == ResourceType.Ore && world.Entities.Production.TryGet(id, out Production production))
                 for (int q = 0; q < production.Count; q++) reserved = checked(reserved + production.Get(q).ReservedOre);
             if (type == ResourceType.Ore && world.Entities.MissionRefitJob.TryGet(id, out MissionRefitJob refit))

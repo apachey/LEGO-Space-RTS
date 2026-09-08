@@ -7,8 +7,8 @@ namespace LegoSpaceRTS.SimCore
 public static class SnapshotSerializer
 {
     public const uint Magic = 0x53525453; // STRS
-    public const ushort FormatVersion = 20;
-    public const ushort SimulationProtocolVersion = 18;
+    public const ushort FormatVersion = 21;
+    public const ushort SimulationProtocolVersion = 19;
 
     [Flags]
     private enum EntityComponents : ulong
@@ -74,6 +74,7 @@ public static class SnapshotSerializer
         WriteTubeGraph(w, world);
         WriteTubeTransfers(w, world);
         WriteStability(w, world);
+        WriteResearch(w, world);
         world.Commands.Serialize(w);
         world.Fog.Serialize(w);
         WriteProjectileState(w, world);
@@ -85,7 +86,7 @@ public static class SnapshotSerializer
         using MemoryStream ms = new(bytes, false); using BinaryReader r = new(ms);
         if (r.ReadUInt32() != Magic) throw new InvalidDataException("Snapshot magic mismatch.");
         ushort format = r.ReadUInt16(), protocol = r.ReadUInt16();
-        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8) || (format == 11 && protocol == 9) || (format == 12 && protocol == 10) || (format == 13 && protocol == 11) || (format == 14 && protocol == 12) || (format == 15 && protocol == 13) || (format == 16 && protocol == 14) || (format == 17 && protocol == 15) || (format == 18 && protocol == 16) || (format == 19 && protocol == 17);
+        bool supportedLegacy = ((format == 2 || format == 3) && protocol == 1) || (format == 4 && protocol == 2) || (format == 5 && protocol == 3) || (format == 6 && protocol == 4) || (format == 7 && protocol == 5) || (format == 8 && protocol == 6) || (format == 9 && protocol == 7) || (format == 10 && protocol == 8) || (format == 11 && protocol == 9) || (format == 12 && protocol == 10) || (format == 13 && protocol == 11) || (format == 14 && protocol == 12) || (format == 15 && protocol == 13) || (format == 16 && protocol == 14) || (format == 17 && protocol == 15) || (format == 18 && protocol == 16) || (format == 19 && protocol == 17) || (format == 20 && protocol == 18);
         if (!supportedLegacy && (format != FormatVersion || protocol != SimulationProtocolVersion)) throw new InvalidDataException($"Unsupported snapshot {format}/{protocol}.");
         SimTick tick = new(r.ReadInt32()); MapGrid map = MapGrid.Deserialize(r, includeExcavatableMetadata: format >= 20); uint nextEntity = r.ReadUInt32();
         EntityStore entities = new(); int entityCount = r.ReadInt32(); if (entityCount < 0 || entityCount > 10000) throw new InvalidDataException("Invalid entity count.");
@@ -125,6 +126,7 @@ public static class SnapshotSerializer
         if (format >= 20) ReadTubeGraph(r, temp, format);
         if (format >= 20) ReadTubeTransfers(r, temp);
         if (format >= 20) ReadStability(r, temp);
+        if (format >= 21) ReadResearch(r, temp);
         temp.Commands.Deserialize(r, includeBuildFields: format >= 6, includeEnergyPriority: format >= 10, includeMissionRefit: format >= 20, includeResonanceCommitment: format >= 20);
         temp.Fog = FogState.Deserialize(r);
         if (format >= 13) ReadProjectileState(r, temp);
@@ -137,6 +139,71 @@ public static class SnapshotSerializer
         OperationsCapacitySystem.Recalculate(temp);
         temp.Spatial.Rebuild(temp.Entities);
         return temp;
+    }
+
+    private static void WriteResearch(BinaryWriter w, SimulationWorld world)
+    {
+        List<ulong> completed = new(world.CompletedResearch); completed.Sort();
+        w.Write(completed.Count); for (int i = 0; i < completed.Count; i++) w.Write(completed[i]);
+        List<uint> providers = new(world.ResearchJobs.Keys); providers.Sort();
+        w.Write(providers.Count);
+        for (int i = 0; i < providers.Count; i++)
+        {
+            ResearchJob job = world.ResearchJobs[providers[i]];
+            w.Write(providers[i]); w.Write(job.ResearchType.Value); w.Write(job.FundingBank.Value); w.Write(job.CrystalFundingBank.Value); w.Write(job.EnergyDomainRoot.Value);
+            w.Write(job.OreCost); w.Write(job.EnergyCost); w.Write(job.CrystalCost); w.Write(job.TotalTicks); w.Write(job.RemainingTicks);
+        }
+        List<uint> excavators = new(world.ExcavationJobs.Keys); excavators.Sort();
+        w.Write(excavators.Count);
+        for (int i = 0; i < excavators.Count; i++)
+        {
+            ExcavationJob job = world.ExcavationJobs[excavators[i]];
+            w.Write(excavators[i]); w.Write(job.Feature.Value); w.Write(job.TotalTicks); w.Write(job.RemainingTicks);
+        }
+        List<uint> defenseNodes = new(world.DefenseNodeStates.Keys); defenseNodes.Sort();
+        w.Write(defenseNodes.Count);
+        for (int i = 0; i < defenseNodes.Count; i++)
+        {
+            DefenseNodeState state = world.DefenseNodeStates[defenseNodes[i]];
+            w.Write(defenseNodes[i]); w.Write((byte)state.CurrentMode); w.Write((byte)state.TargetMode); w.Write(state.RemainingTicks);
+            w.Write(state.LastHostileCombatTick); w.Write(state.IsReconfiguring); w.Write(state.ShuntRemainingTicks);
+        }
+    }
+
+    private static void ReadResearch(BinaryReader r, SimulationWorld world)
+    {
+        int completedCount = r.ReadInt32(); if (completedCount < 0 || completedCount > 10000) throw new InvalidDataException("Invalid completed research count.");
+        for (int i = 0; i < completedCount; i++) if (!world.CompletedResearch.Add(r.ReadUInt64())) throw new InvalidDataException("Duplicate completed research.");
+        int jobCount = r.ReadInt32(); if (jobCount < 0 || jobCount > 10000) throw new InvalidDataException("Invalid research job count.");
+        for (int i = 0; i < jobCount; i++)
+        {
+            uint provider = r.ReadUInt32(); ResearchJob job = new()
+            {
+                ResearchType = new ContentId(r.ReadUInt32()), FundingBank = new EntityId(r.ReadUInt32()), CrystalFundingBank = new EntityId(r.ReadUInt32()), EnergyDomainRoot = new EntityId(r.ReadUInt32()),
+                OreCost = r.ReadUInt16(), EnergyCost = r.ReadUInt16(), CrystalCost = r.ReadByte(), TotalTicks = r.ReadUInt16(), RemainingTicks = r.ReadUInt16()
+            };
+            if (!world.Entities.Exists(new EntityId(provider)) || job.ResearchType.Value == 0 || job.TotalTicks == 0 || job.RemainingTicks > job.TotalTicks ||
+                !world.ResearchJobs.TryAdd(provider, job)) throw new InvalidDataException("Invalid research job.");
+        }
+        int excavationCount = r.ReadInt32(); if (excavationCount < 0 || excavationCount > 10000) throw new InvalidDataException("Invalid excavation job count.");
+        for (int i = 0; i < excavationCount; i++)
+        {
+            uint excavator = r.ReadUInt32(); ExcavationJob job = new() { Feature = new EntityId(r.ReadUInt32()), TotalTicks = r.ReadUInt16(), RemainingTicks = r.ReadUInt16() };
+            if (!world.Entities.Exists(new EntityId(excavator)) || !world.Entities.Excavatable.Has(job.Feature) || job.TotalTicks == 0 || job.RemainingTicks > job.TotalTicks ||
+                !world.ExcavationJobs.TryAdd(excavator, job)) throw new InvalidDataException("Invalid excavation job.");
+        }
+        int defenseCount = r.ReadInt32(); if (defenseCount < 0 || defenseCount > 10000) throw new InvalidDataException("Invalid Defense Node state count.");
+        for (int i = 0; i < defenseCount; i++)
+        {
+            uint node = r.ReadUInt32(); DefenseNodeState state = new()
+            {
+                CurrentMode = (DefenseNodeMode)r.ReadByte(), TargetMode = (DefenseNodeMode)r.ReadByte(), RemainingTicks = r.ReadUInt16(),
+                LastHostileCombatTick = r.ReadInt32(), IsReconfiguring = r.ReadBoolean(), ShuntRemainingTicks = r.ReadUInt16()
+            };
+            if (!world.Entities.Exists(new EntityId(node)) || state.CurrentMode > DefenseNodeMode.AirLance || state.TargetMode > DefenseNodeMode.AirLance ||
+                (state.IsReconfiguring ? state.RemainingTicks == 0 || state.RemainingTicks > DefenseNodeSystem.ReconfigurationTicks : state.RemainingTicks != 0) ||
+                !world.DefenseNodeStates.TryAdd(node, state)) throw new InvalidDataException("Invalid Defense Node state.");
+        }
     }
 
     private static void WriteProjectileState(BinaryWriter w, SimulationWorld world)
@@ -539,7 +606,8 @@ public static class SnapshotSerializer
 
     private static void WriteConstructionSite(BinaryWriter w, ConstructionSite site)
     {
-        w.Write(site.AssignedBuilder.Value); w.Write(site.FundingBank.Value); w.Write(site.ReservedOre); w.Write(site.ConsumedOre); w.Write(site.RequiredEnergy);
+        w.Write(site.AssignedBuilder.Value); w.Write(site.FundingBank.Value); w.Write(site.CrystalFundingBank.Value);
+        w.Write(site.ReservedOre); w.Write(site.ConsumedOre); w.Write(site.RequiredCrystals); w.Write(site.RequiredEnergy);
         w.Write(site.ReservedEnergy); w.Write(site.ConsumedEnergy); w.Write(site.EnergyDomainRoot.Value);
         w.Write(site.RequiredTicks); w.Write(site.ProgressTicks);
     }
@@ -558,8 +626,8 @@ public static class SnapshotSerializer
         for (int i = 0; i < production.Count; i++)
         {
             ProductionQueueItem item = production.Get(i);
-            w.Write(item.UnitType.Value); w.Write(item.FundingBank.Value); w.Write(item.ReservedOre); w.Write(item.RequiredEnergy);
-            w.Write(item.RequiredCrystals); w.Write(item.ReservedOperationsCapacity); w.Write(item.TotalTicks); w.Write(item.RemainingTicks);
+            w.Write(item.UnitType.Value); w.Write(item.FundingBank.Value); w.Write(item.CrystalFundingBank.Value); w.Write(item.EnergyDomainRoot.Value); w.Write(item.ReservedOre); w.Write(item.RequiredEnergy);
+            w.Write(item.RequiredCrystals); w.Write(item.ReservedOperationsCapacity); w.Write(item.TotalTicks); w.Write(item.RemainingTicks); w.Write(item.RapidFabricationUsed);
         }
     }
 
@@ -697,7 +765,7 @@ public static class SnapshotSerializer
                 core.TransitionTotalTicks == (core.TransitionKind == ResonanceTransitionKind.Commit ? ResonanceCoreSystem.CommitTicks : ResonanceCoreSystem.WithdrawTicks) &&
                 core.TransitionRemainingTicks > 0 && core.TransitionRemainingTicks <= core.TransitionTotalTicks;
             int legalSlotMask = (1 << maximum) - 1;
-            if (core.CommandCore == EntityId.None || (core.CommittedSlotMask & ~legalSlotMask) != 0 || ResonanceCoreSystem.CountCommitted(core) > maximum || core.DesiredCommittedCrystals > maximum || (!idle && !transitioning))
+            if ((core.CommittedSlotMask & ~legalSlotMask) != 0 || ResonanceCoreSystem.CountCommitted(core) > maximum || core.DesiredCommittedCrystals > maximum || (!idle && !transitioning))
                 throw new InvalidDataException("Invalid Resonance Core state.");
             world.Entities.ResonanceCore.Set(id, core);
         }
@@ -712,7 +780,7 @@ public static class SnapshotSerializer
         }
         if ((components & EntityComponents.SurgeReceiver) != 0) world.Entities.SurgeReceiver.Set(id, new SurgeReceiver { ActiveZone = new EntityId(r.ReadUInt32()) });
         if ((components & EntityComponents.ConstructionSite) != 0) world.Entities.ConstructionSite.Set(id, ReadConstructionSite(r, format));
-        if ((components & EntityComponents.Production) != 0) world.Entities.Production.Set(id, ReadProduction(r));
+        if ((components & EntityComponents.Production) != 0) world.Entities.Production.Set(id, ReadProduction(r, format));
         if ((components & EntityComponents.Targetable) != 0) world.Entities.Targetable.Set(id, ReadTargetable(r));
         if ((components & EntityComponents.Targeting) != 0) world.Entities.Targeting.Set(id, ReadTargeting(r, format));
         if ((components & EntityComponents.Weapon) != 0)
@@ -832,9 +900,14 @@ public static class SnapshotSerializer
     {
         ConstructionSite site = new()
         {
-            AssignedBuilder = new EntityId(r.ReadUInt32()), FundingBank = new EntityId(r.ReadUInt32()), ReservedOre = r.ReadInt32(),
-            ConsumedOre = format >= 7 ? r.ReadInt32() : 0, RequiredEnergy = r.ReadInt32()
+            AssignedBuilder = new EntityId(r.ReadUInt32()), FundingBank = new EntityId(r.ReadUInt32())
         };
+        if (format >= 21) site.CrystalFundingBank = new EntityId(r.ReadUInt32());
+        site.ReservedOre = r.ReadInt32();
+        site.ConsumedOre = format >= 7 ? r.ReadInt32() : 0;
+        if (format >= 21)
+            site.RequiredCrystals = r.ReadByte();
+        site.RequiredEnergy = r.ReadInt32();
         if (format >= 9)
         {
             site.ReservedEnergy = r.ReadInt32(); site.ConsumedEnergy = r.ReadInt32(); site.EnergyDomainRoot = new EntityId(r.ReadUInt32());
@@ -860,7 +933,7 @@ public static class SnapshotSerializer
         return domain;
     }
 
-    private static Production ReadProduction(BinaryReader r)
+    private static Production ReadProduction(BinaryReader r, ushort format)
     {
         Production production = new()
         {
@@ -873,8 +946,12 @@ public static class SnapshotSerializer
         {
             ProductionQueueItem item = new()
             {
-                UnitType = new ContentId(r.ReadUInt32()), FundingBank = new EntityId(r.ReadUInt32()), ReservedOre = r.ReadUInt16(), RequiredEnergy = r.ReadUInt16(),
-                RequiredCrystals = r.ReadByte(), ReservedOperationsCapacity = r.ReadByte(), TotalTicks = r.ReadUInt16(), RemainingTicks = r.ReadUInt16()
+                UnitType = new ContentId(r.ReadUInt32()), FundingBank = new EntityId(r.ReadUInt32()),
+                CrystalFundingBank = format >= 21 ? new EntityId(r.ReadUInt32()) : EntityId.None,
+                EnergyDomainRoot = format >= 21 ? new EntityId(r.ReadUInt32()) : EntityId.None,
+                ReservedOre = r.ReadUInt16(), RequiredEnergy = r.ReadUInt16(),
+                RequiredCrystals = r.ReadByte(), ReservedOperationsCapacity = r.ReadByte(), TotalTicks = r.ReadUInt16(), RemainingTicks = r.ReadUInt16(),
+                RapidFabricationUsed = format >= 21 && r.ReadBoolean()
             };
             if (item.UnitType.Value == 0 || item.TotalTicks == 0 || item.RemainingTicks > item.TotalTicks || !production.TryEnqueue(item)) throw new InvalidDataException("Invalid production queue item.");
         }

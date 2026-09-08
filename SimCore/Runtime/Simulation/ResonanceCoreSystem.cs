@@ -64,6 +64,44 @@ public sealed class ResonanceCoreSystem : ISimSystem
         return true;
     }
 
+    public static void ReassociateAll(SimulationWorld world)
+    {
+        List<EntityId> resonance = new(), commands = new();
+        IReadOnlyList<EntityId> alive = world.Entities.Alive;
+        for (int i = 0; i < alive.Count; i++)
+        {
+            if (HasCompletedBuildingType(world, alive[i], ResonanceCoreType)) resonance.Add(alive[i]);
+            if (HasCompletedBuildingType(world, alive[i], CommandCoreType) && BrownoutSystem.IsOperational(world, alive[i])) commands.Add(alive[i]);
+        }
+        resonance.Sort((a, b) => a.Value.CompareTo(b.Value)); commands.Sort((a, b) => a.Value.CompareTo(b.Value));
+        HashSet<uint> claimed = new();
+        for (int i = 0; i < resonance.Count; i++)
+        {
+            EntityId coreEntity = resonance[i]; EntityId best = EntityId.None; Fix32 bestDistance = Fix32.MaxValue;
+            if (!world.Entities.Ownership.TryGet(coreEntity, out Ownership owner) || !world.Entities.Transform.TryGet(coreEntity, out SimTransform transform)) continue;
+            for (int c = 0; c < commands.Count; c++)
+            {
+                EntityId command = commands[c];
+                if (claimed.Contains(command.Value) || !world.Entities.Ownership.TryGet(command, out Ownership commandOwner) || commandOwner.PlayerSlot != owner.PlayerSlot) continue;
+                Fix32 distance = FixVec2.Distance(transform.Position, world.Entities.Transform.Get(command).Position);
+                if (distance > Fix32.FromInt(FactionEnergyDomainSystem.DomainRadius)) continue;
+                if (best == EntityId.None || distance < bestDistance || (distance == bestDistance && command.Value < best.Value)) { best = command; bestDistance = distance; }
+            }
+            if (!world.Entities.ResonanceCore.Has(coreEntity)) world.Entities.ResonanceCore.Set(coreEntity, new ResonanceCore
+            {
+                ExpandedLatticeUnlocked = ResearchSystem.HasCompleted(world, owner.PlayerSlot, StableId.FromKey("research.ali.expanded_resonance_lattice"))
+            });
+            ref ResonanceCore state = ref world.Entities.ResonanceCore.Get(coreEntity);
+            state.CommandCore = best;
+            if (best != EntityId.None)
+            {
+                claimed.Add(best.Value);
+                world.Entities.EnergyDomainMember.Set(coreEntity, new EnergyDomainMember { DomainRoot = best });
+            }
+            else world.Entities.EnergyDomainMember.Remove(coreEntity);
+        }
+    }
+
     public static byte MaximumSlots(ResonanceCore core) => core.ExpandedLatticeUnlocked ? ExpandedSlots : BaselineSlots;
 
     public static byte CountCommitted(ResonanceCore core)

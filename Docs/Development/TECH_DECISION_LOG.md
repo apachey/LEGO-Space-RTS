@@ -1091,3 +1091,39 @@ visual direction.
 
 This is a guarded data/compatibility checkpoint. It changes no gameplay canon,
 dependency, visual direction or existing network/snapshot/replay layout.
+
+## 2026-09-08 — T073 approved guarded runtime bindings
+
+- The game director approved the six implementation decisions recorded in
+  `M8_T073_BINDING_REVIEW.md`: cancellation accounting, 13 production exits,
+  explicit excavation durations, Astronaut/Alien Energy membership, Settlement
+  Station reserve and the exact Defense Node combat-pressure rule.
+- Production, research and Mission Refit use one deterministic cancellation
+  calculation: no-progress jobs refund fully; active jobs commit 20% of
+  Ore/Energy and consume the remaining 80% linearly; cancellation returns
+  unspent plus half consumed; Crystals commit at 50% progress. Existing
+  Service/Refit facility-destruction handling remains separate and unchanged.
+- Crystal-bearing construction now reserves its authored Crystal rather than
+  receiving a free runtime path when the 31-building catalog is enabled.
+- Astronaut 18-cell areas merge transitively while remaining separate from
+  Forward Service. Alien membership uses nearest operational Command Core,
+  distance then `EntityId`, and deterministically preserves one Resonance Core
+  per Command Core. Faction topology merges and splits preserve pooled reserve.
+- Settlement Station stores 150 Energy and retains Self +1 Energy/s. Defense
+  Node mode changes take 120 ticks and pause until 80 ticks have elapsed since
+  the most recent hostile damage dealt or received.
+- Snapshot format 21 and simulation protocol 19 serialize the new job and
+  faction state. Snapshot 20 remains readable; replay 16 and command packet 1
+  remain unchanged.
+- Focused T073 tests pass 30/30. The relevant deterministic, snapshot/replay,
+  content, M5-faction and M6-network compatibility selection passes 107/107.
+- The requested single full verification run passed 308/308 NUnit tests and
+  every runtime/build/content/M6/M7 blocking stage. Its summary retained one
+  blocking static-validation failure because the validator still expected the
+  former Settlement Station reserve of 0. After aligning that guard with the
+  approved 150 reserve, standalone static/source validation passes. The prior
+  HUD-lab mutex teardown did not recur. Stress60 remains the known 2/60
+  `BLOCKING_LATER` M9 diagnostic.
+
+This implements approved gameplay canon without a dependency, visual-direction
+change or T074 work.
