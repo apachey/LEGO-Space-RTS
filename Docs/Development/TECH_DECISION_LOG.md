@@ -1153,3 +1153,27 @@ change or T074 work.
 
 This changes no gameplay values, dependency, content/snapshot/network/replay
 format or visual direction.
+
+## 2026-09-08 — Insert M8.5 full content and presentation production
+
+- The game director explicitly approved a new blocking production milestone
+  between M8 and M9. The previous sequence established a limited M7 vertical
+  slice and complete M8 gameplay data but left the production of the full
+  player-facing roster, interface art and audio without a milestone owner.
+- `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
+  defines M8.5 and tasks T081–T091. Existing T001–T080 IDs remain stable; task
+  number order does not override milestone dependency order.
+- M8.5 covers production design and integrated models for all 35 units and 31
+  infrastructure entries, full-roster animation/VFX/destruction, complete
+  icons/cards/portraits, the M9-required frontend/menu/UI presentation, audio
+  SFX/ambience and final integrated acceptance.
+- M7 still owns selection and game-director acceptance of the visual production
+  standard. M8 still owns functional roster data. Neither a style laboratory
+  nor a data definition may be presented as a substitute for a completed
+  player-facing asset.
+- M9 retains T075–T080 and its AI, save/load, performance, network soak and
+  Skirmish Alpha responsibilities, but cannot close with primitive full-roster
+  placeholders or unresolved production presentation.
+- Music, voice acting and localization recording are not made blocking by this
+  decision. They require separate approved scope if added later. No dependency,
+  external asset pack or service is authorized by the roadmap amendment.

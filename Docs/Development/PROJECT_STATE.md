@@ -9,9 +9,9 @@ The dense M7 cross-thread continuity index is
 ## Current milestone
 
 **M0–M6 are implemented, verified and game-director accepted. M7 visual canon
-remains deliberately open. M8 T070–T073 are complete; the current T074 task
-branch adds the complete roster-reference gate to the approved command/runtime
-catalog: all 35 canonical unit chassis, 31 infrastructure definitions, 38
+remains deliberately open. M8 T070–T074 are complete, including the complete
+roster-reference gate for the approved command/runtime catalog: all 35
+canonical unit chassis, 31 infrastructure definitions, 38
 research definitions and 35 stable command families are present, and legal
 construction, production, research and the affected faction actions now use
 their authoritative prerequisites, resources, timings and deterministic state.
@@ -19,6 +19,12 @@ Content compilation now fails on unresolved or contradictory roster, map,
 presentation, production-exit and Aero Tube eligibility references.
 The formerly unresolved T073 values are approved and recorded in
 `Docs/Development/M8_T073_BINDING_REVIEW.md`.
+By explicit game-director decision, the roadmap now includes authoritative
+**M8.5 — Full Content & Presentation Production** between M8 and M9. Phase 09C
+requires complete production designs/models for all 35 units and 31
+infrastructure entries plus full-roster animation/VFX, icons/portraits,
+frontend/menu UI, audio and integrated human acceptance. M9 may no longer claim
+Skirmish Alpha presentation directly from the data-only M8 roster.
 Preset-style comparisons are retired as the primary
 workflow; the gameplay-scale realtime Look Lab is now at schema 9 with free
 camera control, ten reproducible surface/glare assets, exact shader-bound role-authored material
@@ -721,16 +727,20 @@ blocking only when M9 must prove its stable-large-battle exit.
 
 ## Next approved action
 
-1. T074 is complete on its task branch and awaits review/merge. T075 is the next
-   implementation task after acceptance; no T075 work has started here.
-2. The game director may independently explore `F8` → **M7 HUD Lab** and return
+1. T074 is complete on the current implementation baseline. T081 is now the
+   next approved implementation task; no T081 work has started here. Its Phase
+   09C entry gate still requires explicit M7 visual-direction acceptance.
+2. Execute Phase 09C M8.5 T081–T091 before final M9 Skirmish Alpha acceptance.
+   Do not treat T070 data definitions as substitutes for production models or
+   presentation.
+3. The game director may independently explore `F8` → **M7 HUD Lab** and return
    its Hybrid/Structural/Legacy/Clean comparison across the four faction-bound
    recipes, then return a **COPY JSON** profile later; no HUD visual canon is
    required to begin T072.
-3. The gameplay-scale **M7 Look Lab** remains available for world-style review;
+4. The gameplay-scale **M7 Look Lab** remains available for world-style review;
    compare the named Authored surface with Raster Forward rather than the
    migration-only Legacy result. Do not record T064 acceptance until the game
    director explicitly locks a direction.
-4. Keep Stress60 visible without starting an unreviewed third movement attempt;
+5. Keep Stress60 visible without starting an unreviewed third movement attempt;
    revisit it for M9 or earlier only if a catastrophic movement regression
    appears.
