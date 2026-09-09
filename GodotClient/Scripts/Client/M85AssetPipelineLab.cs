@@ -25,6 +25,7 @@ public partial class M85AssetPipelineLab : Node3D
     private int _captureFrame = 45;
     private string? _capturePath;
     private float _zoomCells = 44f;
+    private float _cameraYawDegrees = 36f;
     private double _time;
     private M85AssetPipelineValidationReport _report;
     private string _validationError = string.Empty;
@@ -41,13 +42,17 @@ public partial class M85AssetPipelineLab : Node3D
                 System.Globalization.NumberStyles.Float,
                 System.Globalization.CultureInfo.InvariantCulture, out float zoom))
             _zoomCells = Mathf.Clamp(zoom, 24f, 72f);
+        if (float.TryParse(ParseString(arguments, "--m85-asset-pipeline-yaw"),
+                System.Globalization.NumberStyles.Float,
+                System.Globalization.CultureInfo.InvariantCulture, out float yaw))
+            _cameraYawDegrees = NormalizeDegrees(yaw);
 
         BuildWorld();
         BuildModels();
         BuildOverlay();
         ApplyCamera();
         ProcessPriority = 1000;
-        GD.Print($"M8.5 ASSET PIPELINE: active fixture=non-roster source=blend export=glb import=PackedScene lods=Close,Combat,Strategic zoom={_zoomCells:0} Z/X/C=24/44/72 Escape=return");
+        GD.Print($"M8.5 ASSET PIPELINE: active fixture=non-roster source=blend export=glb import=PackedScene lods=Close,Combat,Strategic zoom={_zoomCells:0} yaw={_cameraYawDegrees:0} Z/X/C=24/44/72 Q/E=orbit Escape=return");
     }
 
     public override void _Process(double delta)
@@ -67,7 +72,7 @@ public partial class M85AssetPipelineLab : Node3D
         _finished = true;
         if (valid)
         {
-            GD.Print($"M8.5 ASSET PIPELINE: PASS source=blend export=glb import=PackedScene root=ground-centre scale=1 cellWorldUnits={M85AssetPipelineContract.WorldUnitsPerBuildCell:0} forward=-Z lods=3 close={_report.CloseTriangles} combat={_report.CombatTriangles} strategic={_report.StrategicTriangles} pivots={_report.PivotCount} sockets={_report.SocketCount} roleBindings={_roleMeshes.Count} zoom={_zoomCells:0}");
+            GD.Print($"M8.5 ASSET PIPELINE: PASS source=blend export=glb import=PackedScene root=ground-centre scale=1 cellWorldUnits={M85AssetPipelineContract.WorldUnitsPerBuildCell:0} forward=-Z lods=3 close={_report.CloseTriangles} combat={_report.CombatTriangles} strategic={_report.StrategicTriangles} pivots={_report.PivotCount} sockets={_report.SocketCount} roleBindings={_roleMeshes.Count} zoom={_zoomCells:0} yaw={_cameraYawDegrees:0}");
         }
         else
         {
@@ -84,6 +89,10 @@ public partial class M85AssetPipelineLab : Node3D
             case Key.Z: SetZoom(24f); break;
             case Key.X: SetZoom(44f); break;
             case Key.C: SetZoom(72f); break;
+            case Key.Q:
+            case Key.Left: RotateCamera(-45f); break;
+            case Key.E:
+            case Key.Right: RotateCamera(45f); break;
             case Key.Escape: _returnToPrototype?.Invoke(); break;
             default: return;
         }
@@ -246,10 +255,15 @@ public partial class M85AssetPipelineLab : Node3D
         {
             Text = "One Blender source → deterministic GLB → Godot PackedScene\n" +
                    "Cyan: selection/health · Orange: weapon · Yellow: mechanical pivots\n" +
-                   "Z / X / C: 24 / 44 / 72-cell camera checks · Esc: return"
+                   "Q / E or ← / →: rotate camera · Z / X / C: 24 / 44 / 72 cells · Esc: return"
         };
         body.AddThemeFontSizeOverride("font_size", 14); box.AddChild(body);
         _status = new Label(); _status.AddThemeFontSizeOverride("font_size", 14); box.AddChild(_status);
+        HBoxContainer cameraControls = new(); box.AddChild(cameraControls);
+        Button rotateLeft = new() { Text = "↺ ROTATE LEFT" };
+        rotateLeft.Pressed += () => RotateCamera(-45f); cameraControls.AddChild(rotateLeft);
+        Button rotateRight = new() { Text = "ROTATE RIGHT ↻" };
+        rotateRight.Pressed += () => RotateCamera(45f); cameraControls.AddChild(rotateRight);
         Button returnButton = new() { Text = "RETURN TO PROTOTYPE" };
         returnButton.Pressed += () => _returnToPrototype?.Invoke(); box.AddChild(returnButton);
         UpdateStatus();
@@ -262,6 +276,13 @@ public partial class M85AssetPipelineLab : Node3D
         UpdateStatus();
     }
 
+    private void RotateCamera(float deltaDegrees)
+    {
+        _cameraYawDegrees = NormalizeDegrees(_cameraYawDegrees + deltaDegrees);
+        ApplyCamera();
+        UpdateStatus();
+    }
+
     private void ApplyCamera()
     {
         if (_camera is null) return;
@@ -269,7 +290,7 @@ public partial class M85AssetPipelineLab : Node3D
         float aspect = size.Y <= 1f ? 16f / 9f : size.X / size.Y;
         float halfWidthWorld = _zoomCells * GodotConversions.WorldUnitsPerBuildCell * 0.5f;
         float distance = halfWidthWorld / Mathf.Max(0.1f, Mathf.Tan(Mathf.DegToRad(_camera.Fov * 0.5f)) * aspect);
-        float yaw = Mathf.DegToRad(36f);
+        float yaw = Mathf.DegToRad(_cameraYawDegrees);
         float pitch = Mathf.DegToRad(58f);
         Vector3 direction = new(Mathf.Sin(yaw) * Mathf.Cos(pitch), Mathf.Sin(pitch), Mathf.Cos(yaw) * Mathf.Cos(pitch));
         Vector3 focus = new(0f, 0.9f, 0f);
@@ -281,7 +302,7 @@ public partial class M85AssetPipelineLab : Node3D
     {
         if (_status is null) return;
         _status.Text = string.IsNullOrEmpty(_validationError)
-            ? $"PASS · root/scale/axes preserved · LOD 868 → 332 → 168 · zoom {_zoomCells:0} cells"
+            ? $"PASS · root/scale/axes preserved · LOD 868 → 332 → 168 · zoom {_zoomCells:0} cells · camera {_cameraYawDegrees:0}°"
             : $"FAIL · {_validationError}";
     }
 
@@ -302,8 +323,15 @@ public partial class M85AssetPipelineLab : Node3D
         EmissionEnabled = true,
         Emission = color,
         EmissionEnergyMultiplier = 1.8f,
-        ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded
+        ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
+        NoDepthTest = true
     };
+
+    private static float NormalizeDegrees(float degrees)
+    {
+        float normalized = degrees % 360f;
+        return normalized < 0f ? normalized + 360f : normalized;
+    }
 
     private static string? ParseString(string[] arguments, string name)
     {

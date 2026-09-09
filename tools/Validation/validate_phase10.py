@@ -320,7 +320,8 @@ for token in ['WorldUnitsPerBuildCell = 2f','LOD_Close','LOD_Combat','LOD_Strate
     check(token in asset_pipeline_contract, f'T081 imported-scene contract missing: {token}')
 for token in ['M85AssetPipelineContract.RuntimePath','BuildSharedMaterials','SetTextureAnchor',
               '--m85-asset-pipeline-smoke','--m85-asset-pipeline-zoom','--capture-path',
-              'Z / X / C: 24 / 44 / 72-cell','PIPELINE: PASS']:
+              '--m85-asset-pipeline-yaw','RotateCamera','Q / E or ← / →',
+              'Z / X / C: 24 / 44 / 72','NoDepthTest = true','PIPELINE: PASS']:
     check(token in asset_pipeline_lab, f'T081 gameplay-camera round-trip fixture missing: {token}')
 check('RigidBody3D' not in asset_pipeline_contract + asset_pipeline_lab and
       'CollisionShape3D' not in asset_pipeline_contract + asset_pipeline_lab,

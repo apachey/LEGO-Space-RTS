@@ -591,7 +591,13 @@ live; the current schema-9 copy/paste retains the complete experiment.
   scene at exact 24/44/72-cell camera distances. Full verification regenerates
   the GLB from the editable Blender source and requires byte-identical output.
 - A normal build exposes the review through `F8` → **Review M8.5 asset
-  pipeline**. `Z`, `X` and `C` select the exact 24, 44 and 72-cell checks.
+  pipeline**. `Q`/`E`, the left/right arrows or on-screen buttons orbit the
+  camera; `Z`, `X` and `C` select the exact 24, 44 and 72-cell checks. Technical
+  attachment markers remain visible through the model for unambiguous review.
+- The first game-director pass accepted the scale, orientation, LOD progression
+  and other visible evidence, but found that the fixed camera hid the yellow
+  mechanical-pivot markers. Camera orbit and through-model marker visibility
+  correct that review blocker; only this corrected pivot review remains pending.
 - The candidate has zero blocking verification failures and a launchable macOS
   build. Its game-director acceptance remains `PENDING`; T082 has not started.
 
@@ -615,7 +621,7 @@ byte-identical regeneration, Godot import at 24/44/72 cells, 100-repeat
 determinism, replay/snapshot continuation and a fresh launchable macOS export.
 The preserved Stress60 diagnostic reported 2/60 completion and remains
 `BLOCKING_LATER` for M9 rather than a T081 regression. Exact summary:
-`Artifacts/Verification/20260909T022531Z-full-summary.txt`.
+`Artifacts/Verification/20260909T082127Z-full-summary.txt`.
 
 M8 T074 targeted roster/M5 coverage passes 57/57. Static validation and the
 Godot C# host build pass after the final HUD-reference correction. The full
@@ -816,7 +822,8 @@ blocking only when M9 must prove its stable-large-battle exit.
 
 1. Review the verified T081 candidate in the launchable macOS build through
    `F8` → **Review M8.5 asset pipeline**, using `Z`/`X`/`C` for the exact
-   24/44/72-cell views. Record explicit game-director acceptance or corrections.
+   24/44/72-cell views and `Q`/`E` to orbit. Record explicit game-director
+   acceptance or corrections.
 2. Do not begin T082 until T081 is accepted. After acceptance, T082 Super Scout
    must complete its 66 evidence-backed asset packets and cross-roster identity
    audit before unit/building design production begins. Do not treat T070 data
