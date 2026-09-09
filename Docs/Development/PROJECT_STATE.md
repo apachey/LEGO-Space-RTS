@@ -59,8 +59,10 @@ minimum four-faction M7 visual-direction review flow combines the strongest
 existing Look Lab and HUD Lab directions at a wide 84-cell opening plus exact
 24/44/72-cell checks. The game director accepted M7 Final with outline on as the
 production visual direction. The T081 production asset pipeline is complete,
-fully verified and game-director accepted; T082 Super Scout reference
-intelligence is now the next approved task. A post-T069
+fully verified and game-director accepted. T082 Super Scout reference
+intelligence is now in progress: its exact 66-asset identity/source baseline is
+complete, while multi-angle evidence, construction/mechanism analysis and the
+cross-roster review corpus remain open. A post-T069
 quality revision makes outline/halo independent from
 the style post-pass, hardens profile paste, bounds VFX event memory and avoids
 unrelated live material rebuilds. HUD and health visuals remain excluded from the world Look Lab. The
@@ -604,7 +606,35 @@ live; the current schema-9 copy/paste retains the complete experiment.
   2026-09-09.
 - The candidate has zero blocking verification failures and a launchable macOS
   build. Its game-director acceptance is `ACCEPTED`; T082 is now unblocked but
-  has not started.
+  has started on a separate task branch.
+
+## M8.5 T082 Super Scout reference intelligence
+
+- `Content/Presentation/SuperScout/roster_identity_baseline.json` binds the
+  research corpus to the exact 35-unit / 31-infrastructure runtime roster. It
+  records the canonical faction, role, footprint, source classification,
+  source-set lineage, silhouette thesis and three non-removable identity anchors
+  for every asset.
+- `Content/Presentation/SuperScout/source_ledger.json` records 39 relied-upon
+  official sets/source families, reference-only rights handling, official LEGO
+  instruction URLs and BrickLink inventory corroboration. Twenty-eight official
+  instruction pages were reachable in the first pass; eleven older or
+  promotional sources remain explicitly archival-backed pending final primary
+  corroboration.
+- All 66 A–I packet files, the identity/source matrix and a 31-pair confusion
+  register regenerate deterministically. Every confusion pair has three visible
+  differentiation requirements, and every packet is visibly `HOLD`, so this
+  baseline cannot be confused with completed evidence or game-director
+  acceptance.
+- `tools/Validation/validate_m85_super_scout.py` compares the corpus with the
+  authoritative runtime roster, checks counts, IDs, classifications, source
+  coverage and the three-to-seven silhouette-anchor contract, and rejects stale
+  generated packets.
+- T082 remains `BLOCKING_NOW` for T083/T085. Multi-angle source boards,
+  semantic construction and motion analysis, texture/material needs, complete
+  cross-roster silhouettes/confusion audits and explicit game-director review
+  remain required. Current detail is tracked in
+  `Docs/Development/M85_SUPER_SCOUT_PROGRESS.md`.
 
 Routine Godot verification is now non-intrusive on macOS: every gameplay smoke
 runs headlessly, records its real PASS/FAIL exit code, then bypasses the Godot
@@ -626,6 +656,17 @@ actually required.
 - network replay chunk format **1**.
 
 ## Verification state
+
+The T082 roster-locked identity/source baseline passed `./tools/verify.sh --full`
+with zero blocking failures at
+`Artifacts/Verification/20260909T143103Z-full-summary.txt`: all 317 tests,
+the complete 66-asset roster and source-ledger validator, deterministic packet
+generation, the 24-mover gate, compiled content, retained M6 networking, T081
+round trip, retained M7 presentation gates and a fresh macOS export passed. The
+new T082 stage reports 66 HOLD packets, 39 source records, 31 initial confusion
+pairs and no roster drift; it does not claim T082 acceptance. Stress60 remained
+the expected 2/60 `BLOCKING_LATER` M9 diagnostic. The Godot diagnostic-report
+count remained 25, so this full run produced no new macOS crash report.
 
 The recorded T081 game-director acceptance passed `./tools/verify.sh --full`
 with zero blocking failures at
@@ -851,10 +892,12 @@ blocking only when M9 must prove its stable-large-battle exit.
 
 ## Next approved action
 
-1. Begin T082 Super Scout reference intelligence. Complete its 66
-   evidence-backed asset packets and cross-roster identity audit before
-   unit/building design production begins. Do not treat T070 data definitions
-   or the non-roster T081 pipeline fixture as production models.
+1. Continue T082 from the locked 66-asset identity baseline: verify precise
+   multi-angle and construction-critical evidence, then complete semantic
+   construction, motion and texture-needs contracts plus the cross-roster
+   silhouette/confusion audit. Do not treat the generated `HOLD` packets, T070
+   data definitions or the non-roster T081 pipeline fixture as production
+   models.
 2. Execute the remaining Phase 09C M8.5 T082–T092 work before final M9 Skirmish
    Alpha acceptance.
 3. Use the separate M7 Look/HUD/Palette labs only to investigate a rejected aspect;

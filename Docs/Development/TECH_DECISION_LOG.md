@@ -1240,6 +1240,29 @@ format or visual direction.
 This changes no gameplay value, authoritative simulation, public data format,
 dependency or accepted M7 visual direction.
 
+## 2026-09-09 — Start T082 with a roster-locked identity/source baseline
+
+- T082 begins from the authoritative runtime roster rather than a hand-copied
+  art list. The first corpus pass contains exactly 35 unit and 31 infrastructure
+  stable IDs and validates faction, footprint and canonical source
+  classification against `Content/PrototypeEntities.json`.
+- Every asset now has a generated A–I packet with its source family, silhouette
+  thesis and three non-removable identity anchors. Packets remain explicitly
+  `HOLD` until multi-angle evidence, construction, animation, texture and
+  cross-roster confusion work is complete.
+- A shared 39-source ledger records official instruction and archival inventory
+  references with retrieval confidence and rights notes. Reference images are
+  not redistributed in the repository.
+- The generated form is intentional: one structured baseline produces all 66
+  review packets, the identity/source matrix and the first 31-pair confusion
+  register, while validation prevents roster drift or a partially generated
+  corpus from looking complete. Each confusion pair records exactly three
+  required visible differences.
+
+This is a research/preproduction implementation decision only. It changes no
+gameplay, simulation, public data format, dependency, canon or accepted visual
+direction, and it does not approve any T083/T085 production design.
+
 ## 2026-09-09 — Non-intrusive macOS Godot automation
 
 - Routine Godot verification is permanently headless and disables Godot's
