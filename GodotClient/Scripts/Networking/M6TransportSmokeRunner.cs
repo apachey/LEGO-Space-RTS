@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using Godot;
+using LegoSpaceRTS.Client;
 
 namespace LegoSpaceRTS.Networking;
 
@@ -86,7 +87,7 @@ public partial class M6TransportSmokeRunner : Node
             _finished = true;
             GD.Print($"M6 TRANSPORT SMOKE: PASS serverConnections={_server.ConnectedClientCount} clientOne={_clientOne.LocalPeerId} clientTwo={_clientTwo.LocalPeerId} channels=3");
             CloseAll();
-            GetTree().Quit(0);
+            AutomatedSmokeExit.Finish(this, 0);
             return;
         }
 
@@ -160,7 +161,7 @@ public partial class M6TransportSmokeRunner : Node
         _finished = true;
         GD.PrintErr($"M6 TRANSPORT SMOKE: FAIL {reason}");
         CloseAll();
-        GetTree().Quit(2);
+        AutomatedSmokeExit.Finish(this, 2);
     }
 
     private void CloseAll()

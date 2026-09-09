@@ -44,13 +44,13 @@ if [[ "${OUTPUT}" != /* ]]; then OUTPUT="${ROOT}/${OUTPUT}"; fi
 mkdir -p "$(dirname "${OUTPUT}")"
 dotnet build "${ROOT}/GodotClient/LEGO.SpaceRTS.Godot.csproj" -c Debug --no-restore --disable-build-servers -m:1
 if [[ "${DESTRUCTION}" == "on" ]]; then
-  "${GODOT}" --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- \
+  "${GODOT}" --disable-crash-handler --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- \
     --m7-acceptance-candidate --m7-acceptance-smoke --m7-acceptance-zoom "${ZOOM}" \
     --m7-acceptance-labels "${LABELS}" --m7-acceptance-hud "${HUD}" --m7-acceptance-review "${REVIEW}" \
     --m7-acceptance-capture-frame "${CAPTURE_FRAME}" --m7-acceptance-look "${LOOK}" \
     --m7-acceptance-outline "${OUTLINE}" --m7-acceptance-destruction --capture-path "${OUTPUT}"
 else
-  "${GODOT}" --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- \
+  "${GODOT}" --disable-crash-handler --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- \
     --m7-acceptance-candidate --m7-acceptance-smoke --m7-acceptance-zoom "${ZOOM}" \
     --m7-acceptance-labels "${LABELS}" --m7-acceptance-hud "${HUD}" --m7-acceptance-review "${REVIEW}" \
     --m7-acceptance-capture-frame "${CAPTURE_FRAME}" --m7-acceptance-look "${LOOK}" \

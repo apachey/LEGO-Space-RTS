@@ -86,7 +86,7 @@ public partial class M7PaletteRatioLab : Node3D
             GD.Print($"M7 PALETTE LAB: PASS factionGroups={FactionGroups.Length} martianGroups={MartianGroups.Length} nonEmissiveTransparent=5 luminousFunctions=10 abstractPanels={_abstractPanelCount} canvasLayers=0 active={Slug(_page)}");
         else
             GD.PrintErr("M7 PALETTE LAB: FAIL");
-        GetTree().Quit(valid ? 0 : 2);
+        AutomatedSmokeExit.Finish(this, valid ? 0 : 2);
     }
 
     public override void _UnhandledInput(InputEvent @event)

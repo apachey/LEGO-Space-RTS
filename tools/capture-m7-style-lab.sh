@@ -30,9 +30,9 @@ mkdir -p "$(dirname "${OUTPUT}")"
 : > "${CAPTURE_LOG}"
 dotnet restore "${ROOT}/GodotClient/LEGO.SpaceRTS.Godot.csproj" -p:NuGetAudit=false --ignore-failed-sources
 dotnet build "${ROOT}/GodotClient/LEGO.SpaceRTS.Godot.csproj" -c Debug --no-restore --disable-build-servers -m:1
-"${GODOT}" --headless --import --path "${ROOT}/GodotClient"
-"${GODOT}" --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- \
-  --m7-style-lab --m7-style-smoke --m7-style "${STYLE}" --m7-outline "${OUTLINE}" --capture-path "${OUTPUT}"
+"${GODOT}" --headless --disable-crash-handler --import --path "${ROOT}/GodotClient"
+"${GODOT}" --disable-crash-handler --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- \
+  --automated-smoke-immediate-exit --m7-style-lab --m7-style-smoke --m7-style "${STYLE}" --m7-outline "${OUTLINE}" --capture-path "${OUTPUT}"
 if [[ ! -s "${OUTPUT}" ]] || ! grep -q "M7 STYLE LAB: PASS styles=4.*active=${STYLE} outline=${OUTLINE}" "${CAPTURE_LOG}"; then
   printf 'FAIL: M7 Style Lab capture or PASS marker was not produced.\n' >&2
   exit 1

@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
 using Godot;
+using LegoSpaceRTS.Client;
 using LegoSpaceRTS.SimCore;
 
 namespace LegoSpaceRTS.Networking;
@@ -90,7 +91,7 @@ public partial class M6CommandAuthoritySmokeRunner : Node
             _finished = true;
             GD.Print($"M6 COMMAND AUTHORITY SMOKE: PASS sessions=2 accepted=3 rejected=6 tick={_server.World.Tick.Value}");
             CloseAll();
-            GetTree().Quit(0);
+            AutomatedSmokeExit.Finish(this, 0);
             return;
         }
 
@@ -183,7 +184,7 @@ public partial class M6CommandAuthoritySmokeRunner : Node
         _finished = true;
         GD.PrintErr($"M6 COMMAND AUTHORITY SMOKE: FAIL {reason}");
         CloseAll();
-        GetTree().Quit(2);
+        AutomatedSmokeExit.Finish(this, 2);
     }
 
     private void CloseAll()

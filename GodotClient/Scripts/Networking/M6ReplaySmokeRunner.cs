@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
 using Godot;
+using LegoSpaceRTS.Client;
 using LegoSpaceRTS.SimCore;
 
 namespace LegoSpaceRTS.Networking;
@@ -131,7 +132,7 @@ public partial class M6ReplaySmokeRunner : Node
         _finished = true; GD.PrintErr($"M6 NETWORK REPLAY SMOKE: FAIL {reason}"); Callable.From(() => Finish(2)).CallDeferred();
     }
 
-    private void Finish(int exitCode) { CloseAll(); GetTree().Quit(exitCode); }
+    private void Finish(int exitCode) { CloseAll(); AutomatedSmokeExit.Finish(this, exitCode); }
 
     private void CloseAll()
     {

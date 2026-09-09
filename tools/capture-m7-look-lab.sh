@@ -89,7 +89,7 @@ fi
 mkdir -p "$(dirname "${OUTPUT}")"
 : > "${CAPTURE_LOG}"
 dotnet build "${ROOT}/GodotClient/LEGO.SpaceRTS.Godot.csproj" -c Debug --no-restore --disable-build-servers -m:1
-"${GODOT}" --headless --import --path "${ROOT}/GodotClient"
+"${GODOT}" --headless --disable-crash-handler --import --path "${ROOT}/GodotClient"
 EXTRA_ARGS=()
 if [[ -n "${PROFILE}" ]]; then
   if [[ "${PROFILE}" != /* ]]; then PROFILE="${ROOT}/${PROFILE}"; fi
@@ -103,8 +103,8 @@ if [[ "${LOCAL_TIME}" != profile ]]; then EXTRA_ARGS+=(--m7-look-time "${LOCAL_T
 if [[ "${MATERIAL_VIEW}" != profile ]]; then EXTRA_ARGS+=(--m7-look-material-view "${MATERIAL_VIEW}"); fi
 if [[ "${MATERIAL_AUDIT}" == "on" ]]; then EXTRA_ARGS+=(--m7-look-material-audit); fi
 if [[ "${GROUND_TREATMENT}" != profile ]]; then EXTRA_ARGS+=(--m7-look-ground "${GROUND_TREATMENT}"); fi
-"${GODOT}" --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- \
-  --m7-look-lab --m7-look-smoke --m7-look-controls "${CONTROLS}" --m7-look-capture-frame "${CAPTURE_FRAME}" \
+"${GODOT}" --disable-crash-handler --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- \
+  --automated-smoke-immediate-exit --m7-look-lab --m7-look-smoke --m7-look-controls "${CONTROLS}" --m7-look-capture-frame "${CAPTURE_FRAME}" \
   "${EXTRA_ARGS[@]}" --capture-path "${OUTPUT}"
 PASS_PREFIX="M7 LOOK LAB: PASS schema=9 units=4 meshes=192 triangles=31104 buildings=2"
 if [[ ! -s "${OUTPUT}" ]] || ! grep -q "${PASS_PREFIX}" "${CAPTURE_LOG}"; then

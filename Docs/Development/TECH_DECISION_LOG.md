@@ -1237,3 +1237,23 @@ format or visual direction.
 
 This changes no gameplay value, authoritative simulation, public data format,
 dependency or accepted M7 visual direction.
+
+## 2026-09-09 — Non-intrusive macOS Godot automation
+
+- Routine Godot verification is permanently headless and disables Godot's
+  in-process crash handler. It must not open the editor or game window.
+- Godot 4.7.1 intermittently aborted during native macOS teardown after a smoke
+  fixture had already printed PASS, producing distracting system crash dialogs
+  and false host-process failures. Disposable smoke runs now preserve their
+  real result code and exit directly only after the fixture has completed and
+  reported PASS/FAIL, bypassing that teardown path.
+- The direct exit is limited to macOS headless runs, explicit automated capture
+  runs, and smoke runners. Normal playable/editor sessions still perform normal
+  Godot shutdown, so real player-session failures are not concealed.
+- A real renderer is required to create viewport screenshots; Godot's headless
+  dummy renderer cannot produce them. Visible capture scripts are therefore
+  excluded from routine automated verification and may run only when new visual
+  evidence is materially required and announced to the user.
+
+This changes no gameplay, deterministic simulation, production rendering,
+public data format or dependency.

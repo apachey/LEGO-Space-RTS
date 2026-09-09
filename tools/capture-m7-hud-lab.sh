@@ -84,18 +84,18 @@ fi
 mkdir -p "$(dirname "${OUTPUT}")"
 : > "${CAPTURE_LOG}"
 dotnet build "${ROOT}/GodotClient/LEGO.SpaceRTS.Godot.csproj" -c Debug --no-restore --disable-build-servers -m:1
-"${GODOT}" --headless --import --path "${ROOT}/GodotClient"
+"${GODOT}" --headless --disable-crash-handler --import --path "${ROOT}/GodotClient"
 if [[ "${PALETTE_ENABLED}" == "1" && "${KIT_ENABLED}" == "1" ]]; then
-  "${GODOT}" --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- \
+  "${GODOT}" --disable-crash-handler --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- \
     --m7-hud-lab --m7-hud-smoke --m7-hud-scenario "${SCENARIO}" --m7-hud-aspect "${ASPECT}" --m7-hud-finish "${FINISH}" "${PALETTE_ARGS[@]}" "${KIT_ARGS[@]}" --m7-hud-controls "${CONTROLS}" --capture-path "${OUTPUT}"
 elif [[ "${PALETTE_ENABLED}" == "1" ]]; then
-  "${GODOT}" --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- \
+  "${GODOT}" --disable-crash-handler --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- \
     --m7-hud-lab --m7-hud-smoke --m7-hud-scenario "${SCENARIO}" --m7-hud-aspect "${ASPECT}" --m7-hud-finish "${FINISH}" "${PALETTE_ARGS[@]}" --m7-hud-controls "${CONTROLS}" --capture-path "${OUTPUT}"
 elif [[ "${KIT_ENABLED}" == "1" ]]; then
-  "${GODOT}" --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- \
+  "${GODOT}" --disable-crash-handler --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- \
     --m7-hud-lab --m7-hud-smoke --m7-hud-scenario "${SCENARIO}" --m7-hud-aspect "${ASPECT}" --m7-hud-finish "${FINISH}" "${KIT_ARGS[@]}" --m7-hud-controls "${CONTROLS}" --capture-path "${OUTPUT}"
 else
-  "${GODOT}" --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- \
+  "${GODOT}" --disable-crash-handler --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- \
     --m7-hud-lab --m7-hud-smoke --m7-hud-scenario "${SCENARIO}" --m7-hud-aspect "${ASPECT}" --m7-hud-finish "${FINISH}" --m7-hud-controls "${CONTROLS}" --capture-path "${OUTPUT}"
 fi
 if [[ ! -s "${OUTPUT}" ]] || ! grep -q "M7 HUD LAB: PASS scenarios=8 commands=12 minimap=legal.*factionSkins=4.*schema=8 active=${SCENARIO} finish=${EXPECTED_FINISH} palette=${EXPECTED_PALETTE}.*apertureMasks=4 kitSwitch=interactive kit=${EXPECTED_KIT}" "${CAPTURE_LOG}"; then

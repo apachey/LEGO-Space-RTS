@@ -24,6 +24,7 @@ required = [
     'GodotClient/project.godot','GodotClient/LEGO.SpaceRTS.Godot.csproj','GodotClient/LEGO.SpaceRTS.Godot.sln',
     'GodotClient/Scenes/Bootstrap.tscn','GodotClient/Scenes/PrototypeRTS.tscn',
     'GodotClient/Scripts/Client/RtsCompositionRoot.cs','GodotClient/Scripts/Client/RuntimeScenarioLoader.cs',
+    'GodotClient/Scripts/Client/AutomatedSmokeExit.cs',
     'GodotClient/Scripts/Presentation/GodotSimBridge.cs','GodotClient/Scripts/Presentation/RtsCameraController.cs',
     'GodotClient/Scripts/Presentation/SelectionController.cs','GodotClient/Scripts/Presentation/RtsInputController.cs',
     'GodotClient/Scripts/Presentation/FogPresenter.cs','GodotClient/Scripts/Presentation/DebugRenderer.cs',
@@ -92,6 +93,39 @@ godotproj = (ROOT/'GodotClient/LEGO.SpaceRTS.Godot.csproj').read_text()
 check('Godot.NET.Sdk/4.7.1' in godotproj, 'Godot .NET SDK is not pinned to 4.7.1')
 check('<TargetFramework>net8.0</TargetFramework>' in godotproj, 'Godot client does not target net8.0')
 check('../SimCore/LegoSpaceRTS.SimCore.csproj' in godotproj, 'Godot client does not reference portable SimCore')
+automated_exit = (ROOT/'GodotClient/Scripts/Client/AutomatedSmokeExit.cs').read_text()
+check('NativeImmediateExit(exitCode)' in automated_exit and
+      'engineArguments.Contains("--headless")' in automated_exit and
+      'context.GetTree().Quit(exitCode)' in automated_exit,
+      'macOS smoke exit no longer separates disposable automation from normal game shutdown')
+verify_script = (ROOT/'tools/verify.sh').read_text()
+build_mac_script = (ROOT/'tools/build-mac.sh').read_text()
+check('--headless --disable-crash-handler' in verify_script and
+      '--headless --quit-after' not in verify_script and
+      '--headless --log-file' not in verify_script,
+      'verification contains an intrusive or crash-handler-enabled Godot smoke launch')
+check('--headless --disable-crash-handler' in build_mac_script and
+      '--headless --log-file' not in build_mac_script,
+      'macOS build verification contains a crash-handler-enabled app smoke launch')
+smoke_exit_files = [
+    'GodotClient/Scripts/Client/GodotSmokeRunner.cs',
+    'GodotClient/Scripts/Client/M7MaterialLab.cs',
+    'GodotClient/Scripts/Client/M7VisualStyleLab.cs',
+    'GodotClient/Scripts/Client/M7PaletteRatioLab.cs',
+    'GodotClient/Scripts/Client/M7LookLab.cs',
+    'GodotClient/Scripts/Client/M7HudLab.cs',
+    'GodotClient/Scripts/Client/M7VisualAcceptanceCandidate.cs',
+    'GodotClient/Scripts/Client/M85AssetPipelineLab.cs',
+    'GodotClient/Scripts/Networking/M6TransportSmokeRunner.cs',
+    'GodotClient/Scripts/Networking/M6CommandAuthoritySmokeRunner.cs',
+    'GodotClient/Scripts/Networking/M6SnapshotSmokeRunner.cs',
+    'GodotClient/Scripts/Networking/M6ReconnectSmokeRunner.cs',
+    'GodotClient/Scripts/Networking/M6ReplaySmokeRunner.cs',
+]
+for smoke_exit_file in smoke_exit_files:
+    smoke_exit_text = (ROOT/smoke_exit_file).read_text()
+    check('AutomatedSmokeExit.Finish' in smoke_exit_text and 'GetTree().Quit' not in smoke_exit_text,
+          f'automated Godot fixture bypasses the crash-safe exit: {smoke_exit_file}')
 content_bin=require('GodotClient/Compiled/PrototypeEntities.contentbin')
 map_bin=require('GodotClient/Compiled/DEV_FirstControllableRTS.mapbin')
 if content_bin.exists():

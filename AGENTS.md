@@ -782,7 +782,28 @@ make code literacy a prerequisite for ordinary project management.
 
 ---
 
-## 21. CURRENT PROJECT PHASE
+## 21. NON-INTRUSIVE GODOT AUTOMATION
+
+Automated compilation, tests and validation must never open a visible Godot
+editor or game window on the user's desktop.
+
+On macOS, project smoke tests must run with `--headless
+--disable-crash-handler`. After recording their real PASS/FAIL result, the
+disposable smoke process must use the project-owned immediate-exit path instead
+of Godot's unstable native teardown. Preserve the real exit code; this rule may
+not turn a failure into a pass or suppress a failure that occurs during the
+test itself. Normal player/editor sessions retain normal shutdown behavior.
+
+Viewport screenshots require a real graphics renderer and are therefore not a
+routine automated-test step. Reuse existing visual evidence when it is still
+valid. Start a visible capture only when new visual evidence is materially
+required, tell the user before doing so, and use the same crash-safe disposable
+exit after the capture is written. The user launching a playable build for
+manual review is not an automated launch.
+
+---
+
+## 22. CURRENT PROJECT PHASE
 
 Phase 10 M0–M6 are implemented, verified, and game-director accepted. M7 may
 begin from the accepted post-M6 baseline.

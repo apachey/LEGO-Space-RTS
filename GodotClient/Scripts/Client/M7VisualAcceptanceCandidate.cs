@@ -166,7 +166,7 @@ public partial class M7VisualAcceptanceCandidate : Node3D
         {
             GD.PrintErr($"M7 ACCEPTANCE CANDIDATE: FAIL factions={_prototypes.Count} meshes={meshCount} acceptance=m7-final-outline-on");
         }
-        GetTree().Quit(valid ? 0 : 2);
+        AutomatedSmokeExit.Finish(this, valid ? 0 : 2);
     }
 
     public override void _UnhandledInput(InputEvent @event)

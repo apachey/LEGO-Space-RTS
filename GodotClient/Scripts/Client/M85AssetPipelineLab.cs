@@ -78,7 +78,7 @@ public partial class M85AssetPipelineLab : Node3D
         {
             GD.PrintErr($"M8.5 ASSET PIPELINE: FAIL models={_models.Count} roleBindings={_roleMeshes.Count} reason={_validationError}");
         }
-        GetTree().Quit(valid ? 0 : 2);
+        AutomatedSmokeExit.Finish(this, valid ? 0 : 2);
     }
 
     public override void _UnhandledInput(InputEvent @event)

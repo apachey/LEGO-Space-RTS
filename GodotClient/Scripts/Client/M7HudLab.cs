@@ -69,7 +69,7 @@ public partial class M7HudLab : Node3D
         _frames++;
         if (_finished)
         {
-            if (_frames >= _quitReadyFrame) GetTree().Quit(_smokeExitCode);
+            if (_frames >= _quitReadyFrame) AutomatedSmokeExit.Finish(this, _smokeExitCode);
             return;
         }
         if (_frames < 24) return;

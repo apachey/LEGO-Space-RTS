@@ -30,7 +30,7 @@ dotnet restore "${ROOT}/GodotClient/LEGO.SpaceRTS.Godot.csproj"
 dotnet build "${ROOT}/GodotClient/LEGO.SpaceRTS.Godot.csproj" -c Debug --no-restore --disable-build-servers -m:1
 printf 'Exporting debug macOS app to %s\n' "${OUTPUT_APP}"
 set +e
-"${GODOT}" --headless --path "${ROOT}/GodotClient" --export-debug "macOS" "${OUTPUT_APP}" 2>&1 | tee "${EXPORT_LOG}"
+"${GODOT}" --headless --disable-crash-handler --path "${ROOT}/GodotClient" --export-debug "macOS" "${OUTPUT_APP}" 2>&1 | tee "${EXPORT_LOG}"
 EXPORT_STATUS=${PIPESTATUS[0]}
 set -e
 if (( EXPORT_STATUS != 0 )) || grep -q '^ERROR:' "${EXPORT_LOG}"; then
@@ -48,7 +48,7 @@ codesign --verify --deep --strict "${OUTPUT_APP}"
 SMOKE_LOG="$(mktemp "${TMPDIR:-/tmp}/lego-space-rts-app-smoke.XXXXXX")"
 SMOKE_ENGINE_LOG="$(mktemp "${TMPDIR:-/tmp}/lego-space-rts-app-smoke-engine.XXXXXX")"
 set +e
-"${APP_EXECUTABLE}" --headless --log-file "${SMOKE_ENGINE_LOG}" --quit-after 600 -- --smoke 2>&1 | tee "${SMOKE_LOG}"
+"${APP_EXECUTABLE}" --headless --disable-crash-handler --log-file "${SMOKE_ENGINE_LOG}" --quit-after 600 -- --smoke 2>&1 | tee "${SMOKE_LOG}"
 SMOKE_STATUS=${PIPESTATUS[0]}
 set -e
 if (( SMOKE_STATUS != 0 )) || ! grep -q 'Prototype content source: compiled runtime data' "${SMOKE_LOG}" || ! grep -q 'PHASE10 GODOT HEADLESS SMOKE: PASS' "${SMOKE_LOG}"; then
@@ -61,7 +61,7 @@ rm -f "${SMOKE_LOG}" "${SMOKE_ENGINE_LOG}"
 CANDIDATE_LOG="$(mktemp "${TMPDIR:-/tmp}/lego-space-rts-m7-acceptance-app-smoke.XXXXXX")"
 CANDIDATE_ENGINE_LOG="$(mktemp "${TMPDIR:-/tmp}/lego-space-rts-m7-acceptance-app-engine.XXXXXX")"
 set +e
-"${APP_EXECUTABLE}" --headless --log-file "${CANDIDATE_ENGINE_LOG}" --quit-after 600 -- \
+"${APP_EXECUTABLE}" --headless --disable-crash-handler --log-file "${CANDIDATE_ENGINE_LOG}" --quit-after 600 -- \
   --m7-acceptance-candidate --m7-acceptance-smoke --m7-acceptance-zoom 44 \
   --m7-acceptance-look m7-final --m7-acceptance-outline on \
   --m7-acceptance-labels hidden --m7-acceptance-review hidden 2>&1 | tee "${CANDIDATE_LOG}"
@@ -77,7 +77,7 @@ rm -f "${CANDIDATE_LOG}" "${CANDIDATE_ENGINE_LOG}"
 PIPELINE_LOG="$(mktemp "${TMPDIR:-/tmp}/lego-space-rts-m85-pipeline-app-smoke.XXXXXX")"
 PIPELINE_ENGINE_LOG="$(mktemp "${TMPDIR:-/tmp}/lego-space-rts-m85-pipeline-app-engine.XXXXXX")"
 set +e
-"${APP_EXECUTABLE}" --headless --log-file "${PIPELINE_ENGINE_LOG}" --quit-after 600 -- \
+"${APP_EXECUTABLE}" --headless --disable-crash-handler --log-file "${PIPELINE_ENGINE_LOG}" --quit-after 600 -- \
   --m85-asset-pipeline --m85-asset-pipeline-smoke --m85-asset-pipeline-zoom 44 2>&1 | tee "${PIPELINE_LOG}"
 PIPELINE_STATUS=${PIPESTATUS[0]}
 set -e

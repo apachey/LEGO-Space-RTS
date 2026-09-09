@@ -259,7 +259,7 @@ public partial class M7LookLab : Node3D
             GD.Print($"M7 LOOK LAB: PASS schema={_profile.SchemaVersion} units={_units.Count} meshes={_unitMeshes.Count} triangles={triangles} buildings=2 firing={(_profile.Scene.FiringEnabled ? "on" : "off")} burning={(_profile.Scene.BurningEnabled ? "on" : "off")} animationDrivers={_animationRigs.Count} destructionDriver=1 vfxPools=6 prewarmed=180 controls={(_controlsVisible ? "visible" : "hidden")} zoom={FormatCaptureFloat(_profile.Camera.ZoomCells)} post={(_profile.Post.Enabled ? "on" : "off")} outline={(_profile.Outline.Enabled ? "on" : "off")} world={CaptureWorldMarker()} time={CaptureTimeMarker()} phase={CapturePhaseMarker()} ground={CaptureGroundMarker()} surface={CaptureSurfaceMarker()} materialView={CaptureMaterialViewMarker()} audit={(_materialAudit ? "on" : "off")}");
         else
             GD.PrintErr($"M7 LOOK LAB: FAIL units={_units.Count} meshes={_unitMeshes.Count} triangles={triangles}");
-        GetTree().Quit(valid ? 0 : 2);
+        AutomatedSmokeExit.Finish(this, valid ? 0 : 2);
     }
 
     public override void _UnhandledInput(InputEvent @event)

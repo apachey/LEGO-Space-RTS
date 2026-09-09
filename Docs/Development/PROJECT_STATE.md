@@ -601,6 +601,14 @@ live; the current schema-9 copy/paste retains the complete experiment.
 - The candidate has zero blocking verification failures and a launchable macOS
   build. Its game-director acceptance remains `PENDING`; T082 has not started.
 
+Routine Godot verification is now non-intrusive on macOS: every gameplay smoke
+runs headlessly, records its real PASS/FAIL exit code, then bypasses the Godot
+4.7.1 native teardown that had intermittently produced a system crash dialog
+after successful tests. Normal playable/editor sessions retain normal shutdown.
+Viewport captures still require a real renderer, so they are not launched as a
+routine automated-test step and must be announced when new visual evidence is
+actually required.
+
 ## Integration format boundary
 
 - authoritative snapshot format **21** (backward reader for 20);
@@ -613,6 +621,15 @@ live; the current schema-9 copy/paste retains the complete experiment.
 - network replay chunk format **1**.
 
 ## Verification state
+
+The non-intrusive Godot automation revision passed `./tools/verify.sh --full`
+with zero blocking failures at
+`Artifacts/Verification/20260909T084741Z-full-summary.txt`. It exercised every
+retained Godot smoke plus the exported macOS app without opening a game window.
+The macOS Godot diagnostic-report count remained **25 before and 25 after** the
+full run, confirming that none of the disposable test processes entered the
+former crash-reporting teardown failure. Stress60 remained the expected 2/60
+`BLOCKING_LATER` M9 diagnostic.
 
 M8.5 T081 passed `./tools/verify.sh --full` on 2026-09-09 UTC with **zero
 blocking failures**: all 317 NUnit tests, the 24-mover gate, content and

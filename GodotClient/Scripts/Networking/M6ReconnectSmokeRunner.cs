@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
 using Godot;
+using LegoSpaceRTS.Client;
 using LegoSpaceRTS.SimCore;
 
 namespace LegoSpaceRTS.Networking;
@@ -112,7 +113,7 @@ public partial class M6ReconnectSmokeRunner : Node
                 }
                 _finished = true;
                 GD.Print($"M6 RECONNECT SMOKE: PASS player=0 lastSequence=1 restoredTick={_sequenceOneTick} resumedTick={_sequenceTwoTick}");
-                CloseAll(); GetTree().Quit(0); return;
+                CloseAll(); AutomatedSmokeExit.Finish(this, 0); return;
             }
         }
 
@@ -171,7 +172,7 @@ public partial class M6ReconnectSmokeRunner : Node
     private void Fail(string reason)
     {
         if (_finished) return;
-        _finished = true; GD.PrintErr($"M6 RECONNECT SMOKE: FAIL {reason}"); CloseAll(); GetTree().Quit(2);
+        _finished = true; GD.PrintErr($"M6 RECONNECT SMOKE: FAIL {reason}"); CloseAll(); AutomatedSmokeExit.Finish(this, 2);
     }
 
     private void CloseAll()

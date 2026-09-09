@@ -61,7 +61,7 @@ public partial class M7VisualStyleLab : Node3D
             GD.Print($"M7 STYLE LAB: PASS styles={M7StyleMaterialFactory.Styles.Length} meshes={_modelMeshes.Count} triangles={triangles} canvasLayers=0 active={M7StyleMaterialFactory.Slug(_style)} outline={OutlineSlug()}");
         else
             GD.PrintErr($"M7 STYLE LAB: FAIL styles={M7StyleMaterialFactory.Styles.Length} meshes={_modelMeshes.Count}");
-        GetTree().Quit(valid ? 0 : 2);
+        AutomatedSmokeExit.Finish(this, valid ? 0 : 2);
     }
 
     public override void _UnhandledInput(InputEvent @event)

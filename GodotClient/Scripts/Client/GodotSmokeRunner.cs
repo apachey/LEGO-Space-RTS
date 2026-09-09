@@ -203,14 +203,14 @@ public partial class GodotSmokeRunner : Node
             if (image is null)
             {
                 GD.PrintErr("PHASE10 VISUAL SMOKE CAPTURE: SKIPPED renderer did not expose a viewport texture");
-                GetTree().Quit(77);
+                AutomatedSmokeExit.Finish(this, 77);
                 return;
             }
             Error captureResult = image.SavePng(_capturePath);
             if (captureResult != Error.Ok)
             {
                 GD.PrintErr($"PHASE10 VISUAL SMOKE CAPTURE: FAIL error={captureResult} path={_capturePath}");
-                GetTree().Quit(3);
+                AutomatedSmokeExit.Finish(this, 3);
                 return;
             }
             GD.Print($"PHASE10 VISUAL SMOKE CAPTURE: PASS path={_capturePath}");
@@ -219,7 +219,7 @@ public partial class GodotSmokeRunner : Node
             GD.PrintErr($"PHASE10 GODOT HEADLESS SMOKE DETAIL: hud={hudOk} minimap={minimapOk} markers={minimap?.MarkerCount ?? 0} fogVisible={minimap?.VisibleFogCells ?? 0} construction={constructionOk} health={healthBarOk} controls={controlsOk} destruction={destructionOk} destructionPresentation={destructionPresentationOk} heroDebrisSpawned={_views?.HeroDebrisPoolStats.Spawned ?? 0} destructionDustSpawned={_views?.DestructionDustPoolStats.Spawned ?? 0} activeHeroFragments={_views?.ActiveHeroDebrisFragments ?? 0} preparedTitle={preparedTitleOk} preparedEdgePick={preparedEdgePickOk} scoutDamage={scoutDamageOk} repair={repairOk} transport={transportOk} transformation={transformationOk} presentationDrivers={presentationDriversOk} excavation={excavationOk} m5={m5Ok} standardWreck={standardWreck is MeshInstance3D} collapseId={_collapseUnit.Value} collapseActive={_collapseUnit != EntityId.None && _bridge.World.Entities.Destruction.Has(_collapseUnit)} collapseView={activeCollapse is MeshInstance3D} contact={contactImpact is MeshInstance3D}");
         _finished = true;
         GD.Print(ok ? $"PHASE10 GODOT HEADLESS SMOKE: PASS tick={_bridge.World.Tick.Value} hash={_bridge.StateHashHex()}" : "PHASE10 GODOT HEADLESS SMOKE: FAIL");
-        GetTree().Quit(ok ? 0 : 2);
+        AutomatedSmokeExit.Finish(this, ok ? 0 : 2);
     }
 
     private bool TryOpenExcavatable()

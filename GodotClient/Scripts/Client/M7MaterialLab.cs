@@ -41,7 +41,7 @@ public partial class M7MaterialLab : Node3D
             GD.Print($"M7 T064 MATERIAL LAB: PASS families={_acceptanceMaterials.Count} factionSwatches={_factionSwatchCount} identificationTiles={_teamIdentificationTileCount}");
         else
             GD.PrintErr($"M7 T064 MATERIAL LAB: FAIL families={_acceptanceMaterials.Count} factionSwatches={_factionSwatchCount} identificationTiles={_teamIdentificationTileCount}");
-        GetTree().Quit(valid ? 0 : 2);
+        AutomatedSmokeExit.Finish(this, valid ? 0 : 2);
     }
 
     private void BuildMaterialSet()

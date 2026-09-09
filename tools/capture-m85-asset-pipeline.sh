@@ -32,8 +32,8 @@ if [[ "${OUTPUT}" != /* ]]; then OUTPUT="${ROOT}/${OUTPUT}"; fi
 
 mkdir -p "$(dirname "${OUTPUT}")"
 dotnet build "${ROOT}/GodotClient/LEGO.SpaceRTS.Godot.csproj" -c Debug --no-restore --disable-build-servers -m:1
-"${GODOT}" --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- \
-  --m85-asset-pipeline --m85-asset-pipeline-smoke --m85-asset-pipeline-zoom "${ZOOM}" \
+"${GODOT}" --disable-crash-handler --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- \
+  --automated-smoke-immediate-exit --m85-asset-pipeline --m85-asset-pipeline-smoke --m85-asset-pipeline-zoom "${ZOOM}" \
   --m85-asset-pipeline-yaw "${YAW}" --m85-asset-pipeline-capture-frame "${CAPTURE_FRAME}" \
   --capture-path "${OUTPUT}"
 
