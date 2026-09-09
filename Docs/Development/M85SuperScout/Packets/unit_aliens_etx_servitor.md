@@ -96,7 +96,7 @@ Non-removable identity anchors:
 - Nearest-confusion baseline:
 
 - `unit.astronauts.expedition_crew` — Both are tiny mobile economy/build units. Mitigations: Expedition Crew is upright and bipedal; ETX Servitor is a low hover shell. / Expedition Crew carries tools externally; Servitor wraps around a crystal cradle. / Expedition Crew uses human helmet/backpack masses; Servitor uses a folding single manipulator and no humanoid body.
-- `unit.martians.worker_robot` — Both are small mechanical nonhuman workers. Mitigations: Servitor hovers low; Worker Robot plants on two legs. / Servitor encloses its core in a curved black-lime shell; Worker Robot leaves the Martian operator and mechanisms open. / Servitor uses one folding manipulator; Worker Robot uses paired utility arms.
+- `unit.martians.worker_robot` — Both are small mechanical nonhuman workers. Mitigations: Servitor hovers inside one low curved shell; Worker Robot spreads four straight outriggers from a central wedge. / Servitor encloses its core in black-lime structure; Worker Robot leaves the Martian operator and four end pads open. / Servitor uses one dominant folding manipulator; Worker Robot's production tool must remain subordinate to its four-spoke plan.
 
 ## D. Construction contract
 

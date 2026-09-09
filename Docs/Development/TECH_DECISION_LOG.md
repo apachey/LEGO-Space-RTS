@@ -1341,6 +1341,37 @@ This is a source-traceability and production-handoff decision only. It changes
 no gameplay, simulation, public data format, dependency, canon or accepted
 visual direction. All affected packets remain `HOLD`.
 
+## 2026-09-09 — Complete faction source-page coverage with Martian mechanical evidence
+
+- Eight mapped Martian sources are visually audited across eight official
+  instruction books. Sets 1195 and 3750 retain explicit archival gaps. Together
+  with the previous faction passes, every one of the 39 relied-upon source
+  families now has a faction-scoped audit record rather than an unmarked
+  evidence state.
+- The tiny machines retain three distinct source plans: 7300 is a short
+  twin-runner sled with unlike rear modules, 7303 is a long tube-sided sled with
+  clustered nose nozzles, and 7302 is a low four-spoke operator platform rather
+  than a two-legged humanoid worker.
+- The 7313 Protector and 7314 Recon-Mech prove different modular biped/craft
+  rebuilds. The former separates wedge craft, twin-foot body and paired emitter
+  arms; the latter separates an asymmetric drill/claw upper craft, leg block
+  and rear pressure tank. Both manuals use hand-separated modules, so they prove
+  geometry but not continuous game transformation, gait, detection or attack
+  timing.
+- The 7316 evidence isolates the primary Martian many-legged Excavation
+  Searcher from a separate human support rig and a cross-set humanoid rebuild.
+  The 7317 evidence establishes an open hangar, endpoint stations, docking
+  arches, sleds, couplers, a three-chamber pressure unit and long physical Tube
+  paths; later adapted buildings must divide those shared modules explicitly.
+- Source-disproved baseline claims about circular Double Hover pads, a biped
+  Worker Robot, oversized Jet Scooter side pods, a narrow sensor-led Recon-Mech,
+  an orange-canopy Protector and a reciprocating source pump were corrected.
+  Source paint does not override the approved canonical Martian palette.
+
+This is a source-traceability and production-handoff decision only. It changes
+no gameplay, simulation, public data format, dependency, canon or accepted
+visual direction. All affected packets remain `HOLD`.
+
 ## 2026-09-09 — Non-intrusive macOS Godot automation
 
 - Routine Godot verification is permanently headless and disables Godot's

@@ -23,7 +23,7 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: Exact source-view coverage, construction-critical page ranges and every adaptation boundary must be recorded before this packet can leave HOLD.
+Open question: Source-view coverage and construction-critical page ranges are recorded for the audited sources below. Asset-specific adaptation boundaries still must be resolved before this packet can leave HOLD.
 
 ## B. Reference board
 
@@ -31,26 +31,37 @@ Open question: Exact source-view coverage, construction-critical page ranges and
 |---|---|---|---|---|
 | 7302 — Worker Robot | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7302)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130290.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7302-1) | PRIMARY_VERIFIED | Martian worker walker construction |
 
-`PENDING` — this source family has not yet received its visual PDF/page-range audit.
+### Source audit [Martians:7302]
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 1-2: Complete seven-step Worker Robot build from shallow central wedge to four separate radial outrigger/foot modules and exposed operator.
+- View/mechanism coverage: front=PARTIAL p1 cover and p2 final; rear=PARTIAL p1-2 sequence; leftRight=PARTIAL p1-2 sequence; top=VERIFIED p1-2; threeQuarter=VERIFIED p1 cover and p2 final; undersideInterior=PARTIAL p1 bare base; mechanism=MISSING no gait or tool action is demonstrated
+- Verified findings:
+  - The source machine is an extremely low open four-spoke platform, not a conventional two-legged humanoid robot.
+  - Four separately built rectangular end pads radiate from a shallow central wedge around the seated Martian operator.
+  - The source contains no dominant head or dedicated manipulator, so the game's worker tool must remain a legible adaptation instead of replacing the four-spoke identity.
+- Remaining evidence gaps:
+  - A production construction map must define which source limb becomes the canonical worker/builder manipulator and how the remaining contacts move without inventing an unsupported humanoid gait.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 
 ## C. Recognition contract
 
-**Silhouette thesis:** A tiny open Martian work walker with two legs and front utility arms framing its operator.
+**Silhouette thesis:** A tiny open Martian work platform whose four low radial outriggers surround the central operator wedge.
 
 Non-removable identity anchors:
 
-- open operator seat
-- two planted mechanical legs
-- paired utility manipulators
+- shallow central operator wedge
+- four-spoke outrigger plan
+- four separate rectangular end pads
 
 - Near / standard / far silhouette thumbnails: `PENDING 24/44/72-CELL BOARD`.
 - Palette and material hierarchy: Blue and sand-red with translucent-neon-green accents, open platforms and visibly articulated mechanics.
 - Forbidden genericization: Do not make the asset Alien-lite, a smooth energy object or a joke contraption. Pumps, tubes, legs, clamps and platforms carry identity.
 - Nearest-confusion baseline:
 
-- `unit.aliens.etx_servitor` — Both are small mechanical nonhuman workers. Mitigations: Servitor hovers low; Worker Robot plants on two legs. / Servitor encloses its core in a curved black-lime shell; Worker Robot leaves the Martian operator and mechanisms open. / Servitor uses one folding manipulator; Worker Robot uses paired utility arms.
+- `unit.aliens.etx_servitor` — Both are small mechanical nonhuman workers. Mitigations: Servitor hovers inside one low curved shell; Worker Robot spreads four straight outriggers from a central wedge. / Servitor encloses its core in black-lime structure; Worker Robot leaves the Martian operator and four end pads open. / Servitor uses one dominant folding manipulator; Worker Robot's production tool must remain subordinate to its four-spoke plan.
 
 ## D. Construction contract
 

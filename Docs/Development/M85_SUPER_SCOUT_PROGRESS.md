@@ -1,8 +1,8 @@
 # M8.5 T082 — SUPER SCOUT PROGRESS
 
-**Status:** in progress. Identity/source baseline plus the Rock Raiders,
-Astronauts and Aliens official-PDF audits are complete; Martian evidence and
-the cross-roster review gates remain open.
+**Status:** in progress. The roster-locked identity baseline and all four
+faction source-page audits are complete; semantic construction, motion,
+material and cross-roster review gates remain open.
 
 ## Completed in the identity-baseline pass
 
@@ -61,6 +61,23 @@ the cross-roster review gates remain open.
   verifies a huge open-channel circular Mothership with detachable subcraft,
   while 7693 verifies hinged crescent modules but not the game's final planted
   siege endpoints.
+- The Martian pass audited all eight available mapped sources across eight
+  official books. Sets 1195 and 3750 remain explicit archival gaps, matching
+  the source ledger rather than receiving guessed construction.
+- The small Martian machines are now source-correct: Double Hover uses twin
+  long runners and unlike rear modules; Jet Scooter is a long narrow tube-sided
+  sled; and Worker Robot is a low four-spoke operator platform rather than a
+  generic biped.
+- The manuals prove two different modular mech families. Red Planet Protector
+  separates a wedge upper craft, twin-foot body and long emitter arms;
+  Recon-Mech separates a broad drill/claw craft, leg block and rear pressure
+  tank. Both source conversions are hand-rebuilt, so continuous game motion
+  remains a later contract.
+- The 7316 audit isolates the primary Martian many-legged Excavation Searcher
+  from the separate human support rig and cross-set humanoid rebuild. The 7317
+  audit confirms Aero Tubes as physical sled routes between an open hangar,
+  endpoint stations, colored docking arches, couplers and a stacked
+  three-chamber pressure unit.
 - The 4990 HQ manual is now verified primary evidence. Its 43 pages establish
   a reusable faction vocabulary of separate tower, crane, open service gantry,
   conveyor/processing and irregular worksite-base modules; they do not silently
@@ -82,8 +99,8 @@ redistributed.
 
 ## Remaining before T082 can pass
 
-1. Repeat the completed PDF/page-range audit for Martians, and resolve or retain
-   their remaining explicit archival source gaps.
+1. Retain the four explicit archival gaps unless new primary evidence appears,
+   and escalate any gap that prevents a safe production decision.
 2. Complete each semantic construction map: what every identity-bearing mass,
    opening, tool, light and connection is and why it exists.
 3. Complete locomotion, planted-contact, articulation, state, pivot and socket

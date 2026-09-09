@@ -18,6 +18,7 @@ INSTRUCTION_INDEX = ROOT / "Content/Presentation/SuperScout/source_instruction_i
 ROCK_RAIDERS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/rock_raiders_source_evidence.json"
 ASTRONAUTS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/astronauts_source_evidence.json"
 ALIENS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/aliens_source_evidence.json"
+MARTIANS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/martians_source_evidence.json"
 CONFUSION = ROOT / "Content/Presentation/SuperScout/confusion_register.json"
 CONTENT = ROOT / "Content/PrototypeEntities.json"
 GENERATOR = ROOT / "tools/generate-m85-super-scout-packets.py"
@@ -143,6 +144,7 @@ def main() -> None:
     for path in (
         MANIFEST, LEDGER, INSTRUCTION_INDEX, ROCK_RAIDERS_EVIDENCE, ASTRONAUTS_EVIDENCE,
         ALIENS_EVIDENCE,
+        MARTIANS_EVIDENCE,
         CONFUSION, CONTENT, GENERATOR,
     ):
         if not path.is_file():
@@ -154,6 +156,7 @@ def main() -> None:
     rock_raiders_evidence = json.loads(ROCK_RAIDERS_EVIDENCE.read_text(encoding="utf-8"))
     astronauts_evidence = json.loads(ASTRONAUTS_EVIDENCE.read_text(encoding="utf-8"))
     aliens_evidence = json.loads(ALIENS_EVIDENCE.read_text(encoding="utf-8"))
+    martians_evidence = json.loads(MARTIANS_EVIDENCE.read_text(encoding="utf-8"))
     confusion = json.loads(CONFUSION.read_text(encoding="utf-8"))
     content = json.loads(CONTENT.read_text(encoding="utf-8"))
     if manifest.get("schemaVersion") != 1 or manifest.get("task") != "T082":
@@ -297,6 +300,16 @@ def main() -> None:
         8,
         0,
     )
+    martians_audited, martians_gaps = validate_source_evidence(
+        martians_evidence,
+        assets,
+        instruction_by_id,
+        "Martians",
+        "Martians",
+        "SOURCE_AUDIT_COMPLETE_WITH_TWO_GAPS",
+        8,
+        2,
+    )
 
     if confusion.get("schemaVersion") != 1 or confusion.get("task") != "T082":
         fail("confusion register schema/task mismatch")
@@ -357,6 +370,7 @@ def main() -> None:
         "RockRaiders": {record["setId"] for record in rock_raiders_evidence["sources"]},
         "Astronauts": {record["setId"] for record in astronauts_evidence["sources"]},
         "Aliens": {record["setId"] for record in aliens_evidence["sources"]},
+        "Martians": {record["setId"] for record in martians_evidence["sources"]},
     }
     for asset in assets:
         packet_path = packet_dir / (asset["stableId"].replace(".", "_") + ".md")
@@ -378,8 +392,9 @@ def main() -> None:
         f"primaryVerified={primary} archival={archival} directPdfs={direct_pdf_sources} "
         f"rockRaidersAudited={audited_sources} rockRaidersGaps={evidence_gaps} "
         f"astronautsAudited={astronauts_audited} astronautsGaps={astronauts_gaps} "
-        f"aliensAudited={aliens_audited} aliensGaps={aliens_gaps} packets=66 "
-        f"confusionPairs={len(pairs)} state=HOLD"
+        f"aliensAudited={aliens_audited} aliensGaps={aliens_gaps} "
+        f"martiansAudited={martians_audited} martiansGaps={martians_gaps} "
+        f"packets=66 confusionPairs={len(pairs)} state=HOLD"
     )
 
 

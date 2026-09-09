@@ -23,7 +23,7 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: Exact source-view coverage, construction-critical page ranges and every adaptation boundary must be recorded before this packet can leave HOLD.
+Open question: Source-view coverage and construction-critical page ranges are recorded for the audited sources below. Asset-specific adaptation boundaries still must be resolved before this packet can leave HOLD.
 
 ## B. Reference board
 
@@ -31,26 +31,40 @@ Open question: Exact source-view coverage, construction-critical page ranges and
 |---|---|---|---|---|
 | 7314 — Recon-Mech RP | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7314)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130809.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7314-1) | PRIMARY_VERIFIED | tall recon walker and sensor grammar |
 
-`PENDING` — this source family has not yet received its visual PDF/page-range audit.
+### Source audit [Martians:7314]
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 2-16: Broad red/gray upper craft with open central cockpit, long asymmetric drill/lance and claw arms, wrist hoses and rear equipment.
+  - PDF pages 17-25: Separate two-leg lower chassis with broad feet; upper craft docks above it to form the Recon-Mech.
+  - PDF pages 26-28: Tall rear pressure tank attaches behind the cockpit and between the upper modules.
+  - PDF pages 29-33: Final photography and explicit hand-separated flight conversion: lower body detaches, rotates and reconnects behind the upper craft.
+- View/mechanism coverage: front=VERIFIED p25-33; rear=VERIFIED p25-33; leftRight=VERIFIED p2-33; top=VERIFIED p2-33; threeQuarter=VERIFIED p1 and p25-33; undersideInterior=VERIFIED p2-28 staged modules; mechanism=VERIFIED p30-33 mech-to-flight reconfiguration and articulated arms; gait, detection and anti-air cycle remain missing
+- Verified findings:
+  - Recon-Mech is a tall biped carrying a broad aircraft-like upper body, not a narrow sensor tower with weaponry as a minor detail.
+  - Its two arms are strongly asymmetric: one ends in a long drill/lance and the other in a large black claw, with visible hoses feeding both sides.
+  - The tall rear pressure tank and detachable lower body remain recognizable when the legs are reattached behind the cockpit for the flight configuration.
+- Remaining evidence gaps:
+  - The source proves modular flight conversion but not a continuous transform, walking gait, scanner grammar or anti-air tracking path; those canonical functions need a source-respecting production contract.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 
 ## C. Recognition contract
 
-**Silhouette thesis:** A tall narrow open-cockpit walker whose sensor head and long legs dominate its weaponry.
+**Silhouette thesis:** A tall biped carrying a broad aircraft-like cockpit body, asymmetric drill-and-claw arms and a rear pressure tank.
 
 Non-removable identity anchors:
 
-- very tall paired legs
-- open high cockpit
-- raised scanning and anti-air arm
+- broad detachable upper craft
+- asymmetric long drill and claw arms
+- paired legs and tall rear pressure tank
 
 - Near / standard / far silhouette thumbnails: `PENDING 24/44/72-CELL BOARD`.
 - Palette and material hierarchy: Blue and sand-red with translucent-neon-green accents, open platforms and visibly articulated mechanics.
 - Forbidden genericization: Do not make the asset Alien-lite, a smooth energy object or a joke contraption. Pumps, tubes, legs, clamps and platforms carry identity.
 - Nearest-confusion baseline:
 
-- `unit.martians.red_planet_protector` — Both are articulated Martian walkers with open cockpits. Mitigations: Recon-Mech is very tall and narrow; Protector is broad and arm-heavy. / Recon-Mech elevates a sensor/anti-air arm; Protector spreads paired control arms. / Recon-Mech keeps one reconnaissance stance; Protector has visibly different mobile and planted silhouettes.
+- `unit.martians.red_planet_protector` — Both are modular Martian bipeds built around detachable upper craft. Mitigations: Recon-Mech carries a wide asymmetric drill-and-claw span; Protector carries two matched long emitter arms. / Recon-Mech exposes a tall rear pressure tank; Protector preserves a broad wedge nose and separate torso module. / Recon-Mech relocates its leg block behind the cockpit for flight; Protector distributes both leg and torso modules around its low craft state.
 
 ## D. Construction contract
 

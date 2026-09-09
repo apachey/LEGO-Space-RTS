@@ -23,7 +23,7 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: Exact source-view coverage, construction-critical page ranges and every adaptation boundary must be recorded before this packet can leave HOLD.
+Open question: Source-view coverage and construction-critical page ranges are recorded for the audited sources below. Asset-specific adaptation boundaries still must be resolved before this packet can leave HOLD.
 
 ## B. Reference board
 
@@ -31,27 +31,41 @@ Open question: Exact source-view coverage, construction-critical page ranges and
 |---|---|---|---|---|
 | 7313 — Red Planet Protector | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7313)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4160158.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7313-1) | PRIMARY_VERIFIED | Martian protector articulation and control mechanisms |
 
-`PENDING` — this source family has not yet received its visual PDF/page-range audit.
+### Source audit [Martians:7313]
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 2-14: Low blue/gray wedge craft with open operator area, hoses and two long removable emitter/tool arms.
+  - PDF pages 15-23: Separate broad twin-foot biped lower body; the complete upper craft docks onto it to form the tall Protector.
+  - PDF pages 24-28: Two independent low ground support/emitter devices are built and shown beside the complete Protector; they are not part of its body.
+  - PDF pages 29-33: Final source photography and explicit hand-separated reconfiguration from biped into a low craft with the leg and central body modules relocated.
+- View/mechanism coverage: front=VERIFIED p28-33; rear=PARTIAL p28-33; leftRight=VERIFIED p2-33; top=VERIFIED p2-33; threeQuarter=VERIFIED p1 and p28-33; undersideInterior=VERIFIED p2-28 staged modules; mechanism=VERIFIED p30-33 biped-to-craft reconfiguration; continuous motion and planted control action remain missing
+- Verified findings:
+  - The source Protector is a modular tall biped assembled from a low wedge craft, a broad two-foot lower body and two long detachable emitter arms.
+  - Its upper craft keeps a broad triangular nose and visible hoses; the separate leg blocks and side arms remain readable even after final assembly.
+  - The alternate low craft is made by hand-separating and relocating major modules, so the source proves both silhouettes but not a continuous in-game planted transformation.
+- Remaining evidence gaps:
+  - The canonical Martian palette, anti-heavy control action and credible continuous mobile-to-planted transition require an explicit adaptation contract; the source's blue/gray paint and hand-separated rebuild do not decide them.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 
 ## C. Recognition contract
 
-**Silhouette thesis:** A broad articulated Martian protector that changes stance by planting its body and sweeping mechanical arms outward.
+**Silhouette thesis:** A modular tall biped assembled from a broad wedge craft, twin-foot lower body and two long detachable emitter arms.
 
 Non-removable identity anchors:
 
-- wide paired articulated arms
-- central orange canopy
-- distinct mobile and planted body profiles
+- broad wedge upper craft
+- separate twin-foot biped base
+- paired long detachable emitter arms
 
 - Near / standard / far silhouette thumbnails: `PENDING 24/44/72-CELL BOARD`.
 - Palette and material hierarchy: Blue and sand-red with translucent-neon-green accents, open platforms and visibly articulated mechanics.
 - Forbidden genericization: Do not make the asset Alien-lite, a smooth energy object or a joke contraption. Pumps, tubes, legs, clamps and platforms carry identity.
 - Nearest-confusion baseline:
 
-- `unit.martians.recon_mech_rp` — Both are articulated Martian walkers with open cockpits. Mitigations: Recon-Mech is very tall and narrow; Protector is broad and arm-heavy. / Recon-Mech elevates a sensor/anti-air arm; Protector spreads paired control arms. / Recon-Mech keeps one reconnaissance stance; Protector has visibly different mobile and planted silhouettes.
-- `unit.martians.excavation_searcher` — Both are large articulated Martian control machines. Mitigations: Protector is organized around paired arms and a central canopy; Searcher is organized around many legs and one crane-claw. / Protector is broad but comparatively compact; Searcher has a huge irregular industrial superstructure. / Protector plants to hold space; Searcher exposes a complete material-handling path for siege manipulation.
+- `unit.martians.recon_mech_rp` — Both are modular Martian bipeds built around detachable upper craft. Mitigations: Recon-Mech carries a wide asymmetric drill-and-claw span; Protector carries two matched long emitter arms. / Recon-Mech exposes a tall rear pressure tank; Protector preserves a broad wedge nose and separate torso module. / Recon-Mech relocates its leg block behind the cockpit for flight; Protector distributes both leg and torso modules around its low craft state.
+- `unit.martians.excavation_searcher` — Both are large articulated Martian control machines. Mitigations: Protector is a tall twin-foot biped with a detachable upper craft; Searcher is a huge low many-legged excavation chassis. / Protector carries paired long emitter arms; Searcher separates a forward drill/claw module from a tall rear crane. / Protector changes into a compact craft; Searcher exposes an underslung material sled and irregular processing route.
 
 ## D. Construction contract
 

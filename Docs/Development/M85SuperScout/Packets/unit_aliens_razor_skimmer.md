@@ -94,7 +94,7 @@ Non-removable identity anchors:
 - Nearest-confusion baseline:
 
 - `unit.aliens.alien_jet` — Both are small swept black-lime attack craft. Mitigations: Alien Jet has a visible airborne swept-plate profile; Razor Skimmer stays almost flat against the ground. / Alien Jet raises two bright conduit arches over an open pilot; Razor Skimmer projects two long forward razor prongs. / Alien Jet centers on its pilot; Razor Skimmer centers on an exposed lime energy core.
-- `unit.martians.jet_scooter` — Both are small fast hover harassment units. Mitigations: Razor Skimmer is low, enclosed and blade-like; Jet Scooter is upright and open around its rider. / Razor centers on a lime core between black prongs; Jet Scooter centers on a narrow blue/sand-red rider spine. / Razor's propulsion is visually hidden in the hull; Jet Scooter exposes two oversized side pods.
+- `unit.martians.jet_scooter` — Both are small fast hover harassment units. Mitigations: Razor Skimmer is a broad black blade plan; Jet Scooter is a long thin open sled around its rider. / Razor centers on a lime core between two large prongs; Jet Scooter points a cluster of small orange nozzles ahead of paired side tubes. / Razor's propulsion is visually integrated into the hull; Jet Scooter leaves its tubes, deck and rear equipment exposed.
 
 ## D. Construction contract
 

@@ -23,7 +23,7 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: Exact source-view coverage, construction-critical page ranges and every adaptation boundary must be recorded before this packet can leave HOLD.
+Open question: Source-view coverage and construction-critical page ranges are recorded for the audited sources below. Asset-specific adaptation boundaries still must be resolved before this packet can leave HOLD.
 
 ## B. Reference board
 
@@ -31,19 +31,31 @@ Open question: Exact source-view coverage, construction-critical page ranges and
 |---|---|---|---|---|
 | 7311 — Red Planet Cruiser | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7311)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130806.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7311-1) | PRIMARY_VERIFIED | Martian cruiser proportions and palette |
 
-`PENDING` — this source family has not yet received its visual PDF/page-range audit.
+### Source audit [Martians:7311]
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 2-11: Complete low green/gray Red Planet Cruiser with broad offset platforms, open central rider, forward wheel/equipment and long side probes.
+  - PDF pages 12-15: Separate two-stage docking pedestal is built and the complete cruiser mounts above it.
+- View/mechanism coverage: front=PARTIAL p8-15; rear=PARTIAL p8-15; leftRight=VERIFIED p2-15 construction sequence; top=VERIFIED p2-15; threeQuarter=VERIFIED p1 and p8-15; undersideInterior=VERIFIED p2-13 staged cruiser and pedestal; mechanism=VERIFIED p12-15 detachable docking pedestal; movement and weapon cycles remain missing
+- Verified findings:
+  - Red Planet Cruiser is a low broad and deliberately irregular craft whose flat outer platforms outweigh its small central body.
+  - The Martian operator, green central equipment and long side-mounted probe/weapon rods remain exposed instead of enclosed by a conventional cockpit.
+  - A separately built tall pedestal supports the entire cruiser from below, proving a docking/deployment relationship that must be handled deliberately in the game adaptation.
+- Remaining evidence gaps:
+  - The source does not define whether the pedestal travels, deploys or stays at a facility; the frontline production unit needs an explicit supported state choice without inventing gameplay.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 
 ## C. Recognition contract
 
-**Silhouette thesis:** A compact blue and sand-red cruiser with an open cockpit and visibly eccentric hover-running gear.
+**Silhouette thesis:** A low broad irregular cruiser with flat offset platforms, an exposed central operator and a separate tall docking pedestal.
 
 Non-removable identity anchors:
 
-- broad blue-sand-red nose
-- open translucent-green cockpit
-- irregular side hover machinery
+- broad offset platform plan
+- open central operator and equipment
+- long side probes plus underslung pedestal
 
 - Near / standard / far silhouette thumbnails: `PENDING 24/44/72-CELL BOARD`.
 - Palette and material hierarchy: Blue and sand-red with translucent-neon-green accents, open platforms and visibly articulated mechanics.

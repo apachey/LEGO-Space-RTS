@@ -23,7 +23,7 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: Exact source-view coverage, construction-critical page ranges and every adaptation boundary must be recorded before this packet can leave HOLD.
+Open question: Source-view coverage and construction-critical page ranges are recorded for the audited sources below. Asset-specific adaptation boundaries still must be resolved before this packet can leave HOLD.
 
 ## B. Reference board
 
@@ -31,7 +31,22 @@ Open question: Exact source-view coverage, construction-critical page ranges and
 |---|---|---|---|---|
 | 7316 — Excavation Searcher | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7316)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130811.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7316-1) | PRIMARY_VERIFIED | multi-leg excavation, crane and material handling |
 
-`PENDING` — this source family has not yet received its visual PDF/page-range audit.
+### Source audit [Martians:7316]
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 2-16: Forward tan/orange Excavation Searcher module with long drill, paired claws and separately built planted tool/leg assemblies.
+  - PDF pages 17-30: Large irregular rear body, multiple spaced legs and tall articulated crane assemble, then dock to the forward module.
+  - PDF pages 31-33: Independent low material sled/container builds and docks beneath the complete Searcher.
+  - PDF pages 34-57: Separate dark excavation support rig with arches, hoses and human operator; useful opposition/industrial evidence, not direct Martian Searcher geometry.
+  - PDF pages 58-59: Cross-set alternate humanoid rebuild; not a demonstrated primary Searcher transformation.
+- View/mechanism coverage: front=VERIFIED p1 and p27-33; rear=PARTIAL p27-33; leftRight=VERIFIED p2-33; top=VERIFIED p2-33; threeQuarter=VERIFIED p1 and p27-33; undersideInterior=VERIFIED p2-33 staged modules and sled; mechanism=PARTIAL p28-33 crane/claws/module docking; no primary gait, siege cycle or full material route
+- Verified findings:
+  - The Martian Excavation Searcher is a huge low many-legged machine assembled from visibly separate forward tool, rear processing/crane and underslung sled modules.
+  - A long drill, paired orange claws and tall crane create three different working directions around the irregular body instead of one humanoid front.
+  - The low sled demonstrates material handling beneath the chassis, while the separate dark rig and final humanoid rebuild must not be mistaken for the primary Martian silhouette.
+- Remaining evidence gaps:
+  - The manual does not provide a walking gait, supported siege contact sequence, complete crane-to-processor route or game's manipulation attack; these require later semantic and motion contracts.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 

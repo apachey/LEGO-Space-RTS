@@ -18,6 +18,7 @@ INSTRUCTION_INDEX = ROOT / "Content/Presentation/SuperScout/source_instruction_i
 ROCK_RAIDERS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/rock_raiders_source_evidence.json"
 ASTRONAUTS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/astronauts_source_evidence.json"
 ALIENS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/aliens_source_evidence.json"
+MARTIANS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/martians_source_evidence.json"
 CONFUSION = ROOT / "Content/Presentation/SuperScout/confusion_register.json"
 OUTPUT = ROOT / "Docs/Development/M85SuperScout/Packets"
 INDEX = ROOT / "Docs/Development/M85SuperScout/PACKET_INDEX.md"
@@ -27,6 +28,7 @@ SOURCE_INDEX_MATRIX = ROOT / "Docs/Development/M85SuperScout/Matrices/source_ins
 ROCK_RAIDERS_AUDIT = ROOT / "Docs/Development/M85SuperScout/Matrices/rock_raiders_source_audit.md"
 ASTRONAUTS_AUDIT = ROOT / "Docs/Development/M85SuperScout/Matrices/astronauts_source_audit.md"
 ALIENS_AUDIT = ROOT / "Docs/Development/M85SuperScout/Matrices/aliens_source_audit.md"
+MARTIANS_AUDIT = ROOT / "Docs/Development/M85SuperScout/Matrices/martians_source_audit.md"
 
 FACTION_RULES = {
     "RockRaiders": (
@@ -332,6 +334,7 @@ def expected_files() -> dict[Path, str]:
     rock_raiders_evidence = json.loads(ROCK_RAIDERS_EVIDENCE.read_text(encoding="utf-8"))
     astronauts_evidence = json.loads(ASTRONAUTS_EVIDENCE.read_text(encoding="utf-8"))
     aliens_evidence = json.loads(ALIENS_EVIDENCE.read_text(encoding="utf-8"))
+    martians_evidence = json.loads(MARTIANS_EVIDENCE.read_text(encoding="utf-8"))
     confusion = json.loads(CONFUSION.read_text(encoding="utf-8"))
     sources = {source["setId"]: source for source in ledger["sources"]}
     instructions = {record["setId"]: record for record in instruction_index["records"]}
@@ -344,13 +347,16 @@ def expected_files() -> dict[Path, str]:
     ] + [
         (aliens_evidence["faction"], record)
         for record in aliens_evidence["sources"]
+    ] + [
+        (martians_evidence["faction"], record)
+        for record in martians_evidence["sources"]
     ]
     evidence = {
         (faction, record["setId"]): record
         for faction, record in evidence_records
     }
     if len(evidence) != len(evidence_records):
-        raise ValueError("duplicate source IDs across source-evidence audits")
+        raise ValueError("duplicate faction/source keys across source-evidence audits")
     assets = {asset["stableId"]: asset for asset in manifest["assets"]}
     result = {
         INDEX: index_text(manifest["assets"]),
@@ -365,6 +371,9 @@ def expected_files() -> dict[Path, str]:
         ),
         ALIENS_AUDIT: source_audit_text(
             aliens_evidence["sources"], sources, "Aliens", "Aliens"
+        ),
+        MARTIANS_AUDIT: source_audit_text(
+            martians_evidence["sources"], sources, "Martians", "Martians"
         ),
     }
     for asset in manifest["assets"]:
@@ -389,14 +398,14 @@ def main() -> None:
             for failure in failures:
                 print(f"- {failure}", file=sys.stderr)
             raise SystemExit(1)
-        print("M8.5 SUPER SCOUT PACKETS: PASS packets=66 matrices=6 state=HOLD")
+        print("M8.5 SUPER SCOUT PACKETS: PASS packets=66 matrices=7 state=HOLD")
         return
 
     OUTPUT.mkdir(parents=True, exist_ok=True)
     for path, content in expected.items():
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(content, encoding="utf-8")
-    print("M8.5 SUPER SCOUT PACKETS: GENERATED packets=66 matrices=6 state=HOLD")
+    print("M8.5 SUPER SCOUT PACKETS: GENERATED packets=66 matrices=7 state=HOLD")
 
 
 if __name__ == "__main__":

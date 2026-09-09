@@ -23,7 +23,7 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: Exact source-view coverage, construction-critical page ranges and every adaptation boundary must be recorded before this packet can leave HOLD.
+Open question: Source-view coverage and construction-critical page ranges are recorded for the audited sources below. Asset-specific adaptation boundaries still must be resolved before this packet can leave HOLD.
 
 ## B. Reference board
 
@@ -31,27 +31,39 @@ Open question: Exact source-view coverage, construction-critical page ranges and
 |---|---|---|---|---|
 | 7303 — Jet Scooter | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7303)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130291.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7303-1) | PRIMARY_VERIFIED | Martian light attack scooter |
 
-`PENDING` — this source family has not yet received its visual PDF/page-range audit.
+### Source audit [Martians:7303]
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 1: Complete seven-step Jet Scooter build with long blue central deck, parallel side tubes, clustered orange nose nozzles and open rider.
+  - PDF pages 2: Promotional reverse page; no additional construction evidence.
+- View/mechanism coverage: front=PARTIAL p1 cover and final step; rear=PARTIAL p1 steps 3-7; leftRight=PARTIAL p1 construction sequence; top=VERIFIED p1 steps 1-7; threeQuarter=VERIFIED p1 cover and final step; undersideInterior=PARTIAL p1 bare plate sequence; mechanism=MISSING static micro-build only
+- Verified findings:
+  - Jet Scooter is a long narrow open sled rather than a short body between two oversized engine pods.
+  - Parallel exposed side tubes reinforce the central spine, while a cluster of small orange nozzles makes the nose strongly directional.
+  - The rider and rounded blue rear equipment remain above the otherwise thin deck.
+- Remaining evidence gaps:
+  - The source does not establish hover height, propulsion cycle or a canonical attack emitter; those remain production motion and socket decisions.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 
 ## C. Recognition contract
 
-**Silhouette thesis:** A narrow open scooter with oversized side propulsion pods and a forward attack posture.
+**Silhouette thesis:** A long narrow open sled whose paired side tubes and clustered orange nose nozzles frame the rider spine.
 
 Non-removable identity anchors:
 
-- two large side jet pods
-- narrow central rider spine
-- forward tool or emitter prongs
+- long thin central deck
+- paired exposed side tubes
+- clustered orange forward nozzles
 
 - Near / standard / far silhouette thumbnails: `PENDING 24/44/72-CELL BOARD`.
 - Palette and material hierarchy: Blue and sand-red with translucent-neon-green accents, open platforms and visibly articulated mechanics.
 - Forbidden genericization: Do not make the asset Alien-lite, a smooth energy object or a joke contraption. Pumps, tubes, legs, clamps and platforms carry identity.
 - Nearest-confusion baseline:
 
-- `unit.martians.double_hover` — Both are tiny open Martian ground-hover craft. Mitigations: Double Hover has two flat circular hover discs; Jet Scooter has two tall side jet pods. / Double Hover centers on an upright sensor; Jet Scooter points tool/emitter prongs forward. / Double Hover reads wide and balanced; Jet Scooter reads narrow and aggressively directional.
-- `unit.aliens.razor_skimmer` — Both are small fast hover harassment units. Mitigations: Razor Skimmer is low, enclosed and blade-like; Jet Scooter is upright and open around its rider. / Razor centers on a lime core between black prongs; Jet Scooter centers on a narrow blue/sand-red rider spine. / Razor's propulsion is visually hidden in the hull; Jet Scooter exposes two oversized side pods.
+- `unit.martians.double_hover` — Both are tiny open Martian ground-hover craft. Mitigations: Double Hover has two long forward runners and unlike rear modules; Jet Scooter has one long spine with paired side tubes. / Double Hover ends in blunt parallel forks; Jet Scooter points a cluster of orange nozzles forward. / Double Hover reads short and laterally offset; Jet Scooter reads narrow and aggressively directional.
+- `unit.aliens.razor_skimmer` — Both are small fast hover harassment units. Mitigations: Razor Skimmer is a broad black blade plan; Jet Scooter is a long thin open sled around its rider. / Razor centers on a lime core between two large prongs; Jet Scooter points a cluster of small orange nozzles ahead of paired side tubes. / Razor's propulsion is visually integrated into the hull; Jet Scooter leaves its tubes, deck and rear equipment exposed.
 
 ## D. Construction contract
 

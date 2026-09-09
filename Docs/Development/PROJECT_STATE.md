@@ -60,10 +60,11 @@ existing Look Lab and HUD Lab directions at a wide 84-cell opening plus exact
 24/44/72-cell checks. The game director accepted M7 Final with outline on as the
 production visual direction. The T081 production asset pipeline is complete,
 fully verified and game-director accepted. T082 Super Scout reference
-intelligence is now in progress: its exact 66-asset identity/source baseline is
-complete, and the Rock Raiders, Astronaut and Alien source audits now cover 33
-faction-bound source records; Martian evidence, construction/mechanism analysis
-and the cross-roster review corpus remain open. A post-T069
+intelligence is now in progress: its exact 66-asset identity/source baseline and
+all four faction source-page audits are complete. Forty-one faction-bound
+sources are visually audited across 48 official books, while four older sources
+remain explicit archival gaps; construction/mechanism analysis and the
+cross-roster review corpus remain open. A post-T069
 quality revision makes outline/halo independent from
 the style post-pass, hardens profile paste, bounds VFX event memory and avoids
 unrelated live material rebuilds. HUD and health visuals remain excluded from the world Look Lab. The
@@ -638,6 +639,12 @@ live; the current schema-9 copy/paste retains the complete experiment.
   Infiltrator's three-leg conversion and Mothership's open circular carrier
   construction, and leaves the Strike siege endpoints and composite Razor
   construction as explicit adaptations rather than guesses.
+- The Martian pass visually audited all eight available mapped sources across
+  eight official books and retained 1195/3750 as explicit archival gaps. It
+  corrects the small-craft and Worker Robot profiles, verifies distinct modular
+  transformations for the 7313/7314 mech families, isolates the primary 7316
+  Martian Searcher from supporting builds, and establishes 7317 as a physical
+  multi-station Tube/sled network rather than decorative piping.
 - All 66 A–I packet files, the identity/source matrix and a 31-pair confusion
   register regenerate deterministically. Every confusion pair has three visible
   differentiation requirements, and every packet is visibly `HOLD`, so this
@@ -647,10 +654,10 @@ live; the current schema-9 copy/paste retains the complete experiment.
   authoritative runtime roster, checks counts, IDs, classifications, source
   coverage and the three-to-seven silhouette-anchor contract, and rejects stale
   generated packets.
-- T082 remains `BLOCKING_NOW` for T083/T085. The source-page audit is still
-  required for Martians, followed by semantic construction and
-  motion analysis, texture/material needs, complete cross-roster
-  silhouettes/confusion audits and explicit game-director review. Current detail is tracked in
+- T082 remains `BLOCKING_NOW` for T083/T085. All faction source-page audits are
+  complete; semantic construction and motion analysis, texture/material needs,
+  complete cross-roster silhouettes/confusion audits and explicit game-director
+  review remain required. Current detail is tracked in
   `Docs/Development/M85_SUPER_SCOUT_PROGRESS.md`.
 
 Routine Godot verification is now non-intrusive on macOS: every gameplay smoke
@@ -674,9 +681,9 @@ actually required.
 
 ## Verification state
 
-The T082 Alien official-instruction audit passed `./tools/verify.sh --full`
+The T082 Martian official-instruction audit passed `./tools/verify.sh --full`
 with zero blocking failures at
-`Artifacts/Verification/20260909T201756Z-full-summary.txt`: all 317 tests, the
+`Artifacts/Verification/20260909T205203Z-full-summary.txt`: all 317 tests, the
 complete 66-asset roster and faction-bound source-evidence validator,
 deterministic packet generation, the 24-mover gate, compiled content, retained
 M6 networking, T081 round trip, retained M7 presentation gates and a fresh
@@ -684,18 +691,20 @@ macOS export passed. The T082 stage reports 66 HOLD packets, 39 source records,
 35 direct official-PDF sources, four explicit archival gaps, seven visually
 audited Rock Raiders sources with two manual gaps, all 18 Astronaut sources
 audited across 23 official PDF books, all eight Alien sources audited across ten
-official PDF books, and 31 initial confusion pairs with no roster drift or
-cross-faction evidence leakage. It does not claim T082 acceptance. Stress60
-remained the expected 2/60 `BLOCKING_LATER` M9 diagnostic.
+official PDF books, all eight available Martian sources audited across eight
+official PDF books with two Martian archival gaps, and 31 initial confusion
+pairs with no roster drift or cross-faction evidence leakage. It does not claim
+T082 acceptance. Stress60 remained the expected 2/60 `BLOCKING_LATER` M9
+diagnostic.
 
 An earlier sandbox-constrained attempt was discarded after its local test
 sockets and Godot user paths were denied. That invalid attempt also produced a
 macOS Godot diagnostic report around 18:21 local time. The accepted full run
 started at 18:24 local time, used the required headless crash-safe path and
 produced no later Godot diagnostic report; the repository-wide report count was
-26 after it completed. The Astronaut and Alien audit full runs also preserved
-the count at 26; the newest reports remain the discarded attempt's 18:21
-local-time files.
+26 after it completed. The Astronaut, Alien and Martian audit full runs also
+preserved the count at 26; the newest reports remain the discarded attempt's
+18:21 local-time files.
 This distinction is retained so the discarded launch is not misreported as a
 clean automation result.
 
@@ -923,9 +932,10 @@ blocking only when M9 must prove its stable-large-battle exit.
 
 ## Next approved action
 
-1. Continue T082 by repeating the completed faction official-PDF audit for
-   Martians; then complete semantic construction, motion
-   and texture-needs contracts plus the cross-roster silhouette/confusion audit.
+1. Continue T082 with semantic construction, motion and texture-needs contracts
+   plus the cross-roster silhouette/confusion audit. Retain the four explicit
+   archival gaps unless new primary evidence appears, and escalate any gap that
+   blocks a safe production decision.
    Do not treat the generated `HOLD` packets, T070 data definitions or the
    non-roster T081 pipeline fixture as production models.
 2. Execute the remaining Phase 09C M8.5 T082–T092 work before final M9 Skirmish

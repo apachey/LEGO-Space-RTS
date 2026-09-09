@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "task": "T082",
+  "faction": "Martians",
+  "retrievalDate": "2026-09-09",
+  "status": "SOURCE_AUDIT_COMPLETE_WITH_TWO_GAPS",
+  "coverageScale": ["VERIFIED", "PARTIAL", "MISSING", "NOT_APPLICABLE"],
+  "sources": [
+    {
+      "setId": "1195",
+      "evidenceState": "ARCHIVAL_GAP",
+      "instructionPdfs": [],
+      "constructionRanges": [],
+      "viewCoverage": {"front":"PARTIAL archival product imagery","rear":"MISSING","leftRight":"PARTIAL archival product imagery","top":"MISSING","threeQuarter":"PARTIAL archival product imagery","undersideInterior":"MISSING","mechanism":"MISSING"},
+      "findings": ["Canon and archival inventory establish Alien Encounter as one Aero Skiff source family, but they do not establish a verified construction load path or lift mechanism."],
+      "openGaps": ["Locate an official instruction scan or clearly labeled archival construction views before fixing the 1195 contribution to the composite Aero Skiff."]
+    },
+    {
+      "setId": "3750",
+      "evidenceState": "ARCHIVAL_GAP",
+      "instructionPdfs": [],
+      "constructionRanges": [],
+      "viewCoverage": {"front":"PARTIAL archival product imagery","rear":"MISSING","leftRight":"PARTIAL archival product imagery","top":"PARTIAL archival product imagery","threeQuarter":"PARTIAL archival product imagery","undersideInterior":"MISSING","mechanism":"MISSING"},
+      "findings": ["Canon and archival inventory establish Life on Mars accessories as a hypersled and Aero Tube connection source, but not a modelable coupler interior or verified sled route."],
+      "openGaps": ["Locate official or clearly labeled archival construction evidence before the 3750 coupler and hypersled details become production geometry."]
+    },
+    {
+      "setId": "7300",
+      "evidenceState": "OFFICIAL_PDF_VISUALLY_AUDITED",
+      "instructionPdfs": [{"url":"https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4156313.pdf","pageCount":2,"sha256":"0186c956e8d273dc85f11cb2c5b6745e68716a71c73445ee9077ab2806eda22f"}],
+      "constructionRanges": [{"pages":"1","evidence":"Complete seven-step Double Hover build with twin long forward runners, open rider deck and two unlike rear equipment masses."},{"pages":"2","evidence":"Promotional reverse page; no additional construction evidence."}],
+      "viewCoverage": {"front":"PARTIAL p1 cover and final step","rear":"PARTIAL p1 steps 5-7","leftRight":"PARTIAL p1 construction sequence","top":"VERIFIED p1 steps 1-7","threeQuarter":"VERIFIED p1 cover and final step","undersideInterior":"PARTIAL p1 bare plate sequence","mechanism":"MISSING static micro-build only"},
+      "findings": ["Double Hover is a narrow open sled on two long parallel forward runners, not a platform balanced above two circular hover discs.","The exposed rider sits between asymmetrical rear modules: one large round dish-like hover/engine mass and one compact block.","The blunt parallel fork silhouette is the clearest distinction from the longer, nozzle-led Jet Scooter."],
+      "openGaps": ["Clean rear and underside views are still required before fixing lift, propulsion and landing contacts."]
+    },
+    {
+      "setId": "7302",
+      "evidenceState": "OFFICIAL_PDF_VISUALLY_AUDITED",
+      "instructionPdfs": [{"url":"https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130290.pdf","pageCount":2,"sha256":"ea9e3524d02a9a9ca8b5ffaff30faa21ebef895856c1774dd62e024320db6d62"}],
+      "constructionRanges": [{"pages":"1-2","evidence":"Complete seven-step Worker Robot build from shallow central wedge to four separate radial outrigger/foot modules and exposed operator."}],
+      "viewCoverage": {"front":"PARTIAL p1 cover and p2 final","rear":"PARTIAL p1-2 sequence","leftRight":"PARTIAL p1-2 sequence","top":"VERIFIED p1-2","threeQuarter":"VERIFIED p1 cover and p2 final","undersideInterior":"PARTIAL p1 bare base","mechanism":"MISSING no gait or tool action is demonstrated"},
+      "findings": ["The source machine is an extremely low open four-spoke platform, not a conventional two-legged humanoid robot.","Four separately built rectangular end pads radiate from a shallow central wedge around the seated Martian operator.","The source contains no dominant head or dedicated manipulator, so the game's worker tool must remain a legible adaptation instead of replacing the four-spoke identity."],
+      "openGaps": ["A production construction map must define which source limb becomes the canonical worker/builder manipulator and how the remaining contacts move without inventing an unsupported humanoid gait."]
+    },
+    {
+      "setId": "7303",
+      "evidenceState": "OFFICIAL_PDF_VISUALLY_AUDITED",
+      "instructionPdfs": [{"url":"https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130291.pdf","pageCount":2,"sha256":"ce4513051b024ac9e26ab203959b20ac00b1fe182c357a5083e5ceb29a486700"}],
+      "constructionRanges": [{"pages":"1","evidence":"Complete seven-step Jet Scooter build with long blue central deck, parallel side tubes, clustered orange nose nozzles and open rider."},{"pages":"2","evidence":"Promotional reverse page; no additional construction evidence."}],
+      "viewCoverage": {"front":"PARTIAL p1 cover and final step","rear":"PARTIAL p1 steps 3-7","leftRight":"PARTIAL p1 construction sequence","top":"VERIFIED p1 steps 1-7","threeQuarter":"VERIFIED p1 cover and final step","undersideInterior":"PARTIAL p1 bare plate sequence","mechanism":"MISSING static micro-build only"},
+      "findings": ["Jet Scooter is a long narrow open sled rather than a short body between two oversized engine pods.","Parallel exposed side tubes reinforce the central spine, while a cluster of small orange nozzles makes the nose strongly directional.","The rider and rounded blue rear equipment remain above the otherwise thin deck."],
+      "openGaps": ["The source does not establish hover height, propulsion cycle or a canonical attack emitter; those remain production motion and socket decisions."]
+    },
+    {
+      "setId": "7311",
+      "evidenceState": "OFFICIAL_PDF_VISUALLY_AUDITED",
+      "instructionPdfs": [{"url":"https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130806.pdf","pageCount":15,"sha256":"77c545b88d3d2a66b488038b3ffba81a489219eeae2ba65c457adec5a9339c32"}],
+      "constructionRanges": [{"pages":"2-11","evidence":"Complete low green/gray Red Planet Cruiser with broad offset platforms, open central rider, forward wheel/equipment and long side probes."},{"pages":"12-15","evidence":"Separate two-stage docking pedestal is built and the complete cruiser mounts above it."}],
+      "viewCoverage": {"front":"PARTIAL p8-15","rear":"PARTIAL p8-15","leftRight":"VERIFIED p2-15 construction sequence","top":"VERIFIED p2-15","threeQuarter":"VERIFIED p1 and p8-15","undersideInterior":"VERIFIED p2-13 staged cruiser and pedestal","mechanism":"VERIFIED p12-15 detachable docking pedestal; movement and weapon cycles remain missing"},
+      "findings": ["Red Planet Cruiser is a low broad and deliberately irregular craft whose flat outer platforms outweigh its small central body.","The Martian operator, green central equipment and long side-mounted probe/weapon rods remain exposed instead of enclosed by a conventional cockpit.","A separately built tall pedestal supports the entire cruiser from below, proving a docking/deployment relationship that must be handled deliberately in the game adaptation."],
+      "openGaps": ["The source does not define whether the pedestal travels, deploys or stays at a facility; the frontline production unit needs an explicit supported state choice without inventing gameplay."]
+    },
+    {
+      "setId": "7313",
+      "evidenceState": "OFFICIAL_PDF_VISUALLY_AUDITED",
+      "instructionPdfs": [{"url":"https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4160158.pdf","pageCount":36,"sha256":"e5a0f3b97a57b747049314bd220a804419e5fa14bce75fa6eaa15fdbdd347b6b"}],
+      "constructionRanges": [{"pages":"2-14","evidence":"Low blue/gray wedge craft with open operator area, hoses and two long removable emitter/tool arms."},{"pages":"15-23","evidence":"Separate broad twin-foot biped lower body; the complete upper craft docks onto it to form the tall Protector."},{"pages":"24-28","evidence":"Two independent low ground support/emitter devices are built and shown beside the complete Protector; they are not part of its body."},{"pages":"29-33","evidence":"Final source photography and explicit hand-separated reconfiguration from biped into a low craft with the leg and central body modules relocated."}],
+      "viewCoverage": {"front":"VERIFIED p28-33","rear":"PARTIAL p28-33","leftRight":"VERIFIED p2-33","top":"VERIFIED p2-33","threeQuarter":"VERIFIED p1 and p28-33","undersideInterior":"VERIFIED p2-28 staged modules","mechanism":"VERIFIED p30-33 biped-to-craft reconfiguration; continuous motion and planted control action remain missing"},
+      "findings": ["The source Protector is a modular tall biped assembled from a low wedge craft, a broad two-foot lower body and two long detachable emitter arms.","Its upper craft keeps a broad triangular nose and visible hoses; the separate leg blocks and side arms remain readable even after final assembly.","The alternate low craft is made by hand-separating and relocating major modules, so the source proves both silhouettes but not a continuous in-game planted transformation."],
+      "openGaps": ["The canonical Martian palette, anti-heavy control action and credible continuous mobile-to-planted transition require an explicit adaptation contract; the source's blue/gray paint and hand-separated rebuild do not decide them."]
+    },
+    {
+      "setId": "7314",
+      "evidenceState": "OFFICIAL_PDF_VISUALLY_AUDITED",
+      "instructionPdfs": [{"url":"https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130809.pdf","pageCount":36,"sha256":"abf11efeeee9e07076b6592c1aa726e786491eb99efc1bd55330f35991540ea9"}],
+      "constructionRanges": [{"pages":"2-16","evidence":"Broad red/gray upper craft with open central cockpit, long asymmetric drill/lance and claw arms, wrist hoses and rear equipment."},{"pages":"17-25","evidence":"Separate two-leg lower chassis with broad feet; upper craft docks above it to form the Recon-Mech."},{"pages":"26-28","evidence":"Tall rear pressure tank attaches behind the cockpit and between the upper modules."},{"pages":"29-33","evidence":"Final photography and explicit hand-separated flight conversion: lower body detaches, rotates and reconnects behind the upper craft."}],
+      "viewCoverage": {"front":"VERIFIED p25-33","rear":"VERIFIED p25-33","leftRight":"VERIFIED p2-33","top":"VERIFIED p2-33","threeQuarter":"VERIFIED p1 and p25-33","undersideInterior":"VERIFIED p2-28 staged modules","mechanism":"VERIFIED p30-33 mech-to-flight reconfiguration and articulated arms; gait, detection and anti-air cycle remain missing"},
+      "findings": ["Recon-Mech is a tall biped carrying a broad aircraft-like upper body, not a narrow sensor tower with weaponry as a minor detail.","Its two arms are strongly asymmetric: one ends in a long drill/lance and the other in a large black claw, with visible hoses feeding both sides.","The tall rear pressure tank and detachable lower body remain recognizable when the legs are reattached behind the cockpit for the flight configuration."],
+      "openGaps": ["The source proves modular flight conversion but not a continuous transform, walking gait, scanner grammar or anti-air tracking path; those canonical functions need a source-respecting production contract."]
+    },
+    {
+      "setId": "7316",
+      "evidenceState": "OFFICIAL_PDF_VISUALLY_AUDITED",
+      "instructionPdfs": [{"url":"https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130811.pdf","pageCount":60,"sha256":"52a46d869464d848dddd6012b6357b5ec7bed85003b7e87cb73b50412fb2c07d"}],
+      "constructionRanges": [{"pages":"2-16","evidence":"Forward tan/orange Excavation Searcher module with long drill, paired claws and separately built planted tool/leg assemblies."},{"pages":"17-30","evidence":"Large irregular rear body, multiple spaced legs and tall articulated crane assemble, then dock to the forward module."},{"pages":"31-33","evidence":"Independent low material sled/container builds and docks beneath the complete Searcher."},{"pages":"34-57","evidence":"Separate dark excavation support rig with arches, hoses and human operator; useful opposition/industrial evidence, not direct Martian Searcher geometry."},{"pages":"58-59","evidence":"Cross-set alternate humanoid rebuild; not a demonstrated primary Searcher transformation."}],
+      "viewCoverage": {"front":"VERIFIED p1 and p27-33","rear":"PARTIAL p27-33","leftRight":"VERIFIED p2-33","top":"VERIFIED p2-33","threeQuarter":"VERIFIED p1 and p27-33","undersideInterior":"VERIFIED p2-33 staged modules and sled","mechanism":"PARTIAL p28-33 crane/claws/module docking; no primary gait, siege cycle or full material route"},
+      "findings": ["The Martian Excavation Searcher is a huge low many-legged machine assembled from visibly separate forward tool, rear processing/crane and underslung sled modules.","A long drill, paired orange claws and tall crane create three different working directions around the irregular body instead of one humanoid front.","The low sled demonstrates material handling beneath the chassis, while the separate dark rig and final humanoid rebuild must not be mistaken for the primary Martian silhouette."],
+      "openGaps": ["The manual does not provide a walking gait, supported siege contact sequence, complete crane-to-processor route or game's manipulation attack; these require later semantic and motion contracts."]
+    },
+    {
+      "setId": "7317",
+      "evidenceState": "OFFICIAL_PDF_VISUALLY_AUDITED",
+      "instructionPdfs": [{"url":"https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4160159.pdf","pageCount":72,"sha256":"a1335dde068f98300c23d84e7a0a3d0e7a84d23146125dfcd5a30d03d8a30e17"}],
+      "constructionRanges": [{"pages":"3-8","evidence":"Compact two-leg utility walker with open rider, long probe and claw; supporting station equipment evidence."},{"pages":"9-40","evidence":"Large open Aero Tube Hangar with elevated frame, central ribbed Tube/ramp, ring coupler, handling crane, work platforms and rock load."},{"pages":"41-48","evidence":"Two related raised four-leg control/service stations with antenna or dish equipment."},{"pages":"49-62","evidence":"Separate red and blue Tube docking arches with visible supports, end stops and open approach paths."},{"pages":"63-67","evidence":"Three hypersleds, route signs, coupler/branch pieces and the stacked three-chamber pressure unit."},{"pages":"68-70","evidence":"Complete physical network assembly and play routing: long transparent/flexible Tubes connect hangar, endpoints, junction and pressure unit."},{"pages":"71","evidence":"Cross-set lineup; no additional 7317 construction evidence."}],
+      "viewCoverage": {"front":"VERIFIED p35-40 and p68-70","rear":"PARTIAL p28-40 and p68-70","leftRight":"VERIFIED p9-70","top":"VERIFIED p9-70","threeQuarter":"VERIFIED p1, p35-40 and p68-70","undersideInterior":"VERIFIED p9-67 staged open structures and Tube modules","mechanism":"VERIFIED p68-70 physical Tube/sled network; PARTIAL crane, routing and pressure action"},
+      "findings": ["The source is a decentralized transport system rather than one sealed headquarters: open hangar, endpoint stations, colored docking arches, sleds, couplers, pressure unit and long Tubes remain separate readable modules.","The main Hangar is an elevated irregular frame organized around a real central Tube/ramp and circular coupler, with platforms and a crane left visibly open.","The pressure source is a distinct stacked three-chamber black unit, and the final pages make the Tubes continuous physical travel paths between stations rather than decorative cables."],
+      "openGaps": ["The game's Hangar, Settlement Station, Pressure Generator, Routing Laboratory and Link must divide the shared source modules explicitly; the manual does not define canonical building boundaries, throughput rules or automatic route selection."]
+    }
+  ]
+}
