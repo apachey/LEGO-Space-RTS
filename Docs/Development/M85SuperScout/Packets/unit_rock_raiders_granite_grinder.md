@@ -2,7 +2,7 @@
 
 **Stable ID:** `unit.rock_raiders.granite_grinder`
 
-**Packet state:** `IDENTITY_BASELINE — HOLD FOR MULTI-ANGLE EVIDENCE`
+**Packet state:** `FACTION_CONTRACT_DRAFT — HOLD FOR SILHOUETTE/ROSTER/DIRECTOR REVIEW`
 
 **This is not a design approval or production-model authorization.**
 
@@ -14,7 +14,7 @@
 - Authoritative footprint: `Medium`
 - Source classification: `OFFICIAL-ADAPTED`
 - Approved source sets/motifs: 4940
-- Current confidence: verified canonical identity; construction confidence remains bounded by the source verification shown below.
+- Current confidence: verified canonical identity and faction-internal construction/motion/material draft; source-bounded decisions remain explicit below.
 
 Authoritative references:
 
@@ -23,7 +23,7 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: Source-view coverage and construction-critical page ranges are recorded for the audited sources below. Asset-specific adaptation boundaries still must be resolved before this packet can leave HOLD.
+Open question: The faction-internal construction, motion, socket and material draft is recorded below. Its unresolved decisions and the complete-roster silhouette/director gates must be cleared before this packet can leave HOLD.
 
 ## B. Reference board
 
@@ -68,45 +68,72 @@ Non-removable identity anchors:
 
 ## D. Construction contract
 
-- Hero geometry must preserve every recognition anchor above.
-- Support geometry must explain how hero masses connect, carry load and articulate.
-- Micro geometry may enrich close view but may not become required for recognition.
-- Exact chassis/load path, repeated modules, mounting logic, scale ratios and approved adaptations: `HOLD — SOURCE DECOMPOSITION REQUIRED`.
+- Contract state: `CANON_DERIVED_ADAPTATION`. This is an internally checked draft, not game-director approval.
+- Semantic part map:
+  - Mirrored ski-foot leg modules — create the planted walker base and carry the upper bridge — SOURCE_VERIFIED.
+  - Long drill/cockpit body — delivers the anti-heavy tool through a readable longitudinal load path — SOURCE_VERIFIED.
+  - Rear wheel/equipment counter-mass — balances the long forward drill and prevents a generic humanoid read — SOURCE_VERIFIED.
+  - Brace behavior — transfers sustained drill force into both planted feet — CANON_DERIVED_ADAPTATION.
+- Structural load path: Two mirrored foot/leg modules carry a transverse bridge; the removable drill body spans that bridge so tool thrust is visibly shared by both feet.
+- Repeated modules / connection grammar: Mirrored planted legs, shared bridge, longitudinal drill/cockpit module and rear counterweight.
+- Source-faithful versus adapted boundary: The source proves construction but not gait; the production walk must preserve the broad two-foot contact and avoid agile humanoid motion.
 
 ## E. Material and texture contract
 
-- Silhouette, openings, major panel breaks, moving joints and LEGO connection logic remain geometry.
-- Surface channels may carry controlled color masks, roughness, emission, decals and non-structural relief only.
-- Required reusable and bespoke texture sets, resolution, tiling, texel density, LOD fallback and import settings: `HOLD — TEXTURE-NEEDS AUDIT REQUIRED`.
-- Baked lighting, fake silhouette structure and illegible micro-noise are prohibited.
+- Geometry must carry:
+  - paired ski feet
+  - bridge gap
+  - long drill boom
+  - rear counterweight
+- Accepted master-material roles: `Body`, `Accent`, `Tool`, `Rubber`, `Glass`, `Signal`, `Lamp`, `Neutral`.
+- Reusable texture requirements:
+  - `rr_heavy_frame_surface` — Subtle large-scale molded/painted industrial surface variation on broad frames without drawing false seams. Channels: Tangent-space normal plus linear roughness; body color remains a material parameter. Resolution: 2048x2048; texel density: 256 px/m at Close; tiling: Shared model-space field, 4 m repeat; no per-part phase reset.; LOD fallback: Half strength at Combat; disabled at Strategic in favor of master-material roughness. Provenance/state: Project-authored procedural source; human review required before production use. `SPECIFIED_NOT_AUTHORED`.
+  - `rr_tool_wear` — Directional scuff and cutting wear on drill, scoop, cutter and clamp contact surfaces only. Channels: Linear wear mask, tangent-space normal and roughness variation; no baked highlights. Resolution: 1024x1024; texel density: 512 px/m on localized tool UVs; tiling: Non-tiling trim/atlas regions aligned to the mechanical wear direction.; LOD fallback: Normal and fine mask removed at Strategic; Tool material and silhouette remain. Provenance/state: Project-authored procedural source informed by the official tool surfaces; human review required. `SPECIFIED_NOT_AUTHORED`.
+  - `rr_hazard_and_service_decals` — Hazard stripes, service arrows, bay limits, lift points and restrained equipment labels. Channels: sRGB RGBA decal atlas; alpha is coverage, never shadowing. Resolution: 1024x1024; texel density: Minimum 256 px/m on readable Close/Combat labels; tiling: Atlas placement only; stripes may repeat along authored straight runs without stretching.; LOD fallback: Keep only broad hazard bands at Combat; remove text and micro-labels at Strategic. Provenance/state: Project-authored vector master exported to raster; human review required. `SPECIFIED_NOT_AUTHORED`.
+  - `rr_console_and_signal_atlas` — Geological readouts, service-state lamps and operational signal faces. Channels: sRGB color/alpha plus separate linear emission mask; transparent polymer is not automatically emissive. Resolution: 512x512; texel density: Screen-space authored atlas; one texel density is not applicable.; tiling: Non-tiling atlas with stable panel IDs.; LOD fallback: Replace screens with one bounded Signal or Lamp color block at Strategic. Provenance/state: Project-authored vector/procedural source; human review required. `SPECIFIED_NOT_AUTHORED`.
+- Bespoke texture requirements: none required in this faction draft.
+- Baked lighting, fake silhouette structure, per-part texture phase resets and illegible micro-noise remain prohibited.
 
 ## F. State and animation contract
 
-- Applicable idle, locomotion/operation, work, attack, production, repair, transform/deploy, disabled, damage and destruction beats: `HOLD — MECHANISM EVIDENCE REQUIRED`.
-- Every moving assembly must receive a named pivot, parent, axis/path, rest/extreme poses and authoritative presentation driver.
-- Animation may communicate gameplay state but never decide gameplay timing.
+- Locomotion / operation: Heavy biped walker with short deliberate alternating steps and minimal upper-body sway.
+- Planted/contact rule: At least one ski-foot stays planted during travel; both feet lock before the 2.5-second sustained drill ramp.
+
+| Pivot | Parent | Axis/path and rest-to-extreme motion | Presentation driver |
+|---|---|---|---|
+| `Pivot_LegLeft` | Asset_GraniteGrinder | constrained fore/aft step arc with small vertical clearance | locomotion phase |
+| `Pivot_LegRight` | Asset_GraniteGrinder | opposed constrained step arc with small vertical clearance | locomotion phase |
+| `Pivot_DrillFeed` | Asset_GraniteGrinder | short forward pitch/feed toward target; travel breaks state | authoritative contact and ramp progress |
+| `Pivot_DrillSpin` | Pivot_DrillFeed | roll around drill axis | authoritative attack/excavation progress |
+
+- Required beats:
+  - Idle alternates faint hydraulic pressure between planted feet.
+  - Move uses deliberate foot lift, plant, weight transfer and settle.
+  - Attack plants both feet, feeds drill, ramps vibration, then releases on movement or target loss.
+  - Damage introduces bridge/leg lag; wreck collapses across the two foot modules with drill still recognizable.
+- Animation consumes authoritative state and never decides gameplay timing or results.
 
 ## G. Presentation hookups
 
-- `Socket_Selection` and `Socket_Health` are mandatory.
-- Tool, weapon, projectile, VFX, lamp and audio sockets follow only from verified function.
-- Cargo, passenger, service, production-exit or network sockets apply where the canonical role requires them.
-- Identification Tile, icon silhouette, portrait camera and reduced-presentation fallback: `HOLD — PRESENTATION AUDIT REQUIRED`.
+- Required presentation sockets: `Socket_Selection`, `Socket_Health`, `Socket_FootLeft`, `Socket_FootRight`, `Socket_DrillContact`, `Socket_DrillDust`, `Socket_DrillSparks`, `Socket_AudioDrill`.
+- These sockets are presentation references only and never own targeting, collision, movement, transport or production truth.
+- Identification Tile placement, icon silhouette, portrait camera and reduced-presentation fallback remain `HOLD — PRESENTATION AUDIT REQUIRED`.
 
 ## H. Insight and decision ledger
 
-- Verified fact: stable identity, faction, role, footprint, source classification and mapped source family.
-- Canon-derived interpretation: silhouette thesis and identity anchors above.
-- Unknown: exact multi-angle construction, articulation, material ratios, texture inventory and confusion mitigation until the remaining audits are complete.
-- Consequential contradictions: none recorded at identity-baseline stage.
+- Verified fact: stable identity, source evidence and the source-supported assemblies cited above.
+- Canon-derived interpretation: gameplay function, adaptation boundary, contact behavior and presentation drivers are explicitly labeled in the contract.
+- Remaining source/design decisions:
+  - Exact gait amplitudes require greybox camera review because the manual contains no walking sequence; the contact rule is locked, the style is not.
+- Cross-roster silhouette and game-director review remain open; this contract does not authorize production modeling.
 
 ## I. Build handoff
 
-1. Verify and cite the complete multi-angle source board.
-2. Decompose primary masses and negative spaces from orthogonal evidence.
-3. Resolve LEGO load path, connection grammar and moving mechanism.
-4. Complete material/texture and state/animation contracts.
-5. Produce 24/44/72-cell black silhouettes and run the cross-roster confusion audit.
+1. Retain the audited evidence and every explicit adaptation boundary.
+2. Greybox hero masses, openings and structural load path from the semantic map.
+3. Validate named pivots, contacts and sockets in the real gameplay camera.
+4. Author only the specified reusable textures after human material review.
+5. Produce 24/44/72-cell black silhouettes and run the full cross-roster confusion audit.
 
 **State:** `HOLD`
 

@@ -4,22 +4,22 @@ This generated index covers every canonical buildable unit and infrastructure en
 
 | Asset | Stable ID | Faction | Kind | Footprint | State |
 |---|---|---|---|---|---|
-| [Rock Raider Crew](Packets/unit_rock_raiders_crew.md) | `unit.rock_raiders.crew` | RockRaiders | Unit | Tiny | IDENTITY_BASELINE / HOLD |
-| [Hover Scout](Packets/unit_rock_raiders_hover_scout.md) | `unit.rock_raiders.hover_scout` | RockRaiders | Unit | Small | IDENTITY_BASELINE / HOLD |
-| [Drill Craft](Packets/unit_rock_raiders_drill_craft.md) | `unit.rock_raiders.drill_craft` | RockRaiders | Unit | Small | IDENTITY_BASELINE / HOLD |
-| [Rapid Rider](Packets/unit_rock_raiders_rapid_rider.md) | `unit.rock_raiders.rapid_rider` | RockRaiders | Unit | Small | IDENTITY_BASELINE / HOLD |
-| [Loader Dozer](Packets/unit_rock_raiders_loader_dozer.md) | `unit.rock_raiders.loader_dozer` | RockRaiders | Unit | Medium | IDENTITY_BASELINE / HOLD |
-| [Granite Grinder](Packets/unit_rock_raiders_granite_grinder.md) | `unit.rock_raiders.granite_grinder` | RockRaiders | Unit | Medium | IDENTITY_BASELINE / HOLD |
-| [Chrome Crusher](Packets/unit_rock_raiders_chrome_crusher.md) | `unit.rock_raiders.chrome_crusher` | RockRaiders | Unit | Large | IDENTITY_BASELINE / HOLD |
-| [Tunnel Transport](Packets/unit_rock_raiders_tunnel_transport.md) | `unit.rock_raiders.tunnel_transport` | RockRaiders | Unit | Huge | IDENTITY_BASELINE / HOLD |
-| [Rock Raiders HQ](Packets/building_rock_raiders_hq.md) | `building.rock_raiders.hq` | RockRaiders | Infrastructure | Huge | IDENTITY_BASELINE / HOLD |
-| [Ore Processing Plant](Packets/building_rock_raiders_ore_processing_plant.md) | `building.rock_raiders.ore_processing_plant` | RockRaiders | Infrastructure | Large | IDENTITY_BASELINE / HOLD |
-| [Power Station](Packets/building_rock_raiders_power_station.md) | `building.rock_raiders.power_station` | RockRaiders | Infrastructure | Large | IDENTITY_BASELINE / HOLD |
-| [Vehicle Service Bay](Packets/building_rock_raiders_vehicle_service_bay.md) | `building.rock_raiders.vehicle_service_bay` | RockRaiders | Infrastructure | Huge | IDENTITY_BASELINE / HOLD |
-| [Engineering Workshop](Packets/building_rock_raiders_engineering_workshop.md) | `building.rock_raiders.engineering_workshop` | RockRaiders | Infrastructure | Huge | IDENTITY_BASELINE / HOLD |
-| [Crystal Vault](Packets/building_rock_raiders_crystal_vault.md) | `building.rock_raiders.crystal_vault` | RockRaiders | Infrastructure | Large | IDENTITY_BASELINE / HOLD |
-| [Crusher Barrier](Packets/building_rock_raiders_crusher_barrier.md) | `building.rock_raiders.crusher_barrier` | RockRaiders | Infrastructure | Small | IDENTITY_BASELINE / HOLD |
-| [Cutter Mast](Packets/building_rock_raiders_cutter_mast.md) | `building.rock_raiders.cutter_mast` | RockRaiders | Infrastructure | Small | IDENTITY_BASELINE / HOLD |
+| [Rock Raider Crew](Packets/unit_rock_raiders_crew.md) | `unit.rock_raiders.crew` | RockRaiders | Unit | Tiny | FACTION_CONTRACT_DRAFT / HOLD |
+| [Hover Scout](Packets/unit_rock_raiders_hover_scout.md) | `unit.rock_raiders.hover_scout` | RockRaiders | Unit | Small | FACTION_CONTRACT_DRAFT / HOLD |
+| [Drill Craft](Packets/unit_rock_raiders_drill_craft.md) | `unit.rock_raiders.drill_craft` | RockRaiders | Unit | Small | FACTION_CONTRACT_DRAFT / HOLD |
+| [Rapid Rider](Packets/unit_rock_raiders_rapid_rider.md) | `unit.rock_raiders.rapid_rider` | RockRaiders | Unit | Small | FACTION_CONTRACT_DRAFT / HOLD |
+| [Loader Dozer](Packets/unit_rock_raiders_loader_dozer.md) | `unit.rock_raiders.loader_dozer` | RockRaiders | Unit | Medium | FACTION_CONTRACT_DRAFT / HOLD |
+| [Granite Grinder](Packets/unit_rock_raiders_granite_grinder.md) | `unit.rock_raiders.granite_grinder` | RockRaiders | Unit | Medium | FACTION_CONTRACT_DRAFT / HOLD |
+| [Chrome Crusher](Packets/unit_rock_raiders_chrome_crusher.md) | `unit.rock_raiders.chrome_crusher` | RockRaiders | Unit | Large | FACTION_CONTRACT_DRAFT / HOLD |
+| [Tunnel Transport](Packets/unit_rock_raiders_tunnel_transport.md) | `unit.rock_raiders.tunnel_transport` | RockRaiders | Unit | Huge | FACTION_CONTRACT_DRAFT / HOLD |
+| [Rock Raiders HQ](Packets/building_rock_raiders_hq.md) | `building.rock_raiders.hq` | RockRaiders | Infrastructure | Huge | FACTION_CONTRACT_DRAFT / HOLD |
+| [Ore Processing Plant](Packets/building_rock_raiders_ore_processing_plant.md) | `building.rock_raiders.ore_processing_plant` | RockRaiders | Infrastructure | Large | FACTION_CONTRACT_DRAFT / HOLD |
+| [Power Station](Packets/building_rock_raiders_power_station.md) | `building.rock_raiders.power_station` | RockRaiders | Infrastructure | Large | FACTION_CONTRACT_DRAFT / HOLD |
+| [Vehicle Service Bay](Packets/building_rock_raiders_vehicle_service_bay.md) | `building.rock_raiders.vehicle_service_bay` | RockRaiders | Infrastructure | Huge | FACTION_CONTRACT_DRAFT / HOLD |
+| [Engineering Workshop](Packets/building_rock_raiders_engineering_workshop.md) | `building.rock_raiders.engineering_workshop` | RockRaiders | Infrastructure | Huge | FACTION_CONTRACT_DRAFT / HOLD |
+| [Crystal Vault](Packets/building_rock_raiders_crystal_vault.md) | `building.rock_raiders.crystal_vault` | RockRaiders | Infrastructure | Large | FACTION_CONTRACT_DRAFT / HOLD |
+| [Crusher Barrier](Packets/building_rock_raiders_crusher_barrier.md) | `building.rock_raiders.crusher_barrier` | RockRaiders | Infrastructure | Small | FACTION_CONTRACT_DRAFT / HOLD |
+| [Cutter Mast](Packets/building_rock_raiders_cutter_mast.md) | `building.rock_raiders.cutter_mast` | RockRaiders | Infrastructure | Small | FACTION_CONTRACT_DRAFT / HOLD |
 | [Expedition Crew](Packets/unit_astronauts_expedition_crew.md) | `unit.astronauts.expedition_crew` | Astronauts | Unit | Tiny | IDENTITY_BASELINE / HOLD |
 | [Rover](Packets/unit_astronauts_rover.md) | `unit.astronauts.rover` | Astronauts | Unit | Small | IDENTITY_BASELINE / HOLD |
 | [T3-Trike](Packets/unit_astronauts_t3_trike.md) | `unit.astronauts.t3_trike` | Astronauts | Unit | Medium | IDENTITY_BASELINE / HOLD |

@@ -1,0 +1,612 @@
+{
+  "schemaVersion": 1,
+  "task": "T082",
+  "faction": "RockRaiders",
+  "status": "FACTION_CONTRACT_DRAFT_COMPLETE_HOLD_FOR_ROSTER_REVIEW",
+  "authority": [
+    "Docs/Canon/02_FACTION_BIBLE.md#part-iii-rock-raiders",
+    "Docs/Canon/03_UNIT_BUILDING_ROSTER.md#part-ii-rock-raiders-roster",
+    "Docs/Canon/04_ECONOMY_TECHNOLOGY_PROGRESSION.md",
+    "Docs/Canon/06_COMBAT_DAMAGE_BALANCE.md",
+    "Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md#5-super-scout-reference-intelligence-gate",
+    "Docs/Development/M85_ASSET_PIPELINE.md",
+    "Content/Presentation/SuperScout/rock_raiders_source_evidence.json"
+  ],
+  "confidenceStates": ["SOURCE_VERIFIED", "CANON_DERIVED_ADAPTATION", "SOURCE_BOUNDED_PROVISIONAL"],
+  "sharedMaterialPlan": {
+    "masterMaterialRoles": ["Body", "Accent", "Tool", "Rubber", "Glass", "Signal", "Lamp", "Neutral"],
+    "reusableTextureFamilies": [
+      {
+        "id": "rr_heavy_frame_surface",
+        "purpose": "Subtle large-scale molded/painted industrial surface variation on broad frames without drawing false seams.",
+        "channels": "Tangent-space normal plus linear roughness; body color remains a material parameter.",
+        "resolution": "2048x2048",
+        "texelDensity": "256 px/m at Close",
+        "tiling": "Shared model-space field, 4 m repeat; no per-part phase reset.",
+        "lodFallback": "Half strength at Combat; disabled at Strategic in favor of master-material roughness.",
+        "provenance": "Project-authored procedural source; human review required before production use.",
+        "state": "SPECIFIED_NOT_AUTHORED"
+      },
+      {
+        "id": "rr_tool_wear",
+        "purpose": "Directional scuff and cutting wear on drill, scoop, cutter and clamp contact surfaces only.",
+        "channels": "Linear wear mask, tangent-space normal and roughness variation; no baked highlights.",
+        "resolution": "1024x1024",
+        "texelDensity": "512 px/m on localized tool UVs",
+        "tiling": "Non-tiling trim/atlas regions aligned to the mechanical wear direction.",
+        "lodFallback": "Normal and fine mask removed at Strategic; Tool material and silhouette remain.",
+        "provenance": "Project-authored procedural source informed by the official tool surfaces; human review required.",
+        "state": "SPECIFIED_NOT_AUTHORED"
+      },
+      {
+        "id": "rr_hazard_and_service_decals",
+        "purpose": "Hazard stripes, service arrows, bay limits, lift points and restrained equipment labels.",
+        "channels": "sRGB RGBA decal atlas; alpha is coverage, never shadowing.",
+        "resolution": "1024x1024",
+        "texelDensity": "Minimum 256 px/m on readable Close/Combat labels",
+        "tiling": "Atlas placement only; stripes may repeat along authored straight runs without stretching.",
+        "lodFallback": "Keep only broad hazard bands at Combat; remove text and micro-labels at Strategic.",
+        "provenance": "Project-authored vector master exported to raster; human review required.",
+        "state": "SPECIFIED_NOT_AUTHORED"
+      },
+      {
+        "id": "rr_console_and_signal_atlas",
+        "purpose": "Geological readouts, service-state lamps and operational signal faces.",
+        "channels": "sRGB color/alpha plus separate linear emission mask; transparent polymer is not automatically emissive.",
+        "resolution": "512x512",
+        "texelDensity": "Screen-space authored atlas; one texel density is not applicable.",
+        "tiling": "Non-tiling atlas with stable panel IDs.",
+        "lodFallback": "Replace screens with one bounded Signal or Lamp color block at Strategic.",
+        "provenance": "Project-authored vector/procedural source; human review required.",
+        "state": "SPECIFIED_NOT_AUTHORED"
+      }
+    ],
+    "globalRules": [
+      "Clean molded polymer uses the accepted M7 master material and does not require photographic albedo.",
+      "Dark turquoise and industrial gray carry the largest areas; hazard yellow and translucent neon green remain functional accents.",
+      "Chrome/silver is restricted to drills, cutters, clamp faces and other high-wear tools.",
+      "Baked lighting, fake silhouette structure, per-brick texture phase resets and illegible micro-noise are prohibited."
+    ]
+  },
+  "assets": [
+    {
+      "stableId": "unit.rock_raiders.crew",
+      "contractState": "SOURCE_BOUNDED_PROVISIONAL",
+      "semanticParts": [
+        "Helmet/visor silhouette — identifies protected industrial personnel rather than infantry — CANON_DERIVED_ADAPTATION.",
+        "Portable tool — performs extraction, construction, repair and weak contact defense — CANON_DERIVED_ADAPTATION.",
+        "Backpack/work lamp — carries compact service equipment and keeps the worker readable beside machinery — SOURCE_BOUNDED_PROVISIONAL."
+      ],
+      "construction": {
+        "loadPath": "Minifigure-derived torso and hips carry the helmet, backpack and two-handed tool; the tool must remain visibly portable rather than body-mounted.",
+        "modules": "Shared crew body plus swappable mining/repair tool and restrained backpack/lamp variants.",
+        "adaptationBoundary": "Canon fixes the worker/tool read, but the missing 4930 rear evidence prevents locking one exact backpack and lamp arrangement."
+      },
+      "motion": {
+        "locomotion": "Foot; quick, compact steps with the carried tool kept clear of the legs.",
+        "plantedContact": "Both feet alternate contact during travel; work and repair settle into a stable two-foot stance.",
+        "pivots": [
+          {"name":"Pivot_Tool","parent":"Asset_RockRaiderCrew","motion":"shoulder/hand arc from carried rest to contact pose","driver":"work, repair, construction or contact-attack presentation progress"},
+          {"name":"Pivot_Lamp","parent":"Asset_RockRaiderCrew","motion":"fixed mount; optional narrow aim follow only if the chosen source variant supports it","driver":"visibility and operating state"}
+        ],
+        "beats": ["Idle weight shift and equipment check.", "Foot locomotion with restrained tool counter-swing.", "Extract/build/repair uses anticipation, visible tool contact, repeated work cycle and settle.", "Damage interrupts the work cycle; destruction separates tool/backpack before the body collapse."]
+      },
+      "materials": {
+        "geometryMustCarry": ["helmet and visor profile", "portable tool head", "backpack/lamp mass"],
+        "materialRoles": ["Body", "Accent", "Tool", "Glass", "Lamp", "Neutral"],
+        "textureFamilies": ["rr_tool_wear", "rr_hazard_and_service_decals", "rr_console_and_signal_atlas"],
+        "bespokeTextures": []
+      },
+      "sockets": ["Socket_Selection", "Socket_Health", "Socket_ToolContact", "Socket_WorkVfx", "Socket_Lamp", "Socket_AudioTool"],
+      "unresolved": ["Choose the production backpack/lamp variant after a verified 4930 rear/equipment source is found or the game director explicitly approves a bounded adaptation."]
+    },
+    {
+      "stableId": "unit.rock_raiders.hover_scout",
+      "contractState": "CANON_DERIVED_ADAPTATION",
+      "semanticParts": [
+        "Flat hover deck — carries the operator close to the ground and communicates fragile speed — SOURCE_VERIFIED.",
+        "Forward scanner/tool mass — performs geological and concealed-object survey plus the minor pulse origin — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.",
+        "Rear equipment rack — balances the scanner and keeps the source's open utility construction visible — SOURCE_VERIFIED."
+      ],
+      "construction": {
+        "loadPath": "One shallow plate-built spine carries the central seat, forward scanner and rear rack; no enclosed hull may hide their separate mounts.",
+        "modules": "Forward scanner bracket, open operator deck and rear utility rack remain three independently readable modules.",
+        "adaptationBoundary": "Ground-layer hover height and scanner sweep are presentation adaptations; underside lift hardware remains unresolved."
+      },
+      "motion": {
+        "locomotion": "Ground hover; fast lateral-stable travel with small terrain-following heave, never true-air banking.",
+        "plantedContact": "No wheel contact; a bounded hover datum stays close to the ground and respects ground topology.",
+        "pivots": [
+          {"name":"Pivot_ScannerYaw","parent":"Asset_HoverScout","motion":"short left/right survey arc around vertical axis; forward rest","driver":"passive detector presentation and survey pulse"},
+          {"name":"Pivot_ToolPitch","parent":"Pivot_ScannerYaw","motion":"small downward/upward pitch around visible hinge","driver":"survey pulse or idle equipment check"}
+        ],
+        "beats": ["Idle hover settles around one low datum.", "Move uses restrained heave and rack vibration, not aircraft roll.", "Survey pulse begins with scanner aim, then signal/VFX pulse and return.", "Damage destabilizes hover briefly; wreck rests as a low broken sled."]
+      },
+      "materials": {
+        "geometryMustCarry": ["thin deck edge", "scanner head", "open operator gap and rear rack"],
+        "materialRoles": ["Body", "Accent", "Tool", "Rubber", "Glass", "Signal", "Lamp", "Neutral"],
+        "textureFamilies": ["rr_tool_wear", "rr_hazard_and_service_decals", "rr_console_and_signal_atlas"],
+        "bespokeTextures": []
+      },
+      "sockets": ["Socket_Selection", "Socket_Health", "Socket_SurveyPulse", "Socket_ScannerVfx", "Socket_Lamp", "Socket_AudioHover"],
+      "unresolved": ["Underside lift geometry remains provisional until opposite-side/underside evidence is available; it may not grow into a second hero mass."]
+    },
+    {
+      "stableId": "unit.rock_raiders.drill_craft",
+      "contractState": "SOURCE_BOUNDED_PROVISIONAL",
+      "semanticParts": [
+        "Oversized forward drill — excavates authored terrain and performs short-range structure contact — CANON_DERIVED_ADAPTATION.",
+        "Compact operator cage — keeps the machine visibly a small work craft — CANON_DERIVED_ADAPTATION.",
+        "Short wheel chassis — brings the drill into contact without turning the asset into a miniature tank — SOURCE_BOUNDED_PROVISIONAL."
+      ],
+      "construction": {
+        "loadPath": "A short central frame must carry drill thrust back into the wheel chassis and brace the open operator cage behind the tool.",
+        "modules": "Drill/tool boom, compact cage and wheel/contact chassis; exact repeated wheel modules are not yet source-proven.",
+        "adaptationBoundary": "The missing 1277 construction source blocks final wheel count, axle positions, drill support and rear counterweight geometry."
+      },
+      "motion": {
+        "locomotion": "Wheeled ground movement with quick steering; final wheel rotation pivots wait for source confirmation.",
+        "plantedContact": "All authored wheels remain grounded; excavation settles the chassis before drill contact.",
+        "pivots": [
+          {"name":"Pivot_DrillFeed","parent":"Asset_DrillCraft","motion":"short source-bounded forward feed along drill axis","driver":"authoritative excavation/contact state; exact travel pending source"},
+          {"name":"Pivot_DrillSpin","parent":"Pivot_DrillFeed","motion":"continuous roll around tool axis; stopped rest","driver":"excavation or contact-attack presentation progress"}
+        ],
+        "beats": ["Idle tool check without continuous drill spin.", "Move keeps drill still and visibly clear of the ground.", "Excavate settles, feeds and spins the drill, then retracts after the authoritative result.", "Damage stops tool motion; wreck preserves the drill/cage relationship."]
+      },
+      "materials": {
+        "geometryMustCarry": ["drill helix and tip", "operator cage opening", "wheel/contact silhouette"],
+        "materialRoles": ["Body", "Accent", "Tool", "Rubber", "Glass", "Lamp", "Neutral"],
+        "textureFamilies": ["rr_tool_wear", "rr_hazard_and_service_decals"],
+        "bespokeTextures": []
+      },
+      "sockets": ["Socket_Selection", "Socket_Health", "Socket_DrillContact", "Socket_DrillDust", "Socket_DrillSparks", "Socket_AudioDrill"],
+      "unresolved": ["Do not lock the production chassis or wheel pivots until official/archival 1277 construction evidence is found or the game director approves a clearly labeled reconstruction."]
+    },
+    {
+      "stableId": "unit.rock_raiders.rapid_rider",
+      "contractState": "CANON_DERIVED_ADAPTATION",
+      "semanticParts": [
+        "Twin hulls — provide the amphibious/skimmer base and unmistakable catamaran silhouette — SOURCE_VERIFIED.",
+        "Open central deck — holds up to four Crew and keeps loading visually exposed — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.",
+        "Rear propulsion pair — explains water/rough-surface motion without becoming weaponry — SOURCE_VERIFIED."
+      ],
+      "construction": {
+        "loadPath": "Two long hulls connect through narrow transverse beams under the central deck; passenger load stays between them and below the raised bridge/canopy.",
+        "modules": "Mirrored hull pair, central operator/passenger deck, rear propulsion pair and restrained cargo mounts.",
+        "adaptationBoundary": "Limited land skimming is canonical; no wheels, enclosed cabin or combat hardpoint may be invented."
+      },
+      "motion": {
+        "locomotion": "Amphibious surface skimmer; fast ground-layer travel with small twin-hull heave and no true-air climb.",
+        "plantedContact": "Both hull undersides share one low surface datum; loading/unloading requires a stationary settled pose.",
+        "pivots": [
+          {"name":"Pivot_PropulsionLeft","parent":"Asset_RapidRider","motion":"roll around visible drive axis; stopped rest","driver":"movement speed"},
+          {"name":"Pivot_PropulsionRight","parent":"Asset_RapidRider","motion":"roll around visible drive axis; stopped rest","driver":"movement speed"}
+        ],
+        "beats": ["Idle hulls settle independently by a very small amount.", "Move adds restrained propulsion spin and water/dust response.", "Load/unload settles first, then Crew enter or leave through the open center one at a time.", "Damage unbalances one hull; wreck keeps the twin-hull negative space readable."]
+      },
+      "materials": {
+        "geometryMustCarry": ["separate long hulls", "open passenger gap", "rear propulsion pair"],
+        "materialRoles": ["Body", "Accent", "Tool", "Rubber", "Glass", "Signal", "Lamp", "Neutral"],
+        "textureFamilies": ["rr_heavy_frame_surface", "rr_tool_wear", "rr_hazard_and_service_decals", "rr_console_and_signal_atlas"],
+        "bespokeTextures": []
+      },
+      "sockets": ["Socket_Selection", "Socket_Health", "Socket_PassengerEntry", "Socket_PassengerExit", "Socket_Cargo", "Socket_PropulsionVfxLeft", "Socket_PropulsionVfxRight", "Socket_AudioDrive"],
+      "unresolved": ["Final rear propulsor clearance waits for a clean orthogonal rear reference; this does not alter the twin-hull contract."]
+    },
+    {
+      "stableId": "unit.rock_raiders.loader_dozer",
+      "contractState": "SOURCE_VERIFIED",
+      "semanticParts": [
+        "Full-width bucket — loads rubble and performs the baseline scoop ram — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.",
+        "Side lift/tilt linkages — visibly transfer hydraulic force into the bucket — SOURCE_VERIFIED.",
+        "Four-wheel chassis and rear cage — support the forward tool while keeping the operator behind it — SOURCE_VERIFIED.",
+        "Cutter package — replaces the bucket contact face with a rotating anti-light industrial saw after research — CANON_DERIVED_ADAPTATION."
+      ],
+      "construction": {
+        "loadPath": "The broad plate chassis carries four outer wheels; paired side linkages route bucket load to the rear-weighted frame and operator cage.",
+        "modules": "Four repeated wheel modules, mirrored lift arms, bucket/ram module and optional researched cutter module.",
+        "adaptationBoundary": "Combat is expressed through source-derived bucket/cutter contact only; no ranged gun or armored tank hull."
+      },
+      "motion": {
+        "locomotion": "Heavy wheeled ground movement with visible suspension compression and wide steering response.",
+        "plantedContact": "All four wheels remain grounded; ram/cut actions settle the chassis before contact.",
+        "pivots": [
+          {"name":"Pivot_WheelFrontLeft","parent":"Asset_LoaderDozer","motion":"roll on axle; steering yaw where linkage permits","driver":"movement distance and steering"},
+          {"name":"Pivot_WheelFrontRight","parent":"Asset_LoaderDozer","motion":"roll on axle; steering yaw where linkage permits","driver":"movement distance and steering"},
+          {"name":"Pivot_WheelRearLeft","parent":"Asset_LoaderDozer","motion":"roll on axle","driver":"movement distance"},
+          {"name":"Pivot_WheelRearRight","parent":"Asset_LoaderDozer","motion":"roll on axle","driver":"movement distance"},
+          {"name":"Pivot_BucketLift","parent":"Asset_LoaderDozer","motion":"source-verified upward/downward linkage arc","driver":"clear, load, ram and idle presentation"},
+          {"name":"Pivot_BucketTilt","parent":"Pivot_BucketLift","motion":"source-verified scoop/dump pitch arc","driver":"load, dump or ram presentation"},
+          {"name":"Pivot_CutterSpin","parent":"Asset_LoaderDozer","motion":"roll around cutter axis; absent in baseline loadout","driver":"Cutter Package contact state"}
+        ],
+        "beats": ["Idle hydraulics settle with bucket near ground.", "Move shows wheel roll and heavy suspension response.", "Scoop/ram lowers, settles, drives contact, then recoils and recovers.", "Cutter loadout spins only during committed contact.", "Damage sags one linkage; destruction drops the bucket before frame breakup."]
+      },
+      "materials": {
+        "geometryMustCarry": ["bucket volume and cutting edge", "side hydraulic linkage", "four wheel silhouettes", "optional cutter disc"],
+        "materialRoles": ["Body", "Accent", "Tool", "Rubber", "Glass", "Signal", "Lamp", "Neutral"],
+        "textureFamilies": ["rr_heavy_frame_surface", "rr_tool_wear", "rr_hazard_and_service_decals", "rr_console_and_signal_atlas"],
+        "bespokeTextures": []
+      },
+      "sockets": ["Socket_Selection", "Socket_Health", "Socket_BucketContact", "Socket_CutterContact", "Socket_ImpactVfx", "Socket_Lamp", "Socket_AudioHydraulic", "Socket_AudioTool"],
+      "unresolved": ["Exact hose routing on the unseen side remains a non-silhouette production detail."
+      ]
+    },
+    {
+      "stableId": "unit.rock_raiders.granite_grinder",
+      "contractState": "CANON_DERIVED_ADAPTATION",
+      "semanticParts": [
+        "Mirrored ski-foot leg modules — create the planted walker base and carry the upper bridge — SOURCE_VERIFIED.",
+        "Long drill/cockpit body — delivers the anti-heavy tool through a readable longitudinal load path — SOURCE_VERIFIED.",
+        "Rear wheel/equipment counter-mass — balances the long forward drill and prevents a generic humanoid read — SOURCE_VERIFIED.",
+        "Brace behavior — transfers sustained drill force into both planted feet — CANON_DERIVED_ADAPTATION."
+      ],
+      "construction": {
+        "loadPath": "Two mirrored foot/leg modules carry a transverse bridge; the removable drill body spans that bridge so tool thrust is visibly shared by both feet.",
+        "modules": "Mirrored planted legs, shared bridge, longitudinal drill/cockpit module and rear counterweight.",
+        "adaptationBoundary": "The source proves construction but not gait; the production walk must preserve the broad two-foot contact and avoid agile humanoid motion."
+      },
+      "motion": {
+        "locomotion": "Heavy biped walker with short deliberate alternating steps and minimal upper-body sway.",
+        "plantedContact": "At least one ski-foot stays planted during travel; both feet lock before the 2.5-second sustained drill ramp.",
+        "pivots": [
+          {"name":"Pivot_LegLeft","parent":"Asset_GraniteGrinder","motion":"constrained fore/aft step arc with small vertical clearance","driver":"locomotion phase"},
+          {"name":"Pivot_LegRight","parent":"Asset_GraniteGrinder","motion":"opposed constrained step arc with small vertical clearance","driver":"locomotion phase"},
+          {"name":"Pivot_DrillFeed","parent":"Asset_GraniteGrinder","motion":"short forward pitch/feed toward target; travel breaks state","driver":"authoritative contact and ramp progress"},
+          {"name":"Pivot_DrillSpin","parent":"Pivot_DrillFeed","motion":"roll around drill axis","driver":"authoritative attack/excavation progress"}
+        ],
+        "beats": ["Idle alternates faint hydraulic pressure between planted feet.", "Move uses deliberate foot lift, plant, weight transfer and settle.", "Attack plants both feet, feeds drill, ramps vibration, then releases on movement or target loss.", "Damage introduces bridge/leg lag; wreck collapses across the two foot modules with drill still recognizable."]
+      },
+      "materials": {
+        "geometryMustCarry": ["paired ski feet", "bridge gap", "long drill boom", "rear counterweight"],
+        "materialRoles": ["Body", "Accent", "Tool", "Rubber", "Glass", "Signal", "Lamp", "Neutral"],
+        "textureFamilies": ["rr_heavy_frame_surface", "rr_tool_wear", "rr_hazard_and_service_decals", "rr_console_and_signal_atlas"],
+        "bespokeTextures": []
+      },
+      "sockets": ["Socket_Selection", "Socket_Health", "Socket_FootLeft", "Socket_FootRight", "Socket_DrillContact", "Socket_DrillDust", "Socket_DrillSparks", "Socket_AudioDrill"],
+      "unresolved": ["Exact gait amplitudes require greybox camera review because the manual contains no walking sequence; the contact rule is locked, the style is not."
+      ]
+    },
+    {
+      "stableId": "unit.rock_raiders.chrome_crusher",
+      "contractState": "SOURCE_VERIFIED",
+      "semanticParts": [
+        "Long forked chassis — carries motor, cargo and operator systems as an open industrial frame — SOURCE_VERIFIED.",
+        "Four huge wheel modules — provide the dominant mass and massive slow-ground read — SOURCE_VERIFIED.",
+        "Powered chrome drill — performs direct structure/heavy breaching and projects beyond the cage — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.",
+        "Raised tool/light beam and cargo deck — form the secondary skyline and service identity — SOURCE_VERIFIED."
+      ],
+      "construction": {
+        "loadPath": "The long forked frame ties four separate wheel modules to a central motor block; drill power and thrust remain visibly routed through the nose support into that frame.",
+        "modules": "Four repeated wheels, central motor/cage, front drill drive, overhead work-light/tool beam and open cargo deck.",
+        "adaptationBoundary": "Armor may reinforce the source frame but may not seal it into a tank hull or hide the motor/cargo/tool relationships."
+      },
+      "motion": {
+        "locomotion": "Massive wheeled movement with slow steering, visible suspension lag and no skid-like agility.",
+        "plantedContact": "All four wheels stay grounded; breaching settles the chassis and compresses front suspension before tool contact.",
+        "pivots": [
+          {"name":"Pivot_WheelFrontLeft","parent":"Asset_ChromeCrusher","motion":"roll on axle with bounded steering yaw","driver":"movement distance and steering"},
+          {"name":"Pivot_WheelFrontRight","parent":"Asset_ChromeCrusher","motion":"roll on axle with bounded steering yaw","driver":"movement distance and steering"},
+          {"name":"Pivot_WheelRearLeft","parent":"Asset_ChromeCrusher","motion":"roll on axle","driver":"movement distance"},
+          {"name":"Pivot_WheelRearRight","parent":"Asset_ChromeCrusher","motion":"roll on axle","driver":"movement distance"},
+          {"name":"Pivot_DrillSpin","parent":"Asset_ChromeCrusher","motion":"source-aligned roll around drill axis","driver":"authoritative attack/excavation progress"},
+          {"name":"Pivot_ToolBeam","parent":"Asset_ChromeCrusher","motion":"bounded pitch at visible hinge from travel rest to work aim","driver":"idle work-light or demolition presentation"}
+        ],
+        "beats": ["Idle engine and hoses show low-frequency mechanical vibration.", "Move emphasizes wheel rotation, mass lag and frame flex.", "Breach settles, spins the drill, compresses the nose and recovers after the authoritative hit.", "Damage disables a secondary light/tool module first; destruction releases drill/beam/wheel modules before frame collapse."]
+      },
+      "materials": {
+        "geometryMustCarry": ["open forked chassis", "four huge wheels", "drill motor path and helix", "raised beam and cargo deck"],
+        "materialRoles": ["Body", "Accent", "Tool", "Rubber", "Glass", "Signal", "Lamp", "Neutral"],
+        "textureFamilies": ["rr_heavy_frame_surface", "rr_tool_wear", "rr_hazard_and_service_decals", "rr_console_and_signal_atlas"],
+        "bespokeTextures": []
+      },
+      "sockets": ["Socket_Selection", "Socket_Health", "Socket_DrillContact", "Socket_DrillDust", "Socket_DrillSparks", "Socket_LampWork", "Socket_Cargo", "Socket_AudioEngine", "Socket_AudioDrill"],
+      "unresolved": ["Final rear cable and cargo clearance needs an orthogonal rear reference but does not block the verified chassis/load-path contract."]
+    },
+    {
+      "stableId": "unit.rock_raiders.tunnel_transport",
+      "contractState": "CANON_DERIVED_ADAPTATION",
+      "semanticParts": [
+        "Wide load-bearing crossbeam — carries the entire aircraft between separated rotor pods — SOURCE_VERIFIED.",
+        "Twin oversized rotor pods — provide true-air lift and the primary silhouette — SOURCE_VERIFIED.",
+        "Open central cargo cradle — visibly accepts Raider machines up to one Chrome Crusher — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.",
+        "Cockpit/control module — remains subordinate to the lifting frame and payload — SOURCE_VERIFIED."
+      ],
+      "construction": {
+        "loadPath": "Two rotor pods feed lift into a wide skeletal crossbeam; the cargo cradle hangs from the beam center so the carried machine remains visibly independent.",
+        "modules": "Mirrored rotor pods, structural bridge, control module, cargo suspension/cradle and optional carried load.",
+        "adaptationBoundary": "The game may enlarge clearances for canonical capacity but may not add an enclosed fuselage or normal weapon system."
+      },
+      "motion": {
+        "locomotion": "True air; heavy acceleration/turning with broad bank limits and visible payload inertia.",
+        "plantedContact": "Normally airborne; loading requires a stationary low hover or source-respecting landing pose with the cradle aligned to the target.",
+        "pivots": [
+          {"name":"Pivot_RotorLeft","parent":"Asset_TunnelTransport","motion":"continuous roll around source rotor axis; pitch remains fixed unless later evidence supports it","driver":"airborne/movement state"},
+          {"name":"Pivot_RotorRight","parent":"Asset_TunnelTransport","motion":"continuous roll around source rotor axis","driver":"airborne/movement state"},
+          {"name":"Pivot_CargoHoist","parent":"Asset_TunnelTransport","motion":"bounded vertical cable/cradle path from travel lock to loading height","driver":"authoritative load/unload progress"},
+          {"name":"Pivot_CargoSway","parent":"Pivot_CargoHoist","motion":"small damped fore/aft and lateral swing; zero at load completion","driver":"presentation-only response to acceleration"}
+        ],
+        "beats": ["Idle hover maintains slow heavy rotor response.", "Move banks the bridge slightly while payload sway lags and settles.", "Load/unload enters stationary hover, lowers/aligns cradle, locks cargo, then raises it.", "Damage introduces asymmetric pod vibration; destruction separates a rotor pod and releases cargo according to authoritative transport outcome."]
+      },
+      "materials": {
+        "geometryMustCarry": ["wide crossbeam", "two rotor discs/pods", "open cargo cradle", "visible carried load separation"],
+        "materialRoles": ["Body", "Accent", "Tool", "Rubber", "Glass", "Signal", "Lamp", "Neutral"],
+        "textureFamilies": ["rr_heavy_frame_surface", "rr_tool_wear", "rr_hazard_and_service_decals", "rr_console_and_signal_atlas"],
+        "bespokeTextures": []
+      },
+      "sockets": ["Socket_Selection", "Socket_Health", "Socket_CargoAttach", "Socket_LoadApproach", "Socket_RotorVfxLeft", "Socket_RotorVfxRight", "Socket_Lamp", "Socket_AudioRotorLeft", "Socket_AudioRotorRight"],
+      "unresolved": ["Rotor pitch behavior is not source-proven; keep it fixed unless greybox readability demonstrates a need for a reviewed presentation adaptation."
+      ]
+    },
+    {
+      "stableId": "building.rock_raiders.hq",
+      "contractState": "CANON_DERIVED_ADAPTATION",
+      "semanticParts": [
+        "Command/light tower — marks the Worksite node and command presence — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.",
+        "Articulated crane — handles delivered sections, resources and construction support — SOURCE_VERIFIED.",
+        "Open vehicle gantry — preserves circulation, Crew access and service scale — SOURCE_VERIFIED.",
+        "Material receiving/processing path — communicates emergency receiving without becoming the full Ore Plant — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.",
+        "Irregular worksite base — connects modules as an operating mine rather than a sealed building — SOURCE_VERIFIED."
+      ],
+      "construction": {
+        "loadPath": "An uneven reinforced base anchors separate tower, crane, gantry and receiving modules; service lanes remain open between them.",
+        "modules": "Tower, crane, vehicle gantry, emergency receiving line, Crew production/service point and worksite connection edge.",
+        "adaptationBoundary": "4990 proves the shared grammar but not exact game-building boundaries; the HQ may combine only the functions canon assigns to it."
+      },
+      "motion": {
+        "locomotion": "Static infrastructure.",
+        "plantedContact": "Multiple base pads and rock-compatible foundations visibly carry each independent module.",
+        "pivots": [
+          {"name":"Pivot_CraneYaw","parent":"Asset_RockRaidersHQ","motion":"bounded yaw around vertical bearing","driver":"construction, receiving or idle work cycle"},
+          {"name":"Pivot_CraneBoom","parent":"Pivot_CraneYaw","motion":"source-derived lift/lower arc","driver":"construction or receiving progress"},
+          {"name":"Pivot_CraneHook","parent":"Pivot_CraneBoom","motion":"vertical hoist path","driver":"construction or receiving progress"},
+          {"name":"Pivot_ServiceGate","parent":"Asset_RockRaidersHQ","motion":"heavy lift/slide only if retained by final design","driver":"Crew production or service state"}
+        ],
+        "beats": ["Operational idle rotates work tasks among crane, lamps and receiving line.", "Crew production opens a clear personnel route.", "Construction grows foundation, tower/frame, machinery and service modules in that order.", "Brownout retains command presence but slows/stops powered auxiliaries.", "Damage disables exposed modules before the main frame collapses into readable sections."]
+      },
+      "materials": {
+        "geometryMustCarry": ["open lanes and module spacing", "tower skyline", "crane linkage", "gantry and receiving machinery"],
+        "materialRoles": ["Body", "Accent", "Tool", "Rubber", "Glass", "Signal", "Lamp", "Neutral"],
+        "textureFamilies": ["rr_heavy_frame_surface", "rr_tool_wear", "rr_hazard_and_service_decals", "rr_console_and_signal_atlas"],
+        "bespokeTextures": []
+      },
+      "sockets": ["Socket_Selection", "Socket_Health", "Socket_Interaction", "Socket_CrewExit", "Socket_OreReceive", "Socket_Service", "Socket_Worksite", "Socket_LampTower", "Socket_AudioCrane"],
+      "unresolved": ["Exact module footprint allocation requires the later building proportion board; no new HQ function is implied."
+      ]
+    },
+    {
+      "stableId": "building.rock_raiders.ore_processing_plant",
+      "contractState": "CANON_DERIVED_ADAPTATION",
+      "semanticParts": [
+        "Wide intake hopper — receives visible hauled Ore — CANON_DERIVED_ADAPTATION.",
+        "Stepped crusher stack — converts the delivered rock through visible industrial stages — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.",
+        "Outbound sorting conveyor — completes the readable extract-haul-process path — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.",
+        "Loader access lane — keeps vehicle circulation physically credible — SOURCE_VERIFIED."
+      ],
+      "construction": {
+        "loadPath": "A low reinforced base carries hopper and crusher masses beside an unobstructed delivery lane; conveyor supports transfer processed material away from the crusher.",
+        "modules": "Receiving hopper, crusher/vibration stack, sorting conveyor, inert output bins and service access.",
+        "adaptationBoundary": "4990 supplies processing grammar, while the exact Ore Plant separation is canonical game adaptation; it may not inherit HQ command or production functions."
+      },
+      "motion": {
+        "locomotion": "Static infrastructure.",
+        "plantedContact": "Broad low machinery pads transmit vibration into the foundation; the delivery lane stays clear.",
+        "pivots": [
+          {"name":"Pivot_IntakeGate","parent":"Asset_OreProcessingPlant","motion":"short open/close hinge or slide","driver":"authoritative delivery/processing state"},
+          {"name":"Pivot_Crusher","parent":"Asset_OreProcessingPlant","motion":"repeating compression/rotation cycle within guarded housing","driver":"processing state"},
+          {"name":"Pivot_Conveyor","parent":"Asset_OreProcessingPlant","motion":"continuous belt/roller cycle","driver":"processing state"}
+        ],
+        "beats": ["Idle leaves machinery stopped with service lamps active.", "Ore delivery opens intake, advances crusher cycle, then routes output along conveyor.", "Brownout stops active machinery without erasing stored material.", "Damage jams one stage; destruction spills inert Ore debris and collapses the stepped machinery."]
+      },
+      "materials": {
+        "geometryMustCarry": ["hopper mouth", "crusher stages", "conveyor thickness and supports", "vehicle lane"],
+        "materialRoles": ["Body", "Accent", "Tool", "Rubber", "Signal", "Lamp", "Neutral"],
+        "textureFamilies": ["rr_heavy_frame_surface", "rr_tool_wear", "rr_hazard_and_service_decals", "rr_console_and_signal_atlas"],
+        "bespokeTextures": []
+      },
+      "sockets": ["Socket_Selection", "Socket_Health", "Socket_OreReceive", "Socket_OreOutput", "Socket_ProcessDust", "Socket_Lamp", "Socket_AudioCrusher"],
+      "unresolved": ["The exact crusher mechanism is a bounded source-family adaptation and must be checked in the later silhouette/proportion board."
+      ]
+    },
+    {
+      "stableId": "building.rock_raiders.power_station",
+      "contractState": "CANON_DERIVED_ADAPTATION",
+      "semanticParts": [
+        "Exposed generator block — communicates continuous worksite power generation — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.",
+        "Paired cooling/exhaust stacks — give the energy building a distinct vertical rhythm — CANON_DERIVED_ADAPTATION.",
+        "Crew-scale service platform — makes maintenance and vulnerability legible — SOURCE_VERIFIED.",
+        "Worksite power connections — show that Energy supports nearby industrial modules — CANON_DERIVED_ADAPTATION."
+      ],
+      "construction": {
+        "loadPath": "A compact reinforced base carries the heavy generator low, with paired stacks and service platform braced to its sides rather than forming a tall tower.",
+        "modules": "Generator block, paired cooling/exhaust stacks, service platform and protected worksite cable interfaces.",
+        "adaptationBoundary": "The source provides powered machinery language, not one literal generator; no weapon, reactor fantasy or modern diesel realism."
+      },
+      "motion": {
+        "locomotion": "Static infrastructure.",
+        "plantedContact": "Generator feet and stack braces visibly transmit weight/vibration into the foundation.",
+        "pivots": [
+          {"name":"Pivot_Generator","parent":"Asset_PowerStation","motion":"bounded rotational/reciprocating internal cycle behind visible guards","driver":"operational power state"},
+          {"name":"Pivot_CoolingFanLeft","parent":"Asset_PowerStation","motion":"roll around fan axis","driver":"operational power state"},
+          {"name":"Pivot_CoolingFanRight","parent":"Asset_PowerStation","motion":"roll around fan axis","driver":"operational power state"}
+        ],
+        "beats": ["Startup sequences lamps, generator motion and cooling in order.", "Operational idle uses steady mechanical cadence, not pulsing every transparent part.", "Brownout slows/stops moving machinery and changes signal state.", "Damage adds asymmetric vibration; destruction drops stacks before the generator frame fails."]
+      },
+      "materials": {
+        "geometryMustCarry": ["generator volume", "stack openings", "service platform and rail", "power connection housings"],
+        "materialRoles": ["Body", "Accent", "Tool", "Rubber", "Signal", "Lamp", "Neutral"],
+        "textureFamilies": ["rr_heavy_frame_surface", "rr_tool_wear", "rr_hazard_and_service_decals", "rr_console_and_signal_atlas"],
+        "bespokeTextures": []
+      },
+      "sockets": ["Socket_Selection", "Socket_Health", "Socket_Interaction", "Socket_PowerVfx", "Socket_ExhaustLeft", "Socket_ExhaustRight", "Socket_Lamp", "Socket_AudioGenerator"],
+      "unresolved": ["Final generator cycle is a production-mechanism design within the fixed energy role and needs greybox mechanical review."
+      ]
+    },
+    {
+      "stableId": "building.rock_raiders.vehicle_service_bay",
+      "contractState": "CANON_DERIVED_ADAPTATION",
+      "semanticParts": [
+        "Open vehicle-width lane — accepts light/utility vehicles for production and repair — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.",
+        "Overhead repair gantry — carries tools above the vehicle while preserving an unobstructed exit — SOURCE_VERIFIED.",
+        "Tool and spare-part racks — communicate servicing rather than a generic factory shell — SOURCE_VERIFIED.",
+        "Worksite service interface — establishes the canonical local service zone — CANON_DERIVED_ADAPTATION."
+      ],
+      "construction": {
+        "loadPath": "Two braced side frames carry an overhead gantry around a clear drive-through floor; racks and service machinery stay outside the exit envelope.",
+        "modules": "Drive-through lane, overhead tool bridge, paired service arms, parts racks and worksite service node.",
+        "adaptationBoundary": "The 4990 gantry language is split into a dedicated light-production/repair facility without closing the workshop into a hangar."
+      },
+      "motion": {
+        "locomotion": "Static infrastructure.",
+        "plantedContact": "Side frames anchor outside the vehicle lane; no support crosses the production exit.",
+        "pivots": [
+          {"name":"Pivot_GantryTravel","parent":"Asset_VehicleServiceBay","motion":"bounded fore/aft path along service lane","driver":"production or repair progress"},
+          {"name":"Pivot_RepairArmLeft","parent":"Pivot_GantryTravel","motion":"hinged reach from stow to vehicle contact envelope","driver":"repair/assembly progress"},
+          {"name":"Pivot_RepairArmRight","parent":"Pivot_GantryTravel","motion":"hinged reach from stow to vehicle contact envelope","driver":"repair/assembly progress"}
+        ],
+        "beats": ["Idle tools stow clear of the lane.", "Production assembles visible chassis/tool modules then releases the vehicle through the open exit.", "Repair settles the target, positions gantry and cycles contact tools.", "Brownout parks powered tools safely; destruction drops gantry sections away from the lane where possible."]
+      },
+      "materials": {
+        "geometryMustCarry": ["clear service lane", "gantry rails and carriage", "repair arms", "parts racks"],
+        "materialRoles": ["Body", "Accent", "Tool", "Rubber", "Signal", "Lamp", "Neutral"],
+        "textureFamilies": ["rr_heavy_frame_surface", "rr_tool_wear", "rr_hazard_and_service_decals", "rr_console_and_signal_atlas"],
+        "bespokeTextures": []
+      },
+      "sockets": ["Socket_Selection", "Socket_Health", "Socket_Interaction", "Socket_ServiceTarget", "Socket_ProductionExit", "Socket_Worksite", "Socket_RepairVfxLeft", "Socket_RepairVfxRight", "Socket_AudioGantry"],
+      "unresolved": ["Final bay width and gantry travel derive from the canonical Small/Medium produced roster and require the later scale lineup."
+      ]
+    },
+    {
+      "stableId": "building.rock_raiders.engineering_workshop",
+      "contractState": "CANON_DERIVED_ADAPTATION",
+      "semanticParts": [
+        "Huge unobstructed machine exit — proves that heavy drills and the Tunnel Transport can leave the facility — CANON_DERIVED_ADAPTATION.",
+        "Towering drill/lift rig — commissions heavy machinery through visible industrial work — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.",
+        "Reinforced asymmetric frame — carries the oversized rig without becoming a sealed sci-fi factory — SOURCE_VERIFIED.",
+        "Heavy module staging floor — keeps drill, leg, wheel and rotor assemblies independently readable — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION."
+      ],
+      "construction": {
+        "loadPath": "Deep side foundations and a reinforced rear tower carry the overhead lift/tool rig while the center remains open for Huge production clearance.",
+        "modules": "Heavy exit, lifting/tool tower, assembly gantry, drill/leg/wheel/rotor staging racks and worksite logistics connection.",
+        "adaptationBoundary": "The Workshop combines 4940/4970/4990 industrial grammar only to support canon production/technology; it gains no defensive weapon."
+      },
+      "motion": {
+        "locomotion": "Static infrastructure.",
+        "plantedContact": "Tall rig loads resolve through reinforced side/rear foundations, never through the production lane.",
+        "pivots": [
+          {"name":"Pivot_HeavyGantry","parent":"Asset_EngineeringWorkshop","motion":"slow bounded travel across assembly floor","driver":"production or technology work cycle"},
+          {"name":"Pivot_LiftRig","parent":"Pivot_HeavyGantry","motion":"vertical hoist path sized for major modules","driver":"production progress"},
+          {"name":"Pivot_ToolRig","parent":"Asset_EngineeringWorkshop","motion":"hinged aim from stow to assembly contact","driver":"production progress"}
+        ],
+        "beats": ["Idle keeps the heavy exit completely clear.", "Production stages major modules, lowers/joins them, performs tool checks and releases the completed machine.", "Brownout arrests gantry and lift in a safe pose.", "Damage disables exposed tools/racks first; destruction collapses the tower away from the central exit silhouette."]
+      },
+      "materials": {
+        "geometryMustCarry": ["huge exit void", "tower/gantry silhouette", "reinforced asymmetric supports", "readable staged modules"],
+        "materialRoles": ["Body", "Accent", "Tool", "Rubber", "Signal", "Lamp", "Neutral"],
+        "textureFamilies": ["rr_heavy_frame_surface", "rr_tool_wear", "rr_hazard_and_service_decals", "rr_console_and_signal_atlas"],
+        "bespokeTextures": []
+      },
+      "sockets": ["Socket_Selection", "Socket_Health", "Socket_Interaction", "Socket_ProductionExit", "Socket_HeavyAssembly", "Socket_Worksite", "Socket_LiftVfx", "Socket_Lamp", "Socket_AudioGantry"],
+      "unresolved": ["The final Huge production clearance and skyline need the full-roster building scale board before design approval."
+      ]
+    },
+    {
+      "stableId": "building.rock_raiders.crystal_vault",
+      "contractState": "CANON_DERIVED_ADAPTATION",
+      "semanticParts": [
+        "Central crystal cage — stores/processes the advanced resource while leaving it readable — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.",
+        "Thick segmented blast frame — communicates durable secure storage — CANON_DERIVED_ADAPTATION.",
+        "Small guarded transfer hatch — shows controlled input/output and distinguishes the Vault from a power generator — CANON_DERIVED_ADAPTATION.",
+        "Mechanical clamps — hold crystals as material, not as a magical floating core — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION."
+      ],
+      "construction": {
+        "loadPath": "A heavy outer frame anchors radial/paired clamps around a central chamber; the transfer hatch remains crew-scale and deliberately smaller than the main cage.",
+        "modules": "Protected chamber, segmented frame, clamp set, guarded transfer hatch and service/control platform.",
+        "adaptationBoundary": "Source crystal/cargo handling informs the facility, but exact enclosure is new; stored crystals do not become an always-emissive reactor."
+      },
+      "motion": {
+        "locomotion": "Static infrastructure.",
+        "plantedContact": "Broad blast-frame feet surround the chamber and visually resist outward load.",
+        "pivots": [
+          {"name":"Pivot_TransferHatch","parent":"Asset_CrystalVault","motion":"short guarded hinge/slide from sealed to transfer opening","driver":"authoritative crystal delivery/use state"},
+          {"name":"Pivot_ClampSet","parent":"Asset_CrystalVault","motion":"synchronized small radial open/close path","driver":"crystal transfer and operational state"}
+        ],
+        "beats": ["Idle keeps clamps closed and crystal lighting steady, not pulsing by default.", "Transfer opens the small hatch, releases clamps only as needed, then reseals.", "Brownout removes active signals but preserves physical storage.", "Damage cracks outer frame modules first; destruction releases controlled non-authoritative crystal debris after gameplay resolution."]
+      },
+      "materials": {
+        "geometryMustCarry": ["outer blast frame", "central cage/chamber", "mechanical clamps", "small transfer hatch"],
+        "materialRoles": ["Body", "Accent", "Tool", "Glass", "Signal", "Lamp", "Neutral"],
+        "textureFamilies": ["rr_heavy_frame_surface", "rr_tool_wear", "rr_hazard_and_service_decals", "rr_console_and_signal_atlas"],
+        "bespokeTextures": []
+      },
+      "sockets": ["Socket_Selection", "Socket_Health", "Socket_CrystalReceive", "Socket_CrystalChamber", "Socket_TransferVfx", "Socket_Lamp", "Socket_AudioClamp"],
+      "unresolved": ["The chamber's exact transparent-versus-open ratio needs material/silhouette review; the crystal remains visible and non-self-emissive unless a real signal/lamp function is assigned."
+      ]
+    },
+    {
+      "stableId": "building.rock_raiders.crusher_barrier",
+      "contractState": "CANON_DERIVED_ADAPTATION",
+      "semanticParts": [
+        "Low reinforced barrier body — physically blocks and controls a route — CANON_DERIVED_ADAPTATION.",
+        "Loader-derived crusher/ram face — batters nearby light ground targets through contact — CANON_DERIVED_ADAPTATION.",
+        "Side hydraulic braces — transmit impact into the ground and distinguish it from a wall prop — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION."
+      ],
+      "construction": {
+        "loadPath": "A ground-hugging crossbeam carries the ram face between two wide side braces; contact force routes backward into visible foundation pads.",
+        "modules": "Barrier crossbeam, crusher/ram face, mirrored hydraulic braces and protected service box.",
+        "adaptationBoundary": "This is approved new content derived from Loader mechanics; no turret, projectile or bunker enclosure may be added."
+      },
+      "motion": {
+        "locomotion": "Static infrastructure.",
+        "plantedContact": "Both side braces and central base remain planted throughout the contact cycle.",
+        "pivots": [
+          {"name":"Pivot_CrusherFace","parent":"Asset_CrusherBarrier","motion":"short horizontal shove or hinged scoop arc from guarded rest to contact extreme","driver":"authoritative anti-ground attack progress"},
+          {"name":"Pivot_BraceLeft","parent":"Asset_CrusherBarrier","motion":"small compression at visible hydraulic joint","driver":"contact/recoil presentation"},
+          {"name":"Pivot_BraceRight","parent":"Asset_CrusherBarrier","motion":"small compression at visible hydraulic joint","driver":"contact/recoil presentation"}
+        ],
+        "beats": ["Idle keeps the ram face guarded and lane-blocking.", "Attack anticipates with brace compression, strikes once, recoils and settles.", "Brownout stops active striking while the physical barrier remains.", "Damage bends one brace; destruction breaks the ram face from the planted base."]
+      },
+      "materials": {
+        "geometryMustCarry": ["low barrier thickness", "ram/scoop face", "hydraulic braces and foundation pads"],
+        "materialRoles": ["Body", "Accent", "Tool", "Rubber", "Signal", "Lamp", "Neutral"],
+        "textureFamilies": ["rr_heavy_frame_surface", "rr_tool_wear", "rr_hazard_and_service_decals"],
+        "bespokeTextures": []
+      },
+      "sockets": ["Socket_Selection", "Socket_Health", "Socket_RamContact", "Socket_ImpactVfx", "Socket_Service", "Socket_AudioHydraulic", "Socket_AudioImpact"],
+      "unresolved": ["Greybox review must choose horizontal shove versus short scoop arc based on silhouette clarity; both preserve the same canon contact behavior."
+      ]
+    },
+    {
+      "stableId": "building.rock_raiders.cutter_mast",
+      "contractState": "CANON_DERIVED_ADAPTATION",
+      "semanticParts": [
+        "Thin industrial mast — elevates the anti-air mechanism without reading as a missile tower — CANON_DERIVED_ADAPTATION.",
+        "Scanner-cutter head — tracks true-air targets and emits the precision cutting beam — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.",
+        "Tripod service base — adapts the 4910 station vocabulary into a planted worksite defense — SOURCE_VERIFIED.",
+        "Warm work lamp/signal — communicates powered tracking state separately from the cutter beam — CANON_DERIVED_ADAPTATION."
+      ],
+      "construction": {
+        "loadPath": "A wide tripod/service base carries a narrow segmented mast; the tracking head sits on explicit yaw and pitch bearings with power routed down the mast.",
+        "modules": "Tripod base, mast segments, yaw carriage, pitch cutter/scanner head, work lamp and service box.",
+        "adaptationBoundary": "Approved new content uses survey/cutter grammar; it may not gain missile pods, a conventional gun barrel or ground-target behavior."
+      },
+      "motion": {
+        "locomotion": "Static infrastructure.",
+        "plantedContact": "Three broad service feet remain fixed; upper tracking recoil cannot move the base.",
+        "pivots": [
+          {"name":"Pivot_CutterYaw","parent":"Asset_CutterMast","motion":"continuous bounded/unbounded yaw as allowed by cable design; forward service rest","driver":"authoritative air-target bearing"},
+          {"name":"Pivot_CutterPitch","parent":"Pivot_CutterYaw","motion":"upward pitch from service rest to tracked elevation","driver":"authoritative air-target elevation"}
+        ],
+        "beats": ["Idle performs a slow source-bounded survey check, then returns to rest.", "Acquire yaws first, pitches second and changes the tracking signal.", "Attack holds aim while the beam window plays, then cools and settles; gameplay damage is authoritative.", "Brownout parks the head and extinguishes active signal; destruction folds mast sections in sequence."]
+      },
+      "materials": {
+        "geometryMustCarry": ["tripod footprint", "thin segmented mast", "scanner-cutter head and bearings"],
+        "materialRoles": ["Body", "Accent", "Tool", "Rubber", "Glass", "Signal", "Lamp", "Neutral"],
+        "textureFamilies": ["rr_heavy_frame_surface", "rr_tool_wear", "rr_hazard_and_service_decals", "rr_console_and_signal_atlas"],
+        "bespokeTextures": []
+      },
+      "sockets": ["Socket_Selection", "Socket_Health", "Socket_CutterBeam", "Socket_TrackingSignal", "Socket_Lamp", "Socket_Service", "Socket_AudioTracking", "Socket_AudioCutter"],
+      "unresolved": ["Cable-safe yaw range and exact head proportions require greybox review; the visible consequence is whether the mast can track behind itself without impossible hose twisting."
+      ]
+    }
+  ]
+}

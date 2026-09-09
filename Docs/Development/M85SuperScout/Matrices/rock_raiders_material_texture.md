@@ -1,0 +1,40 @@
+# M8.5 T082 — Rock Raiders material and texture-needs matrix
+
+The accepted M7 role-authored material family remains authoritative. These are production requirements, not generated texture assets and not permission to bake structural detail into maps.
+
+## Shared rules
+
+- Clean molded polymer uses the accepted M7 master material and does not require photographic albedo.
+- Dark turquoise and industrial gray carry the largest areas; hazard yellow and translucent neon green remain functional accents.
+- Chrome/silver is restricted to drills, cutters, clamp faces and other high-wear tools.
+- Baked lighting, fake silhouette structure, per-brick texture phase resets and illegible micro-noise are prohibited.
+
+## Reusable texture families
+
+| ID | Purpose | Channels | Resolution | Texel density | Tiling | LOD fallback | Provenance | State |
+|---|---|---|---|---|---|---|---|---|
+| `rr_heavy_frame_surface` | Subtle large-scale molded/painted industrial surface variation on broad frames without drawing false seams. | Tangent-space normal plus linear roughness; body color remains a material parameter. | 2048x2048 | 256 px/m at Close | Shared model-space field, 4 m repeat; no per-part phase reset. | Half strength at Combat; disabled at Strategic in favor of master-material roughness. | Project-authored procedural source; human review required before production use. | `SPECIFIED_NOT_AUTHORED` |
+| `rr_tool_wear` | Directional scuff and cutting wear on drill, scoop, cutter and clamp contact surfaces only. | Linear wear mask, tangent-space normal and roughness variation; no baked highlights. | 1024x1024 | 512 px/m on localized tool UVs | Non-tiling trim/atlas regions aligned to the mechanical wear direction. | Normal and fine mask removed at Strategic; Tool material and silhouette remain. | Project-authored procedural source informed by the official tool surfaces; human review required. | `SPECIFIED_NOT_AUTHORED` |
+| `rr_hazard_and_service_decals` | Hazard stripes, service arrows, bay limits, lift points and restrained equipment labels. | sRGB RGBA decal atlas; alpha is coverage, never shadowing. | 1024x1024 | Minimum 256 px/m on readable Close/Combat labels | Atlas placement only; stripes may repeat along authored straight runs without stretching. | Keep only broad hazard bands at Combat; remove text and micro-labels at Strategic. | Project-authored vector master exported to raster; human review required. | `SPECIFIED_NOT_AUTHORED` |
+| `rr_console_and_signal_atlas` | Geological readouts, service-state lamps and operational signal faces. | sRGB color/alpha plus separate linear emission mask; transparent polymer is not automatically emissive. | 512x512 | Screen-space authored atlas; one texel density is not applicable. | Non-tiling atlas with stable panel IDs. | Replace screens with one bounded Signal or Lamp color block at Strategic. | Project-authored vector/procedural source; human review required. | `SPECIFIED_NOT_AUTHORED` |
+
+## Per-asset needs
+
+| Asset | Geometry must carry | Master-material roles | Reusable texture families | Bespoke textures |
+|---|---|---|---|---|
+| Rock Raider Crew | helmet and visor profile<br>portable tool head<br>backpack/lamp mass | `Body`, `Accent`, `Tool`, `Glass`, `Lamp`, `Neutral` | `rr_tool_wear`, `rr_hazard_and_service_decals`, `rr_console_and_signal_atlas` | None required in this faction draft |
+| Hover Scout | thin deck edge<br>scanner head<br>open operator gap and rear rack | `Body`, `Accent`, `Tool`, `Rubber`, `Glass`, `Signal`, `Lamp`, `Neutral` | `rr_tool_wear`, `rr_hazard_and_service_decals`, `rr_console_and_signal_atlas` | None required in this faction draft |
+| Drill Craft | drill helix and tip<br>operator cage opening<br>wheel/contact silhouette | `Body`, `Accent`, `Tool`, `Rubber`, `Glass`, `Lamp`, `Neutral` | `rr_tool_wear`, `rr_hazard_and_service_decals` | None required in this faction draft |
+| Rapid Rider | separate long hulls<br>open passenger gap<br>rear propulsion pair | `Body`, `Accent`, `Tool`, `Rubber`, `Glass`, `Signal`, `Lamp`, `Neutral` | `rr_heavy_frame_surface`, `rr_tool_wear`, `rr_hazard_and_service_decals`, `rr_console_and_signal_atlas` | None required in this faction draft |
+| Loader Dozer | bucket volume and cutting edge<br>side hydraulic linkage<br>four wheel silhouettes<br>optional cutter disc | `Body`, `Accent`, `Tool`, `Rubber`, `Glass`, `Signal`, `Lamp`, `Neutral` | `rr_heavy_frame_surface`, `rr_tool_wear`, `rr_hazard_and_service_decals`, `rr_console_and_signal_atlas` | None required in this faction draft |
+| Granite Grinder | paired ski feet<br>bridge gap<br>long drill boom<br>rear counterweight | `Body`, `Accent`, `Tool`, `Rubber`, `Glass`, `Signal`, `Lamp`, `Neutral` | `rr_heavy_frame_surface`, `rr_tool_wear`, `rr_hazard_and_service_decals`, `rr_console_and_signal_atlas` | None required in this faction draft |
+| Chrome Crusher | open forked chassis<br>four huge wheels<br>drill motor path and helix<br>raised beam and cargo deck | `Body`, `Accent`, `Tool`, `Rubber`, `Glass`, `Signal`, `Lamp`, `Neutral` | `rr_heavy_frame_surface`, `rr_tool_wear`, `rr_hazard_and_service_decals`, `rr_console_and_signal_atlas` | None required in this faction draft |
+| Tunnel Transport | wide crossbeam<br>two rotor discs/pods<br>open cargo cradle<br>visible carried load separation | `Body`, `Accent`, `Tool`, `Rubber`, `Glass`, `Signal`, `Lamp`, `Neutral` | `rr_heavy_frame_surface`, `rr_tool_wear`, `rr_hazard_and_service_decals`, `rr_console_and_signal_atlas` | None required in this faction draft |
+| Rock Raiders HQ | open lanes and module spacing<br>tower skyline<br>crane linkage<br>gantry and receiving machinery | `Body`, `Accent`, `Tool`, `Rubber`, `Glass`, `Signal`, `Lamp`, `Neutral` | `rr_heavy_frame_surface`, `rr_tool_wear`, `rr_hazard_and_service_decals`, `rr_console_and_signal_atlas` | None required in this faction draft |
+| Ore Processing Plant | hopper mouth<br>crusher stages<br>conveyor thickness and supports<br>vehicle lane | `Body`, `Accent`, `Tool`, `Rubber`, `Signal`, `Lamp`, `Neutral` | `rr_heavy_frame_surface`, `rr_tool_wear`, `rr_hazard_and_service_decals`, `rr_console_and_signal_atlas` | None required in this faction draft |
+| Power Station | generator volume<br>stack openings<br>service platform and rail<br>power connection housings | `Body`, `Accent`, `Tool`, `Rubber`, `Signal`, `Lamp`, `Neutral` | `rr_heavy_frame_surface`, `rr_tool_wear`, `rr_hazard_and_service_decals`, `rr_console_and_signal_atlas` | None required in this faction draft |
+| Vehicle Service Bay | clear service lane<br>gantry rails and carriage<br>repair arms<br>parts racks | `Body`, `Accent`, `Tool`, `Rubber`, `Signal`, `Lamp`, `Neutral` | `rr_heavy_frame_surface`, `rr_tool_wear`, `rr_hazard_and_service_decals`, `rr_console_and_signal_atlas` | None required in this faction draft |
+| Engineering Workshop | huge exit void<br>tower/gantry silhouette<br>reinforced asymmetric supports<br>readable staged modules | `Body`, `Accent`, `Tool`, `Rubber`, `Signal`, `Lamp`, `Neutral` | `rr_heavy_frame_surface`, `rr_tool_wear`, `rr_hazard_and_service_decals`, `rr_console_and_signal_atlas` | None required in this faction draft |
+| Crystal Vault | outer blast frame<br>central cage/chamber<br>mechanical clamps<br>small transfer hatch | `Body`, `Accent`, `Tool`, `Glass`, `Signal`, `Lamp`, `Neutral` | `rr_heavy_frame_surface`, `rr_tool_wear`, `rr_hazard_and_service_decals`, `rr_console_and_signal_atlas` | None required in this faction draft |
+| Crusher Barrier | low barrier thickness<br>ram/scoop face<br>hydraulic braces and foundation pads | `Body`, `Accent`, `Tool`, `Rubber`, `Signal`, `Lamp`, `Neutral` | `rr_heavy_frame_surface`, `rr_tool_wear`, `rr_hazard_and_service_decals` | None required in this faction draft |
+| Cutter Mast | tripod footprint<br>thin segmented mast<br>scanner-cutter head and bearings | `Body`, `Accent`, `Tool`, `Rubber`, `Glass`, `Signal`, `Lamp`, `Neutral` | `rr_heavy_frame_surface`, `rr_tool_wear`, `rr_hazard_and_service_decals`, `rr_console_and_signal_atlas` | None required in this faction draft |

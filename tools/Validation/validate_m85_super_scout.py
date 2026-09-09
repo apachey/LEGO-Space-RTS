@@ -19,6 +19,7 @@ ROCK_RAIDERS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/rock_raiders_sou
 ASTRONAUTS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/astronauts_source_evidence.json"
 ALIENS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/aliens_source_evidence.json"
 MARTIANS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/martians_source_evidence.json"
+ROCK_RAIDERS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/rock_raiders_production_contracts.json"
 CONFUSION = ROOT / "Content/Presentation/SuperScout/confusion_register.json"
 CONTENT = ROOT / "Content/PrototypeEntities.json"
 GENERATOR = ROOT / "tools/generate-m85-super-scout-packets.py"
@@ -53,6 +54,8 @@ VIEW_COVERAGE_KEYS = {
     "front", "rear", "leftRight", "top", "threeQuarter", "undersideInterior", "mechanism",
 }
 VIEW_COVERAGE_STATES = {"VERIFIED", "PARTIAL", "MISSING", "NOT_APPLICABLE"}
+CONTRACT_STATES = {"SOURCE_VERIFIED", "CANON_DERIVED_ADAPTATION", "SOURCE_BOUNDED_PROVISIONAL"}
+MATERIAL_ROLES = {"Body", "Accent", "Tool", "Rubber", "Glass", "Signal", "Lamp", "Neutral"}
 
 
 def fail(message: str) -> None:
@@ -140,11 +143,95 @@ def validate_source_evidence(
     return audited_sources, evidence_gaps
 
 
+def validate_production_contracts(contracts: dict, assets: list[dict]) -> tuple[int, int]:
+    if contracts.get("schemaVersion") != 1 or contracts.get("task") != "T082":
+        fail("Rock Raiders production-contract schema/task mismatch")
+    if contracts.get("faction") != "RockRaiders":
+        fail("Rock Raiders production-contract faction mismatch")
+    if contracts.get("status") != "FACTION_CONTRACT_DRAFT_COMPLETE_HOLD_FOR_ROSTER_REVIEW":
+        fail("Rock Raiders production contracts must retain the roster-review HOLD")
+
+    shared = contracts.get("sharedMaterialPlan", {})
+    if set(shared.get("masterMaterialRoles", [])) != MATERIAL_ROLES:
+        fail("Rock Raiders production contracts drift from the accepted material roles")
+    texture_specs = shared.get("reusableTextureFamilies", [])
+    texture_ids = [spec.get("id") for spec in texture_specs]
+    if len(texture_ids) != len(set(texture_ids)) or len(texture_ids) < 4:
+        fail("Rock Raiders reusable texture families are missing or duplicated")
+    for spec in texture_specs:
+        identity = f"Rock Raiders texture {spec.get('id')}"
+        for field in (
+            "purpose", "channels", "resolution", "texelDensity", "tiling",
+            "lodFallback", "provenance", "state",
+        ):
+            require_nonempty(spec, field, identity)
+        if spec["state"] != "SPECIFIED_NOT_AUTHORED":
+            fail(f"{identity} incorrectly implies authored/accepted texture work")
+    require_nonempty(shared, "globalRules", "Rock Raiders shared material plan")
+
+    records = contracts.get("assets", [])
+    ids = [record.get("stableId") for record in records]
+    expected_ids = {asset["stableId"] for asset in assets if asset["faction"] == "RockRaiders"}
+    if len(ids) != len(set(ids)) or set(ids) != expected_ids:
+        fail("Rock Raiders production contracts must cover all 16 faction assets exactly once")
+
+    provisional = 0
+    for record in records:
+        stable_id = record["stableId"]
+        state = record.get("contractState")
+        if state not in CONTRACT_STATES:
+            fail(f"{stable_id} has invalid production-contract state")
+        provisional += state == "SOURCE_BOUNDED_PROVISIONAL"
+        semantic = record.get("semanticParts", [])
+        if len(semantic) < 3 or len(semantic) != len(set(semantic)):
+            fail(f"{stable_id} needs at least three distinct semantic parts")
+        construction = record.get("construction", {})
+        for field in ("loadPath", "modules", "adaptationBoundary"):
+            require_nonempty(construction, field, f"{stable_id} construction contract")
+        motion = record.get("motion", {})
+        for field in ("locomotion", "plantedContact", "pivots", "beats"):
+            require_nonempty(motion, field, f"{stable_id} motion contract")
+        if len(motion["pivots"]) < 2 or len(motion["beats"]) < 4:
+            fail(f"{stable_id} needs at least two pivots and four state/animation beats")
+        pivot_names = []
+        for pivot in motion["pivots"]:
+            for field in ("name", "parent", "motion", "driver"):
+                require_nonempty(pivot, field, f"{stable_id} pivot")
+            if not pivot["name"].startswith("Pivot_"):
+                fail(f"{stable_id} pivot {pivot['name']} violates the T081 naming contract")
+            parent = pivot["parent"]
+            if not parent.startswith("Asset_") and parent not in pivot_names:
+                fail(f"{stable_id} pivot {pivot['name']} has an unresolved parent node {parent}")
+            pivot_names.append(pivot["name"])
+        if len(pivot_names) != len(set(pivot_names)):
+            fail(f"{stable_id} duplicates a named pivot")
+        materials = record.get("materials", {})
+        for field in ("geometryMustCarry", "materialRoles", "textureFamilies", "bespokeTextures"):
+            if field not in materials:
+                fail(f"{stable_id} material contract has no {field}")
+        if len(materials["geometryMustCarry"]) < 3:
+            fail(f"{stable_id} needs at least three geometry-retained forms")
+        if not set(materials["materialRoles"]).issubset(MATERIAL_ROLES):
+            fail(f"{stable_id} uses an unknown material role")
+        if not set(materials["textureFamilies"]).issubset(set(texture_ids)):
+            fail(f"{stable_id} references an unknown reusable texture family")
+        sockets = record.get("sockets", [])
+        if len(sockets) != len(set(sockets)) or not {"Socket_Selection", "Socket_Health"}.issubset(sockets):
+            fail(f"{stable_id} has missing or duplicate common sockets")
+        if any(not socket.startswith("Socket_") for socket in sockets):
+            fail(f"{stable_id} violates the T081 socket naming contract")
+        require_nonempty(record, "unresolved", f"{stable_id} decision ledger")
+    if provisional != 2:
+        fail(f"expected the Crew and Drill Craft source-bounded drafts, found {provisional} provisional contracts")
+    return len(records), provisional
+
+
 def main() -> None:
     for path in (
         MANIFEST, LEDGER, INSTRUCTION_INDEX, ROCK_RAIDERS_EVIDENCE, ASTRONAUTS_EVIDENCE,
         ALIENS_EVIDENCE,
         MARTIANS_EVIDENCE,
+        ROCK_RAIDERS_CONTRACTS,
         CONFUSION, CONTENT, GENERATOR,
     ):
         if not path.is_file():
@@ -157,6 +244,7 @@ def main() -> None:
     astronauts_evidence = json.loads(ASTRONAUTS_EVIDENCE.read_text(encoding="utf-8"))
     aliens_evidence = json.loads(ALIENS_EVIDENCE.read_text(encoding="utf-8"))
     martians_evidence = json.loads(MARTIANS_EVIDENCE.read_text(encoding="utf-8"))
+    rock_raiders_contracts = json.loads(ROCK_RAIDERS_CONTRACTS.read_text(encoding="utf-8"))
     confusion = json.loads(CONFUSION.read_text(encoding="utf-8"))
     content = json.loads(CONTENT.read_text(encoding="utf-8"))
     if manifest.get("schemaVersion") != 1 or manifest.get("task") != "T082":
@@ -310,6 +398,9 @@ def main() -> None:
         8,
         2,
     )
+    contract_count, provisional_contracts = validate_production_contracts(
+        rock_raiders_contracts, assets
+    )
 
     if confusion.get("schemaVersion") != 1 or confusion.get("task") != "T082":
         fail("confusion register schema/task mismatch")
@@ -365,6 +456,9 @@ def main() -> None:
                 fail(f"{path.name} missing or duplicates {section}")
         if "**State:** `HOLD`" not in packet or "**Approving reviewer:** game director, not yet requested" not in packet:
             fail(f"{path.name} could be mistaken for an accepted T082 packet")
+    contracted_packets = sum("- Contract state: `" in path.read_text(encoding="utf-8") for path in packet_paths)
+    if contracted_packets != contract_count:
+        fail(f"expected {contract_count} contract-enriched packets, found {contracted_packets}")
 
     evidence_ids_by_faction = {
         "RockRaiders": {record["setId"] for record in rock_raiders_evidence["sources"]},
@@ -394,6 +488,7 @@ def main() -> None:
         f"astronautsAudited={astronauts_audited} astronautsGaps={astronauts_gaps} "
         f"aliensAudited={aliens_audited} aliensGaps={aliens_gaps} "
         f"martiansAudited={martians_audited} martiansGaps={martians_gaps} "
+        f"contracts={contract_count} provisionalContracts={provisional_contracts} "
         f"packets=66 confusionPairs={len(pairs)} state=HOLD"
     )
 

@@ -63,8 +63,10 @@ fully verified and game-director accepted. T082 Super Scout reference
 intelligence is now in progress: its exact 66-asset identity/source baseline and
 all four faction source-page audits are complete. Forty-one faction-bound
 sources are visually audited across 48 official books, while four older sources
-remain explicit archival gaps; construction/mechanism analysis and the
-cross-roster review corpus remain open. A post-T069
+remain explicit archival gaps. The 16 Rock Raiders assets now also have
+faction-internal semantic-construction, motion/socket and material/texture-needs
+drafts; the other three faction contracts and the cross-roster review corpus
+remain open. A post-T069
 quality revision makes outline/halo independent from
 the style post-pass, hardens profile paste, bounds VFX event memory and avoids
 unrelated live material rebuilds. HUD and health visuals remain excluded from the world Look Lab. The
@@ -645,6 +647,13 @@ live; the current schema-9 copy/paste retains the complete experiment.
   transformations for the 7313/7314 mech families, isolates the primary 7316
   Martian Searcher from supporting builds, and establishes 7317 as a physical
   multi-station Tube/sled network rather than decorative piping.
+- The Rock Raiders contract pass converts source and canon into buildable
+  semantic/load-path drafts, named motion pivots and contacts, presentation
+  sockets and four fully specified reusable texture families for all 16 faction
+  assets. Crew and Drill Craft remain visibly source-bounded because 4930 and
+  1277 lack construction evidence; their exact backpack/lamp and chassis/tool
+  layouts are not guessed. All 16 packets remain HOLD for the complete-roster
+  silhouette and game-director gates.
 - All 66 A–I packet files, the identity/source matrix and a 31-pair confusion
   register regenerate deterministically. Every confusion pair has three visible
   differentiation requirements, and every packet is visibly `HOLD`, so this
@@ -655,7 +664,8 @@ live; the current schema-9 copy/paste retains the complete experiment.
   coverage and the three-to-seven silhouette-anchor contract, and rejects stale
   generated packets.
 - T082 remains `BLOCKING_NOW` for T083/T085. All faction source-page audits are
-  complete; semantic construction and motion analysis, texture/material needs,
+  complete and the Rock Raiders production-contract draft is complete;
+  Astronaut, Alien and Martian semantic construction/motion/material drafts,
   complete cross-roster silhouettes/confusion audits and explicit game-director
   review remain required. Current detail is tracked in
   `Docs/Development/M85_SUPER_SCOUT_PROGRESS.md`.
@@ -681,9 +691,9 @@ actually required.
 
 ## Verification state
 
-The T082 Martian official-instruction audit passed `./tools/verify.sh --full`
+The T082 Rock Raiders production-contract draft passed `./tools/verify.sh --full`
 with zero blocking failures at
-`Artifacts/Verification/20260909T205203Z-full-summary.txt`: all 317 tests, the
+`Artifacts/Verification/20260909T212743Z-full-summary.txt`: all 317 tests, the
 complete 66-asset roster and faction-bound source-evidence validator,
 deterministic packet generation, the 24-mover gate, compiled content, retained
 M6 networking, T081 round trip, retained M7 presentation gates and a fresh
@@ -692,19 +702,20 @@ macOS export passed. The T082 stage reports 66 HOLD packets, 39 source records,
 audited Rock Raiders sources with two manual gaps, all 18 Astronaut sources
 audited across 23 official PDF books, all eight Alien sources audited across ten
 official PDF books, all eight available Martian sources audited across eight
-official PDF books with two Martian archival gaps, and 31 initial confusion
-pairs with no roster drift or cross-faction evidence leakage. It does not claim
-T082 acceptance. Stress60 remained the expected 2/60 `BLOCKING_LATER` M9
-diagnostic.
+official PDF books with two Martian archival gaps, all 16 Rock Raiders assets
+with structured semantic/motion/material contracts including two explicitly
+source-bounded provisional cases, and 31 initial confusion pairs with no roster
+drift or cross-faction evidence leakage. It does not claim T082 acceptance.
+Stress60 remained the expected 2/60 `BLOCKING_LATER` M9 diagnostic.
 
 An earlier sandbox-constrained attempt was discarded after its local test
 sockets and Godot user paths were denied. That invalid attempt also produced a
 macOS Godot diagnostic report around 18:21 local time. The accepted full run
 started at 18:24 local time, used the required headless crash-safe path and
 produced no later Godot diagnostic report; the repository-wide report count was
-26 after it completed. The Astronaut, Alien and Martian audit full runs also
-preserved the count at 26; the newest reports remain the discarded attempt's
-18:21 local-time files.
+26 after it completed. The Astronaut, Alien, Martian and Rock Raiders contract
+full runs also preserved the count at 26; the newest reports remain the
+discarded attempt's 18:21 local-time files.
 This distinction is retained so the discarded launch is not misreported as a
 clean automation result.
 
@@ -932,10 +943,11 @@ blocking only when M9 must prove its stable-large-battle exit.
 
 ## Next approved action
 
-1. Continue T082 with semantic construction, motion and texture-needs contracts
-   plus the cross-roster silhouette/confusion audit. Retain the four explicit
-   archival gaps unless new primary evidence appears, and escalate any gap that
-   blocks a safe production decision.
+1. Continue T082 by applying the completed Rock Raiders semantic construction,
+   motion/socket and texture-needs contract pass to Astronauts, Aliens and
+   Martians, then produce the cross-roster silhouette/confusion audit. Retain
+   the four explicit archival gaps unless new primary evidence appears, and
+   escalate any gap that blocks a safe production decision.
    Do not treat the generated `HOLD` packets, T070 data definitions or the
    non-roster T081 pipeline fixture as production models.
 2. Execute the remaining Phase 09C M8.5 T082–T092 work before final M9 Skirmish

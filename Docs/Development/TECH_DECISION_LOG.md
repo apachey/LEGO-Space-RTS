@@ -1372,6 +1372,34 @@ This is a source-traceability and production-handoff decision only. It changes
 no gameplay, simulation, public data format, dependency, canon or accepted
 visual direction. All affected packets remain `HOLD`.
 
+## 2026-09-10 — Make Super Scout production contracts structured and source-bounded
+
+- The first faction-internal production-contract batch covers all 16 Rock
+  Raiders assets. It records semantic part purpose, load path, repeated modules,
+  adaptation boundaries, locomotion/contact behavior, named pivots, state beats,
+  presentation sockets and geometry-retained forms as structured source data;
+  packets and comparison matrices are generated from that data.
+- Contracts distinguish `SOURCE_VERIFIED`, `CANON_DERIVED_ADAPTATION` and
+  `SOURCE_BOUNDED_PROVISIONAL` instead of allowing a plausible description to
+  masquerade as source fact. Crew and Drill Craft are the two provisional
+  cases because their mapped 4930/1277 instruction evidence remains missing.
+- Rock Raiders share four specified-but-not-authored texture families: broad
+  frame normal/roughness variation, localized directional tool wear, a
+  hazard/service decal atlas and a console/signal atlas. Each has an explicit
+  purpose, channel treatment, resolution, texel-density rule, tiling behavior,
+  Strategic-LOD fallback and project-authored provenance requirement.
+- No bespoke Raider texture is justified in this draft. Clean molded polymer
+  remains on the accepted M7 master materials, while silhouette, openings,
+  joints, tool edges and LEGO-derived connection logic remain geometry.
+- The generator and validator now require exact 16-asset faction coverage,
+  stable `Pivot_`/`Socket_` naming, common selection/health sockets, valid
+  material roles, valid texture references, explicit unresolved decisions and
+  unchanged packet HOLD language.
+
+This is preproduction implementation detail only. It changes no gameplay,
+simulation, public runtime format, dependency, canon or accepted visual
+direction, and it does not authorize T083/T085 production modeling.
+
 ## 2026-09-09 — Non-intrusive macOS Godot automation
 
 - Routine Godot verification is permanently headless and disables Godot's

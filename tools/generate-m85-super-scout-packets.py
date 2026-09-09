@@ -19,6 +19,7 @@ ROCK_RAIDERS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/rock_raiders_sou
 ASTRONAUTS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/astronauts_source_evidence.json"
 ALIENS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/aliens_source_evidence.json"
 MARTIANS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/martians_source_evidence.json"
+ROCK_RAIDERS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/rock_raiders_production_contracts.json"
 CONFUSION = ROOT / "Content/Presentation/SuperScout/confusion_register.json"
 OUTPUT = ROOT / "Docs/Development/M85SuperScout/Packets"
 INDEX = ROOT / "Docs/Development/M85SuperScout/PACKET_INDEX.md"
@@ -29,6 +30,9 @@ ROCK_RAIDERS_AUDIT = ROOT / "Docs/Development/M85SuperScout/Matrices/rock_raider
 ASTRONAUTS_AUDIT = ROOT / "Docs/Development/M85SuperScout/Matrices/astronauts_source_audit.md"
 ALIENS_AUDIT = ROOT / "Docs/Development/M85SuperScout/Matrices/aliens_source_audit.md"
 MARTIANS_AUDIT = ROOT / "Docs/Development/M85SuperScout/Matrices/martians_source_audit.md"
+ROCK_RAIDERS_CONSTRUCTION = ROOT / "Docs/Development/M85SuperScout/Matrices/rock_raiders_semantic_construction.md"
+ROCK_RAIDERS_MOTION = ROOT / "Docs/Development/M85SuperScout/Matrices/rock_raiders_motion_socket.md"
+ROCK_RAIDERS_MATERIAL = ROOT / "Docs/Development/M85SuperScout/Matrices/rock_raiders_material_texture.md"
 
 FACTION_RULES = {
     "RockRaiders": (
@@ -96,14 +100,134 @@ def source_evidence_block(
     return "\n\n".join(blocks)
 
 
+def production_contract_sections(contract: dict | None, texture_specs: dict[str, dict]) -> dict[str, str]:
+    if contract is None:
+        return {
+            "construction": (
+                "- Hero geometry must preserve every recognition anchor above.\n"
+                "- Support geometry must explain how hero masses connect, carry load and articulate.\n"
+                "- Micro geometry may enrich close view but may not become required for recognition.\n"
+                "- Exact chassis/load path, repeated modules, mounting logic, scale ratios and approved adaptations: `HOLD — SOURCE DECOMPOSITION REQUIRED`."
+            ),
+            "material": (
+                "- Silhouette, openings, major panel breaks, moving joints and LEGO connection logic remain geometry.\n"
+                "- Surface channels may carry controlled color masks, roughness, emission, decals and non-structural relief only.\n"
+                "- Required reusable and bespoke texture sets, resolution, tiling, texel density, LOD fallback and import settings: `HOLD — TEXTURE-NEEDS AUDIT REQUIRED`.\n"
+                "- Baked lighting, fake silhouette structure and illegible micro-noise are prohibited."
+            ),
+            "motion": (
+                "- Applicable idle, locomotion/operation, work, attack, production, repair, transform/deploy, disabled, damage and destruction beats: `HOLD — MECHANISM EVIDENCE REQUIRED`.\n"
+                "- Every moving assembly must receive a named pivot, parent, axis/path, rest/extreme poses and authoritative presentation driver.\n"
+                "- Animation may communicate gameplay state but never decide gameplay timing."
+            ),
+            "hookups": (
+                "- `Socket_Selection` and `Socket_Health` are mandatory.\n"
+                "- Tool, weapon, projectile, VFX, lamp and audio sockets follow only from verified function.\n"
+                "- Cargo, passenger, service, production-exit or network sockets apply where the canonical role requires them.\n"
+                "- Identification Tile, icon silhouette, portrait camera and reduced-presentation fallback: `HOLD — PRESENTATION AUDIT REQUIRED`."
+            ),
+            "insight": (
+                "- Verified fact: stable identity, faction, role, footprint, source classification and mapped source family.\n"
+                "- Canon-derived interpretation: silhouette thesis and identity anchors above.\n"
+                "- Unknown: exact multi-angle construction, articulation, material ratios, texture inventory and confusion mitigation until the remaining audits are complete.\n"
+                "- Consequential contradictions: none recorded at identity-baseline stage."
+            ),
+        }
+
+    semantic = "\n".join(f"  - {value}" for value in contract["semanticParts"])
+    construction = contract["construction"]
+    geometry = "\n".join(f"  - {value}" for value in contract["materials"]["geometryMustCarry"])
+    roles = ", ".join(f"`{value}`" for value in contract["materials"]["materialRoles"])
+    texture_lines = []
+    for texture_id in contract["materials"]["textureFamilies"]:
+        spec = texture_specs[texture_id]
+        texture_lines.append(
+            f"  - `{texture_id}` — {spec['purpose']} Channels: {spec['channels']} "
+            f"Resolution: {spec['resolution']}; texel density: {spec['texelDensity']}; "
+            f"tiling: {spec['tiling']}; LOD fallback: {spec['lodFallback']} "
+            f"Provenance/state: {spec['provenance']} `{spec['state']}`."
+        )
+    bespoke = contract["materials"]["bespokeTextures"]
+    bespoke_text = "; ".join(bespoke) if bespoke else "none required in this faction draft"
+    motion = contract["motion"]
+    pivot_rows = "\n".join(
+        f"| `{pivot['name']}` | {pivot['parent']} | {pivot['motion']} | {pivot['driver']} |"
+        for pivot in motion["pivots"]
+    )
+    beats = "\n".join(f"  - {value}" for value in motion["beats"])
+    sockets = ", ".join(f"`{value}`" for value in contract["sockets"])
+    unresolved = "\n".join(f"  - {value}" for value in contract["unresolved"])
+    return {
+        "construction": (
+            f"- Contract state: `{contract['contractState']}`. This is an internally checked draft, not game-director approval.\n"
+            f"- Semantic part map:\n{semantic}\n"
+            f"- Structural load path: {construction['loadPath']}\n"
+            f"- Repeated modules / connection grammar: {construction['modules']}\n"
+            f"- Source-faithful versus adapted boundary: {construction['adaptationBoundary']}"
+        ),
+        "material": (
+            f"- Geometry must carry:\n{geometry}\n"
+            f"- Accepted master-material roles: {roles}.\n"
+            f"- Reusable texture requirements:\n" + "\n".join(texture_lines) + "\n"
+            f"- Bespoke texture requirements: {bespoke_text}.\n"
+            "- Baked lighting, fake silhouette structure, per-part texture phase resets and illegible micro-noise remain prohibited."
+        ),
+        "motion": (
+            f"- Locomotion / operation: {motion['locomotion']}\n"
+            f"- Planted/contact rule: {motion['plantedContact']}\n\n"
+            "| Pivot | Parent | Axis/path and rest-to-extreme motion | Presentation driver |\n"
+            "|---|---|---|---|\n"
+            f"{pivot_rows}\n\n"
+            f"- Required beats:\n{beats}\n"
+            "- Animation consumes authoritative state and never decides gameplay timing or results."
+        ),
+        "hookups": (
+            f"- Required presentation sockets: {sockets}.\n"
+            "- These sockets are presentation references only and never own targeting, collision, movement, transport or production truth.\n"
+            "- Identification Tile placement, icon silhouette, portrait camera and reduced-presentation fallback remain `HOLD — PRESENTATION AUDIT REQUIRED`."
+        ),
+        "insight": (
+            "- Verified fact: stable identity, source evidence and the source-supported assemblies cited above.\n"
+            "- Canon-derived interpretation: gameplay function, adaptation boundary, contact behavior and presentation drivers are explicitly labeled in the contract.\n"
+            f"- Remaining source/design decisions:\n{unresolved}\n"
+            "- Cross-roster silhouette and game-director review remain open; this contract does not authorize production modeling."
+        ),
+    }
+
+
 def packet_text(
     asset: dict,
     sources: dict[str, dict],
     pairs: list[dict],
     instruction_index: dict[str, dict],
     evidence: dict[tuple[str, str], dict],
+    contract: dict | None,
+    texture_specs: dict[str, dict],
 ) -> str:
     palette, forbidden = FACTION_RULES[asset["faction"]]
+    if contract is None:
+        packet_state = "IDENTITY_BASELINE — HOLD FOR MULTI-ANGLE EVIDENCE"
+        confidence = "verified canonical identity; construction confidence remains bounded by the source verification shown below."
+        build_handoff = (
+            "1. Verify and cite the complete multi-angle source board.\n"
+            "2. Decompose primary masses and negative spaces from orthogonal evidence.\n"
+            "3. Resolve LEGO load path, connection grammar and moving mechanism.\n"
+            "4. Complete material/texture and state/animation contracts.\n"
+            "5. Produce 24/44/72-cell black silhouettes and run the cross-roster confusion audit."
+        )
+    else:
+        packet_state = "FACTION_CONTRACT_DRAFT — HOLD FOR SILHOUETTE/ROSTER/DIRECTOR REVIEW"
+        confidence = (
+            "verified canonical identity and faction-internal construction/motion/material draft; "
+            "source-bounded decisions remain explicit below."
+        )
+        build_handoff = (
+            "1. Retain the audited evidence and every explicit adaptation boundary.\n"
+            "2. Greybox hero masses, openings and structural load path from the semantic map.\n"
+            "3. Validate named pivots, contacts and sockets in the real gameplay camera.\n"
+            "4. Author only the specified reusable textures after human material review.\n"
+            "5. Produce 24/44/72-cell black silhouettes and run the full cross-roster confusion audit."
+        )
     source_rows = []
     for set_id in asset["sourceSets"]:
         source = sources[set_id]
@@ -117,7 +241,13 @@ def packet_text(
             f"[inventory]({source['inventoryUrl']}) | {source['verification']} | {source['evidenceUse']} |"
         )
     evidence_block = source_evidence_block(asset["sourceSets"], evidence, asset["faction"])
-    if any((asset["faction"], set_id) in evidence for set_id in asset["sourceSets"]):
+    if contract is not None:
+        open_question = (
+            "The faction-internal construction, motion, socket and material draft is recorded below. "
+            "Its unresolved decisions and the complete-roster silhouette/director gates must be cleared "
+            "before this packet can leave HOLD."
+        )
+    elif any((asset["faction"], set_id) in evidence for set_id in asset["sourceSets"]):
         open_question = (
             "Source-view coverage and construction-critical page ranges are recorded for the audited "
             "sources below. Asset-specific adaptation boundaries still must be resolved "
@@ -147,11 +277,12 @@ def packet_text(
             "- `Content/PrototypeEntities.json`",
         ]
     )
+    contract_sections = production_contract_sections(contract, texture_specs)
     return f"""# {asset['displayName']} — T082 Super Scout packet
 
 **Stable ID:** `{asset['stableId']}`
 
-**Packet state:** `IDENTITY_BASELINE — HOLD FOR MULTI-ANGLE EVIDENCE`
+**Packet state:** `{packet_state}`
 
 **This is not a design approval or production-model authorization.**
 
@@ -163,7 +294,7 @@ def packet_text(
 - Authoritative footprint: `{asset['footprint']}`
 - Source classification: `{asset['sourceClassification']}`
 - Approved source sets/motifs: {', '.join(asset['sourceSets'])}
-- Current confidence: verified canonical identity; construction confidence remains bounded by the source verification shown below.
+- Current confidence: {confidence}
 
 Authoritative references:
 
@@ -198,45 +329,27 @@ Non-removable identity anchors:
 
 {SECTION_TITLES[3]}
 
-- Hero geometry must preserve every recognition anchor above.
-- Support geometry must explain how hero masses connect, carry load and articulate.
-- Micro geometry may enrich close view but may not become required for recognition.
-- Exact chassis/load path, repeated modules, mounting logic, scale ratios and approved adaptations: `HOLD — SOURCE DECOMPOSITION REQUIRED`.
+{contract_sections['construction']}
 
 {SECTION_TITLES[4]}
 
-- Silhouette, openings, major panel breaks, moving joints and LEGO connection logic remain geometry.
-- Surface channels may carry controlled color masks, roughness, emission, decals and non-structural relief only.
-- Required reusable and bespoke texture sets, resolution, tiling, texel density, LOD fallback and import settings: `HOLD — TEXTURE-NEEDS AUDIT REQUIRED`.
-- Baked lighting, fake silhouette structure and illegible micro-noise are prohibited.
+{contract_sections['material']}
 
 {SECTION_TITLES[5]}
 
-- Applicable idle, locomotion/operation, work, attack, production, repair, transform/deploy, disabled, damage and destruction beats: `HOLD — MECHANISM EVIDENCE REQUIRED`.
-- Every moving assembly must receive a named pivot, parent, axis/path, rest/extreme poses and authoritative presentation driver.
-- Animation may communicate gameplay state but never decide gameplay timing.
+{contract_sections['motion']}
 
 {SECTION_TITLES[6]}
 
-- `Socket_Selection` and `Socket_Health` are mandatory.
-- Tool, weapon, projectile, VFX, lamp and audio sockets follow only from verified function.
-- Cargo, passenger, service, production-exit or network sockets apply where the canonical role requires them.
-- Identification Tile, icon silhouette, portrait camera and reduced-presentation fallback: `HOLD — PRESENTATION AUDIT REQUIRED`.
+{contract_sections['hookups']}
 
 {SECTION_TITLES[7]}
 
-- Verified fact: stable identity, faction, role, footprint, source classification and mapped source family.
-- Canon-derived interpretation: silhouette thesis and identity anchors above.
-- Unknown: exact multi-angle construction, articulation, material ratios, texture inventory and confusion mitigation until the remaining audits are complete.
-- Consequential contradictions: none recorded at identity-baseline stage.
+{contract_sections['insight']}
 
 {SECTION_TITLES[8]}
 
-1. Verify and cite the complete multi-angle source board.
-2. Decompose primary masses and negative spaces from orthogonal evidence.
-3. Resolve LEGO load path, connection grammar and moving mechanism.
-4. Complete material/texture and state/animation contracts.
-5. Produce 24/44/72-cell black silhouettes and run the cross-roster confusion audit.
+{build_handoff}
 
 **State:** `HOLD`
 
@@ -244,13 +357,14 @@ Non-removable identity anchors:
 """
 
 
-def index_text(assets: list[dict]) -> str:
+def index_text(assets: list[dict], contract_ids: set[str]) -> str:
     rows = []
     for asset in assets:
         rel = f"Packets/{slug(asset['stableId'])}"
+        state = "FACTION_CONTRACT_DRAFT / HOLD" if asset["stableId"] in contract_ids else "IDENTITY_BASELINE / HOLD"
         rows.append(
             f"| [{asset['displayName']}]({rel}) | `{asset['stableId']}` | {asset['faction']} | "
-            f"{asset['kind']} | {asset['footprint']} | IDENTITY_BASELINE / HOLD |"
+            f"{asset['kind']} | {asset['footprint']} | {state} |"
         )
     return f"""# M8.5 T082 — Super Scout packet index
 
@@ -262,7 +376,7 @@ This generated index covers every canonical buildable unit and infrastructure en
 """
 
 
-def matrix_text(assets: list[dict]) -> str:
+def matrix_text(assets: list[dict], contract_ids: set[str]) -> str:
     output = io.StringIO(newline="")
     writer = csv.writer(output, lineterminator="\n")
     writer.writerow([
@@ -274,7 +388,8 @@ def matrix_text(assets: list[dict]) -> str:
             asset["stableId"], asset["displayName"], asset["faction"], asset["kind"],
             asset["role"], asset["footprint"], asset["sourceClassification"],
             ";".join(asset["sourceSets"]), asset["silhouetteThesis"],
-            ";".join(asset["identityAnchors"]), "IDENTITY_BASELINE_HOLD",
+            ";".join(asset["identityAnchors"]),
+            "FACTION_CONTRACT_DRAFT_HOLD" if asset["stableId"] in contract_ids else "IDENTITY_BASELINE_HOLD",
         ])
     return output.getvalue()
 
@@ -327,6 +442,92 @@ This generated review records what the official instruction PDFs actually prove,
 """ + "\n\n".join(blocks) + "\n"
 
 
+def semantic_construction_matrix_text(contracts: list[dict], assets: dict[str, dict]) -> str:
+    rows = []
+    for contract in contracts:
+        asset = assets[contract["stableId"]]
+        parts = "<br>".join(contract["semanticParts"])
+        construction = contract["construction"]
+        rows.append(
+            f"| {asset['displayName']} | `{contract['contractState']}` | {parts} | "
+            f"{construction['loadPath']} | {construction['modules']} | {construction['adaptationBoundary']} |"
+        )
+    return """# M8.5 T082 — Rock Raiders semantic-construction matrix
+
+This generated matrix converts the audited source evidence and locked gameplay roles into buildable faction-internal drafts. It does not approve production modeling; every row remains subject to the full-roster silhouette and game-director review.
+
+| Asset | Contract state | Identity-bearing semantic parts | Structural load path | Modules / connections | Adaptation boundary |
+|---|---|---|---|---|---|
+""" + "\n".join(rows) + "\n"
+
+
+def motion_socket_matrix_text(contracts: list[dict], assets: dict[str, dict]) -> str:
+    rows = []
+    for contract in contracts:
+        asset = assets[contract["stableId"]]
+        motion = contract["motion"]
+        pivots = "<br>".join(
+            f"`{pivot['name']}` — {pivot['parent']}; {pivot['motion']}; driver: {pivot['driver']}"
+            for pivot in motion["pivots"]
+        )
+        beats = "<br>".join(motion["beats"])
+        sockets = ", ".join(f"`{value}`" for value in contract["sockets"])
+        rows.append(
+            f"| {asset['displayName']} | {motion['locomotion']} | {motion['plantedContact']} | "
+            f"{pivots} | {beats} | {sockets} |"
+        )
+    return """# M8.5 T082 — Rock Raiders motion and socket matrix
+
+This generated matrix names the buildable mechanical causes, contacts, pivots and presentation attachment points for the Rock Raiders draft. Animation consumes authoritative gameplay state; it never decides results or timing.
+
+| Asset | Locomotion / operation | Planted/contact rule | Named pivots | Required beats | Presentation sockets |
+|---|---|---|---|---|---|
+""" + "\n".join(rows) + "\n"
+
+
+def material_texture_matrix_text(
+    contracts: list[dict], assets: dict[str, dict], shared_plan: dict
+) -> str:
+    family_rows = []
+    for spec in shared_plan["reusableTextureFamilies"]:
+        family_rows.append(
+            f"| `{spec['id']}` | {spec['purpose']} | {spec['channels']} | {spec['resolution']} | "
+            f"{spec['texelDensity']} | {spec['tiling']} | {spec['lodFallback']} | {spec['provenance']} | `{spec['state']}` |"
+        )
+    asset_rows = []
+    for contract in contracts:
+        asset = assets[contract["stableId"]]
+        material = contract["materials"]
+        geometry = "<br>".join(material["geometryMustCarry"])
+        roles = ", ".join(f"`{value}`" for value in material["materialRoles"])
+        reusable = ", ".join(f"`{value}`" for value in material["textureFamilies"])
+        bespoke = "<br>".join(material["bespokeTextures"]) or "None required in this faction draft"
+        asset_rows.append(
+            f"| {asset['displayName']} | {geometry} | {roles} | {reusable} | {bespoke} |"
+        )
+    rules = "\n".join(f"- {value}" for value in shared_plan["globalRules"])
+    return f"""# M8.5 T082 — Rock Raiders material and texture-needs matrix
+
+The accepted M7 role-authored material family remains authoritative. These are production requirements, not generated texture assets and not permission to bake structural detail into maps.
+
+## Shared rules
+
+{rules}
+
+## Reusable texture families
+
+| ID | Purpose | Channels | Resolution | Texel density | Tiling | LOD fallback | Provenance | State |
+|---|---|---|---|---|---|---|---|---|
+{chr(10).join(family_rows)}
+
+## Per-asset needs
+
+| Asset | Geometry must carry | Master-material roles | Reusable texture families | Bespoke textures |
+|---|---|---|---|---|
+{chr(10).join(asset_rows)}
+"""
+
+
 def expected_files() -> dict[Path, str]:
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     ledger = json.loads(LEDGER.read_text(encoding="utf-8"))
@@ -335,6 +536,7 @@ def expected_files() -> dict[Path, str]:
     astronauts_evidence = json.loads(ASTRONAUTS_EVIDENCE.read_text(encoding="utf-8"))
     aliens_evidence = json.loads(ALIENS_EVIDENCE.read_text(encoding="utf-8"))
     martians_evidence = json.loads(MARTIANS_EVIDENCE.read_text(encoding="utf-8"))
+    rock_raiders_contracts = json.loads(ROCK_RAIDERS_CONTRACTS.read_text(encoding="utf-8"))
     confusion = json.loads(CONFUSION.read_text(encoding="utf-8"))
     sources = {source["setId"]: source for source in ledger["sources"]}
     instructions = {record["setId"]: record for record in instruction_index["records"]}
@@ -358,9 +560,16 @@ def expected_files() -> dict[Path, str]:
     if len(evidence) != len(evidence_records):
         raise ValueError("duplicate faction/source keys across source-evidence audits")
     assets = {asset["stableId"]: asset for asset in manifest["assets"]}
+    production_contracts = {
+        contract["stableId"]: contract for contract in rock_raiders_contracts["assets"]
+    }
+    texture_specs = {
+        spec["id"]: spec
+        for spec in rock_raiders_contracts["sharedMaterialPlan"]["reusableTextureFamilies"]
+    }
     result = {
-        INDEX: index_text(manifest["assets"]),
-        MATRIX: matrix_text(manifest["assets"]),
+        INDEX: index_text(manifest["assets"], set(production_contracts)),
+        MATRIX: matrix_text(manifest["assets"], set(production_contracts)),
         CONFUSION_MATRIX: confusion_text(confusion["pairs"], assets),
         SOURCE_INDEX_MATRIX: source_index_text(instruction_index["records"], sources),
         ROCK_RAIDERS_AUDIT: source_audit_text(
@@ -375,10 +584,20 @@ def expected_files() -> dict[Path, str]:
         MARTIANS_AUDIT: source_audit_text(
             martians_evidence["sources"], sources, "Martians", "Martians"
         ),
+        ROCK_RAIDERS_CONSTRUCTION: semantic_construction_matrix_text(
+            rock_raiders_contracts["assets"], assets
+        ),
+        ROCK_RAIDERS_MOTION: motion_socket_matrix_text(
+            rock_raiders_contracts["assets"], assets
+        ),
+        ROCK_RAIDERS_MATERIAL: material_texture_matrix_text(
+            rock_raiders_contracts["assets"], assets, rock_raiders_contracts["sharedMaterialPlan"]
+        ),
     }
     for asset in manifest["assets"]:
         result[OUTPUT / slug(asset["stableId"])] = packet_text(
-            asset, sources, confusion["pairs"], instructions, evidence
+            asset, sources, confusion["pairs"], instructions, evidence,
+            production_contracts.get(asset["stableId"]), texture_specs,
         )
     return result
 
@@ -398,14 +617,14 @@ def main() -> None:
             for failure in failures:
                 print(f"- {failure}", file=sys.stderr)
             raise SystemExit(1)
-        print("M8.5 SUPER SCOUT PACKETS: PASS packets=66 matrices=7 state=HOLD")
+        print("M8.5 SUPER SCOUT PACKETS: PASS packets=66 matrices=10 contracts=16 state=HOLD")
         return
 
     OUTPUT.mkdir(parents=True, exist_ok=True)
     for path, content in expected.items():
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(content, encoding="utf-8")
-    print("M8.5 SUPER SCOUT PACKETS: GENERATED packets=66 matrices=7 state=HOLD")
+    print("M8.5 SUPER SCOUT PACKETS: GENERATED packets=66 matrices=10 contracts=16 state=HOLD")
 
 
 if __name__ == "__main__":

@@ -1,8 +1,10 @@
 # M8.5 T082 — SUPER SCOUT PROGRESS
 
 **Status:** in progress. The roster-locked identity baseline and all four
-faction source-page audits are complete; semantic construction, motion,
-material and cross-roster review gates remain open.
+faction source-page audits are complete. Rock Raiders now also have a complete
+16-asset faction-internal semantic-construction, motion/socket and
+material/texture-needs draft; the other three faction contracts and the
+cross-roster review gates remain open.
 
 ## Completed in the identity-baseline pass
 
@@ -78,6 +80,22 @@ material and cross-roster review gates remain open.
   audit confirms Aero Tubes as physical sled routes between an open hangar,
   endpoint stations, colored docking arches, couplers and a stacked
   three-chamber pressure unit.
+- The Rock Raiders contract pass names the structural load path, repeated
+  modules, semantic purpose, planted/contact behavior, moving pivots, required
+  state beats and presentation sockets for all eight units and eight
+  infrastructure entries. It protects the source-derived industrial mechanism:
+  drills brace before contact, the Rapid Rider keeps its open twin-hull loading
+  space, the Tunnel Transport carries cargo in a visible cradle, and production
+  buildings keep usable lanes and exits clear.
+- Four reusable Raider texture families are specified with channels,
+  resolution, texel density, tiling, LOD fallback and provenance. They carry
+  restrained frame variation, tool wear, hazard/service markings and
+  console/signals; silhouette, load-bearing connections and moving mechanisms
+  remain geometry. No bespoke Raider texture is justified at this stage.
+- Crew and Drill Craft are deliberately `SOURCE_BOUNDED_PROVISIONAL`: their
+  gameplay and recognition contracts are usable, but the missing 4930 and 1277
+  construction evidence prevents an unmarked guess from fixing the final
+  backpack/lamp or wheel/drill-support layout.
 - The 4990 HQ manual is now verified primary evidence. Its 43 pages establish
   a reusable faction vocabulary of separate tower, crane, open service gantry,
   conveyor/processing and irregular worksite-base modules; they do not silently
@@ -101,11 +119,12 @@ redistributed.
 
 1. Retain the four explicit archival gaps unless new primary evidence appears,
    and escalate any gap that prevents a safe production decision.
-2. Complete each semantic construction map: what every identity-bearing mass,
+2. Repeat the completed Rock Raiders semantic-construction contract for the 21
+   Astronaut, 12 Alien and 17 Martian assets: what every identity-bearing mass,
    opening, tool, light and connection is and why it exists.
-3. Complete locomotion, planted-contact, articulation, state, pivot and socket
-   contracts from mechanical evidence.
-4. Complete reusable-versus-bespoke texture/material needs, channels,
+3. Complete their locomotion, planted-contact, articulation, state, pivot and
+   socket contracts from mechanical evidence.
+4. Complete their reusable-versus-bespoke texture/material needs, channels,
    resolutions and LOD fallbacks.
 5. Produce the 24/44/72-cell black-silhouette boards, faction proportion
    boards, scale lineups and building skyline/entrance/exit/network matrices.
