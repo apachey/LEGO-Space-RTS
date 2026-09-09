@@ -23,7 +23,7 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: Exact source-view coverage, construction-critical page ranges and every adaptation boundary must be recorded before this packet can leave HOLD.
+Open question: Source-view coverage and construction-critical page ranges are recorded for the audited sources below. Asset-specific adaptation boundaries still must be resolved before this packet can leave HOLD.
 
 ## B. Reference board
 
@@ -32,7 +32,33 @@ Open question: Exact source-view coverage, construction-critical page ranges and
 | 5619 — Crystal Hawk | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/5619)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4533843.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=5619-1) | PRIMARY_VERIFIED | small astronaut interceptor |
 | 7695 — MX-11 Astro Fighter | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7695)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517774.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7695-1) | PRIMARY_VERIFIED | astronaut fighter wing and defense hardpoint language |
 
-`PENDING` — this source family has not yet received its visual PDF/page-range audit.
+### Set 5619 source audit
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 1: Complete five-step Crystal Hawk build and final operator-scale three-quarter view.
+  - PDF pages 2: Promotional reverse page; no additional construction evidence.
+- View/mechanism coverage: front=PARTIAL p1 final view; rear=PARTIAL p1 construction sequence; leftRight=PARTIAL p1 mirrored wing build; top=VERIFIED p1 staged wing placement; threeQuarter=VERIFIED p1 cover and final step; undersideInterior=PARTIAL p1 exposed plate sequence; mechanism=MISSING static micro-build only
+- Verified findings:
+  - The fighter is an extremely compact open-seat craft built around a narrow black central spine.
+  - Two broad white swept wings and paired cyan nose emitters carry more silhouette weight than the tiny cockpit.
+  - Orange grille accents repeat at the wing roots and above the rear seat.
+- Remaining evidence gaps:
+  - Acquire a clean orthogonal rear or underside image before fixing propulsion and landing details for the Mission Fighter family.
+
+### Set 7695 source audit
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 2-13: Complete MX-11 Astro Fighter build: flat wing plate, orange canopy nose, tail/antenna and pilot scale.
+  - PDF pages 14-24: Inventory and promotional pages; no additional construction evidence.
+- View/mechanism coverage: front=PARTIAL p9-13; rear=PARTIAL p10-13; leftRight=VERIFIED p2-13; top=VERIFIED p2-13; threeQuarter=VERIFIED p1 and p11-13; undersideInterior=VERIFIED p2-9 staged plate build; mechanism=MISSING static micro-fighter
+- Verified findings:
+  - MX-11 is a thin white delta-wing craft with a sharp orange canopy/nose at its center.
+  - The entire fighter stays close to one plate thickness, separating it from bulkier mission aircraft.
+  - A small dark rear equipment block and antenna provide the only raised mass behind the pilot.
+- Remaining evidence gaps:
+  - Clean underside and propulsion views are still required before consolidating MX-11 with the Crystal Hawk into one Mission Fighter family.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 

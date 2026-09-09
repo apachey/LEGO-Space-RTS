@@ -23,7 +23,7 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: Exact source-view coverage, construction-critical page ranges and every adaptation boundary must be recorded before this packet can leave HOLD.
+Open question: Source-view coverage and construction-critical page ranges are recorded for the audited sources below. Asset-specific adaptation boundaries still must be resolved before this packet can leave HOLD.
 
 ## B. Reference board
 
@@ -31,7 +31,22 @@ Open question: Exact source-view coverage, construction-critical page ranges and
 |---|---|---|---|---|
 | 7697 — MT-51 Claw-Tank Ambush | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7697)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4515381.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7697-1) | PRIMARY_VERIFIED | tracked claw tank and small alien craft |
 
-`PENDING` — this source family has not yet received its visual PDF/page-range audit.
+### Set 7697 source audit
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 3-15: Alien ambush craft; supporting opposition evidence.
+  - PDF pages 16-36: Low rectangular Claw-Tank running-gear frame, twin tracked sides and central rotation mount.
+  - PDF pages 37-47: Circular upper body and orange transparent operator canopy.
+  - PDF pages 48-63: Long articulated tool/claw arms, side equipment and wheel/track details.
+  - PDF pages 64-68: Rotation and articulated-tool play evidence with final multi-angle views.
+- View/mechanism coverage: front=VERIFIED p58-68; rear=VERIFIED p59-68; leftRight=VERIFIED p16-68; top=VERIFIED p16-68; threeQuarter=VERIFIED p1 and p63-68; undersideInterior=VERIFIED p16-47 staged base/turntable; mechanism=VERIFIED p58-68 rotating upper body and articulated tool arms
+- Verified findings:
+  - MT-51 is organized around a circular orange-canopy upper body rotating above a low, wide tracked frame.
+  - Long independently articulated tool/claw arms radiate from the turret instead of forming a conventional forward gun.
+  - The broad running gear stays visually separate from the rotating body, supporting movement and weapon orientation in different directions.
+- Remaining evidence gaps:
+  - The source demonstrates manual rotation and arm movement but not the game's exact multi-target attack cycle or fighting-retreat locomotion; animation timing remains open.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 

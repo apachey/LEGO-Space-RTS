@@ -23,7 +23,7 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: Exact source-view coverage, construction-critical page ranges and every adaptation boundary must be recorded before this packet can leave HOLD.
+Open question: Source-view coverage and construction-critical page ranges are recorded for the audited sources below. Asset-specific adaptation boundaries still must be resolved before this packet can leave HOLD.
 
 ## B. Reference board
 
@@ -31,7 +31,21 @@ Open question: Exact source-view coverage, construction-critical page ranges and
 |---|---|---|---|---|
 | 7315 — Solar Explorer | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7315)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130810.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7315-1) | PRIMARY_VERIFIED | solar arrays, field modules and service construction |
 
-`PENDING` — this source family has not yet received its visual PDF/page-range audit.
+### Set 7315 source audit
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 2-7: Forward cockpit and low exploration nose module.
+  - PDF pages 8-17: Long modular habitation/cargo body plus separate small support pod.
+  - PDF pages 18-23: Twin-panel solar/service tail built around a tall circular frame and attached to the long body.
+  - PDF pages 24-26: Cross-set alternate models and extended modular combinations; not direct production geometry.
+- View/mechanism coverage: front=VERIFIED p1 and p22-23; rear=PARTIAL p18-23; leftRight=VERIFIED p2-23; top=VERIFIED p2-23; threeQuarter=VERIFIED p1 and p22-26; undersideInterior=VERIFIED p2-21 staged construction; mechanism=PARTIAL p18-23 separable solar/service module; deployment not demonstrated
+- Verified findings:
+  - Solar Explorer identity comes from a long low modular convoy body rather than a single compact rover.
+  - The rear service section carries two broad solar wings around a tall circular machinery frame.
+  - Cockpit, habitat/cargo body, support pod and solar tail remain independently readable modules.
+- Remaining evidence gaps:
+  - The manual supports separable modules but not the game's deployed Forward Service state; stabilizers, access route and deployment motion remain explicit adaptation work.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 

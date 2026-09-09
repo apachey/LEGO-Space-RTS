@@ -16,6 +16,7 @@ MANIFEST = ROOT / "Content/Presentation/SuperScout/roster_identity_baseline.json
 LEDGER = ROOT / "Content/Presentation/SuperScout/source_ledger.json"
 INSTRUCTION_INDEX = ROOT / "Content/Presentation/SuperScout/source_instruction_index.json"
 ROCK_RAIDERS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/rock_raiders_source_evidence.json"
+ASTRONAUTS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/astronauts_source_evidence.json"
 CONFUSION = ROOT / "Content/Presentation/SuperScout/confusion_register.json"
 OUTPUT = ROOT / "Docs/Development/M85SuperScout/Packets"
 INDEX = ROOT / "Docs/Development/M85SuperScout/PACKET_INDEX.md"
@@ -23,6 +24,7 @@ MATRIX = ROOT / "Docs/Development/M85SuperScout/Matrices/identity_source_matrix.
 CONFUSION_MATRIX = ROOT / "Docs/Development/M85SuperScout/Matrices/confusion_register.md"
 SOURCE_INDEX_MATRIX = ROOT / "Docs/Development/M85SuperScout/Matrices/source_instruction_index.csv"
 ROCK_RAIDERS_AUDIT = ROOT / "Docs/Development/M85SuperScout/Matrices/rock_raiders_source_audit.md"
+ASTRONAUTS_AUDIT = ROOT / "Docs/Development/M85SuperScout/Matrices/astronauts_source_audit.md"
 
 FACTION_RULES = {
     "RockRaiders": (
@@ -60,10 +62,12 @@ def slug(stable_id: str) -> str:
     return stable_id.replace(".", "_") + ".md"
 
 
-def source_evidence_block(set_ids: list[str], evidence: dict[str, dict]) -> str:
+def source_evidence_block(
+    set_ids: list[str], evidence: dict[tuple[str, str], dict], faction: str
+) -> str:
     blocks = []
     for set_id in set_ids:
-        record = evidence.get(set_id)
+        record = evidence.get((faction, set_id))
         if record is None:
             continue
         ranges = "\n".join(
@@ -93,7 +97,7 @@ def packet_text(
     sources: dict[str, dict],
     pairs: list[dict],
     instruction_index: dict[str, dict],
-    evidence: dict[str, dict],
+    evidence: dict[tuple[str, str], dict],
 ) -> str:
     palette, forbidden = FACTION_RULES[asset["faction"]]
     source_rows = []
@@ -108,11 +112,11 @@ def packet_text(
             f"| {set_id} — {source['title']} | [LEGO instructions]({source['officialInstructionsUrl']})<br>{pdf_links} | "
             f"[inventory]({source['inventoryUrl']}) | {source['verification']} | {source['evidenceUse']} |"
         )
-    evidence_block = source_evidence_block(asset["sourceSets"], evidence)
-    if any(set_id in evidence for set_id in asset["sourceSets"]):
+    evidence_block = source_evidence_block(asset["sourceSets"], evidence, asset["faction"])
+    if any((asset["faction"], set_id) in evidence for set_id in asset["sourceSets"]):
         open_question = (
             "Source-view coverage and construction-critical page ranges are recorded for the audited "
-            "Rock Raiders sources below. Asset-specific adaptation boundaries still must be resolved "
+            "sources below. Asset-specific adaptation boundaries still must be resolved "
             "before this packet can leave HOLD."
         )
     else:
@@ -301,12 +305,18 @@ def source_index_text(records: list[dict], sources: dict[str, dict]) -> str:
     return output.getvalue()
 
 
-def source_audit_text(records: list[dict], sources: dict[str, dict]) -> str:
+def source_audit_text(
+    records: list[dict], sources: dict[str, dict], faction: str, faction_label: str
+) -> str:
+    evidence = {(faction, record["setId"]): record for record in records}
     blocks = []
     for record in records:
         title = sources[record["setId"]]["title"]
-        blocks.append(f"## {record['setId']} — {title}\n\n{source_evidence_block([record['setId']], {record['setId']: record})}")
-    return """# M8.5 T082 — Rock Raiders source-evidence audit
+        blocks.append(
+            f"## {record['setId']} — {title}\n\n"
+            f"{source_evidence_block([record['setId']], evidence, faction)}"
+        )
+    return f"""# M8.5 T082 — {faction_label} source-evidence audit
 
 This generated review records what the official instruction PDFs actually prove, which views remain partial or missing, and where gameplay adaptation still must be explicit. The PDFs and rendered review sheets are temporary research material and are not redistributed in the repository.
 
@@ -318,17 +328,35 @@ def expected_files() -> dict[Path, str]:
     ledger = json.loads(LEDGER.read_text(encoding="utf-8"))
     instruction_index = json.loads(INSTRUCTION_INDEX.read_text(encoding="utf-8"))
     rock_raiders_evidence = json.loads(ROCK_RAIDERS_EVIDENCE.read_text(encoding="utf-8"))
+    astronauts_evidence = json.loads(ASTRONAUTS_EVIDENCE.read_text(encoding="utf-8"))
     confusion = json.loads(CONFUSION.read_text(encoding="utf-8"))
     sources = {source["setId"]: source for source in ledger["sources"]}
     instructions = {record["setId"]: record for record in instruction_index["records"]}
-    evidence = {record["setId"]: record for record in rock_raiders_evidence["sources"]}
+    evidence_records = [
+        (rock_raiders_evidence["faction"], record)
+        for record in rock_raiders_evidence["sources"]
+    ] + [
+        (astronauts_evidence["faction"], record)
+        for record in astronauts_evidence["sources"]
+    ]
+    evidence = {
+        (faction, record["setId"]): record
+        for faction, record in evidence_records
+    }
+    if len(evidence) != len(evidence_records):
+        raise ValueError("duplicate source IDs across source-evidence audits")
     assets = {asset["stableId"]: asset for asset in manifest["assets"]}
     result = {
         INDEX: index_text(manifest["assets"]),
         MATRIX: matrix_text(manifest["assets"]),
         CONFUSION_MATRIX: confusion_text(confusion["pairs"], assets),
         SOURCE_INDEX_MATRIX: source_index_text(instruction_index["records"], sources),
-        ROCK_RAIDERS_AUDIT: source_audit_text(rock_raiders_evidence["sources"], sources),
+        ROCK_RAIDERS_AUDIT: source_audit_text(
+            rock_raiders_evidence["sources"], sources, "RockRaiders", "Rock Raiders"
+        ),
+        ASTRONAUTS_AUDIT: source_audit_text(
+            astronauts_evidence["sources"], sources, "Astronauts", "Astronauts"
+        ),
     }
     for asset in manifest["assets"]:
         result[OUTPUT / slug(asset["stableId"])] = packet_text(
@@ -352,14 +380,14 @@ def main() -> None:
             for failure in failures:
                 print(f"- {failure}", file=sys.stderr)
             raise SystemExit(1)
-        print("M8.5 SUPER SCOUT PACKETS: PASS packets=66 matrices=4 state=HOLD")
+        print("M8.5 SUPER SCOUT PACKETS: PASS packets=66 matrices=5 state=HOLD")
         return
 
     OUTPUT.mkdir(parents=True, exist_ok=True)
     for path, content in expected.items():
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(content, encoding="utf-8")
-    print("M8.5 SUPER SCOUT PACKETS: GENERATED packets=66 matrices=4 state=HOLD")
+    print("M8.5 SUPER SCOUT PACKETS: GENERATED packets=66 matrices=5 state=HOLD")
 
 
 if __name__ == "__main__":

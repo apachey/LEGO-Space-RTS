@@ -23,7 +23,7 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: Exact source-view coverage, construction-critical page ranges and every adaptation boundary must be recorded before this packet can leave HOLD.
+Open question: Source-view coverage and construction-critical page ranges are recorded for the audited sources below. Asset-specific adaptation boundaries still must be resolved before this packet can leave HOLD.
 
 ## B. Reference board
 
@@ -31,7 +31,22 @@ Open question: Exact source-view coverage, construction-critical page ranges and
 |---|---|---|---|---|
 | 7649 — MT-201 Ultra-Drill Walker | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7649)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4538485.pdf)<br>[official PDF 2](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4538486.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7649-1) | PRIMARY_VERIFIED | drill installation-to-walker transformation |
 
-`PENDING` — this source family has not yet received its visual PDF/page-range audit.
+### Set 7649 source audit
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages book 1, 3-20: Alien strike craft; supporting opposition evidence.
+  - PDF pages book 1, 21-46; book 2, 2-18: Low travel chassis, operator cab and central rotating machinery core.
+  - PDF pages book 2, 19-27: Massive longitudinal drill and drive assembly.
+  - PDF pages book 2, 28-34: Forward cockpit/tool pod and central module completion.
+  - PDF pages book 2, 35-43: Four independent ball-jointed leg pods attach and rotate into the deployed walker stance.
+- View/mechanism coverage: front=VERIFIED book 2 p34-43; rear=VERIFIED book 2 p35-43; leftRight=VERIFIED both books; top=VERIFIED book 2 p2-43; threeQuarter=VERIFIED covers and book 2 p42-47; undersideInterior=VERIFIED book 2 p2-42; mechanism=VERIFIED book 2 p35-43 four-leg deployment and body rotation
+- Verified findings:
+  - MT-201 is a central drill/cockpit machine surrounded by four independently built articulated leg pods.
+  - Each broad white leg has a dark planted foot and visible ball-joint connection.
+  - Deployment rotates the leg set around the central machinery so travel and anchored drilling states remain visibly related.
+- Remaining evidence gaps:
+  - The source shows manual leg repositioning but not a timed gait or stable drilling contact sequence; both require an explicit animation contract.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 

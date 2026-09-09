@@ -23,7 +23,7 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: Exact source-view coverage, construction-critical page ranges and every adaptation boundary must be recorded before this packet can leave HOLD.
+Open question: Source-view coverage and construction-critical page ranges are recorded for the audited sources below. Asset-specific adaptation boundaries still must be resolved before this packet can leave HOLD.
 
 ## B. Reference board
 
@@ -32,7 +32,35 @@ Open question: Exact source-view coverage, construction-critical page ranges and
 | 7691 — ETX Alien Mothership Assault | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7691)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4516029.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7691-1) | PRIMARY_VERIFIED | alien mothership, detachable craft and human extraction station |
 | 7648 — MT-21 Mobile Mining Unit | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7648)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4525546.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7648-1) | PRIMARY_VERIFIED | mobile mining and detachable support module |
 
-`PENDING` — this source family has not yet received its visual PDF/page-range audit.
+### Set 7691 source audit
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 3-27: Human extraction station with long rail/sled, upright operator rig, flexible transfer hose and canister.
+  - PDF pages 28-49: Large circular alien mothership body; supporting opposition evidence.
+  - PDF pages 50-68: Alien subcraft and attachment mechanisms; supporting opposition evidence.
+- View/mechanism coverage: front=PARTIAL p17-27 human station; rear=PARTIAL p20-27 human station; leftRight=VERIFIED p3-27; top=VERIFIED p3-27; threeQuarter=VERIFIED p1 and p21-27; undersideInterior=VERIFIED p3-23 staged human station; mechanism=VERIFIED p20-27 hose/canister extraction play; station processing cycle remains partial
+- Verified findings:
+  - The human station is a narrow linear extraction rig rather than a broad factory.
+  - A low rail/sled leads to a small upright operator tower with a visible hose and external material canister.
+  - The compact open structure supports a frontier receiver identity but does not justify a sealed processing building.
+- Remaining evidence gaps:
+  - The exact resource intake, storage and outgoing process for the composite Frontier Extraction Station must be added from other verified Mars Mission mining sources.
+
+### Set 7648 source audit
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 3-16: Compact orange/white mining rover with exposed low chassis and large wheels.
+  - PDF pages 17-25: Separate tall articulated extraction/tool mast on a small wheeled base.
+  - PDF pages 26-28: Both modules shown together at operator scale.
+- View/mechanism coverage: front=PARTIAL p15-28; rear=PARTIAL p15-28; leftRight=VERIFIED p3-28; top=VERIFIED p3-25; threeQuarter=VERIFIED p1 and p25-28; undersideInterior=VERIFIED p3-20 staged chassis; mechanism=PARTIAL p17-25 hinged tool mast; extraction cycle not demonstrated
+- Verified findings:
+  - The source is a paired mining system: a compact rover and a visibly independent upright tool platform.
+  - Both machines use low exposed white frames with orange wheel or equipment masses rather than armored hulls.
+  - The tall mast gives the support module a distinct vertical read beside the horizontal rover.
+- Remaining evidence gaps:
+  - The game combines this source with other mining vehicles, so the retained mini-robot/support-module relationship must be defined without creating an extra buildable unit.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 

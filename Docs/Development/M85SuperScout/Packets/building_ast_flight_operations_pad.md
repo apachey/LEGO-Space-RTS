@@ -23,7 +23,7 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: Exact source-view coverage, construction-critical page ranges and every adaptation boundary must be recorded before this packet can leave HOLD.
+Open question: Source-view coverage and construction-critical page ranges are recorded for the audited sources below. Asset-specific adaptation boundaries still must be resolved before this packet can leave HOLD.
 
 ## B. Reference board
 
@@ -34,7 +34,67 @@ Open question: Exact source-view coverage, construction-critical page ranges and
 | 7692 — MX-71 Recon Dropship | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7692)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4524070.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7692-1) | PRIMARY_VERIFIED | dropship cargo cradle and small alien attack craft |
 | 7695 — MX-11 Astro Fighter | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7695)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517774.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7695-1) | PRIMARY_VERIFIED | astronaut fighter wing and defense hardpoint language |
 
-`PENDING` — this source family has not yet received its visual PDF/page-range audit.
+### Set 5619 source audit
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 1: Complete five-step Crystal Hawk build and final operator-scale three-quarter view.
+  - PDF pages 2: Promotional reverse page; no additional construction evidence.
+- View/mechanism coverage: front=PARTIAL p1 final view; rear=PARTIAL p1 construction sequence; leftRight=PARTIAL p1 mirrored wing build; top=VERIFIED p1 staged wing placement; threeQuarter=VERIFIED p1 cover and final step; undersideInterior=PARTIAL p1 exposed plate sequence; mechanism=MISSING static micro-build only
+- Verified findings:
+  - The fighter is an extremely compact open-seat craft built around a narrow black central spine.
+  - Two broad white swept wings and paired cyan nose emitters carry more silhouette weight than the tiny cockpit.
+  - Orange grille accents repeat at the wing roots and above the rear seat.
+- Remaining evidence gaps:
+  - Acquire a clean orthogonal rear or underside image before fixing propulsion and landing details for the Mission Fighter family.
+
+### Set 7644 source audit
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages book 1, 3-35: Alien scout craft and separate mission payload pods; supporting opposition evidence.
+  - PDF pages book 1, 36-75; book 2, 2-24: Tall modular service/launch tower and platform completed across both books.
+  - PDF pages book 2, 26-60: MX-81 central aircraft hull, broad wing plane, cockpit and twin orange engine masses.
+  - PDF pages book 2, 61-73: Long side booms, detachable operational craft/pods and final multi-module aircraft assembly.
+- View/mechanism coverage: front=VERIFIED book 2 p52-76; rear=VERIFIED book 2 p60-76; leftRight=VERIFIED book 2 p26-76; top=VERIFIED book 2 p26-73; threeQuarter=VERIFIED covers and book 2 p73-76; undersideInterior=VERIFIED book 2 p26-60 staged airframe; mechanism=PARTIAL book 2 p61-73 detachable side modules and launch/service tower; flight operation not animated
+- Verified findings:
+  - MX-81 is a very wide flying operations platform with a dense central command hull and long thin span.
+  - Twin orange engine/pod masses sit forward of a layered white-and-black wing plane.
+  - Small independently readable support craft and equipment pods attach along the broad carrier frame rather than disappearing inside a solid fuselage.
+- Remaining evidence gaps:
+  - The manuals prove modular carried craft and support architecture but not the game's exact scan, transport or in-flight service functions; their attachment and launch states require an asset-specific contract.
+
+### Set 7692 source audit
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 3-12: Separate compact six-wheel reconnaissance payload rover.
+  - PDF pages 13-23: Alien attack craft; supporting opposition evidence.
+  - PDF pages 24-40: Dropship cockpit, central keel and open cargo interface.
+  - PDF pages 41-61: Long tail/wing frame and suspended-load structure.
+  - PDF pages 62-69: Landing pads, side equipment cylinders and final payload-clearance geometry.
+  - PDF pages 70-71: Explicit lift/release of the independent rover beneath the fuselage.
+- View/mechanism coverage: front=VERIFIED p62-71; rear=VERIFIED p65-71; leftRight=VERIFIED p24-71; top=VERIFIED p24-69; threeQuarter=VERIFIED p1 and p69-71; undersideInterior=VERIFIED p24-70 open cargo cradle; mechanism=VERIFIED p70-71 payload lift/release and landing-pad motion
+- Verified findings:
+  - MX-71 is a long narrow lifting aircraft organized around an open underside cargo cradle.
+  - The six-wheel rover remains visibly independent below the fuselage and defines the transport function at a glance.
+  - Tall landing pads and long side/tail booms preserve payload clearance rather than reading as decorative aircraft fins.
+- Remaining evidence gaps:
+  - The production transport must support several canonical payload types while retaining the source's visible external-carry identity and clear loading contacts.
+
+### Set 7695 source audit
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 2-13: Complete MX-11 Astro Fighter build: flat wing plate, orange canopy nose, tail/antenna and pilot scale.
+  - PDF pages 14-24: Inventory and promotional pages; no additional construction evidence.
+- View/mechanism coverage: front=PARTIAL p9-13; rear=PARTIAL p10-13; leftRight=VERIFIED p2-13; top=VERIFIED p2-13; threeQuarter=VERIFIED p1 and p11-13; undersideInterior=VERIFIED p2-9 staged plate build; mechanism=MISSING static micro-fighter
+- Verified findings:
+  - MX-11 is a thin white delta-wing craft with a sharp orange canopy/nose at its center.
+  - The entire fighter stays close to one plate thickness, separating it from bulkier mission aircraft.
+  - A small dark rear equipment block and antenna provide the only raised mass behind the pilot.
+- Remaining evidence gaps:
+  - Clean underside and propulsion views are still required before consolidating MX-11 with the Crystal Hawk into one Mission Fighter family.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 

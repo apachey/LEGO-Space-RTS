@@ -23,7 +23,7 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: Exact source-view coverage, construction-critical page ranges and every adaptation boundary must be recorded before this packet can leave HOLD.
+Open question: Source-view coverage and construction-critical page ranges are recorded for the audited sources below. Asset-specific adaptation boundaries still must be resolved before this packet can leave HOLD.
 
 ## B. Reference board
 
@@ -31,7 +31,23 @@ Open question: Exact source-view coverage, construction-critical page ranges and
 |---|---|---|---|---|
 | 7692 — MX-71 Recon Dropship | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7692)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4524070.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7692-1) | PRIMARY_VERIFIED | dropship cargo cradle and small alien attack craft |
 
-`PENDING` — this source family has not yet received its visual PDF/page-range audit.
+### Set 7692 source audit
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 3-12: Separate compact six-wheel reconnaissance payload rover.
+  - PDF pages 13-23: Alien attack craft; supporting opposition evidence.
+  - PDF pages 24-40: Dropship cockpit, central keel and open cargo interface.
+  - PDF pages 41-61: Long tail/wing frame and suspended-load structure.
+  - PDF pages 62-69: Landing pads, side equipment cylinders and final payload-clearance geometry.
+  - PDF pages 70-71: Explicit lift/release of the independent rover beneath the fuselage.
+- View/mechanism coverage: front=VERIFIED p62-71; rear=VERIFIED p65-71; leftRight=VERIFIED p24-71; top=VERIFIED p24-69; threeQuarter=VERIFIED p1 and p69-71; undersideInterior=VERIFIED p24-70 open cargo cradle; mechanism=VERIFIED p70-71 payload lift/release and landing-pad motion
+- Verified findings:
+  - MX-71 is a long narrow lifting aircraft organized around an open underside cargo cradle.
+  - The six-wheel rover remains visibly independent below the fuselage and defines the transport function at a glance.
+  - Tall landing pads and long side/tail booms preserve payload clearance rather than reading as decorative aircraft fins.
+- Remaining evidence gaps:
+  - The production transport must support several canonical payload types while retaining the source's visible external-carry identity and clear loading contacts.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 

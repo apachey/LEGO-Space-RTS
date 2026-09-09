@@ -23,7 +23,7 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: Exact source-view coverage, construction-critical page ranges and every adaptation boundary must be recorded before this packet can leave HOLD.
+Open question: Source-view coverage and construction-critical page ranges are recorded for the audited sources below. Asset-specific adaptation boundaries still must be resolved before this packet can leave HOLD.
 
 ## B. Reference board
 
@@ -31,7 +31,18 @@ Open question: Exact source-view coverage, construction-critical page ranges and
 |---|---|---|---|---|
 | 7310 — Mono Jet | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7310)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130805.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7310-1) | PRIMARY_VERIFIED | human field aircraft silhouette |
 
-`PENDING` — this source family has not yet received its visual PDF/page-range audit.
+### Set 7310 source audit
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 1-2: Complete eleven-step Mono Jet build with side, top and final operator views.
+- View/mechanism coverage: front=PARTIAL p2 final view; rear=VERIFIED p2 steps 9-11; leftRight=VERIFIED p1-2 construction rotation; top=VERIFIED p1-2; threeQuarter=VERIFIED p1 cover and p2 final; undersideInterior=VERIFIED p1 bare plate and engine pod sequence; mechanism=MISSING static micro-flyer
+- Verified findings:
+  - The Mono Jet is a long one-person sled with no enclosed fuselage.
+  - A single large cylindrical engine pod sits on one side of the narrow wing/deck, creating deliberate asymmetry.
+  - The opposite-side tail plate and exposed operator prevent it from reading as a conventional symmetric fighter.
+- Remaining evidence gaps:
+  - The manual does not establish landing gear or control-surface motion; both remain presentation adaptations.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 

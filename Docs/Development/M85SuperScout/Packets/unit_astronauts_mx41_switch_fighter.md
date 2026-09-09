@@ -23,7 +23,7 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: Exact source-view coverage, construction-critical page ranges and every adaptation boundary must be recorded before this packet can leave HOLD.
+Open question: Source-view coverage and construction-critical page ranges are recorded for the audited sources below. Asset-specific adaptation boundaries still must be resolved before this packet can leave HOLD.
 
 ## B. Reference board
 
@@ -31,7 +31,21 @@ Open question: Exact source-view coverage, construction-critical page ranges and
 |---|---|---|---|---|
 | 7647 — MX-41 Switch Fighter | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7647)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4525547.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7647-1) | PRIMARY_VERIFIED | six-wheel ground-to-flight transformation |
 
-`PENDING` — this source family has not yet received its visual PDF/page-range audit.
+### Set 7647 source audit
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 3-14: Small alien attack craft; supporting opposition evidence.
+  - PDF pages 15-42: Long orange-canopy Switch Fighter hull and layered side shell.
+  - PDF pages 43-58: Separate full-span folding wing/chassis slab with six wheel mounts.
+  - PDF pages 59-64: Explicit conversion: wing tips fold, slab docks under the hull, six wheels attach, then the wing unfolds for flight.
+- View/mechanism coverage: front=VERIFIED p37-64; rear=VERIFIED p41-64; leftRight=VERIFIED p15-64; top=VERIFIED p15-64; threeQuarter=VERIFIED p1 and p60-70; undersideInterior=VERIFIED p43-60 separate chassis/wing slab; mechanism=VERIFIED p58-64 physical ground-to-flight conversion
+- Verified findings:
+  - The ground vehicle and fighter are the same long cockpit hull carried by a separate folding wing/chassis slab.
+  - Six orange wheels remain fully visible beneath the slab in ground state.
+  - Transformation is readable through large wing-tip rotations and docking/undocking of the hull, not a cosmetic effect.
+- Remaining evidence gaps:
+  - The manual demonstrates a hand-separated hull during conversion; the production animation must define a believable continuous connection without changing the canonical two-state read.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 

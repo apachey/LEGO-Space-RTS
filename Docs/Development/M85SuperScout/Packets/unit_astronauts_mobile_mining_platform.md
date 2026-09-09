@@ -23,7 +23,7 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: Exact source-view coverage, construction-critical page ranges and every adaptation boundary must be recorded before this packet can leave HOLD.
+Open question: Source-view coverage and construction-critical page ranges are recorded for the audited sources below. Asset-specific adaptation boundaries still must be resolved before this packet can leave HOLD.
 
 ## B. Reference board
 
@@ -33,7 +33,51 @@ Open question: Exact source-view coverage, construction-critical page ranges and
 | 7648 — MT-21 Mobile Mining Unit | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7648)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4525546.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7648-1) | PRIMARY_VERIFIED | mobile mining and detachable support module |
 | 7693 — ETX Alien Strike | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7693)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4523183.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7693-1) | PRIMARY_VERIFIED | alien strike transformation and human mining module |
 
-`PENDING` — this source family has not yet received its visual PDF/page-range audit.
+### Set 7645 source audit
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages book 1, 3-26: Alien attack craft; supporting opposition evidence.
+  - PDF pages book 1, 27-50: White/orange mining cab and initial wheeled working platform.
+  - PDF pages book 1, 51-75; book 2, 2-17: Separate tool, drill and support assemblies for the mining system.
+  - PDF pages book 2, 18-45: Large Crystal Reaper chassis, tracked conversion and twin front harvesting-wheel installation.
+  - PDF pages book 2, 48-63: Powered controls, cables and explicit harvesting play feature.
+- View/mechanism coverage: front=VERIFIED book 2 p38-66; rear=VERIFIED book 2 p44-66; leftRight=VERIFIED both books; top=VERIFIED book 2 p18-63; threeQuarter=VERIFIED covers and book 2 p43-66; undersideInterior=VERIFIED book 1 p27-75 and book 2 p18-45; mechanism=VERIFIED book 2 p45-63 powered twin harvesting wheels and tracked conversion
+- Verified findings:
+  - Crystal Reaper configuration is defined by two enormous exposed harvesting wheels mounted ahead of a low tracked body.
+  - Orange structural rails, cables and motor blocks remain visible around the white mission shell.
+  - The source separates cab, tool modules and running gear, supporting one configurable Mobile Mining Platform family rather than a generic sealed harvester.
+- Remaining evidence gaps:
+  - The exact boundary between reusable Mobile Mining Platform chassis and Crystal-only harvesting module must be fixed during the asset-specific refit plan.
+
+### Set 7648 source audit
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 3-16: Compact orange/white mining rover with exposed low chassis and large wheels.
+  - PDF pages 17-25: Separate tall articulated extraction/tool mast on a small wheeled base.
+  - PDF pages 26-28: Both modules shown together at operator scale.
+- View/mechanism coverage: front=PARTIAL p15-28; rear=PARTIAL p15-28; leftRight=VERIFIED p3-28; top=VERIFIED p3-25; threeQuarter=VERIFIED p1 and p25-28; undersideInterior=VERIFIED p3-20 staged chassis; mechanism=PARTIAL p17-25 hinged tool mast; extraction cycle not demonstrated
+- Verified findings:
+  - The source is a paired mining system: a compact rover and a visibly independent upright tool platform.
+  - Both machines use low exposed white frames with orange wheel or equipment masses rather than armored hulls.
+  - The tall mast gives the support module a distinct vertical read beside the horizontal rover.
+- Remaining evidence gaps:
+  - The game combines this source with other mining vehicles, so the retained mini-robot/support-module relationship must be defined without creating an extra buildable unit.
+
+### Set 7693 source audit
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 3-16: Compact human mining vehicle with orange canopy, low four-wheel chassis and tall side tool arm.
+  - PDF pages 17-51: Large transforming alien strike craft; supporting opposition evidence.
+- View/mechanism coverage: front=PARTIAL p12-16 human vehicle; rear=PARTIAL p13-16 human vehicle; leftRight=VERIFIED p3-16; top=VERIFIED p3-16; threeQuarter=VERIFIED p1 and p15-16; undersideInterior=VERIFIED p3-12 bare human chassis; mechanism=PARTIAL p13-16 hinged side tool; extraction action not demonstrated
+- Verified findings:
+  - The human mining module is a short low vehicle with a prominent orange cockpit and exposed wheelbase.
+  - One tall side-mounted tool arm creates deliberate asymmetry around the otherwise compact body.
+  - The vehicle supports the small Ore-oriented configuration of the composite Mobile Mining Platform family.
+- Remaining evidence gaps:
+  - The manual does not show a complete extraction cycle, so the tool contact, material intake and deployment state must be derived with corroboration from 7645/7648.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 

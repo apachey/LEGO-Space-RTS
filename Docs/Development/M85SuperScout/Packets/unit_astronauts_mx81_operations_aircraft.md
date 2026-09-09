@@ -23,7 +23,7 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: Exact source-view coverage, construction-critical page ranges and every adaptation boundary must be recorded before this packet can leave HOLD.
+Open question: Source-view coverage and construction-critical page ranges are recorded for the audited sources below. Asset-specific adaptation boundaries still must be resolved before this packet can leave HOLD.
 
 ## B. Reference board
 
@@ -31,7 +31,21 @@ Open question: Exact source-view coverage, construction-critical page ranges and
 |---|---|---|---|---|
 | 7644 — MX-81 Hypersonic Operations Aircraft | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7644)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4534843.pdf)<br>[official PDF 2](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4537579.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7644-1) | PRIMARY_VERIFIED | large modular operations aircraft |
 
-`PENDING` — this source family has not yet received its visual PDF/page-range audit.
+### Set 7644 source audit
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages book 1, 3-35: Alien scout craft and separate mission payload pods; supporting opposition evidence.
+  - PDF pages book 1, 36-75; book 2, 2-24: Tall modular service/launch tower and platform completed across both books.
+  - PDF pages book 2, 26-60: MX-81 central aircraft hull, broad wing plane, cockpit and twin orange engine masses.
+  - PDF pages book 2, 61-73: Long side booms, detachable operational craft/pods and final multi-module aircraft assembly.
+- View/mechanism coverage: front=VERIFIED book 2 p52-76; rear=VERIFIED book 2 p60-76; leftRight=VERIFIED book 2 p26-76; top=VERIFIED book 2 p26-73; threeQuarter=VERIFIED covers and book 2 p73-76; undersideInterior=VERIFIED book 2 p26-60 staged airframe; mechanism=PARTIAL book 2 p61-73 detachable side modules and launch/service tower; flight operation not animated
+- Verified findings:
+  - MX-81 is a very wide flying operations platform with a dense central command hull and long thin span.
+  - Twin orange engine/pod masses sit forward of a layered white-and-black wing plane.
+  - Small independently readable support craft and equipment pods attach along the broad carrier frame rather than disappearing inside a solid fuselage.
+- Remaining evidence gaps:
+  - The manuals prove modular carried craft and support architecture but not the game's exact scan, transport or in-flight service functions; their attachment and launch states require an asset-specific contract.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 

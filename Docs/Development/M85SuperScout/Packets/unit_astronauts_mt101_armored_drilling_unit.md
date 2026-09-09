@@ -23,7 +23,7 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: Exact source-view coverage, construction-critical page ranges and every adaptation boundary must be recorded before this packet can leave HOLD.
+Open question: Source-view coverage and construction-critical page ranges are recorded for the audited sources below. Asset-specific adaptation boundaries still must be resolved before this packet can leave HOLD.
 
 ## B. Reference board
 
@@ -31,7 +31,23 @@ Open question: Exact source-view coverage, construction-critical page ranges and
 |---|---|---|---|---|
 | 7699 — MT-101 Armored Drilling Unit | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7699)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517776.pdf)<br>[official PDF 2](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517777.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7699-1) | PRIMARY_VERIFIED | six-wheel heavy drilling chassis |
 
-`PENDING` — this source family has not yet received its visual PDF/page-range audit.
+### Set 7699 source audit
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages book 1, 3-14: Small human wheeled support craft and alien scout; supporting module evidence.
+  - PDF pages book 1, 15-29: White/orange forward mission cockpit and equipment cylinders.
+  - PDF pages book 1, 30-47; book 2, 2-17: Long open suspended chassis, side rails and rear service bay.
+  - PDF pages book 2, 18-27: Six separately mounted huge orange wheels and completed heavy running gear.
+  - PDF pages book 2, 28-34: Forward shell and detachable support/tool components attach to the chassis.
+  - PDF pages book 2, 35-43: Elevated rotating drill carriage, long drill tool and explicit rotation/tool play evidence.
+- View/mechanism coverage: front=VERIFIED book 2 p24-43; rear=VERIFIED book 2 p27-43; leftRight=VERIFIED both books; top=VERIFIED book 2 p2-43; threeQuarter=VERIFIED covers and book 2 p35-43; undersideInterior=VERIFIED book 1 p30-47 and book 2 p2-27; mechanism=VERIFIED book 2 p35-43 rotating drill carriage and movable rear module
+- Verified findings:
+  - MT-101 is a long open heavy chassis suspended between six individually mounted oversized orange wheels.
+  - The armored white cockpit sits low at the front while the raised drilling carriage remains exposed above the central/rear frame.
+  - The long drill rotates on its own elevated mount, preserving a machine-tool identity instead of becoming a conventional tank cannon.
+- Remaining evidence gaps:
+  - The spring-projectile play action is not the game's contact-drill behavior; final drill reach, impact pose and chassis suspension response require a production animation plan.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 

@@ -16,6 +16,7 @@ MANIFEST = ROOT / "Content/Presentation/SuperScout/roster_identity_baseline.json
 LEDGER = ROOT / "Content/Presentation/SuperScout/source_ledger.json"
 INSTRUCTION_INDEX = ROOT / "Content/Presentation/SuperScout/source_instruction_index.json"
 ROCK_RAIDERS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/rock_raiders_source_evidence.json"
+ASTRONAUTS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/astronauts_source_evidence.json"
 CONFUSION = ROOT / "Content/Presentation/SuperScout/confusion_register.json"
 CONTENT = ROOT / "Content/PrototypeEntities.json"
 GENERATOR = ROOT / "tools/generate-m85-super-scout-packets.py"
@@ -63,9 +64,83 @@ def require_nonempty(record: dict, field: str, identity: str) -> None:
         fail(f"{identity} has no {field}")
 
 
+def validate_source_evidence(
+    evidence: dict,
+    assets: list[dict],
+    instruction_by_id: dict[str, dict],
+    faction: str,
+    label: str,
+    expected_status: str,
+    expected_audited: int,
+    expected_gaps: int,
+) -> tuple[int, int]:
+    if evidence.get("schemaVersion") != 1 or evidence.get("task") != "T082":
+        fail(f"{label} evidence schema/task mismatch")
+    if evidence.get("faction") != faction:
+        fail(f"{label} evidence faction mismatch")
+    if evidence.get("status") != expected_status:
+        fail(f"{label} evidence status mismatch")
+
+    evidence_records = evidence.get("sources", [])
+    evidence_ids = [record.get("setId") for record in evidence_records]
+    faction_source_ids = {
+        set_id
+        for asset in assets if asset["faction"] == faction
+        for set_id in asset["sourceSets"]
+    }
+    if len(evidence_ids) != len(set(evidence_ids)) or set(evidence_ids) != faction_source_ids:
+        fail(f"{label} evidence must cover its mapped source set exactly once")
+
+    audited_sources = 0
+    evidence_gaps = 0
+    for record in evidence_records:
+        set_id = record["setId"]
+        for field in ("instructionPdfs", "constructionRanges", "viewCoverage", "findings", "openGaps"):
+            if field not in record:
+                fail(f"{label} source {set_id} has no {field}")
+        if set(record["viewCoverage"]) != VIEW_COVERAGE_KEYS:
+            fail(f"{label} source {set_id} has incomplete view/mechanism coverage")
+        for value in record["viewCoverage"].values():
+            if value.split(" ", 1)[0] not in VIEW_COVERAGE_STATES:
+                fail(f"{label} source {set_id} has invalid coverage state {value}")
+        require_nonempty(record, "findings", f"{label} source {set_id}")
+        require_nonempty(record, "openGaps", f"{label} source {set_id}")
+        if record.get("evidenceState") == "OFFICIAL_PDF_VISUALLY_AUDITED":
+            audited_sources += 1
+            pdfs = record["instructionPdfs"]
+            if not pdfs or not record["constructionRanges"]:
+                fail(f"{label} source {set_id} audited state lacks PDFs or page ranges")
+            if [pdf["url"] for pdf in pdfs] != instruction_by_id[set_id]["pdfUrls"]:
+                fail(f"{label} source {set_id} PDF list disagrees with instruction index")
+            for pdf in pdfs:
+                if not isinstance(pdf.get("pageCount"), int) or pdf["pageCount"] <= 0:
+                    fail(f"{label} source {set_id} has invalid page count")
+                sha256 = pdf.get("sha256", "")
+                if len(sha256) != 64 or any(character not in "0123456789abcdef" for character in sha256):
+                    fail(f"{label} source {set_id} has invalid PDF SHA-256")
+            for page_range in record["constructionRanges"]:
+                require_nonempty(page_range, "pages", f"{label} source {set_id} page range")
+                require_nonempty(page_range, "evidence", f"{label} source {set_id} page range")
+        elif record.get("evidenceState") == "ARCHIVAL_GAP":
+            evidence_gaps += 1
+            if record["instructionPdfs"] or record["constructionRanges"]:
+                fail(f"{label} source {set_id} archival gap contains unverified PDF evidence")
+            if instruction_by_id[set_id]["state"] != "NO_OFFICIAL_PDF_LOCATED":
+                fail(f"{label} source {set_id} gap disagrees with instruction index")
+        else:
+            fail(f"{label} source {set_id} has invalid evidence state")
+
+    if audited_sources != expected_audited or evidence_gaps != expected_gaps:
+        fail(
+            f"{label} evidence expected {expected_audited} audited sources and "
+            f"{expected_gaps} gaps, found {audited_sources}/{evidence_gaps}"
+        )
+    return audited_sources, evidence_gaps
+
+
 def main() -> None:
     for path in (
-        MANIFEST, LEDGER, INSTRUCTION_INDEX, ROCK_RAIDERS_EVIDENCE,
+        MANIFEST, LEDGER, INSTRUCTION_INDEX, ROCK_RAIDERS_EVIDENCE, ASTRONAUTS_EVIDENCE,
         CONFUSION, CONTENT, GENERATOR,
     ):
         if not path.is_file():
@@ -75,6 +150,7 @@ def main() -> None:
     ledger = json.loads(LEDGER.read_text(encoding="utf-8"))
     instruction_index = json.loads(INSTRUCTION_INDEX.read_text(encoding="utf-8"))
     rock_raiders_evidence = json.loads(ROCK_RAIDERS_EVIDENCE.read_text(encoding="utf-8"))
+    astronauts_evidence = json.loads(ASTRONAUTS_EVIDENCE.read_text(encoding="utf-8"))
     confusion = json.loads(CONFUSION.read_text(encoding="utf-8"))
     content = json.loads(CONTENT.read_text(encoding="utf-8"))
     if manifest.get("schemaVersion") != 1 or manifest.get("task") != "T082":
@@ -188,61 +264,26 @@ def main() -> None:
         else:
             fail(f"instruction source {set_id} has invalid state")
 
-    if rock_raiders_evidence.get("schemaVersion") != 1 or rock_raiders_evidence.get("task") != "T082":
-        fail("Rock Raiders evidence schema/task mismatch")
-    if rock_raiders_evidence.get("faction") != "RockRaiders":
-        fail("Rock Raiders evidence faction mismatch")
-    if rock_raiders_evidence.get("status") != "SOURCE_AUDIT_COMPLETE_WITH_TWO_GAPS":
-        fail("Rock Raiders evidence must retain its two explicit source gaps")
-    evidence_records = rock_raiders_evidence.get("sources", [])
-    evidence_ids = [record.get("setId") for record in evidence_records]
-    rock_raiders_source_ids = {
-        set_id
-        for asset in assets if asset["faction"] == "RockRaiders"
-        for set_id in asset["sourceSets"]
-    }
-    if len(evidence_ids) != len(set(evidence_ids)) or set(evidence_ids) != rock_raiders_source_ids:
-        fail("Rock Raiders evidence must cover its mapped source set exactly once")
-    audited_sources = 0
-    evidence_gaps = 0
-    for record in evidence_records:
-        set_id = record["setId"]
-        for field in ("instructionPdfs", "constructionRanges", "viewCoverage", "findings", "openGaps"):
-            if field not in record:
-                fail(f"Rock Raiders source {set_id} has no {field}")
-        if set(record["viewCoverage"]) != VIEW_COVERAGE_KEYS:
-            fail(f"Rock Raiders source {set_id} has incomplete view/mechanism coverage")
-        for value in record["viewCoverage"].values():
-            if value.split(" ", 1)[0] not in VIEW_COVERAGE_STATES:
-                fail(f"Rock Raiders source {set_id} has invalid coverage state {value}")
-        require_nonempty(record, "findings", f"Rock Raiders source {set_id}")
-        require_nonempty(record, "openGaps", f"Rock Raiders source {set_id}")
-        if record.get("evidenceState") == "OFFICIAL_PDF_VISUALLY_AUDITED":
-            audited_sources += 1
-            pdfs = record["instructionPdfs"]
-            if not pdfs or not record["constructionRanges"]:
-                fail(f"Rock Raiders source {set_id} audited state lacks PDFs or page ranges")
-            if [pdf["url"] for pdf in pdfs] != instruction_by_id[set_id]["pdfUrls"]:
-                fail(f"Rock Raiders source {set_id} PDF list disagrees with instruction index")
-            for pdf in pdfs:
-                if not isinstance(pdf.get("pageCount"), int) or pdf["pageCount"] <= 0:
-                    fail(f"Rock Raiders source {set_id} has invalid page count")
-                sha256 = pdf.get("sha256", "")
-                if len(sha256) != 64 or any(character not in "0123456789abcdef" for character in sha256):
-                    fail(f"Rock Raiders source {set_id} has invalid PDF SHA-256")
-            for page_range in record["constructionRanges"]:
-                require_nonempty(page_range, "pages", f"Rock Raiders source {set_id} page range")
-                require_nonempty(page_range, "evidence", f"Rock Raiders source {set_id} page range")
-        elif record.get("evidenceState") == "ARCHIVAL_GAP":
-            evidence_gaps += 1
-            if record["instructionPdfs"] or record["constructionRanges"]:
-                fail(f"Rock Raiders source {set_id} archival gap contains unverified PDF evidence")
-            if instruction_by_id[set_id]["state"] != "NO_OFFICIAL_PDF_LOCATED":
-                fail(f"Rock Raiders source {set_id} gap disagrees with instruction index")
-        else:
-            fail(f"Rock Raiders source {set_id} has invalid evidence state")
-    if audited_sources != 7 or evidence_gaps != 2:
-        fail(f"Rock Raiders evidence expected seven audited PDFs and two gaps, found {audited_sources}/{evidence_gaps}")
+    audited_sources, evidence_gaps = validate_source_evidence(
+        rock_raiders_evidence,
+        assets,
+        instruction_by_id,
+        "RockRaiders",
+        "Rock Raiders",
+        "SOURCE_AUDIT_COMPLETE_WITH_TWO_GAPS",
+        7,
+        2,
+    )
+    astronauts_audited, astronauts_gaps = validate_source_evidence(
+        astronauts_evidence,
+        assets,
+        instruction_by_id,
+        "Astronauts",
+        "Astronauts",
+        "SOURCE_AUDIT_COMPLETE",
+        18,
+        0,
+    )
 
     if confusion.get("schemaVersion") != 1 or confusion.get("task") != "T082":
         fail("confusion register schema/task mismatch")
@@ -299,6 +340,20 @@ def main() -> None:
         if "**State:** `HOLD`" not in packet or "**Approving reviewer:** game director, not yet requested" not in packet:
             fail(f"{path.name} could be mistaken for an accepted T082 packet")
 
+    evidence_ids_by_faction = {
+        "RockRaiders": {record["setId"] for record in rock_raiders_evidence["sources"]},
+        "Astronauts": {record["setId"] for record in astronauts_evidence["sources"]},
+    }
+    for asset in assets:
+        packet_path = packet_dir / (asset["stableId"].replace(".", "_") + ".md")
+        packet = packet_path.read_text(encoding="utf-8")
+        expected_evidence_ids = set(asset["sourceSets"]) & evidence_ids_by_faction.get(asset["faction"], set())
+        if packet.count(" source audit\n") != len(expected_evidence_ids):
+            fail(f"{packet_path.name} has cross-faction or missing source-evidence blocks")
+        for set_id in expected_evidence_ids:
+            if f"### Set {set_id} source audit" not in packet:
+                fail(f"{packet_path.name} is missing source evidence for {set_id}")
+
     primary = sum(source["verification"] == "PRIMARY_VERIFIED" for source in sources)
     archival = len(sources) - primary
     if primary != direct_pdf_sources or archival != archival_sources:
@@ -307,7 +362,8 @@ def main() -> None:
         "M8.5 SUPER SCOUT: PASS "
         f"assets={len(assets)} units=35 infrastructure=31 sources={len(sources)} "
         f"primaryVerified={primary} archival={archival} directPdfs={direct_pdf_sources} "
-        f"rockRaidersAudited={audited_sources} rockRaidersGaps={evidence_gaps} packets=66 "
+        f"rockRaidersAudited={audited_sources} rockRaidersGaps={evidence_gaps} "
+        f"astronautsAudited={astronauts_audited} astronautsGaps={astronauts_gaps} packets=66 "
         f"confusionPairs={len(pairs)} state=HOLD"
     )
 

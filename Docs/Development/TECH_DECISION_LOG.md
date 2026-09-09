@@ -1283,6 +1283,34 @@ direction, and it does not approve any T083/T085 production design.
 This changes no gameplay, simulation, public data format, dependency, canon or
 accepted visual direction. All affected asset packets remain `HOLD`.
 
+## 2026-09-09 — Record Astronaut source-derived construction and motion boundaries
+
+- All 18 mapped Astronaut sources are now visually audited across 23 official
+  instruction books. The evidence records exact hashes, page ranges, view
+  coverage, construction findings and remaining adaptation gaps without
+  redistributing the manuals.
+- Evidence is keyed by both faction and source set. Mixed playsets often contain
+  opposing human and Alien models under one set number, so a shared set ID alone
+  must never inject one side's construction findings into the other side's
+  asset packet.
+- The audit preserves the source-line split instead of averaging every asset
+  into generic white science fiction: Field Systems remain exposed, rugged and
+  modular, while Mission Systems retain cleaner white/orange carrier, gantry,
+  tool and articulated-machine construction.
+- A manual's rebuild sequence proves geometry and attachment intent, but does
+  not automatically define an in-game animation. In particular, the MX-41
+  cockpit hull is manually separated during the source transformation; its
+  production transform must maintain a credible continuous mechanical
+  connection while preserving the verified ground and flight silhouettes.
+- Similar boundaries remain explicit for the MX-71 payload release, MT-201
+  deployment/gait, MT-51 attack cycle and MT-101 contact drilling. Their motion
+  contracts will be completed later in T082 and may communicate, but never
+  determine, authoritative gameplay timing.
+
+This is a source-traceability and production-handoff decision only. It changes
+no gameplay, simulation, public data format, dependency, canon or accepted
+visual direction. All affected packets remain `HOLD`.
+
 ## 2026-09-09 — Non-intrusive macOS Godot automation
 
 - Routine Godot verification is permanently headless and disables Godot's

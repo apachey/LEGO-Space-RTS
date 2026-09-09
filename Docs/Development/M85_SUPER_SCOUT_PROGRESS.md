@@ -1,8 +1,8 @@
 # M8.5 T082 — SUPER SCOUT PROGRESS
 
-**Status:** in progress. Identity/source baseline and the Rock Raiders official
-PDF audit are complete; the other faction evidence and cross-roster review
-gates remain open.
+**Status:** in progress. Identity/source baseline plus the Rock Raiders and
+Astronauts official-PDF audits are complete; Alien/Martian evidence and the
+cross-roster review gates remain open.
 
 ## Completed in the identity-baseline pass
 
@@ -31,6 +31,22 @@ gates remain open.
   construction-critical page ranges, and classified front/rear/side/top,
   three-quarter, underside/interior and mechanism coverage. Sets 1277 and 4930
   remain explicit archival gaps rather than inferred construction.
+- The Astronaut source pass visually audited all 18 mapped sources across 23
+  official PDF books. It records the same page-range, hash, view and mechanism
+  evidence with no Astronaut archival gap.
+- The manuals confirm the faction's deliberate split between exposed Field
+  Systems and cleaner Mission Systems instead of a generic white sci-fi
+  average. Tiny craft remain visibly open and plate-built; larger machines keep
+  their modular hulls, carried vehicles, separate tool platforms, gantries,
+  hoses, articulated legs and exposed working assemblies.
+- Source-supported signature mechanisms now include the MX-41 folding
+  wing/chassis conversion, MX-71 underside rover cradle, MT-201 four-leg
+  deployment, MT-51 rotating upper body and tool arms, and MT-101 elevated drill
+  carriage. Their game animation timing remains a later presentation contract.
+- The MX-41 manual temporarily separates its cockpit hull by hand during
+  conversion. That proves the two-state geometry but does not authorize a game
+  animation where the craft visibly comes apart without a credible continuous
+  mechanical connection.
 - The 4990 HQ manual is now verified primary evidence. Its 43 pages establish
   a reusable faction vocabulary of separate tower, crane, open service gantry,
   conveyor/processing and irregular worksite-base modules; they do not silently
@@ -52,8 +68,8 @@ redistributed.
 
 ## Remaining before T082 can pass
 
-1. Repeat the Rock Raiders PDF/page-range audit for Astronauts, Aliens and
-   Martians, and resolve or retain the four explicit archival source gaps.
+1. Repeat the completed PDF/page-range audit for Aliens and Martians, and
+   resolve or retain their remaining explicit archival source gaps.
 2. Complete each semantic construction map: what every identity-bearing mass,
    opening, tool, light and connection is and why it exists.
 3. Complete locomotion, planted-contact, articulation, state, pivot and socket
