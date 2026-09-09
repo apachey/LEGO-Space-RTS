@@ -416,7 +416,7 @@ godot_m85_asset_pipeline_smoke() {
       printf 'M8.5 asset-pipeline fixture emitted a shader, script or runtime error.\n' >&2
       return 1
     fi
-    if ! printf '%s\n' "${output}" | grep -q "M8.5 ASSET PIPELINE: PASS source=blend export=glb import=PackedScene root=ground-centre scale=1 cellWorldUnits=2 forward=-Z lods=3 close=868 combat=332 strategic=168 pivots=4 sockets=6 roleBindings=84 zoom=${zoom}"; then
+    if ! printf '%s\n' "${output}" | grep -q "M8.5 ASSET PIPELINE: PASS source=blend export=glb import=PackedScene root=ground-centre scale=1 cellWorldUnits=2 forward=-Z lods=3 close=868 combat=332 strategic=168 pivots=6 sockets=6 roleBindings=84 zoom=${zoom}"; then
       printf 'Godot exited without the required T081 asset-pipeline PASS marker at zoom=%s.\n' "${zoom}" >&2
       return 1
     fi

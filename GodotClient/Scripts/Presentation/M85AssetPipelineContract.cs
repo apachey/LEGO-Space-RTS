@@ -18,7 +18,9 @@ public static class M85AssetPipelineContract
 
     private static readonly string[] RequiredPivots =
     {
-        "Pivot_Suspension", "Pivot_ToolPrimary", "Pivot_Wheel_Left", "Pivot_Wheel_Right"
+        "Pivot_Suspension", "Pivot_ToolPrimary",
+        "Pivot_Wheel_Left_Front", "Pivot_Wheel_Left_Rear",
+        "Pivot_Wheel_Right_Front", "Pivot_Wheel_Right_Rear"
     };
 
     private static readonly string[] RequiredSockets =
@@ -59,6 +61,18 @@ public static class M85AssetPipelineContract
         for (int i = 0; i < RequiredPivots.Length; i++)
             if (root.FindChild(RequiredPivots[i], true, false) is not Node3D)
                 return Fail($"required pivot missing: {RequiredPivots[i]}", out error);
+        foreach ((string name, Vector3 expected) in new[]
+        {
+            ("Pivot_Wheel_Left_Front", new Vector3(-1.60f, 0.54f, -0.95f)),
+            ("Pivot_Wheel_Left_Rear", new Vector3(-1.60f, 0.54f, 0.75f)),
+            ("Pivot_Wheel_Right_Front", new Vector3(1.60f, 0.54f, -0.95f)),
+            ("Pivot_Wheel_Right_Rear", new Vector3(1.60f, 0.54f, 0.75f))
+        })
+        {
+            Node3D pivot = (Node3D)root.FindChild(name, true, false)!;
+            if (!pivot.Position.IsEqualApprox(expected))
+                return Fail($"wheel pivot is not centred on its wheel: {name} at {pivot.Position}", out error);
+        }
         for (int i = 0; i < RequiredSockets.Length; i++)
             if (root.FindChild(RequiredSockets[i], true, false) is not Node3D)
                 return Fail($"required socket missing: {RequiredSockets[i]}", out error);

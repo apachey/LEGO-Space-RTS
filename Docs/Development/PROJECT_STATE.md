@@ -582,7 +582,7 @@ live; the current schema-9 copy/paste retains the complete experiment.
   Close, Combat and Strategic LODs whose complexity decreases while identity,
   locomotion and primary function remain readable.
 - The representative reference vehicle proves the entire round trip with
-  868/332/168 triangles, four pivots, six sockets and the accepted M7 material
+  868/332/168 triangles, six pivots, six sockets and the accepted M7 material
   roles. It is explicitly a technical pipeline fixture, not roster art, and
   cannot count toward the 35 production units or satisfy later asset tasks.
 - The sidecar records source classification, provenance, dimensions, LOD
@@ -597,7 +597,10 @@ live; the current schema-9 copy/paste retains the complete experiment.
 - The first game-director pass accepted the scale, orientation, LOD progression
   and other visible evidence, but found that the fixed camera hid the yellow
   mechanical-pivot markers. Camera orbit and through-model marker visibility
-  correct that review blocker; only this corrected pivot review remains pending.
+  correct that review blocker. The follow-up review confirmed the drill hinge
+  but rejected shared midpoint markers between visually separate wheels; the
+  four Close-LOD wheels now each carry a pivot at their own centre. Only review
+  of this corrected placement remains pending.
 - The candidate has zero blocking verification failures and a launchable macOS
   build. Its game-director acceptance remains `PENDING`; T082 has not started.
 
@@ -621,6 +624,15 @@ actually required.
 - network replay chunk format **1**.
 
 ## Verification state
+
+The corrected T081 wheel-pivot candidate passed `./tools/verify.sh --full` with
+zero blocking failures at
+`Artifacts/Verification/20260909T093445Z-full-summary.txt`: all 317 tests,
+Blender/GLB validation and byte-identical regeneration, exact imported pivot
+positions at 24/44/72 cells, retained Godot presentation/network checks and a
+fresh macOS export pass. Stress60 remained the expected 2/60
+`BLOCKING_LATER` M9 diagnostic. The Godot diagnostic-report count remained 25,
+so this full run produced no new macOS crash report.
 
 The non-intrusive Godot automation revision passed `./tools/verify.sh --full`
 with zero blocking failures at

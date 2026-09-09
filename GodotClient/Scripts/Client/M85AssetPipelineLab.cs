@@ -66,7 +66,7 @@ public partial class M85AssetPipelineLab : Node3D
         if (_frames < _captureFrame) return;
         bool valid = _models.Count == 3 && string.IsNullOrEmpty(_validationError) &&
             _report.CloseTriangles == 868 && _report.CombatTriangles == 332 &&
-            _report.StrategicTriangles == 168 && _report.PivotCount == 4 &&
+            _report.StrategicTriangles == 168 && _report.PivotCount == 6 &&
             _report.SocketCount == 6 && _roleMeshes.Count == 84;
         if (valid && _capturePath is not null) valid = CaptureViewport(_capturePath);
         _finished = true;
@@ -209,7 +209,12 @@ public partial class M85AssetPipelineLab : Node3D
             };
             socket.AddChild(marker);
         }
-        foreach (string pivotName in new[] { "Pivot_ToolPrimary", "Pivot_Wheel_Left", "Pivot_Wheel_Right" })
+        foreach (string pivotName in new[]
+        {
+            "Pivot_ToolPrimary",
+            "Pivot_Wheel_Left_Front", "Pivot_Wheel_Left_Rear",
+            "Pivot_Wheel_Right_Front", "Pivot_Wheel_Right_Rear"
+        })
         {
             if (model.FindChild(pivotName, true, false) is not Node3D pivot) continue;
             MeshInstance3D marker = new()

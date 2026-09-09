@@ -1227,7 +1227,7 @@ format or visual direction.
   must strictly decrease without losing gameplay-scale identity or function.
 - The first round trip exposed and corrected an initially inverted authored
   forward convention before roster production. The non-roster technical
-  vehicle now proves 868/332/168 triangles, four pivots, six sockets, semantic
+  vehicle now proves 868/332/168 triangles, six pivots, six sockets, semantic
   material binding, exact 24/44/72-cell Godot views and byte-identical Blender
   regeneration.
 - This fixture validates the production path only. It cannot count toward the

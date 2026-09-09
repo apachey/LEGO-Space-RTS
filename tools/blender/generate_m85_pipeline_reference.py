@@ -167,8 +167,10 @@ def build_model() -> bpy.types.Object:
 
     empty("Pivot_Suspension", (0.0, 0.0, 0.68), root)
     empty("Pivot_ToolPrimary", (0.0, 1.42, 1.00), root)
-    empty("Pivot_Wheel_Left", (-1.60, 0.05, 0.54), root)
-    empty("Pivot_Wheel_Right", (1.60, 0.05, 0.54), root)
+    empty("Pivot_Wheel_Left_Front", (-1.60, 0.95, 0.54), root)
+    empty("Pivot_Wheel_Left_Rear", (-1.60, -0.75, 0.54), root)
+    empty("Pivot_Wheel_Right_Front", (1.60, 0.95, 0.54), root)
+    empty("Pivot_Wheel_Right_Rear", (1.60, -0.75, 0.54), root)
     empty("Socket_Selection", (0.0, 0.0, 0.0), root)
     empty("Socket_Health", (0.0, -0.10, 2.45), root)
     weapon = empty("Socket_Weapon_Primary", (0.0, 2.82, 1.00), root)

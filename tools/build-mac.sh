@@ -81,7 +81,7 @@ set +e
   --m85-asset-pipeline --m85-asset-pipeline-smoke --m85-asset-pipeline-zoom 44 2>&1 | tee "${PIPELINE_LOG}"
 PIPELINE_STATUS=${PIPESTATUS[0]}
 set -e
-if (( PIPELINE_STATUS != 0 )) || ! grep -q 'M8.5 ASSET PIPELINE: PASS source=blend export=glb import=PackedScene.*lods=3 close=868 combat=332 strategic=168 pivots=4 sockets=6 roleBindings=84 zoom=44' "${PIPELINE_LOG}"; then
+if (( PIPELINE_STATUS != 0 )) || ! grep -q 'M8.5 ASSET PIPELINE: PASS source=blend export=glb import=PackedScene.*lods=3 close=868 combat=332 strategic=168 pivots=6 sockets=6 roleBindings=84 zoom=44' "${PIPELINE_LOG}"; then
   rm -f "${PIPELINE_LOG}" "${PIPELINE_ENGINE_LOG}"
   printf 'FAIL: exported app did not pass the T081 asset-pipeline round trip.\n' >&2
   exit 1

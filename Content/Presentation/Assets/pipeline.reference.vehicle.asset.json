@@ -36,8 +36,10 @@
   "requiredPivots": [
     "Pivot_Suspension",
     "Pivot_ToolPrimary",
-    "Pivot_Wheel_Left",
-    "Pivot_Wheel_Right"
+    "Pivot_Wheel_Left_Front",
+    "Pivot_Wheel_Left_Rear",
+    "Pivot_Wheel_Right_Front",
+    "Pivot_Wheel_Right_Rear"
   ],
   "requiredSockets": [
     "Socket_Selection",

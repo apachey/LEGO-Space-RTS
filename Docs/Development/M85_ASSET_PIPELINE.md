@@ -166,6 +166,10 @@ The fixture proves unit scale, forward/up conversion, ground root, three
 strictly reducing authored LODs, semantic geometry, named pivots/sockets,
 accepted material binding and Blender-to-Godot import. It is not a canonical
 unit design and must never be counted toward the 35 production units.
+The drill uses one pivot at its visible hinge. Each of the four independently
+readable Close-LOD wheels has its own pivot at the wheel centre; a midpoint
+between front and rear wheels is valid only for a visibly connected bogie that
+moves as one assembly.
 The review camera orbits in 45-degree steps with `Q`/`E`, the left/right arrow
 keys or the on-screen rotation buttons. Attachment markers render through the
 technical fixture so occluded wheel/tool pivots remain reviewable from every
