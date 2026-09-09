@@ -31,7 +31,7 @@ Open question: Source-view coverage and construction-critical page ranges are re
 |---|---|---|---|---|
 | 7699 — MT-101 Armored Drilling Unit | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7699)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517776.pdf)<br>[official PDF 2](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517777.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7699-1) | PRIMARY_VERIFIED | six-wheel heavy drilling chassis |
 
-### Set 7699 source audit
+### Source audit [Astronauts:7699]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:

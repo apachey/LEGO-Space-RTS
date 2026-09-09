@@ -33,7 +33,7 @@ Open question: Source-view coverage and construction-critical page ranges are re
 | 7312 — T3-Trike | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7312)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130807.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7312-1) | PRIMARY_VERIFIED | three-wheel field chassis, suspension and modularity |
 | 7315 — Solar Explorer | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7315)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130810.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7315-1) | PRIMARY_VERIFIED | solar arrays, field modules and service construction |
 
-### Set 7301 source audit
+### Source audit [Astronauts:7301]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -47,7 +47,7 @@ Open question: Source-view coverage and construction-critical page ranges are re
 - Remaining evidence gaps:
   - A rear view is still required before final antenna, storage and propulsion placement.
 
-### Set 7312 source audit
+### Source audit [Astronauts:7312]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -63,7 +63,7 @@ Open question: Source-view coverage and construction-critical page ranges are re
 - Remaining evidence gaps:
   - The source proves modular attachment points but not the game's Escort/Survey conversion sequence; that adaptation requires its own mechanical plan.
 
-### Set 7315 source audit
+### Source audit [Astronauts:7315]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:

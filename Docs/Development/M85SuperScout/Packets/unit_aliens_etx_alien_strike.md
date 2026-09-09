@@ -23,7 +23,7 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: Exact source-view coverage, construction-critical page ranges and every adaptation boundary must be recorded before this packet can leave HOLD.
+Open question: Source-view coverage and construction-critical page ranges are recorded for the audited sources below. Asset-specific adaptation boundaries still must be resolved before this packet can leave HOLD.
 
 ## B. Reference board
 
@@ -31,7 +31,20 @@ Open question: Exact source-view coverage, construction-critical page ranges and
 |---|---|---|---|---|
 | 7693 — ETX Alien Strike | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7693)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4523183.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7693-1) | PRIMARY_VERIFIED | alien strike transformation and human mining module |
 
-`PENDING` — this source family has not yet received its visual PDF/page-range audit.
+### Source audit [Aliens:7693]
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 3-16: Astronaut mining vehicle; supporting opposition evidence.
+  - PDF pages 17-35: ETX Alien Strike central keel, hinged side frames, paired crescent lobes, detachable corner modules and long translucent-lime tail blades.
+  - PDF pages 36-59: Cross-set alternate astronaut craft; not direct Alien Strike production geometry.
+- View/mechanism coverage: front=VERIFIED p28-35; rear=PARTIAL p28-35; leftRight=VERIFIED p17-35; top=VERIFIED p17-35; threeQuarter=VERIFIED cover and p28-35; undersideInterior=VERIFIED p17-28 staged open frame; mechanism=PARTIAL p24-35 hinged crescent/side modules and detachable corner pads; no complete flight-to-siege sequence
+- Verified findings:
+  - Alien Strike is built around a long central black keel with a lime multi-blade tail and two huge crescent side lobes.
+  - The lobes and smaller corner pads attach through visible pivots, creating a much wider final attack geometry around the narrow flight spine.
+  - Gray central structure, red forward facets and translucent-lime tail layers remain deliberately exposed inside the black shell.
+- Remaining evidence gaps:
+  - The manual proves rearrangeable hinged modules but does not show the game's exact flight and planted siege endpoints, support contacts or high-output weapon path; those states require explicit adaptation.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 
@@ -50,7 +63,7 @@ Non-removable identity anchors:
 - Forbidden genericization: Do not use insect bodies, biological tissue, nests, tentacles or generic black-neon towers. Construction must remain craft-derived and mechanical.
 - Nearest-confusion baseline:
 
-- `unit.aliens.etx_alien_infiltrator` — Both are medium transforming ETX craft. Mitigations: Alien Strike unfolds wide into planted siege braces; Infiltrator rises into paired walker legs. / Alien Strike preserves split curved wings; Infiltrator preserves two folding hull halves and claws. / Alien Strike's deployed state points fire outward; Infiltrator's walker state places the core above an anti-heavy contact stance.
+- `unit.aliens.etx_alien_infiltrator` — Both are medium transforming ETX craft. Mitigations: Alien Strike unfolds wide into planted siege braces; Infiltrator rises on three planted members. / Alien Strike preserves two huge crescent lobes and a lime tail; Infiltrator preserves a long split nose and paired curved side modules. / Alien Strike's deployed state points fire outward; Infiltrator's walker state places the crew core above an anti-heavy contact stance.
 
 ## D. Construction contract
 

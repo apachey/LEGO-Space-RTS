@@ -31,7 +31,7 @@ Open question: Source-view coverage and construction-critical page ranges are re
 |---|---|---|---|---|
 | 1277 — Drill Craft | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/1277)<br>no direct official PDF located | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=1277-1) | CANON_VERIFIED_ARCHIVAL | compact drill silhouette and construction |
 
-### Set 1277 source audit
+### Source audit [RockRaiders:1277]
 
 - Evidence state: `ARCHIVAL_GAP`
 - Construction map:

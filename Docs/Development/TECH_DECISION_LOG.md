@@ -1311,6 +1311,36 @@ This is a source-traceability and production-handoff decision only. It changes
 no gameplay, simulation, public data format, dependency, canon or accepted
 visual direction. All affected packets remain `HOLD`.
 
+## 2026-09-09 — Preserve distinct Alien machines inside the shared craft language
+
+- Eight faction-mapped Alien sources are visually audited across ten official
+  instruction books. Mixed-set evidence remains explicitly keyed by faction and
+  set, and generated packet headings expose that key for review and regression
+  validation.
+- The small black/lime craft are a related family, not one interchangeable
+  silhouette. The direct 5617 Jet is a tiny open swept plate; 7645 supplies a
+  long split-nose blade skimmer; 7690/7697 supply different broken crescents;
+  and 7692 supplies a narrow vertical twin-blade frame. The production Razor
+  Skimmer must deliberately select a coherent subset during semantic
+  construction rather than average every source into generic Alien geometry.
+- The 7646 Infiltrator's source conversion is specifically three-legged: two
+  curved side modules and the long central nose rotate down from the flight
+  form. It must not become a generic insect or four/six-legged spider.
+- The 7691 Mothership source proves a flattened circular carrier with an open
+  machinery channel, directional tail blades and several independently readable
+  subcraft. The 7693 Strike proves hinged widening modules but not the game's
+  final planted siege contacts or high-output weapon path; those remain explicit
+  later T082 adaptations.
+- Three unverified identity-baseline assumptions were corrected from source
+  evidence: the 5617 Jet uses paired lime arches rather than folding nose
+  panels; the Infiltrator has three planted members rather than a paired-leg
+  read; and the Mothership is an interrupted circular carrier with a directional
+  tail rather than an abstract four-lobed radial craft.
+
+This is a source-traceability and production-handoff decision only. It changes
+no gameplay, simulation, public data format, dependency, canon or accepted
+visual direction. All affected packets remain `HOLD`.
+
 ## 2026-09-09 — Non-intrusive macOS Godot automation
 
 - Routine Godot verification is permanently headless and disables Godot's

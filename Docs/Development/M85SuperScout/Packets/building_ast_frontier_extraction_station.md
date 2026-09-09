@@ -32,7 +32,7 @@ Open question: Source-view coverage and construction-critical page ranges are re
 | 7691 — ETX Alien Mothership Assault | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7691)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4516029.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7691-1) | PRIMARY_VERIFIED | alien mothership, detachable craft and human extraction station |
 | 7648 — MT-21 Mobile Mining Unit | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7648)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4525546.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7648-1) | PRIMARY_VERIFIED | mobile mining and detachable support module |
 
-### Set 7691 source audit
+### Source audit [Astronauts:7691]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -47,7 +47,7 @@ Open question: Source-view coverage and construction-critical page ranges are re
 - Remaining evidence gaps:
   - The exact resource intake, storage and outgoing process for the composite Frontier Extraction Station must be added from other verified Mars Mission mining sources.
 
-### Set 7648 source audit
+### Source audit [Astronauts:7648]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:

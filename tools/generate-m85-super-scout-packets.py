@@ -17,6 +17,7 @@ LEDGER = ROOT / "Content/Presentation/SuperScout/source_ledger.json"
 INSTRUCTION_INDEX = ROOT / "Content/Presentation/SuperScout/source_instruction_index.json"
 ROCK_RAIDERS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/rock_raiders_source_evidence.json"
 ASTRONAUTS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/astronauts_source_evidence.json"
+ALIENS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/aliens_source_evidence.json"
 CONFUSION = ROOT / "Content/Presentation/SuperScout/confusion_register.json"
 OUTPUT = ROOT / "Docs/Development/M85SuperScout/Packets"
 INDEX = ROOT / "Docs/Development/M85SuperScout/PACKET_INDEX.md"
@@ -25,6 +26,7 @@ CONFUSION_MATRIX = ROOT / "Docs/Development/M85SuperScout/Matrices/confusion_reg
 SOURCE_INDEX_MATRIX = ROOT / "Docs/Development/M85SuperScout/Matrices/source_instruction_index.csv"
 ROCK_RAIDERS_AUDIT = ROOT / "Docs/Development/M85SuperScout/Matrices/rock_raiders_source_audit.md"
 ASTRONAUTS_AUDIT = ROOT / "Docs/Development/M85SuperScout/Matrices/astronauts_source_audit.md"
+ALIENS_AUDIT = ROOT / "Docs/Development/M85SuperScout/Matrices/aliens_source_audit.md"
 
 FACTION_RULES = {
     "RockRaiders": (
@@ -80,7 +82,7 @@ def source_evidence_block(
         findings = "\n".join(f"  - {finding}" for finding in record["findings"])
         gaps = "\n".join(f"  - {gap}" for gap in record["openGaps"])
         blocks.append(
-            f"### Set {set_id} source audit\n\n"
+            f"### Source audit [{faction}:{set_id}]\n\n"
             f"- Evidence state: `{record['evidenceState']}`\n"
             f"- Construction map:\n{ranges}\n"
             f"- View/mechanism coverage: {coverage}\n"
@@ -329,6 +331,7 @@ def expected_files() -> dict[Path, str]:
     instruction_index = json.loads(INSTRUCTION_INDEX.read_text(encoding="utf-8"))
     rock_raiders_evidence = json.loads(ROCK_RAIDERS_EVIDENCE.read_text(encoding="utf-8"))
     astronauts_evidence = json.loads(ASTRONAUTS_EVIDENCE.read_text(encoding="utf-8"))
+    aliens_evidence = json.loads(ALIENS_EVIDENCE.read_text(encoding="utf-8"))
     confusion = json.loads(CONFUSION.read_text(encoding="utf-8"))
     sources = {source["setId"]: source for source in ledger["sources"]}
     instructions = {record["setId"]: record for record in instruction_index["records"]}
@@ -338,6 +341,9 @@ def expected_files() -> dict[Path, str]:
     ] + [
         (astronauts_evidence["faction"], record)
         for record in astronauts_evidence["sources"]
+    ] + [
+        (aliens_evidence["faction"], record)
+        for record in aliens_evidence["sources"]
     ]
     evidence = {
         (faction, record["setId"]): record
@@ -356,6 +362,9 @@ def expected_files() -> dict[Path, str]:
         ),
         ASTRONAUTS_AUDIT: source_audit_text(
             astronauts_evidence["sources"], sources, "Astronauts", "Astronauts"
+        ),
+        ALIENS_AUDIT: source_audit_text(
+            aliens_evidence["sources"], sources, "Aliens", "Aliens"
         ),
     }
     for asset in manifest["assets"]:
@@ -380,14 +389,14 @@ def main() -> None:
             for failure in failures:
                 print(f"- {failure}", file=sys.stderr)
             raise SystemExit(1)
-        print("M8.5 SUPER SCOUT PACKETS: PASS packets=66 matrices=5 state=HOLD")
+        print("M8.5 SUPER SCOUT PACKETS: PASS packets=66 matrices=6 state=HOLD")
         return
 
     OUTPUT.mkdir(parents=True, exist_ok=True)
     for path, content in expected.items():
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(content, encoding="utf-8")
-    print("M8.5 SUPER SCOUT PACKETS: GENERATED packets=66 matrices=5 state=HOLD")
+    print("M8.5 SUPER SCOUT PACKETS: GENERATED packets=66 matrices=6 state=HOLD")
 
 
 if __name__ == "__main__":

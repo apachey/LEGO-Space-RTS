@@ -34,7 +34,7 @@ Open question: Source-view coverage and construction-critical page ranges are re
 | 7692 — MX-71 Recon Dropship | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7692)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4524070.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7692-1) | PRIMARY_VERIFIED | dropship cargo cradle and small alien attack craft |
 | 7695 — MX-11 Astro Fighter | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7695)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517774.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7695-1) | PRIMARY_VERIFIED | astronaut fighter wing and defense hardpoint language |
 
-### Set 5619 source audit
+### Source audit [Astronauts:5619]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -48,7 +48,7 @@ Open question: Source-view coverage and construction-critical page ranges are re
 - Remaining evidence gaps:
   - Acquire a clean orthogonal rear or underside image before fixing propulsion and landing details for the Mission Fighter family.
 
-### Set 7644 source audit
+### Source audit [Astronauts:7644]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -64,7 +64,7 @@ Open question: Source-view coverage and construction-critical page ranges are re
 - Remaining evidence gaps:
   - The manuals prove modular carried craft and support architecture but not the game's exact scan, transport or in-flight service functions; their attachment and launch states require an asset-specific contract.
 
-### Set 7692 source audit
+### Source audit [Astronauts:7692]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -82,7 +82,7 @@ Open question: Source-view coverage and construction-critical page ranges are re
 - Remaining evidence gaps:
   - The production transport must support several canonical payload types while retaining the source's visible external-carry identity and clear loading contacts.
 
-### Set 7695 source audit
+### Source audit [Astronauts:7695]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:

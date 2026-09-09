@@ -31,7 +31,7 @@ Open question: Source-view coverage and construction-critical page ranges are re
 |---|---|---|---|---|
 | 7647 — MX-41 Switch Fighter | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7647)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4525547.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7647-1) | PRIMARY_VERIFIED | six-wheel ground-to-flight transformation |
 
-### Set 7647 source audit
+### Source audit [Astronauts:7647]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:

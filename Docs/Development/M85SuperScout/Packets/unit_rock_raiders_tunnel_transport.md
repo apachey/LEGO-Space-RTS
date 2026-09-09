@@ -31,7 +31,7 @@ Open question: Source-view coverage and construction-critical page ranges are re
 |---|---|---|---|---|
 | 4980 — Tunnel Transport | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/4980)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128427.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=4980-1) | PRIMARY_VERIFIED | twin-propeller heavy lift construction |
 
-### Set 4980 source audit
+### Source audit [RockRaiders:4980]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:

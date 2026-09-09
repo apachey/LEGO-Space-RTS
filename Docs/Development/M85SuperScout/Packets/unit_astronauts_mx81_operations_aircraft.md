@@ -31,7 +31,7 @@ Open question: Source-view coverage and construction-critical page ranges are re
 |---|---|---|---|---|
 | 7644 — MX-81 Hypersonic Operations Aircraft | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7644)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4534843.pdf)<br>[official PDF 2](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4537579.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7644-1) | PRIMARY_VERIFIED | large modular operations aircraft |
 
-### Set 7644 source audit
+### Source audit [Astronauts:7644]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:

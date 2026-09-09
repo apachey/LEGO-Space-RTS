@@ -32,7 +32,7 @@ Open question: Source-view coverage and construction-critical page ranges are re
 | 7312 — T3-Trike | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7312)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130807.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7312-1) | PRIMARY_VERIFIED | three-wheel field chassis, suspension and modularity |
 | 7694 — MT-31 Trike | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7694)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517775.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7694-1) | PRIMARY_VERIFIED | Mission Systems trike equipment variant |
 
-### Set 7312 source audit
+### Source audit [Astronauts:7312]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -48,7 +48,7 @@ Open question: Source-view coverage and construction-critical page ranges are re
 - Remaining evidence gaps:
   - The source proves modular attachment points but not the game's Escort/Survey conversion sequence; that adaptation requires its own mechanical plan.
 
-### Set 7694 source audit
+### Source audit [Astronauts:7694]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:

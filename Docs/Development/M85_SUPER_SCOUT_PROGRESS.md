@@ -1,8 +1,8 @@
 # M8.5 T082 — SUPER SCOUT PROGRESS
 
-**Status:** in progress. Identity/source baseline plus the Rock Raiders and
-Astronauts official-PDF audits are complete; Alien/Martian evidence and the
-cross-roster review gates remain open.
+**Status:** in progress. Identity/source baseline plus the Rock Raiders,
+Astronauts and Aliens official-PDF audits are complete; Martian evidence and
+the cross-roster review gates remain open.
 
 ## Completed in the identity-baseline pass
 
@@ -47,6 +47,20 @@ cross-roster review gates remain open.
   conversion. That proves the two-state geometry but does not authorize a game
   animation where the craft visibly comes apart without a credible continuous
   mechanical connection.
+- The Alien source pass visually audited all eight faction-mapped sources
+  across ten official PDF books. Every evidence block is keyed by faction and
+  set number, preventing the human and Alien builds in mixed boxes from leaking
+  into each other's packets.
+- The sources retain distinct machine identities inside the shared black/lime
+  language: 5617 is a tiny open swept Jet; 7645 is a long split-nose blade
+  skimmer; 7690 and 7697 use different broken-crescent plans; and 7692 is a
+  narrow twin-blade craft. The composite Razor Skimmer still requires a
+  deliberate cross-source construction choice rather than an averaged hull.
+- 7646 explicitly converts from a long three-part craft into a three-legged
+  walker by rotating the two curved side modules and long nose downward. 7691
+  verifies a huge open-channel circular Mothership with detachable subcraft,
+  while 7693 verifies hinged crescent modules but not the game's final planted
+  siege endpoints.
 - The 4990 HQ manual is now verified primary evidence. Its 43 pages establish
   a reusable faction vocabulary of separate tower, crane, open service gantry,
   conveyor/processing and irregular worksite-base modules; they do not silently
@@ -68,8 +82,8 @@ redistributed.
 
 ## Remaining before T082 can pass
 
-1. Repeat the completed PDF/page-range audit for Aliens and Martians, and
-   resolve or retain their remaining explicit archival source gaps.
+1. Repeat the completed PDF/page-range audit for Martians, and resolve or retain
+   their remaining explicit archival source gaps.
 2. Complete each semantic construction map: what every identity-bearing mass,
    opening, tool, light and connection is and why it exists.
 3. Complete locomotion, planted-contact, articulation, state, pivot and socket

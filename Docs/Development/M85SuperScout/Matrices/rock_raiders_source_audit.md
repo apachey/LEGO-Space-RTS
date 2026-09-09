@@ -4,7 +4,7 @@ This generated review records what the official instruction PDFs actually prove,
 
 ## 1277 — Drill Craft
 
-### Set 1277 source audit
+### Source audit [RockRaiders:1277]
 
 - Evidence state: `ARCHIVAL_GAP`
 - Construction map:
@@ -17,7 +17,7 @@ This generated review records what the official instruction PDFs actually prove,
 
 ## 4910 — The Hover Scout
 
-### Set 4910 source audit
+### Source audit [RockRaiders:4910]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -34,7 +34,7 @@ This generated review records what the official instruction PDFs actually prove,
 
 ## 4920 — Rapid Rider
 
-### Set 4920 source audit
+### Source audit [RockRaiders:4920]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -50,7 +50,7 @@ This generated review records what the official instruction PDFs actually prove,
 
 ## 4930 — Rock Raiders Crew
 
-### Set 4930 source audit
+### Source audit [RockRaiders:4930]
 
 - Evidence state: `ARCHIVAL_GAP`
 - Construction map:
@@ -63,7 +63,7 @@ This generated review records what the official instruction PDFs actually prove,
 
 ## 4940 — Granite Grinder
 
-### Set 4940 source audit
+### Source audit [RockRaiders:4940]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -80,7 +80,7 @@ This generated review records what the official instruction PDFs actually prove,
 
 ## 4950 — Loader Dozer
 
-### Set 4950 source audit
+### Source audit [RockRaiders:4950]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -97,7 +97,7 @@ This generated review records what the official instruction PDFs actually prove,
 
 ## 4970 — The Chrome Crusher
 
-### Set 4970 source audit
+### Source audit [RockRaiders:4970]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -115,7 +115,7 @@ This generated review records what the official instruction PDFs actually prove,
 
 ## 4980 — Tunnel Transport
 
-### Set 4980 source audit
+### Source audit [RockRaiders:4980]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -133,7 +133,7 @@ This generated review records what the official instruction PDFs actually prove,
 
 ## 4990 — Rock Raiders HQ
 
-### Set 4990 source audit
+### Source audit [RockRaiders:4990]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:

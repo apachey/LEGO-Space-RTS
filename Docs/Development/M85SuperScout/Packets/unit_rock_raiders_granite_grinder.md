@@ -31,7 +31,7 @@ Open question: Source-view coverage and construction-critical page ranges are re
 |---|---|---|---|---|
 | 4940 — Granite Grinder | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/4940)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128317.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=4940-1) | PRIMARY_VERIFIED | drill walker construction and articulation |
 
-### Set 4940 source audit
+### Source audit [RockRaiders:4940]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:

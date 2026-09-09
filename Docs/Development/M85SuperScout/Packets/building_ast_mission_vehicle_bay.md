@@ -34,7 +34,7 @@ Open question: Source-view coverage and construction-critical page ranges are re
 | 7697 — MT-51 Claw-Tank Ambush | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7697)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4515381.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7697-1) | PRIMARY_VERIFIED | tracked claw tank and small alien craft |
 | 7699 — MT-101 Armored Drilling Unit | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7699)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517776.pdf)<br>[official PDF 2](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517777.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7699-1) | PRIMARY_VERIFIED | six-wheel heavy drilling chassis |
 
-### Set 7645 source audit
+### Source audit [Astronauts:7645]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -51,7 +51,7 @@ Open question: Source-view coverage and construction-critical page ranges are re
 - Remaining evidence gaps:
   - The exact boundary between reusable Mobile Mining Platform chassis and Crystal-only harvesting module must be fixed during the asset-specific refit plan.
 
-### Set 7647 source audit
+### Source audit [Astronauts:7647]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -67,7 +67,7 @@ Open question: Source-view coverage and construction-critical page ranges are re
 - Remaining evidence gaps:
   - The manual demonstrates a hand-separated hull during conversion; the production animation must define a believable continuous connection without changing the canonical two-state read.
 
-### Set 7697 source audit
+### Source audit [Astronauts:7697]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -84,7 +84,7 @@ Open question: Source-view coverage and construction-critical page ranges are re
 - Remaining evidence gaps:
   - The source demonstrates manual rotation and arm movement but not the game's exact multi-target attack cycle or fighting-retreat locomotion; animation timing remains open.
 
-### Set 7699 source audit
+### Source audit [Astronauts:7699]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:

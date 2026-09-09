@@ -31,7 +31,7 @@ Open question: Source-view coverage and construction-critical page ranges are re
 |---|---|---|---|---|
 | 7649 — MT-201 Ultra-Drill Walker | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7649)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4538485.pdf)<br>[official PDF 2](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4538486.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7649-1) | PRIMARY_VERIFIED | drill installation-to-walker transformation |
 
-### Set 7649 source audit
+### Source audit [Astronauts:7649]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:

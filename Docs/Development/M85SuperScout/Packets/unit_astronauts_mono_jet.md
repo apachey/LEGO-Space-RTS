@@ -31,7 +31,7 @@ Open question: Source-view coverage and construction-critical page ranges are re
 |---|---|---|---|---|
 | 7310 — Mono Jet | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7310)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130805.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7310-1) | PRIMARY_VERIFIED | human field aircraft silhouette |
 
-### Set 7310 source audit
+### Source audit [Astronauts:7310]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:

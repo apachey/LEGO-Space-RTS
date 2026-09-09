@@ -31,7 +31,7 @@ Open question: Source-view coverage and construction-critical page ranges are re
 |---|---|---|---|---|
 | 4920 — Rapid Rider | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/4920)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128168.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=4920-1) | PRIMARY_VERIFIED | twin-hull transport and propulsion |
 
-### Set 4920 source audit
+### Source audit [RockRaiders:4920]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:

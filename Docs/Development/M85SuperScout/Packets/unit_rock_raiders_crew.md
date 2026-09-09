@@ -31,7 +31,7 @@ Open question: Source-view coverage and construction-critical page ranges are re
 |---|---|---|---|---|
 | 4930 — Rock Raiders Crew | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/4930)<br>no direct official PDF located | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=4930-1) | CANON_VERIFIED_ARCHIVAL | crew, tools and portable equipment |
 
-### Set 4930 source audit
+### Source audit [RockRaiders:4930]
 
 - Evidence state: `ARCHIVAL_GAP`
 - Construction map:

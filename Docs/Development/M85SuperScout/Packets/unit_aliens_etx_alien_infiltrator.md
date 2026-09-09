@@ -23,7 +23,7 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: Exact source-view coverage, construction-critical page ranges and every adaptation boundary must be recorded before this packet can leave HOLD.
+Open question: Source-view coverage and construction-critical page ranges are recorded for the audited sources below. Asset-specific adaptation boundaries still must be resolved before this packet can leave HOLD.
 
 ## B. Reference board
 
@@ -31,26 +31,40 @@ Open question: Exact source-view coverage, construction-critical page ranges and
 |---|---|---|---|---|
 | 7646 — ETX Alien Infiltrator | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7646)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4534848.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7646-1) | PRIMARY_VERIFIED | alien craft-to-walker transformation |
 
-`PENDING` — this source family has not yet received its visual PDF/page-range audit.
+### Source audit [Aliens:7646]
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 3-27: Astronaut equipment and figures; supporting opposition evidence.
+  - PDF pages 29-50: Long central Infiltrator craft with split nose, exposed crew/tool bay, red weapon tips and lime conduits.
+  - PDF pages 51-67: Two independent curved side modules attach to the central craft and receive weapons, cables and flexible lime conduits.
+  - PDF pages 68: Explicit conversion: both curved side modules and the long forward hull rotate downward into a planted three-leg walker.
+- View/mechanism coverage: front=VERIFIED p49-50 and p67-68; rear=VERIFIED p47-50 and p67-68; leftRight=VERIFIED p29-68; top=VERIFIED p29-67; threeQuarter=VERIFIED cover and p49-50/p67-68; undersideInterior=VERIFIED p29-67 staged modules; mechanism=VERIFIED p68 craft-to-three-leg walker conversion; gait and weapon cycle remain partial
+- Verified findings:
+  - Infiltrator flight state is a long central two-seat craft flanked by two separately built crescent modules.
+  - The walker has three planted members, not a generic four- or six-legged spider: the two curved side modules and the long split nose rotate downward.
+  - Flexible lime conduits visibly link the crew/energy core to the moving side modules, making the transformation mechanical rather than magical.
+- Remaining evidence gaps:
+  - The source proves the large rotations but not a continuous gait, stable planted attack pose, heavy-target weapon path or detector sweep; those remain explicit production motion contracts.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 
 ## C. Recognition contract
 
-**Silhouette thesis:** A compact alien craft that opens along obvious seams into a tall clawed combat walker.
+**Silhouette thesis:** A long three-part alien craft that rotates its nose and curved side modules into a tall three-legged walker.
 
 Non-removable identity anchors:
 
-- lime central canopy-core
-- black folding hull halves
-- emergent paired walker legs and claws
+- long split central nose
+- paired curved side modules
+- three planted members in walker state
 
 - Near / standard / far silhouette thumbnails: `PENDING 24/44/72-CELL BOARD`.
 - Palette and material hierarchy: Black and bright lime with dark mechanics and disciplined translucent-neon-green energy or crystal elements.
 - Forbidden genericization: Do not use insect bodies, biological tissue, nests, tentacles or generic black-neon towers. Construction must remain craft-derived and mechanical.
 - Nearest-confusion baseline:
 
-- `unit.aliens.etx_alien_strike` — Both are medium transforming ETX craft. Mitigations: Alien Strike unfolds wide into planted siege braces; Infiltrator rises into paired walker legs. / Alien Strike preserves split curved wings; Infiltrator preserves two folding hull halves and claws. / Alien Strike's deployed state points fire outward; Infiltrator's walker state places the core above an anti-heavy contact stance.
+- `unit.aliens.etx_alien_strike` — Both are medium transforming ETX craft. Mitigations: Alien Strike unfolds wide into planted siege braces; Infiltrator rises on three planted members. / Alien Strike preserves two huge crescent lobes and a lime tail; Infiltrator preserves a long split nose and paired curved side modules. / Alien Strike's deployed state points fire outward; Infiltrator's walker state places the crew core above an anti-heavy contact stance.
 
 ## D. Construction contract
 

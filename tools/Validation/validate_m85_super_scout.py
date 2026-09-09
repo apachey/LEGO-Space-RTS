@@ -17,6 +17,7 @@ LEDGER = ROOT / "Content/Presentation/SuperScout/source_ledger.json"
 INSTRUCTION_INDEX = ROOT / "Content/Presentation/SuperScout/source_instruction_index.json"
 ROCK_RAIDERS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/rock_raiders_source_evidence.json"
 ASTRONAUTS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/astronauts_source_evidence.json"
+ALIENS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/aliens_source_evidence.json"
 CONFUSION = ROOT / "Content/Presentation/SuperScout/confusion_register.json"
 CONTENT = ROOT / "Content/PrototypeEntities.json"
 GENERATOR = ROOT / "tools/generate-m85-super-scout-packets.py"
@@ -141,6 +142,7 @@ def validate_source_evidence(
 def main() -> None:
     for path in (
         MANIFEST, LEDGER, INSTRUCTION_INDEX, ROCK_RAIDERS_EVIDENCE, ASTRONAUTS_EVIDENCE,
+        ALIENS_EVIDENCE,
         CONFUSION, CONTENT, GENERATOR,
     ):
         if not path.is_file():
@@ -151,6 +153,7 @@ def main() -> None:
     instruction_index = json.loads(INSTRUCTION_INDEX.read_text(encoding="utf-8"))
     rock_raiders_evidence = json.loads(ROCK_RAIDERS_EVIDENCE.read_text(encoding="utf-8"))
     astronauts_evidence = json.loads(ASTRONAUTS_EVIDENCE.read_text(encoding="utf-8"))
+    aliens_evidence = json.loads(ALIENS_EVIDENCE.read_text(encoding="utf-8"))
     confusion = json.loads(CONFUSION.read_text(encoding="utf-8"))
     content = json.loads(CONTENT.read_text(encoding="utf-8"))
     if manifest.get("schemaVersion") != 1 or manifest.get("task") != "T082":
@@ -284,6 +287,16 @@ def main() -> None:
         18,
         0,
     )
+    aliens_audited, aliens_gaps = validate_source_evidence(
+        aliens_evidence,
+        assets,
+        instruction_by_id,
+        "Aliens",
+        "Aliens",
+        "SOURCE_AUDIT_COMPLETE",
+        8,
+        0,
+    )
 
     if confusion.get("schemaVersion") != 1 or confusion.get("task") != "T082":
         fail("confusion register schema/task mismatch")
@@ -343,15 +356,16 @@ def main() -> None:
     evidence_ids_by_faction = {
         "RockRaiders": {record["setId"] for record in rock_raiders_evidence["sources"]},
         "Astronauts": {record["setId"] for record in astronauts_evidence["sources"]},
+        "Aliens": {record["setId"] for record in aliens_evidence["sources"]},
     }
     for asset in assets:
         packet_path = packet_dir / (asset["stableId"].replace(".", "_") + ".md")
         packet = packet_path.read_text(encoding="utf-8")
         expected_evidence_ids = set(asset["sourceSets"]) & evidence_ids_by_faction.get(asset["faction"], set())
-        if packet.count(" source audit\n") != len(expected_evidence_ids):
+        if packet.count("### Source audit [") != len(expected_evidence_ids):
             fail(f"{packet_path.name} has cross-faction or missing source-evidence blocks")
         for set_id in expected_evidence_ids:
-            if f"### Set {set_id} source audit" not in packet:
+            if f"### Source audit [{asset['faction']}:{set_id}]" not in packet:
                 fail(f"{packet_path.name} is missing source evidence for {set_id}")
 
     primary = sum(source["verification"] == "PRIMARY_VERIFIED" for source in sources)
@@ -363,7 +377,8 @@ def main() -> None:
         f"assets={len(assets)} units=35 infrastructure=31 sources={len(sources)} "
         f"primaryVerified={primary} archival={archival} directPdfs={direct_pdf_sources} "
         f"rockRaidersAudited={audited_sources} rockRaidersGaps={evidence_gaps} "
-        f"astronautsAudited={astronauts_audited} astronautsGaps={astronauts_gaps} packets=66 "
+        f"astronautsAudited={astronauts_audited} astronautsGaps={astronauts_gaps} "
+        f"aliensAudited={aliens_audited} aliensGaps={aliens_gaps} packets=66 "
         f"confusionPairs={len(pairs)} state=HOLD"
     )
 

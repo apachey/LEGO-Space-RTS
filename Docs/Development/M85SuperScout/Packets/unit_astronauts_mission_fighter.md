@@ -32,7 +32,7 @@ Open question: Source-view coverage and construction-critical page ranges are re
 | 5619 — Crystal Hawk | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/5619)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4533843.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=5619-1) | PRIMARY_VERIFIED | small astronaut interceptor |
 | 7695 — MX-11 Astro Fighter | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7695)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517774.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7695-1) | PRIMARY_VERIFIED | astronaut fighter wing and defense hardpoint language |
 
-### Set 5619 source audit
+### Source audit [Astronauts:5619]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -46,7 +46,7 @@ Open question: Source-view coverage and construction-critical page ranges are re
 - Remaining evidence gaps:
   - Acquire a clean orthogonal rear or underside image before fixing propulsion and landing details for the Mission Fighter family.
 
-### Set 7695 source audit
+### Source audit [Astronauts:7695]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:

@@ -23,7 +23,7 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: Exact source-view coverage, construction-critical page ranges and every adaptation boundary must be recorded before this packet can leave HOLD.
+Open question: Source-view coverage and construction-critical page ranges are recorded for the audited sources below. Asset-specific adaptation boundaries still must be resolved before this packet can leave HOLD.
 
 ## B. Reference board
 
@@ -31,26 +31,38 @@ Open question: Exact source-view coverage, construction-critical page ranges and
 |---|---|---|---|---|
 | 5617 — Alien Jet | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/5617)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4525566.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=5617-1) | PRIMARY_VERIFIED | small alien jet and compact ETX grammar |
 
-`PENDING` — this source family has not yet received its visual PDF/page-range audit.
+### Source audit [Aliens:5617]
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 1: Complete five-step Alien Jet build with exposed pilot, swept black deck and paired flexible lime arches.
+  - PDF pages 2: Promotional reverse page; no additional construction evidence.
+- View/mechanism coverage: front=PARTIAL p1 cover and final step; rear=PARTIAL p1 staged build; leftRight=PARTIAL p1 construction sequence; top=VERIFIED p1 steps 3-5; threeQuarter=VERIFIED p1 cover and final step; undersideInterior=PARTIAL p1 bare plate sequence; mechanism=PARTIAL p1 flexible lime arches; no authored flight or weapon motion
+- Verified findings:
+  - Alien Jet is an extremely small open craft built around a broad swept black plate rather than an enclosed fuselage.
+  - Two tall flexible lime arches rise over the exposed pilot and dominate the profile from the front and side.
+  - A single forward yellow emitter and short rear equipment block keep the craft directional despite its minimal body.
+- Remaining evidence gaps:
+  - Clean rear and underside views are still required before fixing propulsion, landing and weapon sockets for the production Alien Jet.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 
 ## C. Recognition contract
 
-**Silhouette thesis:** A tiny swept black-lime interceptor with folding claw-like nose panels around its pilot.
+**Silhouette thesis:** A tiny open black-lime interceptor with a swept plate body and two bright arches above its pilot.
 
 Non-removable identity anchors:
 
-- folding pointed nose panels
-- compact central alien cockpit
-- narrow swept propulsion wings
+- broad swept plate body
+- exposed central alien pilot
+- paired tall lime conduit arches
 
 - Near / standard / far silhouette thumbnails: `PENDING 24/44/72-CELL BOARD`.
 - Palette and material hierarchy: Black and bright lime with dark mechanics and disciplined translucent-neon-green energy or crystal elements.
 - Forbidden genericization: Do not use insect bodies, biological tissue, nests, tentacles or generic black-neon towers. Construction must remain craft-derived and mechanical.
 - Nearest-confusion baseline:
 
-- `unit.aliens.razor_skimmer` — Both are small swept black-lime attack craft. Mitigations: Alien Jet has a visible airborne wing profile; Razor Skimmer stays almost flat against the ground. / Alien Jet folds pointed nose panels around a cockpit; Razor Skimmer projects two long forward razor prongs. / Alien Jet centers on its pilot; Razor Skimmer centers on an exposed lime energy core.
+- `unit.aliens.razor_skimmer` — Both are small swept black-lime attack craft. Mitigations: Alien Jet has a visible airborne swept-plate profile; Razor Skimmer stays almost flat against the ground. / Alien Jet raises two bright conduit arches over an open pilot; Razor Skimmer projects two long forward razor prongs. / Alien Jet centers on its pilot; Razor Skimmer centers on an exposed lime energy core.
 
 ## D. Construction contract
 

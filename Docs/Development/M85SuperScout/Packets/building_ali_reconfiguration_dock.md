@@ -23,7 +23,7 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: Exact source-view coverage, construction-critical page ranges and every adaptation boundary must be recorded before this packet can leave HOLD.
+Open question: Source-view coverage and construction-critical page ranges are recorded for the audited sources below. Asset-specific adaptation boundaries still must be resolved before this packet can leave HOLD.
 
 ## B. Reference board
 
@@ -33,7 +33,51 @@ Open question: Exact source-view coverage, construction-critical page ranges and
 | 7693 — ETX Alien Strike | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7693)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4523183.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7693-1) | PRIMARY_VERIFIED | alien strike transformation and human mining module |
 | 7691 — ETX Alien Mothership Assault | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7691)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4516029.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7691-1) | PRIMARY_VERIFIED | alien mothership, detachable craft and human extraction station |
 
-`PENDING` — this source family has not yet received its visual PDF/page-range audit.
+### Source audit [Aliens:7646]
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 3-27: Astronaut equipment and figures; supporting opposition evidence.
+  - PDF pages 29-50: Long central Infiltrator craft with split nose, exposed crew/tool bay, red weapon tips and lime conduits.
+  - PDF pages 51-67: Two independent curved side modules attach to the central craft and receive weapons, cables and flexible lime conduits.
+  - PDF pages 68: Explicit conversion: both curved side modules and the long forward hull rotate downward into a planted three-leg walker.
+- View/mechanism coverage: front=VERIFIED p49-50 and p67-68; rear=VERIFIED p47-50 and p67-68; leftRight=VERIFIED p29-68; top=VERIFIED p29-67; threeQuarter=VERIFIED cover and p49-50/p67-68; undersideInterior=VERIFIED p29-67 staged modules; mechanism=VERIFIED p68 craft-to-three-leg walker conversion; gait and weapon cycle remain partial
+- Verified findings:
+  - Infiltrator flight state is a long central two-seat craft flanked by two separately built crescent modules.
+  - The walker has three planted members, not a generic four- or six-legged spider: the two curved side modules and the long split nose rotate downward.
+  - Flexible lime conduits visibly link the crew/energy core to the moving side modules, making the transformation mechanical rather than magical.
+- Remaining evidence gaps:
+  - The source proves the large rotations but not a continuous gait, stable planted attack pose, heavy-target weapon path or detector sweep; those remain explicit production motion contracts.
+
+### Source audit [Aliens:7693]
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 3-16: Astronaut mining vehicle; supporting opposition evidence.
+  - PDF pages 17-35: ETX Alien Strike central keel, hinged side frames, paired crescent lobes, detachable corner modules and long translucent-lime tail blades.
+  - PDF pages 36-59: Cross-set alternate astronaut craft; not direct Alien Strike production geometry.
+- View/mechanism coverage: front=VERIFIED p28-35; rear=PARTIAL p28-35; leftRight=VERIFIED p17-35; top=VERIFIED p17-35; threeQuarter=VERIFIED cover and p28-35; undersideInterior=VERIFIED p17-28 staged open frame; mechanism=PARTIAL p24-35 hinged crescent/side modules and detachable corner pads; no complete flight-to-siege sequence
+- Verified findings:
+  - Alien Strike is built around a long central black keel with a lime multi-blade tail and two huge crescent side lobes.
+  - The lobes and smaller corner pads attach through visible pivots, creating a much wider final attack geometry around the narrow flight spine.
+  - Gray central structure, red forward facets and translucent-lime tail layers remain deliberately exposed inside the black shell.
+- Remaining evidence gaps:
+  - The manual proves rearrangeable hinged modules but does not show the game's exact flight and planted siege endpoints, support contacts or high-output weapon path; those states require explicit adaptation.
+
+### Source audit [Aliens:7691]
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 3-27: Astronaut extraction station; supporting opposition evidence.
+  - PDF pages 28-49: Large circular Mothership hull, open central machinery channel, lime conduits, weapon hardpoints and long multi-blade tail.
+  - PDF pages 50-67: Three detachable small-craft modules: a central lime-conduit craft and two round-disc weapon/capture pods with independent riders.
+- View/mechanism coverage: front=VERIFIED p43-49; rear=VERIFIED p44-49; leftRight=VERIFIED p28-49; top=VERIFIED p28-49; threeQuarter=VERIFIED cover and p43-50; undersideInterior=VERIFIED p28-48 staged circular frame; interior remains open rather than enclosed; mechanism=VERIFIED p50-67 detachable subcraft and capture/weapon pods; carrier launch cycle remains partial
+- Verified findings:
+  - The Mothership is a huge flattened circular black hull interrupted by a visible central machinery channel rather than a sealed saucer.
+  - Several long black and translucent-lime tail blades extend from one side, preventing a rotationally symmetric disc silhouette.
+  - Paired lime conduits route across the open center, while three independently readable small craft establish the carrier language outside the main hull.
+- Remaining evidence gaps:
+  - The manual proves detachable subcraft but not the game's payload capacity, launch/recovery timing, reinforcement function or Charge-support state; all require a carrier-specific contract.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 

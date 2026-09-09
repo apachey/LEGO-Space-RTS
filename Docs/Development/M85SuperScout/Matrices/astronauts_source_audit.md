@@ -4,7 +4,7 @@ This generated review records what the official instruction PDFs actually prove,
 
 ## 5619 — Crystal Hawk
 
-### Set 5619 source audit
+### Source audit [Astronauts:5619]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -20,7 +20,7 @@ This generated review records what the official instruction PDFs actually prove,
 
 ## 7301 — Rover
 
-### Set 7301 source audit
+### Source audit [Astronauts:7301]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -36,7 +36,7 @@ This generated review records what the official instruction PDFs actually prove,
 
 ## 7310 — Mono Jet
 
-### Set 7310 source audit
+### Source audit [Astronauts:7310]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -51,7 +51,7 @@ This generated review records what the official instruction PDFs actually prove,
 
 ## 7312 — T3-Trike
 
-### Set 7312 source audit
+### Source audit [Astronauts:7312]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -69,7 +69,7 @@ This generated review records what the official instruction PDFs actually prove,
 
 ## 7315 — Solar Explorer
 
-### Set 7315 source audit
+### Source audit [Astronauts:7315]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -87,7 +87,7 @@ This generated review records what the official instruction PDFs actually prove,
 
 ## 7644 — MX-81 Hypersonic Operations Aircraft
 
-### Set 7644 source audit
+### Source audit [Astronauts:7644]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -105,7 +105,7 @@ This generated review records what the official instruction PDFs actually prove,
 
 ## 7645 — MT-61 Crystal Reaper
 
-### Set 7645 source audit
+### Source audit [Astronauts:7645]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -124,7 +124,7 @@ This generated review records what the official instruction PDFs actually prove,
 
 ## 7647 — MX-41 Switch Fighter
 
-### Set 7647 source audit
+### Source audit [Astronauts:7647]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -142,7 +142,7 @@ This generated review records what the official instruction PDFs actually prove,
 
 ## 7648 — MT-21 Mobile Mining Unit
 
-### Set 7648 source audit
+### Source audit [Astronauts:7648]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -159,7 +159,7 @@ This generated review records what the official instruction PDFs actually prove,
 
 ## 7649 — MT-201 Ultra-Drill Walker
 
-### Set 7649 source audit
+### Source audit [Astronauts:7649]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -178,7 +178,7 @@ This generated review records what the official instruction PDFs actually prove,
 
 ## 7690 — MB-01 Eagle Command Base
 
-### Set 7690 source audit
+### Source audit [Astronauts:7690]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -197,7 +197,7 @@ This generated review records what the official instruction PDFs actually prove,
 
 ## 7691 — ETX Alien Mothership Assault
 
-### Set 7691 source audit
+### Source audit [Astronauts:7691]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -214,7 +214,7 @@ This generated review records what the official instruction PDFs actually prove,
 
 ## 7692 — MX-71 Recon Dropship
 
-### Set 7692 source audit
+### Source audit [Astronauts:7692]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -234,7 +234,7 @@ This generated review records what the official instruction PDFs actually prove,
 
 ## 7693 — ETX Alien Strike
 
-### Set 7693 source audit
+### Source audit [Astronauts:7693]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -250,7 +250,7 @@ This generated review records what the official instruction PDFs actually prove,
 
 ## 7694 — MT-31 Trike
 
-### Set 7694 source audit
+### Source audit [Astronauts:7694]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -266,7 +266,7 @@ This generated review records what the official instruction PDFs actually prove,
 
 ## 7695 — MX-11 Astro Fighter
 
-### Set 7695 source audit
+### Source audit [Astronauts:7695]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -282,7 +282,7 @@ This generated review records what the official instruction PDFs actually prove,
 
 ## 7697 — MT-51 Claw-Tank Ambush
 
-### Set 7697 source audit
+### Source audit [Astronauts:7697]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:
@@ -301,7 +301,7 @@ This generated review records what the official instruction PDFs actually prove,
 
 ## 7699 — MT-101 Armored Drilling Unit
 
-### Set 7699 source audit
+### Source audit [Astronauts:7699]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Construction map:

@@ -23,7 +23,7 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: Exact source-view coverage, construction-critical page ranges and every adaptation boundary must be recorded before this packet can leave HOLD.
+Open question: Source-view coverage and construction-critical page ranges are recorded for the audited sources below. Asset-specific adaptation boundaries still must be resolved before this packet can leave HOLD.
 
 ## B. Reference board
 
@@ -33,7 +33,48 @@ Open question: Exact source-view coverage, construction-critical page ranges and
 | 7692 — MX-71 Recon Dropship | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7692)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4524070.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7692-1) | PRIMARY_VERIFIED | dropship cargo cradle and small alien attack craft |
 | 7697 — MT-51 Claw-Tank Ambush | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7697)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4515381.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7697-1) | PRIMARY_VERIFIED | tracked claw tank and small alien craft |
 
-`PENDING` — this source family has not yet received its visual PDF/page-range audit.
+### Source audit [Aliens:5617]
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 1: Complete five-step Alien Jet build with exposed pilot, swept black deck and paired flexible lime arches.
+  - PDF pages 2: Promotional reverse page; no additional construction evidence.
+- View/mechanism coverage: front=PARTIAL p1 cover and final step; rear=PARTIAL p1 staged build; leftRight=PARTIAL p1 construction sequence; top=VERIFIED p1 steps 3-5; threeQuarter=VERIFIED p1 cover and final step; undersideInterior=PARTIAL p1 bare plate sequence; mechanism=PARTIAL p1 flexible lime arches; no authored flight or weapon motion
+- Verified findings:
+  - Alien Jet is an extremely small open craft built around a broad swept black plate rather than an enclosed fuselage.
+  - Two tall flexible lime arches rise over the exposed pilot and dominate the profile from the front and side.
+  - A single forward yellow emitter and short rear equipment block keep the craft directional despite its minimal body.
+- Remaining evidence gaps:
+  - Clean rear and underside views are still required before fixing propulsion, landing and weapon sockets for the production Alien Jet.
+
+### Source audit [Aliens:7692]
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 3-12: Astronaut payload rover; supporting opposition evidence.
+  - PDF pages 13-23: Complete narrow Alien attack craft with tall paired curved blades, open center, lime conduits and triple rear emitter cluster.
+  - PDF pages 24-71: Astronaut dropship and visible cargo release; supporting opposition evidence.
+- View/mechanism coverage: front=PARTIAL p20-23; rear=VERIFIED p20-23; leftRight=VERIFIED p13-23; top=VERIFIED p13-23; threeQuarter=VERIFIED cover and p20-23; undersideInterior=VERIFIED p13-20 staged open frame; mechanism=PARTIAL p20-23 hose and projectile mounts; no hover or deployment sequence
+- Verified findings:
+  - This small craft is unusually narrow and tall, with two near-vertical curved black blades enclosing a large central slot.
+  - Three lime rear emitters form a compact triangular cluster while a separate side weapon and flexible conduit remain exposed.
+  - Its vertical blade read is distinct from both the flat 5617 Jet and the broad crescent craft of 7690/7697.
+- Remaining evidence gaps:
+  - The composite Razor Skimmer and Defense Node must decide whether this vertical twin-blade source becomes a variant, a deployed hardpoint motif or is excluded from the shared hero silhouette.
+
+### Source audit [Aliens:7697]
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 3-15: Complete low Alien ambush craft with three curved black lobes, exposed pilot, arched lime conduits and distributed emitters.
+  - PDF pages 16-68: Astronaut MT-51 Claw-Tank; supporting opposition evidence.
+- View/mechanism coverage: front=PARTIAL p12-15; rear=PARTIAL p12-15; leftRight=VERIFIED p3-15; top=VERIFIED p3-15; threeQuarter=VERIFIED cover and p12-15; undersideInterior=VERIFIED p3-12 staged frame; mechanism=PARTIAL p12-15 flexible conduits and projectile mounts; no flight or ambush sequence
+- Verified findings:
+  - The ambush craft forms a low broken ring from three rounded black lobes around an open operator cavity.
+  - Two lime conduits arch over the exposed pilot, and the widest outer lobe carries separated yellow emitters rather than one central nose gun.
+  - Its flat three-lobe footprint distinguishes it from 7692's tall twin-blade craft and 7645's long spear form.
+- Remaining evidence gaps:
+  - The composite Razor/Defense family must determine which lobe, emitter and open-pilot features remain shared identity and which stay source-specific variants.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 

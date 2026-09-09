@@ -23,7 +23,7 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: Exact source-view coverage, construction-critical page ranges and every adaptation boundary must be recorded before this packet can leave HOLD.
+Open question: Source-view coverage and construction-critical page ranges are recorded for the audited sources below. Asset-specific adaptation boundaries still must be resolved before this packet can leave HOLD.
 
 ## B. Reference board
 
@@ -33,7 +33,48 @@ Open question: Exact source-view coverage, construction-critical page ranges and
 | 7692 — MX-71 Recon Dropship | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7692)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4524070.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7692-1) | PRIMARY_VERIFIED | dropship cargo cradle and small alien attack craft |
 | 7697 — MT-51 Claw-Tank Ambush | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7697)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4515381.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7697-1) | PRIMARY_VERIFIED | tracked claw tank and small alien craft |
 
-`PENDING` — this source family has not yet received its visual PDF/page-range audit.
+### Source audit [Aliens:7645]
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages book 1, 3-26: Complete low Alien attack craft: long twin-pronged nose, four swept blade modules, lime cockpit/energy masses, rear engines and exposed crew deck.
+  - PDF pages book 1, 27-75; book 2, 2-63: Astronaut mining assemblies and powered Crystal Reaper; supporting opposition evidence, not Razor Skimmer geometry.
+- View/mechanism coverage: front=VERIFIED book 1 p18-26; rear=VERIFIED book 1 p20-26; leftRight=VERIFIED book 1 p3-26; top=VERIFIED book 1 p3-26; threeQuarter=VERIFIED cover and book 1 p20-26; undersideInterior=VERIFIED book 1 p3-19 staged frame; mechanism=PARTIAL book 1 p20-26 removable crew and projectile mounts; no hover cycle
+- Verified findings:
+  - The source craft is a low, long black skimmer with a split spear-like nose rather than a compact disc.
+  - Four independently mounted swept black blades flare around a narrow central body and preserve large negative spaces between them.
+  - Lime cockpit/energy cylinders, gray rear thrusters and an exposed red rear crew deck remain separate readable masses.
+- Remaining evidence gaps:
+  - Razor Skimmer is a composite family, so the retained 7645 nose, blade count and crew-deck features must be chosen against the other six mapped small craft rather than copied wholesale.
+
+### Source audit [Aliens:7692]
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 3-12: Astronaut payload rover; supporting opposition evidence.
+  - PDF pages 13-23: Complete narrow Alien attack craft with tall paired curved blades, open center, lime conduits and triple rear emitter cluster.
+  - PDF pages 24-71: Astronaut dropship and visible cargo release; supporting opposition evidence.
+- View/mechanism coverage: front=PARTIAL p20-23; rear=VERIFIED p20-23; leftRight=VERIFIED p13-23; top=VERIFIED p13-23; threeQuarter=VERIFIED cover and p20-23; undersideInterior=VERIFIED p13-20 staged open frame; mechanism=PARTIAL p20-23 hose and projectile mounts; no hover or deployment sequence
+- Verified findings:
+  - This small craft is unusually narrow and tall, with two near-vertical curved black blades enclosing a large central slot.
+  - Three lime rear emitters form a compact triangular cluster while a separate side weapon and flexible conduit remain exposed.
+  - Its vertical blade read is distinct from both the flat 5617 Jet and the broad crescent craft of 7690/7697.
+- Remaining evidence gaps:
+  - The composite Razor Skimmer and Defense Node must decide whether this vertical twin-blade source becomes a variant, a deployed hardpoint motif or is excluded from the shared hero silhouette.
+
+### Source audit [Aliens:7697]
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 3-15: Complete low Alien ambush craft with three curved black lobes, exposed pilot, arched lime conduits and distributed emitters.
+  - PDF pages 16-68: Astronaut MT-51 Claw-Tank; supporting opposition evidence.
+- View/mechanism coverage: front=PARTIAL p12-15; rear=PARTIAL p12-15; leftRight=VERIFIED p3-15; top=VERIFIED p3-15; threeQuarter=VERIFIED cover and p12-15; undersideInterior=VERIFIED p3-12 staged frame; mechanism=PARTIAL p12-15 flexible conduits and projectile mounts; no flight or ambush sequence
+- Verified findings:
+  - The ambush craft forms a low broken ring from three rounded black lobes around an open operator cavity.
+  - Two lime conduits arch over the exposed pilot, and the widest outer lobe carries separated yellow emitters rather than one central nose gun.
+  - Its flat three-lobe footprint distinguishes it from 7692's tall twin-blade craft and 7645's long spear form.
+- Remaining evidence gaps:
+  - The composite Razor/Defense family must determine which lobe, emitter and open-pilot features remain shared identity and which stay source-specific variants.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 
@@ -52,7 +93,7 @@ Non-removable identity anchors:
 - Forbidden genericization: Do not use insect bodies, biological tissue, nests, tentacles or generic black-neon towers. Construction must remain craft-derived and mechanical.
 - Nearest-confusion baseline:
 
-- `unit.aliens.alien_jet` — Both are small swept black-lime attack craft. Mitigations: Alien Jet has a visible airborne wing profile; Razor Skimmer stays almost flat against the ground. / Alien Jet folds pointed nose panels around a cockpit; Razor Skimmer projects two long forward razor prongs. / Alien Jet centers on its pilot; Razor Skimmer centers on an exposed lime energy core.
+- `unit.aliens.alien_jet` — Both are small swept black-lime attack craft. Mitigations: Alien Jet has a visible airborne swept-plate profile; Razor Skimmer stays almost flat against the ground. / Alien Jet raises two bright conduit arches over an open pilot; Razor Skimmer projects two long forward razor prongs. / Alien Jet centers on its pilot; Razor Skimmer centers on an exposed lime energy core.
 - `unit.martians.jet_scooter` — Both are small fast hover harassment units. Mitigations: Razor Skimmer is low, enclosed and blade-like; Jet Scooter is upright and open around its rider. / Razor centers on a lime core between black prongs; Jet Scooter centers on a narrow blue/sand-red rider spine. / Razor's propulsion is visually hidden in the hull; Jet Scooter exposes two oversized side pods.
 
 ## D. Construction contract
