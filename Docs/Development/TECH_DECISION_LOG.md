@@ -1210,3 +1210,30 @@ format or visual direction.
   candidate is shown in reproducible gameplay and state/animation views,
   corrected from game-director feedback and reaches PASS only after explicit
   acceptance; unresolved consequential choices are asked rather than guessed.
+
+## 2026-09-09 — T081 production asset interchange and validation contract
+
+- M8.5 production uses the existing Blender 4.4+ DCC, deterministic GLB export
+  and Godot 4.7.1 built-in scene import. The shipping build consumes GLB and
+  does not depend on Blender. No package, plugin, service or external asset
+  library is added.
+- The locked scale is one Blender metre to one Godot world unit and two world
+  units per authoritative build cell. Blender positive Y is the authored
+  forward axis and imports as Godot negative Z; roots retain identity transforms
+  at ground contact or authoritative footprint centre.
+- Production assets carry three explicitly authored LODs (Close, Combat and
+  Strategic), semantic geometry/material names, mechanical pivots,
+  presentation-only sockets and a provenance/review sidecar. LOD complexity
+  must strictly decrease without losing gameplay-scale identity or function.
+- The first round trip exposed and corrected an initially inverted authored
+  forward convention before roster production. The non-roster technical
+  vehicle now proves 868/332/168 triangles, four pivots, six sockets, semantic
+  material binding, exact 24/44/72-cell Godot views and byte-identical Blender
+  regeneration.
+- This fixture validates the production path only. It cannot count toward the
+  35-unit roster, replace T082 evidence, or satisfy T083/T085 model production.
+  T081 remains pending explicit game-director acceptance despite passing all
+  automated checks.
+
+This changes no gameplay value, authoritative simulation, public data format,
+dependency or accepted M7 visual direction.

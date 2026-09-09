@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "stableId": "pipeline.reference.vehicle",
+  "displayName": "M8.5 Pipeline Reference Vehicle",
+  "productionStatus": "PIPELINE_FIXTURE_NOT_ROSTER_ART",
+  "sourceClassification": "NEW GAME CONTENT",
+  "sourceSets": [],
+  "provenance": {
+    "owner": "LEGO Space RTS project",
+    "generator": "tools/blender/generate_m85_pipeline_reference.py",
+    "rightsNote": "Project-authored technical fixture; contains no external model or texture data."
+  },
+  "sourcePath": "ArtSource/M85/PipelineReference/pipeline_reference_vehicle.blend",
+  "runtimePath": "GodotClient/Assets/M85/PipelineReference/pipeline_reference_vehicle.glb",
+  "rootNode": "Asset_PipelineReferenceVehicle",
+  "coordinateContract": {
+    "blenderUp": "+Z",
+    "blenderForward": "+Y",
+    "godotUp": "+Y",
+    "godotForward": "-Z",
+    "worldUnitsPerBlenderMetre": 1.0,
+    "worldUnitsPerBuildCell": 2.0,
+    "rootOrigin": "ground-contact-centre"
+  },
+  "footprintClass": "Medium",
+  "visualBoundsWorldUnits": {
+    "maximumWidth": 4.0,
+    "maximumHeight": 2.8,
+    "maximumLength": 5.2
+  },
+  "lods": [
+    { "name": "Close", "root": "LOD_Close", "minimumTriangles": 300, "maximumTriangles": 5000 },
+    { "name": "Combat", "root": "LOD_Combat", "minimumTriangles": 150, "maximumTriangles": 3000 },
+    { "name": "Strategic", "root": "LOD_Strategic", "minimumTriangles": 50, "maximumTriangles": 1500 }
+  ],
+  "requiredPivots": [
+    "Pivot_Suspension",
+    "Pivot_ToolPrimary",
+    "Pivot_Wheel_Left",
+    "Pivot_Wheel_Right"
+  ],
+  "requiredSockets": [
+    "Socket_Selection",
+    "Socket_Health",
+    "Socket_Weapon_Primary",
+    "Socket_VFX_Exhaust",
+    "Socket_Audio_Engine",
+    "Socket_Cargo"
+  ],
+  "materialRoles": [
+    "Body",
+    "Accent",
+    "Neutral",
+    "Tool",
+    "Rubber",
+    "Glass",
+    "Lamp"
+  ],
+  "requiredStates": ["rest", "locomotion-pivot", "tool-pivot"],
+  "review": {
+    "designReview": "NOT_APPLICABLE_TECHNICAL_FIXTURE",
+    "pipelineReview": "T081",
+    "gameDirectorAcceptance": "PENDING"
+  }
+}

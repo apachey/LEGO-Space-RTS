@@ -73,4 +73,18 @@ if (( CANDIDATE_STATUS != 0 )) || ! grep -q 'M7 ACCEPTANCE CANDIDATE: PASS facti
   exit 1
 fi
 rm -f "${CANDIDATE_LOG}" "${CANDIDATE_ENGINE_LOG}"
+
+PIPELINE_LOG="$(mktemp "${TMPDIR:-/tmp}/lego-space-rts-m85-pipeline-app-smoke.XXXXXX")"
+PIPELINE_ENGINE_LOG="$(mktemp "${TMPDIR:-/tmp}/lego-space-rts-m85-pipeline-app-engine.XXXXXX")"
+set +e
+"${APP_EXECUTABLE}" --headless --log-file "${PIPELINE_ENGINE_LOG}" --quit-after 600 -- \
+  --m85-asset-pipeline --m85-asset-pipeline-smoke --m85-asset-pipeline-zoom 44 2>&1 | tee "${PIPELINE_LOG}"
+PIPELINE_STATUS=${PIPESTATUS[0]}
+set -e
+if (( PIPELINE_STATUS != 0 )) || ! grep -q 'M8.5 ASSET PIPELINE: PASS source=blend export=glb import=PackedScene.*lods=3 close=868 combat=332 strategic=168 pivots=4 sockets=6 roleBindings=84 zoom=44' "${PIPELINE_LOG}"; then
+  rm -f "${PIPELINE_LOG}" "${PIPELINE_ENGINE_LOG}"
+  printf 'FAIL: exported app did not pass the T081 asset-pipeline round trip.\n' >&2
+  exit 1
+fi
+rm -f "${PIPELINE_LOG}" "${PIPELINE_ENGINE_LOG}"
 if [[ "${VERIFY_ONLY}" == true ]]; then printf 'PASS: macOS export smoke produced a launchable app bundle.\n'; else printf 'PASS: playable debug build created at %s\n' "${OUTPUT_APP}"; fi

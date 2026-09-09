@@ -58,7 +58,9 @@ language remains explicitly non-canonical outside the accepted combination. A
 minimum four-faction M7 visual-direction review flow combines the strongest
 existing Look Lab and HUD Lab directions at a wide 84-cell opening plus exact
 24/44/72-cell checks. The game director accepted M7 Final with outline on as the
-production visual direction; T081 has not started. A post-T069
+production visual direction. The T081 asset-pipeline implementation candidate
+is complete and fully verified, but remains awaiting explicit game-director
+acceptance before T082 begins. A post-T069
 quality revision makes outline/halo independent from
 the style post-pass, hardens profile paste, bounds VFX event memory and avoids
 unrelated live material rebuilds. HUD and health visuals remain excluded from the world Look Lab. The
@@ -470,7 +472,8 @@ live; the current schema-9 copy/paste retains the complete experiment.
   starts at 84 cells and retains continuous mouse-wheel zoom from 24 to 108
   cells. Current and Hybrid remain comparison modes only. This accepts the
   direction, not the bounded prototype geometry as final production art. The
-  Phase 09C visual-direction dependency is satisfied; T081 has not started.
+  Phase 09C visual-direction dependency is satisfied. T081 now has a verified
+  implementation candidate awaiting its separate game-director pipeline review.
 - The accepted default, exact 24/44/72 checks, all three comparison modes and
   both outline states pass their Godot smoke fixtures, and a fresh exported app
   starts at `zoom=84 look=m7-final outline=on`. The latest general fast run is
@@ -567,6 +570,31 @@ live; the current schema-9 copy/paste retains the complete experiment.
   canonical T-3 Trikes receive Mission Refit state and keeps Forward Service,
   Aero Tube eligibility and the M5 acceptance fixture bound to the actual roster.
 
+## M8.5 T081 production asset-pipeline candidate
+
+- `Docs/Development/M85_ASSET_PIPELINE.md` defines the common Blender → GLB
+  → Godot production path for T082–T092 without changing gameplay or visual
+  canon. One Blender metre equals one Godot world unit; one authoritative build
+  cell equals two world units. Roots remain at ground/footprint centre with
+  identity transforms, and Blender positive Y imports as Godot negative Z.
+- Stable semantic names cover geometry importance, material roles, mechanical
+  pivots and presentation sockets. Every production asset requires authored
+  Close, Combat and Strategic LODs whose complexity decreases while identity,
+  locomotion and primary function remain readable.
+- The representative reference vehicle proves the entire round trip with
+  868/332/168 triangles, four pivots, six sockets and the accepted M7 material
+  roles. It is explicitly a technical pipeline fixture, not roster art, and
+  cannot count toward the 35 production units or satisfy later asset tasks.
+- The sidecar records source classification, provenance, dimensions, LOD
+  budgets, material roles, pivots, sockets and director-review state. Static
+  validation checks the source and GLB structure; Godot validates the imported
+  scene at exact 24/44/72-cell camera distances. Full verification regenerates
+  the GLB from the editable Blender source and requires byte-identical output.
+- A normal build exposes the review through `F8` → **Review M8.5 asset
+  pipeline**. `Z`, `X` and `C` select the exact 24, 44 and 72-cell checks.
+- The candidate has zero blocking verification failures and a launchable macOS
+  build. Its game-director acceptance remains `PENDING`; T082 has not started.
+
 ## Integration format boundary
 
 - authoritative snapshot format **21** (backward reader for 20);
@@ -579,6 +607,15 @@ live; the current schema-9 copy/paste retains the complete experiment.
 - network replay chunk format **1**.
 
 ## Verification state
+
+M8.5 T081 passed `./tools/verify.sh --full` on 2026-09-09 UTC with **zero
+blocking failures**: all 317 NUnit tests, the 24-mover gate, content and
+network checks, all retained M7 presentation gates, Blender/GLB contract and
+byte-identical regeneration, Godot import at 24/44/72 cells, 100-repeat
+determinism, replay/snapshot continuation and a fresh launchable macOS export.
+The preserved Stress60 diagnostic reported 2/60 completion and remains
+`BLOCKING_LATER` for M9 rather than a T081 regression. Exact summary:
+`Artifacts/Verification/20260909T022531Z-full-summary.txt`.
 
 M8 T074 targeted roster/M5 coverage passes 57/57. Static validation and the
 Godot C# host build pass after the final HUD-reference correction. The full
@@ -777,21 +814,16 @@ blocking only when M9 must prove its stable-large-battle exit.
 
 ## Next approved action
 
-1. T074 is complete on the current implementation baseline. The game director
-   accepted M7 Final with outline on, an 84-cell starting view and continuous
-   24–108-cell mouse-wheel zoom. The Phase 09C visual-direction entry dependency
-   is satisfied. T081 is the next approved implementation task, but it has not
-   started in this change.
-2. Execute Phase 09C M8.5 T081–T092 before final M9 Skirmish Alpha acceptance.
-   T082 Super Scout must complete its 66 evidence-backed asset packets and
-   cross-roster identity audit before unit/building design production begins.
-   Do not treat T070 data definitions as substitutes for production models or
-   presentation.
-3. Launch the accepted direction from `F8` → **Review M7 visual direction**. It
-   opens on M7 Final + outline at 84 cells; use the wheel for continuous zoom and
-   Z/X/C for exact 24/44/72 checks. Current / Hybrid and outline-off remain
-   regression comparisons.
-4. Use the separate Look/HUD/Palette labs only to investigate a rejected aspect;
+1. Review the verified T081 candidate in the launchable macOS build through
+   `F8` → **Review M8.5 asset pipeline**, using `Z`/`X`/`C` for the exact
+   24/44/72-cell views. Record explicit game-director acceptance or corrections.
+2. Do not begin T082 until T081 is accepted. After acceptance, T082 Super Scout
+   must complete its 66 evidence-backed asset packets and cross-roster identity
+   audit before unit/building design production begins. Do not treat T070 data
+   definitions or the non-roster pipeline fixture as production models.
+3. Execute the remaining Phase 09C M8.5 T082–T092 work before final M9 Skirmish
+   Alpha acceptance.
+4. Use the separate M7 Look/HUD/Palette labs only to investigate a rejected aspect;
    they remain exploratory tools and do not independently record visual canon.
 5. Keep Stress60 visible without starting an unreviewed third movement attempt;
    revisit it for M9 or earlier only if a catastrophic movement regression

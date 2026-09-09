@@ -414,6 +414,47 @@ godot_m7_acceptance_smoke() {
   done
 }
 
+godot_m85_asset_pipeline_smoke() {
+  local godot output status log_file zoom
+  godot="$(discover_godot 2>/dev/null || true)"
+  if [[ -z "${godot}" ]]; then printf 'Godot executable not found.\n' >&2; return 1; fi
+  if ! godot_is_required_mono "${godot}"; then printf 'Godot is not the required 4.7.1 .NET build: %s\n' "${godot}" >&2; return 1; fi
+  for zoom in 24 44 72; do
+    log_file="$(mktemp "${TMPDIR:-/tmp}/lego-space-rts-m85-pipeline-smoke.XXXXXX")"
+    output="$("${godot}" --headless --log-file "${log_file}" --quit-after 600 --path "${ROOT}/GodotClient" -- \
+      --m85-asset-pipeline --m85-asset-pipeline-smoke --m85-asset-pipeline-zoom "${zoom}" 2>&1)"
+    status=$?
+    rm -f -- "${log_file}"
+    printf '%s\n' "${output}"
+    if (( status != 0 )); then return "${status}"; fi
+    if printf '%s\n' "${output}" | grep -qE 'SHADER ERROR|SCRIPT ERROR|ERROR:'; then
+      printf 'M8.5 asset-pipeline fixture emitted a shader, script or runtime error.\n' >&2
+      return 1
+    fi
+    if ! printf '%s\n' "${output}" | grep -q "M8.5 ASSET PIPELINE: PASS source=blend export=glb import=PackedScene root=ground-centre scale=1 cellWorldUnits=2 forward=-Z lods=3 close=868 combat=332 strategic=168 pivots=4 sockets=6 roleBindings=84 zoom=${zoom}"; then
+      printf 'Godot exited without the required T081 asset-pipeline PASS marker at zoom=%s.\n' "${zoom}" >&2
+      return 1
+    fi
+  done
+}
+
+regenerate_m85_pipeline_reference() {
+  local blender temp_dir
+  blender="/Applications/Blender.app/Contents/MacOS/Blender"
+  if [[ ! -x "${blender}" ]]; then printf 'Blender 4.4+ was not found at %s.\n' "${blender}" >&2; return 1; fi
+  temp_dir="$(mktemp -d "${TMPDIR:-/tmp}/lego-space-rts-m85-regenerate.XXXXXX")" || return 1
+  "${blender}" --background --python "${ROOT}/tools/blender/generate_m85_pipeline_reference.py" -- \
+    "${temp_dir}/pipeline_reference_vehicle.glb" "${temp_dir}/pipeline_reference_vehicle.blend" || {
+      local rc=$?; rm -rf "${temp_dir}"; return "${rc}";
+    }
+  cmp "${temp_dir}/pipeline_reference_vehicle.glb" \
+    "${ROOT}/GodotClient/Assets/M85/PipelineReference/pipeline_reference_vehicle.glb" || {
+      rm -rf "${temp_dir}"; printf 'Tracked T081 GLB is not a deterministic regeneration.\n' >&2; return 1;
+    }
+  rm -rf "${temp_dir}"
+  printf 'T081 Blender source regenerates the tracked GLB byte-identically.\n'
+}
+
 run_stage "[BLOCKING_NOW] Static/source validation" "static" python3 "${ROOT}/tools/Validation/validate_phase10.py"
 run_stage "[BLOCKING_NOW] .NET restore" "restore" dotnet restore "${ROOT}/LEGO.SpaceRTS.Phase10.sln" --disable-build-servers
 run_stage "[BLOCKING_NOW] .NET solution build (warnings as errors)" "build" dotnet build "${ROOT}/LEGO.SpaceRTS.Phase10.sln" -c Release --no-restore --disable-build-servers -m:1
@@ -423,6 +464,8 @@ run_stage "[BLOCKING_NOW] Representative 24-mover Movement Architecture v2 accep
 run_stage "[BLOCKING_NOW] Content compilation and tracked-binary validation" "content" compile_and_compare_content
 run_stage "[BLOCKING_NOW] HeadlessSim compiled-content smoke" "headless" dotnet "$(headless_dll)" --scenario first --compiled-dir "${ROOT}/GodotClient/Compiled" --ticks 1200 --hash-every 200
 run_stage "[BLOCKING_NOW] Godot C# PrototypeRTS headless smoke" "godot" godot_smoke
+run_stage "[BLOCKING_NOW T081] Blender/GLB asset-pipeline contract" "m85-asset-static" python3 "${ROOT}/tools/Validation/validate_m85_asset_pipeline.py"
+run_stage "[BLOCKING_NOW T081] Godot imported asset round trip" "m85-asset-godot" godot_m85_asset_pipeline_smoke
 run_stage "[BLOCKING_NOW T058] Godot ENet dedicated host with two clients" "m6-transport" godot_m6_transport_smoke
 run_stage "[BLOCKING_NOW T059] Godot server command authority over ENet" "m6-command" godot_m6_command_smoke
 run_stage "[BLOCKING_NOW T060/T061] Godot 10 Hz delta snapshots without hidden data" "m6-snapshot" godot_m6_snapshot_smoke
@@ -444,6 +487,7 @@ if [[ "${MODE}" != "fast" ]]; then
     run_diagnostic_stage "[BLOCKING_LATER M9 LARGE-BATTLE ACCEPTANCE] 60-mover navigation/performance stress" "stress60" dotnet "$(headless_dll)" --scenario stress60 --ticks 26000 --benchmark --path-benchmark --enforce-performance-gates
   fi
   run_stage "[BLOCKING_NOW] Compiled-content regeneration" "content-regenerate" regenerate_tracked_content
+  run_stage "[BLOCKING_NOW T081] Deterministic Blender GLB regeneration" "m85-asset-regenerate" regenerate_m85_pipeline_reference
   run_stage "[BLOCKING_NOW] macOS debug export smoke" "macos-export" "${ROOT}/tools/build-mac.sh" --verify
 fi
 

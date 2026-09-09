@@ -32,7 +32,16 @@ required = [
     'GodotClient/Scripts/Presentation/M7LookMaterialFactory.cs',
     'GodotClient/Scripts/Presentation/M7WorldLightingEvaluator.cs',
     'GodotClient/Scripts/Presentation/PresentationDestruction.cs',
+    'GodotClient/Scripts/Presentation/M85AssetPipelineContract.cs',
     'GodotClient/Scripts/Client/M7LookLab.cs',
+    'GodotClient/Scripts/Client/M85AssetPipelineLab.cs',
+    'GodotClient/Assets/M85/PipelineReference/pipeline_reference_vehicle.glb',
+    'GodotClient/Assets/M85/PipelineReference/pipeline_reference_vehicle.glb.import',
+    'ArtSource/M85/PipelineReference/pipeline_reference_vehicle.blend',
+    'Content/Presentation/Assets/pipeline.reference.vehicle.asset.json',
+    'Docs/Development/M85_ASSET_PIPELINE.md',
+    'tools/Validation/validate_m85_asset_pipeline.py',
+    'tools/blender/generate_m85_pipeline_reference.py','tools/generate-m85-pipeline-reference.sh',
     'GodotClient/Assets/M7/Textures/regolith_surface_v2.png',
     'GodotClient/Assets/M7/Textures/painted_shell_macro_v2.png',
     'GodotClient/Assets/M7/Textures/painted_shell_macro_v2.png.import',
@@ -118,6 +127,9 @@ check('Excess remainder stays queued' in bridge, 'Godot bridge does not document
 composition = (ROOT/'GodotClient/Scripts/Client/RtsCompositionRoot.cs').read_text()
 check('RuntimeScenarioLoader.LoadActive' in composition, 'Godot composition root does not use the active runtime scenario loader')
 check('FindChild' not in composition and 'GetNode<' not in composition, 'composition root uses runtime dependency discovery')
+check('--m85-asset-pipeline' in composition and 'M85AssetPipelineLab' in composition and
+      'OpenM85AssetPipelineLab' in composition and 'ReturnFromM85AssetPipelineLab' in composition,
+      'T081 asset-pipeline review fixture is not wired to the runtime host')
 loader = (ROOT/'GodotClient/Scripts/Client/RuntimeScenarioLoader.cs').read_text()
 check('PrototypeContentCodec.Read' in loader and 'CompiledMapCodec.ReadDefinition' in loader, 'Godot runtime does not consume compiled content/map when present')
 check('requested ? LoadM5Acceptance() : LoadCanonicalOpening()' in loader, 'normal launch no longer defaults to the canonical opening')
@@ -297,6 +309,22 @@ for token in ['PresentationSnapshot snapshot','_rememberedStatic','VisibilitySta
 check('HudMinimapPlaceholder' not in hud_view, 'T069 placeholder minimap remains in the production HUD')
 debug_hud = (ROOT/'GodotClient/Scripts/UI/DebugHud.cs').read_text()
 check('Visible = false' in debug_hud and 'Drain Energy' in debug_hud, 'developer tools must remain available but hidden by default')
+check('Review M8.5 asset pipeline' in debug_hud and 'OpenM85AssetPipelineLab' in debug_hud,
+      'T081 asset-pipeline review action is missing from F8 developer tools')
+asset_pipeline_contract = (ROOT/'GodotClient/Scripts/Presentation/M85AssetPipelineContract.cs').read_text()
+asset_pipeline_lab = (ROOT/'GodotClient/Scripts/Client/M85AssetPipelineLab.cs').read_text()
+for token in ['WorldUnitsPerBuildCell = 2f','LOD_Close','LOD_Combat','LOD_Strategic',
+              'Socket_Selection','Socket_Health','Socket_Weapon_Primary','Pivot_ToolPrimary',
+              'closeTriangles != 868','combatTriangles != 332','strategicTriangles != 168',
+              'ShowOnlyLod']:
+    check(token in asset_pipeline_contract, f'T081 imported-scene contract missing: {token}')
+for token in ['M85AssetPipelineContract.RuntimePath','BuildSharedMaterials','SetTextureAnchor',
+              '--m85-asset-pipeline-smoke','--m85-asset-pipeline-zoom','--capture-path',
+              'Z / X / C: 24 / 44 / 72-cell','PIPELINE: PASS']:
+    check(token in asset_pipeline_lab, f'T081 gameplay-camera round-trip fixture missing: {token}')
+check('RigidBody3D' not in asset_pipeline_contract + asset_pipeline_lab and
+      'CollisionShape3D' not in asset_pipeline_contract + asset_pipeline_lab,
+      'T081 pipeline fixture introduced authoritative-looking physics nodes')
 debug_renderer = (ROOT/'GodotClient/Scripts/Presentation/DebugRenderer.cs').read_text()
 for token in ['DrawNavigation { get; set; } = true','DrawClusters { get; set; } = true','DrawPaths { get; set; } = true','DrawExcavatable { get; set; } = true']:
     check(token not in debug_renderer, f'developer visualization leaks into normal play: {token}')

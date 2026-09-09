@@ -13,7 +13,7 @@ public partial class DebugHud : CanvasLayer
     private double _nextUpdate;
 
     public void Configure(GodotSimBridge bridge, RtsInputController input, DebugRenderer debug, FogPresenter fog,
-        Action prepareM5Acceptance, Action openM7AcceptanceCandidate, Action openM7LookLab, Action openM7HudLab,
+        Action prepareM5Acceptance, Action openM85AssetPipelineLab, Action openM7AcceptanceCandidate, Action openM7LookLab, Action openM7HudLab,
         Action openM7PaletteLab, Action openM7MaterialLab)
     {
         _bridge = bridge; _input = input; Name = "DeveloperHUD"; Layer = 20; ProcessPriority = 210;
@@ -40,6 +40,10 @@ public partial class DebugHud : CanvasLayer
         oldM7.Pressed += openM7MaterialLab;
         header.AddChild(oldM7);
         HFlowContainer actions = new() { Name = "PreparedPlaytestActions" }; box.AddChild(actions);
+        Button assetPipeline = new() { Name = "OpenM85AssetPipelineLab", Text = "Review M8.5 asset pipeline" };
+        assetPipeline.TooltipText = "Shows the T081 Blender-to-Godot round trip, three authored LODs and named attachment points.";
+        assetPipeline.Pressed += openM85AssetPipelineLab;
+        actions.AddChild(assetPipeline);
         Button visualAcceptance = new() { Name = "OpenM7VisualAcceptanceCandidate", Text = "Review M7 visual direction" };
         visualAcceptance.TooltipText = "Opens the non-canonical four-faction production-direction candidate at the 24/44/72-cell gameplay camera bands.";
         visualAcceptance.Pressed += openM7AcceptanceCandidate;

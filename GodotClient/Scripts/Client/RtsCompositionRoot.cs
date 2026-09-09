@@ -13,11 +13,19 @@ public partial class RtsCompositionRoot : Node3D
     private static bool _forceM7LookLab;
     private static bool _forceM7HudLab;
     private static bool _forceM7AcceptanceCandidate;
+    private static bool _forceM85AssetPipelineLab;
 
     public override void _Ready()
     {
         Engine.MaxFps = 60;
         string[] commandLineArgs = OS.GetCmdlineUserArgs();
+        if (_forceM85AssetPipelineLab || commandLineArgs.Contains("--m85-asset-pipeline"))
+        {
+            M85AssetPipelineLab lab = new();
+            AddChild(lab);
+            lab.Configure(ReturnFromM85AssetPipelineLab, commandLineArgs);
+            return;
+        }
         if (_forceM7AcceptanceCandidate || commandLineArgs.Contains("--m7-acceptance-candidate"))
         {
             M7VisualAcceptanceCandidate candidate = new();
@@ -75,7 +83,7 @@ public partial class RtsCompositionRoot : Node3D
         FogPresenter fog = new() { Name = "FogPresentation" }; AddChild(fog); fog.Configure(bridge);
         DebugRenderer debug = new() { Name = "DebugVisualization" }; AddChild(debug); debug.Configure(bridge);
         BasicHud hud = new(); AddChild(hud); hud.Configure(bridge, selection, input, camera);
-        DebugHud developerHud = new(); AddChild(developerHud); developerHud.Configure(bridge, input, debug, fog, PrepareM5Acceptance, OpenM7AcceptanceCandidate, OpenM7LookLab, OpenM7HudLab, OpenM7PaletteLab, OpenM7MaterialLab);
+        DebugHud developerHud = new(); AddChild(developerHud); developerHud.Configure(bridge, input, debug, fog, PrepareM5Acceptance, OpenM85AssetPipelineLab, OpenM7AcceptanceCandidate, OpenM7LookLab, OpenM7HudLab, OpenM7PaletteLab, OpenM7MaterialLab);
         if (scenario.IsM5Acceptance)
         {
             bool pauseInitially = !commandLineArgs.Contains("--smoke") && !commandLineArgs.Contains("--capture-smoke");
@@ -108,6 +116,12 @@ public partial class RtsCompositionRoot : Node3D
     private void OpenM7MaterialLab()
     {
         _forceM7MaterialLab = true;
+        Callable.From(() => GetTree().ReloadCurrentScene()).CallDeferred();
+    }
+
+    private void OpenM85AssetPipelineLab()
+    {
+        _forceM85AssetPipelineLab = true;
         Callable.From(() => GetTree().ReloadCurrentScene()).CallDeferred();
     }
 
@@ -145,6 +159,17 @@ public partial class RtsCompositionRoot : Node3D
     {
         _forceM7PaletteLab = false;
         if (OS.GetCmdlineUserArgs().Contains("--m7-palette-lab"))
+        {
+            GetTree().Quit();
+            return;
+        }
+        Callable.From(() => GetTree().ReloadCurrentScene()).CallDeferred();
+    }
+
+    private void ReturnFromM85AssetPipelineLab()
+    {
+        _forceM85AssetPipelineLab = false;
+        if (OS.GetCmdlineUserArgs().Contains("--m85-asset-pipeline"))
         {
             GetTree().Quit();
             return;
