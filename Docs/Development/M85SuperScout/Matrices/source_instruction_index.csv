@@ -1,0 +1,40 @@
+set_id,title,verification,direct_pdf_count,direct_pdf_urls,state
+1277,Drill Craft,CANON_VERIFIED_ARCHIVAL,0,,NO_OFFICIAL_PDF_LOCATED
+4910,The Hover Scout,PRIMARY_VERIFIED,1,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128290.pdf,DIRECT_PDF_LOCATED
+4920,Rapid Rider,PRIMARY_VERIFIED,1,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128168.pdf,DIRECT_PDF_LOCATED
+4930,Rock Raiders Crew,CANON_VERIFIED_ARCHIVAL,0,,NO_OFFICIAL_PDF_LOCATED
+4940,Granite Grinder,PRIMARY_VERIFIED,1,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128317.pdf,DIRECT_PDF_LOCATED
+4950,Loader Dozer,PRIMARY_VERIFIED,1,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128419.pdf,DIRECT_PDF_LOCATED
+4970,The Chrome Crusher,PRIMARY_VERIFIED,1,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4129264.pdf,DIRECT_PDF_LOCATED
+4980,Tunnel Transport,PRIMARY_VERIFIED,1,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128427.pdf,DIRECT_PDF_LOCATED
+4990,Rock Raiders HQ,PRIMARY_VERIFIED,1,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4129017.pdf,DIRECT_PDF_LOCATED
+1195,Alien Encounter,CANON_VERIFIED_ARCHIVAL,0,,NO_OFFICIAL_PDF_LOCATED
+3750,Life on Mars Accessories,CANON_VERIFIED_ARCHIVAL,0,,NO_OFFICIAL_PDF_LOCATED
+7300,Double Hover,PRIMARY_VERIFIED,1,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4156313.pdf,DIRECT_PDF_LOCATED
+7301,Rover,PRIMARY_VERIFIED,1,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4156314.pdf,DIRECT_PDF_LOCATED
+7302,Worker Robot,PRIMARY_VERIFIED,1,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130290.pdf,DIRECT_PDF_LOCATED
+7303,Jet Scooter,PRIMARY_VERIFIED,1,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130291.pdf,DIRECT_PDF_LOCATED
+7310,Mono Jet,PRIMARY_VERIFIED,1,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130805.pdf,DIRECT_PDF_LOCATED
+7311,Red Planet Cruiser,PRIMARY_VERIFIED,1,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130806.pdf,DIRECT_PDF_LOCATED
+7312,T3-Trike,PRIMARY_VERIFIED,1,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130807.pdf,DIRECT_PDF_LOCATED
+7313,Red Planet Protector,PRIMARY_VERIFIED,1,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4160158.pdf,DIRECT_PDF_LOCATED
+7314,Recon-Mech RP,PRIMARY_VERIFIED,1,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130809.pdf,DIRECT_PDF_LOCATED
+7315,Solar Explorer,PRIMARY_VERIFIED,1,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130810.pdf,DIRECT_PDF_LOCATED
+7316,Excavation Searcher,PRIMARY_VERIFIED,1,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130811.pdf,DIRECT_PDF_LOCATED
+7317,Aero Tube Hangar,PRIMARY_VERIFIED,1,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4160159.pdf,DIRECT_PDF_LOCATED
+5617,Alien Jet,PRIMARY_VERIFIED,1,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4525566.pdf,DIRECT_PDF_LOCATED
+5619,Crystal Hawk,PRIMARY_VERIFIED,1,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4533843.pdf,DIRECT_PDF_LOCATED
+7644,MX-81 Hypersonic Operations Aircraft,PRIMARY_VERIFIED,2,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4534843.pdf;https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4537579.pdf,DIRECT_PDF_LOCATED
+7645,MT-61 Crystal Reaper,PRIMARY_VERIFIED,2,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4534846.pdf;https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4549395.pdf,DIRECT_PDF_LOCATED
+7646,ETX Alien Infiltrator,PRIMARY_VERIFIED,1,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4534848.pdf,DIRECT_PDF_LOCATED
+7647,MX-41 Switch Fighter,PRIMARY_VERIFIED,1,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4525547.pdf,DIRECT_PDF_LOCATED
+7648,MT-21 Mobile Mining Unit,PRIMARY_VERIFIED,1,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4525546.pdf,DIRECT_PDF_LOCATED
+7649,MT-201 Ultra-Drill Walker,PRIMARY_VERIFIED,2,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4538485.pdf;https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4538486.pdf,DIRECT_PDF_LOCATED
+7690,MB-01 Eagle Command Base,PRIMARY_VERIFIED,2,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4523177.pdf;https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4523179.pdf,DIRECT_PDF_LOCATED
+7691,ETX Alien Mothership Assault,PRIMARY_VERIFIED,1,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4516029.pdf,DIRECT_PDF_LOCATED
+7692,MX-71 Recon Dropship,PRIMARY_VERIFIED,1,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4524070.pdf,DIRECT_PDF_LOCATED
+7693,ETX Alien Strike,PRIMARY_VERIFIED,1,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4523183.pdf,DIRECT_PDF_LOCATED
+7694,MT-31 Trike,PRIMARY_VERIFIED,1,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517775.pdf,DIRECT_PDF_LOCATED
+7695,MX-11 Astro Fighter,PRIMARY_VERIFIED,1,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517774.pdf,DIRECT_PDF_LOCATED
+7697,MT-51 Claw-Tank Ambush,PRIMARY_VERIFIED,1,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4515381.pdf,DIRECT_PDF_LOCATED
+7699,MT-101 Armored Drilling Unit,PRIMARY_VERIFIED,2,https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517776.pdf;https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517777.pdf,DIRECT_PDF_LOCATED

@@ -14,11 +14,15 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "Content/Presentation/SuperScout/roster_identity_baseline.json"
 LEDGER = ROOT / "Content/Presentation/SuperScout/source_ledger.json"
+INSTRUCTION_INDEX = ROOT / "Content/Presentation/SuperScout/source_instruction_index.json"
+ROCK_RAIDERS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/rock_raiders_source_evidence.json"
 CONFUSION = ROOT / "Content/Presentation/SuperScout/confusion_register.json"
 OUTPUT = ROOT / "Docs/Development/M85SuperScout/Packets"
 INDEX = ROOT / "Docs/Development/M85SuperScout/PACKET_INDEX.md"
 MATRIX = ROOT / "Docs/Development/M85SuperScout/Matrices/identity_source_matrix.csv"
 CONFUSION_MATRIX = ROOT / "Docs/Development/M85SuperScout/Matrices/confusion_register.md"
+SOURCE_INDEX_MATRIX = ROOT / "Docs/Development/M85SuperScout/Matrices/source_instruction_index.csv"
+ROCK_RAIDERS_AUDIT = ROOT / "Docs/Development/M85SuperScout/Matrices/rock_raiders_source_audit.md"
 
 FACTION_RULES = {
     "RockRaiders": (
@@ -56,14 +60,65 @@ def slug(stable_id: str) -> str:
     return stable_id.replace(".", "_") + ".md"
 
 
-def packet_text(asset: dict, sources: dict[str, dict], pairs: list[dict]) -> str:
+def source_evidence_block(set_ids: list[str], evidence: dict[str, dict]) -> str:
+    blocks = []
+    for set_id in set_ids:
+        record = evidence.get(set_id)
+        if record is None:
+            continue
+        ranges = "\n".join(
+            f"  - PDF pages {page_range['pages']}: {page_range['evidence']}"
+            for page_range in record["constructionRanges"]
+        ) or "  - No official construction-page range is available."
+        coverage = "; ".join(
+            f"{name}={value}" for name, value in record["viewCoverage"].items()
+        )
+        findings = "\n".join(f"  - {finding}" for finding in record["findings"])
+        gaps = "\n".join(f"  - {gap}" for gap in record["openGaps"])
+        blocks.append(
+            f"### Set {set_id} source audit\n\n"
+            f"- Evidence state: `{record['evidenceState']}`\n"
+            f"- Construction map:\n{ranges}\n"
+            f"- View/mechanism coverage: {coverage}\n"
+            f"- Verified findings:\n{findings}\n"
+            f"- Remaining evidence gaps:\n{gaps}"
+        )
+    if not blocks:
+        return "`PENDING` — this source family has not yet received its visual PDF/page-range audit."
+    return "\n\n".join(blocks)
+
+
+def packet_text(
+    asset: dict,
+    sources: dict[str, dict],
+    pairs: list[dict],
+    instruction_index: dict[str, dict],
+    evidence: dict[str, dict],
+) -> str:
     palette, forbidden = FACTION_RULES[asset["faction"]]
     source_rows = []
     for set_id in asset["sourceSets"]:
         source = sources[set_id]
+        instruction = instruction_index[set_id]
+        pdf_links = "<br>".join(
+            f"[official PDF {number}]({url})"
+            for number, url in enumerate(instruction["pdfUrls"], start=1)
+        ) or "no direct official PDF located"
         source_rows.append(
-            f"| {set_id} — {source['title']} | [LEGO instructions]({source['officialInstructionsUrl']}) | "
+            f"| {set_id} — {source['title']} | [LEGO instructions]({source['officialInstructionsUrl']})<br>{pdf_links} | "
             f"[inventory]({source['inventoryUrl']}) | {source['verification']} | {source['evidenceUse']} |"
+        )
+    evidence_block = source_evidence_block(asset["sourceSets"], evidence)
+    if any(set_id in evidence for set_id in asset["sourceSets"]):
+        open_question = (
+            "Source-view coverage and construction-critical page ranges are recorded for the audited "
+            "Rock Raiders sources below. Asset-specific adaptation boundaries still must be resolved "
+            "before this packet can leave HOLD."
+        )
+    else:
+        open_question = (
+            "Exact source-view coverage, construction-critical page ranges and every adaptation boundary "
+            "must be recorded before this packet can leave HOLD."
         )
     anchors = "\n".join(f"- {anchor}" for anchor in asset["identityAnchors"])
     related = []
@@ -106,7 +161,7 @@ Authoritative references:
 
 {authority}
 
-Open question: exact source-view coverage, construction-critical page ranges and any adaptation boundary must be recorded before this packet can leave HOLD.
+Open question: {open_question}
 
 {SECTION_TITLES[1]}
 
@@ -114,7 +169,9 @@ Open question: exact source-view coverage, construction-critical page ranges and
 |---|---|---|---|---|
 {chr(10).join(source_rows)}
 
-Required evidence still to attach or cite precisely: front, rear, left/right, top and three-quarter views; underside/interior/exploded evidence where mechanically relevant; motion or play-feature frames. One flattering three-quarter image is never sufficient.
+{evidence_block}
+
+Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 
 {SECTION_TITLES[2]}
 
@@ -231,19 +288,52 @@ This is the canon-derived first pass for the most obvious internal and cross-fac
 """
 
 
+def source_index_text(records: list[dict], sources: dict[str, dict]) -> str:
+    output = io.StringIO(newline="")
+    writer = csv.writer(output, lineterminator="\n")
+    writer.writerow(["set_id", "title", "verification", "direct_pdf_count", "direct_pdf_urls", "state"])
+    for record in records:
+        source = sources[record["setId"]]
+        writer.writerow([
+            record["setId"], source["title"], source["verification"],
+            len(record["pdfUrls"]), ";".join(record["pdfUrls"]), record["state"],
+        ])
+    return output.getvalue()
+
+
+def source_audit_text(records: list[dict], sources: dict[str, dict]) -> str:
+    blocks = []
+    for record in records:
+        title = sources[record["setId"]]["title"]
+        blocks.append(f"## {record['setId']} — {title}\n\n{source_evidence_block([record['setId']], {record['setId']: record})}")
+    return """# M8.5 T082 — Rock Raiders source-evidence audit
+
+This generated review records what the official instruction PDFs actually prove, which views remain partial or missing, and where gameplay adaptation still must be explicit. The PDFs and rendered review sheets are temporary research material and are not redistributed in the repository.
+
+""" + "\n\n".join(blocks) + "\n"
+
+
 def expected_files() -> dict[Path, str]:
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     ledger = json.loads(LEDGER.read_text(encoding="utf-8"))
+    instruction_index = json.loads(INSTRUCTION_INDEX.read_text(encoding="utf-8"))
+    rock_raiders_evidence = json.loads(ROCK_RAIDERS_EVIDENCE.read_text(encoding="utf-8"))
     confusion = json.loads(CONFUSION.read_text(encoding="utf-8"))
     sources = {source["setId"]: source for source in ledger["sources"]}
+    instructions = {record["setId"]: record for record in instruction_index["records"]}
+    evidence = {record["setId"]: record for record in rock_raiders_evidence["sources"]}
     assets = {asset["stableId"]: asset for asset in manifest["assets"]}
     result = {
         INDEX: index_text(manifest["assets"]),
         MATRIX: matrix_text(manifest["assets"]),
         CONFUSION_MATRIX: confusion_text(confusion["pairs"], assets),
+        SOURCE_INDEX_MATRIX: source_index_text(instruction_index["records"], sources),
+        ROCK_RAIDERS_AUDIT: source_audit_text(rock_raiders_evidence["sources"], sources),
     }
     for asset in manifest["assets"]:
-        result[OUTPUT / slug(asset["stableId"])] = packet_text(asset, sources, confusion["pairs"])
+        result[OUTPUT / slug(asset["stableId"])] = packet_text(
+            asset, sources, confusion["pairs"], instructions, evidence
+        )
     return result
 
 
@@ -262,14 +352,14 @@ def main() -> None:
             for failure in failures:
                 print(f"- {failure}", file=sys.stderr)
             raise SystemExit(1)
-        print("M8.5 SUPER SCOUT PACKETS: PASS packets=66 matrices=2 state=HOLD")
+        print("M8.5 SUPER SCOUT PACKETS: PASS packets=66 matrices=4 state=HOLD")
         return
 
     OUTPUT.mkdir(parents=True, exist_ok=True)
     for path, content in expected.items():
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(content, encoding="utf-8")
-    print("M8.5 SUPER SCOUT PACKETS: GENERATED packets=66 matrices=2 state=HOLD")
+    print("M8.5 SUPER SCOUT PACKETS: GENERATED packets=66 matrices=4 state=HOLD")
 
 
 if __name__ == "__main__":

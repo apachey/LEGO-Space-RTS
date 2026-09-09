@@ -23,15 +23,30 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: exact source-view coverage, construction-critical page ranges and any adaptation boundary must be recorded before this packet can leave HOLD.
+Open question: Source-view coverage and construction-critical page ranges are recorded for the audited Rock Raiders sources below. Asset-specific adaptation boundaries still must be resolved before this packet can leave HOLD.
 
 ## B. Reference board
 
 | Source | Primary evidence | Inventory / archival check | Confidence | Intended use |
 |---|---|---|---|---|
-| 4950 — Loader Dozer | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/4950) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=4950-1) | PRIMARY_VERIFIED | loader chassis, scoop and defensive derivation |
+| 4950 — Loader Dozer | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/4950)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128419.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=4950-1) | PRIMARY_VERIFIED | loader chassis, scoop and defensive derivation |
 
-Required evidence still to attach or cite precisely: front, rear, left/right, top and three-quarter views; underside/interior/exploded evidence where mechanically relevant; motion or play-feature frames. One flattering three-quarter image is never sufficient.
+### Set 4950 source audit
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 2-10: Wide low chassis, rear frame, control station and paired structural side rails.
+  - PDF pages 11-20: Full-width bucket, front linkage, high cage, lighting and wheel mounts.
+  - PDF pages 21-22: Explicit bucket lift/tilt play feature and rock-loading pose.
+- View/mechanism coverage: front=VERIFIED p1 and p11-22; rear=PARTIAL p17-20; leftRight=VERIFIED p2-22 construction sequence; top=VERIFIED p2-20; threeQuarter=VERIFIED p1 and p21-24; undersideInterior=VERIFIED p2-8 chassis build; mechanism=VERIFIED p21-22 bucket lift/tilt linkage
+- Verified findings:
+  - The bucket is carried by visible side linkages and must remain the dominant forward mass.
+  - Four equal large wheels sit outside a broad plate-built chassis.
+  - The operator cage is rear-weighted, leaving the front linkage and bucket visually exposed.
+- Remaining evidence gaps:
+  - Opposite-side product photography is still desirable for exact hose and control placement.
+
+Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 
 ## C. Recognition contract
 

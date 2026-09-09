@@ -14,6 +14,8 @@ from urllib.parse import urlparse
 ROOT = Path(__file__).resolve().parents[2]
 MANIFEST = ROOT / "Content/Presentation/SuperScout/roster_identity_baseline.json"
 LEDGER = ROOT / "Content/Presentation/SuperScout/source_ledger.json"
+INSTRUCTION_INDEX = ROOT / "Content/Presentation/SuperScout/source_instruction_index.json"
+ROCK_RAIDERS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/rock_raiders_source_evidence.json"
 CONFUSION = ROOT / "Content/Presentation/SuperScout/confusion_register.json"
 CONTENT = ROOT / "Content/PrototypeEntities.json"
 GENERATOR = ROOT / "tools/generate-m85-super-scout-packets.py"
@@ -44,6 +46,11 @@ REQUIRED_PACKET_SECTIONS = [
     "## I. Build handoff",
 ]
 
+VIEW_COVERAGE_KEYS = {
+    "front", "rear", "leftRight", "top", "threeQuarter", "undersideInterior", "mechanism",
+}
+VIEW_COVERAGE_STATES = {"VERIFIED", "PARTIAL", "MISSING", "NOT_APPLICABLE"}
+
 
 def fail(message: str) -> None:
     print(f"M8.5 SUPER SCOUT: FAIL {message}", file=sys.stderr)
@@ -57,12 +64,17 @@ def require_nonempty(record: dict, field: str, identity: str) -> None:
 
 
 def main() -> None:
-    for path in (MANIFEST, LEDGER, CONFUSION, CONTENT, GENERATOR):
+    for path in (
+        MANIFEST, LEDGER, INSTRUCTION_INDEX, ROCK_RAIDERS_EVIDENCE,
+        CONFUSION, CONTENT, GENERATOR,
+    ):
         if not path.is_file():
             fail(f"missing {path.relative_to(ROOT)}")
 
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     ledger = json.loads(LEDGER.read_text(encoding="utf-8"))
+    instruction_index = json.loads(INSTRUCTION_INDEX.read_text(encoding="utf-8"))
+    rock_raiders_evidence = json.loads(ROCK_RAIDERS_EVIDENCE.read_text(encoding="utf-8"))
     confusion = json.loads(CONFUSION.read_text(encoding="utf-8"))
     content = json.loads(CONTENT.read_text(encoding="utf-8"))
     if manifest.get("schemaVersion") != 1 or manifest.get("task") != "T082":
@@ -140,6 +152,98 @@ def main() -> None:
         if source["verification"] not in {"PRIMARY_VERIFIED", "CANON_VERIFIED_ARCHIVAL"}:
             fail(f"source {set_id} has invalid confidence state")
 
+    if instruction_index.get("schemaVersion") != 1 or instruction_index.get("task") != "T082":
+        fail("instruction index schema/task mismatch")
+    if instruction_index.get("status") != "IN_PROGRESS_DIRECT_PDF_INDEX":
+        fail("instruction index must not imply complete visual evidence")
+    instruction_records = instruction_index.get("records", [])
+    instruction_ids = [record.get("setId") for record in instruction_records]
+    if len(instruction_ids) != len(set(instruction_ids)) or set(instruction_ids) != set(source_ids):
+        fail("instruction index must cover every source exactly once")
+    instruction_by_id = {record["setId"]: record for record in instruction_records}
+    direct_pdf_sources = 0
+    archival_sources = 0
+    for set_id, record in instruction_by_id.items():
+        pdf_urls = record.get("pdfUrls")
+        if not isinstance(pdf_urls, list) or len(pdf_urls) != len(set(pdf_urls)):
+            fail(f"instruction source {set_id} has invalid or duplicate PDF URLs")
+        for pdf_url in pdf_urls:
+            parsed = urlparse(pdf_url)
+            if (
+                parsed.scheme != "https"
+                or parsed.netloc != "www.lego.com"
+                or not parsed.path.startswith("/cdn/product-assets/product.bi.core.pdf/")
+                or not parsed.path.endswith(".pdf")
+            ):
+                fail(f"instruction source {set_id} has invalid official PDF URL")
+        source = source_by_id[set_id]
+        if record.get("state") == "DIRECT_PDF_LOCATED":
+            direct_pdf_sources += 1
+            if not pdf_urls or source["verification"] != "PRIMARY_VERIFIED":
+                fail(f"instruction source {set_id} direct-PDF state disagrees with source ledger")
+        elif record.get("state") == "NO_OFFICIAL_PDF_LOCATED":
+            archival_sources += 1
+            if pdf_urls or source["verification"] != "CANON_VERIFIED_ARCHIVAL":
+                fail(f"instruction source {set_id} archival state disagrees with source ledger")
+        else:
+            fail(f"instruction source {set_id} has invalid state")
+
+    if rock_raiders_evidence.get("schemaVersion") != 1 or rock_raiders_evidence.get("task") != "T082":
+        fail("Rock Raiders evidence schema/task mismatch")
+    if rock_raiders_evidence.get("faction") != "RockRaiders":
+        fail("Rock Raiders evidence faction mismatch")
+    if rock_raiders_evidence.get("status") != "SOURCE_AUDIT_COMPLETE_WITH_TWO_GAPS":
+        fail("Rock Raiders evidence must retain its two explicit source gaps")
+    evidence_records = rock_raiders_evidence.get("sources", [])
+    evidence_ids = [record.get("setId") for record in evidence_records]
+    rock_raiders_source_ids = {
+        set_id
+        for asset in assets if asset["faction"] == "RockRaiders"
+        for set_id in asset["sourceSets"]
+    }
+    if len(evidence_ids) != len(set(evidence_ids)) or set(evidence_ids) != rock_raiders_source_ids:
+        fail("Rock Raiders evidence must cover its mapped source set exactly once")
+    audited_sources = 0
+    evidence_gaps = 0
+    for record in evidence_records:
+        set_id = record["setId"]
+        for field in ("instructionPdfs", "constructionRanges", "viewCoverage", "findings", "openGaps"):
+            if field not in record:
+                fail(f"Rock Raiders source {set_id} has no {field}")
+        if set(record["viewCoverage"]) != VIEW_COVERAGE_KEYS:
+            fail(f"Rock Raiders source {set_id} has incomplete view/mechanism coverage")
+        for value in record["viewCoverage"].values():
+            if value.split(" ", 1)[0] not in VIEW_COVERAGE_STATES:
+                fail(f"Rock Raiders source {set_id} has invalid coverage state {value}")
+        require_nonempty(record, "findings", f"Rock Raiders source {set_id}")
+        require_nonempty(record, "openGaps", f"Rock Raiders source {set_id}")
+        if record.get("evidenceState") == "OFFICIAL_PDF_VISUALLY_AUDITED":
+            audited_sources += 1
+            pdfs = record["instructionPdfs"]
+            if not pdfs or not record["constructionRanges"]:
+                fail(f"Rock Raiders source {set_id} audited state lacks PDFs or page ranges")
+            if [pdf["url"] for pdf in pdfs] != instruction_by_id[set_id]["pdfUrls"]:
+                fail(f"Rock Raiders source {set_id} PDF list disagrees with instruction index")
+            for pdf in pdfs:
+                if not isinstance(pdf.get("pageCount"), int) or pdf["pageCount"] <= 0:
+                    fail(f"Rock Raiders source {set_id} has invalid page count")
+                sha256 = pdf.get("sha256", "")
+                if len(sha256) != 64 or any(character not in "0123456789abcdef" for character in sha256):
+                    fail(f"Rock Raiders source {set_id} has invalid PDF SHA-256")
+            for page_range in record["constructionRanges"]:
+                require_nonempty(page_range, "pages", f"Rock Raiders source {set_id} page range")
+                require_nonempty(page_range, "evidence", f"Rock Raiders source {set_id} page range")
+        elif record.get("evidenceState") == "ARCHIVAL_GAP":
+            evidence_gaps += 1
+            if record["instructionPdfs"] or record["constructionRanges"]:
+                fail(f"Rock Raiders source {set_id} archival gap contains unverified PDF evidence")
+            if instruction_by_id[set_id]["state"] != "NO_OFFICIAL_PDF_LOCATED":
+                fail(f"Rock Raiders source {set_id} gap disagrees with instruction index")
+        else:
+            fail(f"Rock Raiders source {set_id} has invalid evidence state")
+    if audited_sources != 7 or evidence_gaps != 2:
+        fail(f"Rock Raiders evidence expected seven audited PDFs and two gaps, found {audited_sources}/{evidence_gaps}")
+
     if confusion.get("schemaVersion") != 1 or confusion.get("task") != "T082":
         fail("confusion register schema/task mismatch")
     if confusion.get("status") != "IN_PROGRESS_CANONICAL_PAIR_BASELINE":
@@ -197,10 +301,13 @@ def main() -> None:
 
     primary = sum(source["verification"] == "PRIMARY_VERIFIED" for source in sources)
     archival = len(sources) - primary
+    if primary != direct_pdf_sources or archival != archival_sources:
+        fail("source-ledger confidence totals disagree with instruction index")
     print(
         "M8.5 SUPER SCOUT: PASS "
         f"assets={len(assets)} units=35 infrastructure=31 sources={len(sources)} "
-        f"primaryVerified={primary} archival={archival} packets=66 "
+        f"primaryVerified={primary} archival={archival} directPdfs={direct_pdf_sources} "
+        f"rockRaidersAudited={audited_sources} rockRaidersGaps={evidence_gaps} packets=66 "
         f"confusionPairs={len(pairs)} state=HOLD"
     )
 

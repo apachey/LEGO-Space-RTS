@@ -1,7 +1,8 @@
 # M8.5 T082 — SUPER SCOUT PROGRESS
 
-**Status:** in progress. Identity/source baseline complete; evidence and
-cross-roster review gates remain open.
+**Status:** in progress. Identity/source baseline and the Rock Raiders official
+PDF audit are complete; the other faction evidence and cross-roster review
+gates remain open.
 
 ## Completed in the identity-baseline pass
 
@@ -21,11 +22,19 @@ cross-roster review gates remain open.
   requirements, and each affected packet receives the same mitigation text.
   This is a baseline for the future blind silhouette review, not a claim that
   every visual collision has already been found.
-- The source ledger currently records 39 relied-upon official sets or source
-  families. Twenty-eight official LEGO instruction pages were reachable and
-  verified on 2026-09-09. Eleven older/promotional sources retain their
-  approved Canon Registry and BrickLink inventory evidence but require a final
-  primary-page/PDF or archival corroboration pass.
+- The source ledger records 39 relied-upon official sets or source families.
+  Direct official LEGO PDFs are now indexed for 35 sources. Four older or
+  promotional sources retain their approved Canon Registry and BrickLink
+  inventory evidence but still lack a located official PDF.
+- The Rock Raiders source pass visually audited all seven located official
+  manuals, recorded exact PDF page counts and hashes, mapped
+  construction-critical page ranges, and classified front/rear/side/top,
+  three-quarter, underside/interior and mechanism coverage. Sets 1277 and 4930
+  remain explicit archival gaps rather than inferred construction.
+- The 4990 HQ manual is now verified primary evidence. Its 43 pages establish
+  a reusable faction vocabulary of separate tower, crane, open service gantry,
+  conveyor/processing and irregular worksite-base modules; they do not silently
+  approve the game's adapted building boundaries.
 - Repository validation compares all 66 entries against
   `Content/PrototypeEntities.json`, checks the source ledger, enforces the
   three-to-seven-anchor contract and regenerates every packet deterministically.
@@ -34,8 +43,8 @@ cross-roster review gates remain open.
 
 | State | Count | Meaning |
 |---|---:|---|
-| `PRIMARY_VERIFIED` | 28 | The official LEGO instruction page was reachable during this pass. |
-| `CANON_VERIFIED_ARCHIVAL` | 11 | Identity is approved in Phase 00, with archival inventory evidence; the official page was unavailable or not safely retrievable during this pass. |
+| `PRIMARY_VERIFIED` | 35 | A direct official LEGO instruction PDF was located. |
+| `CANON_VERIFIED_ARCHIVAL` | 4 | Identity is approved in Phase 00, with archival inventory evidence; no official PDF has yet been located. |
 
 No source image is copied into the repository. URLs and rights notes are
 recorded for reference-only research; third-party or LEGO imagery is not
@@ -43,9 +52,8 @@ redistributed.
 
 ## Remaining before T082 can pass
 
-1. Record precise multi-angle coverage and construction-critical instruction
-   ranges for every relied source, including underside, interior and
-   transformation evidence where applicable.
+1. Repeat the Rock Raiders PDF/page-range audit for Astronauts, Aliens and
+   Martians, and resolve or retain the four explicit archival source gaps.
 2. Complete each semantic construction map: what every identity-bearing mass,
    opening, tool, light and connection is and why it exists.
 3. Complete locomotion, planted-contact, articulation, state, pivot and socket

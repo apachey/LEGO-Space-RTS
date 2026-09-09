@@ -23,15 +23,26 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: exact source-view coverage, construction-critical page ranges and any adaptation boundary must be recorded before this packet can leave HOLD.
+Open question: Source-view coverage and construction-critical page ranges are recorded for the audited Rock Raiders sources below. Asset-specific adaptation boundaries still must be resolved before this packet can leave HOLD.
 
 ## B. Reference board
 
 | Source | Primary evidence | Inventory / archival check | Confidence | Intended use |
 |---|---|---|---|---|
-| 1277 — Drill Craft | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/1277) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=1277-1) | CANON_VERIFIED_ARCHIVAL | compact drill silhouette and construction |
+| 1277 — Drill Craft | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/1277)<br>no direct official PDF located | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=1277-1) | CANON_VERIFIED_ARCHIVAL | compact drill silhouette and construction |
 
-Required evidence still to attach or cite precisely: front, rear, left/right, top and three-quarter views; underside/interior/exploded evidence where mechanically relevant; motion or play-feature frames. One flattering three-quarter image is never sufficient.
+### Set 1277 source audit
+
+- Evidence state: `ARCHIVAL_GAP`
+- Construction map:
+  - No official construction-page range is available.
+- View/mechanism coverage: front=MISSING; rear=MISSING; leftRight=MISSING; top=MISSING; threeQuarter=MISSING; undersideInterior=MISSING; mechanism=MISSING
+- Verified findings:
+  - Canon and archival inventory establish the compact Drill Craft identity and parts family, but they do not establish a modelable load path or verified articulation.
+- Remaining evidence gaps:
+  - Locate an official instruction scan, official catalog construction view or clearly labeled archival manual before resolving Drill Craft construction.
+
+Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 
 ## C. Recognition contract
 

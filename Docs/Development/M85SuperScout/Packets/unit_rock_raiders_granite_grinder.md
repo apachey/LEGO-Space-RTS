@@ -23,15 +23,30 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: exact source-view coverage, construction-critical page ranges and any adaptation boundary must be recorded before this packet can leave HOLD.
+Open question: Source-view coverage and construction-critical page ranges are recorded for the audited Rock Raiders sources below. Asset-specific adaptation boundaries still must be resolved before this packet can leave HOLD.
 
 ## B. Reference board
 
 | Source | Primary evidence | Inventory / archival check | Confidence | Intended use |
 |---|---|---|---|---|
-| 4940 — Granite Grinder | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/4940) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=4940-1) | PRIMARY_VERIFIED | drill walker construction and articulation |
+| 4940 — Granite Grinder | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/4940)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128317.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=4940-1) | PRIMARY_VERIFIED | drill walker construction and articulation |
 
-Required evidence still to attach or cite precisely: front, rear, left/right, top and three-quarter views; underside/interior/exploded evidence where mechanically relevant; motion or play-feature frames. One flattering three-quarter image is never sufficient.
+### Set 4940 source audit
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 2-12: Two mirrored ski-foot/leg modules and their shared upper bridge are assembled independently.
+  - PDF pages 13-22: Long central drill craft body, cockpit cage, rear wheel/tool mass and drill boom are built as a separate module.
+  - PDF pages 23-24: Upper drill module is mounted across the paired leg modules; final operator-scale three-quarter view.
+- View/mechanism coverage: front=PARTIAL p1 and p24; rear=PARTIAL p18-22; leftRight=VERIFIED p13-24 construction rotation; top=VERIFIED p13-23; threeQuarter=VERIFIED p1 and p23-24; undersideInterior=VERIFIED p2-16 staged subassemblies; mechanism=PARTIAL p23 module connection; gait and drill motion not demonstrated
+- Verified findings:
+  - The recognizable walker is a bridge between two mirrored planted foot modules, not a wheeled chassis with decorative legs.
+  - The drill/cockpit body is a removable longitudinal module carried above the feet.
+  - The long drill is structurally balanced by rear wheel/equipment mass and a high open cage.
+- Remaining evidence gaps:
+  - The manual proves modular construction but not a walking gait; leg articulation and contact phases remain an explicit adaptation decision.
+
+Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 
 ## C. Recognition contract
 

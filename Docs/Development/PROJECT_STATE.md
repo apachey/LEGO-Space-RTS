@@ -615,12 +615,17 @@ live; the current schema-9 copy/paste retains the complete experiment.
   records the canonical faction, role, footprint, source classification,
   source-set lineage, silhouette thesis and three non-removable identity anchors
   for every asset.
-- `Content/Presentation/SuperScout/source_ledger.json` records 39 relied-upon
-  official sets/source families, reference-only rights handling, official LEGO
-  instruction URLs and BrickLink inventory corroboration. Twenty-eight official
-  instruction pages were reachable in the first pass; eleven older or
-  promotional sources remain explicitly archival-backed pending final primary
-  corroboration.
+- `Content/Presentation/SuperScout/source_ledger.json` and
+  `source_instruction_index.json` record 39 relied-upon source families,
+  reference-only rights handling, official instruction pages, exact direct LEGO
+  PDF links and BrickLink inventory corroboration. Thirty-five sources now have
+  direct official PDFs; four older/promotional sources remain explicitly
+  archival-backed.
+- The first faction-deep source pass visually audited all seven available Rock
+  Raiders manuals, including page counts/hashes, construction-critical ranges,
+  view/mechanism coverage, verified findings and explicit gaps. The 4990 HQ
+  manual now establishes the tower/crane/gantry/conveyor worksite grammar used
+  by adapted buildings. Sets 1277 and 4930 remain honest evidence gaps.
 - All 66 A–I packet files, the identity/source matrix and a 31-pair confusion
   register regenerate deterministically. Every confusion pair has three visible
   differentiation requirements, and every packet is visibly `HOLD`, so this
@@ -630,10 +635,10 @@ live; the current schema-9 copy/paste retains the complete experiment.
   authoritative runtime roster, checks counts, IDs, classifications, source
   coverage and the three-to-seven silhouette-anchor contract, and rejects stale
   generated packets.
-- T082 remains `BLOCKING_NOW` for T083/T085. Multi-angle source boards,
-  semantic construction and motion analysis, texture/material needs, complete
-  cross-roster silhouettes/confusion audits and explicit game-director review
-  remain required. Current detail is tracked in
+- T082 remains `BLOCKING_NOW` for T083/T085. The same source-page audit is still
+  required for the other three factions, followed by semantic construction and
+  motion analysis, texture/material needs, complete cross-roster
+  silhouettes/confusion audits and explicit game-director review. Current detail is tracked in
   `Docs/Development/M85_SUPER_SCOUT_PROGRESS.md`.
 
 Routine Godot verification is now non-intrusive on macOS: every gameplay smoke
@@ -657,16 +662,25 @@ actually required.
 
 ## Verification state
 
-The T082 roster-locked identity/source baseline passed `./tools/verify.sh --full`
-with zero blocking failures at
-`Artifacts/Verification/20260909T143103Z-full-summary.txt`: all 317 tests,
-the complete 66-asset roster and source-ledger validator, deterministic packet
+The T082 Rock Raiders official-instruction audit passed `./tools/verify.sh
+--full` with zero blocking failures at
+`Artifacts/Verification/20260909T152408Z-full-summary.txt`: all 317 tests,
+the complete 66-asset roster and source-evidence validator, deterministic packet
 generation, the 24-mover gate, compiled content, retained M6 networking, T081
 round trip, retained M7 presentation gates and a fresh macOS export passed. The
-new T082 stage reports 66 HOLD packets, 39 source records, 31 initial confusion
-pairs and no roster drift; it does not claim T082 acceptance. Stress60 remained
-the expected 2/60 `BLOCKING_LATER` M9 diagnostic. The Godot diagnostic-report
-count remained 25, so this full run produced no new macOS crash report.
+T082 stage reports 66 HOLD packets, 39 source records, 35 direct official PDFs,
+four explicit archival gaps, seven visually audited Rock Raiders manuals, two
+Rock Raiders manual gaps and 31 initial confusion pairs with no roster drift;
+it does not claim T082 acceptance. Stress60 remained the expected 2/60
+`BLOCKING_LATER` M9 diagnostic.
+
+An earlier sandbox-constrained attempt was discarded after its local test
+sockets and Godot user paths were denied. That invalid attempt also produced a
+macOS Godot diagnostic report around 18:21 local time. The accepted full run
+started at 18:24 local time, used the required headless crash-safe path and
+produced no later Godot diagnostic report; the repository-wide report count was
+26 after it completed. This distinction is retained so the discarded launch is
+not misreported as a clean automation result.
 
 The recorded T081 game-director acceptance passed `./tools/verify.sh --full`
 with zero blocking failures at
@@ -892,12 +906,11 @@ blocking only when M9 must prove its stable-large-battle exit.
 
 ## Next approved action
 
-1. Continue T082 from the locked 66-asset identity baseline: verify precise
-   multi-angle and construction-critical evidence, then complete semantic
-   construction, motion and texture-needs contracts plus the cross-roster
-   silhouette/confusion audit. Do not treat the generated `HOLD` packets, T070
-   data definitions or the non-roster T081 pipeline fixture as production
-   models.
+1. Continue T082 by repeating the completed Rock Raiders official-PDF audit for
+   Astronauts, Aliens and Martians; then complete semantic construction, motion
+   and texture-needs contracts plus the cross-roster silhouette/confusion audit.
+   Do not treat the generated `HOLD` packets, T070 data definitions or the
+   non-roster T081 pipeline fixture as production models.
 2. Execute the remaining Phase 09C M8.5 T082–T092 work before final M9 Skirmish
    Alpha acceptance.
 3. Use the separate M7 Look/HUD/Palette labs only to investigate a rejected aspect;

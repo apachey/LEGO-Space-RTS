@@ -23,18 +23,20 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: exact source-view coverage, construction-critical page ranges and any adaptation boundary must be recorded before this packet can leave HOLD.
+Open question: Exact source-view coverage, construction-critical page ranges and every adaptation boundary must be recorded before this packet can leave HOLD.
 
 ## B. Reference board
 
 | Source | Primary evidence | Inventory / archival check | Confidence | Intended use |
 |---|---|---|---|---|
-| 5619 — Crystal Hawk | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/5619) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=5619-1) | CANON_VERIFIED_ARCHIVAL | small astronaut interceptor |
-| 7644 — MX-81 Hypersonic Operations Aircraft | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7644) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7644-1) | PRIMARY_VERIFIED | large modular operations aircraft |
-| 7692 — MX-71 Recon Dropship | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7692) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7692-1) | PRIMARY_VERIFIED | dropship cargo cradle and small alien attack craft |
-| 7695 — MX-11 Astro Fighter | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7695) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7695-1) | PRIMARY_VERIFIED | astronaut fighter wing and defense hardpoint language |
+| 5619 — Crystal Hawk | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/5619)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4533843.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=5619-1) | PRIMARY_VERIFIED | small astronaut interceptor |
+| 7644 — MX-81 Hypersonic Operations Aircraft | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7644)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4534843.pdf)<br>[official PDF 2](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4537579.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7644-1) | PRIMARY_VERIFIED | large modular operations aircraft |
+| 7692 — MX-71 Recon Dropship | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7692)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4524070.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7692-1) | PRIMARY_VERIFIED | dropship cargo cradle and small alien attack craft |
+| 7695 — MX-11 Astro Fighter | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7695)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517774.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7695-1) | PRIMARY_VERIFIED | astronaut fighter wing and defense hardpoint language |
 
-Required evidence still to attach or cite precisely: front, rear, left/right, top and three-quarter views; underside/interior/exploded evidence where mechanically relevant; motion or play-feature frames. One flattering three-quarter image is never sufficient.
+`PENDING` — this source family has not yet received its visual PDF/page-range audit.
+
+Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 
 ## C. Recognition contract
 

@@ -23,15 +23,26 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: exact source-view coverage, construction-critical page ranges and any adaptation boundary must be recorded before this packet can leave HOLD.
+Open question: Source-view coverage and construction-critical page ranges are recorded for the audited Rock Raiders sources below. Asset-specific adaptation boundaries still must be resolved before this packet can leave HOLD.
 
 ## B. Reference board
 
 | Source | Primary evidence | Inventory / archival check | Confidence | Intended use |
 |---|---|---|---|---|
-| 4930 — Rock Raiders Crew | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/4930) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=4930-1) | CANON_VERIFIED_ARCHIVAL | crew, tools and portable equipment |
+| 4930 — Rock Raiders Crew | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/4930)<br>no direct official PDF located | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=4930-1) | CANON_VERIFIED_ARCHIVAL | crew, tools and portable equipment |
 
-Required evidence still to attach or cite precisely: front, rear, left/right, top and three-quarter views; underside/interior/exploded evidence where mechanically relevant; motion or play-feature frames. One flattering three-quarter image is never sufficient.
+### Set 4930 source audit
+
+- Evidence state: `ARCHIVAL_GAP`
+- Construction map:
+  - No official construction-page range is available.
+- View/mechanism coverage: front=PARTIAL archival character imagery; rear=MISSING; leftRight=PARTIAL archival character imagery; top=NOT_APPLICABLE; threeQuarter=PARTIAL archival character imagery; undersideInterior=NOT_APPLICABLE; mechanism=MISSING
+- Verified findings:
+  - Canon and inventory confirm a crew/equipment source rather than a single vehicle assembly.
+- Remaining evidence gaps:
+  - Locate official or clearly labeled archival front/rear character and equipment sheets before fixing the Crew backpack, lamp and tool variants.
+
+Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 
 ## C. Recognition contract
 

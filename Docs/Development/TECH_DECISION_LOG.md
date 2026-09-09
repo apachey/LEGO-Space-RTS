@@ -1263,6 +1263,26 @@ This is a research/preproduction implementation decision only. It changes no
 gameplay, simulation, public data format, dependency, canon or accepted visual
 direction, and it does not approve any T083/T085 production design.
 
+## 2026-09-09 — Make official instruction PDFs the traceable T082 evidence unit
+
+- Source confidence now depends on locating a direct official LEGO PDF rather
+  than merely loading the set landing page. The shared index records every
+  exact PDF URL while keeping missing older/promotional sources explicit.
+- This recovered direct primary manuals for seven sources that had remained
+  archival in the initial pass, including the 4990 Rock Raiders HQ. The corpus
+  now has 35 direct-PDF sources and four archival gaps.
+- Faction-deep visual audits record the PDF page count and hash,
+  construction-critical page ranges, orthogonal-view/mechanism coverage,
+  source-supported findings and missing evidence. Temporary PDFs and rendered
+  contact sheets are not redistributed.
+- Rock Raiders is the first completed source-family audit: seven manuals are
+  visually audited and 1277/4930 remain explicit gaps. Manual evidence proves
+  source construction and mechanism only; it does not silently approve the
+  adaptation boundary of any game asset.
+
+This changes no gameplay, simulation, public data format, dependency, canon or
+accepted visual direction. All affected asset packets remain `HOLD`.
+
 ## 2026-09-09 — Non-intrusive macOS Godot automation
 
 - Routine Godot verification is permanently headless and disables Godot's

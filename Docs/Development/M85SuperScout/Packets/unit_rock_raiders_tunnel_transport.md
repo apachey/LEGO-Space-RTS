@@ -23,15 +23,31 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: exact source-view coverage, construction-critical page ranges and any adaptation boundary must be recorded before this packet can leave HOLD.
+Open question: Source-view coverage and construction-critical page ranges are recorded for the audited Rock Raiders sources below. Asset-specific adaptation boundaries still must be resolved before this packet can leave HOLD.
 
 ## B. Reference board
 
 | Source | Primary evidence | Inventory / archival check | Confidence | Intended use |
 |---|---|---|---|---|
-| 4980 — Tunnel Transport | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/4980) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=4980-1) | PRIMARY_VERIFIED | twin-propeller heavy lift construction |
+| 4980 — Tunnel Transport | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/4980)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128427.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=4980-1) | PRIMARY_VERIFIED | twin-propeller heavy lift construction |
 
-Required evidence still to attach or cite precisely: front, rear, left/right, top and three-quarter views; underside/interior/exploded evidence where mechanically relevant; motion or play-feature frames. One flattering three-quarter image is never sufficient.
+### Set 4980 source audit
+
+- Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Construction map:
+  - PDF pages 2-14: Forward cockpit/cargo vehicle module with low worksite chassis and open load bed.
+  - PDF pages 15-20: Separate compact wheeled support module.
+  - PDF pages 21-29: Wide rotor transport frame, twin propeller pods and attachment to the carried modules.
+  - PDF pages 30-32: Cargo container, alternate carried load and final multi-angle product photography.
+- View/mechanism coverage: front=VERIFIED p1 and p23-32; rear=VERIFIED p24-32; leftRight=VERIFIED p21-32; top=VERIFIED p21-29; threeQuarter=VERIFIED p1 and p27-32; undersideInterior=VERIFIED p21-29 open transport frame and load connections; mechanism=PARTIAL p21-29 rotors and cargo attachment; no rotor animation sequence
+- Verified findings:
+  - The aircraft is a skeletal load-bearing bridge with two giant rotor pods, not a conventional enclosed helicopter fuselage.
+  - Carried modules remain visibly independent beneath/within the transport frame.
+  - The long crossbeam, pod spacing and open central cradle are the primary structural identity.
+- Remaining evidence gaps:
+  - Rotor pitch and suspension response are not authored by the manual and remain presentation interpretations.
+
+Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 
 ## C. Recognition contract
 
