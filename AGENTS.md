@@ -615,20 +615,169 @@ State where the work exists and whether it has been merged.
 
 ## 20. COMMUNICATION STYLE
 
-The user is the game director, not the implementation technician.
+The user is the game director and primary playtester, not the implementation
+technician.
+
+### Language
+
+Communicate with the user in Ukrainian unless the user switches language.
+
+Code, identifiers, filenames, commands, commit messages, and technical
+documentation may remain in English.
+
+### Plain-language rule
+
+Assume the user does NOT know programming terminology.
+
+Speak in normal product/game-development language first.
+
+Never make the user translate engineering language into gameplay meaning.
+Do that translation yourself.
+
+Do not lead with:
+- class names;
+- methods;
+- namespaces;
+- architecture terminology;
+- engine internals;
+- stack traces;
+- filenames;
+- implementation patterns;
+- compiler jargon.
+
+Technical implementation may be complex internally. The explanation to the
+user should not be complex unless the complexity affects a decision they need
+to make.
+
+If a technical term is genuinely necessary, immediately explain what it means
+in ordinary language and why it matters to the game.
+
+For example, prefer:
+
+> Я виправив рух групи. Юніти тепер повинні рідше застрягати один в одному,
+> особливо у вузьких проходах.
+
+instead of:
+
+> Refactored deterministic local avoidance and reservation conflict
+> resolution.
+
+Prefer:
+
+> Пошук шляху тепер краще враховує великі машини, тому Chrome Crusher не
+> повинен так часто блокувати дрібні юніти.
+
+instead of:
+
+> Added footprint-aware hierarchical path reservation.
+
+### What to talk about first
 
 Lead with:
-- what changed in the game;
+1. what changed in the game;
+2. what the user should visibly notice;
+3. whether it actually works according to automated verification;
+4. what, if anything, still needs human playtesting;
+5. any known visible problem or limitation.
+
+Do not start a completion message with a list of source files or internal code
+changes.
+
+### Playtest instructions
+
+When asking the user to playtest something:
+
+- give short concrete steps;
+- name the exact unit, building, button, or situation to use;
+- explain what correct behavior should look like;
+- explain what failure would look like when useful;
+- do not ask the user to inspect logs, code, hashes, or debug internals unless
+  that is genuinely unavoidable.
+
+Prefer:
+
+> 1. Натисни `Prepare Movement Test`.
+> 2. Виділи всю групу.
+> 3. Відправ її через вузький прохід.
+> 4. Правильний результат: великі машини проходять без затору, а дрібні
+>    поступаються їм дорогою.
+
+Do not give vague instructions such as:
+
+> Test pathfinding and report whether navigation looks correct.
+
+### Decisions and questions
+
+When user input is required, ask in terms of visible game consequences.
+
+Bad:
+
+> Should avoidance use ORCA or velocity obstacles?
+
+Good:
+
+> Коли дві групи зустрічаються у вузькому проході, що для тебе важливіше:
+> щоб вони швидше розходилися, навіть трохи ламаючи стрій, чи щоб стрій
+> тримався жорсткіше, але прохід займав більше часу?
+
+Do not ask the user to choose between engineering approaches when the choice
+does not materially change the game.
+
+### Errors and blockers
+
+When something goes wrong, explain in this order:
+
+1. what is broken;
+2. what the player would see because of it;
+3. whether it was fixed;
+4. what remains unresolved.
+
+Do not paste raw compiler output, stack traces, or large logs unless the user
+explicitly asks for them or the exact output itself requires their attention.
+
+### Technical details
+
+Technical details are still important for implementation, debugging, testing,
+documentation, and review.
+
+Keep them out of the main explanation unless they affect:
+- gameplay;
+- visual result;
+- project risk;
+- architecture;
+- canon;
+- a decision required from the user.
+
+When extra implementation detail is genuinely useful, place it after the
+plain-language explanation under:
+
+**Технічні деталі — якщо цікаво**
+
+That section should be optional reading, not required to understand the task
+result.
+
+### Completion-report readability
+
+The mandatory completion-report fields in Section 19 still apply, but they must
+be concise and understandable to a non-programmer.
+
+`What changed`, `Why`, `Manual playtest requested`, and `Risks / unresolved
+issues` should be written primarily in game/product language.
+
+`Files changed`, exact verification commands, branch names, and other
+engineering bookkeeping should come later and remain brief.
+
+When nothing requires the user's attention in a technical subsection, say so
+briefly instead of filling it with implementation detail.
+
+The goal is that the user can read only the human-facing parts of the report
+and still fully understand:
+- what changed;
 - whether it works;
-- what was verified;
-- what still needs human judgement.
+- what they should test;
+- what is still wrong.
 
-Explain technical details when they affect a decision.
-
-Do not bury the user in compiler output unless the output itself requires
-their attention.
-
-When useful, explain a code change so the user can gradually learn, but do not
+When useful, explain a code change so the user can gradually learn, but never
 make code literacy a prerequisite for ordinary project management.
 
 ---
