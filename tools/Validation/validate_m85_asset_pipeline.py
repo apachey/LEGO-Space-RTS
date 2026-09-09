@@ -84,6 +84,8 @@ def main() -> None:
         fail("sidecar schema must be 1")
     if record.get("productionStatus") != "PIPELINE_FIXTURE_NOT_ROSTER_ART":
         fail("reference fixture could be mistaken for production roster art")
+    if record.get("review", {}).get("gameDirectorAcceptance") != "ACCEPTED_2026-09-09":
+        fail("T081 game-director acceptance is not recorded in the asset sidecar")
     if record.get("sourceClassification") not in {
         "OFFICIAL-DIRECT", "OFFICIAL-ADAPTED", "COMPOSITE-ADAPTATION", "NEW GAME CONTENT"
     }:

@@ -1232,8 +1232,10 @@ format or visual direction.
   regeneration.
 - This fixture validates the production path only. It cannot count toward the
   35-unit roster, replace T082 evidence, or satisfy T083/T085 model production.
-  T081 remains pending explicit game-director acceptance despite passing all
-  automated checks.
+  After accepting its scale, orientation and LOD progression, the game director
+  requested an orbitable review and then corrected the wheel pivots from two
+  shared midpoints to four individual wheel centres. The corrected fixture was
+  explicitly accepted on 2026-09-09, completing T081 and unblocking T082.
 
 This changes no gameplay value, authoritative simulation, public data format,
 dependency or accepted M7 visual direction.

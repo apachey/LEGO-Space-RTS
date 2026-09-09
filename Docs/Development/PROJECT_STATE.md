@@ -58,9 +58,9 @@ language remains explicitly non-canonical outside the accepted combination. A
 minimum four-faction M7 visual-direction review flow combines the strongest
 existing Look Lab and HUD Lab directions at a wide 84-cell opening plus exact
 24/44/72-cell checks. The game director accepted M7 Final with outline on as the
-production visual direction. The T081 asset-pipeline implementation candidate
-is complete and fully verified, but remains awaiting explicit game-director
-acceptance before T082 begins. A post-T069
+production visual direction. The T081 production asset pipeline is complete,
+fully verified and game-director accepted; T082 Super Scout reference
+intelligence is now the next approved task. A post-T069
 quality revision makes outline/halo independent from
 the style post-pass, hardens profile paste, bounds VFX event memory and avoids
 unrelated live material rebuilds. HUD and health visuals remain excluded from the world Look Lab. The
@@ -472,8 +472,8 @@ live; the current schema-9 copy/paste retains the complete experiment.
   starts at 84 cells and retains continuous mouse-wheel zoom from 24 to 108
   cells. Current and Hybrid remain comparison modes only. This accepts the
   direction, not the bounded prototype geometry as final production art. The
-  Phase 09C visual-direction dependency is satisfied. T081 now has a verified
-  implementation candidate awaiting its separate game-director pipeline review.
+  Phase 09C visual-direction dependency is satisfied. T081 is separately
+  game-director accepted after its pipeline review and corrections.
 - The accepted default, exact 24/44/72 checks, all three comparison modes and
   both outline states pass their Godot smoke fixtures, and a fresh exported app
   starts at `zoom=84 look=m7-final outline=on`. The latest general fast run is
@@ -570,7 +570,7 @@ live; the current schema-9 copy/paste retains the complete experiment.
   canonical T-3 Trikes receive Mission Refit state and keeps Forward Service,
   Aero Tube eligibility and the M5 acceptance fixture bound to the actual roster.
 
-## M8.5 T081 production asset-pipeline candidate
+## M8.5 T081 accepted production asset pipeline
 
 - `Docs/Development/M85_ASSET_PIPELINE.md` defines the common Blender → GLB
   → Godot production path for T082–T092 without changing gameplay or visual
@@ -599,10 +599,12 @@ live; the current schema-9 copy/paste retains the complete experiment.
   mechanical-pivot markers. Camera orbit and through-model marker visibility
   correct that review blocker. The follow-up review confirmed the drill hinge
   but rejected shared midpoint markers between visually separate wheels; the
-  four Close-LOD wheels now each carry a pivot at their own centre. Only review
-  of this corrected placement remains pending.
+  four Close-LOD wheels now each carry a pivot at their own centre. The game
+  director reviewed the correction and accepted the complete T081 pipeline on
+  2026-09-09.
 - The candidate has zero blocking verification failures and a launchable macOS
-  build. Its game-director acceptance remains `PENDING`; T082 has not started.
+  build. Its game-director acceptance is `ACCEPTED`; T082 is now unblocked but
+  has not started.
 
 Routine Godot verification is now non-intrusive on macOS: every gameplay smoke
 runs headlessly, records its real PASS/FAIL exit code, then bypasses the Godot
@@ -625,14 +627,14 @@ actually required.
 
 ## Verification state
 
-The corrected T081 wheel-pivot candidate passed `./tools/verify.sh --full` with
-zero blocking failures at
-`Artifacts/Verification/20260909T093445Z-full-summary.txt`: all 317 tests,
-Blender/GLB validation and byte-identical regeneration, exact imported pivot
-positions at 24/44/72 cells, retained Godot presentation/network checks and a
-fresh macOS export pass. Stress60 remained the expected 2/60
-`BLOCKING_LATER` M9 diagnostic. The Godot diagnostic-report count remained 25,
-so this full run produced no new macOS crash report.
+The recorded T081 game-director acceptance passed `./tools/verify.sh --full`
+with zero blocking failures at
+`Artifacts/Verification/20260909T094920Z-full-summary.txt`: all 317 tests, the
+accepted sidecar gate, Blender/GLB validation and byte-identical regeneration,
+all six imported pivots at 24/44/72 cells, retained Godot
+presentation/network checks and a fresh macOS export pass. Stress60 remained
+the expected 2/60 `BLOCKING_LATER` M9 diagnostic. The Godot diagnostic-report
+count remained 25, so this full run produced no new macOS crash report.
 
 The non-intrusive Godot automation revision passed `./tools/verify.sh --full`
 with zero blocking failures at
@@ -849,18 +851,14 @@ blocking only when M9 must prove its stable-large-battle exit.
 
 ## Next approved action
 
-1. Review the verified T081 candidate in the launchable macOS build through
-   `F8` → **Review M8.5 asset pipeline**, using `Z`/`X`/`C` for the exact
-   24/44/72-cell views and `Q`/`E` to orbit. Record explicit game-director
-   acceptance or corrections.
-2. Do not begin T082 until T081 is accepted. After acceptance, T082 Super Scout
-   must complete its 66 evidence-backed asset packets and cross-roster identity
-   audit before unit/building design production begins. Do not treat T070 data
-   definitions or the non-roster pipeline fixture as production models.
-3. Execute the remaining Phase 09C M8.5 T082–T092 work before final M9 Skirmish
+1. Begin T082 Super Scout reference intelligence. Complete its 66
+   evidence-backed asset packets and cross-roster identity audit before
+   unit/building design production begins. Do not treat T070 data definitions
+   or the non-roster T081 pipeline fixture as production models.
+2. Execute the remaining Phase 09C M8.5 T082–T092 work before final M9 Skirmish
    Alpha acceptance.
-4. Use the separate M7 Look/HUD/Palette labs only to investigate a rejected aspect;
+3. Use the separate M7 Look/HUD/Palette labs only to investigate a rejected aspect;
    they remain exploratory tools and do not independently record visual canon.
-5. Keep Stress60 visible without starting an unreviewed third movement attempt;
+4. Keep Stress60 visible without starting an unreviewed third movement attempt;
    revisit it for M9 or earlier only if a catastrophic movement regression
    appears.

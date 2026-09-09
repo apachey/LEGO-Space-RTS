@@ -1,8 +1,8 @@
 # M8.5 T081 — PRODUCTION ASSET PIPELINE
 
-**Status:** implementation standard for T082–T092. This document does not
-change gameplay or visual canon. Phase 09C and the accepted M7 Final direction
-remain authoritative.
+**Status:** game-director accepted on 2026-09-09; implementation standard for
+T082–T092. This document does not change gameplay or visual canon. Phase 09C
+and the accepted M7 Final direction remain authoritative.
 
 ## Purpose
 
