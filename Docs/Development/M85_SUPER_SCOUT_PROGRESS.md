@@ -1,10 +1,10 @@
 # M8.5 T082 — SUPER SCOUT PROGRESS
 
 **Status:** in progress. The roster-locked identity baseline and all four
-faction source-page audits are complete. Rock Raiders and Astronauts now also
-have complete 16-asset and 21-asset faction-internal semantic-construction,
-motion/socket and material/texture-needs drafts; Alien and Martian contracts
-and the cross-roster review gates remain open.
+faction source-page audits are complete. Rock Raiders, Astronauts and Aliens now
+also have complete 16-asset, 21-asset and 12-asset faction-internal
+semantic-construction, motion/socket and material/texture-needs drafts; Martian
+contracts and the cross-roster review gates remain open.
 
 ## Completed in the identity-baseline pass
 
@@ -118,6 +118,20 @@ and the cross-roster review gates remain open.
   surface, Mission shell surface, shared service/insignia decals and shared
   console/signal panels. Silhouette, suspension, transformation seams, payload
   cradles, large openings and physical module interfaces remain geometry.
+- The Alien contract pass covers all six units and six infrastructure entries.
+  Every design remains a black/lime mechanical construction derived from craft,
+  bays, crescents, frames and explicit energy hardware; generic organic tissue,
+  insects, nests, tentacles and interchangeable black-neon towers are excluded.
+- The Infiltrator and Strike retain explicit deployed contact points and
+  transformation pivots. Razor Skimmer and ETX Servitor retain disclosed donor
+  decisions rather than receiving an averaged or invented final hull. The
+  Mothership remains one selectable carrier whose integrated sections and bays
+  unfold; possible internal unit production stays an unresolved gameplay
+  proposal, including eligible units, cost, time, capacity and state rules.
+- Four Alien texture families are specified but not authored: black hull
+  surface, lime conduit surface, crystal-containment mask and bay/state signal
+  atlas. Crescents, openings, planted frames, load-bearing connections,
+  articulated seams and crystal cages remain geometry.
 - The 4990 HQ manual is now verified primary evidence. Its 43 pages establish
   a reusable faction vocabulary of separate tower, crane, open service gantry,
   conveyor/processing and irregular worksite-base modules; they do not silently
@@ -141,19 +155,14 @@ redistributed.
 
 1. Retain the two explicit Martian archival gaps unless usable evidence appears,
    and escalate any gap that prevents a safe production decision.
-2. Repeat the completed Rock Raiders/Astronaut semantic-construction contract
-   for the 12 Alien and 17 Martian assets: what every identity-bearing mass,
-   opening, tool, light and connection is and why it exists.
-3. Complete their locomotion, planted-contact, articulation, state, pivot and
-   socket contracts from mechanical evidence.
-4. Complete their reusable-versus-bespoke texture/material needs, channels,
-   resolutions and LOD fallbacks.
-5. Produce the 24/44/72-cell black-silhouette boards, faction proportion
+2. Repeat the completed Rock Raiders/Astronaut/Alien semantic-construction,
+   motion/socket and material/texture-needs pass for the 17 Martian assets.
+3. Produce the 24/44/72-cell black-silhouette boards, faction proportion
    boards, scale lineups and building skyline/entrance/exit/network matrices.
-6. Expand the 31-pair confusion baseline wherever the silhouette boards expose
+4. Expand the 31-pair confusion baseline wherever the silhouette boards expose
    another plausible neighbor; keep at least three deliberate differences for
    every recorded pair.
-7. Resolve or escalate every consequential unknown, then request the game
+5. Resolve or escalate every consequential unknown, then request the game
    director's blind silhouette and complete-corpus review.
 
 ## Current decision state
@@ -164,19 +173,19 @@ No packet is approved for T083/T085 production yet.
 
 ## Verification state
 
-The Drill Craft/Mothership canon clarification and complete 21-asset Astronaut
-contract pass passed `./tools/verify.sh --full` with zero blocking failures at
-`Artifacts/Verification/20260910T064215Z-full-summary.txt`. All 317 tests, the
+The complete 12-asset Alien contract pass passed `./tools/verify.sh --full`
+with zero blocking failures at
+`Artifacts/Verification/20260910T070408Z-full-summary.txt`. All 317 tests, the
 66-asset Super Scout corpus, 39 source records, 35 primary sources, four
-archival sources, 37 non-provisional production contracts, 13 generated
+archival sources, 49 non-provisional production contracts, 16 generated
 matrices, deterministic packet regeneration, retained presentation/network
 gates and a fresh macOS export passed. Stress60 remains the expected 2/60
 `BLOCKING_LATER` M9 diagnostic.
 
 Every routine Godot smoke and the exported app emitted the explicit immediate
 exit marker after its real PASS result. The macOS Godot diagnostic-report count
-remained 11 before and after this clean full run. Earlier attempts during this
-correction created 11 reports: ten when two verification runs were mistakenly
+remained 11 before and after this clean full run. Earlier attempts during the
+smoke-path correction created 11 reports: ten when two verification runs were mistakenly
 allowed to overlap and one later repeated Look Lab launch that exposed the
 remaining implicit-activation defect. Those failed attempts are not treated as
 accepted verification evidence.

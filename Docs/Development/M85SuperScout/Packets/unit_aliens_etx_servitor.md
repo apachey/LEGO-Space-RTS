@@ -2,7 +2,7 @@
 
 **Stable ID:** `unit.aliens.etx_servitor`
 
-**Packet state:** `IDENTITY_BASELINE — HOLD FOR MULTI-ANGLE EVIDENCE`
+**Packet state:** `FACTION_CONTRACT_DRAFT — HOLD FOR SILHOUETTE/ROSTER/DIRECTOR REVIEW`
 
 **This is not a design approval or production-model authorization.**
 
@@ -14,7 +14,7 @@
 - Authoritative footprint: `Tiny`
 - Source classification: `NEW GAME CONTENT`
 - Approved source sets/motifs: 5617, 7646, 7691
-- Current confidence: verified canonical identity; construction confidence remains bounded by the source verification shown below.
+- Current confidence: verified canonical identity and faction-internal construction/motion/material draft; source-bounded decisions remain explicit below.
 
 Authoritative references:
 
@@ -23,7 +23,7 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: Source-view coverage and construction-critical page ranges are recorded for the audited sources below. Asset-specific adaptation boundaries still must be resolved before this packet can leave HOLD.
+Open question: The faction-internal construction, motion, socket and material draft is recorded below. Its unresolved decisions and the complete-roster silhouette/director gates must be cleared before this packet can leave HOLD.
 
 ## B. Reference board
 
@@ -108,45 +108,68 @@ Non-removable identity anchors:
 
 ## D. Construction contract
 
-- Hero geometry must preserve every recognition anchor above.
-- Support geometry must explain how hero masses connect, carry load and articulate.
-- Micro geometry may enrich close view but may not become required for recognition.
-- Exact chassis/load path, repeated modules, mounting logic, scale ratios and approved adaptations: `HOLD — SOURCE DECOMPOSITION REQUIRED`.
+- Contract state: `CANON_DERIVED_ADAPTATION`. This is an internally checked draft, not game-director approval.
+- Semantic part map:
+  - Low curved hover shell — keeps the worker spacecraft-derived and non-humanoid — CANON_DERIVED_ADAPTATION.
+  - Central crystal cradle — receives Ore/Crystals and exposes the economy function — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.
+  - Single folding utility manipulator — harvests, builds and repairs through visible mechanical contact — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.
+- Structural load path: A shallow crescent frame carries the hover mechanism and central cradle; one articulated arm routes work load into the frame without creating legs.
+- Repeated modules / connection grammar: Hover shell, crystal cradle, folding clamp/tool and rear energy feed derive from 5617, 7646 and 7691 mechanical grammar.
+- Source-faithful versus adapted boundary: No official dedicated Alien worker exists. Exact donors must be disclosed before modeling; no humanoid robot, insect or floating crystal with unexplained parts.
 
 ## E. Material and texture contract
 
-- Silhouette, openings, major panel breaks, moving joints and LEGO connection logic remain geometry.
-- Surface channels may carry controlled color masks, roughness, emission, decals and non-structural relief only.
-- Required reusable and bespoke texture sets, resolution, tiling, texel density, LOD fallback and import settings: `HOLD — TEXTURE-NEEDS AUDIT REQUIRED`.
-- Baked lighting, fake silhouette structure and illegible micro-noise are prohibited.
+- Geometry must carry:
+  - low crescent hover shell
+  - central crystal cradle
+  - single folding manipulator
+- Accepted master-material roles: `Body`, `Accent`, `Tool`, `Glass`, `Signal`, `Neutral`.
+- Reusable texture requirements:
+  - `ali_black_hull_surface` — Restrained molded black-shell roughness variation across craft-derived hulls without inventing biological skin or panel structure. Channels: Tangent-space normal and linear roughness; black body color remains parametric. Resolution: 2048x2048; texel density: 256 px/m at Close; tiling: Shared model-space 4 m repeat across connected hull modules.; LOD fallback: Half strength at Combat; master roughness only at Strategic. Provenance/state: Project-authored procedural source informed by verified Mars Mission Alien hulls; human review required. `SPECIFIED_NOT_AUTHORED`.
+  - `ali_lime_conduit_surface` — Controlled variation on lime conduits, energy rails and translucent housings while preserving their physical path. Channels: Linear roughness and restrained emissive mask; geometry defines every conduit. Resolution: 1024x1024; texel density: 512 px/m on localized conduit UVs; tiling: Short trim regions aligned to conduit direction; no phase reset at joints.; LOD fallback: Collapse to one bounded lime Signal strip at Strategic. Provenance/state: Project-authored procedural/trim source; human review required. `SPECIFIED_NOT_AUTHORED`.
+  - `ali_crystal_containment_mask` — Facet-localized Charge intensity and containment contact masks without baked glow or fake crystal depth. Channels: Linear roughness, transmission control and separate emission mask. Resolution: 1024x1024; texel density: Object-local crystal atlas; not world-density bound.; tiling: Non-tiling per approved crystal form.; LOD fallback: One faceted Glass mass and bounded emission at Strategic. Provenance/state: Project-authored procedural crystal source; human review required. `SPECIFIED_NOT_AUTHORED`.
+  - `ali_bay_state_signal_atlas` — Launch, docking, transformation, Charge and configuration state indicators on mechanical interfaces. Channels: sRGB color/alpha with separate linear emission mask. Resolution: 512x512; texel density: Screen-space and trim atlas; not world-density bound.; tiling: Non-tiling stable interface IDs.; LOD fallback: One directional Signal block per active interface at Strategic. Provenance/state: Project-authored vector/procedural source; human review required. `SPECIFIED_NOT_AUTHORED`.
+- Bespoke texture requirements: none required in this faction draft.
+- Baked lighting, fake silhouette structure, per-part texture phase resets and illegible micro-noise remain prohibited.
 
 ## F. State and animation contract
 
-- Applicable idle, locomotion/operation, work, attack, production, repair, transform/deploy, disabled, damage and destruction beats: `HOLD — MECHANISM EVIDENCE REQUIRED`.
-- Every moving assembly must receive a named pivot, parent, axis/path, rest/extreme poses and authoritative presentation driver.
-- Animation may communicate gameplay state but never decide gameplay timing.
+- Locomotion / operation: Ground-layer hover with fast lateral-stable movement and no true-air banking.
+- Planted/contact rule: No wheel/foot contact; construction settles the shell low and plants the manipulator at the work point.
+
+| Pivot | Parent | Axis/path and rest-to-extreme motion | Presentation driver |
+|---|---|---|---|
+| `Pivot_ManipulatorBase` | Asset_ETXServitor | stowed shell line to forward/downward work arc | harvest, construction or repair progress |
+| `Pivot_CrystalClamp` | Pivot_ManipulatorBase | open to secure/release clamp | resource handoff progress |
+
+- Required beats:
+  - Idle cradle scan.
+  - Travel stows the manipulator and uses restrained hover heave.
+  - Work settles, unfolds, contacts and repeats.
+  - Damage releases carried material; destruction separates arm from shell.
+- Animation consumes authoritative state and never decides gameplay timing or results.
 
 ## G. Presentation hookups
 
-- `Socket_Selection` and `Socket_Health` are mandatory.
-- Tool, weapon, projectile, VFX, lamp and audio sockets follow only from verified function.
-- Cargo, passenger, service, production-exit or network sockets apply where the canonical role requires them.
-- Identification Tile, icon silhouette, portrait camera and reduced-presentation fallback: `HOLD — PRESENTATION AUDIT REQUIRED`.
+- Required presentation sockets: `Socket_Selection`, `Socket_Health`, `Socket_ToolContact`, `Socket_Cargo`, `Socket_WorkVfx`, `Socket_AudioHover`.
+- These sockets are presentation references only and never own targeting, collision, movement, transport or production truth.
+- Identification Tile placement, icon silhouette, portrait camera and reduced-presentation fallback remain `HOLD — PRESENTATION AUDIT REQUIRED`.
 
 ## H. Insight and decision ledger
 
-- Verified fact: stable identity, faction, role, footprint, source classification and mapped source family.
-- Canon-derived interpretation: silhouette thesis and identity anchors above.
-- Unknown: exact multi-angle construction, articulation, material ratios, texture inventory and confusion mitigation until the remaining audits are complete.
-- Consequential contradictions: none recorded at identity-baseline stage.
+- Verified fact: stable identity, source evidence and the source-supported assemblies cited above.
+- Canon-derived interpretation: gameplay function, adaptation boundary, contact behavior and presentation drivers are explicitly labeled in the contract.
+- Remaining source/design decisions:
+  - A composed-design proposal must name the exact 5617/7646/7691 donor modules and rejected worker layouts before director approval.
+- Cross-roster silhouette and game-director review remain open; this contract does not authorize production modeling.
 
 ## I. Build handoff
 
-1. Verify and cite the complete multi-angle source board.
-2. Decompose primary masses and negative spaces from orthogonal evidence.
-3. Resolve LEGO load path, connection grammar and moving mechanism.
-4. Complete material/texture and state/animation contracts.
-5. Produce 24/44/72-cell black silhouettes and run the cross-roster confusion audit.
+1. Retain the audited evidence and every explicit adaptation boundary.
+2. Greybox hero masses, openings and structural load path from the semantic map.
+3. Validate named pivots, contacts and sockets in the real gameplay camera.
+4. Author only the specified reusable textures after human material review.
+5. Produce 24/44/72-cell black silhouettes and run the full cross-roster confusion audit.
 
 **State:** `HOLD`
 

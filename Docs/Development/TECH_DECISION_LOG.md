@@ -1520,3 +1520,27 @@ simulation statistics, public formats, architecture or dependencies.
 
 This is preproduction implementation detail only. It changes no gameplay,
 simulation, public format, dependency or canon. All packets remain `HOLD`.
+
+## 2026-09-10 — Keep Alien production mechanical and craft-derived
+
+- The T082 Alien production-contract draft covers all six units and six
+  infrastructure entries with semantic parts, structural load paths, repeated
+  modules, adaptation boundaries, contacts, pivots, state beats and sockets.
+- Black hull construction, bright-lime conduits and bounded crystal/energy
+  hardware carry the shared faction language. Organic tissue, insect bodies,
+  nests, tentacles and generic black-neon towers remain excluded.
+- Source transformations remain legible: Alien Strike and Infiltrator have
+  explicit moving sections and planted contacts, while Razor Skimmer and ETX
+  Servitor retain unresolved donor-selection reviews instead of silently
+  averaging source craft.
+- Alien Mothership remains one selectable unit whose integrated craft sections
+  and bays unfold. Possible internal unit production remains a separate
+  game-director proposal; eligible units, price, build time, capacity and state
+  requirements are not introduced by this contract.
+- Four reusable texture families are specified but not authored: black hull,
+  lime conduit, crystal containment and bay/state signals. Identity-bearing
+  masses, openings, connections, crystal cages and transformation seams remain
+  geometry.
+
+This is preproduction implementation detail only. It changes no gameplay,
+simulation, public format, dependency or canon. All packets remain `HOLD`.

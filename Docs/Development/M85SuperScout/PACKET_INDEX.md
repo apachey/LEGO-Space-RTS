@@ -41,18 +41,18 @@ This generated index covers every canonical buildable unit and infrastructure en
 | [Solar Energy Array](Packets/building_ast_solar_energy_array.md) | `building.ast.solar_energy_array` | Astronauts | Infrastructure | Large | FACTION_CONTRACT_DRAFT / HOLD |
 | [Frontier Extraction Station](Packets/building_ast_frontier_extraction_station.md) | `building.ast.frontier_extraction_station` | Astronauts | Infrastructure | Large | FACTION_CONTRACT_DRAFT / HOLD |
 | [Modular Sentinel Defense](Packets/building_ast_modular_sentinel_defense.md) | `building.ast.modular_sentinel_defense` | Astronauts | Infrastructure | Small | FACTION_CONTRACT_DRAFT / HOLD |
-| [ETX Servitor](Packets/unit_aliens_etx_servitor.md) | `unit.aliens.etx_servitor` | Aliens | Unit | Tiny | IDENTITY_BASELINE / HOLD |
-| [Alien Jet](Packets/unit_aliens_alien_jet.md) | `unit.aliens.alien_jet` | Aliens | Unit | Small | IDENTITY_BASELINE / HOLD |
-| [Razor Skimmer](Packets/unit_aliens_razor_skimmer.md) | `unit.aliens.razor_skimmer` | Aliens | Unit | Small | IDENTITY_BASELINE / HOLD |
-| [ETX Alien Strike](Packets/unit_aliens_etx_alien_strike.md) | `unit.aliens.etx_alien_strike` | Aliens | Unit | Medium | IDENTITY_BASELINE / HOLD |
-| [ETX Alien Infiltrator](Packets/unit_aliens_etx_alien_infiltrator.md) | `unit.aliens.etx_alien_infiltrator` | Aliens | Unit | Medium | IDENTITY_BASELINE / HOLD |
-| [Alien Mothership](Packets/unit_aliens_alien_mothership.md) | `unit.aliens.alien_mothership` | Aliens | Unit | Huge | IDENTITY_BASELINE / HOLD |
-| [ETX Command Core](Packets/building_ali_etx_command_core.md) | `building.ali.etx_command_core` | Aliens | Infrastructure | Huge | IDENTITY_BASELINE / HOLD |
-| [Resonance Core](Packets/building_ali_resonance_core.md) | `building.ali.resonance_core` | Aliens | Infrastructure | Small | IDENTITY_BASELINE / HOLD |
-| [ETX Fabricator](Packets/building_ali_etx_fabricator.md) | `building.ali.etx_fabricator` | Aliens | Infrastructure | Large | IDENTITY_BASELINE / HOLD |
-| [Reconfiguration Dock](Packets/building_ali_reconfiguration_dock.md) | `building.ali.reconfiguration_dock` | Aliens | Infrastructure | Huge | IDENTITY_BASELINE / HOLD |
-| [Power Coupler](Packets/building_ali_power_coupler.md) | `building.ali.power_coupler` | Aliens | Infrastructure | Small | IDENTITY_BASELINE / HOLD |
-| [ETX Defense Node](Packets/building_ali_etx_defense_node.md) | `building.ali.etx_defense_node` | Aliens | Infrastructure | Small | IDENTITY_BASELINE / HOLD |
+| [ETX Servitor](Packets/unit_aliens_etx_servitor.md) | `unit.aliens.etx_servitor` | Aliens | Unit | Tiny | FACTION_CONTRACT_DRAFT / HOLD |
+| [Alien Jet](Packets/unit_aliens_alien_jet.md) | `unit.aliens.alien_jet` | Aliens | Unit | Small | FACTION_CONTRACT_DRAFT / HOLD |
+| [Razor Skimmer](Packets/unit_aliens_razor_skimmer.md) | `unit.aliens.razor_skimmer` | Aliens | Unit | Small | FACTION_CONTRACT_DRAFT / HOLD |
+| [ETX Alien Strike](Packets/unit_aliens_etx_alien_strike.md) | `unit.aliens.etx_alien_strike` | Aliens | Unit | Medium | FACTION_CONTRACT_DRAFT / HOLD |
+| [ETX Alien Infiltrator](Packets/unit_aliens_etx_alien_infiltrator.md) | `unit.aliens.etx_alien_infiltrator` | Aliens | Unit | Medium | FACTION_CONTRACT_DRAFT / HOLD |
+| [Alien Mothership](Packets/unit_aliens_alien_mothership.md) | `unit.aliens.alien_mothership` | Aliens | Unit | Huge | FACTION_CONTRACT_DRAFT / HOLD |
+| [ETX Command Core](Packets/building_ali_etx_command_core.md) | `building.ali.etx_command_core` | Aliens | Infrastructure | Huge | FACTION_CONTRACT_DRAFT / HOLD |
+| [Resonance Core](Packets/building_ali_resonance_core.md) | `building.ali.resonance_core` | Aliens | Infrastructure | Small | FACTION_CONTRACT_DRAFT / HOLD |
+| [ETX Fabricator](Packets/building_ali_etx_fabricator.md) | `building.ali.etx_fabricator` | Aliens | Infrastructure | Large | FACTION_CONTRACT_DRAFT / HOLD |
+| [Reconfiguration Dock](Packets/building_ali_reconfiguration_dock.md) | `building.ali.reconfiguration_dock` | Aliens | Infrastructure | Huge | FACTION_CONTRACT_DRAFT / HOLD |
+| [Power Coupler](Packets/building_ali_power_coupler.md) | `building.ali.power_coupler` | Aliens | Infrastructure | Small | FACTION_CONTRACT_DRAFT / HOLD |
+| [ETX Defense Node](Packets/building_ali_etx_defense_node.md) | `building.ali.etx_defense_node` | Aliens | Infrastructure | Small | FACTION_CONTRACT_DRAFT / HOLD |
 | [Worker Robot](Packets/unit_martians_worker_robot.md) | `unit.martians.worker_robot` | Martians | Unit | Tiny | IDENTITY_BASELINE / HOLD |
 | [Double Hover](Packets/unit_martians_double_hover.md) | `unit.martians.double_hover` | Martians | Unit | Small | IDENTITY_BASELINE / HOLD |
 | [Jet Scooter](Packets/unit_martians_jet_scooter.md) | `unit.martians.jet_scooter` | Martians | Unit | Small | IDENTITY_BASELINE / HOLD |

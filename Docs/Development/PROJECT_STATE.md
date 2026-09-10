@@ -64,9 +64,9 @@ intelligence is now in progress: its exact 66-asset identity/source baseline and
 all four faction source-page audits are complete. Forty-three faction-scoped
 source records are visually audited across 48 official books plus one archival
 instruction scan; only Martian sources 1195 and 3750 remain evidence gaps. The
-16 Rock Raiders assets and 21 Astronaut assets now also have faction-internal
-semantic-construction, motion/socket and material/texture-needs drafts; Alien
-and Martian contracts and the cross-roster review corpus remain open. A post-T069
+16 Rock Raiders assets, 21 Astronaut assets and 12 Alien assets now also have
+faction-internal semantic-construction, motion/socket and material/texture-needs
+drafts; Martian contracts and the cross-roster review corpus remain open. A post-T069
 quality revision makes outline/halo independent from
 the style post-pass, hardens profile paste, bounds VFX event memory and avoids
 unrelated live material rebuilds. HUD and health visuals remain excluded from the world Look Lab. The
@@ -669,6 +669,13 @@ live; the current schema-9 copy/paste retains the complete experiment.
   transformations, carried payloads, refit modules, production exits, motion
   pivots, state beats and presentation sockets are explicit, with four
   specified-but-not-authored reusable texture families.
+- The Alien contract pass covers all six units and six infrastructure entries.
+  Black/lime craft-derived mechanics, readable crescents, bay openings,
+  articulated planted frames and bounded crystal hardware replace generic
+  biological or interchangeable black-neon forms. The Mothership is one
+  selectable unfolding unit; training units inside it remains an explicitly
+  unresolved gameplay proposal rather than an assumed production rule. Four
+  reusable Alien texture families are specified but not authored.
 - All 66 A–I packet files, the identity/source matrix and a 31-pair confusion
   register regenerate deterministically. Every confusion pair has three visible
   differentiation requirements, and every packet is visibly `HOLD`, so this
@@ -678,11 +685,11 @@ live; the current schema-9 copy/paste retains the complete experiment.
   authoritative runtime roster, checks counts, IDs, classifications, source
   coverage and the three-to-seven silhouette-anchor contract, and rejects stale
   generated packets.
-- T082 remains `BLOCKING_NOW` for T083/T085. All faction source-page audits are
-  complete and the Rock Raiders and Astronaut production-contract drafts are
-  complete; Alien and Martian semantic construction/motion/material drafts,
-  complete cross-roster silhouettes/confusion audits and explicit game-director
-  review remain required. Current detail is tracked in
+- T082 remains `BLOCKING_NOW` for T083/T085. All faction source-page audits and
+  the Rock Raiders, Astronaut and Alien production-contract drafts are complete;
+  Martian semantic construction/motion/material drafts, complete cross-roster
+  silhouettes/confusion audits and explicit game-director review remain
+  required. Current detail is tracked in
   `Docs/Development/M85_SUPER_SCOUT_PROGRESS.md`.
 
 Routine Godot verification is now non-intrusive on macOS: every gameplay smoke
@@ -707,10 +714,9 @@ step and must be announced when new visual evidence is actually required.
 
 ## Verification state
 
-The T082 Drill Craft/Mothership canon clarification, Astronaut production-
-contract pass and explicit crash-safe Godot smoke path passed
+The T082 Alien production-contract pass passed
 `./tools/verify.sh --full` with zero blocking failures at
-`Artifacts/Verification/20260910T064215Z-full-summary.txt`: all 317 tests,
+`Artifacts/Verification/20260910T070408Z-full-summary.txt`: all 317 tests,
 the complete 66-asset roster and faction-bound evidence validator,
 deterministic packet generation, the 24-mover gate, compiled content, retained
 M6 networking, T081 round trip, retained M7 presentation gates and a fresh
@@ -720,16 +726,16 @@ archival Rock Raiders audits with zero remaining Rock Raiders evidence gaps,
 all 18 Astronaut sources audited across 23 official PDF books, all eight Alien
 sources audited across ten official PDF books, all eight available Martian
 sources audited across eight official PDF books with two Martian archival gaps,
-all 16 Rock Raiders and 21 Astronaut assets with structured semantic/motion/
-material contracts and no provisional contract, 13 generated comparison
+all 16 Rock Raiders, 21 Astronaut and 12 Alien assets with structured semantic/
+motion/material contracts and no provisional contract, 16 generated comparison
 matrices, and 31 initial confusion pairs with no roster drift or cross-faction
 evidence leakage. It does not claim T082 acceptance.
 Stress60 remained the expected 2/60 `BLOCKING_LATER` M9 diagnostic.
 
 Every routine Godot smoke and the exported app emitted the explicit immediate
 exit marker after its real PASS result. The macOS Godot diagnostic-report count
-remained 11 before and after this clean full run. Earlier attempts during this
-correction created 11 reports: ten when two verification runs were mistakenly
+remained 11 before and after this clean full run. Earlier attempts during the
+smoke-path correction created 11 reports: ten when two verification runs were mistakenly
 allowed to overlap and one later repeated Look Lab launch that exposed the
 remaining implicit-activation defect. Those failed attempts are retained as
 failed evidence and are not confused with the accepted clean run.
@@ -958,9 +964,9 @@ blocking only when M9 must prove its stable-large-battle exit.
 
 ## Next approved action
 
-1. Continue T082 by applying the completed Rock Raiders/Astronaut semantic
-   construction, motion/socket and texture-needs contract pass to Aliens and
-   Martians, then produce the cross-roster silhouette/confusion audit. Retain
+1. Continue T082 by applying the completed Rock Raiders/Astronaut/Alien
+   semantic construction, motion/socket and texture-needs contract pass to the
+   17 Martian assets, then produce the cross-roster silhouette/confusion audit. Retain
    the two explicit Martian archival gaps unless usable evidence appears, and
    escalate any gap that blocks a safe production decision.
    Do not treat the generated `HOLD` packets, T070 data definitions or the

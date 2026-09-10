@@ -22,6 +22,7 @@ ALIENS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/aliens_source_evidence
 MARTIANS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/martians_source_evidence.json"
 ROCK_RAIDERS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/rock_raiders_production_contracts.json"
 ASTRONAUTS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/astronauts_production_contracts.json"
+ALIENS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/aliens_production_contracts.json"
 CONFUSION = ROOT / "Content/Presentation/SuperScout/confusion_register.json"
 OUTPUT = ROOT / "Docs/Development/M85SuperScout/Packets"
 INDEX = ROOT / "Docs/Development/M85SuperScout/PACKET_INDEX.md"
@@ -38,6 +39,9 @@ ROCK_RAIDERS_MATERIAL = ROOT / "Docs/Development/M85SuperScout/Matrices/rock_rai
 ASTRONAUTS_CONSTRUCTION = ROOT / "Docs/Development/M85SuperScout/Matrices/astronauts_semantic_construction.md"
 ASTRONAUTS_MOTION = ROOT / "Docs/Development/M85SuperScout/Matrices/astronauts_motion_socket.md"
 ASTRONAUTS_MATERIAL = ROOT / "Docs/Development/M85SuperScout/Matrices/astronauts_material_texture.md"
+ALIENS_CONSTRUCTION = ROOT / "Docs/Development/M85SuperScout/Matrices/aliens_semantic_construction.md"
+ALIENS_MOTION = ROOT / "Docs/Development/M85SuperScout/Matrices/aliens_motion_socket.md"
+ALIENS_MATERIAL = ROOT / "Docs/Development/M85SuperScout/Matrices/aliens_material_texture.md"
 
 FACTION_RULES = {
     "RockRaiders": (
@@ -566,6 +570,7 @@ def expected_files() -> dict[Path, str]:
     martians_evidence = json.loads(MARTIANS_EVIDENCE.read_text(encoding="utf-8"))
     rock_raiders_contracts = json.loads(ROCK_RAIDERS_CONTRACTS.read_text(encoding="utf-8"))
     astronauts_contracts = json.loads(ASTRONAUTS_CONTRACTS.read_text(encoding="utf-8"))
+    aliens_contracts = json.loads(ALIENS_CONTRACTS.read_text(encoding="utf-8"))
     confusion = json.loads(CONFUSION.read_text(encoding="utf-8"))
     sources = {source["setId"]: source for source in ledger["sources"]}
     instructions = {record["setId"]: record for record in instruction_index["records"]}
@@ -589,7 +594,7 @@ def expected_files() -> dict[Path, str]:
     if len(evidence) != len(evidence_records):
         raise ValueError("duplicate faction/source keys across source-evidence audits")
     assets = {asset["stableId"]: asset for asset in manifest["assets"]}
-    contract_documents = [rock_raiders_contracts, astronauts_contracts]
+    contract_documents = [rock_raiders_contracts, astronauts_contracts, aliens_contracts]
     production_contracts = {
         contract["stableId"]: contract
         for document in contract_documents
@@ -635,6 +640,15 @@ def expected_files() -> dict[Path, str]:
         ASTRONAUTS_MATERIAL: material_texture_matrix_text(
             astronauts_contracts["assets"], assets, astronauts_contracts["sharedMaterialPlan"]
         ),
+        ALIENS_CONSTRUCTION: semantic_construction_matrix_text(
+            aliens_contracts["assets"], assets
+        ),
+        ALIENS_MOTION: motion_socket_matrix_text(
+            aliens_contracts["assets"], assets
+        ),
+        ALIENS_MATERIAL: material_texture_matrix_text(
+            aliens_contracts["assets"], assets, aliens_contracts["sharedMaterialPlan"]
+        ),
     }
     for asset in manifest["assets"]:
         result[OUTPUT / slug(asset["stableId"])] = packet_text(
@@ -660,14 +674,14 @@ def main() -> None:
             for failure in failures:
                 print(f"- {failure}", file=sys.stderr)
             raise SystemExit(1)
-        print("M8.5 SUPER SCOUT PACKETS: PASS packets=66 matrices=13 contracts=37 state=HOLD")
+        print("M8.5 SUPER SCOUT PACKETS: PASS packets=66 matrices=16 contracts=49 state=HOLD")
         return
 
     OUTPUT.mkdir(parents=True, exist_ok=True)
     for path, content in expected.items():
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(content, encoding="utf-8")
-    print("M8.5 SUPER SCOUT PACKETS: GENERATED packets=66 matrices=13 contracts=37 state=HOLD")
+    print("M8.5 SUPER SCOUT PACKETS: GENERATED packets=66 matrices=16 contracts=49 state=HOLD")
 
 
 if __name__ == "__main__":
