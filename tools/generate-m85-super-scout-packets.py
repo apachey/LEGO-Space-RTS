@@ -23,6 +23,7 @@ MARTIANS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/martians_source_evid
 ROCK_RAIDERS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/rock_raiders_production_contracts.json"
 ASTRONAUTS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/astronauts_production_contracts.json"
 ALIENS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/aliens_production_contracts.json"
+MARTIANS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/martians_production_contracts.json"
 CONFUSION = ROOT / "Content/Presentation/SuperScout/confusion_register.json"
 OUTPUT = ROOT / "Docs/Development/M85SuperScout/Packets"
 INDEX = ROOT / "Docs/Development/M85SuperScout/PACKET_INDEX.md"
@@ -42,6 +43,9 @@ ASTRONAUTS_MATERIAL = ROOT / "Docs/Development/M85SuperScout/Matrices/astronauts
 ALIENS_CONSTRUCTION = ROOT / "Docs/Development/M85SuperScout/Matrices/aliens_semantic_construction.md"
 ALIENS_MOTION = ROOT / "Docs/Development/M85SuperScout/Matrices/aliens_motion_socket.md"
 ALIENS_MATERIAL = ROOT / "Docs/Development/M85SuperScout/Matrices/aliens_material_texture.md"
+MARTIANS_CONSTRUCTION = ROOT / "Docs/Development/M85SuperScout/Matrices/martians_semantic_construction.md"
+MARTIANS_MOTION = ROOT / "Docs/Development/M85SuperScout/Matrices/martians_motion_socket.md"
+MARTIANS_MATERIAL = ROOT / "Docs/Development/M85SuperScout/Matrices/martians_material_texture.md"
 
 FACTION_RULES = {
     "RockRaiders": (
@@ -473,7 +477,9 @@ This generated review records what the available official instructions or labele
 """ + "\n\n".join(blocks) + "\n"
 
 
-def semantic_construction_matrix_text(contracts: list[dict], assets: dict[str, dict]) -> str:
+def semantic_construction_matrix_text(
+    contracts: list[dict], assets: dict[str, dict], faction_label: str
+) -> str:
     rows = []
     for contract in contracts:
         asset = assets[contract["stableId"]]
@@ -483,7 +489,7 @@ def semantic_construction_matrix_text(contracts: list[dict], assets: dict[str, d
             f"| {asset['displayName']} | `{contract['contractState']}` | {parts} | "
             f"{construction['loadPath']} | {construction['modules']} | {construction['adaptationBoundary']} |"
         )
-    return """# M8.5 T082 — Rock Raiders semantic-construction matrix
+    return f"""# M8.5 T082 — {faction_label} semantic-construction matrix
 
 This generated matrix converts the audited source evidence and locked gameplay roles into buildable faction-internal drafts. It does not approve production modeling; every row remains subject to the full-roster silhouette and game-director review.
 
@@ -492,7 +498,9 @@ This generated matrix converts the audited source evidence and locked gameplay r
 """ + "\n".join(rows) + "\n"
 
 
-def motion_socket_matrix_text(contracts: list[dict], assets: dict[str, dict]) -> str:
+def motion_socket_matrix_text(
+    contracts: list[dict], assets: dict[str, dict], faction_label: str
+) -> str:
     rows = []
     for contract in contracts:
         asset = assets[contract["stableId"]]
@@ -507,9 +515,9 @@ def motion_socket_matrix_text(contracts: list[dict], assets: dict[str, dict]) ->
             f"| {asset['displayName']} | {motion['locomotion']} | {motion['plantedContact']} | "
             f"{pivots} | {beats} | {sockets} |"
         )
-    return """# M8.5 T082 — Rock Raiders motion and socket matrix
+    return f"""# M8.5 T082 — {faction_label} motion and socket matrix
 
-This generated matrix names the buildable mechanical causes, contacts, pivots and presentation attachment points for the Rock Raiders draft. Animation consumes authoritative gameplay state; it never decides results or timing.
+This generated matrix names the buildable mechanical causes, contacts, pivots and presentation attachment points for the {faction_label} draft. Animation consumes authoritative gameplay state; it never decides results or timing.
 
 | Asset | Locomotion / operation | Planted/contact rule | Named pivots | Required beats | Presentation sockets |
 |---|---|---|---|---|---|
@@ -517,7 +525,7 @@ This generated matrix names the buildable mechanical causes, contacts, pivots an
 
 
 def material_texture_matrix_text(
-    contracts: list[dict], assets: dict[str, dict], shared_plan: dict
+    contracts: list[dict], assets: dict[str, dict], shared_plan: dict, faction_label: str
 ) -> str:
     family_rows = []
     for spec in shared_plan["reusableTextureFamilies"]:
@@ -537,7 +545,7 @@ def material_texture_matrix_text(
             f"| {asset['displayName']} | {geometry} | {roles} | {reusable} | {bespoke} |"
         )
     rules = "\n".join(f"- {value}" for value in shared_plan["globalRules"])
-    return f"""# M8.5 T082 — Rock Raiders material and texture-needs matrix
+    return f"""# M8.5 T082 — {faction_label} material and texture-needs matrix
 
 The accepted M7 role-authored material family remains authoritative. These are production requirements, not generated texture assets and not permission to bake structural detail into maps.
 
@@ -571,6 +579,7 @@ def expected_files() -> dict[Path, str]:
     rock_raiders_contracts = json.loads(ROCK_RAIDERS_CONTRACTS.read_text(encoding="utf-8"))
     astronauts_contracts = json.loads(ASTRONAUTS_CONTRACTS.read_text(encoding="utf-8"))
     aliens_contracts = json.loads(ALIENS_CONTRACTS.read_text(encoding="utf-8"))
+    martians_contracts = json.loads(MARTIANS_CONTRACTS.read_text(encoding="utf-8"))
     confusion = json.loads(CONFUSION.read_text(encoding="utf-8"))
     sources = {source["setId"]: source for source in ledger["sources"]}
     instructions = {record["setId"]: record for record in instruction_index["records"]}
@@ -594,7 +603,9 @@ def expected_files() -> dict[Path, str]:
     if len(evidence) != len(evidence_records):
         raise ValueError("duplicate faction/source keys across source-evidence audits")
     assets = {asset["stableId"]: asset for asset in manifest["assets"]}
-    contract_documents = [rock_raiders_contracts, astronauts_contracts, aliens_contracts]
+    contract_documents = [
+        rock_raiders_contracts, astronauts_contracts, aliens_contracts, martians_contracts
+    ]
     production_contracts = {
         contract["stableId"]: contract
         for document in contract_documents
@@ -623,31 +634,44 @@ def expected_files() -> dict[Path, str]:
             martians_evidence["sources"], sources, "Martians", "Martians"
         ),
         ROCK_RAIDERS_CONSTRUCTION: semantic_construction_matrix_text(
-            rock_raiders_contracts["assets"], assets
+            rock_raiders_contracts["assets"], assets, "Rock Raiders"
         ),
         ROCK_RAIDERS_MOTION: motion_socket_matrix_text(
-            rock_raiders_contracts["assets"], assets
+            rock_raiders_contracts["assets"], assets, "Rock Raiders"
         ),
         ROCK_RAIDERS_MATERIAL: material_texture_matrix_text(
-            rock_raiders_contracts["assets"], assets, rock_raiders_contracts["sharedMaterialPlan"]
+            rock_raiders_contracts["assets"], assets,
+            rock_raiders_contracts["sharedMaterialPlan"], "Rock Raiders"
         ),
         ASTRONAUTS_CONSTRUCTION: semantic_construction_matrix_text(
-            astronauts_contracts["assets"], assets
+            astronauts_contracts["assets"], assets, "Astronauts"
         ),
         ASTRONAUTS_MOTION: motion_socket_matrix_text(
-            astronauts_contracts["assets"], assets
+            astronauts_contracts["assets"], assets, "Astronauts"
         ),
         ASTRONAUTS_MATERIAL: material_texture_matrix_text(
-            astronauts_contracts["assets"], assets, astronauts_contracts["sharedMaterialPlan"]
+            astronauts_contracts["assets"], assets,
+            astronauts_contracts["sharedMaterialPlan"], "Astronauts"
         ),
         ALIENS_CONSTRUCTION: semantic_construction_matrix_text(
-            aliens_contracts["assets"], assets
+            aliens_contracts["assets"], assets, "Aliens"
         ),
         ALIENS_MOTION: motion_socket_matrix_text(
-            aliens_contracts["assets"], assets
+            aliens_contracts["assets"], assets, "Aliens"
         ),
         ALIENS_MATERIAL: material_texture_matrix_text(
-            aliens_contracts["assets"], assets, aliens_contracts["sharedMaterialPlan"]
+            aliens_contracts["assets"], assets,
+            aliens_contracts["sharedMaterialPlan"], "Aliens"
+        ),
+        MARTIANS_CONSTRUCTION: semantic_construction_matrix_text(
+            martians_contracts["assets"], assets, "Martians"
+        ),
+        MARTIANS_MOTION: motion_socket_matrix_text(
+            martians_contracts["assets"], assets, "Martians"
+        ),
+        MARTIANS_MATERIAL: material_texture_matrix_text(
+            martians_contracts["assets"], assets,
+            martians_contracts["sharedMaterialPlan"], "Martians"
         ),
     }
     for asset in manifest["assets"]:
@@ -674,14 +698,14 @@ def main() -> None:
             for failure in failures:
                 print(f"- {failure}", file=sys.stderr)
             raise SystemExit(1)
-        print("M8.5 SUPER SCOUT PACKETS: PASS packets=66 matrices=16 contracts=49 state=HOLD")
+        print("M8.5 SUPER SCOUT PACKETS: PASS packets=66 matrices=19 contracts=66 state=HOLD")
         return
 
     OUTPUT.mkdir(parents=True, exist_ok=True)
     for path, content in expected.items():
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(content, encoding="utf-8")
-    print("M8.5 SUPER SCOUT PACKETS: GENERATED packets=66 matrices=16 contracts=49 state=HOLD")
+    print("M8.5 SUPER SCOUT PACKETS: GENERATED packets=66 matrices=19 contracts=66 state=HOLD")
 
 
 if __name__ == "__main__":

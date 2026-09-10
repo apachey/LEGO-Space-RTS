@@ -1544,3 +1544,31 @@ simulation, public format, dependency or canon. All packets remain `HOLD`.
 
 This is preproduction implementation detail only. It changes no gameplay,
 simulation, public format, dependency or canon. All packets remain `HOLD`.
+
+## 2026-09-10 — Preserve Martian mechanics and bound archival gaps
+
+- The T082 Martian production-contract draft covers all eight units and nine
+  infrastructure entries with semantic parts, structural load paths, modules,
+  adaptation boundaries, contacts, pivots, state beats and sockets.
+- Open blue/sand-red construction, pneumatic Tubes, asymmetrical equipment and
+  visible mechanical work remain the faction language. Martians may not become
+  smooth Alien-like energy machines or generic conventional factories.
+- The corrected 7302 Worker remains a two-legged open biped. Protector Stance
+  and Searcher Brace/Clamp receive credible continuous connected motions rather
+  than reproducing hand-separated source rebuilds or changing gameplay state.
+- The 7317 Hangar source is divided deliberately among Hangar, Settlement,
+  Pressure, Routing and Link functions. Each keeps its own silhouette and clear
+  physical route rather than becoming a repeated generic Tube building.
+- The 1195 archival gap fixes no Aero Skiff connection or lift geometry; the
+  safe draft uses verified 7317 platform/docking grammar. The 3750 gap fixes no
+  Link coupler or sled detail because 7317 independently proves the complete
+  Tube system. Better evidence may refine, but may not silently replace, these
+  boundaries.
+- Four reusable texture families are specified but not authored: open frame,
+  pneumatic Tube, mechanism/service and route/signal surfaces. Structural and
+  moving forms remain geometry.
+- The generated matrix functions now receive a faction label explicitly,
+  correcting stale Rock Raiders headings on Astronaut and Alien matrices.
+
+This is preproduction implementation detail only. It changes no gameplay,
+simulation, public format, dependency or canon. All packets remain `HOLD`.

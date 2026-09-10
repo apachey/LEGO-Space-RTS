@@ -1,4 +1,4 @@
-# M8.5 T082 — Rock Raiders material and texture-needs matrix
+# M8.5 T082 — Aliens material and texture-needs matrix
 
 The accepted M7 role-authored material family remains authoritative. These are production requirements, not generated texture assets and not permission to bake structural detail into maps.
 

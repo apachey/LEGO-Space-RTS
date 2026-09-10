@@ -1,6 +1,6 @@
-# M8.5 T082 — Rock Raiders motion and socket matrix
+# M8.5 T082 — Astronauts motion and socket matrix
 
-This generated matrix names the buildable mechanical causes, contacts, pivots and presentation attachment points for the Rock Raiders draft. Animation consumes authoritative gameplay state; it never decides results or timing.
+This generated matrix names the buildable mechanical causes, contacts, pivots and presentation attachment points for the Astronauts draft. Animation consumes authoritative gameplay state; it never decides results or timing.
 
 | Asset | Locomotion / operation | Planted/contact rule | Named pivots | Required beats | Presentation sockets |
 |---|---|---|---|---|---|

@@ -53,20 +53,20 @@ This generated index covers every canonical buildable unit and infrastructure en
 | [Reconfiguration Dock](Packets/building_ali_reconfiguration_dock.md) | `building.ali.reconfiguration_dock` | Aliens | Infrastructure | Huge | FACTION_CONTRACT_DRAFT / HOLD |
 | [Power Coupler](Packets/building_ali_power_coupler.md) | `building.ali.power_coupler` | Aliens | Infrastructure | Small | FACTION_CONTRACT_DRAFT / HOLD |
 | [ETX Defense Node](Packets/building_ali_etx_defense_node.md) | `building.ali.etx_defense_node` | Aliens | Infrastructure | Small | FACTION_CONTRACT_DRAFT / HOLD |
-| [Worker Robot](Packets/unit_martians_worker_robot.md) | `unit.martians.worker_robot` | Martians | Unit | Tiny | IDENTITY_BASELINE / HOLD |
-| [Double Hover](Packets/unit_martians_double_hover.md) | `unit.martians.double_hover` | Martians | Unit | Small | IDENTITY_BASELINE / HOLD |
-| [Jet Scooter](Packets/unit_martians_jet_scooter.md) | `unit.martians.jet_scooter` | Martians | Unit | Small | IDENTITY_BASELINE / HOLD |
-| [Aero Skiff](Packets/unit_martians_aero_skiff.md) | `unit.martians.aero_skiff` | Martians | Unit | Small | IDENTITY_BASELINE / HOLD |
-| [Red Planet Cruiser](Packets/unit_martians_red_planet_cruiser.md) | `unit.martians.red_planet_cruiser` | Martians | Unit | Medium | IDENTITY_BASELINE / HOLD |
-| [Recon-Mech RP](Packets/unit_martians_recon_mech_rp.md) | `unit.martians.recon_mech_rp` | Martians | Unit | Medium | IDENTITY_BASELINE / HOLD |
-| [Red Planet Protector](Packets/unit_martians_red_planet_protector.md) | `unit.martians.red_planet_protector` | Martians | Unit | Large | IDENTITY_BASELINE / HOLD |
-| [Excavation Searcher](Packets/unit_martians_excavation_searcher.md) | `unit.martians.excavation_searcher` | Martians | Unit | Huge | IDENTITY_BASELINE / HOLD |
-| [Aero Tube Hangar](Packets/building_mar_aero_tube_hangar.md) | `building.mar.aero_tube_hangar` | Martians | Infrastructure | Huge | IDENTITY_BASELINE / HOLD |
-| [Settlement Station](Packets/building_mar_settlement_station.md) | `building.mar.settlement_station` | Martians | Infrastructure | Huge | IDENTITY_BASELINE / HOLD |
-| [Mechanical Workshop](Packets/building_mar_mechanical_workshop.md) | `building.mar.mechanical_workshop` | Martians | Infrastructure | Huge | IDENTITY_BASELINE / HOLD |
-| [Pressure Generator](Packets/building_mar_pressure_generator.md) | `building.mar.pressure_generator` | Martians | Infrastructure | Small | IDENTITY_BASELINE / HOLD |
-| [Routing Laboratory](Packets/building_mar_routing_laboratory.md) | `building.mar.routing_laboratory` | Martians | Infrastructure | Large | IDENTITY_BASELINE / HOLD |
-| [Excavation Plant](Packets/building_mar_excavation_plant.md) | `building.mar.excavation_plant` | Martians | Infrastructure | Large | IDENTITY_BASELINE / HOLD |
-| [Deflector Arm](Packets/building_mar_deflector_arm.md) | `building.mar.deflector_arm` | Martians | Infrastructure | Small | IDENTITY_BASELINE / HOLD |
-| [Aero Guard Tower](Packets/building_mar_aero_guard_tower.md) | `building.mar.aero_guard_tower` | Martians | Infrastructure | Small | IDENTITY_BASELINE / HOLD |
-| [Aero Tube Link](Packets/building_mar_aero_tube_link.md) | `building.mar.aero_tube_link` | Martians | Infrastructure | Tiny | IDENTITY_BASELINE / HOLD |
+| [Worker Robot](Packets/unit_martians_worker_robot.md) | `unit.martians.worker_robot` | Martians | Unit | Tiny | FACTION_CONTRACT_DRAFT / HOLD |
+| [Double Hover](Packets/unit_martians_double_hover.md) | `unit.martians.double_hover` | Martians | Unit | Small | FACTION_CONTRACT_DRAFT / HOLD |
+| [Jet Scooter](Packets/unit_martians_jet_scooter.md) | `unit.martians.jet_scooter` | Martians | Unit | Small | FACTION_CONTRACT_DRAFT / HOLD |
+| [Aero Skiff](Packets/unit_martians_aero_skiff.md) | `unit.martians.aero_skiff` | Martians | Unit | Small | FACTION_CONTRACT_DRAFT / HOLD |
+| [Red Planet Cruiser](Packets/unit_martians_red_planet_cruiser.md) | `unit.martians.red_planet_cruiser` | Martians | Unit | Medium | FACTION_CONTRACT_DRAFT / HOLD |
+| [Recon-Mech RP](Packets/unit_martians_recon_mech_rp.md) | `unit.martians.recon_mech_rp` | Martians | Unit | Medium | FACTION_CONTRACT_DRAFT / HOLD |
+| [Red Planet Protector](Packets/unit_martians_red_planet_protector.md) | `unit.martians.red_planet_protector` | Martians | Unit | Large | FACTION_CONTRACT_DRAFT / HOLD |
+| [Excavation Searcher](Packets/unit_martians_excavation_searcher.md) | `unit.martians.excavation_searcher` | Martians | Unit | Huge | FACTION_CONTRACT_DRAFT / HOLD |
+| [Aero Tube Hangar](Packets/building_mar_aero_tube_hangar.md) | `building.mar.aero_tube_hangar` | Martians | Infrastructure | Huge | FACTION_CONTRACT_DRAFT / HOLD |
+| [Settlement Station](Packets/building_mar_settlement_station.md) | `building.mar.settlement_station` | Martians | Infrastructure | Huge | FACTION_CONTRACT_DRAFT / HOLD |
+| [Mechanical Workshop](Packets/building_mar_mechanical_workshop.md) | `building.mar.mechanical_workshop` | Martians | Infrastructure | Huge | FACTION_CONTRACT_DRAFT / HOLD |
+| [Pressure Generator](Packets/building_mar_pressure_generator.md) | `building.mar.pressure_generator` | Martians | Infrastructure | Small | FACTION_CONTRACT_DRAFT / HOLD |
+| [Routing Laboratory](Packets/building_mar_routing_laboratory.md) | `building.mar.routing_laboratory` | Martians | Infrastructure | Large | FACTION_CONTRACT_DRAFT / HOLD |
+| [Excavation Plant](Packets/building_mar_excavation_plant.md) | `building.mar.excavation_plant` | Martians | Infrastructure | Large | FACTION_CONTRACT_DRAFT / HOLD |
+| [Deflector Arm](Packets/building_mar_deflector_arm.md) | `building.mar.deflector_arm` | Martians | Infrastructure | Small | FACTION_CONTRACT_DRAFT / HOLD |
+| [Aero Guard Tower](Packets/building_mar_aero_guard_tower.md) | `building.mar.aero_guard_tower` | Martians | Infrastructure | Small | FACTION_CONTRACT_DRAFT / HOLD |
+| [Aero Tube Link](Packets/building_mar_aero_tube_link.md) | `building.mar.aero_tube_link` | Martians | Infrastructure | Tiny | FACTION_CONTRACT_DRAFT / HOLD |

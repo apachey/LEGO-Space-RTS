@@ -23,6 +23,7 @@ MARTIANS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/martians_source_evid
 ROCK_RAIDERS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/rock_raiders_production_contracts.json"
 ASTRONAUTS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/astronauts_production_contracts.json"
 ALIENS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/aliens_production_contracts.json"
+MARTIANS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/martians_production_contracts.json"
 CONFUSION = ROOT / "Content/Presentation/SuperScout/confusion_register.json"
 CONTENT = ROOT / "Content/PrototypeEntities.json"
 GENERATOR = ROOT / "tools/generate-m85-super-scout-packets.py"
@@ -274,7 +275,7 @@ def validate_production_contracts(
     texture_specs = shared.get("reusableTextureFamilies", [])
     texture_ids = [spec.get("id") for spec in texture_specs]
     if len(texture_ids) != len(set(texture_ids)) or len(texture_ids) < 4:
-        fail("Rock Raiders reusable texture families are missing or duplicated")
+        fail(f"{label} reusable texture families are missing or duplicated")
     for spec in texture_specs:
         identity = f"{label} texture {spec.get('id')}"
         for field in (
@@ -348,7 +349,7 @@ def main() -> None:
         MANIFEST, LEDGER, INSTRUCTION_INDEX, SOURCE_ANALYSIS_POLICY, ROCK_RAIDERS_EVIDENCE, ASTRONAUTS_EVIDENCE,
         ALIENS_EVIDENCE,
         MARTIANS_EVIDENCE,
-        ROCK_RAIDERS_CONTRACTS, ASTRONAUTS_CONTRACTS, ALIENS_CONTRACTS,
+        ROCK_RAIDERS_CONTRACTS, ASTRONAUTS_CONTRACTS, ALIENS_CONTRACTS, MARTIANS_CONTRACTS,
         CONFUSION, CONTENT, GENERATOR,
     ):
         if not path.is_file():
@@ -365,6 +366,7 @@ def main() -> None:
     rock_raiders_contracts = json.loads(ROCK_RAIDERS_CONTRACTS.read_text(encoding="utf-8"))
     astronauts_contracts = json.loads(ASTRONAUTS_CONTRACTS.read_text(encoding="utf-8"))
     aliens_contracts = json.loads(ALIENS_CONTRACTS.read_text(encoding="utf-8"))
+    martians_contracts = json.loads(MARTIANS_CONTRACTS.read_text(encoding="utf-8"))
     confusion = json.loads(CONFUSION.read_text(encoding="utf-8"))
     content = json.loads(CONTENT.read_text(encoding="utf-8"))
     packet_notice = validate_source_analysis_policy(source_analysis_policy)
@@ -539,11 +541,32 @@ def main() -> None:
     aliens_contract_count, aliens_provisional_contracts = validate_production_contracts(
         aliens_contracts, assets, "Aliens", "Aliens", 12
     )
-    contract_count = rock_raiders_contract_count + astronauts_contract_count + aliens_contract_count
+    martians_contract_count, martians_provisional_contracts = validate_production_contracts(
+        martians_contracts, assets, "Martians", "Martians", 17
+    )
+    martian_contracts_by_id = {
+        record["stableId"]: record for record in martians_contracts["assets"]
+    }
+    worker_contract = martian_contracts_by_id["unit.martians.worker_robot"]
+    if "exactly two" not in worker_contract["construction"]["loadPath"]:
+        fail("Worker Robot production contract no longer protects the corrected biped topology")
+    aero_skiff_contract = martian_contracts_by_id["unit.martians.aero_skiff"]
+    if "1195 lacks modelable construction evidence" not in aero_skiff_contract["construction"]["adaptationBoundary"]:
+        fail("Aero Skiff production contract no longer bounds the 1195 evidence gap")
+    tube_link_contract = martian_contracts_by_id["building.mar.aero_tube_link"]
+    if "3750 has no modelable interior evidence" not in tube_link_contract["construction"]["adaptationBoundary"]:
+        fail("Aero Tube Link production contract no longer bounds the 3750 evidence gap")
+    contract_count = (
+        rock_raiders_contract_count
+        + astronauts_contract_count
+        + aliens_contract_count
+        + martians_contract_count
+    )
     provisional_contracts = (
         rock_raiders_provisional_contracts
         + astronauts_provisional_contracts
         + aliens_provisional_contracts
+        + martians_provisional_contracts
     )
 
     if confusion.get("schemaVersion") != 1 or confusion.get("task") != "T082":
@@ -588,6 +611,23 @@ def main() -> None:
     )
     if generated.returncode != 0:
         fail(generated.stderr.strip() or generated.stdout.strip())
+
+    matrix_dir = ROOT / "Docs/Development/M85SuperScout/Matrices"
+    for slug, label in (
+        ("rock_raiders", "Rock Raiders"),
+        ("astronauts", "Astronauts"),
+        ("aliens", "Aliens"),
+        ("martians", "Martians"),
+    ):
+        expected_matrix_headings = {
+            f"{slug}_semantic_construction.md": f"# M8.5 T082 — {label} semantic-construction matrix",
+            f"{slug}_motion_socket.md": f"# M8.5 T082 — {label} motion and socket matrix",
+            f"{slug}_material_texture.md": f"# M8.5 T082 — {label} material and texture-needs matrix",
+        }
+        for filename, expected_heading in expected_matrix_headings.items():
+            heading = (matrix_dir / filename).read_text(encoding="utf-8").splitlines()[0]
+            if heading != expected_heading:
+                fail(f"{filename} has stale or cross-faction heading")
 
     packet_dir = ROOT / "Docs/Development/M85SuperScout/Packets"
     packet_paths = sorted(packet_dir.glob("*.md"))

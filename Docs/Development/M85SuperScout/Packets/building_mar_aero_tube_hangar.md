@@ -2,7 +2,7 @@
 
 **Stable ID:** `building.mar.aero_tube_hangar`
 
-**Packet state:** `IDENTITY_BASELINE — HOLD FOR MULTI-ANGLE EVIDENCE`
+**Packet state:** `FACTION_CONTRACT_DRAFT — HOLD FOR SILHOUETTE/ROSTER/DIRECTOR REVIEW`
 
 **This is not a design approval or production-model authorization.**
 
@@ -14,7 +14,7 @@
 - Authoritative footprint: `Huge`
 - Source classification: `OFFICIAL-ADAPTED`
 - Approved source sets/motifs: 7317
-- Current confidence: verified canonical identity; construction confidence remains bounded by the source verification shown below.
+- Current confidence: verified canonical identity and faction-internal construction/motion/material draft; source-bounded decisions remain explicit below.
 
 Authoritative references:
 
@@ -23,7 +23,7 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: Source-view coverage and construction-critical page ranges are recorded for the audited sources below. Asset-specific adaptation boundaries still must be resolved before this packet can leave HOLD.
+Open question: The faction-internal construction, motion, socket and material draft is recorded below. Its unresolved decisions and the complete-roster silhouette/director gates must be cleared before this packet can leave HOLD.
 
 ## B. Reference board
 
@@ -74,45 +74,69 @@ Non-removable identity anchors:
 
 ## D. Construction contract
 
-- Hero geometry must preserve every recognition anchor above.
-- Support geometry must explain how hero masses connect, carry load and articulate.
-- Micro geometry may enrich close view but may not become required for recognition.
-- Exact chassis/load path, repeated modules, mounting logic, scale ratios and approved adaptations: `HOLD — SOURCE DECOMPOSITION REQUIRED`.
+- Contract state: `SOURCE_VERIFIED`. This is an internally checked draft, not game-director approval.
+- Semantic part map:
+  - Large central transparent Tube/ramp and circular coupler — organize the major Station around real travel — SOURCE_VERIFIED.
+  - Tall pump, docking and open handling towers — create the irregular settlement skyline — SOURCE_VERIFIED.
+  - Visible hypersled platforms, crane and clear air-production deck — expose logistics and production — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.
+- Structural load path: An elevated irregular frame carries towers and handling platforms around the central Tube/ramp while separate planted supports leave sled and air exits unobstructed.
+- Repeated modules / connection grammar: Major Tube coupler, pump tower, air deck, handling crane, sled platforms, worker exit and five link sockets remain distinct functional zones.
+- Source-faithful versus adapted boundary: 7317 supplies a decentralized system, not one sealed headquarters. The game Hangar coordinates selected source modules without swallowing Settlement, Pressure or Routing identities.
 
 ## E. Material and texture contract
 
-- Silhouette, openings, major panel breaks, moving joints and LEGO connection logic remain geometry.
-- Surface channels may carry controlled color masks, roughness, emission, decals and non-structural relief only.
-- Required reusable and bespoke texture sets, resolution, tiling, texel density, LOD fallback and import settings: `HOLD — TEXTURE-NEEDS AUDIT REQUIRED`.
-- Baked lighting, fake silhouette structure and illegible micro-noise are prohibited.
+- Geometry must carry:
+  - central transparent Tube and ring
+  - tall open towers
+  - hypersled and air-handling platforms
+- Accepted master-material roles: `Body`, `Accent`, `Tool`, `Rubber`, `Glass`, `Signal`, `Lamp`, `Neutral`.
+- Reusable texture requirements:
+  - `mar_open_frame_surface` — Restrained molded variation for blue, sand-red and neutral open frames without faking connections or turning Martians into polished Alien machines. Channels: Tangent-space normal and linear roughness; body colors remain parametric. Resolution: 2048x2048; texel density: 256 px/m at Close; tiling: Shared model-space 3 m repeat across connected structural frames.; LOD fallback: Half strength at Combat; master roughness only at Strategic. Provenance/state: Project-authored procedural source informed by verified Life on Mars machinery; human review required. `SPECIFIED_NOT_AUTHORED`.
+  - `mar_pneumatic_tube_surface` — Controlled transparent Tube, hose and pressure-window response with readable interiors and no baked cargo or glow. Channels: Linear roughness, transmission control and restrained color mask; geometry defines walls, couplers and contents. Resolution: 1024x1024; texel density: 512 px/m on localized Tube and hose UVs; tiling: Continuous trim along each physical route; phase remains continuous through generated spans.; LOD fallback: Simplified transparent route with opaque end couplers at Combat; one translucent route band at Strategic. Provenance/state: Project-authored procedural/trim source informed by verified 7317 Tubes; human review required. `SPECIFIED_NOT_AUTHORED`.
+  - `mar_mechanism_service_surface` — Subtle functional wear and lubrication variation for pivots, claws, runners, pumps and open handling machinery. Channels: Tangent-space normal, linear roughness and restrained tool-contact mask; no baked structural shadows. Resolution: 1024x1024; texel density: 384 px/m at Close on mechanism islands; tiling: Shared trim regions aligned to mechanical travel; no per-part noise reset.; LOD fallback: Retain broad Tool/Neutral material split at Combat; merge to Tool master at Strategic. Provenance/state: Project-authored procedural/trim source informed by audited 7313/7314/7316/7317 mechanisms; human review required. `SPECIFIED_NOT_AUTHORED`.
+  - `mar_route_signal_atlas` — Route direction, Station identity, loading, pressure, detection and displacement-state indicators. Channels: sRGB color/alpha with separate linear emission mask. Resolution: 1024x1024; texel density: Screen-space and trim atlas; not world-density bound.; tiling: Non-tiling stable interface IDs; directional route arrows may repeat at fixed spacing.; LOD fallback: One route direction and one operating Signal per asset at Strategic. Provenance/state: Project-authored vector/procedural source; human review required. `SPECIFIED_NOT_AUTHORED`.
+- Bespoke texture requirements: none required in this faction draft.
+- Baked lighting, fake silhouette structure, per-part texture phase resets and illegible micro-noise remain prohibited.
 
 ## F. State and animation contract
 
-- Applicable idle, locomotion/operation, work, attack, production, repair, transform/deploy, disabled, damage and destruction beats: `HOLD — MECHANISM EVIDENCE REQUIRED`.
-- Every moving assembly must receive a named pivot, parent, axis/path, rest/extreme poses and authoritative presentation driver.
-- Animation may communicate gameplay state but never decide gameplay timing.
+- Locomotion / operation: Stationary major Station and air-production structure.
+- Planted/contact rule: All elevated supports remain planted; Tube core, Worker exit and true-air launch corridor remain clear.
+
+| Pivot | Parent | Axis/path and rest-to-extreme motion | Presentation driver |
+|---|---|---|---|
+| `Pivot_HandlingCrane` | Asset_AeroTubeHangar | cargo platform to Tube/air-deck service arc | resource, production or transfer presentation |
+| `Pivot_TubeGate` | Asset_AeroTubeHangar | closed pressure seal to clear sled passage | Tube loading/unloading progress |
+| `Pivot_AirDeckClamp` | Asset_AeroTubeHangar | service contact to released launch position | Aero Skiff production |
+
+- Required beats:
+  - Construction raises frame, seats Tube and opens platforms.
+  - Idle pressure and route signals remain bounded.
+  - Worker production or Tube transfer clears its exact exit before release.
+  - Aero Skiff launch retracts clamps; damage disables outer modules before main Station collapse.
+- Animation consumes authoritative state and never decides gameplay timing or results.
 
 ## G. Presentation hookups
 
-- `Socket_Selection` and `Socket_Health` are mandatory.
-- Tool, weapon, projectile, VFX, lamp and audio sockets follow only from verified function.
-- Cargo, passenger, service, production-exit or network sockets apply where the canonical role requires them.
-- Identification Tile, icon silhouette, portrait camera and reduced-presentation fallback: `HOLD — PRESENTATION AUDIT REQUIRED`.
+- Required presentation sockets: `Socket_Selection`, `Socket_Health`, `Socket_ProductionExit`, `Socket_TubeExit`, `Socket_ResourceReceive`, `Socket_Link01`, `Socket_Link02`, `Socket_Link03`, `Socket_Link04`, `Socket_Link05`, `Socket_AudioOperations`.
+- These sockets are presentation references only and never own targeting, collision, movement, transport or production truth.
+- Identification Tile placement, icon silhouette, portrait camera and reduced-presentation fallback remain `HOLD — PRESENTATION AUDIT REQUIRED`.
 
 ## H. Insight and decision ledger
 
-- Verified fact: stable identity, faction, role, footprint, source classification and mapped source family.
-- Canon-derived interpretation: silhouette thesis and identity anchors above.
-- Unknown: exact multi-angle construction, articulation, material ratios, texture inventory and confusion mitigation until the remaining audits are complete.
-- Consequential contradictions: none recorded at identity-baseline stage.
+- Verified fact: stable identity, source evidence and the source-supported assemblies cited above.
+- Canon-derived interpretation: gameplay function, adaptation boundary, contact behavior and presentation drivers are explicitly labeled in the contract.
+- Remaining source/design decisions:
+  - The complete-roster building matrix must keep the Hangar from visually absorbing the smaller Station, pressure and routing modules.
+- Cross-roster silhouette and game-director review remain open; this contract does not authorize production modeling.
 
 ## I. Build handoff
 
-1. Verify and cite the complete multi-angle source board.
-2. Decompose primary masses and negative spaces from orthogonal evidence.
-3. Resolve LEGO load path, connection grammar and moving mechanism.
-4. Complete material/texture and state/animation contracts.
-5. Produce 24/44/72-cell black silhouettes and run the cross-roster confusion audit.
+1. Retain the audited evidence and every explicit adaptation boundary.
+2. Greybox hero masses, openings and structural load path from the semantic map.
+3. Validate named pivots, contacts and sockets in the real gameplay camera.
+4. Author only the specified reusable textures after human material review.
+5. Produce 24/44/72-cell black silhouettes and run the full cross-roster confusion audit.
 
 **State:** `HOLD`
 

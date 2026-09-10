@@ -1,10 +1,9 @@
 # M8.5 T082 — SUPER SCOUT PROGRESS
 
-**Status:** in progress. The roster-locked identity baseline and all four
-faction source-page audits are complete. Rock Raiders, Astronauts and Aliens now
-also have complete 16-asset, 21-asset and 12-asset faction-internal
-semantic-construction, motion/socket and material/texture-needs drafts; Martian
-contracts and the cross-roster review gates remain open.
+**Status:** in progress. The roster-locked identity baseline, all four faction
+source-page audits and all 66 faction-internal semantic-construction,
+motion/socket and material/texture-needs drafts are complete. The cross-roster
+silhouette, confusion and game-director review gates remain open.
 
 ## Completed in the identity-baseline pass
 
@@ -132,6 +131,27 @@ contracts and the cross-roster review gates remain open.
   surface, lime conduit surface, crystal-containment mask and bay/state signal
   atlas. Crescents, openings, planted frames, load-bearing connections,
   articulated seams and crystal cages remain geometry.
+- The Martian contract pass covers all eight units and nine infrastructure
+  entries. It keeps the faction open, blue/sand-red, pneumatic and visibly
+  mechanical: two-legged Workers stay two-legged, hover runners stay distinct
+  from true air, walker modules retain unequal tools, and every Tube, pump,
+  crane, clamp, switch, route and platform has a named physical purpose.
+- Protector Stance and Searcher Brace/Clamp now have continuous connected
+  motion contracts rather than copying the source manuals' hand-rebuilt
+  conversions. Aero Tube Hangar, Settlement Station, Pressure Generator,
+  Routing Laboratory and Link divide the 7317 source system into distinct
+  readable functions instead of collapsing it into one generic base.
+- The two archival gaps remain safely bounded. Unverified 1195 construction
+  fixes no Aero Skiff geometry; the contract uses verified 7317 platform and
+  docking language pending better evidence. Unverified 3750 fixes no Link
+  coupler or sled detail because 7317 already proves the complete Tube route.
+- Four Martian texture families are specified but not authored: open frame,
+  pneumatic Tube, mechanism/service and route/signal surfaces. Structural
+  connections, Tube walls, open platforms, planted contacts and moving
+  mechanisms remain geometry.
+- The matrix generator now labels every faction's semantic, motion and material
+  matrix correctly. The previous Astronaut and Alien files inherited a stale
+  Rock Raiders title even though their contents were faction-correct.
 - The 4990 HQ manual is now verified primary evidence. Its 43 pages establish
   a reusable faction vocabulary of separate tower, crane, open service gantry,
   conveyor/processing and irregular worksite-base modules; they do not silently
@@ -155,14 +175,12 @@ redistributed.
 
 1. Retain the two explicit Martian archival gaps unless usable evidence appears,
    and escalate any gap that prevents a safe production decision.
-2. Repeat the completed Rock Raiders/Astronaut/Alien semantic-construction,
-   motion/socket and material/texture-needs pass for the 17 Martian assets.
-3. Produce the 24/44/72-cell black-silhouette boards, faction proportion
+2. Produce the 24/44/72-cell black-silhouette boards, faction proportion
    boards, scale lineups and building skyline/entrance/exit/network matrices.
-4. Expand the 31-pair confusion baseline wherever the silhouette boards expose
+3. Expand the 31-pair confusion baseline wherever the silhouette boards expose
    another plausible neighbor; keep at least three deliberate differences for
    every recorded pair.
-5. Resolve or escalate every consequential unknown, then request the game
+4. Resolve or escalate every consequential unknown, then request the game
    director's blind silhouette and complete-corpus review.
 
 ## Current decision state
@@ -173,11 +191,11 @@ No packet is approved for T083/T085 production yet.
 
 ## Verification state
 
-The complete 12-asset Alien contract pass passed `./tools/verify.sh --full`
+The complete 17-asset Martian contract pass passed `./tools/verify.sh --full`
 with zero blocking failures at
-`Artifacts/Verification/20260910T070408Z-full-summary.txt`. All 317 tests, the
+`Artifacts/Verification/20260910T072609Z-full-summary.txt`. All 317 tests, the
 66-asset Super Scout corpus, 39 source records, 35 primary sources, four
-archival sources, 49 non-provisional production contracts, 16 generated
+archival sources, 66 non-provisional production contracts, 19 generated
 matrices, deterministic packet regeneration, retained presentation/network
 gates and a fresh macOS export passed. Stress60 remains the expected 2/60
 `BLOCKING_LATER` M9 diagnostic.

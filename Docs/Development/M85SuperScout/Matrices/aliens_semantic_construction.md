@@ -1,4 +1,4 @@
-# M8.5 T082 — Rock Raiders semantic-construction matrix
+# M8.5 T082 — Aliens semantic-construction matrix
 
 This generated matrix converts the audited source evidence and locked gameplay roles into buildable faction-internal drafts. It does not approve production modeling; every row remains subject to the full-roster silhouette and game-director review.
 
