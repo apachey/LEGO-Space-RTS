@@ -18,7 +18,7 @@ This generated review records what the available official instructions or labele
   - Two raised round side pods and the central hazard panel carry more source identity than any rear bodywork.
 - Remaining evidence gaps:
   - The opposite side and strict underside remain unverified.
-  - The canonical single oversized mining drill is a gameplay adaptation of the paired source saw package; its support must preserve the verified low sled and paired side-pod relationship rather than inventing a wheel chassis.
+  - The exact in-game contact pose for both small saws must preserve their mirrored source relationship while keeping excavation feedback readable at Strategic zoom.
 
 ## 4910 — The Hover Scout
 

@@ -33,7 +33,7 @@ Rock Raiders' eight principal boxed 1999 sets are straightforward. The harder ed
 | 1274 | Light Hover | 1999/2000* | Rock Raiders | Kabaya promo polybag | Rock Raiders | Very small one-man hover/scout craft; Jet. Simplified promotional Rock Raiders vehicle. | Ch, V |
 | 1275 | Chainsaw Bulldozer / **Chain Dozer** | 1999/2000* | Rock Raiders | Kabaya promo polybag | Rock Raiders | Mini bulldozer/dozer distinguished by front working saw/chainsaw element; Bandit. | Ch, V, Eq |
 | 1276 | Helicopter Transport | 1999/2000* | Rock Raiders | Kabaya promo polybag | Rock Raiders | Mini aerial transport/helicopter-like mining craft; Docs. | Ch, V |
-| 1277 | Drill Craft | 1999/2000* | Rock Raiders | Kabaya promo polybag | Rock Raiders | Compact drill-equipped mining craft; Sparks. | Ch, V, Eq |
+| 1277 | Drill Craft / Hovercraft with Ice Saws | 1999/2000* | Rock Raiders | Kabaya promo polybag | Rock Raiders | Compact hover mining craft with two small forward ice saws; Sparks. | Ch, V, Eq |
 | 3347 | Rock Raiders #1 – Mini Heroes Collection | 2000 | Rock Raiders | Limited character pack | Rock Raiders | Chief minifigure presented as a Mini Heroes collectible/display item rather than a conventional vehicle set. | Ch |
 | 3348 | Rock Raiders #2 – Mini Heroes Collection | 2000 | Rock Raiders | Limited character pack | Rock Raiders | Bandit, Docs and Sparks character/display collection. | Ch |
 | 3349 | Rock Raiders #3 – Mini Heroes Collection | 2000 | Rock Raiders | Limited character pack | Rock Raiders | Axle, Docs and Jet character/display collection. | Ch |

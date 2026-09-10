@@ -1,10 +1,10 @@
 # M8.5 T082 — SUPER SCOUT PROGRESS
 
 **Status:** in progress. The roster-locked identity baseline and all four
-faction source-page audits are complete. Rock Raiders now also have a complete
-16-asset faction-internal semantic-construction, motion/socket and
-material/texture-needs draft; the other three faction contracts and the
-cross-roster review gates remain open.
+faction source-page audits are complete. Rock Raiders and Astronauts now also
+have complete 16-asset and 21-asset faction-internal semantic-construction,
+motion/socket and material/texture-needs drafts; Alien and Martian contracts
+and the cross-roster review gates remain open.
 
 ## Completed in the identity-baseline pass
 
@@ -63,9 +63,10 @@ cross-roster review gates remain open.
   deliberate cross-source construction choice rather than an averaged hull.
 - 7646 explicitly converts from a long three-part craft into a three-legged
   walker by rotating the two curved side modules and long nose downward. 7691
-  verifies a huge open-channel circular Mothership with detachable subcraft,
-  while 7693 verifies hinged crescent modules but not the game's final planted
-  siege endpoints.
+  verifies one huge open-channel circular Mothership whose integrated sections
+  can open around visible internal craft bays; its subcraft do not split the
+  Mothership into multiple selectable entities. 7693 verifies hinged crescent
+  modules but not the game's final planted siege endpoints.
 - The Martian pass audited all eight available mapped sources across eight
   official books. Sets 1195 and 3750 remain explicit archival gaps, matching
   the source ledger rather than receiving guessed construction.
@@ -99,14 +100,24 @@ cross-roster review gates remain open.
 - Crew and Drill Craft now use `CANON_DERIVED_ADAPTATION` contracts grounded in
   the recovered archival evidence. Crew preserves five visible
   character/equipment variants without inventing a 4930 vehicle. Drill Craft
-  preserves the low hover-sled chassis and paired side pods while labeling its
-  canonical single drill as the replacement for the source's twin saws.
+  preserves the low hover-sled chassis, paired side pods and two small mirrored
+  ice saws as its defining source silhouette and excavation tool package.
 - A repository-enforced source-analysis policy now requires a whole-set audit,
   separate accounting for detachable modules/figures/equipment, connection and
   contact tracing before silhouette claims, and explicit donor/rejected-option
   disclosure for any proposed composed design. Promo, combo, unreleased and
   official-game references are labeled by their permitted use; alternative
   official versions require review and fan MOCs remain excluded.
+- The Astronaut contract pass covers all 13 units and eight infrastructure
+  entries. It preserves rugged exposed Field Systems and cleaner modular
+  Mission Systems as two compatible lineages rather than blending them into
+  generic white science fiction. Source transformations, carried payloads,
+  service modules, production exits and refit interfaces receive explicit load
+  paths, pivots, contacts, state beats and sockets.
+- Four Astronaut texture families are specified but not authored: Field frame
+  surface, Mission shell surface, shared service/insignia decals and shared
+  console/signal panels. Silhouette, suspension, transformation seams, payload
+  cradles, large openings and physical module interfaces remain geometry.
 - The 4990 HQ manual is now verified primary evidence. Its 43 pages establish
   a reusable faction vocabulary of separate tower, crane, open service gantry,
   conveyor/processing and irregular worksite-base modules; they do not silently
@@ -130,8 +141,8 @@ redistributed.
 
 1. Retain the two explicit Martian archival gaps unless usable evidence appears,
    and escalate any gap that prevents a safe production decision.
-2. Repeat the completed Rock Raiders semantic-construction contract for the 21
-   Astronaut, 12 Alien and 17 Martian assets: what every identity-bearing mass,
+2. Repeat the completed Rock Raiders/Astronaut semantic-construction contract
+   for the 12 Alien and 17 Martian assets: what every identity-bearing mass,
    opening, tool, light and connection is and why it exists.
 3. Complete their locomotion, planted-contact, articulation, state, pivot and
    socket contracts from mechanical evidence.
@@ -147,19 +158,19 @@ redistributed.
 
 ## Current decision state
 
-No canon conflict has been found in the identity baseline. No packet is
-approved for T083/T085 production yet.
+The game director resolved the 1277 source/canon conflict by approving two small
+mirrored ice saws in place of the previously canonical single oversized drill.
+No packet is approved for T083/T085 production yet.
 
 ## Verification state
 
-The corrected whole-set/source-decomposition pass and explicit crash-safe
-Godot smoke path passed `./tools/verify.sh --full` with zero blocking failures
-at `Artifacts/Verification/20260910T053640Z-full-summary.txt`. All 317 tests,
-the 66-asset Super Scout corpus, 39 source records, 35 primary sources, four
-archival sources, nine Rock Raiders audits with zero remaining Rock Raiders
-evidence gaps, all 16 non-provisional Rock Raiders production contracts,
-deterministic packet regeneration, retained presentation/network gates and a
-fresh macOS export passed. Stress60 remains the expected 2/60
+The Drill Craft/Mothership canon clarification and complete 21-asset Astronaut
+contract pass passed `./tools/verify.sh --full` with zero blocking failures at
+`Artifacts/Verification/20260910T064215Z-full-summary.txt`. All 317 tests, the
+66-asset Super Scout corpus, 39 source records, 35 primary sources, four
+archival sources, 37 non-provisional production contracts, 13 generated
+matrices, deterministic packet regeneration, retained presentation/network
+gates and a fresh macOS export passed. Stress60 remains the expected 2/60
 `BLOCKING_LATER` M9 diagnostic.
 
 Every routine Godot smoke and the exported app emitted the explicit immediate

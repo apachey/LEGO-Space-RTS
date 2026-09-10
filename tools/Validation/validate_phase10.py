@@ -51,6 +51,7 @@ required = [
     'Content/Presentation/SuperScout/aliens_source_evidence.json',
     'Content/Presentation/SuperScout/martians_source_evidence.json',
     'Content/Presentation/SuperScout/rock_raiders_production_contracts.json',
+    'Content/Presentation/SuperScout/astronauts_production_contracts.json',
     'Content/Presentation/SuperScout/confusion_register.json',
     'Docs/Development/M85SuperScout/PACKET_INDEX.md',
     'Docs/Development/M85SuperScout/Matrices/identity_source_matrix.csv',

@@ -21,6 +21,7 @@ ASTRONAUTS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/astronauts_source_
 ALIENS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/aliens_source_evidence.json"
 MARTIANS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/martians_source_evidence.json"
 ROCK_RAIDERS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/rock_raiders_production_contracts.json"
+ASTRONAUTS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/astronauts_production_contracts.json"
 CONFUSION = ROOT / "Content/Presentation/SuperScout/confusion_register.json"
 CONTENT = ROOT / "Content/PrototypeEntities.json"
 GENERATOR = ROOT / "tools/generate-m85-super-scout-packets.py"
@@ -239,7 +240,7 @@ def validate_source_analysis_policy(policy: dict) -> str:
         "RR_1277_COMPLETE_SET",
         "RR_4930_COMPLETE_SET",
         "LOM_7302_TOPOLOGY_CORRECTION",
-        "MM_7691_MULTI_ASSET_DECOMPOSITION",
+        "MM_7691_SINGLE_UNIT_DECOMPOSITION",
         "CAC_TRAINING_CAMP_RECOMPOSITION",
     ]:
         fail("source-analysis policy case-study set drifted")
@@ -256,23 +257,25 @@ def validate_source_analysis_policy(policy: dict) -> str:
     return policy["packetNotice"]
 
 
-def validate_production_contracts(contracts: dict, assets: list[dict]) -> tuple[int, int]:
+def validate_production_contracts(
+    contracts: dict, assets: list[dict], faction: str, label: str, expected_count: int
+) -> tuple[int, int]:
     if contracts.get("schemaVersion") != 1 or contracts.get("task") != "T082":
-        fail("Rock Raiders production-contract schema/task mismatch")
-    if contracts.get("faction") != "RockRaiders":
-        fail("Rock Raiders production-contract faction mismatch")
+        fail(f"{label} production-contract schema/task mismatch")
+    if contracts.get("faction") != faction:
+        fail(f"{label} production-contract faction mismatch")
     if contracts.get("status") != "FACTION_CONTRACT_DRAFT_COMPLETE_HOLD_FOR_ROSTER_REVIEW":
-        fail("Rock Raiders production contracts must retain the roster-review HOLD")
+        fail(f"{label} production contracts must retain the roster-review HOLD")
 
     shared = contracts.get("sharedMaterialPlan", {})
     if set(shared.get("masterMaterialRoles", [])) != MATERIAL_ROLES:
-        fail("Rock Raiders production contracts drift from the accepted material roles")
+        fail(f"{label} production contracts drift from the accepted material roles")
     texture_specs = shared.get("reusableTextureFamilies", [])
     texture_ids = [spec.get("id") for spec in texture_specs]
     if len(texture_ids) != len(set(texture_ids)) or len(texture_ids) < 4:
         fail("Rock Raiders reusable texture families are missing or duplicated")
     for spec in texture_specs:
-        identity = f"Rock Raiders texture {spec.get('id')}"
+        identity = f"{label} texture {spec.get('id')}"
         for field in (
             "purpose", "channels", "resolution", "texelDensity", "tiling",
             "lodFallback", "provenance", "state",
@@ -280,13 +283,13 @@ def validate_production_contracts(contracts: dict, assets: list[dict]) -> tuple[
             require_nonempty(spec, field, identity)
         if spec["state"] != "SPECIFIED_NOT_AUTHORED":
             fail(f"{identity} incorrectly implies authored/accepted texture work")
-    require_nonempty(shared, "globalRules", "Rock Raiders shared material plan")
+    require_nonempty(shared, "globalRules", f"{label} shared material plan")
 
     records = contracts.get("assets", [])
     ids = [record.get("stableId") for record in records]
-    expected_ids = {asset["stableId"] for asset in assets if asset["faction"] == "RockRaiders"}
+    expected_ids = {asset["stableId"] for asset in assets if asset["faction"] == faction}
     if len(ids) != len(set(ids)) or set(ids) != expected_ids:
-        fail("Rock Raiders production contracts must cover all 16 faction assets exactly once")
+        fail(f"{label} production contracts must cover all {expected_count} faction assets exactly once")
 
     provisional = 0
     for record in records:
@@ -335,7 +338,7 @@ def validate_production_contracts(contracts: dict, assets: list[dict]) -> tuple[
             fail(f"{stable_id} violates the T081 socket naming contract")
         require_nonempty(record, "unresolved", f"{stable_id} decision ledger")
     if provisional != 0:
-        fail(f"archival Crew/Drill corrections should leave no source-bounded Raider drafts, found {provisional}")
+        fail(f"{label} production contracts retain {provisional} source-bounded provisional drafts")
     return len(records), provisional
 
 
@@ -344,7 +347,7 @@ def main() -> None:
         MANIFEST, LEDGER, INSTRUCTION_INDEX, SOURCE_ANALYSIS_POLICY, ROCK_RAIDERS_EVIDENCE, ASTRONAUTS_EVIDENCE,
         ALIENS_EVIDENCE,
         MARTIANS_EVIDENCE,
-        ROCK_RAIDERS_CONTRACTS,
+        ROCK_RAIDERS_CONTRACTS, ASTRONAUTS_CONTRACTS,
         CONFUSION, CONTENT, GENERATOR,
     ):
         if not path.is_file():
@@ -359,6 +362,7 @@ def main() -> None:
     aliens_evidence = json.loads(ALIENS_EVIDENCE.read_text(encoding="utf-8"))
     martians_evidence = json.loads(MARTIANS_EVIDENCE.read_text(encoding="utf-8"))
     rock_raiders_contracts = json.loads(ROCK_RAIDERS_CONTRACTS.read_text(encoding="utf-8"))
+    astronauts_contracts = json.loads(ASTRONAUTS_CONTRACTS.read_text(encoding="utf-8"))
     confusion = json.loads(CONFUSION.read_text(encoding="utf-8"))
     content = json.loads(CONTENT.read_text(encoding="utf-8"))
     packet_notice = validate_source_analysis_policy(source_analysis_policy)
@@ -524,9 +528,14 @@ def main() -> None:
         0,
         2,
     )
-    contract_count, provisional_contracts = validate_production_contracts(
-        rock_raiders_contracts, assets
+    rock_raiders_contract_count, rock_raiders_provisional_contracts = validate_production_contracts(
+        rock_raiders_contracts, assets, "RockRaiders", "Rock Raiders", 16
     )
+    astronauts_contract_count, astronauts_provisional_contracts = validate_production_contracts(
+        astronauts_contracts, assets, "Astronauts", "Astronauts", 21
+    )
+    contract_count = rock_raiders_contract_count + astronauts_contract_count
+    provisional_contracts = rock_raiders_provisional_contracts + astronauts_provisional_contracts
 
     if confusion.get("schemaVersion") != 1 or confusion.get("task") != "T082":
         fail("confusion register schema/task mismatch")

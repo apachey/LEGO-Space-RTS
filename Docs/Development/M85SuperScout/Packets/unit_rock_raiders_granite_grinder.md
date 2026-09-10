@@ -66,7 +66,7 @@ Non-removable identity anchors:
 - Forbidden genericization: Do not turn the asset into a conventional tank, APC, artillery piece or realistic modern vehicle. Its industrial purpose must read first.
 - Nearest-confusion baseline:
 
-- `unit.rock_raiders.drill_craft` — Both use a large forward drill. Mitigations: Drill Craft stays low on an open hover sled; Granite Grinder is a tall planted biped. / Drill Craft frames its operator between paired raised side pods; Granite Grinder places the operator high above two large feet. / Drill Craft adapts the source's short twin-saw nose into one compact drill; Granite Grinder carries a long drill boom balanced by rear machinery.
+- `unit.rock_raiders.drill_craft` — Both are short-range Raider excavation machines. Mitigations: Drill Craft stays low on an open hover sled; Granite Grinder is a tall planted biped. / Drill Craft frames its operator between paired raised side pods; Granite Grinder places the operator high above two large feet. / Drill Craft keeps two small mirrored saw discs; Granite Grinder carries one long drill boom balanced by rear machinery.
 - `unit.rock_raiders.chrome_crusher` — Both are major teal drill machines. Mitigations: Granite Grinder has two legs; Chrome Crusher has four huge wheels. / Granite Grinder is tall and narrow; Chrome Crusher is long and low. / Granite Grinder balances one boom; Chrome Crusher combines drill, work light and cargo machinery along a heavy chassis.
 
 ## D. Construction contract

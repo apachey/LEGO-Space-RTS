@@ -4437,7 +4437,7 @@ Unreleased 7728 and 7729 remain outside the released-canon denominator.
 |---|---|---|---|---|---|---|---|---|
 | Rock Raider Crew | OA — 4930, 3347–49 | minifigure + lamp/tool | polymer; RR work colors | mining/build/repair | shoulder/pack tile + ring | equipment scuff; no injury realism | worker/tool / minifigure group | becoming infantry |
 | Hover Scout | OA — 4910 + 1274 | tiny wide hover + scanner | Dark Turquoise/dark frame | hover bob, scanner sweep | tail tile | exposed side panel | scanner hover / tiny hover | generic speeder |
-| Drill Craft | OA — 1277 | chassis dominated by forward drill | RR polymer + metal drill | drill rotation/contact | rear tile | drill/frame sparks | drill / pointed utility | mini tank |
+| Drill Craft | OA — 1277 | low hover chassis with twin forward ice saws | RR polymer + metal cutters | paired saw rotation/contact | rear tile | saw/frame sparks | twin cutter / pointed utility | mini tank |
 | Rapid Rider | OA — 4920 | twin-hull skimmer | RR polymer, dark hull | twin propulsion, unloading | rear deck tile | hull panel separation | twin hull / light transport | generic boat |
 | Loader Dozer | OA — 4950 + 1275 | giant scoop/cutter nose | RR polymer + metal tool | scoop, saw, chassis weight | upper rear tile | tool scuff, side panel | scoop / broad heavy | realistic bulldozer |
 | Granite Grinder | OA — 4940 | tall legs + huge horizontal drill | RR/metal drill | leg plant + drill brace | top plate | leg/frame sparks | drill walker / tall breacher | military mech |

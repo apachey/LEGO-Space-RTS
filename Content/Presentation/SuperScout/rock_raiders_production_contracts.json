@@ -139,29 +139,31 @@
         "Flat open hover sled — carries the operator and tool on one shallow plate-built spine — SOURCE_VERIFIED.",
         "Paired raised round side pods — provide the source's dominant lift/engine masses and frame the operator — SOURCE_VERIFIED.",
         "Central hazard panel and exposed Sparks position — separate the operator deck from the forward tool package — SOURCE_VERIFIED.",
-        "Single oversized forward drill — replaces the source's two mirrored ice-saw arms to perform canonical excavation and short-range structure contact — CANON_DERIVED_ADAPTATION."
+        "Two small mirrored forward ice saws — preserve the source's defining tool silhouette while jointly performing canonical excavation and short-range structure contact — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION."
       ],
       "construction": {
-        "loadPath": "One shallow plate-built spine carries the open operator deck, hazard panel and two vertical side-pod mounts; a short reinforced front bracket transfers the adapted drill load into that spine.",
-        "modules": "Flat sled, mirrored side lift/engine pods, central operator/hazard station and one detachable adapted drill package. The source's two saw arms define the width and attachment rhythm of the replacement tool bracket.",
-        "adaptationBoundary": "The archival manual proves a hovercraft with two ice saws and no wheels. Canon requires a ground-layer Drill Craft with one oversized mining drill, so the drill/tool conversion is explicit; a wheel chassis, tank hull or source-invented rear counterweight is forbidden."
+        "loadPath": "One shallow plate-built spine carries the open operator deck, hazard panel and two vertical side-pod mounts; two short mirrored front arms transfer the paired saw contact load into that spine.",
+        "modules": "Flat sled, mirrored side lift/engine pods, central operator/hazard station and two small independently rotating saw arms.",
+        "adaptationBoundary": "The archival manual's hovercraft, two ice saws and lack of wheels are preserved. Canon adapts their cutting action to authored terrain excavation; a single replacement drill, wheel chassis, tank hull or invented rear counterweight is forbidden."
       },
       "motion": {
         "locomotion": "Low ground-layer hover movement derived from the source craft; quick steering with restrained sled heave and no true-air banking.",
-        "plantedContact": "The sled settles to one low hover datum before excavation; the adapted drill establishes the only hard work contact while the paired side pods stabilize the chassis visually.",
+        "plantedContact": "The sled settles to one low hover datum before excavation; both saws establish mirrored hard work contacts while the paired side pods stabilize the chassis visually.",
         "pivots": [
-          {"name":"Pivot_DrillFeed","parent":"Asset_DrillCraft","motion":"short canon-derived forward feed along the drill axis; retracted travel rest","driver":"authoritative excavation/contact state"},
-          {"name":"Pivot_DrillSpin","parent":"Pivot_DrillFeed","motion":"continuous roll around tool axis; stopped rest","driver":"excavation or contact-attack presentation progress"}
+          {"name":"Pivot_SawFeedLeft","parent":"Asset_DrillCraft","motion":"short forward/downward contact arc; raised travel rest","driver":"authoritative excavation/contact state"},
+          {"name":"Pivot_SawFeedRight","parent":"Asset_DrillCraft","motion":"mirrored short forward/downward contact arc; raised travel rest","driver":"authoritative excavation/contact state"},
+          {"name":"Pivot_SawSpinLeft","parent":"Pivot_SawFeedLeft","motion":"continuous roll around saw axle; stopped rest","driver":"excavation or contact-attack presentation progress"},
+          {"name":"Pivot_SawSpinRight","parent":"Pivot_SawFeedRight","motion":"opposed continuous roll around saw axle; stopped rest","driver":"excavation or contact-attack presentation progress"}
         ],
-        "beats": ["Idle hover settles around the shallow source sled with the drill stopped.", "Move uses restrained side-pod vibration and small terrain-following heave, not wheel roll or aircraft banking.", "Excavate settles, feeds and spins the adapted drill, then retracts after the authoritative result.", "Damage destabilizes one side pod and stops tool motion; the wreck preserves the open sled, paired pods and drill relationship."]
+        "beats": ["Idle hover settles around the shallow source sled with both saws stopped.", "Move uses restrained side-pod vibration and small terrain-following heave, not wheel roll or aircraft banking.", "Excavate settles, lowers both arms, spins the two saws in opposed directions, and raises them after the authoritative result.", "Damage destabilizes one side pod and stops tool motion; the wreck preserves the open sled, paired pods and twin-saw relationship."]
       },
       "materials": {
-        "geometryMustCarry": ["drill helix and short twin-saw-derived support bracket", "flat open operator sled and hazard panel", "paired raised round side pods"],
+        "geometryMustCarry": ["two small mirrored saw discs and separate support arms", "flat open operator sled and hazard panel", "paired raised round side pods"],
         "materialRoles": ["Body", "Accent", "Tool", "Glass", "Lamp", "Neutral"],
         "textureFamilies": ["rr_tool_wear", "rr_hazard_and_service_decals"],
         "bespokeTextures": []
       },
-      "sockets": ["Socket_Selection", "Socket_Health", "Socket_DrillContact", "Socket_DrillDust", "Socket_DrillSparks", "Socket_HoverLeft", "Socket_HoverRight", "Socket_AudioDrill", "Socket_AudioHover"],
+      "sockets": ["Socket_Selection", "Socket_Health", "Socket_SawContactLeft", "Socket_SawContactRight", "Socket_CutDust", "Socket_CutSparks", "Socket_HoverLeft", "Socket_HoverRight", "Socket_AudioSaws", "Socket_AudioHover"],
       "unresolved": ["The source manual does not prove whether the two raised round side pods rotate, glow or remain visually static. Keep them mechanically quiet until later motion evidence or director review selects a restrained presentation behavior."]
     },
     {

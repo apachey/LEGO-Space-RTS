@@ -83,7 +83,7 @@
     {
       "caseId": "RR_1277_COMPLETE_SET",
       "finding": "The complete source is a low open hovercraft with two forward ice saws, two raised round side hover/engine pods, a central hazard panel and an exposed Sparks operator; it is not a wheeled single-drill vehicle.",
-      "productionConsequence": "The canonical Drill Craft may retain its single oversized mining drill only as a labeled adaptation of the source tool package. The flat hover sled, paired side lift masses and open operator relationship are the source-grounded chassis language.",
+      "productionConsequence": "The canonical Drill Craft preserves the two small mirrored ice saws because they define the source silhouette and tool rhythm. The flat hover sled, paired side lift masses and open operator relationship remain equally non-removable source language; its excavation statistics do not require replacing the saws with a drill.",
       "evidenceUrls": [
         "https://kb.rockraidersunited.com/images/2/2f/1277_Hovercraft_with_Ice_Saws.pdf",
         "https://kb.rockraidersunited.com/1277_Drill_Craft"
@@ -108,9 +108,9 @@
       ]
     },
     {
-      "caseId": "MM_7691_MULTI_ASSET_DECOMPOSITION",
+      "caseId": "MM_7691_SINGLE_UNIT_DECOMPOSITION",
       "finding": "The Mothership instructions build and dock several independently readable modules: the main circular carrier, a long front/central lime-conduit craft, two small seated weapon craft and two disc-like alien jetpack modules.",
-      "productionConsequence": "One large set may supply multiple roster assets or building modules. Record each detachable assembly and its candidate use instead of treating the boxed set as one indivisible unit.",
+      "productionConsequence": "Record every module, but preserve the production Mothership as one selectable unit whose integrated sections open and unfold around internal bays. Its contained craft may inform carried or future trainable units; they do not automatically become separate pieces of the Mothership entity or independent roster assignments.",
       "evidenceUrls": [
         "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4516029.pdf"
       ]

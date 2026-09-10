@@ -21,6 +21,7 @@ ASTRONAUTS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/astronauts_source_
 ALIENS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/aliens_source_evidence.json"
 MARTIANS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/martians_source_evidence.json"
 ROCK_RAIDERS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/rock_raiders_production_contracts.json"
+ASTRONAUTS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/astronauts_production_contracts.json"
 CONFUSION = ROOT / "Content/Presentation/SuperScout/confusion_register.json"
 OUTPUT = ROOT / "Docs/Development/M85SuperScout/Packets"
 INDEX = ROOT / "Docs/Development/M85SuperScout/PACKET_INDEX.md"
@@ -34,6 +35,9 @@ MARTIANS_AUDIT = ROOT / "Docs/Development/M85SuperScout/Matrices/martians_source
 ROCK_RAIDERS_CONSTRUCTION = ROOT / "Docs/Development/M85SuperScout/Matrices/rock_raiders_semantic_construction.md"
 ROCK_RAIDERS_MOTION = ROOT / "Docs/Development/M85SuperScout/Matrices/rock_raiders_motion_socket.md"
 ROCK_RAIDERS_MATERIAL = ROOT / "Docs/Development/M85SuperScout/Matrices/rock_raiders_material_texture.md"
+ASTRONAUTS_CONSTRUCTION = ROOT / "Docs/Development/M85SuperScout/Matrices/astronauts_semantic_construction.md"
+ASTRONAUTS_MOTION = ROOT / "Docs/Development/M85SuperScout/Matrices/astronauts_motion_socket.md"
+ASTRONAUTS_MATERIAL = ROOT / "Docs/Development/M85SuperScout/Matrices/astronauts_material_texture.md"
 
 FACTION_RULES = {
     "RockRaiders": (
@@ -561,6 +565,7 @@ def expected_files() -> dict[Path, str]:
     aliens_evidence = json.loads(ALIENS_EVIDENCE.read_text(encoding="utf-8"))
     martians_evidence = json.loads(MARTIANS_EVIDENCE.read_text(encoding="utf-8"))
     rock_raiders_contracts = json.loads(ROCK_RAIDERS_CONTRACTS.read_text(encoding="utf-8"))
+    astronauts_contracts = json.loads(ASTRONAUTS_CONTRACTS.read_text(encoding="utf-8"))
     confusion = json.loads(CONFUSION.read_text(encoding="utf-8"))
     sources = {source["setId"]: source for source in ledger["sources"]}
     instructions = {record["setId"]: record for record in instruction_index["records"]}
@@ -584,12 +589,16 @@ def expected_files() -> dict[Path, str]:
     if len(evidence) != len(evidence_records):
         raise ValueError("duplicate faction/source keys across source-evidence audits")
     assets = {asset["stableId"]: asset for asset in manifest["assets"]}
+    contract_documents = [rock_raiders_contracts, astronauts_contracts]
     production_contracts = {
-        contract["stableId"]: contract for contract in rock_raiders_contracts["assets"]
+        contract["stableId"]: contract
+        for document in contract_documents
+        for contract in document["assets"]
     }
     texture_specs = {
         spec["id"]: spec
-        for spec in rock_raiders_contracts["sharedMaterialPlan"]["reusableTextureFamilies"]
+        for document in contract_documents
+        for spec in document["sharedMaterialPlan"]["reusableTextureFamilies"]
     }
     result = {
         INDEX: index_text(manifest["assets"], set(production_contracts)),
@@ -617,6 +626,15 @@ def expected_files() -> dict[Path, str]:
         ROCK_RAIDERS_MATERIAL: material_texture_matrix_text(
             rock_raiders_contracts["assets"], assets, rock_raiders_contracts["sharedMaterialPlan"]
         ),
+        ASTRONAUTS_CONSTRUCTION: semantic_construction_matrix_text(
+            astronauts_contracts["assets"], assets
+        ),
+        ASTRONAUTS_MOTION: motion_socket_matrix_text(
+            astronauts_contracts["assets"], assets
+        ),
+        ASTRONAUTS_MATERIAL: material_texture_matrix_text(
+            astronauts_contracts["assets"], assets, astronauts_contracts["sharedMaterialPlan"]
+        ),
     }
     for asset in manifest["assets"]:
         result[OUTPUT / slug(asset["stableId"])] = packet_text(
@@ -642,14 +660,14 @@ def main() -> None:
             for failure in failures:
                 print(f"- {failure}", file=sys.stderr)
             raise SystemExit(1)
-        print("M8.5 SUPER SCOUT PACKETS: PASS packets=66 matrices=10 contracts=16 state=HOLD")
+        print("M8.5 SUPER SCOUT PACKETS: PASS packets=66 matrices=13 contracts=37 state=HOLD")
         return
 
     OUTPUT.mkdir(parents=True, exist_ok=True)
     for path, content in expected.items():
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(content, encoding="utf-8")
-    print("M8.5 SUPER SCOUT PACKETS: GENERATED packets=66 matrices=10 contracts=16 state=HOLD")
+    print("M8.5 SUPER SCOUT PACKETS: GENERATED packets=66 matrices=13 contracts=37 state=HOLD")
 
 
 if __name__ == "__main__":

@@ -177,7 +177,7 @@ Their machines remain mining and engineering equipment first.
 
 **MOVEMENT:** Compact ground machine.
 
-**ATTACK / TOOL BEHAVIOR:** Forward mining drill requires very short range. Effective against rock, rubble, and structures; poor against mobile units.
+**ATTACK / TOOL BEHAVIOR:** Two small forward ice saws require very short range. Together they perform the same excavation function against rock, rubble, and structures and remain poor against mobile units.
 
 **SPECIAL MECHANIC:** Primary Raider Excavation vehicle.
 
@@ -187,9 +187,9 @@ Their machines remain mining and engineering equipment first.
 
 **COUNTERPLAY:** Opponents can scout excavation, attack the Drill Craft, or prepare at the future exit.
 
-**VISUAL READ:** Small chassis dominated by an oversized forward drill.
+**VISUAL READ:** Tiny low hover chassis identified by two small mirrored forward ice saws, raised round side pods, and the exposed operator between them.
 
-**SOURCE-FIDELITY NOTES:** The source design's drill is preserved as its defining gameplay function rather than being turned into a miniature combat tank.
+**SOURCE-FIDELITY NOTES:** The source design's twin-saw tool package is preserved as its defining visual and gameplay function rather than being replaced by a generic drill or miniature combat tank.
 
 ---
 
@@ -995,7 +995,7 @@ Therefore most Alien NEW GAME CONTENT is economic and architectural rather than 
 
 **ATTACK / TOOL BEHAVIOR:** Multiple modest weapons; its value is operational support rather than raw damage.
 
-**SPECIAL MECHANIC:** Carries selected small Alien craft and improves their ability to sustain Surge operations near the Mothership.
+**SPECIAL MECHANIC:** Carries selected small Alien craft and improves their ability to sustain Surge operations near the Mothership. Its integrated sections may unfold for launch, reinforcement, and Charge-support presentation, but the Mothership remains one selectable unit.
 
 **STRENGTHS:** Extends Alien pressure far from base infrastructure.
 
@@ -1003,7 +1003,7 @@ Therefore most Alien NEW GAME CONTENT is economic and architectural rather than 
 
 **COUNTERPLAY:** Force it away from the fight or destroy its escort.
 
-**VISUAL READ:** Very large black/lime multi-part alien craft with detachable subcraft language.
+**VISUAL READ:** One very large black/lime multi-part alien craft whose integrated hull sections open and unfold around visible internal craft bays.
 
 **SOURCE-FIDELITY NOTES:** Retains the official flagship role without becoming an unstoppable capital ship.
 

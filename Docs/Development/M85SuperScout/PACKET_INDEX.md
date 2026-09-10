@@ -20,27 +20,27 @@ This generated index covers every canonical buildable unit and infrastructure en
 | [Crystal Vault](Packets/building_rock_raiders_crystal_vault.md) | `building.rock_raiders.crystal_vault` | RockRaiders | Infrastructure | Large | FACTION_CONTRACT_DRAFT / HOLD |
 | [Crusher Barrier](Packets/building_rock_raiders_crusher_barrier.md) | `building.rock_raiders.crusher_barrier` | RockRaiders | Infrastructure | Small | FACTION_CONTRACT_DRAFT / HOLD |
 | [Cutter Mast](Packets/building_rock_raiders_cutter_mast.md) | `building.rock_raiders.cutter_mast` | RockRaiders | Infrastructure | Small | FACTION_CONTRACT_DRAFT / HOLD |
-| [Expedition Crew](Packets/unit_astronauts_expedition_crew.md) | `unit.astronauts.expedition_crew` | Astronauts | Unit | Tiny | IDENTITY_BASELINE / HOLD |
-| [Rover](Packets/unit_astronauts_rover.md) | `unit.astronauts.rover` | Astronauts | Unit | Small | IDENTITY_BASELINE / HOLD |
-| [T3-Trike](Packets/unit_astronauts_t3_trike.md) | `unit.astronauts.t3_trike` | Astronauts | Unit | Medium | IDENTITY_BASELINE / HOLD |
-| [Mono Jet](Packets/unit_astronauts_mono_jet.md) | `unit.astronauts.mono_jet` | Astronauts | Unit | Small | IDENTITY_BASELINE / HOLD |
-| [Solar Explorer](Packets/unit_astronauts_solar_explorer.md) | `unit.astronauts.solar_explorer` | Astronauts | Unit | Large | IDENTITY_BASELINE / HOLD |
-| [Mission Fighter](Packets/unit_astronauts_mission_fighter.md) | `unit.astronauts.mission_fighter` | Astronauts | Unit | Small | IDENTITY_BASELINE / HOLD |
-| [MX-41 Switch Fighter](Packets/unit_astronauts_mx41_switch_fighter.md) | `unit.astronauts.mx41_switch_fighter` | Astronauts | Unit | Medium | IDENTITY_BASELINE / HOLD |
-| [Mobile Mining Platform](Packets/unit_astronauts_mobile_mining_platform.md) | `unit.astronauts.mobile_mining_platform` | Astronauts | Unit | Large | IDENTITY_BASELINE / HOLD |
-| [MX-71 Recon Dropship](Packets/unit_astronauts_mx71_recon_dropship.md) | `unit.astronauts.mx71_recon_dropship` | Astronauts | Unit | Large | IDENTITY_BASELINE / HOLD |
-| [MT-51 Claw-Tank](Packets/unit_astronauts_mt51_claw_tank.md) | `unit.astronauts.mt51_claw_tank` | Astronauts | Unit | Large | IDENTITY_BASELINE / HOLD |
-| [MT-101 Armored Drilling Unit](Packets/unit_astronauts_mt101_armored_drilling_unit.md) | `unit.astronauts.mt101_armored_drilling_unit` | Astronauts | Unit | Large | IDENTITY_BASELINE / HOLD |
-| [MT-201 Ultra-Drill Walker](Packets/unit_astronauts_mt201_ultra_drill_walker.md) | `unit.astronauts.mt201_ultra_drill_walker` | Astronauts | Unit | Huge | IDENTITY_BASELINE / HOLD |
-| [MX-81 Hypersonic Operations Aircraft](Packets/unit_astronauts_mx81_operations_aircraft.md) | `unit.astronauts.mx81_operations_aircraft` | Astronauts | Unit | Huge | IDENTITY_BASELINE / HOLD |
-| [MB-01 Eagle Command Base](Packets/building_ast_mb01_eagle_command_base.md) | `building.ast.mb01_eagle_command_base` | Astronauts | Infrastructure | Huge | IDENTITY_BASELINE / HOLD |
-| [Field Systems Garage](Packets/building_ast_field_systems_garage.md) | `building.ast.field_systems_garage` | Astronauts | Infrastructure | Huge | IDENTITY_BASELINE / HOLD |
-| [Mission Vehicle Bay](Packets/building_ast_mission_vehicle_bay.md) | `building.ast.mission_vehicle_bay` | Astronauts | Infrastructure | Huge | IDENTITY_BASELINE / HOLD |
-| [Flight Operations Pad](Packets/building_ast_flight_operations_pad.md) | `building.ast.flight_operations_pad` | Astronauts | Infrastructure | Huge | IDENTITY_BASELINE / HOLD |
-| [Service & Refit Hub](Packets/building_ast_service_refit_hub.md) | `building.ast.service_refit_hub` | Astronauts | Infrastructure | Huge | IDENTITY_BASELINE / HOLD |
-| [Solar Energy Array](Packets/building_ast_solar_energy_array.md) | `building.ast.solar_energy_array` | Astronauts | Infrastructure | Large | IDENTITY_BASELINE / HOLD |
-| [Frontier Extraction Station](Packets/building_ast_frontier_extraction_station.md) | `building.ast.frontier_extraction_station` | Astronauts | Infrastructure | Large | IDENTITY_BASELINE / HOLD |
-| [Modular Sentinel Defense](Packets/building_ast_modular_sentinel_defense.md) | `building.ast.modular_sentinel_defense` | Astronauts | Infrastructure | Small | IDENTITY_BASELINE / HOLD |
+| [Expedition Crew](Packets/unit_astronauts_expedition_crew.md) | `unit.astronauts.expedition_crew` | Astronauts | Unit | Tiny | FACTION_CONTRACT_DRAFT / HOLD |
+| [Rover](Packets/unit_astronauts_rover.md) | `unit.astronauts.rover` | Astronauts | Unit | Small | FACTION_CONTRACT_DRAFT / HOLD |
+| [T3-Trike](Packets/unit_astronauts_t3_trike.md) | `unit.astronauts.t3_trike` | Astronauts | Unit | Medium | FACTION_CONTRACT_DRAFT / HOLD |
+| [Mono Jet](Packets/unit_astronauts_mono_jet.md) | `unit.astronauts.mono_jet` | Astronauts | Unit | Small | FACTION_CONTRACT_DRAFT / HOLD |
+| [Solar Explorer](Packets/unit_astronauts_solar_explorer.md) | `unit.astronauts.solar_explorer` | Astronauts | Unit | Large | FACTION_CONTRACT_DRAFT / HOLD |
+| [Mission Fighter](Packets/unit_astronauts_mission_fighter.md) | `unit.astronauts.mission_fighter` | Astronauts | Unit | Small | FACTION_CONTRACT_DRAFT / HOLD |
+| [MX-41 Switch Fighter](Packets/unit_astronauts_mx41_switch_fighter.md) | `unit.astronauts.mx41_switch_fighter` | Astronauts | Unit | Medium | FACTION_CONTRACT_DRAFT / HOLD |
+| [Mobile Mining Platform](Packets/unit_astronauts_mobile_mining_platform.md) | `unit.astronauts.mobile_mining_platform` | Astronauts | Unit | Large | FACTION_CONTRACT_DRAFT / HOLD |
+| [MX-71 Recon Dropship](Packets/unit_astronauts_mx71_recon_dropship.md) | `unit.astronauts.mx71_recon_dropship` | Astronauts | Unit | Large | FACTION_CONTRACT_DRAFT / HOLD |
+| [MT-51 Claw-Tank](Packets/unit_astronauts_mt51_claw_tank.md) | `unit.astronauts.mt51_claw_tank` | Astronauts | Unit | Large | FACTION_CONTRACT_DRAFT / HOLD |
+| [MT-101 Armored Drilling Unit](Packets/unit_astronauts_mt101_armored_drilling_unit.md) | `unit.astronauts.mt101_armored_drilling_unit` | Astronauts | Unit | Large | FACTION_CONTRACT_DRAFT / HOLD |
+| [MT-201 Ultra-Drill Walker](Packets/unit_astronauts_mt201_ultra_drill_walker.md) | `unit.astronauts.mt201_ultra_drill_walker` | Astronauts | Unit | Huge | FACTION_CONTRACT_DRAFT / HOLD |
+| [MX-81 Hypersonic Operations Aircraft](Packets/unit_astronauts_mx81_operations_aircraft.md) | `unit.astronauts.mx81_operations_aircraft` | Astronauts | Unit | Huge | FACTION_CONTRACT_DRAFT / HOLD |
+| [MB-01 Eagle Command Base](Packets/building_ast_mb01_eagle_command_base.md) | `building.ast.mb01_eagle_command_base` | Astronauts | Infrastructure | Huge | FACTION_CONTRACT_DRAFT / HOLD |
+| [Field Systems Garage](Packets/building_ast_field_systems_garage.md) | `building.ast.field_systems_garage` | Astronauts | Infrastructure | Huge | FACTION_CONTRACT_DRAFT / HOLD |
+| [Mission Vehicle Bay](Packets/building_ast_mission_vehicle_bay.md) | `building.ast.mission_vehicle_bay` | Astronauts | Infrastructure | Huge | FACTION_CONTRACT_DRAFT / HOLD |
+| [Flight Operations Pad](Packets/building_ast_flight_operations_pad.md) | `building.ast.flight_operations_pad` | Astronauts | Infrastructure | Huge | FACTION_CONTRACT_DRAFT / HOLD |
+| [Service & Refit Hub](Packets/building_ast_service_refit_hub.md) | `building.ast.service_refit_hub` | Astronauts | Infrastructure | Huge | FACTION_CONTRACT_DRAFT / HOLD |
+| [Solar Energy Array](Packets/building_ast_solar_energy_array.md) | `building.ast.solar_energy_array` | Astronauts | Infrastructure | Large | FACTION_CONTRACT_DRAFT / HOLD |
+| [Frontier Extraction Station](Packets/building_ast_frontier_extraction_station.md) | `building.ast.frontier_extraction_station` | Astronauts | Infrastructure | Large | FACTION_CONTRACT_DRAFT / HOLD |
+| [Modular Sentinel Defense](Packets/building_ast_modular_sentinel_defense.md) | `building.ast.modular_sentinel_defense` | Astronauts | Infrastructure | Small | FACTION_CONTRACT_DRAFT / HOLD |
 | [ETX Servitor](Packets/unit_aliens_etx_servitor.md) | `unit.aliens.etx_servitor` | Aliens | Unit | Tiny | IDENTITY_BASELINE / HOLD |
 | [Alien Jet](Packets/unit_aliens_alien_jet.md) | `unit.aliens.alien_jet` | Aliens | Unit | Small | IDENTITY_BASELINE / HOLD |
 | [Razor Skimmer](Packets/unit_aliens_razor_skimmer.md) | `unit.aliens.razor_skimmer` | Aliens | Unit | Small | IDENTITY_BASELINE / HOLD |

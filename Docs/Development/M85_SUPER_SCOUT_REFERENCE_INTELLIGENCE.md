@@ -66,8 +66,11 @@ Before assigning it to the roster, audit the complete inventory and every
 separately built model: detachable craft, repeated modules, minifigures,
 equipment, resources, alternate builds and opposing-faction contents may each
 support different assets. The 7691 Mothership, for example, contains a carrier,
-a long front craft, two seated side craft and two disc-like jetpack modules;
-those parts must be recorded separately before deciding their roster use.
+a long front craft, two seated side craft and two disc-like jetpack modules.
+Those parts must be recorded separately, but the approved production mapping
+keeps them inside one selectable Mothership whose integrated sections open and
+unfold around its internal bays. Separately built source modules are evidence,
+not an automatic instruction to split the game unit.
 
 Source use follows these boundaries:
 

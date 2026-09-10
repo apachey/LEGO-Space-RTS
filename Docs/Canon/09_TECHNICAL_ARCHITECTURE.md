@@ -5168,7 +5168,7 @@ The following matrix establishes an implementation path for all 35 buildable uni
 |---|---|---|---|---|---|
 | Rock Raider Crew | Foot / Tiny | Weak tool | Harvest/build/repair | Minifigure rigid animation | worker economy |
 | Hover Scout | Hover / Small | Minimal | Detection/geology | hover + scanner | excavation reveal |
-| Drill Craft | Ground / Small | Drill utility | Excavate | drill/contact | route opening |
+| Drill Craft | Ground / Small | Twin-saw utility | Excavate | paired saw/contact | route opening |
 | Rapid Rider | Skimmer / Small | Essentially none | 4 Personnel transport | twin hull | load/unload |
 | Loader Dozer | Wheeled / Medium | Scoop/Cutter | rubble utility | scoop/saw | contact/cutter upgrade |
 | Granite Grinder | Walker / Medium | Breach drill | sustained drill ramp | leg/drill brace | approach/ramp |

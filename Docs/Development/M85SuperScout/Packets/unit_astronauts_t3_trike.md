@@ -2,7 +2,7 @@
 
 **Stable ID:** `unit.astronauts.t3_trike`
 
-**Packet state:** `IDENTITY_BASELINE — HOLD FOR MULTI-ANGLE EVIDENCE`
+**Packet state:** `FACTION_CONTRACT_DRAFT — HOLD FOR SILHOUETTE/ROSTER/DIRECTOR REVIEW`
 
 **This is not a design approval or production-model authorization.**
 
@@ -14,7 +14,7 @@
 - Authoritative footprint: `Medium`
 - Source classification: `OFFICIAL-ADAPTED`
 - Approved source sets/motifs: 7312, 7694
-- Current confidence: verified canonical identity; construction confidence remains bounded by the source verification shown below.
+- Current confidence: verified canonical identity and faction-internal construction/motion/material draft; source-bounded decisions remain explicit below.
 
 Authoritative references:
 
@@ -23,7 +23,7 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: Source-view coverage and construction-critical page ranges are recorded for the audited sources below. Asset-specific adaptation boundaries still must be resolved before this packet can leave HOLD.
+Open question: The faction-internal construction, motion, socket and material draft is recorded below. Its unresolved decisions and the complete-roster silhouette/director gates must be cleared before this packet can leave HOLD.
 
 ## B. Reference board
 
@@ -87,45 +87,69 @@ Non-removable identity anchors:
 
 ## D. Construction contract
 
-- Hero geometry must preserve every recognition anchor above.
-- Support geometry must explain how hero masses connect, carry load and articulate.
-- Micro geometry may enrich close view but may not become required for recognition.
-- Exact chassis/load path, repeated modules, mounting logic, scale ratios and approved adaptations: `HOLD — SOURCE DECOMPOSITION REQUIRED`.
+- Contract state: `CANON_DERIVED_ADAPTATION`. This is an internally checked draft, not game-director approval.
+- Semantic part map:
+  - One-front/two-rear wheel triangle — preserves the unmistakable trike plan — SOURCE_VERIFIED.
+  - Long articulated wheel arms — explain rough-terrain suspension — SOURCE_VERIFIED.
+  - Replaceable center mission bay — carries Escort or Survey equipment — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.
+- Structural load path: The narrow central spine transfers the mission-bay load into the front fork and two long rear wheel arms.
+- Repeated modules / connection grammar: Three wheel modules, exposed suspension arms and one standardized center payload interface.
+- Source-faithful versus adapted boundary: 7312 and 7694 remain appearance/equipment members of one unit family; refit swaps the center module rather than the chassis.
 
 ## E. Material and texture contract
 
-- Silhouette, openings, major panel breaks, moving joints and LEGO connection logic remain geometry.
-- Surface channels may carry controlled color masks, roughness, emission, decals and non-structural relief only.
-- Required reusable and bespoke texture sets, resolution, tiling, texel density, LOD fallback and import settings: `HOLD — TEXTURE-NEEDS AUDIT REQUIRED`.
-- Baked lighting, fake silhouette structure and illegible micro-noise are prohibited.
+- Geometry must carry:
+  - three-wheel triangle
+  - long suspension arms
+  - center mission module
+- Accepted master-material roles: `Body`, `Accent`, `Tool`, `Rubber`, `Glass`, `Signal`, `Neutral`.
+- Reusable texture requirements:
+  - `ast_field_frame_surface` — Restrained molded and brushed variation for rugged blue-gray Field Systems frames without faking structural seams. Channels: Tangent-space normal and linear roughness; body color stays parametric. Resolution: 2048x2048; texel density: 256 px/m at Close; tiling: Shared model-space 3 m repeat across connected frames.; LOD fallback: Half strength at Combat; master roughness only at Strategic. Provenance/state: Project-authored procedural source informed by verified Field Systems surfaces; human review required. `SPECIFIED_NOT_AUTHORED`.
+  - `ast_mission_shell_surface` — Very subtle clean-shell roughness variation for white-orange Mission Systems hulls without weathering them into Raider machinery. Channels: Tangent-space normal and linear roughness; no photographic albedo or baked highlights. Resolution: 2048x2048; texel density: 256 px/m at Close; tiling: Shared model-space 4 m repeat with continuous phase across large shells.; LOD fallback: Normal removed at Strategic; clean master-material blocks remain. Provenance/state: Project-authored procedural source informed by verified Mission Systems panels; human review required. `SPECIFIED_NOT_AUTHORED`.
+  - `ast_service_insignia_decals` — Expedition insignia, docking marks, module IDs, service arrows and broad safety bands. Channels: sRGB RGBA decal atlas; alpha is coverage only. Resolution: 1024x1024; texel density: Minimum 256 px/m for Close/Combat readable marks; tiling: Atlas placement; only broad authored bands may repeat.; LOD fallback: Keep insignia and large docking bands at Combat; remove labels at Strategic. Provenance/state: Project-authored vector master exported to raster; human review required. `SPECIFIED_NOT_AUTHORED`.
+  - `ast_console_signal_atlas` — Navigation, scan, refit, extraction and flight-operation displays plus bounded status lights. Channels: sRGB color/alpha with separate linear emission mask. Resolution: 1024x1024; texel density: Screen-space atlas; not world-density bound.; tiling: Non-tiling stable panel IDs shared by Field and Mission variants.; LOD fallback: Replace panels with one bounded Signal or Lamp block at Strategic. Provenance/state: Project-authored vector/procedural source; human review required. `SPECIFIED_NOT_AUTHORED`.
+- Bespoke texture requirements: none required in this faction draft.
+- Baked lighting, fake silhouette structure, per-part texture phase resets and illegible micro-noise remain prohibited.
 
 ## F. State and animation contract
 
-- Applicable idle, locomotion/operation, work, attack, production, repair, transform/deploy, disabled, damage and destruction beats: `HOLD — MECHANISM EVIDENCE REQUIRED`.
-- Every moving assembly must receive a named pivot, parent, axis/path, rest/extreme poses and authoritative presentation driver.
-- Animation may communicate gameplay state but never decide gameplay timing.
+- Locomotion / operation: Rough-terrain wheeled travel with large visible suspension arcs.
+- Planted/contact rule: All three wheels seek terrain contact; center bay remains above the suspension plane.
+
+| Pivot | Parent | Axis/path and rest-to-extreme motion | Presentation driver |
+|---|---|---|---|
+| `Pivot_WheelFront` | Asset_T3Trike | roll plus steering yaw | movement and steering |
+| `Pivot_SuspensionRearLeft` | Asset_T3Trike | bounded vertical arm travel | terrain response |
+| `Pivot_SuspensionRearRight` | Asset_T3Trike | mirrored bounded vertical arm travel | terrain response |
+
+- Required beats:
+  - Idle suspension settle.
+  - Travel emphasizes three-wheel rhythm.
+  - Escort or Survey module operates from the center bay.
+  - Refit removes and seats the replacement module; damage never changes gameplay state by animation.
+- Animation consumes authoritative state and never decides gameplay timing or results.
 
 ## G. Presentation hookups
 
-- `Socket_Selection` and `Socket_Health` are mandatory.
-- Tool, weapon, projectile, VFX, lamp and audio sockets follow only from verified function.
-- Cargo, passenger, service, production-exit or network sockets apply where the canonical role requires them.
-- Identification Tile, icon silhouette, portrait camera and reduced-presentation fallback: `HOLD — PRESENTATION AUDIT REQUIRED`.
+- Required presentation sockets: `Socket_Selection`, `Socket_Health`, `Socket_Module`, `Socket_Weapon`, `Socket_SurveyPulse`, `Socket_AudioDrive`.
+- These sockets are presentation references only and never own targeting, collision, movement, transport or production truth.
+- Identification Tile placement, icon silhouette, portrait camera and reduced-presentation fallback remain `HOLD — PRESENTATION AUDIT REQUIRED`.
 
 ## H. Insight and decision ledger
 
-- Verified fact: stable identity, faction, role, footprint, source classification and mapped source family.
-- Canon-derived interpretation: silhouette thesis and identity anchors above.
-- Unknown: exact multi-angle construction, articulation, material ratios, texture inventory and confusion mitigation until the remaining audits are complete.
-- Consequential contradictions: none recorded at identity-baseline stage.
+- Verified fact: stable identity, source evidence and the source-supported assemblies cited above.
+- Canon-derived interpretation: gameplay function, adaptation boundary, contact behavior and presentation drivers are explicitly labeled in the contract.
+- Remaining source/design decisions:
+  - Final 7312-versus-7694 body weighting waits for the family silhouette review.
+- Cross-roster silhouette and game-director review remain open; this contract does not authorize production modeling.
 
 ## I. Build handoff
 
-1. Verify and cite the complete multi-angle source board.
-2. Decompose primary masses and negative spaces from orthogonal evidence.
-3. Resolve LEGO load path, connection grammar and moving mechanism.
-4. Complete material/texture and state/animation contracts.
-5. Produce 24/44/72-cell black silhouettes and run the cross-roster confusion audit.
+1. Retain the audited evidence and every explicit adaptation boundary.
+2. Greybox hero masses, openings and structural load path from the semantic map.
+3. Validate named pivots, contacts and sockets in the real gameplay camera.
+4. Author only the specified reusable textures after human material review.
+5. Produce 24/44/72-cell black silhouettes and run the full cross-roster confusion audit.
 
 **State:** `HOLD`
 

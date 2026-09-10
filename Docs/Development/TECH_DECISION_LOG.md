@@ -1420,7 +1420,10 @@ direction, and it does not authorize T083/T085 production modeling.
   separately built model, detachable module, minifigure, equipment item,
   resource and opposing-faction build is recorded independently. Set 7691 is
   the reference case: its carrier, long front craft, two seated side craft and
-  two disc-like jetpack modules may support different roster assets.
+  two disc-like jetpack modules must all be understood before production
+  mapping. The later director clarification below keeps them within one
+  unfolding Mothership rather than assigning them automatically to separate
+  roster assets.
 - Official games may supply method precedents when no set directly matches a
   required asset. The CrystAlien Conflict Training Camp's 2-by-2 repetition of
   Dropship-like nose modules demonstrates recomposition, but the project must
@@ -1476,3 +1479,44 @@ public data format or dependency.
 
 This changes no gameplay, deterministic simulation, production rendering,
 public data format or dependency. Normal player/editor shutdown is unchanged.
+
+## 2026-09-10 — Preserve 1277 twin saws and one unfolding Mothership
+
+- The game director explicitly replaced the Drill Craft's prior single
+  oversized-drill visual canon with the source model's two small mirrored ice
+  saws. The low hover sled, paired side pods and exposed operator remain the
+  other defining masses. Excavation role, contact range, damage, timing, cost
+  and counterplay are unchanged.
+- The 7691 Mothership remains one selectable carrier/support unit. Its main
+  hull, front craft, side craft and jetpack modules are analyzed separately so
+  their connections are understood, but production must present them as
+  integrated sections/bay contents that can open and unfold with the flagship.
+- Producing Alien units inside the Mothership is retained as a game-director
+  proposal, not a locked mechanic. Eligible roster, price, build time, capacity
+  interaction and any unfolded-state requirement need a later explicit
+  gameplay/balance decision.
+
+This is an explicit visual/source-mapping canon change. It does not change
+simulation statistics, public formats, architecture or dependencies.
+
+## 2026-09-10 — Keep Astronaut Field and Mission construction distinct
+
+- The T082 Astronaut production-contract draft covers all 13 units and eight
+  infrastructure entries with semantic parts, structural load paths, repeated
+  modules, adaptation boundaries, contacts, pivots, state beats and sockets.
+- Field Systems retain rugged exposed blue-gray frames, unusual wheels and
+  separable expedition modules. Mission Systems retain cleaner white-orange
+  shells, standardized equipment interfaces, transformation seams and visible
+  payload/service mechanisms. Shared insignia and docking interfaces unify the
+  faction without averaging the two lineages into generic white science
+  fiction.
+- Four reusable texture families are specified but not authored: Field frame
+  surface, Mission shell surface, service/insignia decals and console/signal
+  panels. Load-bearing construction, silhouette, large openings, suspension,
+  transformation seams and carried payloads remain geometry.
+- Composite buildings and the Mobile Mining Platform keep explicit unresolved
+  donor-selection reviews. The contracts do not silently approve a final
+  Frankenstein arrangement or any production model.
+
+This is preproduction implementation detail only. It changes no gameplay,
+simulation, public format, dependency or canon. All packets remain `HOLD`.

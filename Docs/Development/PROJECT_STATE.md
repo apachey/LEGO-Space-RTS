@@ -64,10 +64,9 @@ intelligence is now in progress: its exact 66-asset identity/source baseline and
 all four faction source-page audits are complete. Forty-three faction-scoped
 source records are visually audited across 48 official books plus one archival
 instruction scan; only Martian sources 1195 and 3750 remain evidence gaps. The
-16 Rock Raiders assets now also have
-faction-internal semantic-construction, motion/socket and material/texture-needs
-drafts; the other three faction contracts and the cross-roster review corpus
-remain open. A post-T069
+16 Rock Raiders assets and 21 Astronaut assets now also have faction-internal
+semantic-construction, motion/socket and material/texture-needs drafts; Alien
+and Martian contracts and the cross-roster review corpus remain open. A post-T069
 quality revision makes outline/halo independent from
 the style post-pass, hardens profile paste, bounds VFX event memory and avoids
 unrelated live material rebuilds. HUD and health visuals remain excluded from the world Look Lab. The
@@ -652,15 +651,24 @@ live; the current schema-9 copy/paste retains the complete experiment.
   semantic/load-path drafts, named motion pivots and contacts, presentation
   sockets and four fully specified reusable texture families for all 16 faction
   assets. Archival evidence now grounds Crew as five visible character/equipment
-  variants and Drill Craft as a low hover sled whose canonical single drill is
-  an explicit adaptation of 1277's twin saws. All 16 packets remain HOLD for the
-  complete-roster silhouette and game-director gates.
+  variants. By explicit game-director canon decision, Drill Craft preserves
+  1277's low hover sled, paired side pods and two small forward ice saws instead
+  of replacing them with one oversized drill. All 16 packets remain HOLD for
+  the complete-roster silhouette and game-director gates.
 - The T082 source-analysis policy now requires a whole-set audit and separately
   records figures, equipment and detachable modules before roster mapping. It
   also requires traced connections plus a completed-model view before topology
   claims, correcting the earlier false four-spoke reading of the bipedal 7302
-  Worker Robot. Any composed design must disclose exact donors, new work and
-  rejected alternatives before director review.
+  Worker Robot. The 7691 Mothership is explicitly one selectable unfolding
+  carrier; its separately built source modules are internal/bay evidence, not
+  automatic separate roster assignments. Any composed design must disclose
+  exact donors, new work and rejected alternatives before director review.
+- The Astronaut contract pass covers all 13 units and eight infrastructure
+  entries. It keeps rugged Field Systems and clean modular Mission Systems
+  visibly distinct while sharing insignia and service interfaces. All source
+  transformations, carried payloads, refit modules, production exits, motion
+  pivots, state beats and presentation sockets are explicit, with four
+  specified-but-not-authored reusable texture families.
 - All 66 A–I packet files, the identity/source matrix and a 31-pair confusion
   register regenerate deterministically. Every confusion pair has three visible
   differentiation requirements, and every packet is visibly `HOLD`, so this
@@ -671,8 +679,8 @@ live; the current schema-9 copy/paste retains the complete experiment.
   coverage and the three-to-seven silhouette-anchor contract, and rejects stale
   generated packets.
 - T082 remains `BLOCKING_NOW` for T083/T085. All faction source-page audits are
-  complete and the Rock Raiders production-contract draft is complete;
-  Astronaut, Alien and Martian semantic construction/motion/material drafts,
+  complete and the Rock Raiders and Astronaut production-contract drafts are
+  complete; Alien and Martian semantic construction/motion/material drafts,
   complete cross-roster silhouettes/confusion audits and explicit game-director
   review remain required. Current detail is tracked in
   `Docs/Development/M85_SUPER_SCOUT_PROGRESS.md`.
@@ -699,9 +707,10 @@ step and must be announced when new visual evidence is actually required.
 
 ## Verification state
 
-The corrected T082 whole-set/source-decomposition pass and explicit crash-safe
-Godot smoke path passed `./tools/verify.sh --full` with zero blocking failures
-at `Artifacts/Verification/20260910T053640Z-full-summary.txt`: all 317 tests,
+The T082 Drill Craft/Mothership canon clarification, Astronaut production-
+contract pass and explicit crash-safe Godot smoke path passed
+`./tools/verify.sh --full` with zero blocking failures at
+`Artifacts/Verification/20260910T064215Z-full-summary.txt`: all 317 tests,
 the complete 66-asset roster and faction-bound evidence validator,
 deterministic packet generation, the 24-mover gate, compiled content, retained
 M6 networking, T081 round trip, retained M7 presentation gates and a fresh
@@ -711,9 +720,10 @@ archival Rock Raiders audits with zero remaining Rock Raiders evidence gaps,
 all 18 Astronaut sources audited across 23 official PDF books, all eight Alien
 sources audited across ten official PDF books, all eight available Martian
 sources audited across eight official PDF books with two Martian archival gaps,
-all 16 Rock Raiders assets with structured semantic/motion/material contracts
-and no provisional contract, and 31 initial confusion pairs with no roster
-drift or cross-faction evidence leakage. It does not claim T082 acceptance.
+all 16 Rock Raiders and 21 Astronaut assets with structured semantic/motion/
+material contracts and no provisional contract, 13 generated comparison
+matrices, and 31 initial confusion pairs with no roster drift or cross-faction
+evidence leakage. It does not claim T082 acceptance.
 Stress60 remained the expected 2/60 `BLOCKING_LATER` M9 diagnostic.
 
 Every routine Godot smoke and the exported app emitted the explicit immediate
@@ -948,8 +958,8 @@ blocking only when M9 must prove its stable-large-battle exit.
 
 ## Next approved action
 
-1. Continue T082 by applying the completed Rock Raiders semantic construction,
-   motion/socket and texture-needs contract pass to Astronauts, Aliens and
+1. Continue T082 by applying the completed Rock Raiders/Astronaut semantic
+   construction, motion/socket and texture-needs contract pass to Aliens and
    Martians, then produce the cross-roster silhouette/confusion audit. Retain
    the two explicit Martian archival gaps unless usable evidence appears, and
    escalate any gap that blocks a safe production decision.

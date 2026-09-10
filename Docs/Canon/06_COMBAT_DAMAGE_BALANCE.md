@@ -2025,7 +2025,7 @@ All costs below are inherited from Phase 04.
 |---|---|---|---|---:|---|---|---|---|---|---|
 | Crew | G | Portable Mining Tool | 6 General /1.2 /5.0 | 0.8 | Contact | Self-defense | — | 7; 10 in Worksite | Rapid/Tunnel | Economy unit; flee normal combat |
 | Hover Scout | G | Survey Pulse | 6 General /1.5 /4.0 | 3.0 | Pulse 12 | Threat only | Passive survey | Service Bay | Tunnel | Information; fragile |
-| Drill Craft | G | Mining Drill | 12 Siege /1.25 /9.6 | 0.85 | Contact | Terrain/structure | Excavation orders | Service Bay | Tunnel | Engineering first; combat weak |
+| Drill Craft | G | Twin Ice Saws | 12 Siege /1.25 /9.6 | 0.85 | Contact | Terrain/structure | Excavation orders | Service Bay | Tunnel | Engineering first; combat weak |
 | Rapid Rider | — | **NO NORMAL COMBAT WEAPON** | — | — | — | — | Load/unload | Service Bay | — | Personnel transport |
 | Loader Dozer | G | Scoop Ram / Cutter | 18 Gen/1.35/13.3 → 22 Light/1.15/19.1 | 0.9 | Contact | Personnel/Light | Cutter Package | Service Bay | Tunnel | Durable screen; kitable |
 | Granite Grinder | G | Granite Drill | 34 Breach/1.5/22.7; 28.3 ramped | 1.0 | Contact | Heavy | 2.5s drill ramp | Service Bay | Tunnel | Heavy specialist |
@@ -3214,7 +3214,7 @@ Armor:
 |---|---|---|---:|---|---:|---:|---:|---:|---|---|
 | RR_TOOL | Crew | G |6|General|1.20|5.00|0.8|0|Contact|—|
 | RR_SCOUT | Hover Scout |G|6|General|1.50|4.00|3.0|0|Pulse12|—|
-| RR_DRILL_LIGHT | Drill Craft |G|12|Siege|1.25|9.60|0.85|0|Contact|+100% authored geology |
+| RR_DRILL_LIGHT | Drill Craft |G|12|Siege|1.25|9.60|0.85|0|Contact|Twin saw presentation; +100% authored geology |
 | RR_SCOOP | Loader |G|18|General|1.35|13.33|0.9|0|Contact|baseline |
 | RR_CUTTER | Loader upgrade |G|22|Light|1.15|19.13|0.9|0|Contact|replaces Scoop |
 | RR_GRANITE | Grinder |G|34|Breach|1.50|22.67|1.0|0|Contact|+25% after2.5s |
