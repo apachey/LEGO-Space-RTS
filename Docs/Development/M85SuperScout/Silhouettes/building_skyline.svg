@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1760" height="1890" viewBox="0 0 1760 1890">
+<title>T082 building skyline audit</title>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<style>text{font-family:Arial,Helvetica,sans-serif}.title{font-size:28px;font-weight:700;fill:#141518}.sub{font-size:14px;fill:#5e626a}.code{font-size:14px;font-weight:700;letter-spacing:1px;fill:#34373d}.name{font-size:12px;font-weight:700;fill:#17181b}.meta{font-size:10px;fill:#656a72}.label{font-size:11px;font-weight:700;fill:#3d4148}</style>
+<text x="40" y="45" class="title">T082 building skyline audit</text>
+<text x="40" y="72" class="sub">Side elevation at shared footprint scale. Entrances and channels remain white negative space.</text>
+<rect x="40" y="95" width="390" height="190" rx="8" fill="none" stroke="#d9dbe0"/>
+<text x="54" y="118" class="name">Rock Raiders HQ</text>
+<text x="416" y="118" text-anchor="end" class="meta">Rock Raiders · Huge</text>
+<g transform="translate(235 197) scale(1.2 1.03636)"><polygon points="-42,31 -45,-22 -29,-39 25,-42 43,-24 39,34 10,43 -28,40" fill="#050505"/><rect x="-45" y="25" width="31" height="13" rx="3" fill="#050505"/><rect x="15" y="-39" width="25" height="14" rx="3" fill="#050505"/><line x1="-28" y1="25" x2="26" y2="-25" stroke="#050505" stroke-width="7" stroke-linecap="round"/><line x1="11" y1="24" x2="31" y2="-37" stroke="#050505" stroke-width="7" stroke-linecap="round"/><line x1="31" y1="-37" x2="47" y2="-14" stroke="#050505" stroke-width="6" stroke-linecap="round"/><circle cx="47" cy="-10" r="5" fill="#050505"/><rect x="-10" y="-44" width="20" height="36" rx="4" fill="#ffffff"/><rect x="-36" y="12" width="72" height="17" rx="5" fill="#ffffff"/></g>
+<line x1="70" y1="257" x2="400" y2="257" stroke="#8f939b"/>
+<rect x="460" y="95" width="390" height="190" rx="8" fill="none" stroke="#d9dbe0"/>
+<text x="474" y="118" class="name">Ore Processing Plant</text>
+<text x="836" y="118" text-anchor="end" class="meta">Rock Raiders · Large</text>
+<g transform="translate(655 197) scale(0.81 0.414)"><polygon points="-42,31 -45,-22 -29,-39 25,-42 43,-24 39,34 10,43 -28,40" fill="#050505"/><rect x="-42" y="18" width="84" height="13" rx="4" fill="#050505"/><polygon points="-45,12 -31,5 -31,38 -45,31" fill="#050505"/><rect x="-19" y="-42" width="38" height="18" rx="4" fill="#050505"/><rect x="-25" y="-18" width="50" height="18" rx="4" fill="#050505"/><rect x="-31" y="6" width="62" height="21" rx="4" fill="#050505"/><rect x="-8" y="-43" width="16" height="84" rx="3" fill="#ffffff"/></g>
+<line x1="490" y1="257" x2="820" y2="257" stroke="#8f939b"/>
+<rect x="880" y="95" width="390" height="190" rx="8" fill="none" stroke="#d9dbe0"/>
+<text x="894" y="118" class="name">Power Station</text>
+<text x="1256" y="118" text-anchor="end" class="meta">Rock Raiders · Large</text>
+<g transform="translate(1075 197) scale(0.81 0.486)"><polygon points="-42,31 -45,-22 -29,-39 25,-42 43,-24 39,34 10,43 -28,40" fill="#050505"/><rect x="-40" y="-31" width="10" height="65" rx="3" fill="#050505"/><rect x="30" y="-31" width="10" height="65" rx="3" fill="#050505"/><line x1="-30" y1="-25" x2="30" y2="-9" stroke="#050505" stroke-width="7" stroke-linecap="round"/><rect x="-26" y="-27" width="52" height="38" rx="5" fill="#050505"/><rect x="-20" y="-44" width="9" height="20" rx="4" fill="#050505"/><rect x="11" y="-44" width="9" height="20" rx="4" fill="#050505"/><ellipse cx="0" cy="14" rx="10" ry="15" fill="#ffffff"/></g>
+<line x1="910" y1="257" x2="1240" y2="257" stroke="#8f939b"/>
+<rect x="1300" y="95" width="390" height="190" rx="8" fill="none" stroke="#d9dbe0"/>
+<text x="1314" y="118" class="name">Vehicle Service Bay</text>
+<text x="1676" y="118" text-anchor="end" class="meta">Rock Raiders · Huge</text>
+<g transform="translate(1495 197) scale(1.2 0.725581)"><polygon points="-42,31 -45,-22 -29,-39 25,-42 43,-24 39,34 10,43 -28,40" fill="#050505"/><rect x="-42" y="-35" width="7" height="73" rx="3" fill="#050505"/><rect x="35" y="-35" width="7" height="73" rx="3" fill="#050505"/><rect x="-42" y="-39" width="84" height="7" rx="3" fill="#050505"/><line x1="-38" y1="-31" x2="-12" y2="4" stroke="#050505" stroke-width="7" stroke-linecap="round"/><line x1="38" y1="-25" x2="15" y2="9" stroke="#050505" stroke-width="9" stroke-linecap="round"/><circle cx="-10" cy="7" r="6" fill="#050505"/><circle cx="14" cy="12" r="7" fill="#050505"/><rect x="-19" y="-2" width="38" height="46" rx="4" fill="#ffffff"/></g>
+<line x1="1330" y1="257" x2="1660" y2="257" stroke="#8f939b"/>
+<rect x="40" y="315" width="390" height="190" rx="8" fill="none" stroke="#d9dbe0"/>
+<text x="54" y="338" class="name">Engineering Workshop</text>
+<text x="416" y="338" text-anchor="end" class="meta">Rock Raiders · Huge</text>
+<g transform="translate(235 417) scale(1.2 0.950943)"><polygon points="-42,31 -45,-22 -29,-39 25,-42 43,-24 39,34 10,43 -28,40" fill="#050505"/><rect x="-42" y="-35" width="10" height="73" rx="3" fill="#050505"/><rect x="32" y="-35" width="10" height="73" rx="3" fill="#050505"/><rect x="-42" y="-39" width="84" height="10" rx="3" fill="#050505"/><rect x="-9" y="-48" width="18" height="63" rx="4" fill="#050505"/><polygon points="0,-58 -17,-39 17,-39" fill="#050505"/><rect x="-19" y="-2" width="38" height="46" rx="4" fill="#ffffff"/></g>
+<line x1="70" y1="477" x2="400" y2="477" stroke="#8f939b"/>
+<rect x="460" y="315" width="390" height="190" rx="8" fill="none" stroke="#d9dbe0"/>
+<text x="474" y="338" class="name">Crystal Vault</text>
+<text x="836" y="338" text-anchor="end" class="meta">Rock Raiders · Large</text>
+<g transform="translate(655 417) scale(0.81 0.54)"><polygon points="-42,31 -45,-22 -29,-39 25,-42 43,-24 39,34 10,43 -28,40" fill="#050505"/><ellipse cx="0" cy="0" rx="43" ry="39" fill="#050505"/><ellipse cx="0" cy="0" rx="27" ry="23" fill="#ffffff"/><polygon points="0,-34 18,-11 13,25 0,39 -13,25 -18,-11" fill="#050505"/><rect x="-14" y="-3" width="28" height="30" rx="5" fill="#ffffff"/></g>
+<line x1="490" y1="477" x2="820" y2="477" stroke="#8f939b"/>
+<rect x="880" y="315" width="390" height="190" rx="8" fill="none" stroke="#d9dbe0"/>
+<text x="894" y="338" class="name">Crusher Barrier</text>
+<text x="1256" y="338" text-anchor="end" class="meta">Rock Raiders · Small</text>
+<g transform="translate(1075 417) scale(0.375 0.335526)"><line x1="-23.1" y1="14.4" x2="-42" y2="32" stroke="#050505" stroke-width="7" stroke-linecap="round"/><ellipse cx="-42" cy="32" rx="10" ry="5" fill="#050505"/><line x1="23.1" y1="14.4" x2="42" y2="32" stroke="#050505" stroke-width="7" stroke-linecap="round"/><ellipse cx="42" cy="32" rx="10" ry="5" fill="#050505"/><polygon points="-48,-13 41,-19 49,15 -39,22" fill="#050505"/><polygon points="-48,-18 48,-18 37,7 -37,7" fill="#050505"/><ellipse cx="0" cy="14" rx="10" ry="15" fill="#ffffff"/></g>
+<line x1="910" y1="477" x2="1240" y2="477" stroke="#8f939b"/>
+<rect x="1300" y="315" width="390" height="190" rx="8" fill="none" stroke="#d9dbe0"/>
+<text x="1314" y="338" class="name">Cutter Mast</text>
+<text x="1676" y="338" text-anchor="end" class="meta">Rock Raiders · Small</text>
+<g transform="translate(1495 417) scale(0.130208 0.375)"><polygon points="-18,39 -24,24 -13,-31 -5,-44 8,-44 15,-30 24,24 17,39" fill="#050505"/><rect x="-6" y="-43" width="12" height="80" rx="0" fill="#050505"/><polygon points="-25,37 25,37 16,27 -16,27" fill="#050505"/><circle cx="0" cy="-31" r="16" fill="#050505"/><rect x="-5" y="-52" width="10" height="24" rx="3" fill="#050505"/><ellipse cx="0" cy="14" rx="10" ry="15" fill="#ffffff"/></g>
+<line x1="1330" y1="477" x2="1660" y2="477" stroke="#8f939b"/>
+<rect x="40" y="535" width="390" height="190" rx="8" fill="none" stroke="#d9dbe0"/>
+<text x="54" y="558" class="name">MB-01 Eagle Command Base</text>
+<text x="416" y="558" text-anchor="end" class="meta">Astronauts · Huge</text>
+<g transform="translate(235 637) scale(1.2 1.03529)"><polygon points="-42,31 -45,-22 -29,-39 25,-42 43,-24 39,34 10,43 -28,40" fill="#050505"/><rect x="-45" y="25" width="31" height="13" rx="3" fill="#050505"/><rect x="15" y="-39" width="25" height="14" rx="3" fill="#050505"/><line x1="-28" y1="25" x2="26" y2="-25" stroke="#050505" stroke-width="7" stroke-linecap="round"/><line x1="-26" y1="32" x2="-5" y2="-46" stroke="#050505" stroke-width="10" stroke-linecap="round"/><line x1="26" y1="32" x2="5" y2="-46" stroke="#050505" stroke-width="10" stroke-linecap="round"/><rect x="-16" y="-12" width="32" height="10" rx="3" fill="#050505"/><rect x="-19" y="-2" width="38" height="46" rx="4" fill="#ffffff"/></g>
+<line x1="70" y1="697" x2="400" y2="697" stroke="#8f939b"/>
+<rect x="460" y="535" width="390" height="190" rx="8" fill="none" stroke="#d9dbe0"/>
+<text x="474" y="558" class="name">Field Systems Garage</text>
+<text x="836" y="558" text-anchor="end" class="meta">Astronauts · Huge</text>
+<g transform="translate(655 637) scale(1.2 0.587755)"><polygon points="-42,31 -45,-22 -29,-39 25,-42 43,-24 39,34 10,43 -28,40" fill="#050505"/><rect x="-42" y="-35" width="7" height="73" rx="3" fill="#050505"/><rect x="35" y="-35" width="7" height="73" rx="3" fill="#050505"/><rect x="-42" y="-39" width="84" height="7" rx="3" fill="#050505"/><rect x="-42" y="-27" width="16" height="54" rx="3" fill="#050505"/><rect x="26" y="-17" width="16" height="44" rx="3" fill="#050505"/><rect x="-19" y="-2" width="38" height="46" rx="4" fill="#ffffff"/></g>
+<line x1="490" y1="697" x2="820" y2="697" stroke="#8f939b"/>
+<rect x="880" y="535" width="390" height="190" rx="8" fill="none" stroke="#d9dbe0"/>
+<text x="894" y="558" class="name">Mission Vehicle Bay</text>
+<text x="1256" y="558" text-anchor="end" class="meta">Astronauts · Huge</text>
+<g transform="translate(1075 637) scale(1.2 0.757895)"><polygon points="-42,31 -45,-22 -29,-39 25,-42 43,-24 39,34 10,43 -28,40" fill="#050505"/><rect x="-42" y="-35" width="7" height="73" rx="3" fill="#050505"/><rect x="35" y="-35" width="7" height="73" rx="3" fill="#050505"/><rect x="-42" y="-39" width="84" height="7" rx="3" fill="#050505"/><rect x="-31" y="-39" width="9" height="75" rx="3" fill="#050505"/><rect x="22" y="-39" width="9" height="75" rx="3" fill="#050505"/><rect x="-19" y="-2" width="38" height="46" rx="4" fill="#ffffff"/></g>
+<line x1="910" y1="697" x2="1240" y2="697" stroke="#8f939b"/>
+<rect x="1300" y="535" width="390" height="190" rx="8" fill="none" stroke="#d9dbe0"/>
+<text x="1314" y="558" class="name">Flight Operations Pad</text>
+<text x="1676" y="558" text-anchor="end" class="meta">Astronauts · Huge</text>
+<g transform="translate(1495 637) scale(1.2 0.210526)"><polygon points="-46,36 -44,-38 30,-44 47,-18 44,39" fill="#050505"/><polygon points="0,-48 14,-25 6,-28 6,39 -6,39 -6,-28 -14,-25" fill="#050505"/><line x1="-35" y1="21" x2="-12" y2="-3" stroke="#050505" stroke-width="6" stroke-linecap="round"/><line x1="35" y1="21" x2="12" y2="-3" stroke="#050505" stroke-width="6" stroke-linecap="round"/><circle cx="39" cy="-35" r="8" fill="#050505"/><rect x="-19" y="-2" width="38" height="46" rx="4" fill="#ffffff"/></g>
+<line x1="1330" y1="697" x2="1660" y2="697" stroke="#8f939b"/>
+<rect x="40" y="755" width="390" height="190" rx="8" fill="none" stroke="#d9dbe0"/>
+<text x="54" y="778" class="name">Service &amp; Refit Hub</text>
+<text x="416" y="778" text-anchor="end" class="meta">Astronauts · Huge</text>
+<g transform="translate(235 857) scale(1.2 0.461538)"><ellipse cx="0" cy="0" rx="44" ry="40" fill="#050505"/><ellipse cx="0" cy="0" rx="23" ry="20" fill="#ffffff"/><ellipse cx="0" cy="0" rx="43" ry="39" fill="#050505"/><ellipse cx="0" cy="0" rx="27" ry="23" fill="#ffffff"/><line x1="-38" y1="-31" x2="-12" y2="4" stroke="#050505" stroke-width="7" stroke-linecap="round"/><line x1="38" y1="-25" x2="15" y2="9" stroke="#050505" stroke-width="9" stroke-linecap="round"/><circle cx="-10" cy="7" r="6" fill="#050505"/><circle cx="14" cy="12" r="7" fill="#050505"/><rect x="-14" y="-3" width="28" height="30" rx="5" fill="#ffffff"/></g>
+<line x1="70" y1="917" x2="400" y2="917" stroke="#8f939b"/>
+<rect x="460" y="755" width="390" height="190" rx="8" fill="none" stroke="#d9dbe0"/>
+<text x="474" y="778" class="name">Solar Energy Array</text>
+<text x="836" y="778" text-anchor="end" class="meta">Astronauts · Large</text>
+<g transform="translate(655 857) scale(0.81 0.362368)"><polygon points="-42,31 -45,-22 -29,-39 25,-42 43,-24 39,34 10,43 -28,40" fill="#050505"/><circle cx="-27" cy="6" r="8" fill="#050505"/><circle cx="27" cy="6" r="8" fill="#050505"/><rect x="-48" y="-18" width="34" height="36" rx="2" fill="#050505"/><rect x="14" y="-18" width="34" height="36" rx="2" fill="#050505"/><line x1="-9" y1="0" x2="9" y2="0" stroke="#050505" stroke-width="7" stroke-linecap="round"/><rect x="-8" y="-22" width="16" height="44" rx="3" fill="#ffffff"/></g>
+<line x1="490" y1="917" x2="820" y2="917" stroke="#8f939b"/>
+<rect x="880" y="755" width="390" height="190" rx="8" fill="none" stroke="#d9dbe0"/>
+<text x="894" y="778" class="name">Frontier Extraction Station</text>
+<text x="1256" y="778" text-anchor="end" class="meta">Astronauts · Large</text>
+<g transform="translate(1075 857) scale(0.81 0.5265)"><polygon points="-42,31 -45,-22 -29,-39 25,-42 43,-24 39,34 10,43 -28,40" fill="#050505"/><rect x="-42" y="18" width="84" height="13" rx="4" fill="#050505"/><polygon points="-45,12 -31,5 -31,38 -45,31" fill="#050505"/><polygon points="0,-48 -15,-28 15,-28" fill="#050505"/><rect x="-30" y="-20" width="60" height="18" rx="3" fill="#050505"/><rect x="-8" y="-43" width="16" height="84" rx="3" fill="#ffffff"/></g>
+<line x1="910" y1="917" x2="1240" y2="917" stroke="#8f939b"/>
+<rect x="1300" y="755" width="390" height="190" rx="8" fill="none" stroke="#d9dbe0"/>
+<text x="1314" y="778" class="name">Modular Sentinel Defense</text>
+<text x="1676" y="778" text-anchor="end" class="meta">Astronauts · Small</text>
+<g transform="translate(1495 857) scale(0.226562 0.375)"><polygon points="-18,39 -24,24 -13,-31 -5,-44 8,-44 15,-30 24,24 17,39" fill="#050505"/><polygon points="-27,39 -18,10 18,10 27,39" fill="#050505"/><rect x="-13" y="-30" width="26" height="43" rx="4" fill="#050505"/><circle cx="0" cy="-31" r="16" fill="#050505"/><rect x="-5" y="-52" width="10" height="24" rx="3" fill="#050505"/><ellipse cx="0" cy="14" rx="10" ry="15" fill="#ffffff"/></g>
+<line x1="1330" y1="917" x2="1660" y2="917" stroke="#8f939b"/>
+<rect x="40" y="975" width="390" height="190" rx="8" fill="none" stroke="#d9dbe0"/>
+<text x="54" y="998" class="name">ETX Command Core</text>
+<text x="416" y="998" text-anchor="end" class="meta">Aliens · Huge</text>
+<g transform="translate(235 1077) scale(1.2 0.784615)"><polygon points="-42,31 -45,-22 -29,-39 25,-42 43,-24 39,34 10,43 -28,40" fill="#050505"/><ellipse cx="0" cy="0" rx="43" ry="39" fill="#050505"/><ellipse cx="0" cy="0" rx="27" ry="23" fill="#ffffff"/><rect x="-7" y="-45" width="14" height="90" rx="0" fill="#050505"/><polygon points="0,-34 18,-11 13,25 0,39 -13,25 -18,-11" fill="#050505"/><rect x="-10" y="-44" width="20" height="36" rx="4" fill="#ffffff"/><rect x="-36" y="12" width="72" height="17" rx="5" fill="#ffffff"/></g>
+<line x1="70" y1="1137" x2="400" y2="1137" stroke="#8f939b"/>
+<rect x="460" y="975" width="390" height="190" rx="8" fill="none" stroke="#d9dbe0"/>
+<text x="474" y="998" class="name">Resonance Core</text>
+<text x="836" y="998" text-anchor="end" class="meta">Aliens · Small</text>
+<g transform="translate(655 1077) scale(0.375 0.34375)"><line x1="-19.25" y1="15.75" x2="-35" y2="35" stroke="#050505" stroke-width="7" stroke-linecap="round"/><ellipse cx="-35" cy="35" rx="10" ry="5" fill="#050505"/><line x1="19.25" y1="15.75" x2="35" y2="35" stroke="#050505" stroke-width="7" stroke-linecap="round"/><ellipse cx="35" cy="35" rx="10" ry="5" fill="#050505"/><line x1="-19.8" y1="-13.5" x2="-36" y2="-30" stroke="#050505" stroke-width="7" stroke-linecap="round"/><ellipse cx="-36" cy="-30" rx="10" ry="5" fill="#050505"/><line x1="19.8" y1="-13.5" x2="36" y2="-30" stroke="#050505" stroke-width="7" stroke-linecap="round"/><ellipse cx="36" cy="-30" rx="10" ry="5" fill="#050505"/><polygon points="0,-42 31,-17 38,22 0,43 -38,22 -31,-17" fill="#050505"/><ellipse cx="0" cy="0" rx="43" ry="39" fill="#050505"/><ellipse cx="0" cy="0" rx="27" ry="23" fill="#ffffff"/><polygon points="0,-34 18,-11 13,25 0,39 -13,25 -18,-11" fill="#050505"/><ellipse cx="0" cy="14" rx="10" ry="15" fill="#ffffff"/></g>
+<line x1="490" y1="1137" x2="820" y2="1137" stroke="#8f939b"/>
+<rect x="880" y="975" width="390" height="190" rx="8" fill="none" stroke="#d9dbe0"/>
+<text x="894" y="998" class="name">ETX Fabricator</text>
+<text x="1256" y="998" text-anchor="end" class="meta">Aliens · Large</text>
+<g transform="translate(1075 1077) scale(0.81 0.334565)"><polygon points="-42,31 -45,-22 -29,-39 25,-42 43,-24 39,34 10,43 -28,40" fill="#050505"/><polygon points="-47,-30 -11,-22 -16,31 -44,39" fill="#050505"/><polygon points="47,-30 11,-22 16,31 44,39" fill="#050505"/><line x1="-38" y1="-31" x2="-12" y2="4" stroke="#050505" stroke-width="7" stroke-linecap="round"/><line x1="38" y1="-25" x2="15" y2="9" stroke="#050505" stroke-width="9" stroke-linecap="round"/><circle cx="-10" cy="7" r="6" fill="#050505"/><circle cx="14" cy="12" r="7" fill="#050505"/><rect x="-8" y="-43" width="16" height="84" rx="3" fill="#ffffff"/></g>
+<line x1="910" y1="1137" x2="1240" y2="1137" stroke="#8f939b"/>
+<rect x="1300" y="975" width="390" height="190" rx="8" fill="none" stroke="#d9dbe0"/>
+<text x="1314" y="998" class="name">Reconfiguration Dock</text>
+<text x="1676" y="998" text-anchor="end" class="meta">Aliens · Huge</text>
+<g transform="translate(1495 1077) scale(1.2 1.02222)"><polygon points="-42,31 -45,-22 -29,-39 25,-42 43,-24 39,34 10,43 -28,40" fill="#050505"/><polygon points="-45,38 -43,-31 -19,-45 -13,35" fill="#050505"/><polygon points="13,35 19,-45 43,-31 45,38" fill="#050505"/><rect x="-23" y="-42" width="46" height="8" rx="3" fill="#050505"/><rect x="-24" y="9" width="48" height="31" rx="5" fill="#050505"/><rect x="-15" y="16" width="30" height="17" rx="3" fill="#ffffff"/><rect x="-19" y="-2" width="38" height="46" rx="4" fill="#ffffff"/></g>
+<line x1="1330" y1="1137" x2="1660" y2="1137" stroke="#8f939b"/>
+<rect x="40" y="1195" width="390" height="190" rx="8" fill="none" stroke="#d9dbe0"/>
+<text x="54" y="1218" class="name">Power Coupler</text>
+<text x="416" y="1218" text-anchor="end" class="meta">Aliens · Small</text>
+<g transform="translate(235 1297) scale(0.375 0.222222)"><polygon points="-36,14 -28,-16 0,-30 31,-14 40,17 17,31 -23,29" fill="#050505"/><rect x="-43" y="-28" width="17" height="45" rx="4" fill="#050505"/><circle cx="31" cy="21" r="15" fill="#050505"/><polygon points="-46,-16 -10,-27 -15,-5 -43,8" fill="#050505"/><polygon points="46,-16 10,-27 15,-5 43,8" fill="#050505"/><circle cx="0" cy="7" r="13" fill="#050505"/><rect x="-14" y="-3" width="28" height="30" rx="5" fill="#ffffff"/></g>
+<line x1="70" y1="1357" x2="400" y2="1357" stroke="#8f939b"/>
+<rect x="460" y="1195" width="390" height="190" rx="8" fill="none" stroke="#d9dbe0"/>
+<text x="474" y="1218" class="name">ETX Defense Node</text>
+<text x="836" y="1218" text-anchor="end" class="meta">Aliens · Small</text>
+<g transform="translate(655 1297) scale(0.375 0.335526)"><line x1="-23.1" y1="14.4" x2="-42" y2="32" stroke="#050505" stroke-width="7" stroke-linecap="round"/><ellipse cx="-42" cy="32" rx="10" ry="5" fill="#050505"/><line x1="23.1" y1="14.4" x2="42" y2="32" stroke="#050505" stroke-width="7" stroke-linecap="round"/><ellipse cx="42" cy="32" rx="10" ry="5" fill="#050505"/><polygon points="-36,14 -28,-16 0,-30 31,-14 40,17 17,31 -23,29" fill="#050505"/><circle cx="-27" cy="6" r="8" fill="#050505"/><circle cx="27" cy="6" r="8" fill="#050505"/><circle cx="0" cy="-31" r="16" fill="#050505"/><rect x="-5" y="-52" width="10" height="24" rx="3" fill="#050505"/><polygon points="-12,5 12,5 19,43 -19,43" fill="#ffffff"/></g>
+<line x1="490" y1="1357" x2="820" y2="1357" stroke="#8f939b"/>
+<rect x="880" y="1195" width="390" height="190" rx="8" fill="none" stroke="#d9dbe0"/>
+<text x="894" y="1218" class="name">Aero Tube Hangar</text>
+<text x="1256" y="1218" text-anchor="end" class="meta">Martians · Huge</text>
+<g transform="translate(1075 1297) scale(1.2 0.870968)"><polygon points="-42,31 -45,-22 -29,-39 25,-42 43,-24 39,34 10,43 -28,40" fill="#050505"/><rect x="-45" y="25" width="31" height="13" rx="3" fill="#050505"/><rect x="15" y="-39" width="25" height="14" rx="3" fill="#050505"/><line x1="-28" y1="25" x2="26" y2="-25" stroke="#050505" stroke-width="7" stroke-linecap="round"/><circle cx="-13" cy="3" r="23" fill="#050505"/><rect x="17" y="-44" width="18" height="69" rx="4" fill="#050505"/><rect x="-43" y="-23" width="17" height="49" rx="4" fill="#050505"/><rect x="-10" y="-44" width="20" height="36" rx="4" fill="#ffffff"/><rect x="-36" y="12" width="72" height="17" rx="5" fill="#ffffff"/></g>
+<line x1="910" y1="1357" x2="1240" y2="1357" stroke="#8f939b"/>
+<rect x="1300" y="1195" width="390" height="190" rx="8" fill="none" stroke="#d9dbe0"/>
+<text x="1314" y="1218" class="name">Settlement Station</text>
+<text x="1676" y="1218" text-anchor="end" class="meta">Martians · Huge</text>
+<g transform="translate(1495 1297) scale(1.2 0.85)"><line x1="-19.25" y1="15.75" x2="-35" y2="35" stroke="#050505" stroke-width="7" stroke-linecap="round"/><ellipse cx="-35" cy="35" rx="10" ry="5" fill="#050505"/><line x1="19.25" y1="15.75" x2="35" y2="35" stroke="#050505" stroke-width="7" stroke-linecap="round"/><ellipse cx="35" cy="35" rx="10" ry="5" fill="#050505"/><line x1="-19.8" y1="-13.5" x2="-36" y2="-30" stroke="#050505" stroke-width="7" stroke-linecap="round"/><ellipse cx="-36" cy="-30" rx="10" ry="5" fill="#050505"/><line x1="19.8" y1="-13.5" x2="36" y2="-30" stroke="#050505" stroke-width="7" stroke-linecap="round"/><ellipse cx="36" cy="-30" rx="10" ry="5" fill="#050505"/><polygon points="-42,31 -45,-22 -29,-39 25,-42 43,-24 39,34 10,43 -28,40" fill="#050505"/><rect x="-39" y="-31" width="14" height="63" rx="5" fill="#050505"/><rect x="25" y="-31" width="14" height="63" rx="5" fill="#050505"/><rect x="-27" y="-9" width="54" height="18" rx="4" fill="#050505"/><circle cx="0" cy="0" r="22" fill="#050505"/><rect x="-48" y="-7" width="96" height="14" rx="7" fill="#050505"/><rect x="-7" y="-47" width="14" height="94" rx="7" fill="#050505"/><rect x="-10" y="-44" width="20" height="36" rx="4" fill="#ffffff"/><rect x="-36" y="12" width="72" height="17" rx="5" fill="#ffffff"/></g>
+<line x1="1330" y1="1357" x2="1660" y2="1357" stroke="#8f939b"/>
+<rect x="40" y="1415" width="390" height="190" rx="8" fill="none" stroke="#d9dbe0"/>
+<text x="54" y="1438" class="name">Mechanical Workshop</text>
+<text x="416" y="1438" text-anchor="end" class="meta">Martians · Huge</text>
+<g transform="translate(235 1517) scale(1.2 0.90566)"><polygon points="-42,31 -45,-22 -29,-39 25,-42 43,-24 39,34 10,43 -28,40" fill="#050505"/><rect x="-42" y="-35" width="7" height="73" rx="3" fill="#050505"/><rect x="35" y="-35" width="7" height="73" rx="3" fill="#050505"/><rect x="-42" y="-39" width="84" height="7" rx="3" fill="#050505"/><line x1="-38" y1="-31" x2="-12" y2="4" stroke="#050505" stroke-width="7" stroke-linecap="round"/><line x1="38" y1="-25" x2="15" y2="9" stroke="#050505" stroke-width="9" stroke-linecap="round"/><circle cx="-10" cy="7" r="6" fill="#050505"/><circle cx="14" cy="12" r="7" fill="#050505"/><rect x="-19" y="-2" width="38" height="46" rx="4" fill="#ffffff"/></g>
+<line x1="70" y1="1577" x2="400" y2="1577" stroke="#8f939b"/>
+<rect x="460" y="1415" width="390" height="190" rx="8" fill="none" stroke="#d9dbe0"/>
+<text x="474" y="1438" class="name">Pressure Generator</text>
+<text x="836" y="1438" text-anchor="end" class="meta">Martians · Small</text>
+<g transform="translate(655 1517) scale(0.294643 0.375)"><ellipse cx="0" cy="-23" rx="29" ry="13" fill="#050505"/><rect x="-29" y="-23" width="58" height="51" rx="0" fill="#050505"/><ellipse cx="0" cy="28" rx="29" ry="13" fill="#050505"/><polygon points="-39,37 -31,21 31,21 39,37" fill="#050505"/><circle cx="-22" cy="26" r="7" fill="#ffffff"/><circle cx="22" cy="26" r="7" fill="#ffffff"/><rect x="-19" y="-42" width="38" height="18" rx="4" fill="#050505"/><rect x="-25" y="-18" width="50" height="18" rx="4" fill="#050505"/><rect x="-31" y="6" width="62" height="21" rx="4" fill="#050505"/><ellipse cx="0" cy="14" rx="10" ry="15" fill="#ffffff"/></g>
+<line x1="490" y1="1577" x2="820" y2="1577" stroke="#8f939b"/>
+<rect x="880" y="1415" width="390" height="190" rx="8" fill="none" stroke="#d9dbe0"/>
+<text x="894" y="1438" class="name">Routing Laboratory</text>
+<text x="1256" y="1438" text-anchor="end" class="meta">Martians · Large</text>
+<g transform="translate(1075 1517) scale(0.732857 0.81)"><polygon points="-18,39 -24,24 -13,-31 -5,-44 8,-44 15,-30 24,24 17,39" fill="#050505"/><rect x="17" y="-44" width="18" height="67" rx="4" fill="#050505"/><circle cx="-20" cy="17" r="18" fill="#050505"/><line x1="-9" y1="8" x2="19" y2="-22" stroke="#050505" stroke-width="7" stroke-linecap="round"/><circle cx="0" cy="-24" r="18" fill="#050505"/><line x1="-9" y1="-14" x2="-39" y2="12" stroke="#050505" stroke-width="7" stroke-linecap="round"/><line x1="9" y1="-14" x2="40" y2="4" stroke="#050505" stroke-width="7" stroke-linecap="round"/><rect x="-10" y="-44" width="20" height="36" rx="4" fill="#ffffff"/><rect x="-36" y="12" width="72" height="17" rx="5" fill="#ffffff"/></g>
+<line x1="910" y1="1577" x2="1240" y2="1577" stroke="#8f939b"/>
+<rect x="1300" y="1415" width="390" height="190" rx="8" fill="none" stroke="#d9dbe0"/>
+<text x="1314" y="1438" class="name">Excavation Plant</text>
+<text x="1676" y="1438" text-anchor="end" class="meta">Martians · Large</text>
+<g transform="translate(1495 1517) scale(0.81 0.534255)"><line x1="-23.1" y1="14.4" x2="-42" y2="32" stroke="#050505" stroke-width="7" stroke-linecap="round"/><ellipse cx="-42" cy="32" rx="10" ry="5" fill="#050505"/><line x1="23.1" y1="14.4" x2="42" y2="32" stroke="#050505" stroke-width="7" stroke-linecap="round"/><ellipse cx="42" cy="32" rx="10" ry="5" fill="#050505"/><polygon points="-42,31 -45,-22 -29,-39 25,-42 43,-24 39,34 10,43 -28,40" fill="#050505"/><rect x="-42" y="18" width="84" height="13" rx="4" fill="#050505"/><polygon points="-45,12 -31,5 -31,38 -45,31" fill="#050505"/><line x1="-15" y1="20" x2="29" y2="-43" stroke="#050505" stroke-width="8" stroke-linecap="round"/><line x1="29" y1="-43" x2="49" y2="-18" stroke="#050505" stroke-width="7" stroke-linecap="round"/><circle cx="48" cy="-13" r="9" fill="#050505"/><rect x="-8" y="-43" width="16" height="84" rx="3" fill="#ffffff"/></g>
+<line x1="1330" y1="1577" x2="1660" y2="1577" stroke="#8f939b"/>
+<rect x="40" y="1635" width="390" height="190" rx="8" fill="none" stroke="#d9dbe0"/>
+<text x="54" y="1658" class="name">Deflector Arm</text>
+<text x="416" y="1658" text-anchor="end" class="meta">Martians · Small</text>
+<g transform="translate(235 1737) scale(0.375 0.321429)"><line x1="-19.25" y1="15.75" x2="-35" y2="35" stroke="#050505" stroke-width="7" stroke-linecap="round"/><ellipse cx="-35" cy="35" rx="10" ry="5" fill="#050505"/><line x1="19.25" y1="15.75" x2="35" y2="35" stroke="#050505" stroke-width="7" stroke-linecap="round"/><ellipse cx="35" cy="35" rx="10" ry="5" fill="#050505"/><line x1="-19.8" y1="-13.5" x2="-36" y2="-30" stroke="#050505" stroke-width="7" stroke-linecap="round"/><ellipse cx="-36" cy="-30" rx="10" ry="5" fill="#050505"/><line x1="19.8" y1="-13.5" x2="36" y2="-30" stroke="#050505" stroke-width="7" stroke-linecap="round"/><ellipse cx="36" cy="-30" rx="10" ry="5" fill="#050505"/><polygon points="-30,-29 29,-29 35,-5 20,17 -20,17 -35,-5" fill="#050505"/><rect x="-21" y="8" width="42" height="23" rx="5" fill="#050505"/><circle cx="-27" cy="6" r="8" fill="#050505"/><circle cx="27" cy="6" r="8" fill="#050505"/><line x1="-9" y1="24" x2="20" y2="-19" stroke="#050505" stroke-width="12" stroke-linecap="round"/><line x1="20" y1="-19" x2="39" y2="-40" stroke="#050505" stroke-width="10" stroke-linecap="round"/><rect x="30" y="-51" width="25" height="16" rx="4" fill="#050505"/><ellipse cx="0" cy="14" rx="10" ry="15" fill="#ffffff"/></g>
+<line x1="70" y1="1797" x2="400" y2="1797" stroke="#8f939b"/>
+<rect x="460" y="1635" width="390" height="190" rx="8" fill="none" stroke="#d9dbe0"/>
+<text x="474" y="1658" class="name">Aero Guard Tower</text>
+<text x="836" y="1658" text-anchor="end" class="meta">Martians · Small</text>
+<g transform="translate(655 1737) scale(0.160714 0.375)"><polygon points="-18,39 -24,24 -13,-31 -5,-44 8,-44 15,-30 24,24 17,39" fill="#050505"/><rect x="-41" y="20" width="82" height="17" rx="7" fill="#050505"/><circle cx="-34" cy="28" r="5" fill="#ffffff"/><circle cx="34" cy="28" r="5" fill="#ffffff"/><line x1="-6" y1="-24" x2="-33" y2="-43" stroke="#050505" stroke-width="7" stroke-linecap="round"/><line x1="6" y1="-24" x2="33" y2="-43" stroke="#050505" stroke-width="7" stroke-linecap="round"/><rect x="-43" y="-49" width="18" height="10" rx="3" fill="#050505"/><rect x="25" y="-49" width="18" height="10" rx="3" fill="#050505"/><ellipse cx="0" cy="14" rx="10" ry="15" fill="#ffffff"/></g>
+<line x1="490" y1="1797" x2="820" y2="1797" stroke="#8f939b"/>
+<rect x="880" y="1635" width="390" height="190" rx="8" fill="none" stroke="#d9dbe0"/>
+<text x="894" y="1658" class="name">Aero Tube Link</text>
+<text x="1256" y="1658" text-anchor="end" class="meta">Martians · Tiny</text>
+<g transform="translate(1075 1737) scale(0.225 0.0386719)"><ellipse cx="-45" cy="0" rx="13" ry="20" fill="#050505"/><ellipse cx="45" cy="0" rx="13" ry="20" fill="#050505"/><rect x="-48" y="-15" width="96" height="30" rx="15" fill="#050505"/><rect x="-44" y="-19" width="88" height="38" rx="18" fill="#050505"/><rect x="-37" y="-10" width="74" height="20" rx="10" fill="#ffffff"/><rect x="-38" y="-7" width="76" height="14" rx="7" fill="#050505"/><polygon points="18,-13 42,0 18,13" fill="#050505"/><rect x="-12" y="-45" width="24" height="74" rx="8" fill="#ffffff"/></g>
+<line x1="910" y1="1797" x2="1240" y2="1797" stroke="#8f939b"/>
+</svg>

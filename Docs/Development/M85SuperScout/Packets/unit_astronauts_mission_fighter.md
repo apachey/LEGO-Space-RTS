@@ -76,13 +76,14 @@ Non-removable identity anchors:
 - small central blue canopy
 - white-orange nose and engine split
 
-- Near / standard / far silhouette thumbnails: `PENDING 24/44/72-CELL BOARD`.
+- Blind-review code: `S40`. Draft boards: [24-cell](../Silhouettes/blind_24_cells.svg), [44-cell](../Silhouettes/blind_44_cells.svg), [72-cell](../Silhouettes/blind_72_cells.svg). This is a concept silhouette, not an approved model.
 - Palette and material hierarchy: Field Systems retain rugged white/light-gray/medium-blue construction; Mission Systems retain clean white/orange/black construction. Shared identity comes from insignia and interfaces, not shape averaging.
 - Forbidden genericization: Do not blend the two source lineages into generic white sci-fi or add military forms unsupported by the mapped expedition function.
 - Nearest-confusion baseline:
 
 - `unit.astronauts.mono_jet` — Both are small true-air Astronaut craft. Mitigations: Mono Jet is a narrow improvised field fuselage; Mission Fighter has a crisp swept mission-wing plan. / Mono Jet has an open cockpit; Mission Fighter uses a compact enclosed blue canopy. / Mono Jet remains Field white/gray/blue; Mission Fighter uses strong white/orange Mission blocks.
 - `unit.astronauts.mx41_switch_fighter` — Both use the white-orange Mission aerospace language. Mitigations: Mission Fighter is always airborne with two swept wings; MX-41 has a six-wheel ground stance. / Mission Fighter keeps one compact flight silhouette; MX-41 exposes oversized folding side frames. / Mission Fighter has no visible transformation seam; MX-41's central rocket nose and wing-wheel hinge must read in both states.
+- `unit.aliens.alien_jet` — The draft sheet reduces both small interceptors to a swept central fuselage and paired wings. Mitigations: Mission Fighter uses a closed compact canopy; Alien Jet leaves the pilot open beneath two raised arches. / Mission Fighter's wings form clean rearward wedges; Alien Jet uses one thin irregular swept plate. / Mission Fighter has a solid pointed nose; Alien Jet's arches create a persistent central negative space.
 
 ## D. Construction contract
 
@@ -146,7 +147,7 @@ Non-removable identity anchors:
 2. Greybox hero masses, openings and structural load path from the semantic map.
 3. Validate named pivots, contacts and sockets in the real gameplay camera.
 4. Author only the specified reusable textures after human material review.
-5. Produce 24/44/72-cell black silhouettes and run the full cross-roster confusion audit.
+5. Run the game-director blind review on the 24/44/72-cell silhouette draft and revise any failed distinction.
 
 **State:** `HOLD`
 

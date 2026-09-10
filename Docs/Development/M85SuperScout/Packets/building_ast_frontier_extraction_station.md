@@ -78,12 +78,13 @@ Non-removable identity anchors:
 - sealed crystal or ore container rack
 - small pneumatic transfer mast
 
-- Near / standard / far silhouette thumbnails: `PENDING 24/44/72-CELL BOARD`.
+- Blind-review code: `S04`. Draft boards: [24-cell](../Silhouettes/blind_24_cells.svg), [44-cell](../Silhouettes/blind_44_cells.svg), [72-cell](../Silhouettes/blind_72_cells.svg). This is a concept silhouette, not an approved model.
 - Palette and material hierarchy: Field Systems retain rugged white/light-gray/medium-blue construction; Mission Systems retain clean white/orange/black construction. Shared identity comes from insignia and interfaces, not shape averaging.
 - Forbidden genericization: Do not blend the two source lineages into generic white sci-fi or add military forms unsupported by the mapped expedition function.
 - Nearest-confusion baseline:
 
-- `PENDING` — no nearest-neighbor pair has been assigned yet.
+- `building.rock_raiders.ore_processing_plant` — Both are low large resource buildings with a visible receiving and transfer line. Mitigations: Ore Plant feeds an open crusher and sorting stack; Frontier Station feeds sealed mission containers. / Ore Plant's highest mass is an irregular industrial crusher; Frontier Station's highest mass is a compact expedition control module. / Ore Plant leaves processed rock visibly exposed; Frontier Station closes output into standardized container silhouettes.
+- `building.mar.excavation_plant` — Both are large planted extraction structures organized around one material channel. Mitigations: Frontier Station leads with a compact drill receiver; Excavation Plant leads with a tall Searcher-derived crane intake. / Frontier Station routes output into sealed containers; Excavation Plant exposes an open rock-transfer path. / Frontier Station stays low and rectilinear; Excavation Plant stands on irregular braces around an elevated handling body.
 
 ## D. Construction contract
 
@@ -147,7 +148,7 @@ Non-removable identity anchors:
 2. Greybox hero masses, openings and structural load path from the semantic map.
 3. Validate named pivots, contacts and sockets in the real gameplay camera.
 4. Author only the specified reusable textures after human material review.
-5. Produce 24/44/72-cell black silhouettes and run the full cross-roster confusion audit.
+5. Run the game-director blind review on the 24/44/72-cell silhouette draft and revise any failed distinction.
 
 **State:** `HOLD`
 

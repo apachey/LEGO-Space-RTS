@@ -61,12 +61,13 @@ Non-removable identity anchors:
 - two mirrored multi-joint legs
 - two broad rectangular feet
 
-- Near / standard / far silhouette thumbnails: `PENDING 24/44/72-CELL BOARD`.
+- Blind-review code: `S41`. Draft boards: [24-cell](../Silhouettes/blind_24_cells.svg), [44-cell](../Silhouettes/blind_44_cells.svg), [72-cell](../Silhouettes/blind_72_cells.svg). This is a concept silhouette, not an approved model.
 - Palette and material hierarchy: Blue and sand-red with translucent-neon-green accents, open platforms and visibly articulated mechanics.
 - Forbidden genericization: Do not make the asset Alien-lite, a smooth energy object or a joke contraption. Pumps, tubes, legs, clamps and platforms carry identity.
 - Nearest-confusion baseline:
 
 - `unit.aliens.etx_servitor` — Both are small mechanical nonhuman workers. Mitigations: Servitor hovers inside one low curved shell; Worker Robot walks on two long articulated legs. / Servitor encloses its core in black-lime structure; Worker Robot leaves the seated Martian visible between two broad feet. / Servitor uses one dominant folding manipulator; Worker Robot's adapted tool must remain subordinate to its bipedal source silhouette.
+- `unit.rock_raiders.crew` — At far scale both reduce to a tiny upright worker with two planted contacts. Mitigations: Raider Crew keeps a full minifigure torso above short legs; Worker Robot suspends a shallow rider wedge between two long mechanical legs. / Raider Crew carries one large tool outside the body; Worker Robot's small adapted tool remains subordinate to the biped frame. / Raider Crew's negative space is between arms and tool; Worker Robot must retain a tall open gap between its legs.
 
 ## D. Construction contract
 
@@ -131,7 +132,7 @@ Non-removable identity anchors:
 2. Greybox hero masses, openings and structural load path from the semantic map.
 3. Validate named pivots, contacts and sockets in the real gameplay camera.
 4. Author only the specified reusable textures after human material review.
-5. Produce 24/44/72-cell black silhouettes and run the full cross-roster confusion audit.
+5. Run the game-director blind review on the 24/44/72-cell silhouette draft and revise any failed distinction.
 
 **State:** `HOLD`
 

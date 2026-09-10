@@ -59,12 +59,13 @@ Non-removable identity anchors:
 - oversized portable mining or repair tool
 - compact backpack and work-light mass
 
-- Near / standard / far silhouette thumbnails: `PENDING 24/44/72-CELL BOARD`.
+- Blind-review code: `S31`. Draft boards: [24-cell](../Silhouettes/blind_24_cells.svg), [44-cell](../Silhouettes/blind_44_cells.svg), [72-cell](../Silhouettes/blind_72_cells.svg). This is a concept silhouette, not an approved model.
 - Palette and material hierarchy: Dark turquoise and industrial gray with black, light gray, hazard-yellow and restrained tool metal.
 - Forbidden genericization: Do not turn the asset into a conventional tank, APC, artillery piece or realistic modern vehicle. Its industrial purpose must read first.
 - Nearest-confusion baseline:
 
 - `unit.astronauts.expedition_crew` — Both are tiny minifigure-scale workers. Mitigations: Raider Crew leads with an oversized industrial hand tool; Expedition Crew leads with a standardized modular attachment. / Raider Crew uses helmet/visor, compact work light and dark-teal industrial blocks; Expedition Crew uses sealed astronaut helmet and white lineage markings. / Raider Crew reads improvised and tool-specific; Expedition Crew reads standardized and mission-configurable.
+- `unit.martians.worker_robot` — At far scale both reduce to a tiny upright worker with two planted contacts. Mitigations: Raider Crew keeps a full minifigure torso above short legs; Worker Robot suspends a shallow rider wedge between two long mechanical legs. / Raider Crew carries one large tool outside the body; Worker Robot's small adapted tool remains subordinate to the biped frame. / Raider Crew's negative space is between arms and tool; Worker Robot must retain a tall open gap between its legs.
 
 ## D. Construction contract
 
@@ -129,7 +130,7 @@ Non-removable identity anchors:
 2. Greybox hero masses, openings and structural load path from the semantic map.
 3. Validate named pivots, contacts and sockets in the real gameplay camera.
 4. Author only the specified reusable textures after human material review.
-5. Produce 24/44/72-cell black silhouettes and run the full cross-roster confusion audit.
+5. Run the game-director blind review on the 24/44/72-cell silhouette draft and revise any failed distinction.
 
 **State:** `HOLD`
 

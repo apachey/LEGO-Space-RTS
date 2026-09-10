@@ -83,13 +83,14 @@ Non-removable identity anchors:
 - paired tracking arms
 - visible Tube-linked lower platform
 
-- Near / standard / far silhouette thumbnails: `PENDING 24/44/72-CELL BOARD`.
+- Blind-review code: `S45`. Draft boards: [24-cell](../Silhouettes/blind_24_cells.svg), [44-cell](../Silhouettes/blind_44_cells.svg), [72-cell](../Silhouettes/blind_72_cells.svg). This is a concept silhouette, not an approved model.
 - Palette and material hierarchy: Blue and sand-red with translucent-neon-green accents, open platforms and visibly articulated mechanics.
 - Forbidden genericization: Do not make the asset Alien-lite, a smooth energy object or a joke contraption. Pumps, tubes, legs, clamps and platforms carry identity.
 - Nearest-confusion baseline:
 
 - `building.mar.deflector_arm` — Both are small new Martian defensive structures with articulated upper mechanisms. Mitigations: Deflector Arm stays low with one long pushing arm; Aero Guard Tower is tall with paired tracking arms. / Deflector Arm ends in a broad paddle; Aero Guard Tower ends in sensor/anti-air heads. / Deflector Arm uses wide planted feet; Aero Guard Tower visibly joins the Tube network at its lower platform.
 - `building.rock_raiders.cutter_mast` — Both are small tall anti-air structures. Mitigations: Cutter Mast is a thin industrial tripod; Aero Guard Tower is an open stacked Martian platform. / Cutter Mast has one scanner-cutter head; Aero Guard Tower has paired articulated tracking arms. / Cutter Mast carries a warm work light; Aero Guard Tower exposes blue/sand-red mechanics and a Tube connection.
+- `building.ast.modular_sentinel_defense` — Both draft as compact anti-air towers with elevated tracking hardware. Mitigations: Sentinel Defense has one swappable centered head; Aero Guard Tower has paired mechanical tracking arms. / Sentinel Defense is a short clean pedestal; Aero Guard Tower is a tall open stack. / Sentinel Defense stands alone; Aero Guard Tower must expose its Tube-network connection at the base.
 
 ## D. Construction contract
 
@@ -155,7 +156,7 @@ Non-removable identity anchors:
 2. Greybox hero masses, openings and structural load path from the semantic map.
 3. Validate named pivots, contacts and sockets in the real gameplay camera.
 4. Author only the specified reusable textures after human material review.
-5. Produce 24/44/72-cell black silhouettes and run the full cross-roster confusion audit.
+5. Run the game-director blind review on the 24/44/72-cell silhouette draft and revise any failed distinction.
 
 **State:** `HOLD`
 

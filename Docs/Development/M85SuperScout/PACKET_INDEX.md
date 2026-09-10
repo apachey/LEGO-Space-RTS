@@ -1,6 +1,6 @@
 # M8.5 T082 — Super Scout packet index
 
-This generated index covers every canonical buildable unit and infrastructure entry. The current pass locks identity, source family and non-removable silhouette anchors. It deliberately remains `HOLD` until multi-angle evidence, construction, mechanism, texture and cross-roster silhouette audits are complete.
+This generated index covers every canonical buildable unit and infrastructure entry. Identity, sources, semantic construction, mechanisms, texture needs and a cross-roster concept-silhouette draft now exist. Every packet deliberately remains `HOLD` until the game-director blind silhouette and complete-corpus review pass.
 
 | Asset | Stable ID | Faction | Kind | Footprint | State |
 |---|---|---|---|---|---|

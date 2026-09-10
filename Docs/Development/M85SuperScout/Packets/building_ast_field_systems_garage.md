@@ -96,12 +96,13 @@ Non-removable identity anchors:
 - external module racks
 - exposed blue-gray service frame
 
-- Near / standard / far silhouette thumbnails: `PENDING 24/44/72-CELL BOARD`.
+- Blind-review code: `S23`. Draft boards: [24-cell](../Silhouettes/blind_24_cells.svg), [44-cell](../Silhouettes/blind_44_cells.svg), [72-cell](../Silhouettes/blind_72_cells.svg). This is a concept silhouette, not an approved model.
 - Palette and material hierarchy: Field Systems retain rugged white/light-gray/medium-blue construction; Mission Systems retain clean white/orange/black construction. Shared identity comes from insignia and interfaces, not shape averaging.
 - Forbidden genericization: Do not blend the two source lineages into generic white sci-fi or add military forms unsupported by the mapped expedition function.
 - Nearest-confusion baseline:
 
 - `building.ast.mission_vehicle_bay` — Both are huge Astronaut vehicle-production buildings. Mitigations: Field Garage is low, rugged and blue-gray; Mission Bay is clean, tall and white-orange. / Field Garage stores irregular external modules; Mission Bay uses standardized paired assembly rails. / Field Garage door clearance is shaped around unusual field wheels; Mission Bay has a straight huge mission-vehicle exit.
+- `building.rock_raiders.vehicle_service_bay` — The draft sheet exposes two huge low open repair gantries around a vehicle lane. Mitigations: Raider Service Bay uses paired overhead repair arms; Field Garage uses unequal side racks and rugged modules. / Raider Service Bay is a straight drive-through frame; Field Garage shapes its exit around oversized field wheels. / Raider Service Bay concentrates its skyline in the gantry; Field Garage stays lower and spreads storage mass laterally.
 
 ## D. Construction contract
 
@@ -165,7 +166,7 @@ Non-removable identity anchors:
 2. Greybox hero masses, openings and structural load path from the semantic map.
 3. Validate named pivots, contacts and sockets in the real gameplay camera.
 4. Author only the specified reusable textures after human material review.
-5. Produce 24/44/72-cell black silhouettes and run the full cross-roster confusion audit.
+5. Run the game-director blind review on the 24/44/72-cell silhouette draft and revise any failed distinction.
 
 **State:** `HOLD`
 

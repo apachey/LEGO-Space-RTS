@@ -65,12 +65,12 @@ Non-removable identity anchors:
 - stepped crusher machinery
 - outbound sorting conveyor
 
-- Near / standard / far silhouette thumbnails: `PENDING 24/44/72-CELL BOARD`.
+- Blind-review code: `S24`. Draft boards: [24-cell](../Silhouettes/blind_24_cells.svg), [44-cell](../Silhouettes/blind_44_cells.svg), [72-cell](../Silhouettes/blind_72_cells.svg). This is a concept silhouette, not an approved model.
 - Palette and material hierarchy: Dark turquoise and industrial gray with black, light gray, hazard-yellow and restrained tool metal.
 - Forbidden genericization: Do not turn the asset into a conventional tank, APC, artillery piece or realistic modern vehicle. Its industrial purpose must read first.
 - Nearest-confusion baseline:
 
-- `PENDING` — no nearest-neighbor pair has been assigned yet.
+- `building.ast.frontier_extraction_station` — Both are low large resource buildings with a visible receiving and transfer line. Mitigations: Ore Plant feeds an open crusher and sorting stack; Frontier Station feeds sealed mission containers. / Ore Plant's highest mass is an irregular industrial crusher; Frontier Station's highest mass is a compact expedition control module. / Ore Plant leaves processed rock visibly exposed; Frontier Station closes output into standardized container silhouettes.
 
 ## D. Construction contract
 
@@ -138,7 +138,7 @@ Non-removable identity anchors:
 2. Greybox hero masses, openings and structural load path from the semantic map.
 3. Validate named pivots, contacts and sockets in the real gameplay camera.
 4. Author only the specified reusable textures after human material review.
-5. Produce 24/44/72-cell black silhouettes and run the full cross-roster confusion audit.
+5. Run the game-director blind review on the 24/44/72-cell silhouette draft and revise any failed distinction.
 
 **State:** `HOLD`
 

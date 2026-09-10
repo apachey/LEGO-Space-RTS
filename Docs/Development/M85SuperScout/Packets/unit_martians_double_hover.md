@@ -60,13 +60,14 @@ Non-removable identity anchors:
 - central exposed rider
 - one round rear hover mass beside one block
 
-- Near / standard / far silhouette thumbnails: `PENDING 24/44/72-CELL BOARD`.
+- Blind-review code: `S64`. Draft boards: [24-cell](../Silhouettes/blind_24_cells.svg), [44-cell](../Silhouettes/blind_44_cells.svg), [72-cell](../Silhouettes/blind_72_cells.svg). This is a concept silhouette, not an approved model.
 - Palette and material hierarchy: Blue and sand-red with translucent-neon-green accents, open platforms and visibly articulated mechanics.
 - Forbidden genericization: Do not make the asset Alien-lite, a smooth energy object or a joke contraption. Pumps, tubes, legs, clamps and platforms carry identity.
 - Nearest-confusion baseline:
 
 - `unit.martians.jet_scooter` — Both are tiny open Martian ground-hover craft. Mitigations: Double Hover has two long forward runners and unlike rear modules; Jet Scooter has one long spine with paired side tubes. / Double Hover ends in blunt parallel forks; Jet Scooter points a cluster of orange nozzles forward. / Double Hover reads short and laterally offset; Jet Scooter reads narrow and aggressively directional.
 - `unit.martians.aero_skiff` — Both are small open Martian utility platforms. Mitigations: Double Hover keeps two long runners close to the ground; Aero Skiff must preserve an elevated airborne deck and visible lift mass. / Double Hover carries one operator between unlike rear modules; Aero Skiff preserves a separate passenger/cargo perch. / Double Hover points two straight forks forward; Aero Skiff retains the composite source family's intentionally asymmetric deck.
+- `unit.rock_raiders.hover_scout` — The draft sheet exposes two tiny open survey sleds with similarly low parallel masses. Mitigations: Hover Scout must read as one continuous deck; Double Hover must preserve two long separated runners. / Hover Scout places one scanner bar at the nose; Double Hover places deliberately unlike equipment masses behind the rider. / Hover Scout uses a compact single-seat centre; Double Hover keeps a long fork gap visible from above.
 
 ## D. Construction contract
 
@@ -130,7 +131,7 @@ Non-removable identity anchors:
 2. Greybox hero masses, openings and structural load path from the semantic map.
 3. Validate named pivots, contacts and sockets in the real gameplay camera.
 4. Author only the specified reusable textures after human material review.
-5. Produce 24/44/72-cell black silhouettes and run the full cross-roster confusion audit.
+5. Run the game-director blind review on the 24/44/72-cell silhouette draft and revise any failed distinction.
 
 **State:** `HOLD`
 

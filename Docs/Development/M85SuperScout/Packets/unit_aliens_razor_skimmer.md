@@ -93,13 +93,14 @@ Non-removable identity anchors:
 - twin forward razor prongs
 - central exposed lime energy core
 
-- Near / standard / far silhouette thumbnails: `PENDING 24/44/72-CELL BOARD`.
+- Blind-review code: `S62`. Draft boards: [24-cell](../Silhouettes/blind_24_cells.svg), [44-cell](../Silhouettes/blind_44_cells.svg), [72-cell](../Silhouettes/blind_72_cells.svg). This is a concept silhouette, not an approved model.
 - Palette and material hierarchy: Black and bright lime with dark mechanics and disciplined translucent-neon-green energy or crystal elements.
 - Forbidden genericization: Do not use insect bodies, biological tissue, nests, tentacles or generic black-neon towers. Construction must remain craft-derived and mechanical.
 - Nearest-confusion baseline:
 
 - `unit.aliens.alien_jet` — Both are small swept black-lime attack craft. Mitigations: Alien Jet has a visible airborne swept-plate profile; Razor Skimmer stays almost flat against the ground. / Alien Jet raises two bright conduit arches over an open pilot; Razor Skimmer projects two long forward razor prongs. / Alien Jet centers on its pilot; Razor Skimmer centers on an exposed lime energy core.
 - `unit.martians.jet_scooter` — Both are small fast hover harassment units. Mitigations: Razor Skimmer is a broad black blade plan; Jet Scooter is a long thin open sled around its rider. / Razor centers on a lime core between two large prongs; Jet Scooter points a cluster of small orange nozzles ahead of paired side tubes. / Razor's propulsion is visually integrated into the hull; Jet Scooter leaves its tubes, deck and rear equipment exposed.
+- `unit.rock_raiders.drill_craft` — Both draft as tiny ground-hugging craft with two forward circular or pronged masses. Mitigations: Drill Craft exposes a rider between raised side lift pods; Razor Skimmer is almost flat around a crystal core. / Drill Craft ends in two small round saw discs; Razor Skimmer ends in two long blade prongs. / Drill Craft's rear reads as a work sled; Razor Skimmer's rear closes into one swept alien shell.
 
 ## D. Construction contract
 
@@ -164,7 +165,7 @@ Non-removable identity anchors:
 2. Greybox hero masses, openings and structural load path from the semantic map.
 3. Validate named pivots, contacts and sockets in the real gameplay camera.
 4. Author only the specified reusable textures after human material review.
-5. Produce 24/44/72-cell black silhouettes and run the full cross-roster confusion audit.
+5. Run the game-director blind review on the 24/44/72-cell silhouette draft and revise any failed distinction.
 
 **State:** `HOLD`
 

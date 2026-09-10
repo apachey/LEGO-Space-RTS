@@ -82,12 +82,13 @@ Non-removable identity anchors:
 - scanner-cutter tracking head
 - tripod service base with work light
 
-- Near / standard / far silhouette thumbnails: `PENDING 24/44/72-CELL BOARD`.
+- Blind-review code: `S34`. Draft boards: [24-cell](../Silhouettes/blind_24_cells.svg), [44-cell](../Silhouettes/blind_44_cells.svg), [72-cell](../Silhouettes/blind_72_cells.svg). This is a concept silhouette, not an approved model.
 - Palette and material hierarchy: Dark turquoise and industrial gray with black, light gray, hazard-yellow and restrained tool metal.
 - Forbidden genericization: Do not turn the asset into a conventional tank, APC, artillery piece or realistic modern vehicle. Its industrial purpose must read first.
 - Nearest-confusion baseline:
 
 - `building.mar.aero_guard_tower` — Both are small tall anti-air structures. Mitigations: Cutter Mast is a thin industrial tripod; Aero Guard Tower is an open stacked Martian platform. / Cutter Mast has one scanner-cutter head; Aero Guard Tower has paired articulated tracking arms. / Cutter Mast carries a warm work light; Aero Guard Tower exposes blue/sand-red mechanics and a Tube connection.
+- `building.ast.modular_sentinel_defense` — Both draft as small narrow pedestals with one tracking head. Mitigations: Cutter Mast remains a tall thin worksite mast; Sentinel Defense uses a shorter broad modular pedestal. / Cutter Mast carries one cutter/scanner assembly; Sentinel exposes a replaceable ground-or-air weapon head. / Cutter Mast's support is a skeletal industrial brace; Sentinel's support is a clean closed Mission base.
 
 ## D. Construction contract
 
@@ -153,7 +154,7 @@ Non-removable identity anchors:
 2. Greybox hero masses, openings and structural load path from the semantic map.
 3. Validate named pivots, contacts and sockets in the real gameplay camera.
 4. Author only the specified reusable textures after human material review.
-5. Produce 24/44/72-cell black silhouettes and run the full cross-roster confusion audit.
+5. Run the game-director blind review on the 24/44/72-cell silhouette draft and revise any failed distinction.
 
 **State:** `HOLD`
 

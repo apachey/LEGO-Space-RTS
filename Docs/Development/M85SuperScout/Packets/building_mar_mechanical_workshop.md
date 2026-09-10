@@ -99,12 +99,12 @@ Non-removable identity anchors:
 - multiple articulated overhead arms
 - irregular parts and leg racks
 
-- Near / standard / far silhouette thumbnails: `PENDING 24/44/72-CELL BOARD`.
+- Blind-review code: `S25`. Draft boards: [24-cell](../Silhouettes/blind_24_cells.svg), [44-cell](../Silhouettes/blind_44_cells.svg), [72-cell](../Silhouettes/blind_72_cells.svg). This is a concept silhouette, not an approved model.
 - Palette and material hierarchy: Blue and sand-red with translucent-neon-green accents, open platforms and visibly articulated mechanics.
 - Forbidden genericization: Do not make the asset Alien-lite, a smooth energy object or a joke contraption. Pumps, tubes, legs, clamps and platforms carry identity.
 - Nearest-confusion baseline:
 
-- `PENDING` — no nearest-neighbor pair has been assigned yet.
+- `building.rock_raiders.engineering_workshop` — Both are huge irregular heavy-machine workshops with open floors and overhead tools. Mitigations: Raider Workshop has one dominant tall tool rig; Martian Workshop has several unequal articulated arms. / Raider Workshop frames a broad vehicle/airlifter exit; Martian Workshop reserves a narrower leg-width assembly floor. / Raider Workshop stages drills, wheels and rotors on industrial racks; Martian Workshop stages legs and pressure tanks around exposed Tube-era machinery.
 
 ## D. Construction contract
 
@@ -170,7 +170,7 @@ Non-removable identity anchors:
 2. Greybox hero masses, openings and structural load path from the semantic map.
 3. Validate named pivots, contacts and sockets in the real gameplay camera.
 4. Author only the specified reusable textures after human material review.
-5. Produce 24/44/72-cell black silhouettes and run the full cross-roster confusion audit.
+5. Run the game-director blind review on the 24/44/72-cell silhouette draft and revise any failed distinction.
 
 **State:** `HOLD`
 

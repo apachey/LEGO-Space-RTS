@@ -61,12 +61,13 @@ Non-removable identity anchors:
 - forward survey scanner
 - exposed seated operator and tool rack
 
-- Near / standard / far silhouette thumbnails: `PENDING 24/44/72-CELL BOARD`.
+- Blind-review code: `S05`. Draft boards: [24-cell](../Silhouettes/blind_24_cells.svg), [44-cell](../Silhouettes/blind_44_cells.svg), [72-cell](../Silhouettes/blind_72_cells.svg). This is a concept silhouette, not an approved model.
 - Palette and material hierarchy: Dark turquoise and industrial gray with black, light gray, hazard-yellow and restrained tool metal.
 - Forbidden genericization: Do not turn the asset into a conventional tank, APC, artillery piece or realistic modern vehicle. Its industrial purpose must read first.
 - Nearest-confusion baseline:
 
 - `unit.rock_raiders.rapid_rider` — Both are small low Rock Raider utility craft. Mitigations: Hover Scout has one flat survey deck; Rapid Rider has two parallel hulls. / Hover Scout carries a forward scanner; Rapid Rider carries paired rear propulsion. / Hover Scout reads as single-seat information equipment; Rapid Rider preserves an open passenger/cargo gap.
+- `unit.martians.double_hover` — The draft sheet exposes two tiny open survey sleds with similarly low parallel masses. Mitigations: Hover Scout must read as one continuous deck; Double Hover must preserve two long separated runners. / Hover Scout places one scanner bar at the nose; Double Hover places deliberately unlike equipment masses behind the rider. / Hover Scout uses a compact single-seat centre; Double Hover keeps a long fork gap visible from above.
 
 ## D. Construction contract
 
@@ -130,7 +131,7 @@ Non-removable identity anchors:
 2. Greybox hero masses, openings and structural load path from the semantic map.
 3. Validate named pivots, contacts and sockets in the real gameplay camera.
 4. Author only the specified reusable textures after human material review.
-5. Produce 24/44/72-cell black silhouettes and run the full cross-roster confusion audit.
+5. Run the game-director blind review on the 24/44/72-cell silhouette draft and revise any failed distinction.
 
 **State:** `HOLD`
 

@@ -60,12 +60,13 @@ Non-removable identity anchors:
 - exposed central alien pilot
 - paired tall lime conduit arches
 
-- Near / standard / far silhouette thumbnails: `PENDING 24/44/72-CELL BOARD`.
+- Blind-review code: `S28`. Draft boards: [24-cell](../Silhouettes/blind_24_cells.svg), [44-cell](../Silhouettes/blind_44_cells.svg), [72-cell](../Silhouettes/blind_72_cells.svg). This is a concept silhouette, not an approved model.
 - Palette and material hierarchy: Black and bright lime with dark mechanics and disciplined translucent-neon-green energy or crystal elements.
 - Forbidden genericization: Do not use insect bodies, biological tissue, nests, tentacles or generic black-neon towers. Construction must remain craft-derived and mechanical.
 - Nearest-confusion baseline:
 
 - `unit.aliens.razor_skimmer` — Both are small swept black-lime attack craft. Mitigations: Alien Jet has a visible airborne swept-plate profile; Razor Skimmer stays almost flat against the ground. / Alien Jet raises two bright conduit arches over an open pilot; Razor Skimmer projects two long forward razor prongs. / Alien Jet centers on its pilot; Razor Skimmer centers on an exposed lime energy core.
+- `unit.astronauts.mission_fighter` — The draft sheet reduces both small interceptors to a swept central fuselage and paired wings. Mitigations: Mission Fighter uses a closed compact canopy; Alien Jet leaves the pilot open beneath two raised arches. / Mission Fighter's wings form clean rearward wedges; Alien Jet uses one thin irregular swept plate. / Mission Fighter has a solid pointed nose; Alien Jet's arches create a persistent central negative space.
 
 ## D. Construction contract
 
@@ -129,7 +130,7 @@ Non-removable identity anchors:
 2. Greybox hero masses, openings and structural load path from the semantic map.
 3. Validate named pivots, contacts and sockets in the real gameplay camera.
 4. Author only the specified reusable textures after human material review.
-5. Produce 24/44/72-cell black silhouettes and run the full cross-roster confusion audit.
+5. Run the game-director blind review on the 24/44/72-cell silhouette draft and revise any failed distinction.
 
 **State:** `HOLD`
 

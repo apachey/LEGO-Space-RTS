@@ -65,12 +65,12 @@ Non-removable identity anchors:
 - paired exhaust or cooling stacks
 - crew-scale service platform
 
-- Near / standard / far silhouette thumbnails: `PENDING 24/44/72-CELL BOARD`.
+- Blind-review code: `S08`. Draft boards: [24-cell](../Silhouettes/blind_24_cells.svg), [44-cell](../Silhouettes/blind_44_cells.svg), [72-cell](../Silhouettes/blind_72_cells.svg). This is a concept silhouette, not an approved model.
 - Palette and material hierarchy: Dark turquoise and industrial gray with black, light gray, hazard-yellow and restrained tool metal.
 - Forbidden genericization: Do not turn the asset into a conventional tank, APC, artillery piece or realistic modern vehicle. Its industrial purpose must read first.
 - Nearest-confusion baseline:
 
-- `PENDING` — no nearest-neighbor pair has been assigned yet.
+- `building.mar.pressure_generator` — Both draft as compact planted utility machines with exposed engines and exhaust-like upper forms. Mitigations: Power Station is a low horizontal engine block; Pressure Generator is a vertical three-tier drum. / Power Station uses paired exhaust stacks and side service access; Pressure Generator exposes one lower pressure mechanism and Tube coupling. / Power Station reads directionally like an industrial generator skid; Pressure Generator reads as a centered stacked network node.
 
 ## D. Construction contract
 
@@ -138,7 +138,7 @@ Non-removable identity anchors:
 2. Greybox hero masses, openings and structural load path from the semantic map.
 3. Validate named pivots, contacts and sockets in the real gameplay camera.
 4. Author only the specified reusable textures after human material review.
-5. Produce 24/44/72-cell black silhouettes and run the full cross-roster confusion audit.
+5. Run the game-director blind review on the 24/44/72-cell silhouette draft and revise any failed distinction.
 
 **State:** `HOLD`
 

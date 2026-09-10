@@ -1521,6 +1521,28 @@ simulation statistics, public formats, architecture or dependencies.
 This is preproduction implementation detail only. It changes no gameplay,
 simulation, public format, dependency or canon. All packets remain `HOLD`.
 
+## 2026-09-10 — Use deterministic concept silhouettes before T082 production modeling
+
+- Every roster asset receives an explicit concept recipe made from five
+  reviewable concerns: core mass, locomotion/contact, hero mechanism,
+  structural frame and identity-bearing negative space. The recipe also records
+  width, height and length ratios without changing the authoritative footprint.
+- Blind sheets randomize the complete 66-asset roster behind stable S-codes and
+  remove names, factions, roles, colours, icons and selection rings. The same
+  codes and one camera-ratio scale rule are reused at 24, 44 and 72 cells; a
+  separate answer key prevents automatic self-acceptance.
+- The vector generator also produces labeled faction proportion boards, a
+  relative-scale lineup and a building skyline/access/network audit. Building
+  production-exit sizes come from authoritative runtime content; white openings
+  are visual obligations and never new gameplay data.
+- The concept geometry is intentionally cheaper than 3D production art. It may
+  reveal an identity collision and be revised, but it cannot satisfy model,
+  construction, material, animation, gameplay-camera or director-acceptance
+  gates by itself.
+
+This is a preproduction review method only. It changes no gameplay, simulation,
+public format, dependency, architecture or canon. T082 remains `HOLD`.
+
 ## 2026-09-10 — Keep Alien production mechanical and craft-derived
 
 - The T082 Alien production-contract draft covers all six units and six

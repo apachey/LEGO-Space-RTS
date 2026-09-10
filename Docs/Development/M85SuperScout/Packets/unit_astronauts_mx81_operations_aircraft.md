@@ -62,12 +62,13 @@ Non-removable identity anchors:
 - long modular command spine
 - multiple detachable mission pods
 
-- Near / standard / far silhouette thumbnails: `PENDING 24/44/72-CELL BOARD`.
+- Blind-review code: `S43`. Draft boards: [24-cell](../Silhouettes/blind_24_cells.svg), [44-cell](../Silhouettes/blind_44_cells.svg), [72-cell](../Silhouettes/blind_72_cells.svg). This is a concept silhouette, not an approved model.
 - Palette and material hierarchy: Field Systems retain rugged white/light-gray/medium-blue construction; Mission Systems retain clean white/orange/black construction. Shared identity comes from insignia and interfaces, not shape averaging.
 - Forbidden genericization: Do not blend the two source lineages into generic white sci-fi or add military forms unsupported by the mapped expedition function.
 - Nearest-confusion baseline:
 
 - `unit.astronauts.solar_explorer` — Both are large modular Astronaut support assets. Mitigations: Solar Explorer is a long ground convoy; MX-81 is a very wide true-air wing. / Solar Explorer is bookended by flat solar panels; MX-81 carries several detachable mission pods. / Solar Explorer retains rugged Field construction; MX-81 uses clean high-performance Mission geometry.
+- `unit.aliens.alien_mothership` — Both are huge extremely wide airborne command/support silhouettes. Mitigations: MX-81 is a long command spine crossed by distinct wing and pod modules; Mothership is one interrupted circular hull. / MX-81 preserves several gaps between detachable mission pods; Mothership preserves one continuous open machinery channel. / MX-81 has a clear nose-to-tail direction; Mothership reads radially until its tail and bay opening establish heading.
 
 ## D. Construction contract
 
@@ -131,7 +132,7 @@ Non-removable identity anchors:
 2. Greybox hero masses, openings and structural load path from the semantic map.
 3. Validate named pivots, contacts and sockets in the real gameplay camera.
 4. Author only the specified reusable textures after human material review.
-5. Produce 24/44/72-cell black silhouettes and run the full cross-roster confusion audit.
+5. Run the game-director blind review on the 24/44/72-cell silhouette draft and revise any failed distinction.
 
 **State:** `HOLD`
 

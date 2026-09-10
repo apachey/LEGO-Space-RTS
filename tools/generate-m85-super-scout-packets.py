@@ -8,6 +8,7 @@ import csv
 import io
 import json
 from pathlib import Path
+import random
 import sys
 
 
@@ -25,6 +26,7 @@ ASTRONAUTS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/astronauts_produc
 ALIENS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/aliens_production_contracts.json"
 MARTIANS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/martians_production_contracts.json"
 CONFUSION = ROOT / "Content/Presentation/SuperScout/confusion_register.json"
+SILHOUETTES = ROOT / "Content/Presentation/SuperScout/silhouette_concepts.json"
 OUTPUT = ROOT / "Docs/Development/M85SuperScout/Packets"
 INDEX = ROOT / "Docs/Development/M85SuperScout/PACKET_INDEX.md"
 MATRIX = ROOT / "Docs/Development/M85SuperScout/Matrices/identity_source_matrix.csv"
@@ -225,6 +227,7 @@ def packet_text(
     contract: dict | None,
     texture_specs: dict[str, dict],
     packet_notice: str,
+    review_code: str,
 ) -> str:
     palette, forbidden = FACTION_RULES[asset["faction"]]
     if contract is None:
@@ -235,7 +238,7 @@ def packet_text(
             "2. Decompose primary masses and negative spaces from orthogonal evidence.\n"
             "3. Resolve LEGO load path, connection grammar and moving mechanism.\n"
             "4. Complete material/texture and state/animation contracts.\n"
-            "5. Produce 24/44/72-cell black silhouettes and run the cross-roster confusion audit."
+            "5. Run the game-director blind review on the 24/44/72-cell silhouette draft and revise any failed distinction."
         )
     else:
         packet_state = "FACTION_CONTRACT_DRAFT — HOLD FOR SILHOUETTE/ROSTER/DIRECTOR REVIEW"
@@ -248,7 +251,7 @@ def packet_text(
             "2. Greybox hero masses, openings and structural load path from the semantic map.\n"
             "3. Validate named pivots, contacts and sockets in the real gameplay camera.\n"
             "4. Author only the specified reusable textures after human material review.\n"
-            "5. Produce 24/44/72-cell black silhouettes and run the full cross-roster confusion audit."
+            "5. Run the game-director blind review on the 24/44/72-cell silhouette draft and revise any failed distinction."
         )
     source_rows = []
     for set_id in asset["sourceSets"]:
@@ -350,7 +353,7 @@ Non-removable identity anchors:
 
 {anchors}
 
-- Near / standard / far silhouette thumbnails: `PENDING 24/44/72-CELL BOARD`.
+- Blind-review code: `{review_code}`. Draft boards: [24-cell](../Silhouettes/blind_24_cells.svg), [44-cell](../Silhouettes/blind_44_cells.svg), [72-cell](../Silhouettes/blind_72_cells.svg). This is a concept silhouette, not an approved model.
 - Palette and material hierarchy: {palette}
 - Forbidden genericization: {forbidden}
 - Nearest-confusion baseline:
@@ -398,7 +401,7 @@ def index_text(assets: list[dict], contract_ids: set[str]) -> str:
         )
     return f"""# M8.5 T082 — Super Scout packet index
 
-This generated index covers every canonical buildable unit and infrastructure entry. The current pass locks identity, source family and non-removable silhouette anchors. It deliberately remains `HOLD` until multi-angle evidence, construction, mechanism, texture and cross-roster silhouette audits are complete.
+This generated index covers every canonical buildable unit and infrastructure entry. Identity, sources, semantic construction, mechanisms, texture needs and a cross-roster concept-silhouette draft now exist. Every packet deliberately remains `HOLD` until the game-director blind silhouette and complete-corpus review pass.
 
 | Asset | Stable ID | Faction | Kind | Footprint | State |
 |---|---|---|---|---|---|
@@ -431,9 +434,9 @@ def confusion_text(pairs: list[dict], assets: dict[str, dict]) -> str:
         right = assets[pair["right"]]["displayName"]
         differences = "<br>".join(f"{index + 1}. {value}" for index, value in enumerate(pair["differences"]))
         rows.append(f"| {left} | {right} | {pair['risk']} | {differences} | {pair['state']} |")
-    return f"""# M8.5 T082 — confusion-register baseline
+    return f"""# M8.5 T082 — confusion register
 
-This is the canon-derived first pass for the most obvious internal and cross-faction confusion pairs. It is not the final blind silhouette audit; additional pairs may be discovered after the 24/44/72-cell boards exist.
+This register combines the canon-derived baseline with risks exposed by the first 24/44/72-cell concept boards. It is still not the completed blind review: the game director may add failures or reject a proposed mitigation.
 
 | Left | Right | Why they may be confused | Required visible differences | State |
 |---|---|---|---|---|
@@ -581,6 +584,7 @@ def expected_files() -> dict[Path, str]:
     aliens_contracts = json.loads(ALIENS_CONTRACTS.read_text(encoding="utf-8"))
     martians_contracts = json.loads(MARTIANS_CONTRACTS.read_text(encoding="utf-8"))
     confusion = json.loads(CONFUSION.read_text(encoding="utf-8"))
+    silhouette_concepts = json.loads(SILHOUETTES.read_text(encoding="utf-8"))
     sources = {source["setId"]: source for source in ledger["sources"]}
     instructions = {record["setId"]: record for record in instruction_index["records"]}
     evidence_records = [
@@ -603,6 +607,14 @@ def expected_files() -> dict[Path, str]:
     if len(evidence) != len(evidence_records):
         raise ValueError("duplicate faction/source keys across source-evidence audits")
     assets = {asset["stableId"]: asset for asset in manifest["assets"]}
+    shuffled_assets = list(manifest["assets"])
+    random.Random(85082).shuffle(shuffled_assets)
+    review_codes = {
+        asset["stableId"]: f"S{index:02d}"
+        for index, asset in enumerate(shuffled_assets, 1)
+    }
+    if {profile["stableId"] for profile in silhouette_concepts["profiles"]} != set(assets):
+        raise ValueError("silhouette concepts do not cover the packet roster")
     contract_documents = [
         rock_raiders_contracts, astronauts_contracts, aliens_contracts, martians_contracts
     ]
@@ -679,6 +691,7 @@ def expected_files() -> dict[Path, str]:
             asset, sources, confusion["pairs"], instructions, evidence,
             production_contracts.get(asset["stableId"]), texture_specs,
             source_analysis_policy["packetNotice"],
+            review_codes[asset["stableId"]],
         )
     return result
 

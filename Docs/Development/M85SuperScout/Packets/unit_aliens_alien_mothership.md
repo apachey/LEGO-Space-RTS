@@ -64,12 +64,13 @@ Non-removable identity anchors:
 - opening lime-conduit central channel
 - integrated side bays and jetpack modules revealed by unfolding
 
-- Near / standard / far silhouette thumbnails: `PENDING 24/44/72-CELL BOARD`.
+- Blind-review code: `S14`. Draft boards: [24-cell](../Silhouettes/blind_24_cells.svg), [44-cell](../Silhouettes/blind_44_cells.svg), [72-cell](../Silhouettes/blind_72_cells.svg). This is a concept silhouette, not an approved model.
 - Palette and material hierarchy: Black and bright lime with dark mechanics and disciplined translucent-neon-green energy or crystal elements.
 - Forbidden genericization: Do not use insect bodies, biological tissue, nests, tentacles or generic black-neon towers. Construction must remain craft-derived and mechanical.
 - Nearest-confusion baseline:
 
 - `building.ali.etx_command_core` — The Command Core is intentionally Mothership-derived. Mitigations: Mothership keeps a huge interrupted circular airborne hull and long tail; Command Core is a compact grounded segment with support legs. / Mothership unfolds integrated craft bays while remaining one unit; Command Core replaces those bays with entrances and fixed service interfaces. / Mothership's machinery channel stays low and horizontal; Command Core raises and protects its core as a command landmark.
+- `unit.astronauts.mx81_operations_aircraft` — Both are huge extremely wide airborne command/support silhouettes. Mitigations: MX-81 is a long command spine crossed by distinct wing and pod modules; Mothership is one interrupted circular hull. / MX-81 preserves several gaps between detachable mission pods; Mothership preserves one continuous open machinery channel. / MX-81 has a clear nose-to-tail direction; Mothership reads radially until its tail and bay opening establish heading.
 
 ## D. Construction contract
 
@@ -135,7 +136,7 @@ Non-removable identity anchors:
 2. Greybox hero masses, openings and structural load path from the semantic map.
 3. Validate named pivots, contacts and sockets in the real gameplay camera.
 4. Author only the specified reusable textures after human material review.
-5. Produce 24/44/72-cell black silhouettes and run the full cross-roster confusion audit.
+5. Run the game-director blind review on the 24/44/72-cell silhouette draft and revise any failed distinction.
 
 **State:** `HOLD`
 

@@ -6,9 +6,11 @@ from __future__ import annotations
 from collections import Counter
 import json
 from pathlib import Path
+import random
 import subprocess
 import sys
 from urllib.parse import urlparse
+import xml.etree.ElementTree as ET
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -25,8 +27,11 @@ ASTRONAUTS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/astronauts_produc
 ALIENS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/aliens_production_contracts.json"
 MARTIANS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/martians_production_contracts.json"
 CONFUSION = ROOT / "Content/Presentation/SuperScout/confusion_register.json"
+SILHOUETTE_CONCEPTS = ROOT / "Content/Presentation/SuperScout/silhouette_concepts.json"
 CONTENT = ROOT / "Content/PrototypeEntities.json"
 GENERATOR = ROOT / "tools/generate-m85-super-scout-packets.py"
+SILHOUETTE_GENERATOR = ROOT / "tools/generate-m85-silhouette-review.py"
+SILHOUETTE_OUTPUT = ROOT / "Docs/Development/M85SuperScout/Silhouettes"
 
 CLASSIFICATIONS = {
     "OFFICIAL_DIRECT": "OFFICIAL-DIRECT",
@@ -350,7 +355,7 @@ def main() -> None:
         ALIENS_EVIDENCE,
         MARTIANS_EVIDENCE,
         ROCK_RAIDERS_CONTRACTS, ASTRONAUTS_CONTRACTS, ALIENS_CONTRACTS, MARTIANS_CONTRACTS,
-        CONFUSION, CONTENT, GENERATOR,
+        CONFUSION, SILHOUETTE_CONCEPTS, CONTENT, GENERATOR, SILHOUETTE_GENERATOR,
     ):
         if not path.is_file():
             fail(f"missing {path.relative_to(ROOT)}")
@@ -368,6 +373,7 @@ def main() -> None:
     aliens_contracts = json.loads(ALIENS_CONTRACTS.read_text(encoding="utf-8"))
     martians_contracts = json.loads(MARTIANS_CONTRACTS.read_text(encoding="utf-8"))
     confusion = json.loads(CONFUSION.read_text(encoding="utf-8"))
+    silhouette_concepts = json.loads(SILHOUETTE_CONCEPTS.read_text(encoding="utf-8"))
     content = json.loads(CONTENT.read_text(encoding="utf-8"))
     packet_notice = validate_source_analysis_policy(source_analysis_policy)
     if manifest.get("schemaVersion") != 1 or manifest.get("task") != "T082":
@@ -387,6 +393,29 @@ def main() -> None:
         fail("identity baseline is not the canonical 35-unit/31-infrastructure roster")
     if Counter(asset.get("faction") for asset in assets) != Counter(EXPECTED_FACTIONS):
         fail("identity baseline faction counts drifted")
+
+    if silhouette_concepts.get("schemaVersion") != 1 or silhouette_concepts.get("task") != "T082":
+        fail("silhouette concept schema/task mismatch")
+    if silhouette_concepts.get("status") != "DRAFT_CONCEPTS_READY_FOR_BLIND_REVIEW":
+        fail("silhouette concepts must remain a draft pending game-director review")
+    if silhouette_concepts.get("cameraWidthsCells") != [24, 44, 72]:
+        fail("silhouette concept camera widths drifted")
+    if set(silhouette_concepts.get("reviewRules", {})) != {"blindBoards", "negativeSpace", "scale", "hold"}:
+        fail("silhouette review rules are incomplete")
+    profiles = silhouette_concepts.get("profiles", [])
+    profile_ids = [profile.get("stableId") for profile in profiles]
+    if len(profile_ids) != 66 or len(set(profile_ids)) != 66 or set(profile_ids) != set(ids):
+        fail("silhouette concepts must cover the 66-asset roster exactly once")
+    expected_profile_fields = {"stableId", "ratios", "core", "mobility", "hero", "frame", "negative"}
+    for profile in profiles:
+        stable_id = profile["stableId"]
+        if set(profile) != expected_profile_fields:
+            fail(f"{stable_id} silhouette concept fields drifted")
+        ratios = profile["ratios"]
+        if len(ratios) != 3 or any(not isinstance(value, (int, float)) or value <= 0 for value in ratios):
+            fail(f"{stable_id} has invalid width/height/length silhouette ratios")
+        for field in ("core", "mobility", "hero", "frame", "negative"):
+            require_nonempty(profile, field, f"{stable_id} silhouette concept")
 
     runtime_assets = {
         entity["stableId"]: entity
@@ -571,9 +600,9 @@ def main() -> None:
 
     if confusion.get("schemaVersion") != 1 or confusion.get("task") != "T082":
         fail("confusion register schema/task mismatch")
-    if confusion.get("status") != "IN_PROGRESS_CANONICAL_PAIR_BASELINE":
+    if confusion.get("status") != "IN_PROGRESS_SILHOUETTE_DRAFT_AUDIT":
         fail("confusion register must not imply completed blind review")
-    if confusion.get("blindReviewState") != "PENDING_24_44_72_SILHOUETTES":
+    if confusion.get("blindReviewState") != "DRAFT_24_44_72_READY_FOR_GAME_DIRECTOR":
         fail("confusion register must retain the open silhouette-review gate")
     pairs = confusion.get("pairs", [])
     if len(pairs) < 30:
@@ -593,7 +622,7 @@ def main() -> None:
         if len(differences) != 3 or len(set(differences)) != 3:
             fail(f"confusion pair {left}/{right} needs exactly three distinct differences")
         require_nonempty(pair, "risk", f"confusion pair {left}/{right}")
-        if pair.get("state") != "BASELINE":
+        if pair.get("state") not in {"BASELINE", "SILHOUETTE_DRAFT_ADDED"}:
             fail(f"confusion pair {left}/{right} incorrectly implies completed review")
         if runtime_assets[left]["faction"] == runtime_assets[right]["faction"]:
             internal_pairs += 1
@@ -611,6 +640,55 @@ def main() -> None:
     )
     if generated.returncode != 0:
         fail(generated.stderr.strip() or generated.stdout.strip())
+
+    silhouette_generated = subprocess.run(
+        [sys.executable, str(SILHOUETTE_GENERATOR), "--check"],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if silhouette_generated.returncode != 0:
+        fail(silhouette_generated.stderr.strip() or silhouette_generated.stdout.strip())
+
+    shuffled_assets = list(assets)
+    random.Random(85082).shuffle(shuffled_assets)
+    review_codes = {
+        asset["stableId"]: f"S{index:02d}"
+        for index, asset in enumerate(shuffled_assets, 1)
+    }
+    expected_codes = set(review_codes.values())
+    blind_paths: list[Path] = []
+    for camera_width in (24, 44, 72):
+        full_path = SILHOUETTE_OUTPUT / f"blind_{camera_width}_cells.svg"
+        page_paths = [
+            SILHOUETTE_OUTPUT / f"blind_{camera_width}_cells_page_1.svg",
+            SILHOUETTE_OUTPUT / f"blind_{camera_width}_cells_page_2.svg",
+        ]
+        blind_paths.extend([full_path] + page_paths)
+        full_text = full_path.read_text(encoding="utf-8")
+        page_text = "\n".join(path.read_text(encoding="utf-8") for path in page_paths)
+        for label, text_value in (("full", full_text), ("paged", page_text)):
+            found_codes = {code for code in expected_codes if text_value.count(f">{code}<") == 1}
+            if found_codes != expected_codes:
+                fail(f"{camera_width}-cell {label} blind board does not contain every S-code exactly once")
+            if any(asset["displayName"] in text_value or asset["stableId"] in text_value for asset in assets):
+                fail(f"{camera_width}-cell {label} blind board leaks an asset name or stable ID")
+    for path in blind_paths + list(SILHOUETTE_OUTPUT.glob("proportions_*.svg")) + [
+        SILHOUETTE_OUTPUT / "relative_scale_lineup.svg",
+        SILHOUETTE_OUTPUT / "building_skyline.svg",
+    ]:
+        try:
+            ET.parse(path)
+        except ET.ParseError as error:
+            fail(f"invalid generated SVG {path.name}: {error}")
+    key_text = (SILHOUETTE_OUTPUT / "BLIND_REVIEW_KEY.md").read_text(encoding="utf-8")
+    for asset in assets:
+        if f"`{review_codes[asset['stableId']]}`" not in key_text or asset["displayName"] not in key_text:
+            fail(f"blind-review key does not map {asset['stableId']} exactly")
+    building_matrix_text = (SILHOUETTE_OUTPUT / "building_access_network_matrix.md").read_text(encoding="utf-8")
+    if sum(line.startswith("|") for line in building_matrix_text.splitlines()) != 33:
+        fail("building access/network matrix must contain one header, separator and 31 buildings")
 
     matrix_dir = ROOT / "Docs/Development/M85SuperScout/Matrices"
     for slug, label in (

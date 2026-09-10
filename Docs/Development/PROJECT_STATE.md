@@ -63,10 +63,11 @@ fully verified and game-director accepted. T082 Super Scout reference
 intelligence is now in progress: its exact 66-asset identity/source baseline and
 all four faction source-page audits are complete. Forty-three faction-scoped
 source records are visually audited across 48 official books plus one archival
-instruction scan; only Martian sources 1195 and 3750 remain evidence gaps. The
-All 66 assets now also have faction-internal semantic-construction,
-motion/socket and material/texture-needs drafts; the cross-roster silhouette,
-confusion and game-director review corpus remains open. A post-T069
+instruction scan; only Martian sources 1195 and 3750 remain evidence gaps. All
+66 assets now also have faction-internal semantic-construction,
+motion/socket and material/texture-needs drafts plus a complete first-pass
+24/44/72-cell concept-silhouette corpus. The game-director blind silhouette and
+complete-corpus review gates remain open. A post-T069
 quality revision makes outline/halo independent from
 the style post-pass, hardens profile paste, bounds VFX event memory and avoids
 unrelated live material rebuilds. HUD and health visuals remain excluded from the world Look Lab. The
@@ -689,19 +690,26 @@ live; the current schema-9 copy/paste retains the complete experiment.
 - Generated semantic, motion and material matrices now receive their faction
   label explicitly; this corrects stale Rock Raiders headings previously shown
   on the otherwise-correct Astronaut and Alien matrices.
-- All 66 A–I packet files, the identity/source matrix and a 31-pair confusion
+- All 66 A–I packet files, the identity/source matrix and a 44-pair confusion
   register regenerate deterministically. Every confusion pair has three visible
   differentiation requirements, and every packet is visibly `HOLD`, so this
   baseline cannot be confused with completed evidence or game-director
   acceptance.
+- The first complete black concept-silhouette corpus covers all 66 assets at
+  the 24/44/72 camera ratios using one shared footprint scale. Six blind-review
+  pages show only randomized stable S-codes; the answer key is separate. Four
+  faction proportion boards, a complete relative-scale lineup and a 31-building
+  skyline/access/network audit expose the intended front/side/top envelopes,
+  entrances, authoritative production exits and physical network gaps before
+  production modeling begins.
 - `tools/Validation/validate_m85_super_scout.py` compares the corpus with the
   authoritative runtime roster, checks counts, IDs, classifications, source
   coverage and the three-to-seven silhouette-anchor contract, and rejects stale
   generated packets.
-- T082 remains `BLOCKING_NOW` for T083/T085. All faction source-page audits and
-  all 66 production-contract drafts are complete; complete cross-roster
-  silhouettes/confusion audits and explicit game-director review remain
-  required. Current detail is tracked in
+- T082 remains `BLOCKING_NOW` for T083/T085. All faction source-page audits,
+  all 66 production-contract drafts and the first cross-roster silhouette and
+  confusion drafts are complete; blind identification, any resulting revisions
+  and explicit game-director corpus acceptance remain required. Current detail is tracked in
   `Docs/Development/M85_SUPER_SCOUT_PROGRESS.md`.
 
 Routine Godot verification is now non-intrusive on macOS: every gameplay smoke
@@ -726,9 +734,9 @@ step and must be announced when new visual evidence is actually required.
 
 ## Verification state
 
-The T082 Martian production-contract pass passed
+The T082 first-pass cross-roster silhouette corpus passed
 `./tools/verify.sh --full` with zero blocking failures at
-`Artifacts/Verification/20260910T072609Z-full-summary.txt`: all 317 tests,
+`Artifacts/Verification/20260910T115734Z-full-summary.txt`: all 317 tests,
 the complete 66-asset roster and faction-bound evidence validator,
 deterministic packet generation, the 24-mover gate, compiled content, retained
 M6 networking, T081 round trip, retained M7 presentation gates and a fresh
@@ -739,9 +747,10 @@ all 18 Astronaut sources audited across 23 official PDF books, all eight Alien
 sources audited across ten official PDF books, all eight available Martian
 sources audited across eight official PDF books with two Martian archival gaps,
 all 66 assets across four factions with structured semantic/motion/material
-contracts and no provisional contract, 19 generated comparison
-matrices, and 31 initial confusion pairs with no roster drift or cross-faction
-evidence leakage. It does not claim T082 acceptance.
+contracts and no provisional contract, 19 generated comparison matrices, 18
+deterministic silhouette-review artifacts, and 44 confusion pairs with no
+roster drift, blind-sheet label leak or cross-faction evidence leakage. It does
+not claim T082 acceptance.
 Stress60 remained the expected 2/60 `BLOCKING_LATER` M9 diagnostic.
 
 Every routine Godot smoke and the exported app emitted the explicit immediate
@@ -976,12 +985,14 @@ blocking only when M9 must prove its stable-large-battle exit.
 
 ## Next approved action
 
-1. Continue T082 with the 24/44/72-cell cross-roster silhouette, faction
-   proportion, scale, building skyline/entrance/exit/network and confusion
-   audits. Retain the two explicit Martian archival gaps unless usable evidence
-   appears, and escalate any gap that blocks a safe production decision.
-   Do not treat the generated `HOLD` packets, T070 data definitions or the
-   non-roster T081 pipeline fixture as production models.
+1. Continue T082 with the game director's blind review of both 24-cell pages,
+   then the 44- and 72-cell pages. Revise every wrong, uncertain or
+   indistinguishable S-code and expand the 44-pair confusion register wherever
+   the review exposes a new neighbor. Retain the two explicit Martian archival
+   gaps unless usable evidence appears, and escalate any gap that blocks a safe
+   production decision. Do not treat the concept silhouettes, generated `HOLD`
+   packets, T070 data definitions or the non-roster T081 pipeline fixture as
+   production models.
 2. Execute the remaining Phase 09C M8.5 T082–T092 work before final M9 Skirmish
    Alpha acceptance.
 3. Use the separate M7 Look/HUD/Palette labs only to investigate a rejected aspect;

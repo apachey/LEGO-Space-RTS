@@ -1,9 +1,9 @@
 # M8.5 T082 — SUPER SCOUT PROGRESS
 
 **Status:** in progress. The roster-locked identity baseline, all four faction
-source-page audits and all 66 faction-internal semantic-construction,
-motion/socket and material/texture-needs drafts are complete. The cross-roster
-silhouette, confusion and game-director review gates remain open.
+source-page audits, all 66 faction-internal production-contract drafts and the
+first complete cross-roster concept-silhouette audit are complete. The
+game-director blind silhouette and complete-corpus review gates remain open.
 
 ## Completed in the identity-baseline pass
 
@@ -18,11 +18,25 @@ silhouette, confusion and game-director review gates remain open.
   cannot be mistaken for T082 or game-director acceptance.
 - A generated identity/source matrix lets later audits compare the complete
   roster without copying data between documents.
-- The first confusion register covers 31 canon-derived internal and
-  cross-faction pairs. Every pair has exactly three visible differentiation
-  requirements, and each affected packet receives the same mitigation text.
-  This is a baseline for the future blind silhouette review, not a claim that
-  every visual collision has already been found.
+- The confusion register now covers 44 internal and cross-faction pairs. The
+  original 31 canon-derived neighbors remain, and 13 additional risks exposed
+  by the concept sheets cover tiny workers, hover craft, interceptors, huge
+  aircraft, production gantries, defense towers and resource/energy buildings.
+  Every pair has exactly three visible differentiation requirements. This is
+  still a draft for blind review, not a claim that every collision is solved.
+- All 66 assets now have one explicit width/height/length ratio and a
+  source-bounded silhouette recipe separating core mass, locomotion/contact,
+  hero mechanism, structural frame and identity-bearing negative space.
+  These are deliberately cheap concept shapes, not final models or new
+  gameplay footprints.
+- Deterministic full-roster black sheets exist at the exact 24/44/72 camera
+  ratios. The six easy-review pages use randomized stable S-codes and contain
+  no names, faction hints, roles, colours, icons or selection rings. A separate
+  answer key prevents the generator from grading its own work.
+- Four labeled faction proportion boards compare front/side/top envelopes; a
+  full-roster scale lineup uses one footprint-class rule; and the 31-building
+  skyline plus access/network matrix preserves entrances, production exits,
+  material lanes and Tube/network gaps as structural obligations.
 - The source ledger records 39 relied-upon official sets or source families.
   Direct official LEGO PDFs are indexed for 35 sources. Four older or
   promotional sources have no located official PDF; 1277 and 4930 now have
@@ -175,13 +189,12 @@ redistributed.
 
 1. Retain the two explicit Martian archival gaps unless usable evidence appears,
    and escalate any gap that prevents a safe production decision.
-2. Produce the 24/44/72-cell black-silhouette boards, faction proportion
-   boards, scale lineups and building skyline/entrance/exit/network matrices.
-3. Expand the 31-pair confusion baseline wherever the silhouette boards expose
-   another plausible neighbor; keep at least three deliberate differences for
-   every recorded pair.
-4. Resolve or escalate every consequential unknown, then request the game
-   director's blind silhouette and complete-corpus review.
+2. Run the game-director blind identification on both pages at 24 cells, then
+   44 and 72 cells, before opening the answer key.
+3. Revise every wrong, uncertain or indistinguishable S-code and extend the
+   44-pair register wherever the blind result exposes a new neighbor.
+4. Resolve or escalate every consequential unknown, then request the final
+   complete-corpus review.
 
 ## Current decision state
 
@@ -191,14 +204,14 @@ No packet is approved for T083/T085 production yet.
 
 ## Verification state
 
-The complete 17-asset Martian contract pass passed `./tools/verify.sh --full`
+The complete first-pass silhouette corpus passed `./tools/verify.sh --full`
 with zero blocking failures at
-`Artifacts/Verification/20260910T072609Z-full-summary.txt`. All 317 tests, the
+`Artifacts/Verification/20260910T115734Z-full-summary.txt`. All 317 tests, the
 66-asset Super Scout corpus, 39 source records, 35 primary sources, four
 archival sources, 66 non-provisional production contracts, 19 generated
-matrices, deterministic packet regeneration, retained presentation/network
-gates and a fresh macOS export passed. Stress60 remains the expected 2/60
-`BLOCKING_LATER` M9 diagnostic.
+matrices, 18 deterministic silhouette-review artifacts, all 44 confusion
+pairs, retained presentation/network gates and a fresh macOS export passed.
+Stress60 remains the expected 2/60 `BLOCKING_LATER` M9 diagnostic.
 
 Every routine Godot smoke and the exported app emitted the explicit immediate
 exit marker after its real PASS result. The macOS Godot diagnostic-report count

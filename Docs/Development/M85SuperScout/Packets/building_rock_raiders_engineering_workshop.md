@@ -100,12 +100,14 @@ Non-removable identity anchors:
 - towering drill or lift rig
 - reinforced asymmetrical frame
 
-- Near / standard / far silhouette thumbnails: `PENDING 24/44/72-CELL BOARD`.
+- Blind-review code: `S03`. Draft boards: [24-cell](../Silhouettes/blind_24_cells.svg), [44-cell](../Silhouettes/blind_44_cells.svg), [72-cell](../Silhouettes/blind_72_cells.svg). This is a concept silhouette, not an approved model.
 - Palette and material hierarchy: Dark turquoise and industrial gray with black, light gray, hazard-yellow and restrained tool metal.
 - Forbidden genericization: Do not turn the asset into a conventional tank, APC, artillery piece or realistic modern vehicle. Its industrial purpose must read first.
 - Nearest-confusion baseline:
 
 - `building.rock_raiders.vehicle_service_bay` — Both are huge open industrial production buildings. Mitigations: Service Bay has a low drive-through lane; Workshop has a tall heavy-machine exit. / Service Bay frames the lane with repair arms; Workshop is dominated by a drill/lift assembly rig. / Service Bay exposes spare racks at crew height; Workshop uses reinforced asymmetrical load-bearing frames.
+- `building.ast.mission_vehicle_bay` — Both are huge production halls with one central heavy-unit opening. Mitigations: Engineering Workshop rises into one asymmetric drill/lift tower; Mission Vehicle Bay uses a centered clean overhead gantry. / Engineering Workshop exposes irregular tool and chassis racks; Mission Vehicle Bay repeats two standardized assembly rails. / Engineering Workshop's supports deliberately differ left-to-right; Mission Vehicle Bay preserves a controlled bilateral frame.
+- `building.mar.mechanical_workshop` — Both are huge irregular heavy-machine workshops with open floors and overhead tools. Mitigations: Raider Workshop has one dominant tall tool rig; Martian Workshop has several unequal articulated arms. / Raider Workshop frames a broad vehicle/airlifter exit; Martian Workshop reserves a narrower leg-width assembly floor. / Raider Workshop stages drills, wheels and rotors on industrial racks; Martian Workshop stages legs and pressure tanks around exposed Tube-era machinery.
 
 ## D. Construction contract
 
@@ -173,7 +175,7 @@ Non-removable identity anchors:
 2. Greybox hero masses, openings and structural load path from the semantic map.
 3. Validate named pivots, contacts and sockets in the real gameplay camera.
 4. Author only the specified reusable textures after human material review.
-5. Produce 24/44/72-cell black silhouettes and run the full cross-roster confusion audit.
+5. Run the game-director blind review on the 24/44/72-cell silhouette draft and revise any failed distinction.
 
 **State:** `HOLD`
 
