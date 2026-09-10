@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[2]
 MANIFEST = ROOT / "Content/Presentation/SuperScout/roster_identity_baseline.json"
 LEDGER = ROOT / "Content/Presentation/SuperScout/source_ledger.json"
 INSTRUCTION_INDEX = ROOT / "Content/Presentation/SuperScout/source_instruction_index.json"
+SOURCE_ANALYSIS_POLICY = ROOT / "Content/Presentation/SuperScout/source_analysis_policy.json"
 ROCK_RAIDERS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/rock_raiders_source_evidence.json"
 ASTRONAUTS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/astronauts_source_evidence.json"
 ALIENS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/aliens_source_evidence.json"
@@ -76,9 +77,10 @@ def validate_source_evidence(
     faction: str,
     label: str,
     expected_status: str,
-    expected_audited: int,
+    expected_official_audited: int,
+    expected_archival_audited: int,
     expected_gaps: int,
-) -> tuple[int, int]:
+) -> tuple[int, int, int]:
     if evidence.get("schemaVersion") != 1 or evidence.get("task") != "T082":
         fail(f"{label} evidence schema/task mismatch")
     if evidence.get("faction") != faction:
@@ -96,7 +98,8 @@ def validate_source_evidence(
     if len(evidence_ids) != len(set(evidence_ids)) or set(evidence_ids) != faction_source_ids:
         fail(f"{label} evidence must cover its mapped source set exactly once")
 
-    audited_sources = 0
+    official_audited_sources = 0
+    archival_audited_sources = 0
     evidence_gaps = 0
     for record in evidence_records:
         set_id = record["setId"]
@@ -111,7 +114,7 @@ def validate_source_evidence(
         require_nonempty(record, "findings", f"{label} source {set_id}")
         require_nonempty(record, "openGaps", f"{label} source {set_id}")
         if record.get("evidenceState") == "OFFICIAL_PDF_VISUALLY_AUDITED":
-            audited_sources += 1
+            official_audited_sources += 1
             pdfs = record["instructionPdfs"]
             if not pdfs or not record["constructionRanges"]:
                 fail(f"{label} source {set_id} audited state lacks PDFs or page ranges")
@@ -126,6 +129,44 @@ def validate_source_evidence(
             for page_range in record["constructionRanges"]:
                 require_nonempty(page_range, "pages", f"{label} source {set_id} page range")
                 require_nonempty(page_range, "evidence", f"{label} source {set_id} page range")
+        elif record.get("evidenceState") == "ARCHIVAL_PDF_VISUALLY_AUDITED":
+            archival_audited_sources += 1
+            pdfs = record["instructionPdfs"]
+            if not pdfs or not record["constructionRanges"]:
+                fail(f"{label} source {set_id} archival-PDF state lacks PDF or page ranges")
+            if instruction_by_id[set_id]["state"] != "NO_OFFICIAL_PDF_LOCATED":
+                fail(f"{label} source {set_id} archival-PDF state disagrees with instruction index")
+            archival_urls = instruction_by_id[set_id].get("archivalEvidenceUrls", [])
+            if [pdf["url"] for pdf in pdfs] != archival_urls:
+                fail(f"{label} source {set_id} archival PDF list disagrees with instruction index")
+            for pdf in pdfs:
+                parsed = urlparse(pdf.get("url", ""))
+                if parsed.scheme != "https" or not parsed.netloc:
+                    fail(f"{label} source {set_id} has invalid archival PDF URL")
+                if not isinstance(pdf.get("pageCount"), int) or pdf["pageCount"] <= 0:
+                    fail(f"{label} source {set_id} has invalid archival page count")
+                sha256 = pdf.get("sha256", "")
+                if len(sha256) != 64 or any(character not in "0123456789abcdef" for character in sha256):
+                    fail(f"{label} source {set_id} has invalid archival PDF SHA-256")
+                require_nonempty(pdf, "provenance", f"{label} source {set_id} archival PDF")
+            for page_range in record["constructionRanges"]:
+                require_nonempty(page_range, "pages", f"{label} source {set_id} archival page range")
+                require_nonempty(page_range, "evidence", f"{label} source {set_id} archival page range")
+        elif record.get("evidenceState") == "ARCHIVAL_PRODUCT_VISUALLY_AUDITED":
+            archival_audited_sources += 1
+            if record["instructionPdfs"] or record["constructionRanges"]:
+                fail(f"{label} source {set_id} product-audit state contains instruction evidence")
+            references = record.get("referenceUrls", [])
+            if not references or len(references) != len(set(references)):
+                fail(f"{label} source {set_id} has missing or duplicate archival product references")
+            if references != instruction_by_id[set_id].get("archivalEvidenceUrls", []):
+                fail(f"{label} source {set_id} product references disagree with instruction index")
+            for reference in references:
+                parsed = urlparse(reference)
+                if parsed.scheme != "https" or not parsed.netloc:
+                    fail(f"{label} source {set_id} has invalid archival product URL")
+            if not any(value.startswith("VERIFIED") for value in record["viewCoverage"].values()):
+                fail(f"{label} source {set_id} product audit has no verified view")
         elif record.get("evidenceState") == "ARCHIVAL_GAP":
             evidence_gaps += 1
             if record["instructionPdfs"] or record["constructionRanges"]:
@@ -135,12 +176,84 @@ def validate_source_evidence(
         else:
             fail(f"{label} source {set_id} has invalid evidence state")
 
-    if audited_sources != expected_audited or evidence_gaps != expected_gaps:
+    if (
+        official_audited_sources != expected_official_audited
+        or archival_audited_sources != expected_archival_audited
+        or evidence_gaps != expected_gaps
+    ):
         fail(
-            f"{label} evidence expected {expected_audited} audited sources and "
-            f"{expected_gaps} gaps, found {audited_sources}/{evidence_gaps}"
+            f"{label} evidence expected {expected_official_audited} official audits, "
+            f"{expected_archival_audited} archival audits and {expected_gaps} gaps, found "
+            f"{official_audited_sources}/{archival_audited_sources}/{evidence_gaps}"
         )
-    return audited_sources, evidence_gaps
+    return official_audited_sources, archival_audited_sources, evidence_gaps
+
+
+def validate_source_analysis_policy(policy: dict) -> str:
+    if policy.get("schemaVersion") != 1 or policy.get("task") != "T082":
+        fail("source-analysis policy schema/task mismatch")
+    if policy.get("status") != "ACTIVE_SOURCE_ANALYSIS_POLICY":
+        fail("source-analysis policy must remain active")
+    required_order = policy.get("requiredAnalysisOrder", [])
+    if len(required_order) != 6 or len(required_order) != len(set(required_order)):
+        fail("source-analysis policy needs six distinct ordered safeguards")
+    expected_source_states = {
+        "releasedOfficialSetOrSubassembly",
+        "officialPromotionalModelOrMaterial",
+        "officialCombinationOrAlternateBuild",
+        "officialUnreleasedModel",
+        "officialGameModelOrAnimation",
+        "alternativeOfficialVersion",
+        "fanMoc",
+    }
+    if set(policy.get("sourceUsePolicy", {})) != expected_source_states:
+        fail("source-analysis policy source classifications drifted")
+    if policy["sourceUsePolicy"]["fanMoc"] != "EXCLUDED_FROM_CURRENT_T082_SOURCE_POOL":
+        fail("fan MOCs must remain excluded from the current T082 source pool")
+    method_ids = [method.get("id") for method in policy.get("candidateConstructionMethods", [])]
+    if method_ids != [
+        "DIRECT_SET_ADAPTATION",
+        "OFFICIAL_SUBASSEMBLY_DERIVATION",
+        "OFFICIAL_CROSS_SET_COMBINATION",
+        "OFFICIAL_GAME_RECOMPOSITION",
+        "FACTION_GRAMMAR_SYNTHESIS",
+        "FUNCTION_FIRST_SOURCE_CLADDING",
+    ]:
+        fail("source-analysis policy construction methods drifted")
+    if any(not method.get("description") for method in policy["candidateConstructionMethods"]):
+        fail("source-analysis policy has an unexplained construction method")
+    proposal_fields = policy.get("composedDesignProposalFields", [])
+    if len(proposal_fields) != 10 or len(proposal_fields) != len(set(proposal_fields)):
+        fail("composed-design proposal contract is incomplete")
+    game_titles = [game.get("title") for game in policy.get("gameReferencePool", [])]
+    if game_titles != ["LEGO Rock Raiders", "CrystAlien Conflict", "LEGO Battles (Nintendo DS)"]:
+        fail("required official-game reference pool drifted")
+    for game in policy["gameReferencePool"]:
+        parsed = urlparse(game.get("referenceUrl", ""))
+        if parsed.scheme != "https" or not parsed.netloc:
+            fail(f"game reference {game.get('title')} has invalid URL")
+        require_nonempty(game, "state", f"game reference {game.get('title')}")
+        require_nonempty(game, "allowedUse", f"game reference {game.get('title')}")
+    case_ids = [case.get("caseId") for case in policy.get("caseStudies", [])]
+    if case_ids != [
+        "RR_1277_COMPLETE_SET",
+        "RR_4930_COMPLETE_SET",
+        "LOM_7302_TOPOLOGY_CORRECTION",
+        "MM_7691_MULTI_ASSET_DECOMPOSITION",
+        "CAC_TRAINING_CAMP_RECOMPOSITION",
+    ]:
+        fail("source-analysis policy case-study set drifted")
+    for case in policy["caseStudies"]:
+        require_nonempty(case, "finding", f"case study {case.get('caseId')}")
+        require_nonempty(case, "productionConsequence", f"case study {case.get('caseId')}")
+        require_nonempty(case, "evidenceUrls", f"case study {case.get('caseId')}")
+    correction = policy.get("knownAuditCorrection", {})
+    if correction.get("stableId") != "unit.martians.worker_robot":
+        fail("Worker Robot audit correction is missing")
+    for field in ("incorrectClaim", "rootCause", "preventiveGuard"):
+        require_nonempty(correction, field, "Worker Robot audit correction")
+    require_nonempty(policy, "packetNotice", "source-analysis policy")
+    return policy["packetNotice"]
 
 
 def validate_production_contracts(contracts: dict, assets: list[dict]) -> tuple[int, int]:
@@ -221,14 +334,14 @@ def validate_production_contracts(contracts: dict, assets: list[dict]) -> tuple[
         if any(not socket.startswith("Socket_") for socket in sockets):
             fail(f"{stable_id} violates the T081 socket naming contract")
         require_nonempty(record, "unresolved", f"{stable_id} decision ledger")
-    if provisional != 2:
-        fail(f"expected the Crew and Drill Craft source-bounded drafts, found {provisional} provisional contracts")
+    if provisional != 0:
+        fail(f"archival Crew/Drill corrections should leave no source-bounded Raider drafts, found {provisional}")
     return len(records), provisional
 
 
 def main() -> None:
     for path in (
-        MANIFEST, LEDGER, INSTRUCTION_INDEX, ROCK_RAIDERS_EVIDENCE, ASTRONAUTS_EVIDENCE,
+        MANIFEST, LEDGER, INSTRUCTION_INDEX, SOURCE_ANALYSIS_POLICY, ROCK_RAIDERS_EVIDENCE, ASTRONAUTS_EVIDENCE,
         ALIENS_EVIDENCE,
         MARTIANS_EVIDENCE,
         ROCK_RAIDERS_CONTRACTS,
@@ -240,6 +353,7 @@ def main() -> None:
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     ledger = json.loads(LEDGER.read_text(encoding="utf-8"))
     instruction_index = json.loads(INSTRUCTION_INDEX.read_text(encoding="utf-8"))
+    source_analysis_policy = json.loads(SOURCE_ANALYSIS_POLICY.read_text(encoding="utf-8"))
     rock_raiders_evidence = json.loads(ROCK_RAIDERS_EVIDENCE.read_text(encoding="utf-8"))
     astronauts_evidence = json.loads(ASTRONAUTS_EVIDENCE.read_text(encoding="utf-8"))
     aliens_evidence = json.loads(ALIENS_EVIDENCE.read_text(encoding="utf-8"))
@@ -247,6 +361,7 @@ def main() -> None:
     rock_raiders_contracts = json.loads(ROCK_RAIDERS_CONTRACTS.read_text(encoding="utf-8"))
     confusion = json.loads(CONFUSION.read_text(encoding="utf-8"))
     content = json.loads(CONTENT.read_text(encoding="utf-8"))
+    packet_notice = validate_source_analysis_policy(source_analysis_policy)
     if manifest.get("schemaVersion") != 1 or manifest.get("task") != "T082":
         fail("identity baseline schema/task mismatch")
     if manifest.get("corpusStatus") != "IN_PROGRESS_IDENTITY_BASELINE":
@@ -346,6 +461,13 @@ def main() -> None:
                 or not parsed.path.endswith(".pdf")
             ):
                 fail(f"instruction source {set_id} has invalid official PDF URL")
+        archival_urls = record.get("archivalEvidenceUrls", [])
+        if not isinstance(archival_urls, list) or len(archival_urls) != len(set(archival_urls)):
+            fail(f"instruction source {set_id} has invalid or duplicate archival evidence URLs")
+        for archival_url in archival_urls:
+            parsed = urlparse(archival_url)
+            if parsed.scheme != "https" or not parsed.netloc:
+                fail(f"instruction source {set_id} has invalid archival evidence URL")
         source = source_by_id[set_id]
         if record.get("state") == "DIRECT_PDF_LOCATED":
             direct_pdf_sources += 1
@@ -358,17 +480,18 @@ def main() -> None:
         else:
             fail(f"instruction source {set_id} has invalid state")
 
-    audited_sources, evidence_gaps = validate_source_evidence(
+    audited_sources, rock_raiders_archival_audits, evidence_gaps = validate_source_evidence(
         rock_raiders_evidence,
         assets,
         instruction_by_id,
         "RockRaiders",
         "Rock Raiders",
-        "SOURCE_AUDIT_COMPLETE_WITH_TWO_GAPS",
+        "SOURCE_AUDIT_COMPLETE_WITH_ARCHIVAL_EVIDENCE",
         7,
         2,
+        0,
     )
-    astronauts_audited, astronauts_gaps = validate_source_evidence(
+    astronauts_audited, astronauts_archival_audits, astronauts_gaps = validate_source_evidence(
         astronauts_evidence,
         assets,
         instruction_by_id,
@@ -377,8 +500,9 @@ def main() -> None:
         "SOURCE_AUDIT_COMPLETE",
         18,
         0,
+        0,
     )
-    aliens_audited, aliens_gaps = validate_source_evidence(
+    aliens_audited, aliens_archival_audits, aliens_gaps = validate_source_evidence(
         aliens_evidence,
         assets,
         instruction_by_id,
@@ -387,8 +511,9 @@ def main() -> None:
         "SOURCE_AUDIT_COMPLETE",
         8,
         0,
+        0,
     )
-    martians_audited, martians_gaps = validate_source_evidence(
+    martians_audited, martians_archival_audits, martians_gaps = validate_source_evidence(
         martians_evidence,
         assets,
         instruction_by_id,
@@ -396,6 +521,7 @@ def main() -> None:
         "Martians",
         "SOURCE_AUDIT_COMPLETE_WITH_TWO_GAPS",
         8,
+        0,
         2,
     )
     contract_count, provisional_contracts = validate_production_contracts(
@@ -456,6 +582,8 @@ def main() -> None:
                 fail(f"{path.name} missing or duplicates {section}")
         if "**State:** `HOLD`" not in packet or "**Approving reviewer:** game director, not yet requested" not in packet:
             fail(f"{path.name} could be mistaken for an accepted T082 packet")
+        if packet_notice not in packet:
+            fail(f"{path.name} is missing the source-decomposition policy notice")
     contracted_packets = sum("- Contract state: `" in path.read_text(encoding="utf-8") for path in packet_paths)
     if contracted_packets != contract_count:
         fail(f"expected {contract_count} contract-enriched packets, found {contracted_packets}")
@@ -484,10 +612,10 @@ def main() -> None:
         "M8.5 SUPER SCOUT: PASS "
         f"assets={len(assets)} units=35 infrastructure=31 sources={len(sources)} "
         f"primaryVerified={primary} archival={archival} directPdfs={direct_pdf_sources} "
-        f"rockRaidersAudited={audited_sources} rockRaidersGaps={evidence_gaps} "
-        f"astronautsAudited={astronauts_audited} astronautsGaps={astronauts_gaps} "
-        f"aliensAudited={aliens_audited} aliensGaps={aliens_gaps} "
-        f"martiansAudited={martians_audited} martiansGaps={martians_gaps} "
+        f"rockRaidersOfficialAudits={audited_sources} rockRaidersArchivalAudits={rock_raiders_archival_audits} rockRaidersGaps={evidence_gaps} "
+        f"astronautsAudited={astronauts_audited} astronautsArchivalAudits={astronauts_archival_audits} astronautsGaps={astronauts_gaps} "
+        f"aliensAudited={aliens_audited} aliensArchivalAudits={aliens_archival_audits} aliensGaps={aliens_gaps} "
+        f"martiansAudited={martians_audited} martiansArchivalAudits={martians_archival_audits} martiansGaps={martians_gaps} "
         f"contracts={contract_count} provisionalContracts={provisional_contracts} "
         f"packets=66 confusionPairs={len(pairs)} state=HOLD"
     )

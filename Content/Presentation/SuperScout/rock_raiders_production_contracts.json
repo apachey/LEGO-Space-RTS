@@ -71,16 +71,17 @@
   "assets": [
     {
       "stableId": "unit.rock_raiders.crew",
-      "contractState": "SOURCE_BOUNDED_PROVISIONAL",
+      "contractState": "CANON_DERIVED_ADAPTATION",
       "semanticParts": [
-        "Helmet/visor silhouette — identifies protected industrial personnel rather than infantry — CANON_DERIVED_ADAPTATION.",
-        "Portable tool — performs extraction, construction, repair and weak contact defense — CANON_DERIVED_ADAPTATION.",
-        "Backpack/work lamp — carries compact service equipment and keeps the worker readable beside machinery — SOURCE_BOUNDED_PROVISIONAL."
+        "Five named crew variants — Axle, Bandit, Docs, Jet and Sparks provide distinct headwear, torso color and face reads inside one shared worker class — SOURCE_VERIFIED.",
+        "Portable tool loadout — draws from the source's loose drill, shovel, scanner and large handheld saw equipment while communicating extraction, construction or repair — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.",
+        "Variant-specific helmet, visor, goggles or cap — preserves character identity instead of forcing one generic uniform silhouette — SOURCE_VERIFIED.",
+        "Compact lamp/back equipment — keeps work function readable beside machines without becoming a permanent weapon pack — CANON_DERIVED_ADAPTATION."
       ],
       "construction": {
-        "loadPath": "Minifigure-derived torso and hips carry the helmet, backpack and two-handed tool; the tool must remain visibly portable rather than body-mounted.",
-        "modules": "Shared crew body plus swappable mining/repair tool and restrained backpack/lamp variants.",
-        "adaptationBoundary": "Canon fixes the worker/tool read, but the missing 4930 rear evidence prevents locking one exact backpack and lamp arrangement."
+        "loadPath": "A minifigure-derived torso and hips carry variant-specific headwear and a handheld tool; any lamp/back equipment attaches to the torso and remains visibly lighter than the carried work tool.",
+        "modules": "Shared movement/interaction rig plus five appearance variants, swappable mining/repair tools and restrained optional lamp/back equipment. The tiny 4930 equipment stand remains a world/support motif, not part of the Crew body.",
+        "adaptationBoundary": "4930 proves five distinct people and loose work equipment, not one standardized soldier. Production may unify animation and gameplay sockets but may not erase the character variation or invent a 4930-derived vehicle."
       },
       "motion": {
         "locomotion": "Foot; quick, compact steps with the carried tool kept clear of the legs.",
@@ -92,13 +93,13 @@
         "beats": ["Idle weight shift and equipment check.", "Foot locomotion with restrained tool counter-swing.", "Extract/build/repair uses anticipation, visible tool contact, repeated work cycle and settle.", "Damage interrupts the work cycle; destruction separates tool/backpack before the body collapse."]
       },
       "materials": {
-        "geometryMustCarry": ["helmet and visor profile", "portable tool head", "backpack/lamp mass"],
+        "geometryMustCarry": ["variant-specific headwear and visor profile", "portable tool head", "optional compact lamp/back-equipment mass"],
         "materialRoles": ["Body", "Accent", "Tool", "Glass", "Lamp", "Neutral"],
         "textureFamilies": ["rr_tool_wear", "rr_hazard_and_service_decals", "rr_console_and_signal_atlas"],
         "bespokeTextures": []
       },
       "sockets": ["Socket_Selection", "Socket_Health", "Socket_ToolContact", "Socket_WorkVfx", "Socket_Lamp", "Socket_AudioTool"],
-      "unresolved": ["Choose the production backpack/lamp variant after a verified 4930 rear/equipment source is found or the game director explicitly approves a bounded adaptation."]
+      "unresolved": ["Choose whether normal production cycles the five named appearance variants evenly or weights particular specialists; rear printing and exact lamp/backpack combinations still require additional crew imagery or director approval."]
     },
     {
       "stableId": "unit.rock_raiders.hover_scout",
@@ -133,34 +134,35 @@
     },
     {
       "stableId": "unit.rock_raiders.drill_craft",
-      "contractState": "SOURCE_BOUNDED_PROVISIONAL",
+      "contractState": "CANON_DERIVED_ADAPTATION",
       "semanticParts": [
-        "Oversized forward drill — excavates authored terrain and performs short-range structure contact — CANON_DERIVED_ADAPTATION.",
-        "Compact operator cage — keeps the machine visibly a small work craft — CANON_DERIVED_ADAPTATION.",
-        "Short wheel chassis — brings the drill into contact without turning the asset into a miniature tank — SOURCE_BOUNDED_PROVISIONAL."
+        "Flat open hover sled — carries the operator and tool on one shallow plate-built spine — SOURCE_VERIFIED.",
+        "Paired raised round side pods — provide the source's dominant lift/engine masses and frame the operator — SOURCE_VERIFIED.",
+        "Central hazard panel and exposed Sparks position — separate the operator deck from the forward tool package — SOURCE_VERIFIED.",
+        "Single oversized forward drill — replaces the source's two mirrored ice-saw arms to perform canonical excavation and short-range structure contact — CANON_DERIVED_ADAPTATION."
       ],
       "construction": {
-        "loadPath": "A short central frame must carry drill thrust back into the wheel chassis and brace the open operator cage behind the tool.",
-        "modules": "Drill/tool boom, compact cage and wheel/contact chassis; exact repeated wheel modules are not yet source-proven.",
-        "adaptationBoundary": "The missing 1277 construction source blocks final wheel count, axle positions, drill support and rear counterweight geometry."
+        "loadPath": "One shallow plate-built spine carries the open operator deck, hazard panel and two vertical side-pod mounts; a short reinforced front bracket transfers the adapted drill load into that spine.",
+        "modules": "Flat sled, mirrored side lift/engine pods, central operator/hazard station and one detachable adapted drill package. The source's two saw arms define the width and attachment rhythm of the replacement tool bracket.",
+        "adaptationBoundary": "The archival manual proves a hovercraft with two ice saws and no wheels. Canon requires a ground-layer Drill Craft with one oversized mining drill, so the drill/tool conversion is explicit; a wheel chassis, tank hull or source-invented rear counterweight is forbidden."
       },
       "motion": {
-        "locomotion": "Wheeled ground movement with quick steering; final wheel rotation pivots wait for source confirmation.",
-        "plantedContact": "All authored wheels remain grounded; excavation settles the chassis before drill contact.",
+        "locomotion": "Low ground-layer hover movement derived from the source craft; quick steering with restrained sled heave and no true-air banking.",
+        "plantedContact": "The sled settles to one low hover datum before excavation; the adapted drill establishes the only hard work contact while the paired side pods stabilize the chassis visually.",
         "pivots": [
-          {"name":"Pivot_DrillFeed","parent":"Asset_DrillCraft","motion":"short source-bounded forward feed along drill axis","driver":"authoritative excavation/contact state; exact travel pending source"},
+          {"name":"Pivot_DrillFeed","parent":"Asset_DrillCraft","motion":"short canon-derived forward feed along the drill axis; retracted travel rest","driver":"authoritative excavation/contact state"},
           {"name":"Pivot_DrillSpin","parent":"Pivot_DrillFeed","motion":"continuous roll around tool axis; stopped rest","driver":"excavation or contact-attack presentation progress"}
         ],
-        "beats": ["Idle tool check without continuous drill spin.", "Move keeps drill still and visibly clear of the ground.", "Excavate settles, feeds and spins the drill, then retracts after the authoritative result.", "Damage stops tool motion; wreck preserves the drill/cage relationship."]
+        "beats": ["Idle hover settles around the shallow source sled with the drill stopped.", "Move uses restrained side-pod vibration and small terrain-following heave, not wheel roll or aircraft banking.", "Excavate settles, feeds and spins the adapted drill, then retracts after the authoritative result.", "Damage destabilizes one side pod and stops tool motion; the wreck preserves the open sled, paired pods and drill relationship."]
       },
       "materials": {
-        "geometryMustCarry": ["drill helix and tip", "operator cage opening", "wheel/contact silhouette"],
-        "materialRoles": ["Body", "Accent", "Tool", "Rubber", "Glass", "Lamp", "Neutral"],
+        "geometryMustCarry": ["drill helix and short twin-saw-derived support bracket", "flat open operator sled and hazard panel", "paired raised round side pods"],
+        "materialRoles": ["Body", "Accent", "Tool", "Glass", "Lamp", "Neutral"],
         "textureFamilies": ["rr_tool_wear", "rr_hazard_and_service_decals"],
         "bespokeTextures": []
       },
-      "sockets": ["Socket_Selection", "Socket_Health", "Socket_DrillContact", "Socket_DrillDust", "Socket_DrillSparks", "Socket_AudioDrill"],
-      "unresolved": ["Do not lock the production chassis or wheel pivots until official/archival 1277 construction evidence is found or the game director approves a clearly labeled reconstruction."]
+      "sockets": ["Socket_Selection", "Socket_Health", "Socket_DrillContact", "Socket_DrillDust", "Socket_DrillSparks", "Socket_HoverLeft", "Socket_HoverRight", "Socket_AudioDrill", "Socket_AudioHover"],
+      "unresolved": ["The source manual does not prove whether the two raised round side pods rotate, glow or remain visually static. Keep them mechanically quiet until later motion evidence or director review selects a restrained presentation behavior."]
     },
     {
       "stableId": "unit.rock_raiders.rapid_rider",

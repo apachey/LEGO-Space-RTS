@@ -34,8 +34,9 @@ Open question: The faction-internal construction, motion, socket and material dr
 ### Source audit [RockRaiders:4920]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128168.pdf)
 - Construction map:
-  - PDF pages 1-2: Complete twin-hull Rapid Rider build, central deck, raised canopy/bridge, rear drive equipment and carried rock load.
+  - Evidence pages 1-2: Complete twin-hull Rapid Rider build, central deck, raised canopy/bridge, rear drive equipment and carried rock load.
 - View/mechanism coverage: front=PARTIAL p1 cover and p2 final; rear=PARTIAL p2 steps 10-14; leftRight=PARTIAL p1-2 construction sequence; top=VERIFIED p1-2; threeQuarter=VERIFIED p1 cover and p2 final; undersideInterior=PARTIAL p1 steps 1-4 expose hull foundations; mechanism=PARTIAL p2 rear propulsion and cargo placement; no movement sequence
 - Verified findings:
   - Two long parallel hulls remain separate around a narrow central deck.
@@ -46,6 +47,8 @@ Open question: The faction-internal construction, motion, socket and material dr
   - Amphibious hover behavior is canonical adaptation and is not demonstrated by the static manual.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 

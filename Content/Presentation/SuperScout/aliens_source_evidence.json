@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "task": "T082",
   "faction": "Aliens",
-  "retrievalDate": "2026-09-09",
+  "retrievalDate": "2026-09-10",
   "status": "SOURCE_AUDIT_COMPLETE",
   "coverageScale": ["VERIFIED", "PARTIAL", "MISSING", "NOT_APPLICABLE"],
   "sources": [
@@ -46,9 +46,9 @@
       "setId": "7691",
       "evidenceState": "OFFICIAL_PDF_VISUALLY_AUDITED",
       "instructionPdfs": [{"url":"https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4516029.pdf","pageCount":76,"sha256":"2a6d4ddeac8fd1b67fa0a405fa623a4de15369db8458a27fb923666779752e8f"}],
-      "constructionRanges": [{"pages":"3-27","evidence":"Astronaut extraction station; supporting opposition evidence."},{"pages":"28-49","evidence":"Large circular Mothership hull, open central machinery channel, lime conduits, weapon hardpoints and long multi-blade tail."},{"pages":"50-67","evidence":"Three detachable small-craft modules: a central lime-conduit craft and two round-disc weapon/capture pods with independent riders."}],
+      "constructionRanges": [{"pages":"3-27","evidence":"Astronaut extraction station; supporting opposition evidence."},{"pages":"28-49","evidence":"Large circular Mothership carrier hull, open central machinery channel, lime conduits, docking hardpoints and long multi-blade tail."},{"pages":"50-56","evidence":"Two mirrored narrow seated weapon craft are built as independent modules for the carrier."},{"pages":"57-63","evidence":"A long lime-conduit front/central craft is assembled independently and docked into the carrier's open machinery channel."},{"pages":"64-67","evidence":"Two disc-like alien jetpack modules are built separately, accept individual aliens and dock at the carrier's outer wing/arm ends."}],
       "viewCoverage": {"front":"VERIFIED p43-49","rear":"VERIFIED p44-49","leftRight":"VERIFIED p28-49","top":"VERIFIED p28-49","threeQuarter":"VERIFIED cover and p43-50","undersideInterior":"VERIFIED p28-48 staged circular frame; interior remains open rather than enclosed","mechanism":"VERIFIED p50-67 detachable subcraft and capture/weapon pods; carrier launch cycle remains partial"},
-      "findings": ["The Mothership is a huge flattened circular black hull interrupted by a visible central machinery channel rather than a sealed saucer.","Several long black and translucent-lime tail blades extend from one side, preventing a rotationally symmetric disc silhouette.","Paired lime conduits route across the open center, while three independently readable small craft establish the carrier language outside the main hull."],
+      "findings": ["The Mothership is a huge flattened circular black carrier interrupted by a visible central machinery channel rather than a sealed saucer.","Several long black and translucent-lime tail blades extend from one side, preventing a rotationally symmetric disc silhouette.","The set is not one indivisible vehicle: beyond the main carrier it provides a long front/central craft, two narrow seated side craft and two disc jetpack modules, each with its own assembly and docking relationship."],
       "openGaps": ["The manual proves detachable subcraft but not the game's payload capacity, launch/recovery timing, reinforcement function or Charge-support state; all require a carrier-specific contract."]
     },
     {

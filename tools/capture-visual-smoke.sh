@@ -17,19 +17,19 @@ mkdir -p "$(dirname "${OUTPUT}")"
 dotnet restore "${ROOT}/GodotClient/LEGO.SpaceRTS.Godot.csproj" -p:NuGetAudit=false --ignore-failed-sources
 dotnet build "${ROOT}/GodotClient/LEGO.SpaceRTS.Godot.csproj" -c Debug --no-restore --disable-build-servers -m:1
 if [[ "${CAPTURE_MODE}" == "--construction" ]]; then
-  "${GODOT}" --disable-crash-handler --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- --capture-smoke --capture-path "${OUTPUT}" --capture-construction
+  "${GODOT}" --disable-crash-handler --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- --automated-smoke-immediate-exit --capture-smoke --capture-path "${OUTPUT}" --capture-construction
 elif [[ "${CAPTURE_MODE}" == "--repair" ]]; then
-  "${GODOT}" --disable-crash-handler --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- --capture-smoke --capture-path "${OUTPUT}" --capture-repair
+  "${GODOT}" --disable-crash-handler --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- --automated-smoke-immediate-exit --capture-smoke --capture-path "${OUTPUT}" --capture-repair
 elif [[ "${CAPTURE_MODE}" == "--transport" ]]; then
-  "${GODOT}" --disable-crash-handler --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- --capture-smoke --capture-path "${OUTPUT}" --capture-transport
+  "${GODOT}" --disable-crash-handler --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- --automated-smoke-immediate-exit --capture-smoke --capture-path "${OUTPUT}" --capture-transport
 elif [[ "${CAPTURE_MODE}" == "--transformation" ]]; then
-  "${GODOT}" --disable-crash-handler --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- --capture-smoke --capture-path "${OUTPUT}" --capture-transformation
+  "${GODOT}" --disable-crash-handler --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- --automated-smoke-immediate-exit --capture-smoke --capture-path "${OUTPUT}" --capture-transformation
 elif [[ "${CAPTURE_MODE}" == "--transformation-rollback" ]]; then
-  "${GODOT}" --disable-crash-handler --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- --capture-smoke --capture-path "${OUTPUT}" --capture-transformation-rollback
+  "${GODOT}" --disable-crash-handler --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- --automated-smoke-immediate-exit --capture-smoke --capture-path "${OUTPUT}" --capture-transformation-rollback
 elif [[ "${CAPTURE_MODE}" == "--excavation" ]]; then
-  "${GODOT}" --disable-crash-handler --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- --capture-smoke --capture-path "${OUTPUT}" --capture-excavation
+  "${GODOT}" --disable-crash-handler --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- --automated-smoke-immediate-exit --capture-smoke --capture-path "${OUTPUT}" --capture-excavation
 else
-  "${GODOT}" --disable-crash-handler --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- --capture-smoke --capture-path "${OUTPUT}"
+  "${GODOT}" --disable-crash-handler --log-file "${CAPTURE_LOG}" --quit-after 600 --path "${ROOT}/GodotClient" -- --automated-smoke-immediate-exit --capture-smoke --capture-path "${OUTPUT}"
 fi
 if [[ ! -s "${OUTPUT}" ]]; then printf 'FAIL: visual smoke capture was not produced.\n' >&2; exit 1; fi
 printf 'PASS: visual smoke capture saved to %s\n' "${OUTPUT}"

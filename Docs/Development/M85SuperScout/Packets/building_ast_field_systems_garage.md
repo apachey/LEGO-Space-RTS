@@ -36,9 +36,10 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Astronauts:7301]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4156314.pdf)
 - Construction map:
-  - PDF pages 1: Complete seven-step Rover build, equipment mast and final operator view.
-  - PDF pages 2: Promotional reverse page; no additional construction evidence.
+  - Evidence pages 1: Complete seven-step Rover build, equipment mast and final operator view.
+  - Evidence pages 2: Promotional reverse page; no additional construction evidence.
 - View/mechanism coverage: front=PARTIAL p1 final view; rear=PARTIAL p1 steps 1-6; leftRight=VERIFIED p1 final and staged construction; top=VERIFIED p1 steps 3-6; threeQuarter=VERIFIED p1 cover and final step; undersideInterior=PARTIAL p1 bare chassis; mechanism=MISSING static open rover
 - Verified findings:
   - The Rover is a tiny open four-wheel platform rather than an enclosed car.
@@ -50,11 +51,12 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Astronauts:7312]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130807.pdf)
 - Construction map:
-  - PDF pages 2-9: Central T3-Trike cockpit/chassis, twin front outriggers and large rear wheel assembly.
-  - PDF pages 10-13: Separate service robot and scanner station modules.
-  - PDF pages 14-17: Outrigger equipment, hoses, final three-wheel machine and operator scale.
-  - PDF pages 18: Cross-set alternate walker; not direct T3-Trike geometry.
+  - Evidence pages 2-9: Central T3-Trike cockpit/chassis, twin front outriggers and large rear wheel assembly.
+  - Evidence pages 10-13: Separate service robot and scanner station modules.
+  - Evidence pages 14-17: Outrigger equipment, hoses, final three-wheel machine and operator scale.
+  - Evidence pages 18: Cross-set alternate walker; not direct T3-Trike geometry.
 - View/mechanism coverage: front=VERIFIED p1 and p14-17; rear=PARTIAL p8-17; leftRight=VERIFIED p2-17 construction sequence; top=VERIFIED p2-16; threeQuarter=VERIFIED p1 and p16-17; undersideInterior=VERIFIED p2-8 exposed chassis; mechanism=PARTIAL p14-16 rotating outrigger/tool mounts; no driving sequence
 - Verified findings:
   - The signature layout is one huge rear wheel plus two long forward outriggers ending in smaller contact points.
@@ -66,11 +68,12 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Astronauts:7315]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130810.pdf)
 - Construction map:
-  - PDF pages 2-7: Forward cockpit and low exploration nose module.
-  - PDF pages 8-17: Long modular habitation/cargo body plus separate small support pod.
-  - PDF pages 18-23: Twin-panel solar/service tail built around a tall circular frame and attached to the long body.
-  - PDF pages 24-26: Cross-set alternate models and extended modular combinations; not direct production geometry.
+  - Evidence pages 2-7: Forward cockpit and low exploration nose module.
+  - Evidence pages 8-17: Long modular habitation/cargo body plus separate small support pod.
+  - Evidence pages 18-23: Twin-panel solar/service tail built around a tall circular frame and attached to the long body.
+  - Evidence pages 24-26: Cross-set alternate models and extended modular combinations; not direct production geometry.
 - View/mechanism coverage: front=VERIFIED p1 and p22-23; rear=PARTIAL p18-23; leftRight=VERIFIED p2-23; top=VERIFIED p2-23; threeQuarter=VERIFIED p1 and p22-26; undersideInterior=VERIFIED p2-21 staged construction; mechanism=PARTIAL p18-23 separable solar/service module; deployment not demonstrated
 - Verified findings:
   - Solar Explorer identity comes from a long low modular convoy body rather than a single compact rover.
@@ -80,6 +83,8 @@ Open question: Source-view coverage and construction-critical page ranges are re
   - The manual supports separable modules but not the game's deployed Forward Service state; stabilizers, access route and deployment motion remain explicit adaptation work.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 

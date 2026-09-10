@@ -34,12 +34,13 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Martians:7316]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130811.pdf)
 - Construction map:
-  - PDF pages 2-16: Forward tan/orange Excavation Searcher module with long drill, paired claws and separately built planted tool/leg assemblies.
-  - PDF pages 17-30: Large irregular rear body, multiple spaced legs and tall articulated crane assemble, then dock to the forward module.
-  - PDF pages 31-33: Independent low material sled/container builds and docks beneath the complete Searcher.
-  - PDF pages 34-57: Separate dark excavation support rig with arches, hoses and human operator; useful opposition/industrial evidence, not direct Martian Searcher geometry.
-  - PDF pages 58-59: Cross-set alternate humanoid rebuild; not a demonstrated primary Searcher transformation.
+  - Evidence pages 2-16: Forward tan/orange Excavation Searcher module with long drill, paired claws and separately built planted tool/leg assemblies.
+  - Evidence pages 17-30: Large irregular rear body, multiple spaced legs and tall articulated crane assemble, then dock to the forward module.
+  - Evidence pages 31-33: Independent low material sled/container builds and docks beneath the complete Searcher.
+  - Evidence pages 34-57: Separate dark excavation support rig with arches, hoses and human operator; useful opposition/industrial evidence, not direct Martian Searcher geometry.
+  - Evidence pages 58-59: Cross-set alternate humanoid rebuild; not a demonstrated primary Searcher transformation.
 - View/mechanism coverage: front=VERIFIED p1 and p27-33; rear=PARTIAL p27-33; leftRight=VERIFIED p2-33; top=VERIFIED p2-33; threeQuarter=VERIFIED p1 and p27-33; undersideInterior=VERIFIED p2-33 staged modules and sled; mechanism=PARTIAL p28-33 crane/claws/module docking; no primary gait, siege cycle or full material route
 - Verified findings:
   - The Martian Excavation Searcher is a huge low many-legged machine assembled from visibly separate forward tool, rear processing/crane and underslung sled modules.
@@ -49,6 +50,8 @@ Open question: Source-view coverage and construction-critical page ranges are re
   - The manual does not provide a walking gait, supported siege contact sequence, complete crane-to-processor route or game's manipulation attack; these require later semantic and motion contracts.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 

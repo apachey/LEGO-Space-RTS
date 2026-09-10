@@ -34,9 +34,10 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Martians:7300]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4156313.pdf)
 - Construction map:
-  - PDF pages 1: Complete seven-step Double Hover build with twin long forward runners, open rider deck and two unlike rear equipment masses.
-  - PDF pages 2: Promotional reverse page; no additional construction evidence.
+  - Evidence pages 1: Complete seven-step Double Hover build with twin long forward runners, open rider deck and two unlike rear equipment masses.
+  - Evidence pages 2: Promotional reverse page; no additional construction evidence.
 - View/mechanism coverage: front=PARTIAL p1 cover and final step; rear=PARTIAL p1 steps 5-7; leftRight=PARTIAL p1 construction sequence; top=VERIFIED p1 steps 1-7; threeQuarter=VERIFIED p1 cover and final step; undersideInterior=PARTIAL p1 bare plate sequence; mechanism=MISSING static micro-build only
 - Verified findings:
   - Double Hover is a narrow open sled on two long parallel forward runners, not a platform balanced above two circular hover discs.
@@ -46,6 +47,8 @@ Open question: Source-view coverage and construction-critical page ranges are re
   - Clean rear and underside views are still required before fixing lift, propulsion and landing contacts.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 

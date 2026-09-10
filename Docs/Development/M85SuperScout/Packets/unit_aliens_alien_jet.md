@@ -34,9 +34,10 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Aliens:5617]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4525566.pdf)
 - Construction map:
-  - PDF pages 1: Complete five-step Alien Jet build with exposed pilot, swept black deck and paired flexible lime arches.
-  - PDF pages 2: Promotional reverse page; no additional construction evidence.
+  - Evidence pages 1: Complete five-step Alien Jet build with exposed pilot, swept black deck and paired flexible lime arches.
+  - Evidence pages 2: Promotional reverse page; no additional construction evidence.
 - View/mechanism coverage: front=PARTIAL p1 cover and final step; rear=PARTIAL p1 staged build; leftRight=PARTIAL p1 construction sequence; top=VERIFIED p1 steps 3-5; threeQuarter=VERIFIED p1 cover and final step; undersideInterior=PARTIAL p1 bare plate sequence; mechanism=PARTIAL p1 flexible lime arches; no authored flight or weapon motion
 - Verified findings:
   - Alien Jet is an extremely small open craft built around a broad swept black plate rather than an enclosed fuselage.
@@ -46,6 +47,8 @@ Open question: Source-view coverage and construction-critical page ranges are re
   - Clean rear and underside views are still required before fixing propulsion, landing and weapon sockets for the production Alien Jet.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 

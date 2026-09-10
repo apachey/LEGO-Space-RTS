@@ -61,6 +61,38 @@ Archival databases may verify inventory, mold, color and set-family facts.
 Secondary reconstructions may fill viewing-angle gaps only when labeled as
 interpretation. Generated imagery is never evidence of source construction.
 
+Treat every set as a container, not as an automatic one-set/one-unit mapping.
+Before assigning it to the roster, audit the complete inventory and every
+separately built model: detachable craft, repeated modules, minifigures,
+equipment, resources, alternate builds and opposing-faction contents may each
+support different assets. The 7691 Mothership, for example, contains a carrier,
+a long front craft, two seated side craft and two disc-like jetpack modules;
+those parts must be recorded separately before deciding their roster use.
+
+Source use follows these boundaries:
+
+- released official sets and their subassemblies may be primary evidence;
+- official promotional material and official combination builds may be used
+  when the exact model or module is named;
+- unreleased official material may inform ideation, but production mapping
+  requires game-director approval and a canon check;
+- official games such as LEGO Rock Raiders, CrystAlien Conflict and LEGO
+  Battles may suggest operation, recombination and RTS readability, but are not
+  designs to copy or automatic canon;
+- alternative official versions require game-director review;
+- fan MOCs are excluded from the current T082 source pool.
+
+When no official set directly matches a canonical asset, compare several
+methods: direct adaptation, promoting an official subassembly, combining named
+official modules, using an official game's recombination only as a method
+precedent, synthesizing recurring faction construction grammar, or starting
+from the canonical gameplay function and cladding it with source-supported
+modules. Any proposed composed design must name the donors, exact borrowed
+parts, connection/load path, new work, rejected alternatives and visible game
+consequence before asking for approval. CrystAlien Conflict's Training Camp —
+a 2-by-2 repetition of Dropship-like nose modules — is a useful precedent for
+the method, not a building to reproduce.
+
 ### 3. Decompose visual identity
 
 Describe the asset as a hierarchy of recognizable masses:
@@ -77,6 +109,13 @@ which detail may disappear at lower LOD without changing identity.
 Name what each major visible part actually is. A shape without a known
 structural, operational or identity purpose is treated as unresolved, not as
 free decorative detail.
+
+Before stating a topology, appendage count or locomotion type, trace each major
+part through the construction sequence, name its parent connection and decide
+whether it is a foot, wheel, hover element, tool, support or decoration. Confirm
+the result against a completed-model or product view. This two-view guard is
+mandatory because a single final angle can make two articulated legs look like
+four radial protrusions.
 
 ### 4. Reconstruct credible construction
 

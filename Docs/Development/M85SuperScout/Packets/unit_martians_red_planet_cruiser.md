@@ -34,9 +34,10 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Martians:7311]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130806.pdf)
 - Construction map:
-  - PDF pages 2-11: Complete low green/gray Red Planet Cruiser with broad offset platforms, open central rider, forward wheel/equipment and long side probes.
-  - PDF pages 12-15: Separate two-stage docking pedestal is built and the complete cruiser mounts above it.
+  - Evidence pages 2-11: Complete low green/gray Red Planet Cruiser with broad offset platforms, open central rider, forward wheel/equipment and long side probes.
+  - Evidence pages 12-15: Separate two-stage docking pedestal is built and the complete cruiser mounts above it.
 - View/mechanism coverage: front=PARTIAL p8-15; rear=PARTIAL p8-15; leftRight=VERIFIED p2-15 construction sequence; top=VERIFIED p2-15; threeQuarter=VERIFIED p1 and p8-15; undersideInterior=VERIFIED p2-13 staged cruiser and pedestal; mechanism=VERIFIED p12-15 detachable docking pedestal; movement and weapon cycles remain missing
 - Verified findings:
   - Red Planet Cruiser is a low broad and deliberately irregular craft whose flat outer platforms outweigh its small central body.
@@ -46,6 +47,8 @@ Open question: Source-view coverage and construction-critical page ranges are re
   - The source does not define whether the pedestal travels, deploys or stays at a facility; the frontline production unit needs an explicit supported state choice without inventing gameplay.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 

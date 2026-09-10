@@ -34,14 +34,15 @@ Open question: The faction-internal construction, motion, socket and material dr
 ### Source audit [RockRaiders:4990]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4129017.pdf)
 - Construction map:
-  - PDF pages 2-7: Small work vehicles, crystal handling and compact workstation modules.
-  - PDF pages 8-10: Tall illuminated machinery/power tower with open service access.
-  - PDF pages 11-19: Long articulated crane/tool boom mounted to the tower and used for rock handling.
-  - PDF pages 20-29: Open vehicle-width gantry/workshop with sloped supports, lamps and overhead rails.
-  - PDF pages 30-34: Conveyor/processing module attaches to the gantry and completes a visible material route.
-  - PDF pages 35-40: Modules connect across an irregular rock worksite base rather than a sealed building shell.
-  - PDF pages 41-43: Final product photography supplies overall skyline, module spacing and worksite context.
+  - Evidence pages 2-7: Small work vehicles, crystal handling and compact workstation modules.
+  - Evidence pages 8-10: Tall illuminated machinery/power tower with open service access.
+  - Evidence pages 11-19: Long articulated crane/tool boom mounted to the tower and used for rock handling.
+  - Evidence pages 20-29: Open vehicle-width gantry/workshop with sloped supports, lamps and overhead rails.
+  - Evidence pages 30-34: Conveyor/processing module attaches to the gantry and completes a visible material route.
+  - Evidence pages 35-40: Modules connect across an irregular rock worksite base rather than a sealed building shell.
+  - Evidence pages 41-43: Final product photography supplies overall skyline, module spacing and worksite context.
 - View/mechanism coverage: front=VERIFIED p41-43; rear=PARTIAL p35-43; leftRight=VERIFIED p35-43; top=VERIFIED p35-40; threeQuarter=VERIFIED p1 and p41-43; undersideInterior=VERIFIED p2-40 staged module and base construction; mechanism=VERIFIED p11-19 crane/tool boom; PARTIAL p20-34 gantry/conveyor service path
 - Verified findings:
   - HQ identity comes from a loose network of independently readable work modules on an uneven base, not from a single enclosed headquarters block.
@@ -51,6 +52,8 @@ Open question: The faction-internal construction, motion, socket and material dr
   - The manual supports modular industrial functions but does not assign the game's exact Ore Plant, Power Station, Service Bay or Workshop boundaries; those remain explicit canonical adaptations.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 

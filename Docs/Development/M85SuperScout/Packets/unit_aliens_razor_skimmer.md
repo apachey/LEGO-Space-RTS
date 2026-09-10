@@ -36,9 +36,10 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Aliens:7645]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4534846.pdf), [official instruction PDF 2](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4549395.pdf)
 - Construction map:
-  - PDF pages book 1, 3-26: Complete low Alien attack craft: long twin-pronged nose, four swept blade modules, lime cockpit/energy masses, rear engines and exposed crew deck.
-  - PDF pages book 1, 27-75; book 2, 2-63: Astronaut mining assemblies and powered Crystal Reaper; supporting opposition evidence, not Razor Skimmer geometry.
+  - Evidence pages book 1, 3-26: Complete low Alien attack craft: long twin-pronged nose, four swept blade modules, lime cockpit/energy masses, rear engines and exposed crew deck.
+  - Evidence pages book 1, 27-75; book 2, 2-63: Astronaut mining assemblies and powered Crystal Reaper; supporting opposition evidence, not Razor Skimmer geometry.
 - View/mechanism coverage: front=VERIFIED book 1 p18-26; rear=VERIFIED book 1 p20-26; leftRight=VERIFIED book 1 p3-26; top=VERIFIED book 1 p3-26; threeQuarter=VERIFIED cover and book 1 p20-26; undersideInterior=VERIFIED book 1 p3-19 staged frame; mechanism=PARTIAL book 1 p20-26 removable crew and projectile mounts; no hover cycle
 - Verified findings:
   - The source craft is a low, long black skimmer with a split spear-like nose rather than a compact disc.
@@ -50,10 +51,11 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Aliens:7692]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4524070.pdf)
 - Construction map:
-  - PDF pages 3-12: Astronaut payload rover; supporting opposition evidence.
-  - PDF pages 13-23: Complete narrow Alien attack craft with tall paired curved blades, open center, lime conduits and triple rear emitter cluster.
-  - PDF pages 24-71: Astronaut dropship and visible cargo release; supporting opposition evidence.
+  - Evidence pages 3-12: Astronaut payload rover; supporting opposition evidence.
+  - Evidence pages 13-23: Complete narrow Alien attack craft with tall paired curved blades, open center, lime conduits and triple rear emitter cluster.
+  - Evidence pages 24-71: Astronaut dropship and visible cargo release; supporting opposition evidence.
 - View/mechanism coverage: front=PARTIAL p20-23; rear=VERIFIED p20-23; leftRight=VERIFIED p13-23; top=VERIFIED p13-23; threeQuarter=VERIFIED cover and p20-23; undersideInterior=VERIFIED p13-20 staged open frame; mechanism=PARTIAL p20-23 hose and projectile mounts; no hover or deployment sequence
 - Verified findings:
   - This small craft is unusually narrow and tall, with two near-vertical curved black blades enclosing a large central slot.
@@ -65,9 +67,10 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Aliens:7697]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4515381.pdf)
 - Construction map:
-  - PDF pages 3-15: Complete low Alien ambush craft with three curved black lobes, exposed pilot, arched lime conduits and distributed emitters.
-  - PDF pages 16-68: Astronaut MT-51 Claw-Tank; supporting opposition evidence.
+  - Evidence pages 3-15: Complete low Alien ambush craft with three curved black lobes, exposed pilot, arched lime conduits and distributed emitters.
+  - Evidence pages 16-68: Astronaut MT-51 Claw-Tank; supporting opposition evidence.
 - View/mechanism coverage: front=PARTIAL p12-15; rear=PARTIAL p12-15; leftRight=VERIFIED p3-15; top=VERIFIED p3-15; threeQuarter=VERIFIED cover and p12-15; undersideInterior=VERIFIED p3-12 staged frame; mechanism=PARTIAL p12-15 flexible conduits and projectile mounts; no flight or ambush sequence
 - Verified findings:
   - The ambush craft forms a low broken ring from three rounded black lobes around an open operator cavity.
@@ -77,6 +80,8 @@ Open question: Source-view coverage and construction-critical page ranges are re
   - The composite Razor/Defense family must determine which lobe, emitter and open-pilot features remain shared identity and which stay source-specific variants.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 

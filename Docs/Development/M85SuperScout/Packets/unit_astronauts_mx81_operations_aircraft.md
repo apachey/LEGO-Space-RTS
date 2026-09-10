@@ -34,11 +34,12 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Astronauts:7644]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4534843.pdf), [official instruction PDF 2](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4537579.pdf)
 - Construction map:
-  - PDF pages book 1, 3-35: Alien scout craft and separate mission payload pods; supporting opposition evidence.
-  - PDF pages book 1, 36-75; book 2, 2-24: Tall modular service/launch tower and platform completed across both books.
-  - PDF pages book 2, 26-60: MX-81 central aircraft hull, broad wing plane, cockpit and twin orange engine masses.
-  - PDF pages book 2, 61-73: Long side booms, detachable operational craft/pods and final multi-module aircraft assembly.
+  - Evidence pages book 1, 3-35: Alien scout craft and separate mission payload pods; supporting opposition evidence.
+  - Evidence pages book 1, 36-75; book 2, 2-24: Tall modular service/launch tower and platform completed across both books.
+  - Evidence pages book 2, 26-60: MX-81 central aircraft hull, broad wing plane, cockpit and twin orange engine masses.
+  - Evidence pages book 2, 61-73: Long side booms, detachable operational craft/pods and final multi-module aircraft assembly.
 - View/mechanism coverage: front=VERIFIED book 2 p52-76; rear=VERIFIED book 2 p60-76; leftRight=VERIFIED book 2 p26-76; top=VERIFIED book 2 p26-73; threeQuarter=VERIFIED covers and book 2 p73-76; undersideInterior=VERIFIED book 2 p26-60 staged airframe; mechanism=PARTIAL book 2 p61-73 detachable side modules and launch/service tower; flight operation not animated
 - Verified findings:
   - MX-81 is a very wide flying operations platform with a dense central command hull and long thin span.
@@ -48,6 +49,8 @@ Open question: Source-view coverage and construction-critical page ranges are re
   - The manuals prove modular carried craft and support architecture but not the game's exact scan, transport or in-flight service functions; their attachment and launch states require an asset-specific contract.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 

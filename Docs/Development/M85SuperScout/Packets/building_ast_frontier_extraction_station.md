@@ -35,10 +35,11 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Astronauts:7691]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4516029.pdf)
 - Construction map:
-  - PDF pages 3-27: Human extraction station with long rail/sled, upright operator rig, flexible transfer hose and canister.
-  - PDF pages 28-49: Large circular alien mothership body; supporting opposition evidence.
-  - PDF pages 50-68: Alien subcraft and attachment mechanisms; supporting opposition evidence.
+  - Evidence pages 3-27: Human extraction station with long rail/sled, upright operator rig, flexible transfer hose and canister.
+  - Evidence pages 28-49: Large circular alien mothership body; supporting opposition evidence.
+  - Evidence pages 50-68: Alien subcraft and attachment mechanisms; supporting opposition evidence.
 - View/mechanism coverage: front=PARTIAL p17-27 human station; rear=PARTIAL p20-27 human station; leftRight=VERIFIED p3-27; top=VERIFIED p3-27; threeQuarter=VERIFIED p1 and p21-27; undersideInterior=VERIFIED p3-23 staged human station; mechanism=VERIFIED p20-27 hose/canister extraction play; station processing cycle remains partial
 - Verified findings:
   - The human station is a narrow linear extraction rig rather than a broad factory.
@@ -50,10 +51,11 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Astronauts:7648]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4525546.pdf)
 - Construction map:
-  - PDF pages 3-16: Compact orange/white mining rover with exposed low chassis and large wheels.
-  - PDF pages 17-25: Separate tall articulated extraction/tool mast on a small wheeled base.
-  - PDF pages 26-28: Both modules shown together at operator scale.
+  - Evidence pages 3-16: Compact orange/white mining rover with exposed low chassis and large wheels.
+  - Evidence pages 17-25: Separate tall articulated extraction/tool mast on a small wheeled base.
+  - Evidence pages 26-28: Both modules shown together at operator scale.
 - View/mechanism coverage: front=PARTIAL p15-28; rear=PARTIAL p15-28; leftRight=VERIFIED p3-28; top=VERIFIED p3-25; threeQuarter=VERIFIED p1 and p25-28; undersideInterior=VERIFIED p3-20 staged chassis; mechanism=PARTIAL p17-25 hinged tool mast; extraction cycle not demonstrated
 - Verified findings:
   - The source is a paired mining system: a compact rover and a visibly independent upright tool platform.
@@ -63,6 +65,8 @@ Open question: Source-view coverage and construction-critical page ranges are re
   - The game combines this source with other mining vehicles, so the retained mini-robot/support-module relationship must be defined without creating an extra buildable unit.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "task": "T082",
   "faction": "Martians",
-  "retrievalDate": "2026-09-09",
+  "retrievalDate": "2026-09-10",
   "status": "SOURCE_AUDIT_COMPLETE_WITH_TWO_GAPS",
   "coverageScale": ["VERIFIED", "PARTIAL", "MISSING", "NOT_APPLICABLE"],
   "sources": [
@@ -37,10 +37,10 @@
       "setId": "7302",
       "evidenceState": "OFFICIAL_PDF_VISUALLY_AUDITED",
       "instructionPdfs": [{"url":"https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130290.pdf","pageCount":2,"sha256":"ea9e3524d02a9a9ca8b5ffaff30faa21ebef895856c1774dd62e024320db6d62"}],
-      "constructionRanges": [{"pages":"1-2","evidence":"Complete seven-step Worker Robot build from shallow central wedge to four separate radial outrigger/foot modules and exposed operator."}],
-      "viewCoverage": {"front":"PARTIAL p1 cover and p2 final","rear":"PARTIAL p1-2 sequence","leftRight":"PARTIAL p1-2 sequence","top":"VERIFIED p1-2","threeQuarter":"VERIFIED p1 cover and p2 final","undersideInterior":"PARTIAL p1 bare base","mechanism":"MISSING no gait or tool action is demonstrated"},
-      "findings": ["The source machine is an extremely low open four-spoke platform, not a conventional two-legged humanoid robot.","Four separately built rectangular end pads radiate from a shallow central wedge around the seated Martian operator.","The source contains no dominant head or dedicated manipulator, so the game's worker tool must remain a legible adaptation instead of replacing the four-spoke identity."],
-      "openGaps": ["A production construction map must define which source limb becomes the canonical worker/builder manipulator and how the remaining contacts move without inventing an unsupported humanoid gait."]
+      "constructionRanges": [{"pages":"1","evidence":"The Martian figure and shallow central operator wedge are built separately; the wedge includes an exposed seat/control tile and rear wall."},{"pages":"2","evidence":"Two mirrored multi-joint leg assemblies, each ending in one broad rectangular foot, attach to the left and right sides of the central wedge; the final seated biped and cover walking pose are shown."}],
+      "viewCoverage": {"front":"VERIFIED p1 cover and p2 final","rear":"PARTIAL p1-2 sequence","leftRight":"VERIFIED p1 cover and p2 steps 5-7","top":"VERIFIED p1-2","threeQuarter":"VERIFIED p1 cover and p2 final","undersideInterior":"PARTIAL p1 bare base and p2 separate feet","mechanism":"PARTIAL p2 mirrored leg joints plus cover walking pose; no complete gait or tool action sequence"},
+      "findings": ["The source machine is a tiny open bipedal walker with two mirrored articulated legs; the earlier four-spoke interpretation was incorrect.","Each leg terminates in one broad foot, producing exactly two ground contacts around the shallow central operator wedge.","The source has no dedicated arm or work tool, so the canonical builder/repair manipulator must be a clearly labeled subordinate adaptation that does not erase the two-leg silhouette."],
+      "openGaps": ["The manual proves leg topology and a walking pose but not a full planted gait cycle.","The production contract must choose a compact worker tool mount without converting the small biped into a generic humanoid robot or a multi-legged platform."]
     },
     {
       "setId": "7303",

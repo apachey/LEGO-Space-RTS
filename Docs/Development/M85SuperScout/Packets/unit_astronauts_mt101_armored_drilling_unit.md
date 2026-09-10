@@ -34,13 +34,14 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Astronauts:7699]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517776.pdf), [official instruction PDF 2](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517777.pdf)
 - Construction map:
-  - PDF pages book 1, 3-14: Small human wheeled support craft and alien scout; supporting module evidence.
-  - PDF pages book 1, 15-29: White/orange forward mission cockpit and equipment cylinders.
-  - PDF pages book 1, 30-47; book 2, 2-17: Long open suspended chassis, side rails and rear service bay.
-  - PDF pages book 2, 18-27: Six separately mounted huge orange wheels and completed heavy running gear.
-  - PDF pages book 2, 28-34: Forward shell and detachable support/tool components attach to the chassis.
-  - PDF pages book 2, 35-43: Elevated rotating drill carriage, long drill tool and explicit rotation/tool play evidence.
+  - Evidence pages book 1, 3-14: Small human wheeled support craft and alien scout; supporting module evidence.
+  - Evidence pages book 1, 15-29: White/orange forward mission cockpit and equipment cylinders.
+  - Evidence pages book 1, 30-47; book 2, 2-17: Long open suspended chassis, side rails and rear service bay.
+  - Evidence pages book 2, 18-27: Six separately mounted huge orange wheels and completed heavy running gear.
+  - Evidence pages book 2, 28-34: Forward shell and detachable support/tool components attach to the chassis.
+  - Evidence pages book 2, 35-43: Elevated rotating drill carriage, long drill tool and explicit rotation/tool play evidence.
 - View/mechanism coverage: front=VERIFIED book 2 p24-43; rear=VERIFIED book 2 p27-43; leftRight=VERIFIED both books; top=VERIFIED book 2 p2-43; threeQuarter=VERIFIED covers and book 2 p35-43; undersideInterior=VERIFIED book 1 p30-47 and book 2 p2-27; mechanism=VERIFIED book 2 p35-43 rotating drill carriage and movable rear module
 - Verified findings:
   - MT-101 is a long open heavy chassis suspended between six individually mounted oversized orange wheels.
@@ -50,6 +51,8 @@ Open question: Source-view coverage and construction-critical page ranges are re
   - The spring-projectile play action is not the game's contact-drill behavior; final drill reach, impact pose and chassis suspension response require a production animation plan.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 

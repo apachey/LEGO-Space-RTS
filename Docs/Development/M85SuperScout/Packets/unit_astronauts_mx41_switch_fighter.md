@@ -34,11 +34,12 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Astronauts:7647]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4525547.pdf)
 - Construction map:
-  - PDF pages 3-14: Small alien attack craft; supporting opposition evidence.
-  - PDF pages 15-42: Long orange-canopy Switch Fighter hull and layered side shell.
-  - PDF pages 43-58: Separate full-span folding wing/chassis slab with six wheel mounts.
-  - PDF pages 59-64: Explicit conversion: wing tips fold, slab docks under the hull, six wheels attach, then the wing unfolds for flight.
+  - Evidence pages 3-14: Small alien attack craft; supporting opposition evidence.
+  - Evidence pages 15-42: Long orange-canopy Switch Fighter hull and layered side shell.
+  - Evidence pages 43-58: Separate full-span folding wing/chassis slab with six wheel mounts.
+  - Evidence pages 59-64: Explicit conversion: wing tips fold, slab docks under the hull, six wheels attach, then the wing unfolds for flight.
 - View/mechanism coverage: front=VERIFIED p37-64; rear=VERIFIED p41-64; leftRight=VERIFIED p15-64; top=VERIFIED p15-64; threeQuarter=VERIFIED p1 and p60-70; undersideInterior=VERIFIED p43-60 separate chassis/wing slab; mechanism=VERIFIED p58-64 physical ground-to-flight conversion
 - Verified findings:
   - The ground vehicle and fighter are the same long cockpit hull carried by a separate folding wing/chassis slab.
@@ -48,6 +49,8 @@ Open question: Source-view coverage and construction-critical page ranges are re
   - The manual demonstrates a hand-separated hull during conversion; the production animation must define a believable continuous connection without changing the canonical two-state read.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 

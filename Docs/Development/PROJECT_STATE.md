@@ -61,9 +61,10 @@ existing Look Lab and HUD Lab directions at a wide 84-cell opening plus exact
 production visual direction. The T081 production asset pipeline is complete,
 fully verified and game-director accepted. T082 Super Scout reference
 intelligence is now in progress: its exact 66-asset identity/source baseline and
-all four faction source-page audits are complete. Forty-one faction-bound
-sources are visually audited across 48 official books, while four older sources
-remain explicit archival gaps. The 16 Rock Raiders assets now also have
+all four faction source-page audits are complete. Forty-three faction-scoped
+source records are visually audited across 48 official books plus one archival
+instruction scan; only Martian sources 1195 and 3750 remain evidence gaps. The
+16 Rock Raiders assets now also have
 faction-internal semantic-construction, motion/socket and material/texture-needs
 drafts; the other three faction contracts and the cross-roster review corpus
 remain open. A post-T069
@@ -625,11 +626,11 @@ live; the current schema-9 copy/paste retains the complete experiment.
   PDF links and BrickLink inventory corroboration. Thirty-five sources now have
   direct official PDFs; four older/promotional sources remain explicitly
   archival-backed.
-- The first faction-deep source pass visually audited all seven available Rock
-  Raiders manuals, including page counts/hashes, construction-critical ranges,
-  view/mechanism coverage, verified findings and explicit gaps. The 4990 HQ
-  manual now establishes the tower/crane/gantry/conveyor worksite grammar used
-  by adapted buildings. Sets 1277 and 4930 remain honest evidence gaps.
+- The Rock Raiders source pass visually audited all seven available official
+  manuals plus the archival 1277 instruction scan and 4930 product evidence.
+  The 4990 HQ manual establishes the tower/crane/gantry/conveyor worksite
+  grammar used by adapted buildings; 1277 establishes a low twin-saw hover
+  sled; and 4930 establishes five crew figures plus small equipment and tools.
 - The Astronaut source pass visually audited all 18 mapped sources across 23
   official PDF books with exact page counts, hashes, construction ranges and
   view/mechanism coverage. It confirms the faction's Field/Mission split,
@@ -650,10 +651,16 @@ live; the current schema-9 copy/paste retains the complete experiment.
 - The Rock Raiders contract pass converts source and canon into buildable
   semantic/load-path drafts, named motion pivots and contacts, presentation
   sockets and four fully specified reusable texture families for all 16 faction
-  assets. Crew and Drill Craft remain visibly source-bounded because 4930 and
-  1277 lack construction evidence; their exact backpack/lamp and chassis/tool
-  layouts are not guessed. All 16 packets remain HOLD for the complete-roster
-  silhouette and game-director gates.
+  assets. Archival evidence now grounds Crew as five visible character/equipment
+  variants and Drill Craft as a low hover sled whose canonical single drill is
+  an explicit adaptation of 1277's twin saws. All 16 packets remain HOLD for the
+  complete-roster silhouette and game-director gates.
+- The T082 source-analysis policy now requires a whole-set audit and separately
+  records figures, equipment and detachable modules before roster mapping. It
+  also requires traced connections plus a completed-model view before topology
+  claims, correcting the earlier false four-spoke reading of the bipedal 7302
+  Worker Robot. Any composed design must disclose exact donors, new work and
+  rejected alternatives before director review.
 - All 66 A–I packet files, the identity/source matrix and a 31-pair confusion
   register regenerate deterministically. Every confusion pair has three visible
   differentiation requirements, and every packet is visibly `HOLD`, so this
@@ -671,12 +678,13 @@ live; the current schema-9 copy/paste retains the complete experiment.
   `Docs/Development/M85_SUPER_SCOUT_PROGRESS.md`.
 
 Routine Godot verification is now non-intrusive on macOS: every gameplay smoke
-runs headlessly, records its real PASS/FAIL exit code, then bypasses the Godot
-4.7.1 native teardown that had intermittently produced a system crash dialog
-after successful tests. Normal playable/editor sessions retain normal shutdown.
-Viewport captures still require a real renderer, so they are not launched as a
-routine automated-test step and must be announced when new visual evidence is
-actually required.
+runs headlessly with an explicit automated-smoke flag, records its real
+PASS/FAIL exit code, then bypasses the Godot 4.7.1 native teardown that had
+intermittently produced a system crash dialog after successful tests. The
+verification and export scripts are regression-checked for this explicit flag.
+Normal playable/editor sessions retain normal shutdown. Viewport captures still
+require a real renderer, so they are not launched as a routine automated-test
+step and must be announced when new visual evidence is actually required.
 
 ## Integration format boundary
 
@@ -691,33 +699,30 @@ actually required.
 
 ## Verification state
 
-The T082 Rock Raiders production-contract draft passed `./tools/verify.sh --full`
-with zero blocking failures at
-`Artifacts/Verification/20260909T212743Z-full-summary.txt`: all 317 tests, the
-complete 66-asset roster and faction-bound source-evidence validator,
+The corrected T082 whole-set/source-decomposition pass and explicit crash-safe
+Godot smoke path passed `./tools/verify.sh --full` with zero blocking failures
+at `Artifacts/Verification/20260910T053640Z-full-summary.txt`: all 317 tests,
+the complete 66-asset roster and faction-bound evidence validator,
 deterministic packet generation, the 24-mover gate, compiled content, retained
 M6 networking, T081 round trip, retained M7 presentation gates and a fresh
 macOS export passed. The T082 stage reports 66 HOLD packets, 39 source records,
-35 direct official-PDF sources, four explicit archival gaps, seven visually
-audited Rock Raiders sources with two manual gaps, all 18 Astronaut sources
-audited across 23 official PDF books, all eight Alien sources audited across ten
-official PDF books, all eight available Martian sources audited across eight
-official PDF books with two Martian archival gaps, all 16 Rock Raiders assets
-with structured semantic/motion/material contracts including two explicitly
-source-bounded provisional cases, and 31 initial confusion pairs with no roster
+35 direct official-PDF sources, four archival sources, seven official plus two
+archival Rock Raiders audits with zero remaining Rock Raiders evidence gaps,
+all 18 Astronaut sources audited across 23 official PDF books, all eight Alien
+sources audited across ten official PDF books, all eight available Martian
+sources audited across eight official PDF books with two Martian archival gaps,
+all 16 Rock Raiders assets with structured semantic/motion/material contracts
+and no provisional contract, and 31 initial confusion pairs with no roster
 drift or cross-faction evidence leakage. It does not claim T082 acceptance.
 Stress60 remained the expected 2/60 `BLOCKING_LATER` M9 diagnostic.
 
-An earlier sandbox-constrained attempt was discarded after its local test
-sockets and Godot user paths were denied. That invalid attempt also produced a
-macOS Godot diagnostic report around 18:21 local time. The accepted full run
-started at 18:24 local time, used the required headless crash-safe path and
-produced no later Godot diagnostic report; the repository-wide report count was
-26 after it completed. The Astronaut, Alien, Martian and Rock Raiders contract
-full runs also preserved the count at 26; the newest reports remain the
-discarded attempt's 18:21 local-time files.
-This distinction is retained so the discarded launch is not misreported as a
-clean automation result.
+Every routine Godot smoke and the exported app emitted the explicit immediate
+exit marker after its real PASS result. The macOS Godot diagnostic-report count
+remained 11 before and after this clean full run. Earlier attempts during this
+correction created 11 reports: ten when two verification runs were mistakenly
+allowed to overlap and one later repeated Look Lab launch that exposed the
+remaining implicit-activation defect. Those failed attempts are retained as
+failed evidence and are not confused with the accepted clean run.
 
 The recorded T081 game-director acceptance passed `./tools/verify.sh --full`
 with zero blocking failures at
@@ -946,7 +951,7 @@ blocking only when M9 must prove its stable-large-battle exit.
 1. Continue T082 by applying the completed Rock Raiders semantic construction,
    motion/socket and texture-needs contract pass to Astronauts, Aliens and
    Martians, then produce the cross-roster silhouette/confusion audit. Retain
-   the four explicit archival gaps unless new primary evidence appears, and
+   the two explicit Martian archival gaps unless usable evidence appears, and
    escalate any gap that blocks a safe production decision.
    Do not treat the generated `HOLD` packets, T070 data definitions or the
    non-roster T081 pipeline fixture as production models.

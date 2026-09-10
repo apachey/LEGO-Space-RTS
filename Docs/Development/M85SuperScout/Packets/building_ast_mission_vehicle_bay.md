@@ -37,12 +37,13 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Astronauts:7645]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4534846.pdf), [official instruction PDF 2](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4549395.pdf)
 - Construction map:
-  - PDF pages book 1, 3-26: Alien attack craft; supporting opposition evidence.
-  - PDF pages book 1, 27-50: White/orange mining cab and initial wheeled working platform.
-  - PDF pages book 1, 51-75; book 2, 2-17: Separate tool, drill and support assemblies for the mining system.
-  - PDF pages book 2, 18-45: Large Crystal Reaper chassis, tracked conversion and twin front harvesting-wheel installation.
-  - PDF pages book 2, 48-63: Powered controls, cables and explicit harvesting play feature.
+  - Evidence pages book 1, 3-26: Alien attack craft; supporting opposition evidence.
+  - Evidence pages book 1, 27-50: White/orange mining cab and initial wheeled working platform.
+  - Evidence pages book 1, 51-75; book 2, 2-17: Separate tool, drill and support assemblies for the mining system.
+  - Evidence pages book 2, 18-45: Large Crystal Reaper chassis, tracked conversion and twin front harvesting-wheel installation.
+  - Evidence pages book 2, 48-63: Powered controls, cables and explicit harvesting play feature.
 - View/mechanism coverage: front=VERIFIED book 2 p38-66; rear=VERIFIED book 2 p44-66; leftRight=VERIFIED both books; top=VERIFIED book 2 p18-63; threeQuarter=VERIFIED covers and book 2 p43-66; undersideInterior=VERIFIED book 1 p27-75 and book 2 p18-45; mechanism=VERIFIED book 2 p45-63 powered twin harvesting wheels and tracked conversion
 - Verified findings:
   - Crystal Reaper configuration is defined by two enormous exposed harvesting wheels mounted ahead of a low tracked body.
@@ -54,11 +55,12 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Astronauts:7647]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4525547.pdf)
 - Construction map:
-  - PDF pages 3-14: Small alien attack craft; supporting opposition evidence.
-  - PDF pages 15-42: Long orange-canopy Switch Fighter hull and layered side shell.
-  - PDF pages 43-58: Separate full-span folding wing/chassis slab with six wheel mounts.
-  - PDF pages 59-64: Explicit conversion: wing tips fold, slab docks under the hull, six wheels attach, then the wing unfolds for flight.
+  - Evidence pages 3-14: Small alien attack craft; supporting opposition evidence.
+  - Evidence pages 15-42: Long orange-canopy Switch Fighter hull and layered side shell.
+  - Evidence pages 43-58: Separate full-span folding wing/chassis slab with six wheel mounts.
+  - Evidence pages 59-64: Explicit conversion: wing tips fold, slab docks under the hull, six wheels attach, then the wing unfolds for flight.
 - View/mechanism coverage: front=VERIFIED p37-64; rear=VERIFIED p41-64; leftRight=VERIFIED p15-64; top=VERIFIED p15-64; threeQuarter=VERIFIED p1 and p60-70; undersideInterior=VERIFIED p43-60 separate chassis/wing slab; mechanism=VERIFIED p58-64 physical ground-to-flight conversion
 - Verified findings:
   - The ground vehicle and fighter are the same long cockpit hull carried by a separate folding wing/chassis slab.
@@ -70,12 +72,13 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Astronauts:7697]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4515381.pdf)
 - Construction map:
-  - PDF pages 3-15: Alien ambush craft; supporting opposition evidence.
-  - PDF pages 16-36: Low rectangular Claw-Tank running-gear frame, twin tracked sides and central rotation mount.
-  - PDF pages 37-47: Circular upper body and orange transparent operator canopy.
-  - PDF pages 48-63: Long articulated tool/claw arms, side equipment and wheel/track details.
-  - PDF pages 64-68: Rotation and articulated-tool play evidence with final multi-angle views.
+  - Evidence pages 3-15: Alien ambush craft; supporting opposition evidence.
+  - Evidence pages 16-36: Low rectangular Claw-Tank running-gear frame, twin tracked sides and central rotation mount.
+  - Evidence pages 37-47: Circular upper body and orange transparent operator canopy.
+  - Evidence pages 48-63: Long articulated tool/claw arms, side equipment and wheel/track details.
+  - Evidence pages 64-68: Rotation and articulated-tool play evidence with final multi-angle views.
 - View/mechanism coverage: front=VERIFIED p58-68; rear=VERIFIED p59-68; leftRight=VERIFIED p16-68; top=VERIFIED p16-68; threeQuarter=VERIFIED p1 and p63-68; undersideInterior=VERIFIED p16-47 staged base/turntable; mechanism=VERIFIED p58-68 rotating upper body and articulated tool arms
 - Verified findings:
   - MT-51 is organized around a circular orange-canopy upper body rotating above a low, wide tracked frame.
@@ -87,13 +90,14 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Astronauts:7699]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517776.pdf), [official instruction PDF 2](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517777.pdf)
 - Construction map:
-  - PDF pages book 1, 3-14: Small human wheeled support craft and alien scout; supporting module evidence.
-  - PDF pages book 1, 15-29: White/orange forward mission cockpit and equipment cylinders.
-  - PDF pages book 1, 30-47; book 2, 2-17: Long open suspended chassis, side rails and rear service bay.
-  - PDF pages book 2, 18-27: Six separately mounted huge orange wheels and completed heavy running gear.
-  - PDF pages book 2, 28-34: Forward shell and detachable support/tool components attach to the chassis.
-  - PDF pages book 2, 35-43: Elevated rotating drill carriage, long drill tool and explicit rotation/tool play evidence.
+  - Evidence pages book 1, 3-14: Small human wheeled support craft and alien scout; supporting module evidence.
+  - Evidence pages book 1, 15-29: White/orange forward mission cockpit and equipment cylinders.
+  - Evidence pages book 1, 30-47; book 2, 2-17: Long open suspended chassis, side rails and rear service bay.
+  - Evidence pages book 2, 18-27: Six separately mounted huge orange wheels and completed heavy running gear.
+  - Evidence pages book 2, 28-34: Forward shell and detachable support/tool components attach to the chassis.
+  - Evidence pages book 2, 35-43: Elevated rotating drill carriage, long drill tool and explicit rotation/tool play evidence.
 - View/mechanism coverage: front=VERIFIED book 2 p24-43; rear=VERIFIED book 2 p27-43; leftRight=VERIFIED both books; top=VERIFIED book 2 p2-43; threeQuarter=VERIFIED covers and book 2 p35-43; undersideInterior=VERIFIED book 1 p30-47 and book 2 p2-27; mechanism=VERIFIED book 2 p35-43 rotating drill carriage and movable rear module
 - Verified findings:
   - MT-101 is a long open heavy chassis suspended between six individually mounted oversized orange wheels.
@@ -103,6 +107,8 @@ Open question: Source-view coverage and construction-critical page ranges are re
   - The spring-projectile play action is not the game's contact-drill behavior; final drill reach, impact pose and chassis suspension response require a production animation plan.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 

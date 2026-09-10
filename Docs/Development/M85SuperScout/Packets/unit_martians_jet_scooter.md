@@ -34,9 +34,10 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Martians:7303]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130291.pdf)
 - Construction map:
-  - PDF pages 1: Complete seven-step Jet Scooter build with long blue central deck, parallel side tubes, clustered orange nose nozzles and open rider.
-  - PDF pages 2: Promotional reverse page; no additional construction evidence.
+  - Evidence pages 1: Complete seven-step Jet Scooter build with long blue central deck, parallel side tubes, clustered orange nose nozzles and open rider.
+  - Evidence pages 2: Promotional reverse page; no additional construction evidence.
 - View/mechanism coverage: front=PARTIAL p1 cover and final step; rear=PARTIAL p1 steps 3-7; leftRight=PARTIAL p1 construction sequence; top=VERIFIED p1 steps 1-7; threeQuarter=VERIFIED p1 cover and final step; undersideInterior=PARTIAL p1 bare plate sequence; mechanism=MISSING static micro-build only
 - Verified findings:
   - Jet Scooter is a long narrow open sled rather than a short body between two oversized engine pods.
@@ -46,6 +47,8 @@ Open question: Source-view coverage and construction-critical page ranges are re
   - The source does not establish hover height, propulsion cycle or a canonical attack emitter; those remain production motion and socket decisions.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 

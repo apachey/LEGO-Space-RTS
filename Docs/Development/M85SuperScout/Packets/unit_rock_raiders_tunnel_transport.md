@@ -34,11 +34,12 @@ Open question: The faction-internal construction, motion, socket and material dr
 ### Source audit [RockRaiders:4980]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128427.pdf)
 - Construction map:
-  - PDF pages 2-14: Forward cockpit/cargo vehicle module with low worksite chassis and open load bed.
-  - PDF pages 15-20: Separate compact wheeled support module.
-  - PDF pages 21-29: Wide rotor transport frame, twin propeller pods and attachment to the carried modules.
-  - PDF pages 30-32: Cargo container, alternate carried load and final multi-angle product photography.
+  - Evidence pages 2-14: Forward cockpit/cargo vehicle module with low worksite chassis and open load bed.
+  - Evidence pages 15-20: Separate compact wheeled support module.
+  - Evidence pages 21-29: Wide rotor transport frame, twin propeller pods and attachment to the carried modules.
+  - Evidence pages 30-32: Cargo container, alternate carried load and final multi-angle product photography.
 - View/mechanism coverage: front=VERIFIED p1 and p23-32; rear=VERIFIED p24-32; leftRight=VERIFIED p21-32; top=VERIFIED p21-29; threeQuarter=VERIFIED p1 and p27-32; undersideInterior=VERIFIED p21-29 open transport frame and load connections; mechanism=PARTIAL p21-29 rotors and cargo attachment; no rotor animation sequence
 - Verified findings:
   - The aircraft is a skeletal load-bearing bridge with two giant rotor pods, not a conventional enclosed helicopter fuselage.
@@ -48,6 +49,8 @@ Open question: The faction-internal construction, motion, socket and material dr
   - Rotor pitch and suspension response are not authored by the manual and remain presentation interpretations.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 

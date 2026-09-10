@@ -34,10 +34,11 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Aliens:7693]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4523183.pdf)
 - Construction map:
-  - PDF pages 3-16: Astronaut mining vehicle; supporting opposition evidence.
-  - PDF pages 17-35: ETX Alien Strike central keel, hinged side frames, paired crescent lobes, detachable corner modules and long translucent-lime tail blades.
-  - PDF pages 36-59: Cross-set alternate astronaut craft; not direct Alien Strike production geometry.
+  - Evidence pages 3-16: Astronaut mining vehicle; supporting opposition evidence.
+  - Evidence pages 17-35: ETX Alien Strike central keel, hinged side frames, paired crescent lobes, detachable corner modules and long translucent-lime tail blades.
+  - Evidence pages 36-59: Cross-set alternate astronaut craft; not direct Alien Strike production geometry.
 - View/mechanism coverage: front=VERIFIED p28-35; rear=PARTIAL p28-35; leftRight=VERIFIED p17-35; top=VERIFIED p17-35; threeQuarter=VERIFIED cover and p28-35; undersideInterior=VERIFIED p17-28 staged open frame; mechanism=PARTIAL p24-35 hinged crescent/side modules and detachable corner pads; no complete flight-to-siege sequence
 - Verified findings:
   - Alien Strike is built around a long central black keel with a lime multi-blade tail and two huge crescent side lobes.
@@ -47,6 +48,8 @@ Open question: Source-view coverage and construction-critical page ranges are re
   - The manual proves rearrangeable hinged modules but does not show the game's exact flight and planted siege endpoints, support contacts or high-output weapon path; those states require explicit adaptation.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 

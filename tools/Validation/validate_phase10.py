@@ -45,6 +45,7 @@ required = [
     'Content/Presentation/SuperScout/roster_identity_baseline.json',
     'Content/Presentation/SuperScout/source_ledger.json',
     'Content/Presentation/SuperScout/source_instruction_index.json',
+    'Content/Presentation/SuperScout/source_analysis_policy.json',
     'Content/Presentation/SuperScout/rock_raiders_source_evidence.json',
     'Content/Presentation/SuperScout/astronauts_source_evidence.json',
     'Content/Presentation/SuperScout/aliens_source_evidence.json',
@@ -124,10 +125,12 @@ verify_script = (ROOT/'tools/verify.sh').read_text()
 build_mac_script = (ROOT/'tools/build-mac.sh').read_text()
 check('--headless --disable-crash-handler' in verify_script and
       '--headless --quit-after' not in verify_script and
-      '--headless --log-file' not in verify_script,
+      '--headless --log-file' not in verify_script and
+      verify_script.count('--automated-smoke-immediate-exit') >= 16,
       'verification contains an intrusive or crash-handler-enabled Godot smoke launch')
 check('--headless --disable-crash-handler' in build_mac_script and
-      '--headless --log-file' not in build_mac_script,
+      '--headless --log-file' not in build_mac_script and
+      build_mac_script.count('--automated-smoke-immediate-exit') >= 3,
       'macOS build verification contains a crash-handler-enabled app smoke launch')
 smoke_exit_files = [
     'GodotClient/Scripts/Client/GodotSmokeRunner.cs',

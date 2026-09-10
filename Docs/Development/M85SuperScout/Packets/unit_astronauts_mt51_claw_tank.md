@@ -34,12 +34,13 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Astronauts:7697]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4515381.pdf)
 - Construction map:
-  - PDF pages 3-15: Alien ambush craft; supporting opposition evidence.
-  - PDF pages 16-36: Low rectangular Claw-Tank running-gear frame, twin tracked sides and central rotation mount.
-  - PDF pages 37-47: Circular upper body and orange transparent operator canopy.
-  - PDF pages 48-63: Long articulated tool/claw arms, side equipment and wheel/track details.
-  - PDF pages 64-68: Rotation and articulated-tool play evidence with final multi-angle views.
+  - Evidence pages 3-15: Alien ambush craft; supporting opposition evidence.
+  - Evidence pages 16-36: Low rectangular Claw-Tank running-gear frame, twin tracked sides and central rotation mount.
+  - Evidence pages 37-47: Circular upper body and orange transparent operator canopy.
+  - Evidence pages 48-63: Long articulated tool/claw arms, side equipment and wheel/track details.
+  - Evidence pages 64-68: Rotation and articulated-tool play evidence with final multi-angle views.
 - View/mechanism coverage: front=VERIFIED p58-68; rear=VERIFIED p59-68; leftRight=VERIFIED p16-68; top=VERIFIED p16-68; threeQuarter=VERIFIED p1 and p63-68; undersideInterior=VERIFIED p16-47 staged base/turntable; mechanism=VERIFIED p58-68 rotating upper body and articulated tool arms
 - Verified findings:
   - MT-51 is organized around a circular orange-canopy upper body rotating above a low, wide tracked frame.
@@ -49,6 +50,8 @@ Open question: Source-view coverage and construction-critical page ranges are re
   - The source demonstrates manual rotation and arm movement but not the game's exact multi-target attack cycle or fighting-retreat locomotion; animation timing remains open.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 

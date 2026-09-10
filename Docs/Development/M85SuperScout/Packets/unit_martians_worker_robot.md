@@ -34,34 +34,39 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Martians:7302]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130290.pdf)
 - Construction map:
-  - PDF pages 1-2: Complete seven-step Worker Robot build from shallow central wedge to four separate radial outrigger/foot modules and exposed operator.
-- View/mechanism coverage: front=PARTIAL p1 cover and p2 final; rear=PARTIAL p1-2 sequence; leftRight=PARTIAL p1-2 sequence; top=VERIFIED p1-2; threeQuarter=VERIFIED p1 cover and p2 final; undersideInterior=PARTIAL p1 bare base; mechanism=MISSING no gait or tool action is demonstrated
+  - Evidence pages 1: The Martian figure and shallow central operator wedge are built separately; the wedge includes an exposed seat/control tile and rear wall.
+  - Evidence pages 2: Two mirrored multi-joint leg assemblies, each ending in one broad rectangular foot, attach to the left and right sides of the central wedge; the final seated biped and cover walking pose are shown.
+- View/mechanism coverage: front=VERIFIED p1 cover and p2 final; rear=PARTIAL p1-2 sequence; leftRight=VERIFIED p1 cover and p2 steps 5-7; top=VERIFIED p1-2; threeQuarter=VERIFIED p1 cover and p2 final; undersideInterior=PARTIAL p1 bare base and p2 separate feet; mechanism=PARTIAL p2 mirrored leg joints plus cover walking pose; no complete gait or tool action sequence
 - Verified findings:
-  - The source machine is an extremely low open four-spoke platform, not a conventional two-legged humanoid robot.
-  - Four separately built rectangular end pads radiate from a shallow central wedge around the seated Martian operator.
-  - The source contains no dominant head or dedicated manipulator, so the game's worker tool must remain a legible adaptation instead of replacing the four-spoke identity.
+  - The source machine is a tiny open bipedal walker with two mirrored articulated legs; the earlier four-spoke interpretation was incorrect.
+  - Each leg terminates in one broad foot, producing exactly two ground contacts around the shallow central operator wedge.
+  - The source has no dedicated arm or work tool, so the canonical builder/repair manipulator must be a clearly labeled subordinate adaptation that does not erase the two-leg silhouette.
 - Remaining evidence gaps:
-  - A production construction map must define which source limb becomes the canonical worker/builder manipulator and how the remaining contacts move without inventing an unsupported humanoid gait.
+  - The manual proves leg topology and a walking pose but not a full planted gait cycle.
+  - The production contract must choose a compact worker tool mount without converting the small biped into a generic humanoid robot or a multi-legged platform.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
+
 ## C. Recognition contract
 
-**Silhouette thesis:** A tiny open Martian work platform whose four low radial outriggers surround the central operator wedge.
+**Silhouette thesis:** A tiny open Martian biped whose shallow operator wedge rides between two long articulated legs and broad feet.
 
 Non-removable identity anchors:
 
 - shallow central operator wedge
-- four-spoke outrigger plan
-- four separate rectangular end pads
+- two mirrored multi-joint legs
+- two broad rectangular feet
 
 - Near / standard / far silhouette thumbnails: `PENDING 24/44/72-CELL BOARD`.
 - Palette and material hierarchy: Blue and sand-red with translucent-neon-green accents, open platforms and visibly articulated mechanics.
 - Forbidden genericization: Do not make the asset Alien-lite, a smooth energy object or a joke contraption. Pumps, tubes, legs, clamps and platforms carry identity.
 - Nearest-confusion baseline:
 
-- `unit.aliens.etx_servitor` — Both are small mechanical nonhuman workers. Mitigations: Servitor hovers inside one low curved shell; Worker Robot spreads four straight outriggers from a central wedge. / Servitor encloses its core in black-lime structure; Worker Robot leaves the Martian operator and four end pads open. / Servitor uses one dominant folding manipulator; Worker Robot's production tool must remain subordinate to its four-spoke plan.
+- `unit.aliens.etx_servitor` — Both are small mechanical nonhuman workers. Mitigations: Servitor hovers inside one low curved shell; Worker Robot walks on two long articulated legs. / Servitor encloses its core in black-lime structure; Worker Robot leaves the seated Martian visible between two broad feet. / Servitor uses one dominant folding manipulator; Worker Robot's adapted tool must remain subordinate to its bipedal source silhouette.
 
 ## D. Construction contract
 

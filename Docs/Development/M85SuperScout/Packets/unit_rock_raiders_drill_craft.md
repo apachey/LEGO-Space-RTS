@@ -29,56 +29,64 @@ Open question: The faction-internal construction, motion, socket and material dr
 
 | Source | Primary evidence | Inventory / archival check | Confidence | Intended use |
 |---|---|---|---|---|
-| 1277 — Drill Craft | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/1277)<br>no direct official PDF located | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=1277-1) | CANON_VERIFIED_ARCHIVAL | compact drill silhouette and construction |
+| 1277 — Drill Craft / Hovercraft with Ice Saws | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/1277)<br>no direct official PDF located<br>[archival evidence 1](https://kb.rockraidersunited.com/images/2/2f/1277_Hovercraft_with_Ice_Saws.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=1277-1) | CANON_VERIFIED_ARCHIVAL | low open hovercraft construction, paired ice-saw tools, side lift/engine pods and the explicit boundary to the canonical single-drill adaptation |
 
 ### Source audit [RockRaiders:1277]
 
-- Evidence state: `ARCHIVAL_GAP`
+- Evidence state: `ARCHIVAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [Archival scan hosted by Rock Raiders United; the pages themselves carry LEGO branding, set number 1277, product code 4132646 and a 1999 LEGO Group copyright notice, but the PDF is not served from LEGO's current archive. 1](https://kb.rockraidersunited.com/images/2/2f/1277_Hovercraft_with_Ice_Saws.pdf)
 - Construction map:
-  - No official construction-page range is available.
-- View/mechanism coverage: front=MISSING; rear=MISSING; leftRight=MISSING; top=MISSING; threeQuarter=MISSING; undersideInterior=MISSING; mechanism=MISSING
+  - Evidence pages 1: Complete flat base, paired yellow side wedges, teal side/rear fittings, central hazard panel and exposed Sparks operator are assembled.
+  - Evidence pages 2: Two raised round side hover/engine pods and two forward ice-saw arms attach to the low open craft; the final model is shown from the front-left three-quarter view.
+- View/mechanism coverage: front=VERIFIED cover and p2 step 6; rear=PARTIAL p1-2 construction sequence; leftRight=PARTIAL cover and p1-2; top=VERIFIED p1-2 steps 1-6; threeQuarter=VERIFIED cover and p2 final; undersideInterior=PARTIAL p1 bare plate foundation; mechanism=PARTIAL p2 saw and side-pod attachment; no spin, hover or steering sequence
 - Verified findings:
-  - Canon and archival inventory establish the compact Drill Craft identity and parts family, but they do not establish a modelable load path or verified articulation.
+  - The complete source is a very low open hovercraft/sled with an exposed operator, not a wheeled miniature drill vehicle.
+  - Two forward ice saws are separate mirrored tool arms; the source does not contain one central helical drill.
+  - Two raised round side pods and the central hazard panel carry more source identity than any rear bodywork.
 - Remaining evidence gaps:
-  - Locate an official instruction scan, official catalog construction view or clearly labeled archival manual before resolving Drill Craft construction.
+  - The opposite side and strict underside remain unverified.
+  - The canonical single oversized mining drill is a gameplay adaptation of the paired source saw package; its support must preserve the verified low sled and paired side-pod relationship rather than inventing a wheel chassis.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
+
 ## C. Recognition contract
 
-**Silhouette thesis:** A tiny work craft whose forward drill occupies more visual weight than its body.
+**Silhouette thesis:** A tiny low open hover sled whose canonical oversized forward drill is framed by the source's paired raised side lift pods.
 
 Non-removable identity anchors:
 
-- single dominant forward drill
-- compact operator cage
-- short industrial wheelbase
+- single dominant forward drill adapted from paired source saws
+- flat open operator sled
+- paired raised round side lift pods
 
 - Near / standard / far silhouette thumbnails: `PENDING 24/44/72-CELL BOARD`.
 - Palette and material hierarchy: Dark turquoise and industrial gray with black, light gray, hazard-yellow and restrained tool metal.
 - Forbidden genericization: Do not turn the asset into a conventional tank, APC, artillery piece or realistic modern vehicle. Its industrial purpose must read first.
 - Nearest-confusion baseline:
 
-- `unit.rock_raiders.granite_grinder` — Both use a large forward drill. Mitigations: Drill Craft stays short and wheeled; Granite Grinder is a tall planted biped. / Drill Craft has a compact low cage; Granite Grinder places the operator high above the ground. / Drill Craft is drill-first with minimal body; Granite Grinder has a long boom balanced by rear machinery.
+- `unit.rock_raiders.granite_grinder` — Both use a large forward drill. Mitigations: Drill Craft stays low on an open hover sled; Granite Grinder is a tall planted biped. / Drill Craft frames its operator between paired raised side pods; Granite Grinder places the operator high above two large feet. / Drill Craft adapts the source's short twin-saw nose into one compact drill; Granite Grinder carries a long drill boom balanced by rear machinery.
 
 ## D. Construction contract
 
-- Contract state: `SOURCE_BOUNDED_PROVISIONAL`. This is an internally checked draft, not game-director approval.
+- Contract state: `CANON_DERIVED_ADAPTATION`. This is an internally checked draft, not game-director approval.
 - Semantic part map:
-  - Oversized forward drill — excavates authored terrain and performs short-range structure contact — CANON_DERIVED_ADAPTATION.
-  - Compact operator cage — keeps the machine visibly a small work craft — CANON_DERIVED_ADAPTATION.
-  - Short wheel chassis — brings the drill into contact without turning the asset into a miniature tank — SOURCE_BOUNDED_PROVISIONAL.
-- Structural load path: A short central frame must carry drill thrust back into the wheel chassis and brace the open operator cage behind the tool.
-- Repeated modules / connection grammar: Drill/tool boom, compact cage and wheel/contact chassis; exact repeated wheel modules are not yet source-proven.
-- Source-faithful versus adapted boundary: The missing 1277 construction source blocks final wheel count, axle positions, drill support and rear counterweight geometry.
+  - Flat open hover sled — carries the operator and tool on one shallow plate-built spine — SOURCE_VERIFIED.
+  - Paired raised round side pods — provide the source's dominant lift/engine masses and frame the operator — SOURCE_VERIFIED.
+  - Central hazard panel and exposed Sparks position — separate the operator deck from the forward tool package — SOURCE_VERIFIED.
+  - Single oversized forward drill — replaces the source's two mirrored ice-saw arms to perform canonical excavation and short-range structure contact — CANON_DERIVED_ADAPTATION.
+- Structural load path: One shallow plate-built spine carries the open operator deck, hazard panel and two vertical side-pod mounts; a short reinforced front bracket transfers the adapted drill load into that spine.
+- Repeated modules / connection grammar: Flat sled, mirrored side lift/engine pods, central operator/hazard station and one detachable adapted drill package. The source's two saw arms define the width and attachment rhythm of the replacement tool bracket.
+- Source-faithful versus adapted boundary: The archival manual proves a hovercraft with two ice saws and no wheels. Canon requires a ground-layer Drill Craft with one oversized mining drill, so the drill/tool conversion is explicit; a wheel chassis, tank hull or source-invented rear counterweight is forbidden.
 
 ## E. Material and texture contract
 
 - Geometry must carry:
-  - drill helix and tip
-  - operator cage opening
-  - wheel/contact silhouette
-- Accepted master-material roles: `Body`, `Accent`, `Tool`, `Rubber`, `Glass`, `Lamp`, `Neutral`.
+  - drill helix and short twin-saw-derived support bracket
+  - flat open operator sled and hazard panel
+  - paired raised round side pods
+- Accepted master-material roles: `Body`, `Accent`, `Tool`, `Glass`, `Lamp`, `Neutral`.
 - Reusable texture requirements:
   - `rr_tool_wear` — Directional scuff and cutting wear on drill, scoop, cutter and clamp contact surfaces only. Channels: Linear wear mask, tangent-space normal and roughness variation; no baked highlights. Resolution: 1024x1024; texel density: 512 px/m on localized tool UVs; tiling: Non-tiling trim/atlas regions aligned to the mechanical wear direction.; LOD fallback: Normal and fine mask removed at Strategic; Tool material and silhouette remain. Provenance/state: Project-authored procedural source informed by the official tool surfaces; human review required. `SPECIFIED_NOT_AUTHORED`.
   - `rr_hazard_and_service_decals` — Hazard stripes, service arrows, bay limits, lift points and restrained equipment labels. Channels: sRGB RGBA decal atlas; alpha is coverage, never shadowing. Resolution: 1024x1024; texel density: Minimum 256 px/m on readable Close/Combat labels; tiling: Atlas placement only; stripes may repeat along authored straight runs without stretching.; LOD fallback: Keep only broad hazard bands at Combat; remove text and micro-labels at Strategic. Provenance/state: Project-authored vector master exported to raster; human review required. `SPECIFIED_NOT_AUTHORED`.
@@ -87,24 +95,24 @@ Non-removable identity anchors:
 
 ## F. State and animation contract
 
-- Locomotion / operation: Wheeled ground movement with quick steering; final wheel rotation pivots wait for source confirmation.
-- Planted/contact rule: All authored wheels remain grounded; excavation settles the chassis before drill contact.
+- Locomotion / operation: Low ground-layer hover movement derived from the source craft; quick steering with restrained sled heave and no true-air banking.
+- Planted/contact rule: The sled settles to one low hover datum before excavation; the adapted drill establishes the only hard work contact while the paired side pods stabilize the chassis visually.
 
 | Pivot | Parent | Axis/path and rest-to-extreme motion | Presentation driver |
 |---|---|---|---|
-| `Pivot_DrillFeed` | Asset_DrillCraft | short source-bounded forward feed along drill axis | authoritative excavation/contact state; exact travel pending source |
+| `Pivot_DrillFeed` | Asset_DrillCraft | short canon-derived forward feed along the drill axis; retracted travel rest | authoritative excavation/contact state |
 | `Pivot_DrillSpin` | Pivot_DrillFeed | continuous roll around tool axis; stopped rest | excavation or contact-attack presentation progress |
 
 - Required beats:
-  - Idle tool check without continuous drill spin.
-  - Move keeps drill still and visibly clear of the ground.
-  - Excavate settles, feeds and spins the drill, then retracts after the authoritative result.
-  - Damage stops tool motion; wreck preserves the drill/cage relationship.
+  - Idle hover settles around the shallow source sled with the drill stopped.
+  - Move uses restrained side-pod vibration and small terrain-following heave, not wheel roll or aircraft banking.
+  - Excavate settles, feeds and spins the adapted drill, then retracts after the authoritative result.
+  - Damage destabilizes one side pod and stops tool motion; the wreck preserves the open sled, paired pods and drill relationship.
 - Animation consumes authoritative state and never decides gameplay timing or results.
 
 ## G. Presentation hookups
 
-- Required presentation sockets: `Socket_Selection`, `Socket_Health`, `Socket_DrillContact`, `Socket_DrillDust`, `Socket_DrillSparks`, `Socket_AudioDrill`.
+- Required presentation sockets: `Socket_Selection`, `Socket_Health`, `Socket_DrillContact`, `Socket_DrillDust`, `Socket_DrillSparks`, `Socket_HoverLeft`, `Socket_HoverRight`, `Socket_AudioDrill`, `Socket_AudioHover`.
 - These sockets are presentation references only and never own targeting, collision, movement, transport or production truth.
 - Identification Tile placement, icon silhouette, portrait camera and reduced-presentation fallback remain `HOLD — PRESENTATION AUDIT REQUIRED`.
 
@@ -113,7 +121,7 @@ Non-removable identity anchors:
 - Verified fact: stable identity, source evidence and the source-supported assemblies cited above.
 - Canon-derived interpretation: gameplay function, adaptation boundary, contact behavior and presentation drivers are explicitly labeled in the contract.
 - Remaining source/design decisions:
-  - Do not lock the production chassis or wheel pivots until official/archival 1277 construction evidence is found or the game director approves a clearly labeled reconstruction.
+  - The source manual does not prove whether the two raised round side pods rotate, glow or remain visually static. Keep them mechanically quiet until later motion evidence or director review selects a restrained presentation behavior.
 - Cross-roster silhouette and game-director review remain open; this contract does not authorize production modeling.
 
 ## I. Build handoff

@@ -34,8 +34,9 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Astronauts:7310]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130805.pdf)
 - Construction map:
-  - PDF pages 1-2: Complete eleven-step Mono Jet build with side, top and final operator views.
+  - Evidence pages 1-2: Complete eleven-step Mono Jet build with side, top and final operator views.
 - View/mechanism coverage: front=PARTIAL p2 final view; rear=VERIFIED p2 steps 9-11; leftRight=VERIFIED p1-2 construction rotation; top=VERIFIED p1-2; threeQuarter=VERIFIED p1 cover and p2 final; undersideInterior=VERIFIED p1 bare plate and engine pod sequence; mechanism=MISSING static micro-flyer
 - Verified findings:
   - The Mono Jet is a long one-person sled with no enclosed fuselage.
@@ -45,6 +46,8 @@ Open question: Source-view coverage and construction-critical page ranges are re
   - The manual does not establish landing gear or control-surface motion; both remain presentation adaptations.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 

@@ -34,10 +34,11 @@ Open question: The faction-internal construction, motion, socket and material dr
 ### Source audit [RockRaiders:4940]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128317.pdf)
 - Construction map:
-  - PDF pages 2-12: Two mirrored ski-foot/leg modules and their shared upper bridge are assembled independently.
-  - PDF pages 13-22: Long central drill craft body, cockpit cage, rear wheel/tool mass and drill boom are built as a separate module.
-  - PDF pages 23-24: Upper drill module is mounted across the paired leg modules; final operator-scale three-quarter view.
+  - Evidence pages 2-12: Two mirrored ski-foot/leg modules and their shared upper bridge are assembled independently.
+  - Evidence pages 13-22: Long central drill craft body, cockpit cage, rear wheel/tool mass and drill boom are built as a separate module.
+  - Evidence pages 23-24: Upper drill module is mounted across the paired leg modules; final operator-scale three-quarter view.
 - View/mechanism coverage: front=PARTIAL p1 and p24; rear=PARTIAL p18-22; leftRight=VERIFIED p13-24 construction rotation; top=VERIFIED p13-23; threeQuarter=VERIFIED p1 and p23-24; undersideInterior=VERIFIED p2-16 staged subassemblies; mechanism=PARTIAL p23 module connection; gait and drill motion not demonstrated
 - Verified findings:
   - The recognizable walker is a bridge between two mirrored planted foot modules, not a wheeled chassis with decorative legs.
@@ -47,6 +48,8 @@ Open question: The faction-internal construction, motion, socket and material dr
   - The manual proves modular construction but not a walking gait; leg articulation and contact phases remain an explicit adaptation decision.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 
@@ -63,7 +66,7 @@ Non-removable identity anchors:
 - Forbidden genericization: Do not turn the asset into a conventional tank, APC, artillery piece or realistic modern vehicle. Its industrial purpose must read first.
 - Nearest-confusion baseline:
 
-- `unit.rock_raiders.drill_craft` — Both use a large forward drill. Mitigations: Drill Craft stays short and wheeled; Granite Grinder is a tall planted biped. / Drill Craft has a compact low cage; Granite Grinder places the operator high above the ground. / Drill Craft is drill-first with minimal body; Granite Grinder has a long boom balanced by rear machinery.
+- `unit.rock_raiders.drill_craft` — Both use a large forward drill. Mitigations: Drill Craft stays low on an open hover sled; Granite Grinder is a tall planted biped. / Drill Craft frames its operator between paired raised side pods; Granite Grinder places the operator high above two large feet. / Drill Craft adapts the source's short twin-saw nose into one compact drill; Granite Grinder carries a long drill boom balanced by rear machinery.
 - `unit.rock_raiders.chrome_crusher` — Both are major teal drill machines. Mitigations: Granite Grinder has two legs; Chrome Crusher has four huge wheels. / Granite Grinder is tall and narrow; Chrome Crusher is long and low. / Granite Grinder balances one boom; Chrome Crusher combines drill, work light and cargo machinery along a heavy chassis.
 
 ## D. Construction contract

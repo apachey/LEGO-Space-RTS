@@ -34,10 +34,11 @@ Open question: The faction-internal construction, motion, socket and material dr
 ### Source audit [RockRaiders:4950]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128419.pdf)
 - Construction map:
-  - PDF pages 2-10: Wide low chassis, rear frame, control station and paired structural side rails.
-  - PDF pages 11-20: Full-width bucket, front linkage, high cage, lighting and wheel mounts.
-  - PDF pages 21-22: Explicit bucket lift/tilt play feature and rock-loading pose.
+  - Evidence pages 2-10: Wide low chassis, rear frame, control station and paired structural side rails.
+  - Evidence pages 11-20: Full-width bucket, front linkage, high cage, lighting and wheel mounts.
+  - Evidence pages 21-22: Explicit bucket lift/tilt play feature and rock-loading pose.
 - View/mechanism coverage: front=VERIFIED p1 and p11-22; rear=PARTIAL p17-20; leftRight=VERIFIED p2-22 construction sequence; top=VERIFIED p2-20; threeQuarter=VERIFIED p1 and p21-24; undersideInterior=VERIFIED p2-8 chassis build; mechanism=VERIFIED p21-22 bucket lift/tilt linkage
 - Verified findings:
   - The bucket is carried by visible side linkages and must remain the dominant forward mass.
@@ -47,6 +48,8 @@ Open question: The faction-internal construction, motion, socket and material dr
   - Opposite-side product photography is still desirable for exact hose and control placement.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 

@@ -23,6 +23,7 @@ public static class AutomatedSmokeExit
                                     engineArguments.Contains("--headless");
         if (OS.GetName() == "macOS" && disposableAutomation)
         {
+            GD.Print($"AUTOMATED SMOKE EXIT: immediate code={exitCode}");
             Console.Out.Flush();
             Console.Error.Flush();
             NativeImmediateExit(exitCode);

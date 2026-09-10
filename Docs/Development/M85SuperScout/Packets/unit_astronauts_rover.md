@@ -34,9 +34,10 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Astronauts:7301]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4156314.pdf)
 - Construction map:
-  - PDF pages 1: Complete seven-step Rover build, equipment mast and final operator view.
-  - PDF pages 2: Promotional reverse page; no additional construction evidence.
+  - Evidence pages 1: Complete seven-step Rover build, equipment mast and final operator view.
+  - Evidence pages 2: Promotional reverse page; no additional construction evidence.
 - View/mechanism coverage: front=PARTIAL p1 final view; rear=PARTIAL p1 steps 1-6; leftRight=VERIFIED p1 final and staged construction; top=VERIFIED p1 steps 3-6; threeQuarter=VERIFIED p1 cover and final step; undersideInterior=PARTIAL p1 bare chassis; mechanism=MISSING static open rover
 - Verified findings:
   - The Rover is a tiny open four-wheel platform rather than an enclosed car.
@@ -46,6 +47,8 @@ Open question: Source-view coverage and construction-critical page ranges are re
   - A rear view is still required before final antenna, storage and propulsion placement.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 

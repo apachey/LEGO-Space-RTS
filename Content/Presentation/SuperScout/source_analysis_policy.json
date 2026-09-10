@@ -1,0 +1,135 @@
+{
+  "schemaVersion": 1,
+  "task": "T082",
+  "status": "ACTIVE_SOURCE_ANALYSIS_POLICY",
+  "retrievalDate": "2026-09-10",
+  "purpose": "Prevent one-set/one-unit assumptions and prevent silhouette claims from being made before the physical role and attachment of each identity-bearing assembly is understood.",
+  "requiredAnalysisOrder": [
+    "Audit the complete set inventory and every separately built model before assigning the set to an RTS asset.",
+    "Map detachable subassemblies, repeated modules, minifigures, equipment, resources and opposing-faction builds separately.",
+    "Name the physical role, parent connection and contact behavior of every identity-bearing assembly before describing silhouette or locomotion.",
+    "Cross-check the construction sequence against the completed model and at least one final/product view before making a topology or appendage-count claim.",
+    "Record source fact, canon-derived adaptation, game-derived proposal and unresolved interpretation as different states.",
+    "Compare all plausible construction methods and disclose the exact source components before asking the game director to approve a composed design."
+  ],
+  "sourceUsePolicy": {
+    "releasedOfficialSetOrSubassembly": "PRIMARY_EVIDENCE_ALLOWED",
+    "officialPromotionalModelOrMaterial": "PRIMARY_OR_SUPPORTING_EVIDENCE_ALLOWED",
+    "officialCombinationOrAlternateBuild": "SUPPORTING_EVIDENCE_ALLOWED_WITH_EXACT_BUILD_LABEL",
+    "officialUnreleasedModel": "REFERENCE_AND_IDEATION_ALLOWED; PRODUCTION_MAPPING_REQUIRES_DIRECTOR_APPROVAL_AND_CANON_CHECK",
+    "officialGameModelOrAnimation": "REFERENCE_AND_IDEATION_ALLOWED; DO_NOT_COPY_OR_PROMOTE_TO_CANON",
+    "alternativeOfficialVersion": "DIRECTOR_REVIEW_REQUIRED_BEFORE_PRODUCTION_USE",
+    "fanMoc": "EXCLUDED_FROM_CURRENT_T082_SOURCE_POOL"
+  },
+  "candidateConstructionMethods": [
+    {
+      "id": "DIRECT_SET_ADAPTATION",
+      "description": "Preserve one official model's dominant masses and mechanisms while adapting only what canon or RTS readability requires."
+    },
+    {
+      "id": "OFFICIAL_SUBASSEMBLY_DERIVATION",
+      "description": "Promote one detachable or independently built module from a larger official model into the basis of a different roster asset."
+    },
+    {
+      "id": "OFFICIAL_CROSS_SET_COMBINATION",
+      "description": "Combine clearly named modules from multiple approved official sources while preserving their connection logic and faction grammar."
+    },
+    {
+      "id": "OFFICIAL_GAME_RECOMPOSITION",
+      "description": "Use an official game's recombination of recognizable source modules as an ideation pattern, then propose an original project-specific arrangement rather than copying it."
+    },
+    {
+      "id": "FACTION_GRAMMAR_SYNTHESIS",
+      "description": "Design a new asset from recurring official connection, support, tool, cockpit, tube or production-exit grammar when no direct model exists."
+    },
+    {
+      "id": "FUNCTION_FIRST_SOURCE_CLADDING",
+      "description": "Start from the canonical gameplay footprint and required readable mechanism, then justify every visible mass with approved source modules or faction construction grammar."
+    }
+  ],
+  "composedDesignProposalFields": [
+    "targetStableId",
+    "canonicalFunction",
+    "selectedMethod",
+    "sourceSetsAndGames",
+    "exactSourceComponents",
+    "connectionAndLoadPath",
+    "whatIsNewOrChanged",
+    "rejectedAlternatives",
+    "visibleGameplayConsequence",
+    "directorDecision"
+  ],
+  "gameReferencePool": [
+    {
+      "title": "LEGO Rock Raiders",
+      "referenceUrl": "https://kb.rockraidersunited.com/LEGO_Rock_Raiders_(video_game)",
+      "state": "REFERENCE_POOL_DECLARED",
+      "allowedUse": "Operation, building-language and faction-behavior reference; not a substitute for set construction evidence."
+    },
+    {
+      "title": "CrystAlien Conflict",
+      "referenceUrl": "https://en.brickimedia.org/wiki/CrystAlien_Conflict",
+      "state": "INITIAL_RECOMPOSITION_CASE_AUDITED",
+      "allowedUse": "Official-game unit/building composition and motion ideation; no direct copying."
+    },
+    {
+      "title": "LEGO Battles (Nintendo DS)",
+      "referenceUrl": "https://www.ttgames.com/games/lego-battles",
+      "state": "REFERENCE_POOL_DECLARED",
+      "allowedUse": "LEGO-scale RTS readability, modular building and unit-combination ideation; not source canon."
+    }
+  ],
+  "caseStudies": [
+    {
+      "caseId": "RR_1277_COMPLETE_SET",
+      "finding": "The complete source is a low open hovercraft with two forward ice saws, two raised round side hover/engine pods, a central hazard panel and an exposed Sparks operator; it is not a wheeled single-drill vehicle.",
+      "productionConsequence": "The canonical Drill Craft may retain its single oversized mining drill only as a labeled adaptation of the source tool package. The flat hover sled, paired side lift masses and open operator relationship are the source-grounded chassis language.",
+      "evidenceUrls": [
+        "https://kb.rockraidersunited.com/images/2/2f/1277_Hovercraft_with_Ice_Saws.pdf",
+        "https://kb.rockraidersunited.com/1277_Drill_Craft"
+      ]
+    },
+    {
+      "caseId": "RR_4930_COMPLETE_SET",
+      "finding": "The source is the five named crew minifigures plus a very small equipment/control stand, loose tools including a handheld saw assembly, and a crystal boulder; it contains no major vehicle.",
+      "productionConsequence": "Treat Rock Raider Crew as a shared worker class with visible character/equipment variants. Do not invent a 4930-derived vehicle or promote the small stand into the crew's body.",
+      "evidenceUrls": [
+        "https://kb.rockraidersunited.com/4930_Rock_Raiders_Crew",
+        "https://kb.rockraidersunited.com/images/b/bd/4930_OutBox.jpg",
+        "https://www.bricklink.com/catalogItemInv.asp?S=4930-1"
+      ]
+    },
+    {
+      "caseId": "LOM_7302_TOPOLOGY_CORRECTION",
+      "finding": "The Worker Robot source has one shallow central operator wedge and two mirrored articulated legs ending in broad feet. The completed model and cover show a bipedal walker; there are not four radial outriggers.",
+      "productionConsequence": "Preserve the tiny open biped and add any canonical worker manipulator as a clearly subordinate adaptation. Never infer appendage count from a top-like silhouette without following the build connections.",
+      "evidenceUrls": [
+        "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130290.pdf"
+      ]
+    },
+    {
+      "caseId": "MM_7691_MULTI_ASSET_DECOMPOSITION",
+      "finding": "The Mothership instructions build and dock several independently readable modules: the main circular carrier, a long front/central lime-conduit craft, two small seated weapon craft and two disc-like alien jetpack modules.",
+      "productionConsequence": "One large set may supply multiple roster assets or building modules. Record each detachable assembly and its candidate use instead of treating the boxed set as one indivisible unit.",
+      "evidenceUrls": [
+        "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4516029.pdf"
+      ]
+    },
+    {
+      "caseId": "CAC_TRAINING_CAMP_RECOMPOSITION",
+      "finding": "The CrystAlien Conflict Training Camp uses a 2-by-2 repetition of low white-orange nose/cockpit modules that visibly echo the Recon Dropship family.",
+      "productionConsequence": "This is the approved kind of ideation precedent when no set is a direct building match: identify the donor module, explain the repetition and function, propose alternatives, and obtain director approval before production. It is a method reference, not a design to copy.",
+      "evidenceUrls": [
+        "https://www.spriters-resource.com/browser_games/legomarsmissioncrystalienconflict/asset/134244/",
+        "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4524070.pdf"
+      ]
+    }
+  ],
+  "knownAuditCorrection": {
+    "stableId": "unit.martians.worker_robot",
+    "incorrectClaim": "The source was described as a four-spoke platform with four end pads and the bipedal reading was rejected.",
+    "rootCause": "The audit counted visible appendage-like masses from a final angle without tracing the two mirrored leg assemblies through the construction sequence or assigning their physical parent and ground-contact role.",
+    "preventiveGuard": "Any topology, locomotion or negative physical claim must cite both a construction-sequence connection and a completed-model view; the semantic part map must name each appendage's parent and contact function first."
+  },
+  "packetNotice": "A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval."
+}

@@ -25,14 +25,17 @@ cross-roster review gates remain open.
   This is a baseline for the future blind silhouette review, not a claim that
   every visual collision has already been found.
 - The source ledger records 39 relied-upon official sets or source families.
-  Direct official LEGO PDFs are now indexed for 35 sources. Four older or
-  promotional sources retain their approved Canon Registry and BrickLink
-  inventory evidence but still lack a located official PDF.
+  Direct official LEGO PDFs are indexed for 35 sources. Four older or
+  promotional sources have no located official PDF; 1277 and 4930 now have
+  usable labeled archival evidence, while Martian sets 1195 and 3750 remain
+  explicit evidence gaps.
 - The Rock Raiders source pass visually audited all seven located official
-  manuals, recorded exact PDF page counts and hashes, mapped
-  construction-critical page ranges, and classified front/rear/side/top,
-  three-quarter, underside/interior and mechanism coverage. Sets 1277 and 4930
-  remain explicit archival gaps rather than inferred construction.
+  manuals plus the archival 1277 instruction scan and the archival 4930 product
+  evidence. The 1277 source is a low open hovercraft with twin forward ice saws
+  and paired side lift/engine pods; the canonical oversized drill is therefore
+  an explicit adaptation, not a source fact. Set 4930 supplies the five crew
+  minifigures, a tiny control/equipment stand, loose tools and a crystal boulder,
+  not a vehicle.
 - The Astronaut source pass visually audited all 18 mapped sources across 23
   official PDF books. It records the same page-range, hash, view and mechanism
   evidence with no Astronaut archival gap.
@@ -68,8 +71,9 @@ cross-roster review gates remain open.
   the source ledger rather than receiving guessed construction.
 - The small Martian machines are now source-correct: Double Hover uses twin
   long runners and unlike rear modules; Jet Scooter is a long narrow tube-sided
-  sled; and Worker Robot is a low four-spoke operator platform rather than a
-  generic biped.
+  sled; and Worker Robot is a tiny open biped with two articulated legs and two
+  broad feet. The earlier four-spoke reading was an audit error caused by
+  counting shapes in one final view without tracing their build connections.
 - The manuals prove two different modular mech families. Red Planet Protector
   separates a wedge upper craft, twin-foot body and long emitter arms;
   Recon-Mech separates a broad drill/claw craft, leg block and rear pressure
@@ -92,10 +96,17 @@ cross-roster review gates remain open.
   restrained frame variation, tool wear, hazard/service markings and
   console/signals; silhouette, load-bearing connections and moving mechanisms
   remain geometry. No bespoke Raider texture is justified at this stage.
-- Crew and Drill Craft are deliberately `SOURCE_BOUNDED_PROVISIONAL`: their
-  gameplay and recognition contracts are usable, but the missing 4930 and 1277
-  construction evidence prevents an unmarked guess from fixing the final
-  backpack/lamp or wheel/drill-support layout.
+- Crew and Drill Craft now use `CANON_DERIVED_ADAPTATION` contracts grounded in
+  the recovered archival evidence. Crew preserves five visible
+  character/equipment variants without inventing a 4930 vehicle. Drill Craft
+  preserves the low hover-sled chassis and paired side pods while labeling its
+  canonical single drill as the replacement for the source's twin saws.
+- A repository-enforced source-analysis policy now requires a whole-set audit,
+  separate accounting for detachable modules/figures/equipment, connection and
+  contact tracing before silhouette claims, and explicit donor/rejected-option
+  disclosure for any proposed composed design. Promo, combo, unreleased and
+  official-game references are labeled by their permitted use; alternative
+  official versions require review and fan MOCs remain excluded.
 - The 4990 HQ manual is now verified primary evidence. Its 43 pages establish
   a reusable faction vocabulary of separate tower, crane, open service gantry,
   conveyor/processing and irregular worksite-base modules; they do not silently
@@ -117,7 +128,7 @@ redistributed.
 
 ## Remaining before T082 can pass
 
-1. Retain the four explicit archival gaps unless new primary evidence appears,
+1. Retain the two explicit Martian archival gaps unless usable evidence appears,
    and escalate any gap that prevents a safe production decision.
 2. Repeat the completed Rock Raiders semantic-construction contract for the 21
    Astronaut, 12 Alien and 17 Martian assets: what every identity-bearing mass,
@@ -138,3 +149,23 @@ redistributed.
 
 No canon conflict has been found in the identity baseline. No packet is
 approved for T083/T085 production yet.
+
+## Verification state
+
+The corrected whole-set/source-decomposition pass and explicit crash-safe
+Godot smoke path passed `./tools/verify.sh --full` with zero blocking failures
+at `Artifacts/Verification/20260910T053640Z-full-summary.txt`. All 317 tests,
+the 66-asset Super Scout corpus, 39 source records, 35 primary sources, four
+archival sources, nine Rock Raiders audits with zero remaining Rock Raiders
+evidence gaps, all 16 non-provisional Rock Raiders production contracts,
+deterministic packet regeneration, retained presentation/network gates and a
+fresh macOS export passed. Stress60 remains the expected 2/60
+`BLOCKING_LATER` M9 diagnostic.
+
+Every routine Godot smoke and the exported app emitted the explicit immediate
+exit marker after its real PASS result. The macOS Godot diagnostic-report count
+remained 11 before and after this clean full run. Earlier attempts during this
+correction created 11 reports: ten when two verification runs were mistakenly
+allowed to overlap and one later repeated Look Lab launch that exposed the
+remaining implicit-activation defect. Those failed attempts are not treated as
+accepted verification evidence.

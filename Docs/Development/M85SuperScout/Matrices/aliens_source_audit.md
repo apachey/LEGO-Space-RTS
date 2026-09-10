@@ -1,15 +1,16 @@
 # M8.5 T082 — Aliens source-evidence audit
 
-This generated review records what the official instruction PDFs actually prove, which views remain partial or missing, and where gameplay adaptation still must be explicit. The PDFs and rendered review sheets are temporary research material and are not redistributed in the repository.
+This generated review records what the available official instructions or labeled archival evidence actually prove, which views remain partial or missing, and where gameplay adaptation still must be explicit. The PDFs and rendered review sheets are temporary research material and are not redistributed in the repository.
 
 ## 5617 — Alien Jet
 
 ### Source audit [Aliens:5617]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4525566.pdf)
 - Construction map:
-  - PDF pages 1: Complete five-step Alien Jet build with exposed pilot, swept black deck and paired flexible lime arches.
-  - PDF pages 2: Promotional reverse page; no additional construction evidence.
+  - Evidence pages 1: Complete five-step Alien Jet build with exposed pilot, swept black deck and paired flexible lime arches.
+  - Evidence pages 2: Promotional reverse page; no additional construction evidence.
 - View/mechanism coverage: front=PARTIAL p1 cover and final step; rear=PARTIAL p1 staged build; leftRight=PARTIAL p1 construction sequence; top=VERIFIED p1 steps 3-5; threeQuarter=VERIFIED p1 cover and final step; undersideInterior=PARTIAL p1 bare plate sequence; mechanism=PARTIAL p1 flexible lime arches; no authored flight or weapon motion
 - Verified findings:
   - Alien Jet is an extremely small open craft built around a broad swept black plate rather than an enclosed fuselage.
@@ -23,9 +24,10 @@ This generated review records what the official instruction PDFs actually prove,
 ### Source audit [Aliens:7645]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4534846.pdf), [official instruction PDF 2](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4549395.pdf)
 - Construction map:
-  - PDF pages book 1, 3-26: Complete low Alien attack craft: long twin-pronged nose, four swept blade modules, lime cockpit/energy masses, rear engines and exposed crew deck.
-  - PDF pages book 1, 27-75; book 2, 2-63: Astronaut mining assemblies and powered Crystal Reaper; supporting opposition evidence, not Razor Skimmer geometry.
+  - Evidence pages book 1, 3-26: Complete low Alien attack craft: long twin-pronged nose, four swept blade modules, lime cockpit/energy masses, rear engines and exposed crew deck.
+  - Evidence pages book 1, 27-75; book 2, 2-63: Astronaut mining assemblies and powered Crystal Reaper; supporting opposition evidence, not Razor Skimmer geometry.
 - View/mechanism coverage: front=VERIFIED book 1 p18-26; rear=VERIFIED book 1 p20-26; leftRight=VERIFIED book 1 p3-26; top=VERIFIED book 1 p3-26; threeQuarter=VERIFIED cover and book 1 p20-26; undersideInterior=VERIFIED book 1 p3-19 staged frame; mechanism=PARTIAL book 1 p20-26 removable crew and projectile mounts; no hover cycle
 - Verified findings:
   - The source craft is a low, long black skimmer with a split spear-like nose rather than a compact disc.
@@ -39,11 +41,12 @@ This generated review records what the official instruction PDFs actually prove,
 ### Source audit [Aliens:7646]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4534848.pdf)
 - Construction map:
-  - PDF pages 3-27: Astronaut equipment and figures; supporting opposition evidence.
-  - PDF pages 29-50: Long central Infiltrator craft with split nose, exposed crew/tool bay, red weapon tips and lime conduits.
-  - PDF pages 51-67: Two independent curved side modules attach to the central craft and receive weapons, cables and flexible lime conduits.
-  - PDF pages 68: Explicit conversion: both curved side modules and the long forward hull rotate downward into a planted three-leg walker.
+  - Evidence pages 3-27: Astronaut equipment and figures; supporting opposition evidence.
+  - Evidence pages 29-50: Long central Infiltrator craft with split nose, exposed crew/tool bay, red weapon tips and lime conduits.
+  - Evidence pages 51-67: Two independent curved side modules attach to the central craft and receive weapons, cables and flexible lime conduits.
+  - Evidence pages 68: Explicit conversion: both curved side modules and the long forward hull rotate downward into a planted three-leg walker.
 - View/mechanism coverage: front=VERIFIED p49-50 and p67-68; rear=VERIFIED p47-50 and p67-68; leftRight=VERIFIED p29-68; top=VERIFIED p29-67; threeQuarter=VERIFIED cover and p49-50/p67-68; undersideInterior=VERIFIED p29-67 staged modules; mechanism=VERIFIED p68 craft-to-three-leg walker conversion; gait and weapon cycle remain partial
 - Verified findings:
   - Infiltrator flight state is a long central two-seat craft flanked by two separately built crescent modules.
@@ -57,9 +60,10 @@ This generated review records what the official instruction PDFs actually prove,
 ### Source audit [Aliens:7690]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4523177.pdf), [official instruction PDF 2](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4523179.pdf)
 - Construction map:
-  - PDF pages book 1, 3-15: Complete compact Alien scout craft with paired curved outer lobes, central open pilot/tool frame, lime arches and long rear fin.
-  - PDF pages book 1, 16-75; book 2, 2-72: Astronaut command base, gantry and shuttle; supporting containment/docking opposition evidence, not small-craft geometry.
+  - Evidence pages book 1, 3-15: Complete compact Alien scout craft with paired curved outer lobes, central open pilot/tool frame, lime arches and long rear fin.
+  - Evidence pages book 1, 16-75; book 2, 2-72: Astronaut command base, gantry and shuttle; supporting containment/docking opposition evidence, not small-craft geometry.
 - View/mechanism coverage: front=VERIFIED book 1 p12-15; rear=PARTIAL book 1 p10-15; leftRight=VERIFIED book 1 p3-15; top=VERIFIED book 1 p3-15; threeQuarter=VERIFIED cover and book 1 p12-15; undersideInterior=VERIFIED book 1 p3-12 staged open frame; mechanism=PARTIAL book 1 p12-15 flexible conduits and weapon mounts; no locomotion sequence
 - Verified findings:
   - The scout uses two broad curved black lobes around an exposed central operator/tool frame, producing a broken crescent silhouette.
@@ -73,15 +77,18 @@ This generated review records what the official instruction PDFs actually prove,
 ### Source audit [Aliens:7691]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4516029.pdf)
 - Construction map:
-  - PDF pages 3-27: Astronaut extraction station; supporting opposition evidence.
-  - PDF pages 28-49: Large circular Mothership hull, open central machinery channel, lime conduits, weapon hardpoints and long multi-blade tail.
-  - PDF pages 50-67: Three detachable small-craft modules: a central lime-conduit craft and two round-disc weapon/capture pods with independent riders.
+  - Evidence pages 3-27: Astronaut extraction station; supporting opposition evidence.
+  - Evidence pages 28-49: Large circular Mothership carrier hull, open central machinery channel, lime conduits, docking hardpoints and long multi-blade tail.
+  - Evidence pages 50-56: Two mirrored narrow seated weapon craft are built as independent modules for the carrier.
+  - Evidence pages 57-63: A long lime-conduit front/central craft is assembled independently and docked into the carrier's open machinery channel.
+  - Evidence pages 64-67: Two disc-like alien jetpack modules are built separately, accept individual aliens and dock at the carrier's outer wing/arm ends.
 - View/mechanism coverage: front=VERIFIED p43-49; rear=VERIFIED p44-49; leftRight=VERIFIED p28-49; top=VERIFIED p28-49; threeQuarter=VERIFIED cover and p43-50; undersideInterior=VERIFIED p28-48 staged circular frame; interior remains open rather than enclosed; mechanism=VERIFIED p50-67 detachable subcraft and capture/weapon pods; carrier launch cycle remains partial
 - Verified findings:
-  - The Mothership is a huge flattened circular black hull interrupted by a visible central machinery channel rather than a sealed saucer.
+  - The Mothership is a huge flattened circular black carrier interrupted by a visible central machinery channel rather than a sealed saucer.
   - Several long black and translucent-lime tail blades extend from one side, preventing a rotationally symmetric disc silhouette.
-  - Paired lime conduits route across the open center, while three independently readable small craft establish the carrier language outside the main hull.
+  - The set is not one indivisible vehicle: beyond the main carrier it provides a long front/central craft, two narrow seated side craft and two disc jetpack modules, each with its own assembly and docking relationship.
 - Remaining evidence gaps:
   - The manual proves detachable subcraft but not the game's payload capacity, launch/recovery timing, reinforcement function or Charge-support state; all require a carrier-specific contract.
 
@@ -90,10 +97,11 @@ This generated review records what the official instruction PDFs actually prove,
 ### Source audit [Aliens:7692]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4524070.pdf)
 - Construction map:
-  - PDF pages 3-12: Astronaut payload rover; supporting opposition evidence.
-  - PDF pages 13-23: Complete narrow Alien attack craft with tall paired curved blades, open center, lime conduits and triple rear emitter cluster.
-  - PDF pages 24-71: Astronaut dropship and visible cargo release; supporting opposition evidence.
+  - Evidence pages 3-12: Astronaut payload rover; supporting opposition evidence.
+  - Evidence pages 13-23: Complete narrow Alien attack craft with tall paired curved blades, open center, lime conduits and triple rear emitter cluster.
+  - Evidence pages 24-71: Astronaut dropship and visible cargo release; supporting opposition evidence.
 - View/mechanism coverage: front=PARTIAL p20-23; rear=VERIFIED p20-23; leftRight=VERIFIED p13-23; top=VERIFIED p13-23; threeQuarter=VERIFIED cover and p20-23; undersideInterior=VERIFIED p13-20 staged open frame; mechanism=PARTIAL p20-23 hose and projectile mounts; no hover or deployment sequence
 - Verified findings:
   - This small craft is unusually narrow and tall, with two near-vertical curved black blades enclosing a large central slot.
@@ -107,10 +115,11 @@ This generated review records what the official instruction PDFs actually prove,
 ### Source audit [Aliens:7693]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4523183.pdf)
 - Construction map:
-  - PDF pages 3-16: Astronaut mining vehicle; supporting opposition evidence.
-  - PDF pages 17-35: ETX Alien Strike central keel, hinged side frames, paired crescent lobes, detachable corner modules and long translucent-lime tail blades.
-  - PDF pages 36-59: Cross-set alternate astronaut craft; not direct Alien Strike production geometry.
+  - Evidence pages 3-16: Astronaut mining vehicle; supporting opposition evidence.
+  - Evidence pages 17-35: ETX Alien Strike central keel, hinged side frames, paired crescent lobes, detachable corner modules and long translucent-lime tail blades.
+  - Evidence pages 36-59: Cross-set alternate astronaut craft; not direct Alien Strike production geometry.
 - View/mechanism coverage: front=VERIFIED p28-35; rear=PARTIAL p28-35; leftRight=VERIFIED p17-35; top=VERIFIED p17-35; threeQuarter=VERIFIED cover and p28-35; undersideInterior=VERIFIED p17-28 staged open frame; mechanism=PARTIAL p24-35 hinged crescent/side modules and detachable corner pads; no complete flight-to-siege sequence
 - Verified findings:
   - Alien Strike is built around a long central black keel with a lime multi-blade tail and two huge crescent side lobes.
@@ -124,9 +133,10 @@ This generated review records what the official instruction PDFs actually prove,
 ### Source audit [Aliens:7697]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4515381.pdf)
 - Construction map:
-  - PDF pages 3-15: Complete low Alien ambush craft with three curved black lobes, exposed pilot, arched lime conduits and distributed emitters.
-  - PDF pages 16-68: Astronaut MT-51 Claw-Tank; supporting opposition evidence.
+  - Evidence pages 3-15: Complete low Alien ambush craft with three curved black lobes, exposed pilot, arched lime conduits and distributed emitters.
+  - Evidence pages 16-68: Astronaut MT-51 Claw-Tank; supporting opposition evidence.
 - View/mechanism coverage: front=PARTIAL p12-15; rear=PARTIAL p12-15; leftRight=VERIFIED p3-15; top=VERIFIED p3-15; threeQuarter=VERIFIED cover and p12-15; undersideInterior=VERIFIED p3-12 staged frame; mechanism=PARTIAL p12-15 flexible conduits and projectile mounts; no flight or ambush sequence
 - Verified findings:
   - The ambush craft forms a low broken ring from three rounded black lobes around an open operator cavity.

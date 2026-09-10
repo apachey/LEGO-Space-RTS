@@ -34,12 +34,13 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Astronauts:7649]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4538485.pdf), [official instruction PDF 2](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4538486.pdf)
 - Construction map:
-  - PDF pages book 1, 3-20: Alien strike craft; supporting opposition evidence.
-  - PDF pages book 1, 21-46; book 2, 2-18: Low travel chassis, operator cab and central rotating machinery core.
-  - PDF pages book 2, 19-27: Massive longitudinal drill and drive assembly.
-  - PDF pages book 2, 28-34: Forward cockpit/tool pod and central module completion.
-  - PDF pages book 2, 35-43: Four independent ball-jointed leg pods attach and rotate into the deployed walker stance.
+  - Evidence pages book 1, 3-20: Alien strike craft; supporting opposition evidence.
+  - Evidence pages book 1, 21-46; book 2, 2-18: Low travel chassis, operator cab and central rotating machinery core.
+  - Evidence pages book 2, 19-27: Massive longitudinal drill and drive assembly.
+  - Evidence pages book 2, 28-34: Forward cockpit/tool pod and central module completion.
+  - Evidence pages book 2, 35-43: Four independent ball-jointed leg pods attach and rotate into the deployed walker stance.
 - View/mechanism coverage: front=VERIFIED book 2 p34-43; rear=VERIFIED book 2 p35-43; leftRight=VERIFIED both books; top=VERIFIED book 2 p2-43; threeQuarter=VERIFIED covers and book 2 p42-47; undersideInterior=VERIFIED book 2 p2-42; mechanism=VERIFIED book 2 p35-43 four-leg deployment and body rotation
 - Verified findings:
   - MT-201 is a central drill/cockpit machine surrounded by four independently built articulated leg pods.
@@ -49,6 +50,8 @@ Open question: Source-view coverage and construction-critical page ranges are re
   - The source shows manual leg repositioning but not a timed gait or stable drilling contact sequence; both require an explicit animation contract.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 

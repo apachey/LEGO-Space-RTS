@@ -37,9 +37,10 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Astronauts:5619]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4533843.pdf)
 - Construction map:
-  - PDF pages 1: Complete five-step Crystal Hawk build and final operator-scale three-quarter view.
-  - PDF pages 2: Promotional reverse page; no additional construction evidence.
+  - Evidence pages 1: Complete five-step Crystal Hawk build and final operator-scale three-quarter view.
+  - Evidence pages 2: Promotional reverse page; no additional construction evidence.
 - View/mechanism coverage: front=PARTIAL p1 final view; rear=PARTIAL p1 construction sequence; leftRight=PARTIAL p1 mirrored wing build; top=VERIFIED p1 staged wing placement; threeQuarter=VERIFIED p1 cover and final step; undersideInterior=PARTIAL p1 exposed plate sequence; mechanism=MISSING static micro-build only
 - Verified findings:
   - The fighter is an extremely compact open-seat craft built around a narrow black central spine.
@@ -51,11 +52,12 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Astronauts:7644]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4534843.pdf), [official instruction PDF 2](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4537579.pdf)
 - Construction map:
-  - PDF pages book 1, 3-35: Alien scout craft and separate mission payload pods; supporting opposition evidence.
-  - PDF pages book 1, 36-75; book 2, 2-24: Tall modular service/launch tower and platform completed across both books.
-  - PDF pages book 2, 26-60: MX-81 central aircraft hull, broad wing plane, cockpit and twin orange engine masses.
-  - PDF pages book 2, 61-73: Long side booms, detachable operational craft/pods and final multi-module aircraft assembly.
+  - Evidence pages book 1, 3-35: Alien scout craft and separate mission payload pods; supporting opposition evidence.
+  - Evidence pages book 1, 36-75; book 2, 2-24: Tall modular service/launch tower and platform completed across both books.
+  - Evidence pages book 2, 26-60: MX-81 central aircraft hull, broad wing plane, cockpit and twin orange engine masses.
+  - Evidence pages book 2, 61-73: Long side booms, detachable operational craft/pods and final multi-module aircraft assembly.
 - View/mechanism coverage: front=VERIFIED book 2 p52-76; rear=VERIFIED book 2 p60-76; leftRight=VERIFIED book 2 p26-76; top=VERIFIED book 2 p26-73; threeQuarter=VERIFIED covers and book 2 p73-76; undersideInterior=VERIFIED book 2 p26-60 staged airframe; mechanism=PARTIAL book 2 p61-73 detachable side modules and launch/service tower; flight operation not animated
 - Verified findings:
   - MX-81 is a very wide flying operations platform with a dense central command hull and long thin span.
@@ -67,13 +69,14 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Astronauts:7692]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4524070.pdf)
 - Construction map:
-  - PDF pages 3-12: Separate compact six-wheel reconnaissance payload rover.
-  - PDF pages 13-23: Alien attack craft; supporting opposition evidence.
-  - PDF pages 24-40: Dropship cockpit, central keel and open cargo interface.
-  - PDF pages 41-61: Long tail/wing frame and suspended-load structure.
-  - PDF pages 62-69: Landing pads, side equipment cylinders and final payload-clearance geometry.
-  - PDF pages 70-71: Explicit lift/release of the independent rover beneath the fuselage.
+  - Evidence pages 3-12: Separate compact six-wheel reconnaissance payload rover.
+  - Evidence pages 13-23: Alien attack craft; supporting opposition evidence.
+  - Evidence pages 24-40: Dropship cockpit, central keel and open cargo interface.
+  - Evidence pages 41-61: Long tail/wing frame and suspended-load structure.
+  - Evidence pages 62-69: Landing pads, side equipment cylinders and final payload-clearance geometry.
+  - Evidence pages 70-71: Explicit lift/release of the independent rover beneath the fuselage.
 - View/mechanism coverage: front=VERIFIED p62-71; rear=VERIFIED p65-71; leftRight=VERIFIED p24-71; top=VERIFIED p24-69; threeQuarter=VERIFIED p1 and p69-71; undersideInterior=VERIFIED p24-70 open cargo cradle; mechanism=VERIFIED p70-71 payload lift/release and landing-pad motion
 - Verified findings:
   - MX-71 is a long narrow lifting aircraft organized around an open underside cargo cradle.
@@ -85,9 +88,10 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Astronauts:7695]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517774.pdf)
 - Construction map:
-  - PDF pages 2-13: Complete MX-11 Astro Fighter build: flat wing plate, orange canopy nose, tail/antenna and pilot scale.
-  - PDF pages 14-24: Inventory and promotional pages; no additional construction evidence.
+  - Evidence pages 2-13: Complete MX-11 Astro Fighter build: flat wing plate, orange canopy nose, tail/antenna and pilot scale.
+  - Evidence pages 14-24: Inventory and promotional pages; no additional construction evidence.
 - View/mechanism coverage: front=PARTIAL p9-13; rear=PARTIAL p10-13; leftRight=VERIFIED p2-13; top=VERIFIED p2-13; threeQuarter=VERIFIED p1 and p11-13; undersideInterior=VERIFIED p2-9 staged plate build; mechanism=MISSING static micro-fighter
 - Verified findings:
   - MX-11 is a thin white delta-wing craft with a sharp orange canopy/nose at its center.
@@ -97,6 +101,8 @@ Open question: Source-view coverage and construction-critical page ranges are re
   - Clean underside and propulsion views are still required before consolidating MX-11 with the Crystal Hawk into one Mission Fighter family.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 

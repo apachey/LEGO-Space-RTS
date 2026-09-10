@@ -36,12 +36,13 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Astronauts:7645]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4534846.pdf), [official instruction PDF 2](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4549395.pdf)
 - Construction map:
-  - PDF pages book 1, 3-26: Alien attack craft; supporting opposition evidence.
-  - PDF pages book 1, 27-50: White/orange mining cab and initial wheeled working platform.
-  - PDF pages book 1, 51-75; book 2, 2-17: Separate tool, drill and support assemblies for the mining system.
-  - PDF pages book 2, 18-45: Large Crystal Reaper chassis, tracked conversion and twin front harvesting-wheel installation.
-  - PDF pages book 2, 48-63: Powered controls, cables and explicit harvesting play feature.
+  - Evidence pages book 1, 3-26: Alien attack craft; supporting opposition evidence.
+  - Evidence pages book 1, 27-50: White/orange mining cab and initial wheeled working platform.
+  - Evidence pages book 1, 51-75; book 2, 2-17: Separate tool, drill and support assemblies for the mining system.
+  - Evidence pages book 2, 18-45: Large Crystal Reaper chassis, tracked conversion and twin front harvesting-wheel installation.
+  - Evidence pages book 2, 48-63: Powered controls, cables and explicit harvesting play feature.
 - View/mechanism coverage: front=VERIFIED book 2 p38-66; rear=VERIFIED book 2 p44-66; leftRight=VERIFIED both books; top=VERIFIED book 2 p18-63; threeQuarter=VERIFIED covers and book 2 p43-66; undersideInterior=VERIFIED book 1 p27-75 and book 2 p18-45; mechanism=VERIFIED book 2 p45-63 powered twin harvesting wheels and tracked conversion
 - Verified findings:
   - Crystal Reaper configuration is defined by two enormous exposed harvesting wheels mounted ahead of a low tracked body.
@@ -53,10 +54,11 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Astronauts:7648]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4525546.pdf)
 - Construction map:
-  - PDF pages 3-16: Compact orange/white mining rover with exposed low chassis and large wheels.
-  - PDF pages 17-25: Separate tall articulated extraction/tool mast on a small wheeled base.
-  - PDF pages 26-28: Both modules shown together at operator scale.
+  - Evidence pages 3-16: Compact orange/white mining rover with exposed low chassis and large wheels.
+  - Evidence pages 17-25: Separate tall articulated extraction/tool mast on a small wheeled base.
+  - Evidence pages 26-28: Both modules shown together at operator scale.
 - View/mechanism coverage: front=PARTIAL p15-28; rear=PARTIAL p15-28; leftRight=VERIFIED p3-28; top=VERIFIED p3-25; threeQuarter=VERIFIED p1 and p25-28; undersideInterior=VERIFIED p3-20 staged chassis; mechanism=PARTIAL p17-25 hinged tool mast; extraction cycle not demonstrated
 - Verified findings:
   - The source is a paired mining system: a compact rover and a visibly independent upright tool platform.
@@ -68,9 +70,10 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Astronauts:7693]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4523183.pdf)
 - Construction map:
-  - PDF pages 3-16: Compact human mining vehicle with orange canopy, low four-wheel chassis and tall side tool arm.
-  - PDF pages 17-51: Large transforming alien strike craft; supporting opposition evidence.
+  - Evidence pages 3-16: Compact human mining vehicle with orange canopy, low four-wheel chassis and tall side tool arm.
+  - Evidence pages 17-51: Large transforming alien strike craft; supporting opposition evidence.
 - View/mechanism coverage: front=PARTIAL p12-16 human vehicle; rear=PARTIAL p13-16 human vehicle; leftRight=VERIFIED p3-16; top=VERIFIED p3-16; threeQuarter=VERIFIED p1 and p15-16; undersideInterior=VERIFIED p3-12 bare human chassis; mechanism=PARTIAL p13-16 hinged side tool; extraction action not demonstrated
 - Verified findings:
   - The human mining module is a short low vehicle with a prominent orange cockpit and exposed wheelbase.
@@ -80,6 +83,8 @@ Open question: Source-view coverage and construction-critical page ranges are re
   - The manual does not show a complete extraction cycle, so the tool contact, material intake and deployment state must be derived with corroboration from 7645/7648.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 

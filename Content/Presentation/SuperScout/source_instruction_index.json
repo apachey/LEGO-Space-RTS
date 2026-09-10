@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
   "task": "T082",
-  "retrievalDate": "2026-09-09",
+  "retrievalDate": "2026-09-10",
   "status": "IN_PROGRESS_DIRECT_PDF_INDEX",
   "rightsPolicy": "Reference-only official LEGO building-instruction links. PDFs are not redistributed in the repository.",
   "records": [
-    {"setId":"1277","pdfUrls":[],"state":"NO_OFFICIAL_PDF_LOCATED"},
+    {"setId":"1277","pdfUrls":[],"archivalEvidenceUrls":["https://kb.rockraidersunited.com/images/2/2f/1277_Hovercraft_with_Ice_Saws.pdf"],"state":"NO_OFFICIAL_PDF_LOCATED"},
     {"setId":"4910","pdfUrls":["https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128290.pdf"],"state":"DIRECT_PDF_LOCATED"},
     {"setId":"4920","pdfUrls":["https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128168.pdf"],"state":"DIRECT_PDF_LOCATED"},
-    {"setId":"4930","pdfUrls":[],"state":"NO_OFFICIAL_PDF_LOCATED"},
+    {"setId":"4930","pdfUrls":[],"archivalEvidenceUrls":["https://kb.rockraidersunited.com/4930_Rock_Raiders_Crew","https://kb.rockraidersunited.com/images/b/bd/4930_OutBox.jpg","https://www.bricklink.com/catalogItemInv.asp?S=4930-1"],"state":"NO_OFFICIAL_PDF_LOCATED"},
     {"setId":"4940","pdfUrls":["https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128317.pdf"],"state":"DIRECT_PDF_LOCATED"},
     {"setId":"4950","pdfUrls":["https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128419.pdf"],"state":"DIRECT_PDF_LOCATED"},
     {"setId":"4970","pdfUrls":["https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4129264.pdf"],"state":"DIRECT_PDF_LOCATED"},

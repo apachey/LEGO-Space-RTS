@@ -34,11 +34,12 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Martians:7313]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4160158.pdf)
 - Construction map:
-  - PDF pages 2-14: Low blue/gray wedge craft with open operator area, hoses and two long removable emitter/tool arms.
-  - PDF pages 15-23: Separate broad twin-foot biped lower body; the complete upper craft docks onto it to form the tall Protector.
-  - PDF pages 24-28: Two independent low ground support/emitter devices are built and shown beside the complete Protector; they are not part of its body.
-  - PDF pages 29-33: Final source photography and explicit hand-separated reconfiguration from biped into a low craft with the leg and central body modules relocated.
+  - Evidence pages 2-14: Low blue/gray wedge craft with open operator area, hoses and two long removable emitter/tool arms.
+  - Evidence pages 15-23: Separate broad twin-foot biped lower body; the complete upper craft docks onto it to form the tall Protector.
+  - Evidence pages 24-28: Two independent low ground support/emitter devices are built and shown beside the complete Protector; they are not part of its body.
+  - Evidence pages 29-33: Final source photography and explicit hand-separated reconfiguration from biped into a low craft with the leg and central body modules relocated.
 - View/mechanism coverage: front=VERIFIED p28-33; rear=PARTIAL p28-33; leftRight=VERIFIED p2-33; top=VERIFIED p2-33; threeQuarter=VERIFIED p1 and p28-33; undersideInterior=VERIFIED p2-28 staged modules; mechanism=VERIFIED p30-33 biped-to-craft reconfiguration; continuous motion and planted control action remain missing
 - Verified findings:
   - The source Protector is a modular tall biped assembled from a low wedge craft, a broad two-foot lower body and two long detachable emitter arms.
@@ -48,6 +49,8 @@ Open question: Source-view coverage and construction-critical page ranges are re
   - The canonical Martian palette, anti-heavy control action and credible continuous mobile-to-planted transition require an explicit adaptation contract; the source's blue/gray paint and hand-separated rebuild do not decide them.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 

@@ -2,18 +2,18 @@
   "schemaVersion": 1,
   "task": "T082",
   "faction": "RockRaiders",
-  "retrievalDate": "2026-09-09",
-  "status": "SOURCE_AUDIT_COMPLETE_WITH_TWO_GAPS",
+  "retrievalDate": "2026-09-10",
+  "status": "SOURCE_AUDIT_COMPLETE_WITH_ARCHIVAL_EVIDENCE",
   "coverageScale": ["VERIFIED", "PARTIAL", "MISSING", "NOT_APPLICABLE"],
   "sources": [
     {
       "setId": "1277",
-      "evidenceState": "ARCHIVAL_GAP",
-      "instructionPdfs": [],
-      "constructionRanges": [],
-      "viewCoverage": {"front":"MISSING","rear":"MISSING","leftRight":"MISSING","top":"MISSING","threeQuarter":"MISSING","undersideInterior":"MISSING","mechanism":"MISSING"},
-      "findings": ["Canon and archival inventory establish the compact Drill Craft identity and parts family, but they do not establish a modelable load path or verified articulation."],
-      "openGaps": ["Locate an official instruction scan, official catalog construction view or clearly labeled archival manual before resolving Drill Craft construction."]
+      "evidenceState": "ARCHIVAL_PDF_VISUALLY_AUDITED",
+      "instructionPdfs": [{"url":"https://kb.rockraidersunited.com/images/2/2f/1277_Hovercraft_with_Ice_Saws.pdf","pageCount":2,"sha256":"bad8c22f08fe7d9c3241421a28022467f1ea397c162ad8790179c5d87ced9027","provenance":"Archival scan hosted by Rock Raiders United; the pages themselves carry LEGO branding, set number 1277, product code 4132646 and a 1999 LEGO Group copyright notice, but the PDF is not served from LEGO's current archive."}],
+      "constructionRanges": [{"pages":"1","evidence":"Complete flat base, paired yellow side wedges, teal side/rear fittings, central hazard panel and exposed Sparks operator are assembled."},{"pages":"2","evidence":"Two raised round side hover/engine pods and two forward ice-saw arms attach to the low open craft; the final model is shown from the front-left three-quarter view."}],
+      "viewCoverage": {"front":"VERIFIED cover and p2 step 6","rear":"PARTIAL p1-2 construction sequence","leftRight":"PARTIAL cover and p1-2","top":"VERIFIED p1-2 steps 1-6","threeQuarter":"VERIFIED cover and p2 final","undersideInterior":"PARTIAL p1 bare plate foundation","mechanism":"PARTIAL p2 saw and side-pod attachment; no spin, hover or steering sequence"},
+      "findings": ["The complete source is a very low open hovercraft/sled with an exposed operator, not a wheeled miniature drill vehicle.","Two forward ice saws are separate mirrored tool arms; the source does not contain one central helical drill.","Two raised round side pods and the central hazard panel carry more source identity than any rear bodywork."],
+      "openGaps": ["The opposite side and strict underside remain unverified.","The canonical single oversized mining drill is a gameplay adaptation of the paired source saw package; its support must preserve the verified low sled and paired side-pod relationship rather than inventing a wheel chassis."]
     },
     {
       "setId": "4910",
@@ -35,12 +35,13 @@
     },
     {
       "setId": "4930",
-      "evidenceState": "ARCHIVAL_GAP",
+      "evidenceState": "ARCHIVAL_PRODUCT_VISUALLY_AUDITED",
       "instructionPdfs": [],
       "constructionRanges": [],
-      "viewCoverage": {"front":"PARTIAL archival character imagery","rear":"MISSING","leftRight":"PARTIAL archival character imagery","top":"NOT_APPLICABLE","threeQuarter":"PARTIAL archival character imagery","undersideInterior":"NOT_APPLICABLE","mechanism":"MISSING"},
-      "findings": ["Canon and inventory confirm a crew/equipment source rather than a single vehicle assembly."],
-      "openGaps": ["Locate official or clearly labeled archival front/rear character and equipment sheets before fixing the Crew backpack, lamp and tool variants."]
+      "referenceUrls": ["https://kb.rockraidersunited.com/4930_Rock_Raiders_Crew","https://kb.rockraidersunited.com/images/b/bd/4930_OutBox.jpg","https://www.bricklink.com/catalogItemInv.asp?S=4930-1"],
+      "viewCoverage": {"front":"VERIFIED archival box and out-of-box photos","rear":"MISSING","leftRight":"PARTIAL archival out-of-box photo","top":"NOT_APPLICABLE minifigure/equipment pack","threeQuarter":"VERIFIED archival box and out-of-box photos","undersideInterior":"NOT_APPLICABLE","mechanism":"PARTIAL loose handheld tools and equipment stand; no authored action sequence"},
+      "findings": ["The set contains the five named crew minifigures Axle, Bandit, Docs, Jet and Sparks; the figures, not a vehicle, are its primary playable identity.","The remaining source material is a very small equipment/control stand, loose tools including a large handheld saw assembly, and a boulder containing an energy crystal.","4930 provides crew appearance and portable-equipment variation. It does not justify a crew vehicle, a large building or one fixed backpack shared by all five characters."],
+      "openGaps": ["Rear printing and exact backpack/lamp combinations for all five characters remain incomplete in the located product photos; production must use other verified crew appearances or present the variant choice to the game director."]
     },
     {
       "setId": "4940",

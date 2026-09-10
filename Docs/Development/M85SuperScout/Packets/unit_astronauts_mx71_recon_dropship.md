@@ -34,13 +34,14 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Astronauts:7692]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4524070.pdf)
 - Construction map:
-  - PDF pages 3-12: Separate compact six-wheel reconnaissance payload rover.
-  - PDF pages 13-23: Alien attack craft; supporting opposition evidence.
-  - PDF pages 24-40: Dropship cockpit, central keel and open cargo interface.
-  - PDF pages 41-61: Long tail/wing frame and suspended-load structure.
-  - PDF pages 62-69: Landing pads, side equipment cylinders and final payload-clearance geometry.
-  - PDF pages 70-71: Explicit lift/release of the independent rover beneath the fuselage.
+  - Evidence pages 3-12: Separate compact six-wheel reconnaissance payload rover.
+  - Evidence pages 13-23: Alien attack craft; supporting opposition evidence.
+  - Evidence pages 24-40: Dropship cockpit, central keel and open cargo interface.
+  - Evidence pages 41-61: Long tail/wing frame and suspended-load structure.
+  - Evidence pages 62-69: Landing pads, side equipment cylinders and final payload-clearance geometry.
+  - Evidence pages 70-71: Explicit lift/release of the independent rover beneath the fuselage.
 - View/mechanism coverage: front=VERIFIED p62-71; rear=VERIFIED p65-71; leftRight=VERIFIED p24-71; top=VERIFIED p24-69; threeQuarter=VERIFIED p1 and p69-71; undersideInterior=VERIFIED p24-70 open cargo cradle; mechanism=VERIFIED p70-71 payload lift/release and landing-pad motion
 - Verified findings:
   - MX-71 is a long narrow lifting aircraft organized around an open underside cargo cradle.
@@ -50,6 +51,8 @@ Open question: Source-view coverage and construction-critical page ranges are re
   - The production transport must support several canonical payload types while retaining the source's visible external-carry identity and clear loading contacts.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 

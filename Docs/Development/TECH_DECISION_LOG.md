@@ -1348,10 +1348,11 @@ visual direction. All affected packets remain `HOLD`.
   with the previous faction passes, every one of the 39 relied-upon source
   families now has a faction-scoped audit record rather than an unmarked
   evidence state.
-- The tiny machines retain three distinct source plans: 7300 is a short
-  twin-runner sled with unlike rear modules, 7303 is a long tube-sided sled with
-  clustered nose nozzles, and 7302 is a low four-spoke operator platform rather
-  than a two-legged humanoid worker.
+- The tiny machines were initially recorded as three distinct source plans:
+  7300 is a short twin-runner sled with unlike rear modules, 7303 is a long
+  tube-sided sled with clustered nose nozzles, and 7302 was incorrectly read as
+  a low four-spoke platform. The 7302 claim is superseded by the 2026-09-10
+  complete-set/topology correction below: it is a two-legged walker.
 - The 7313 Protector and 7314 Recon-Mech prove different modular biped/craft
   rebuilds. The former separates wedge craft, twin-foot body and paired emitter
   arms; the latter separates an asymmetric drill/claw upper craft, leg block
@@ -1363,8 +1364,9 @@ visual direction. All affected packets remain `HOLD`.
   The 7317 evidence establishes an open hangar, endpoint stations, docking
   arches, sleds, couplers, a three-chamber pressure unit and long physical Tube
   paths; later adapted buildings must divide those shared modules explicitly.
-- Source-disproved baseline claims about circular Double Hover pads, a biped
-  Worker Robot, oversized Jet Scooter side pods, a narrow sensor-led Recon-Mech,
+- Source-disproved baseline claims about circular Double Hover pads, a
+  four-spoke Worker Robot, oversized Jet Scooter side pods, a narrow
+  sensor-led Recon-Mech,
   an orange-canopy Protector and a reciprocating source pump were corrected.
   Source paint does not override the approved canonical Martian palette.
 
@@ -1381,8 +1383,9 @@ visual direction. All affected packets remain `HOLD`.
   packets and comparison matrices are generated from that data.
 - Contracts distinguish `SOURCE_VERIFIED`, `CANON_DERIVED_ADAPTATION` and
   `SOURCE_BOUNDED_PROVISIONAL` instead of allowing a plausible description to
-  masquerade as source fact. Crew and Drill Craft are the two provisional
-  cases because their mapped 4930/1277 instruction evidence remains missing.
+  masquerade as source fact. Crew and Drill Craft were initially provisional;
+  the 2026-09-10 archival-evidence correction below reclassifies both as
+  canon-derived adaptations.
 - Rock Raiders share four specified-but-not-authored texture families: broad
   frame normal/roughness variation, localized directional tool wear, a
   hazard/service decal atlas and a console/signal atlas. Each has an explicit
@@ -1399,6 +1402,41 @@ visual direction. All affected packets remain `HOLD`.
 This is preproduction implementation detail only. It changes no gameplay,
 simulation, public runtime format, dependency, canon or accepted visual
 direction, and it does not authorize T083/T085 production modeling.
+
+## 2026-09-10 — Audit complete sets and decomposable modules before asset mapping
+
+- The earlier T082 pass treated some source-set assignments too narrowly.
+  Archival evidence now establishes 1277 as a low open hovercraft with twin ice
+  saws and paired side lift/engine pods, and 4930 as five crew minifigures plus
+  a tiny control/equipment stand, tools and a crystal boulder. Their Rock
+  Raiders contracts are now labeled canon-derived adaptations rather than
+  source-bounded guesses.
+- The 7302 Worker Robot correction reverses an incorrect four-spoke reading.
+  Its official construction sequence builds exactly two mirrored articulated
+  legs ending in two broad feet. The error came from counting apparent
+  protrusions in a final view without tracing their physical connections and
+  ground-contact roles.
+- T082 now requires a complete-set inventory before roster assignment. Every
+  separately built model, detachable module, minifigure, equipment item,
+  resource and opposing-faction build is recorded independently. Set 7691 is
+  the reference case: its carrier, long front craft, two seated side craft and
+  two disc-like jetpack modules may support different roster assets.
+- Official games may supply method precedents when no set directly matches a
+  required asset. The CrystAlien Conflict Training Camp's 2-by-2 repetition of
+  Dropship-like nose modules demonstrates recomposition, but the project must
+  disclose exact donors, connections, new work and rejected alternatives and
+  obtain director approval rather than copying it.
+- Released official subassemblies and promotional material are usable evidence;
+  combination/alternate builds must be precisely labeled; unreleased official
+  material is ideation-only until a canon check and director decision;
+  alternative official versions require review; fan MOCs remain excluded.
+- A topology claim must now be supported by both a traced construction
+  connection and a completed-model/product view. Generated packets repeat the
+  one-set/many-assets and donor-disclosure rule so future production work cannot
+  silently regress to one-set/one-unit assumptions.
+
+This corrects research method and production evidence only. It changes no
+gameplay, simulation, public format, dependency or canon. T082 remains `HOLD`.
 
 ## 2026-09-09 — Non-intrusive macOS Godot automation
 
@@ -1419,3 +1457,22 @@ direction, and it does not authorize T083/T085 production modeling.
 
 This changes no gameplay, deterministic simulation, production rendering,
 public data format or dependency.
+
+## 2026-09-10 — Make disposable Godot smoke activation explicit
+
+- Repeated Look Lab launches showed that inferring automated-smoke mode from
+  `--headless` was not reliable enough to protect every disposable Godot
+  process from the unstable native teardown path.
+- Every routine verification, export smoke and project-owned capture route now
+  passes `--automated-smoke-immediate-exit` explicitly. The smoke helper prints
+  an immediate-exit marker only after preserving the fixture's real result.
+- Repository validation rejects verification or export scripts that omit the
+  explicit marker. Eight consecutive Look Lab launches and the complete full
+  verification passed; the macOS diagnostic-report count remained 11 before
+  and after the accepted full run.
+- Ten reports created by mistakenly overlapping two earlier full verification
+  attempts, plus one report from the later repeated Look Lab reproduction, are
+  recorded as failed attempts rather than hidden or called successful runs.
+
+This changes no gameplay, deterministic simulation, production rendering,
+public data format or dependency. Normal player/editor shutdown is unchanged.

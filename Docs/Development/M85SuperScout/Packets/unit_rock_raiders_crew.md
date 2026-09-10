@@ -29,20 +29,25 @@ Open question: The faction-internal construction, motion, socket and material dr
 
 | Source | Primary evidence | Inventory / archival check | Confidence | Intended use |
 |---|---|---|---|---|
-| 4930 — Rock Raiders Crew | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/4930)<br>no direct official PDF located | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=4930-1) | CANON_VERIFIED_ARCHIVAL | crew, tools and portable equipment |
+| 4930 — Rock Raiders Crew | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/4930)<br>no direct official PDF located<br>[archival evidence 1](https://kb.rockraidersunited.com/4930_Rock_Raiders_Crew)<br>[archival evidence 2](https://kb.rockraidersunited.com/images/b/bd/4930_OutBox.jpg)<br>[archival evidence 3](https://www.bricklink.com/catalogItemInv.asp?S=4930-1) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=4930-1) | CANON_VERIFIED_ARCHIVAL | five named crew minifigures, small equipment/control stand, loose handheld tools and crystal boulder; no major vehicle |
 
 ### Source audit [RockRaiders:4930]
 
-- Evidence state: `ARCHIVAL_GAP`
+- Evidence state: `ARCHIVAL_PRODUCT_VISUALLY_AUDITED`
+- Evidence links: [archival product reference 1](https://kb.rockraidersunited.com/4930_Rock_Raiders_Crew), [archival product reference 2](https://kb.rockraidersunited.com/images/b/bd/4930_OutBox.jpg), [archival product reference 3](https://www.bricklink.com/catalogItemInv.asp?S=4930-1)
 - Construction map:
-  - No official construction-page range is available.
-- View/mechanism coverage: front=PARTIAL archival character imagery; rear=MISSING; leftRight=PARTIAL archival character imagery; top=NOT_APPLICABLE; threeQuarter=PARTIAL archival character imagery; undersideInterior=NOT_APPLICABLE; mechanism=MISSING
+  - No construction-page range is available for this evidence type.
+- View/mechanism coverage: front=VERIFIED archival box and out-of-box photos; rear=MISSING; leftRight=PARTIAL archival out-of-box photo; top=NOT_APPLICABLE minifigure/equipment pack; threeQuarter=VERIFIED archival box and out-of-box photos; undersideInterior=NOT_APPLICABLE; mechanism=PARTIAL loose handheld tools and equipment stand; no authored action sequence
 - Verified findings:
-  - Canon and inventory confirm a crew/equipment source rather than a single vehicle assembly.
+  - The set contains the five named crew minifigures Axle, Bandit, Docs, Jet and Sparks; the figures, not a vehicle, are its primary playable identity.
+  - The remaining source material is a very small equipment/control stand, loose tools including a large handheld saw assembly, and a boulder containing an energy crystal.
+  - 4930 provides crew appearance and portable-equipment variation. It does not justify a crew vehicle, a large building or one fixed backpack shared by all five characters.
 - Remaining evidence gaps:
-  - Locate official or clearly labeled archival front/rear character and equipment sheets before fixing the Crew backpack, lamp and tool variants.
+  - Rear printing and exact backpack/lamp combinations for all five characters remain incomplete in the located product photos; production must use other verified crew appearances or present the variant choice to the game director.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 
@@ -63,21 +68,22 @@ Non-removable identity anchors:
 
 ## D. Construction contract
 
-- Contract state: `SOURCE_BOUNDED_PROVISIONAL`. This is an internally checked draft, not game-director approval.
+- Contract state: `CANON_DERIVED_ADAPTATION`. This is an internally checked draft, not game-director approval.
 - Semantic part map:
-  - Helmet/visor silhouette — identifies protected industrial personnel rather than infantry — CANON_DERIVED_ADAPTATION.
-  - Portable tool — performs extraction, construction, repair and weak contact defense — CANON_DERIVED_ADAPTATION.
-  - Backpack/work lamp — carries compact service equipment and keeps the worker readable beside machinery — SOURCE_BOUNDED_PROVISIONAL.
-- Structural load path: Minifigure-derived torso and hips carry the helmet, backpack and two-handed tool; the tool must remain visibly portable rather than body-mounted.
-- Repeated modules / connection grammar: Shared crew body plus swappable mining/repair tool and restrained backpack/lamp variants.
-- Source-faithful versus adapted boundary: Canon fixes the worker/tool read, but the missing 4930 rear evidence prevents locking one exact backpack and lamp arrangement.
+  - Five named crew variants — Axle, Bandit, Docs, Jet and Sparks provide distinct headwear, torso color and face reads inside one shared worker class — SOURCE_VERIFIED.
+  - Portable tool loadout — draws from the source's loose drill, shovel, scanner and large handheld saw equipment while communicating extraction, construction or repair — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.
+  - Variant-specific helmet, visor, goggles or cap — preserves character identity instead of forcing one generic uniform silhouette — SOURCE_VERIFIED.
+  - Compact lamp/back equipment — keeps work function readable beside machines without becoming a permanent weapon pack — CANON_DERIVED_ADAPTATION.
+- Structural load path: A minifigure-derived torso and hips carry variant-specific headwear and a handheld tool; any lamp/back equipment attaches to the torso and remains visibly lighter than the carried work tool.
+- Repeated modules / connection grammar: Shared movement/interaction rig plus five appearance variants, swappable mining/repair tools and restrained optional lamp/back equipment. The tiny 4930 equipment stand remains a world/support motif, not part of the Crew body.
+- Source-faithful versus adapted boundary: 4930 proves five distinct people and loose work equipment, not one standardized soldier. Production may unify animation and gameplay sockets but may not erase the character variation or invent a 4930-derived vehicle.
 
 ## E. Material and texture contract
 
 - Geometry must carry:
-  - helmet and visor profile
+  - variant-specific headwear and visor profile
   - portable tool head
-  - backpack/lamp mass
+  - optional compact lamp/back-equipment mass
 - Accepted master-material roles: `Body`, `Accent`, `Tool`, `Glass`, `Lamp`, `Neutral`.
 - Reusable texture requirements:
   - `rr_tool_wear` — Directional scuff and cutting wear on drill, scoop, cutter and clamp contact surfaces only. Channels: Linear wear mask, tangent-space normal and roughness variation; no baked highlights. Resolution: 1024x1024; texel density: 512 px/m on localized tool UVs; tiling: Non-tiling trim/atlas regions aligned to the mechanical wear direction.; LOD fallback: Normal and fine mask removed at Strategic; Tool material and silhouette remain. Provenance/state: Project-authored procedural source informed by the official tool surfaces; human review required. `SPECIFIED_NOT_AUTHORED`.
@@ -114,7 +120,7 @@ Non-removable identity anchors:
 - Verified fact: stable identity, source evidence and the source-supported assemblies cited above.
 - Canon-derived interpretation: gameplay function, adaptation boundary, contact behavior and presentation drivers are explicitly labeled in the contract.
 - Remaining source/design decisions:
-  - Choose the production backpack/lamp variant after a verified 4930 rear/equipment source is found or the game director explicitly approves a bounded adaptation.
+  - Choose whether normal production cycles the five named appearance variants evenly or weights particular specialists; rear printing and exact lamp/backpack combinations still require additional crew imagery or director approval.
 - Cross-roster silhouette and game-director review remain open; this contract does not authorize production modeling.
 
 ## I. Build handoff

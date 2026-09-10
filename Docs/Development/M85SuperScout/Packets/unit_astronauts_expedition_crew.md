@@ -35,9 +35,10 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Astronauts:7301]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4156314.pdf)
 - Construction map:
-  - PDF pages 1: Complete seven-step Rover build, equipment mast and final operator view.
-  - PDF pages 2: Promotional reverse page; no additional construction evidence.
+  - Evidence pages 1: Complete seven-step Rover build, equipment mast and final operator view.
+  - Evidence pages 2: Promotional reverse page; no additional construction evidence.
 - View/mechanism coverage: front=PARTIAL p1 final view; rear=PARTIAL p1 steps 1-6; leftRight=VERIFIED p1 final and staged construction; top=VERIFIED p1 steps 3-6; threeQuarter=VERIFIED p1 cover and final step; undersideInterior=PARTIAL p1 bare chassis; mechanism=MISSING static open rover
 - Verified findings:
   - The Rover is a tiny open four-wheel platform rather than an enclosed car.
@@ -49,12 +50,13 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Astronauts:7690]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4523177.pdf), [official instruction PDF 2](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4523179.pdf)
 - Construction map:
-  - PDF pages book 1, 3-15: Alien scout craft; supporting opposition evidence.
-  - PDF pages book 1, 16-49: Compact astronaut drilling/transfer station, pressure tank, hoses and material routes.
-  - PDF pages book 1, 50-75; book 2, 2-31: Tall open A-frame service gantry, crane/transfer boom and elevated mission modules.
-  - PDF pages book 2, 32-68: Long white/orange shuttle assembled and suspended within the gantry.
-  - PDF pages book 2, 69-72: Final base-wide views and explicit crane/transfer interaction.
+  - Evidence pages book 1, 3-15: Alien scout craft; supporting opposition evidence.
+  - Evidence pages book 1, 16-49: Compact astronaut drilling/transfer station, pressure tank, hoses and material routes.
+  - Evidence pages book 1, 50-75; book 2, 2-31: Tall open A-frame service gantry, crane/transfer boom and elevated mission modules.
+  - Evidence pages book 2, 32-68: Long white/orange shuttle assembled and suspended within the gantry.
+  - Evidence pages book 2, 69-72: Final base-wide views and explicit crane/transfer interaction.
 - View/mechanism coverage: front=VERIFIED book 2 p23-72; rear=VERIFIED book 2 p26-72; leftRight=VERIFIED both books; top=VERIFIED book 2 p17-72; threeQuarter=VERIFIED covers and book 2 p29-72; undersideInterior=VERIFIED staged open gantry and shuttle construction; mechanism=VERIFIED book 1 p47-49 and book 2 p23-31 transfer hoses/crane; PARTIAL shuttle service cycle
 - Verified findings:
   - MB-01 is an open mission complex dominated by a tall white A-frame gantry rather than an enclosed headquarters block.
@@ -64,6 +66,8 @@ Open question: Source-view coverage and construction-critical page ranges are re
   - The source combines command, extraction and shuttle service in one playset; the game's Command Base, Refit Hub and Sentinel adaptations still need explicit boundaries between shared modules.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 

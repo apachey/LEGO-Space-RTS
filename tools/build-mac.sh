@@ -48,7 +48,7 @@ codesign --verify --deep --strict "${OUTPUT_APP}"
 SMOKE_LOG="$(mktemp "${TMPDIR:-/tmp}/lego-space-rts-app-smoke.XXXXXX")"
 SMOKE_ENGINE_LOG="$(mktemp "${TMPDIR:-/tmp}/lego-space-rts-app-smoke-engine.XXXXXX")"
 set +e
-"${APP_EXECUTABLE}" --headless --disable-crash-handler --log-file "${SMOKE_ENGINE_LOG}" --quit-after 600 -- --smoke 2>&1 | tee "${SMOKE_LOG}"
+"${APP_EXECUTABLE}" --headless --disable-crash-handler --log-file "${SMOKE_ENGINE_LOG}" --quit-after 600 -- --automated-smoke-immediate-exit --smoke 2>&1 | tee "${SMOKE_LOG}"
 SMOKE_STATUS=${PIPESTATUS[0]}
 set -e
 if (( SMOKE_STATUS != 0 )) || ! grep -q 'Prototype content source: compiled runtime data' "${SMOKE_LOG}" || ! grep -q 'PHASE10 GODOT HEADLESS SMOKE: PASS' "${SMOKE_LOG}"; then
@@ -62,7 +62,7 @@ CANDIDATE_LOG="$(mktemp "${TMPDIR:-/tmp}/lego-space-rts-m7-acceptance-app-smoke.
 CANDIDATE_ENGINE_LOG="$(mktemp "${TMPDIR:-/tmp}/lego-space-rts-m7-acceptance-app-engine.XXXXXX")"
 set +e
 "${APP_EXECUTABLE}" --headless --disable-crash-handler --log-file "${CANDIDATE_ENGINE_LOG}" --quit-after 600 -- \
-  --m7-acceptance-candidate --m7-acceptance-smoke --m7-acceptance-zoom 44 \
+  --automated-smoke-immediate-exit --m7-acceptance-candidate --m7-acceptance-smoke --m7-acceptance-zoom 44 \
   --m7-acceptance-look m7-final --m7-acceptance-outline on \
   --m7-acceptance-labels hidden --m7-acceptance-review hidden 2>&1 | tee "${CANDIDATE_LOG}"
 CANDIDATE_STATUS=${PIPESTATUS[0]}
@@ -78,7 +78,7 @@ PIPELINE_LOG="$(mktemp "${TMPDIR:-/tmp}/lego-space-rts-m85-pipeline-app-smoke.XX
 PIPELINE_ENGINE_LOG="$(mktemp "${TMPDIR:-/tmp}/lego-space-rts-m85-pipeline-app-engine.XXXXXX")"
 set +e
 "${APP_EXECUTABLE}" --headless --disable-crash-handler --log-file "${PIPELINE_ENGINE_LOG}" --quit-after 600 -- \
-  --m85-asset-pipeline --m85-asset-pipeline-smoke --m85-asset-pipeline-zoom 44 2>&1 | tee "${PIPELINE_LOG}"
+  --automated-smoke-immediate-exit --m85-asset-pipeline --m85-asset-pipeline-smoke --m85-asset-pipeline-zoom 44 2>&1 | tee "${PIPELINE_LOG}"
 PIPELINE_STATUS=${PIPESTATUS[0]}
 set -e
 if (( PIPELINE_STATUS != 0 )) || ! grep -q 'M8.5 ASSET PIPELINE: PASS source=blend export=glb import=PackedScene.*lods=3 close=868 combat=332 strategic=168 pivots=6 sockets=6 roleBindings=84 zoom=44' "${PIPELINE_LOG}"; then

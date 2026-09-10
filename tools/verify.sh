@@ -141,7 +141,7 @@ godot_smoke() {
   godot="$(discover_godot 2>/dev/null || true)"
   if [[ -z "${godot}" ]]; then printf 'Godot executable not found.\n' >&2; return 1; fi
   if ! godot_is_required_mono "${godot}"; then printf 'Godot is not the required 4.7.1 .NET build: %s\n' "${godot}" >&2; return 1; fi
-  output="$("${godot}" --headless --disable-crash-handler --quit-after 600 --path "${ROOT}/GodotClient" -- --smoke 2>&1)"
+  output="$("${godot}" --headless --disable-crash-handler --quit-after 600 --path "${ROOT}/GodotClient" -- --automated-smoke-immediate-exit --smoke 2>&1)"
   status=$?
   printf '%s\n' "${output}"
   if (( status != 0 )); then return "${status}"; fi
@@ -156,7 +156,7 @@ godot_m6_transport_smoke() {
   godot="$(discover_godot 2>/dev/null || true)"
   if [[ -z "${godot}" ]]; then printf 'Godot executable not found.\n' >&2; return 1; fi
   if ! godot_is_required_mono "${godot}"; then printf 'Godot is not the required 4.7.1 .NET build: %s\n' "${godot}" >&2; return 1; fi
-  output="$("${godot}" --headless --disable-crash-handler --quit-after 600 --path "${ROOT}/GodotClient" -- --m6-transport-smoke 2>&1)"
+  output="$("${godot}" --headless --disable-crash-handler --quit-after 600 --path "${ROOT}/GodotClient" -- --automated-smoke-immediate-exit --m6-transport-smoke 2>&1)"
   status=$?
   printf '%s\n' "${output}"
   if (( status != 0 )); then return "${status}"; fi
@@ -171,7 +171,7 @@ godot_m6_command_smoke() {
   godot="$(discover_godot 2>/dev/null || true)"
   if [[ -z "${godot}" ]]; then printf 'Godot executable not found.\n' >&2; return 1; fi
   if ! godot_is_required_mono "${godot}"; then printf 'Godot is not the required 4.7.1 .NET build: %s\n' "${godot}" >&2; return 1; fi
-  output="$("${godot}" --headless --disable-crash-handler --quit-after 600 --path "${ROOT}/GodotClient" -- --m6-command-smoke 2>&1)"
+  output="$("${godot}" --headless --disable-crash-handler --quit-after 600 --path "${ROOT}/GodotClient" -- --automated-smoke-immediate-exit --m6-command-smoke 2>&1)"
   status=$?
   printf '%s\n' "${output}"
   if (( status != 0 )); then return "${status}"; fi
@@ -186,7 +186,7 @@ godot_m6_snapshot_smoke() {
   godot="$(discover_godot 2>/dev/null || true)"
   if [[ -z "${godot}" ]]; then printf 'Godot executable not found.\n' >&2; return 1; fi
   if ! godot_is_required_mono "${godot}"; then printf 'Godot is not the required 4.7.1 .NET build: %s\n' "${godot}" >&2; return 1; fi
-  output="$("${godot}" --headless --disable-crash-handler --quit-after 600 --path "${ROOT}/GodotClient" -- --m6-snapshot-smoke 2>&1)"
+  output="$("${godot}" --headless --disable-crash-handler --quit-after 600 --path "${ROOT}/GodotClient" -- --automated-smoke-immediate-exit --m6-snapshot-smoke 2>&1)"
   status=$?
   printf '%s\n' "${output}"
   if (( status != 0 )); then return "${status}"; fi
@@ -201,7 +201,7 @@ godot_m6_reconnect_smoke() {
   godot="$(discover_godot 2>/dev/null || true)"
   if [[ -z "${godot}" ]]; then printf 'Godot executable not found.\n' >&2; return 1; fi
   if ! godot_is_required_mono "${godot}"; then printf 'Godot is not the required 4.7.1 .NET build: %s\n' "${godot}" >&2; return 1; fi
-  output="$("${godot}" --headless --disable-crash-handler --quit-after 600 --path "${ROOT}/GodotClient" -- --m6-reconnect-smoke 2>&1)"
+  output="$("${godot}" --headless --disable-crash-handler --quit-after 600 --path "${ROOT}/GodotClient" -- --automated-smoke-immediate-exit --m6-reconnect-smoke 2>&1)"
   status=$?
   printf '%s\n' "${output}"
   if (( status != 0 )); then return "${status}"; fi
@@ -216,7 +216,7 @@ godot_m6_replay_smoke() {
   godot="$(discover_godot 2>/dev/null || true)"
   if [[ -z "${godot}" ]]; then printf 'Godot executable not found.\n' >&2; return 1; fi
   if ! godot_is_required_mono "${godot}"; then printf 'Godot is not the required 4.7.1 .NET build: %s\n' "${godot}" >&2; return 1; fi
-  output="$("${godot}" --headless --disable-crash-handler --quit-after 600 --path "${ROOT}/GodotClient" -- --m6-replay-smoke 2>&1)"
+  output="$("${godot}" --headless --disable-crash-handler --quit-after 600 --path "${ROOT}/GodotClient" -- --automated-smoke-immediate-exit --m6-replay-smoke 2>&1)"
   status=$?
   printf '%s\n' "${output}"
   if (( status != 0 )); then return "${status}"; fi
@@ -231,7 +231,7 @@ godot_m7_material_smoke() {
   godot="$(discover_godot 2>/dev/null || true)"
   if [[ -z "${godot}" ]]; then printf 'Godot executable not found.\n' >&2; return 1; fi
   if ! godot_is_required_mono "${godot}"; then printf 'Godot is not the required 4.7.1 .NET build: %s\n' "${godot}" >&2; return 1; fi
-  output="$("${godot}" --headless --disable-crash-handler --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-material-lab --m7-material-smoke 2>&1)"
+  output="$("${godot}" --headless --disable-crash-handler --quit-after 600 --path "${ROOT}/GodotClient" -- --automated-smoke-immediate-exit --m7-material-lab --m7-material-smoke 2>&1)"
   status=$?
   printf '%s\n' "${output}"
   if (( status != 0 )); then return "${status}"; fi
@@ -251,7 +251,7 @@ godot_m7_style_smoke() {
   printf '%s\n' "${import_output}"
   if (( status != 0 )); then return "${status}"; fi
   for style in industrial-mass heroic-rts constructive-lego graphic-volume; do
-    output="$("${godot}" --headless --disable-crash-handler --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-style-lab --m7-style-smoke --m7-style "${style}" --m7-outline off 2>&1)"
+    output="$("${godot}" --headless --disable-crash-handler --quit-after 600 --path "${ROOT}/GodotClient" -- --automated-smoke-immediate-exit --m7-style-lab --m7-style-smoke --m7-style "${style}" --m7-outline off 2>&1)"
     status=$?
     printf '%s\n' "${output}"
     if (( status != 0 )); then return "${status}"; fi
@@ -260,7 +260,7 @@ godot_m7_style_smoke() {
       return 1
     fi
   done
-  output="$("${godot}" --headless --disable-crash-handler --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-style-lab --m7-style-smoke --m7-style heroic-rts --m7-outline on 2>&1)"
+  output="$("${godot}" --headless --disable-crash-handler --quit-after 600 --path "${ROOT}/GodotClient" -- --automated-smoke-immediate-exit --m7-style-lab --m7-style-smoke --m7-style heroic-rts --m7-outline on 2>&1)"
   status=$?
   printf '%s\n' "${output}"
   if (( status != 0 )); then return "${status}"; fi
@@ -276,7 +276,7 @@ godot_m7_palette_smoke() {
   if [[ -z "${godot}" ]]; then printf 'Godot executable not found.\n' >&2; return 1; fi
   if ! godot_is_required_mono "${godot}"; then printf 'Godot is not the required 4.7.1 .NET build: %s\n' "${godot}" >&2; return 1; fi
   for page in factions martian-sources faction-models martian-models transparency light-language; do
-    output="$("${godot}" --headless --disable-crash-handler --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-palette-lab --m7-palette-smoke --m7-palette-page "${page}" 2>&1)"
+    output="$("${godot}" --headless --disable-crash-handler --quit-after 600 --path "${ROOT}/GodotClient" -- --automated-smoke-immediate-exit --m7-palette-lab --m7-palette-smoke --m7-palette-page "${page}" 2>&1)"
     status=$?
     printf '%s\n' "${output}"
     if (( status != 0 )); then return "${status}"; fi
@@ -302,7 +302,7 @@ godot_m7_look_smoke() {
     "hidden 35 on on hybrid earth earth-desert" \
     "hidden 72 on on hybrid earth earth-desert"; do
     read -r controls zoom outline post ground world surface <<< "${fixture}"
-    output="$("${godot}" --headless --disable-crash-handler --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-look-lab --m7-look-smoke --m7-look-controls "${controls}" --m7-look-zoom "${zoom}" --m7-look-post "${post}" --m7-look-outline "${outline}" --m7-look-ground "${ground}" --m7-look-world "${world}" 2>&1)"
+    output="$("${godot}" --headless --disable-crash-handler --quit-after 600 --path "${ROOT}/GodotClient" -- --automated-smoke-immediate-exit --m7-look-lab --m7-look-smoke --m7-look-controls "${controls}" --m7-look-zoom "${zoom}" --m7-look-post "${post}" --m7-look-outline "${outline}" --m7-look-ground "${ground}" --m7-look-world "${world}" 2>&1)"
     status=$?
     printf '%s\n' "${output}"
     if (( status != 0 )); then return "${status}"; fi
@@ -312,6 +312,10 @@ godot_m7_look_smoke() {
     fi
     if ! printf '%s\n' "${output}" | grep -q "M7 LOOK LAB: PASS schema=9 units=4 meshes=192 triangles=31104 buildings=2 firing=on burning=on animationDrivers=4 destructionDriver=1 vfxPools=6 prewarmed=180 controls=${controls} zoom=${zoom} post=${post} outline=${outline}.*world=${world}.*ground=${ground} surface=${surface} materialView=combined audit=off"; then
       printf 'Godot exited without the required M7 Look Lab PASS marker for controls=%s zoom=%s post=%s outline=%s ground=%s world=%s surface=%s.\n' "${controls}" "${zoom}" "${post}" "${outline}" "${ground}" "${world}" "${surface}" >&2
+      return 1
+    fi
+    if ! printf '%s\n' "${output}" | grep -q 'AUTOMATED SMOKE EXIT: immediate code=0'; then
+      printf 'M7 Look Lab did not use the crash-safe immediate-exit path.\n' >&2
       return 1
     fi
   done
@@ -343,9 +347,9 @@ godot_m7_hud_smoke() {
     esac
     log_file="$(mktemp "${TMPDIR:-/tmp}/lego-space-rts-m7-hud-smoke.XXXXXX")"
     if [[ "${kit}" == "scenario" ]]; then
-      output="$("${godot}" --headless --disable-crash-handler --log-file "${log_file}" --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-hud-lab --m7-hud-smoke --m7-hud-scenario "${scenario}" --m7-hud-aspect "${aspect}" --m7-hud-finish "${finish}" 2>&1)"
+      output="$("${godot}" --headless --disable-crash-handler --log-file "${log_file}" --quit-after 600 --path "${ROOT}/GodotClient" -- --automated-smoke-immediate-exit --m7-hud-lab --m7-hud-smoke --m7-hud-scenario "${scenario}" --m7-hud-aspect "${aspect}" --m7-hud-finish "${finish}" 2>&1)"
     else
-      output="$("${godot}" --headless --disable-crash-handler --log-file "${log_file}" --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-hud-lab --m7-hud-smoke --m7-hud-scenario "${scenario}" --m7-hud-aspect "${aspect}" --m7-hud-finish "${finish}" --m7-hud-kit "${kit}" 2>&1)"
+      output="$("${godot}" --headless --disable-crash-handler --log-file "${log_file}" --quit-after 600 --path "${ROOT}/GodotClient" -- --automated-smoke-immediate-exit --m7-hud-lab --m7-hud-smoke --m7-hud-scenario "${scenario}" --m7-hud-aspect "${aspect}" --m7-hud-finish "${finish}" --m7-hud-kit "${kit}" 2>&1)"
     fi
     status=$?
     rm -f -- "${log_file}"
@@ -379,10 +383,10 @@ godot_m7_acceptance_smoke() {
     log_file="$(mktemp "${TMPDIR:-/tmp}/lego-space-rts-m7-acceptance-smoke.XXXXXX")"
     if [[ "${look}" == "default" ]]; then
       expected_look="m7-final"
-      output="$("${godot}" --headless --disable-crash-handler --log-file "${log_file}" --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-acceptance-candidate --m7-acceptance-smoke --m7-acceptance-labels hidden --m7-acceptance-review hidden 2>&1)"
+      output="$("${godot}" --headless --disable-crash-handler --log-file "${log_file}" --quit-after 600 --path "${ROOT}/GodotClient" -- --automated-smoke-immediate-exit --m7-acceptance-candidate --m7-acceptance-smoke --m7-acceptance-labels hidden --m7-acceptance-review hidden 2>&1)"
     else
       expected_look="${look}"
-      output="$("${godot}" --headless --disable-crash-handler --log-file "${log_file}" --quit-after 600 --path "${ROOT}/GodotClient" -- --m7-acceptance-candidate --m7-acceptance-smoke --m7-acceptance-zoom "${zoom}" --m7-acceptance-look "${look}" --m7-acceptance-outline "${outline}" --m7-acceptance-labels hidden --m7-acceptance-review hidden 2>&1)"
+      output="$("${godot}" --headless --disable-crash-handler --log-file "${log_file}" --quit-after 600 --path "${ROOT}/GodotClient" -- --automated-smoke-immediate-exit --m7-acceptance-candidate --m7-acceptance-smoke --m7-acceptance-zoom "${zoom}" --m7-acceptance-look "${look}" --m7-acceptance-outline "${outline}" --m7-acceptance-labels hidden --m7-acceptance-review hidden 2>&1)"
     fi
     status=$?
     rm -f -- "${log_file}"
@@ -407,7 +411,7 @@ godot_m85_asset_pipeline_smoke() {
   for zoom in 24 44 72; do
     log_file="$(mktemp "${TMPDIR:-/tmp}/lego-space-rts-m85-pipeline-smoke.XXXXXX")"
     output="$("${godot}" --headless --disable-crash-handler --log-file "${log_file}" --quit-after 600 --path "${ROOT}/GodotClient" -- \
-      --m85-asset-pipeline --m85-asset-pipeline-smoke --m85-asset-pipeline-zoom "${zoom}" 2>&1)"
+      --automated-smoke-immediate-exit --m85-asset-pipeline --m85-asset-pipeline-smoke --m85-asset-pipeline-zoom "${zoom}" 2>&1)"
     status=$?
     rm -f -- "${log_file}"
     printf '%s\n' "${output}"

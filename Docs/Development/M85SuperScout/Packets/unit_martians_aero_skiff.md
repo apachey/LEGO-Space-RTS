@@ -35,8 +35,9 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Martians:1195]
 
 - Evidence state: `ARCHIVAL_GAP`
+- Evidence links: no viewable evidence link recorded
 - Construction map:
-  - No official construction-page range is available.
+  - No construction-page range is available for this evidence type.
 - View/mechanism coverage: front=PARTIAL archival product imagery; rear=MISSING; leftRight=PARTIAL archival product imagery; top=MISSING; threeQuarter=PARTIAL archival product imagery; undersideInterior=MISSING; mechanism=MISSING
 - Verified findings:
   - Canon and archival inventory establish Alien Encounter as one Aero Skiff source family, but they do not establish a verified construction load path or lift mechanism.
@@ -46,14 +47,15 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Martians:7317]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4160159.pdf)
 - Construction map:
-  - PDF pages 3-8: Compact two-leg utility walker with open rider, long probe and claw; supporting station equipment evidence.
-  - PDF pages 9-40: Large open Aero Tube Hangar with elevated frame, central ribbed Tube/ramp, ring coupler, handling crane, work platforms and rock load.
-  - PDF pages 41-48: Two related raised four-leg control/service stations with antenna or dish equipment.
-  - PDF pages 49-62: Separate red and blue Tube docking arches with visible supports, end stops and open approach paths.
-  - PDF pages 63-67: Three hypersleds, route signs, coupler/branch pieces and the stacked three-chamber pressure unit.
-  - PDF pages 68-70: Complete physical network assembly and play routing: long transparent/flexible Tubes connect hangar, endpoints, junction and pressure unit.
-  - PDF pages 71: Cross-set lineup; no additional 7317 construction evidence.
+  - Evidence pages 3-8: Compact two-leg utility walker with open rider, long probe and claw; supporting station equipment evidence.
+  - Evidence pages 9-40: Large open Aero Tube Hangar with elevated frame, central ribbed Tube/ramp, ring coupler, handling crane, work platforms and rock load.
+  - Evidence pages 41-48: Two related raised four-leg control/service stations with antenna or dish equipment.
+  - Evidence pages 49-62: Separate red and blue Tube docking arches with visible supports, end stops and open approach paths.
+  - Evidence pages 63-67: Three hypersleds, route signs, coupler/branch pieces and the stacked three-chamber pressure unit.
+  - Evidence pages 68-70: Complete physical network assembly and play routing: long transparent/flexible Tubes connect hangar, endpoints, junction and pressure unit.
+  - Evidence pages 71: Cross-set lineup; no additional 7317 construction evidence.
 - View/mechanism coverage: front=VERIFIED p35-40 and p68-70; rear=PARTIAL p28-40 and p68-70; leftRight=VERIFIED p9-70; top=VERIFIED p9-70; threeQuarter=VERIFIED p1, p35-40 and p68-70; undersideInterior=VERIFIED p9-67 staged open structures and Tube modules; mechanism=VERIFIED p68-70 physical Tube/sled network; PARTIAL crane, routing and pressure action
 - Verified findings:
   - The source is a decentralized transport system rather than one sealed headquarters: open hangar, endpoint stations, colored docking arches, sleds, couplers, pressure unit and long Tubes remain separate readable modules.
@@ -63,6 +65,8 @@ Open question: Source-view coverage and construction-critical page ranges are re
   - The game's Hangar, Settlement Station, Pressure Generator, Routing Laboratory and Link must divide the shared source modules explicitly; the manual does not define canonical building boundaries, throughput rules or automatic route selection.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 

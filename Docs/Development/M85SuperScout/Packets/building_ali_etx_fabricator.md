@@ -35,24 +35,28 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Aliens:7691]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4516029.pdf)
 - Construction map:
-  - PDF pages 3-27: Astronaut extraction station; supporting opposition evidence.
-  - PDF pages 28-49: Large circular Mothership hull, open central machinery channel, lime conduits, weapon hardpoints and long multi-blade tail.
-  - PDF pages 50-67: Three detachable small-craft modules: a central lime-conduit craft and two round-disc weapon/capture pods with independent riders.
+  - Evidence pages 3-27: Astronaut extraction station; supporting opposition evidence.
+  - Evidence pages 28-49: Large circular Mothership carrier hull, open central machinery channel, lime conduits, docking hardpoints and long multi-blade tail.
+  - Evidence pages 50-56: Two mirrored narrow seated weapon craft are built as independent modules for the carrier.
+  - Evidence pages 57-63: A long lime-conduit front/central craft is assembled independently and docked into the carrier's open machinery channel.
+  - Evidence pages 64-67: Two disc-like alien jetpack modules are built separately, accept individual aliens and dock at the carrier's outer wing/arm ends.
 - View/mechanism coverage: front=VERIFIED p43-49; rear=VERIFIED p44-49; leftRight=VERIFIED p28-49; top=VERIFIED p28-49; threeQuarter=VERIFIED cover and p43-50; undersideInterior=VERIFIED p28-48 staged circular frame; interior remains open rather than enclosed; mechanism=VERIFIED p50-67 detachable subcraft and capture/weapon pods; carrier launch cycle remains partial
 - Verified findings:
-  - The Mothership is a huge flattened circular black hull interrupted by a visible central machinery channel rather than a sealed saucer.
+  - The Mothership is a huge flattened circular black carrier interrupted by a visible central machinery channel rather than a sealed saucer.
   - Several long black and translucent-lime tail blades extend from one side, preventing a rotationally symmetric disc silhouette.
-  - Paired lime conduits route across the open center, while three independently readable small craft establish the carrier language outside the main hull.
+  - The set is not one indivisible vehicle: beyond the main carrier it provides a long front/central craft, two narrow seated side craft and two disc jetpack modules, each with its own assembly and docking relationship.
 - Remaining evidence gaps:
   - The manual proves detachable subcraft but not the game's payload capacity, launch/recovery timing, reinforcement function or Charge-support state; all require a carrier-specific contract.
 
 ### Source audit [Aliens:7690]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4523177.pdf), [official instruction PDF 2](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4523179.pdf)
 - Construction map:
-  - PDF pages book 1, 3-15: Complete compact Alien scout craft with paired curved outer lobes, central open pilot/tool frame, lime arches and long rear fin.
-  - PDF pages book 1, 16-75; book 2, 2-72: Astronaut command base, gantry and shuttle; supporting containment/docking opposition evidence, not small-craft geometry.
+  - Evidence pages book 1, 3-15: Complete compact Alien scout craft with paired curved outer lobes, central open pilot/tool frame, lime arches and long rear fin.
+  - Evidence pages book 1, 16-75; book 2, 2-72: Astronaut command base, gantry and shuttle; supporting containment/docking opposition evidence, not small-craft geometry.
 - View/mechanism coverage: front=VERIFIED book 1 p12-15; rear=PARTIAL book 1 p10-15; leftRight=VERIFIED book 1 p3-15; top=VERIFIED book 1 p3-15; threeQuarter=VERIFIED cover and book 1 p12-15; undersideInterior=VERIFIED book 1 p3-12 staged open frame; mechanism=PARTIAL book 1 p12-15 flexible conduits and weapon mounts; no locomotion sequence
 - Verified findings:
   - The scout uses two broad curved black lobes around an exposed central operator/tool frame, producing a broken crescent silhouette.
@@ -62,6 +66,8 @@ Open question: Source-view coverage and construction-critical page ranges are re
   - The source does not establish whether the consolidated Razor/Servitor family retains the tail fin, distributed emitters or central exposed operator, so those choices must be resolved in the cross-source construction map.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 

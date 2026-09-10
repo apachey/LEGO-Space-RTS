@@ -35,11 +35,12 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Astronauts:7312]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130807.pdf)
 - Construction map:
-  - PDF pages 2-9: Central T3-Trike cockpit/chassis, twin front outriggers and large rear wheel assembly.
-  - PDF pages 10-13: Separate service robot and scanner station modules.
-  - PDF pages 14-17: Outrigger equipment, hoses, final three-wheel machine and operator scale.
-  - PDF pages 18: Cross-set alternate walker; not direct T3-Trike geometry.
+  - Evidence pages 2-9: Central T3-Trike cockpit/chassis, twin front outriggers and large rear wheel assembly.
+  - Evidence pages 10-13: Separate service robot and scanner station modules.
+  - Evidence pages 14-17: Outrigger equipment, hoses, final three-wheel machine and operator scale.
+  - Evidence pages 18: Cross-set alternate walker; not direct T3-Trike geometry.
 - View/mechanism coverage: front=VERIFIED p1 and p14-17; rear=PARTIAL p8-17; leftRight=VERIFIED p2-17 construction sequence; top=VERIFIED p2-16; threeQuarter=VERIFIED p1 and p16-17; undersideInterior=VERIFIED p2-8 exposed chassis; mechanism=PARTIAL p14-16 rotating outrigger/tool mounts; no driving sequence
 - Verified findings:
   - The signature layout is one huge rear wheel plus two long forward outriggers ending in smaller contact points.
@@ -51,9 +52,10 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Astronauts:7694]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517775.pdf)
 - Construction map:
-  - PDF pages 2-13: Narrow open trike body built around a long orange equipment cylinder and exposed operator position.
-  - PDF pages 14-21: Three huge orange wheels attach through long angled arm/axle assemblies; final operator-scale views.
+  - Evidence pages 2-13: Narrow open trike body built around a long orange equipment cylinder and exposed operator position.
+  - Evidence pages 14-21: Three huge orange wheels attach through long angled arm/axle assemblies; final operator-scale views.
 - View/mechanism coverage: front=VERIFIED p15-21; rear=PARTIAL p16-21; leftRight=VERIFIED p2-21; top=VERIFIED p2-21; threeQuarter=VERIFIED p1 and p15-21; undersideInterior=VERIFIED p2-18 exposed chassis; mechanism=PARTIAL p14-20 articulated wheel arms; suspension motion not demonstrated
 - Verified findings:
   - MT-31 retains an unmistakable three-wheel layout with oversized orange tires on long exposed supports.
@@ -63,6 +65,8 @@ Open question: Source-view coverage and construction-critical page ranges are re
   - The source does not define the game's Escort/Survey payload swap or suspension travel; both require a shared T3-Trike family plan.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 

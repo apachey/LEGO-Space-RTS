@@ -34,11 +34,12 @@ Open question: The faction-internal construction, motion, socket and material dr
 ### Source audit [RockRaiders:4970]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4129264.pdf)
 - Construction map:
-  - PDF pages 2-11: Long forked chassis and independently built front control side modules.
-  - PDF pages 12-26: Motor block, raised frame, cockpit cage, cargo deck and flexible power/tool routing.
-  - PDF pages 27-33: Overhead tool/light beam, drill subassembly, wheel/light modules and final machine assembly.
-  - PDF pages 34-36: Drill motor operation/safety evidence and final mechanism instructions.
+  - Evidence pages 2-11: Long forked chassis and independently built front control side modules.
+  - Evidence pages 12-26: Motor block, raised frame, cockpit cage, cargo deck and flexible power/tool routing.
+  - Evidence pages 27-33: Overhead tool/light beam, drill subassembly, wheel/light modules and final machine assembly.
+  - Evidence pages 34-36: Drill motor operation/safety evidence and final mechanism instructions.
 - View/mechanism coverage: front=VERIFIED p1 and p29-34; rear=PARTIAL p21-26; leftRight=VERIFIED p2-34 construction sequence; top=VERIFIED p2-33; threeQuarter=VERIFIED p1 and p29-33; undersideInterior=VERIFIED p2-20 chassis and motor build; mechanism=VERIFIED p27-36 drill drive, wheel modules and movable tool/light assembly
 - Verified findings:
   - The vehicle is a long open industrial chassis wrapped around motor, cargo and tool systems rather than a solid armored hull.
@@ -48,6 +49,8 @@ Open question: The faction-internal construction, motion, socket and material dr
   - A strict orthogonal rear photograph remains desirable for final cargo and cable clearance.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 

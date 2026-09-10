@@ -36,9 +36,10 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Aliens:5617]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4525566.pdf)
 - Construction map:
-  - PDF pages 1: Complete five-step Alien Jet build with exposed pilot, swept black deck and paired flexible lime arches.
-  - PDF pages 2: Promotional reverse page; no additional construction evidence.
+  - Evidence pages 1: Complete five-step Alien Jet build with exposed pilot, swept black deck and paired flexible lime arches.
+  - Evidence pages 2: Promotional reverse page; no additional construction evidence.
 - View/mechanism coverage: front=PARTIAL p1 cover and final step; rear=PARTIAL p1 staged build; leftRight=PARTIAL p1 construction sequence; top=VERIFIED p1 steps 3-5; threeQuarter=VERIFIED p1 cover and final step; undersideInterior=PARTIAL p1 bare plate sequence; mechanism=PARTIAL p1 flexible lime arches; no authored flight or weapon motion
 - Verified findings:
   - Alien Jet is an extremely small open craft built around a broad swept black plate rather than an enclosed fuselage.
@@ -50,10 +51,11 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Aliens:7692]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4524070.pdf)
 - Construction map:
-  - PDF pages 3-12: Astronaut payload rover; supporting opposition evidence.
-  - PDF pages 13-23: Complete narrow Alien attack craft with tall paired curved blades, open center, lime conduits and triple rear emitter cluster.
-  - PDF pages 24-71: Astronaut dropship and visible cargo release; supporting opposition evidence.
+  - Evidence pages 3-12: Astronaut payload rover; supporting opposition evidence.
+  - Evidence pages 13-23: Complete narrow Alien attack craft with tall paired curved blades, open center, lime conduits and triple rear emitter cluster.
+  - Evidence pages 24-71: Astronaut dropship and visible cargo release; supporting opposition evidence.
 - View/mechanism coverage: front=PARTIAL p20-23; rear=VERIFIED p20-23; leftRight=VERIFIED p13-23; top=VERIFIED p13-23; threeQuarter=VERIFIED cover and p20-23; undersideInterior=VERIFIED p13-20 staged open frame; mechanism=PARTIAL p20-23 hose and projectile mounts; no hover or deployment sequence
 - Verified findings:
   - This small craft is unusually narrow and tall, with two near-vertical curved black blades enclosing a large central slot.
@@ -65,9 +67,10 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Aliens:7697]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4515381.pdf)
 - Construction map:
-  - PDF pages 3-15: Complete low Alien ambush craft with three curved black lobes, exposed pilot, arched lime conduits and distributed emitters.
-  - PDF pages 16-68: Astronaut MT-51 Claw-Tank; supporting opposition evidence.
+  - Evidence pages 3-15: Complete low Alien ambush craft with three curved black lobes, exposed pilot, arched lime conduits and distributed emitters.
+  - Evidence pages 16-68: Astronaut MT-51 Claw-Tank; supporting opposition evidence.
 - View/mechanism coverage: front=PARTIAL p12-15; rear=PARTIAL p12-15; leftRight=VERIFIED p3-15; top=VERIFIED p3-15; threeQuarter=VERIFIED cover and p12-15; undersideInterior=VERIFIED p3-12 staged frame; mechanism=PARTIAL p12-15 flexible conduits and projectile mounts; no flight or ambush sequence
 - Verified findings:
   - The ambush craft forms a low broken ring from three rounded black lobes around an open operator cavity.
@@ -77,6 +80,8 @@ Open question: Source-view coverage and construction-critical page ranges are re
   - The composite Razor/Defense family must determine which lobe, emitter and open-pilot features remain shared identity and which stay source-specific variants.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 

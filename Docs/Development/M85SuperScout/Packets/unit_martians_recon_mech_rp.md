@@ -34,11 +34,12 @@ Open question: Source-view coverage and construction-critical page ranges are re
 ### Source audit [Martians:7314]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
+- Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130809.pdf)
 - Construction map:
-  - PDF pages 2-16: Broad red/gray upper craft with open central cockpit, long asymmetric drill/lance and claw arms, wrist hoses and rear equipment.
-  - PDF pages 17-25: Separate two-leg lower chassis with broad feet; upper craft docks above it to form the Recon-Mech.
-  - PDF pages 26-28: Tall rear pressure tank attaches behind the cockpit and between the upper modules.
-  - PDF pages 29-33: Final photography and explicit hand-separated flight conversion: lower body detaches, rotates and reconnects behind the upper craft.
+  - Evidence pages 2-16: Broad red/gray upper craft with open central cockpit, long asymmetric drill/lance and claw arms, wrist hoses and rear equipment.
+  - Evidence pages 17-25: Separate two-leg lower chassis with broad feet; upper craft docks above it to form the Recon-Mech.
+  - Evidence pages 26-28: Tall rear pressure tank attaches behind the cockpit and between the upper modules.
+  - Evidence pages 29-33: Final photography and explicit hand-separated flight conversion: lower body detaches, rotates and reconnects behind the upper craft.
 - View/mechanism coverage: front=VERIFIED p25-33; rear=VERIFIED p25-33; leftRight=VERIFIED p2-33; top=VERIFIED p2-33; threeQuarter=VERIFIED p1 and p25-33; undersideInterior=VERIFIED p2-28 staged modules; mechanism=VERIFIED p30-33 mech-to-flight reconfiguration and articulated arms; gait, detection and anti-air cycle remain missing
 - Verified findings:
   - Recon-Mech is a tall biped carrying a broad aircraft-like upper body, not a narrow sensor tower with weaponry as a minor detail.
@@ -48,6 +49,8 @@ Open question: Source-view coverage and construction-critical page ranges are re
   - The source proves modular flight conversion but not a continuous transform, walking gait, scanner grammar or anti-air tracking path; those canonical functions need a source-respecting production contract.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 

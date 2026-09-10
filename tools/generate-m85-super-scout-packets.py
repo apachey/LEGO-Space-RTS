@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "Content/Presentation/SuperScout/roster_identity_baseline.json"
 LEDGER = ROOT / "Content/Presentation/SuperScout/source_ledger.json"
 INSTRUCTION_INDEX = ROOT / "Content/Presentation/SuperScout/source_instruction_index.json"
+SOURCE_ANALYSIS_POLICY = ROOT / "Content/Presentation/SuperScout/source_analysis_policy.json"
 ROCK_RAIDERS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/rock_raiders_source_evidence.json"
 ASTRONAUTS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/astronauts_source_evidence.json"
 ALIENS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/aliens_source_evidence.json"
@@ -79,9 +80,16 @@ def source_evidence_block(
         if record is None:
             continue
         ranges = "\n".join(
-            f"  - PDF pages {page_range['pages']}: {page_range['evidence']}"
+            f"  - Evidence pages {page_range['pages']}: {page_range['evidence']}"
             for page_range in record["constructionRanges"]
-        ) or "  - No official construction-page range is available."
+        ) or "  - No construction-page range is available for this evidence type."
+        evidence_links = []
+        for number, pdf in enumerate(record.get("instructionPdfs", []), start=1):
+            provenance = pdf.get("provenance", "official instruction PDF")
+            evidence_links.append(f"[{provenance} {number}]({pdf['url']})")
+        for number, url in enumerate(record.get("referenceUrls", []), start=1):
+            evidence_links.append(f"[archival product reference {number}]({url})")
+        evidence_link_text = ", ".join(evidence_links) or "no viewable evidence link recorded"
         coverage = "; ".join(
             f"{name}={value}" for name, value in record["viewCoverage"].items()
         )
@@ -90,6 +98,7 @@ def source_evidence_block(
         blocks.append(
             f"### Source audit [{faction}:{set_id}]\n\n"
             f"- Evidence state: `{record['evidenceState']}`\n"
+            f"- Evidence links: {evidence_link_text}\n"
             f"- Construction map:\n{ranges}\n"
             f"- View/mechanism coverage: {coverage}\n"
             f"- Verified findings:\n{findings}\n"
@@ -203,6 +212,7 @@ def packet_text(
     evidence: dict[tuple[str, str], dict],
     contract: dict | None,
     texture_specs: dict[str, dict],
+    packet_notice: str,
 ) -> str:
     palette, forbidden = FACTION_RULES[asset["faction"]]
     if contract is None:
@@ -236,6 +246,12 @@ def packet_text(
             f"[official PDF {number}]({url})"
             for number, url in enumerate(instruction["pdfUrls"], start=1)
         ) or "no direct official PDF located"
+        archival_links = "<br>".join(
+            f"[archival evidence {number}]({url})"
+            for number, url in enumerate(instruction.get("archivalEvidenceUrls", []), start=1)
+        )
+        if archival_links:
+            pdf_links += f"<br>{archival_links}"
         source_rows.append(
             f"| {set_id} — {source['title']} | [LEGO instructions]({source['officialInstructionsUrl']})<br>{pdf_links} | "
             f"[inventory]({source['inventoryUrl']}) | {source['verification']} | {source['evidenceUse']} |"
@@ -311,6 +327,8 @@ Open question: {open_question}
 {evidence_block}
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
+
+**Source-decomposition rule:** {packet_notice}
 
 {SECTION_TITLES[2]}
 
@@ -414,12 +432,17 @@ This is the canon-derived first pass for the most obvious internal and cross-fac
 def source_index_text(records: list[dict], sources: dict[str, dict]) -> str:
     output = io.StringIO(newline="")
     writer = csv.writer(output, lineterminator="\n")
-    writer.writerow(["set_id", "title", "verification", "direct_pdf_count", "direct_pdf_urls", "state"])
+    writer.writerow([
+        "set_id", "title", "verification", "direct_pdf_count", "direct_pdf_urls",
+        "archival_evidence_count", "archival_evidence_urls", "state",
+    ])
     for record in records:
         source = sources[record["setId"]]
         writer.writerow([
             record["setId"], source["title"], source["verification"],
-            len(record["pdfUrls"]), ";".join(record["pdfUrls"]), record["state"],
+            len(record["pdfUrls"]), ";".join(record["pdfUrls"]),
+            len(record.get("archivalEvidenceUrls", [])),
+            ";".join(record.get("archivalEvidenceUrls", [])), record["state"],
         ])
     return output.getvalue()
 
@@ -437,7 +460,7 @@ def source_audit_text(
         )
     return f"""# M8.5 T082 — {faction_label} source-evidence audit
 
-This generated review records what the official instruction PDFs actually prove, which views remain partial or missing, and where gameplay adaptation still must be explicit. The PDFs and rendered review sheets are temporary research material and are not redistributed in the repository.
+This generated review records what the available official instructions or labeled archival evidence actually prove, which views remain partial or missing, and where gameplay adaptation still must be explicit. The PDFs and rendered review sheets are temporary research material and are not redistributed in the repository.
 
 """ + "\n\n".join(blocks) + "\n"
 
@@ -532,6 +555,7 @@ def expected_files() -> dict[Path, str]:
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     ledger = json.loads(LEDGER.read_text(encoding="utf-8"))
     instruction_index = json.loads(INSTRUCTION_INDEX.read_text(encoding="utf-8"))
+    source_analysis_policy = json.loads(SOURCE_ANALYSIS_POLICY.read_text(encoding="utf-8"))
     rock_raiders_evidence = json.loads(ROCK_RAIDERS_EVIDENCE.read_text(encoding="utf-8"))
     astronauts_evidence = json.loads(ASTRONAUTS_EVIDENCE.read_text(encoding="utf-8"))
     aliens_evidence = json.loads(ALIENS_EVIDENCE.read_text(encoding="utf-8"))
@@ -598,6 +622,7 @@ def expected_files() -> dict[Path, str]:
         result[OUTPUT / slug(asset["stableId"])] = packet_text(
             asset, sources, confusion["pairs"], instructions, evidence,
             production_contracts.get(asset["stableId"]), texture_specs,
+            source_analysis_policy["packetNotice"],
         )
     return result
 
