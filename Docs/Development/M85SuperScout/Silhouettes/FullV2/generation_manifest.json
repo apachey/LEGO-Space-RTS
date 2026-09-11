@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "task": "T082",
   "corpus": "SOURCE_DERIVED_FULL_ROSTER_V2",
-  "status": "IN_PROGRESS_ROCK_RAIDERS_16_OF_16_ASTRONAUTS_19_OF_21_TOTAL_35_OF_66",
+  "status": "IN_PROGRESS_ROCK_RAIDERS_16_OF_16_ASTRONAUTS_19_OF_21_ALIENS_12_OF_12_TOTAL_47_OF_66",
   "generationTool": "built-in image generation",
   "useCase": "source-derived silhouette concept render",
   "authority": "Generated concept images are review aids only. Canon and the audited official or archival sources remain authoritative; these images do not approve production models or complete T082.",
@@ -13,12 +13,12 @@
     "Exclude labels, logos, UI, scenery, unrelated models and decorative shapes unsupported by the source-derived contract."
   ],
   "progress": {
-    "complete": 35,
+    "complete": 47,
     "required": 66,
     "factions": {
       "RockRaiders": "16_OF_16_COMPLETE",
       "Astronauts": "19_OF_21",
-      "Aliens": "0_OF_12",
+      "Aliens": "12_OF_12_COMPLETE",
       "Martians": "0_OF_17"
     }
   },
@@ -57,6 +57,18 @@
     {"stableId":"building.ast.service_refit_hub","sourceSets":["7315","7690"],"specificPrompt":"Broad planted service ring around an open central turntable, two dissimilar opposed radial docking arms, two wide ingress gaps and exterior racks of separate replacement modules.","output":"Renders/building_astronauts_service_refit_hub.png","outputSha256":"aa514e67600930c36dc4ce81b81356174b1ba61144768a1b13996fce2420548e"},
     {"stableId":"building.ast.solar_energy_array","sourceSets":["7315"],"specificPrompt":"Low stationary field base with exactly two countable broad lateral Solar Explorer panel wings, visible hinges, central circular machinery frame and one small control box.","output":"Renders/building_astronauts_solar_energy_array.png","outputSha256":"f52eee23258c90d8d15584c2cee713be3307b4d74d57b14402ce15fa012e9de5"},
     {"stableId":"building.ast.frontier_extraction_station","sourceSets":["7691","7648"],"specificPrompt":"Narrow stationary linear extraction rig with receiving rail and drill-facing hopper, upright transfer mast, one conspicuous hose, fixed planted feet and an external rack of sealed containers.","output":"Renders/building_astronauts_frontier_extraction_station.png","outputSha256":"3aac4f755874f4f97f939a700e3c67222118d661e78738951d3946eb1eba4be2"},
-    {"stableId":"building.ast.modular_sentinel_defense","sourceSets":["7690","7695"],"specificPrompt":"Stationary pedestal on exactly four visible deployed feet with one detachable blunt sensor/twin-emitter turret head and one smaller alternate rectangular defense head stored on a side rack.","output":"Renders/building_astronauts_modular_sentinel_defense.png","outputSha256":"3ac07814e7a9ccc0251c9ebc0ec1d4e78b74bdbc199e86dcaa8e13f0f2cfe7cd"}
+    {"stableId":"building.ast.modular_sentinel_defense","sourceSets":["7690","7695"],"specificPrompt":"Stationary pedestal on exactly four visible deployed feet with one detachable blunt sensor/twin-emitter turret head and one smaller alternate rectangular defense head stored on a side rack.","output":"Renders/building_astronauts_modular_sentinel_defense.png","outputSha256":"3ac07814e7a9ccc0251c9ebc0ec1d4e78b74bdbc199e86dcaa8e13f0f2cfe7cd"},
+    {"stableId":"unit.aliens.alien_jet","sourceSets":["5617"],"specificPrompt":"Tiny open interceptor preserving one broad swept plate, one exposed central alien pilot and exactly two tall curved conduit arches rising around the pilot.","output":"Renders/unit_aliens_alien_jet.png","outputSha256":"85a8657c72bab6478a19e0626c70ade6780a7bc186f7eb9be697bd65f44348ef"},
+    {"stableId":"unit.aliens.alien_mothership","sourceSets":["7691"],"specificPrompt":"One enormous flattened interrupted ring carrier with an open central machinery channel, directional tail and front, side-bay and jetpack-drone modules all still attached by visible hinges or docking roots.","output":"Renders/unit_aliens_alien_mothership.png","outputSha256":"25b64a0476e94eace7fbf5e835cae410ec00f00ee7417d77b9592601c272c4be"},
+    {"stableId":"unit.aliens.etx_alien_infiltrator","sourceSets":["7646"],"specificPrompt":"Official walker state with the long split nose and two huge curved side modules rotated into exactly three independently readable planted members around one elevated core.","output":"Renders/unit_aliens_etx_alien_infiltrator.png","outputSha256":"85badc4623a402b89aba9753ae560de2ab93a2cbfe5a6c41d0d5a12c3b43a030"},
+    {"stableId":"unit.aliens.etx_alien_strike","sourceSets":["7693"],"specificPrompt":"Deployed siege state retaining the long central keel and core while two enormous crescent side lobes open on hinges into a connected planted attack frame.","output":"Renders/unit_aliens_etx_alien_strike.png","outputSha256":"65eaeac0bf66d8eb583bac09e5e1c307f91174f7acc0a6a8f63f6e384128a4f1"},
+    {"stableId":"unit.aliens.etx_servitor","sourceSets":["5617","7646","7691"],"specificPrompt":"Tiny non-humanoid hover worker with a low shallow crescent shell, one central crystal cradle and exactly one folding two-joint utility manipulator ending in a small claw.","output":"Renders/unit_aliens_etx_servitor.png","outputSha256":"7019f3231f41493e2ad2c00efc8b6bac2dfb431540957078bdbfbb62d4f2b1e0"},
+    {"stableId":"unit.aliens.razor_skimmer","sourceSets":["7645","7692","7697"],"specificPrompt":"Extremely low hover blade craft with exactly two long separated forward prongs, a narrow spine carrying one faceted exposed core and exactly two restrained swept side lobes.","output":"Renders/unit_aliens_razor_skimmer.png","outputSha256":"74101b129aa59e5c53bbb66f1a26d23b923f0573b491f1b6603b1ef5d1e573ea"},
+    {"stableId":"building.ali.etx_command_core","sourceSets":["7691","7646"],"specificPrompt":"Broad grounded radial mothership-derived hull segment on low feet with a tall protected central resonance core and three open entrance gaps formed by transformation seams.","output":"Renders/building_aliens_etx_command_core.png","outputSha256":"f4ccdc71e268e9ca555f6a019b4e9bf9b6a1d28c05c75f17dcb7ac9641a51339"},
+    {"stableId":"building.ali.etx_fabricator","sourceSets":["7691","7690"],"specificPrompt":"Two low planted curved hull halves separated by one clear forward fabrication channel, with exactly two overhead feed arms and exterior module racks but no completed craft.","output":"Renders/building_aliens_etx_fabricator.png","outputSha256":"f8d3c57138166e364a239476a78d6ffd1de4e8758b9c23af75d4be7fa4137b45"},
+    {"stableId":"building.ali.etx_defense_node","sourceSets":["5617","7692","7697"],"specificPrompt":"Low landed swept attack-craft shell locked into a four-contact cradle with one clearly hinged central hardpoint raised for air interception and a visible charge channel.","output":"Renders/building_aliens_etx_defense_node.png","outputSha256":"7e1be019ba4c9e5b445050aa1765d35c577dc98a7ecea62c7411f99fced92e7c"},
+    {"stableId":"building.ali.power_coupler","sourceSets":["7691","7646"],"specificPrompt":"Small triangular three-foot energy node with exactly two opposed mechanical arcs focusing on one extremely thin central conductor; reject a crystal cage, portal or turret.","output":"Renders/building_aliens_power_coupler.png","outputSha256":"77ce0a7e49684fd6300b7597903002720f9e26bba0cbc02dcf4478311d6d6531"},
+    {"stableId":"building.ali.reconfiguration_dock","sourceSets":["7646","7693","7691"],"specificPrompt":"Exactly two tall planted folding shell towers suspending one empty transformation cradle on visible hinge arcs above an enormous unobstructed exit lane.","output":"Renders/building_aliens_reconfiguration_dock.png","outputSha256":"6c2f733648e4a699c867d064df21b20934195b60ec9935ee4fbea08e8c5501bf"},
+    {"stableId":"building.ali.resonance_core","sourceSets":["7691","7646"],"specificPrompt":"Compact planted concentric-ring mechanism dominated by one huge upright faceted crystal mass visibly restrained by exactly four countable articulated radial claws.","output":"Renders/building_aliens_resonance_core.png","outputSha256":"b65151800ab401c959ca203ce11ce686cd0912ddbf8c92e0a77144fa2539ea63"}
   ]
 }

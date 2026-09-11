@@ -796,15 +796,15 @@ def main() -> None:
         fail("Full V2 generation manifest schema/task mismatch")
     if full_v2_manifest.get("corpus") != "SOURCE_DERIVED_FULL_ROSTER_V2":
         fail("Full V2 manifest corpus identity drifted")
-    if full_v2_manifest.get("status") != "IN_PROGRESS_ROCK_RAIDERS_16_OF_16_ASTRONAUTS_19_OF_21_TOTAL_35_OF_66":
-        fail("Full V2 manifest must retain its in-progress 35/66 checkpoint state")
+    if full_v2_manifest.get("status") != "IN_PROGRESS_ROCK_RAIDERS_16_OF_16_ASTRONAUTS_19_OF_21_ALIENS_12_OF_12_TOTAL_47_OF_66":
+        fail("Full V2 manifest must retain its in-progress 47/66 checkpoint state")
     full_progress = full_v2_manifest.get("progress", {})
-    if full_progress.get("complete") != 35 or full_progress.get("required") != 66:
-        fail("Full V2 manifest progress must remain 35 of 66 at this checkpoint")
+    if full_progress.get("complete") != 47 or full_progress.get("required") != 66:
+        fail("Full V2 manifest progress must remain 47 of 66 at this checkpoint")
     if full_progress.get("factions") != {
         "RockRaiders": "16_OF_16_COMPLETE",
         "Astronauts": "19_OF_21",
-        "Aliens": "0_OF_12",
+        "Aliens": "12_OF_12_COMPLETE",
         "Martians": "0_OF_17",
     }:
         fail("Full V2 faction progress drifted")
@@ -830,10 +830,22 @@ def main() -> None:
         "building.ast.solar_energy_array",
         "building.ast.frontier_extraction_station",
         "building.ast.modular_sentinel_defense",
+        "unit.aliens.alien_jet",
+        "unit.aliens.alien_mothership",
+        "unit.aliens.etx_alien_infiltrator",
+        "unit.aliens.etx_alien_strike",
+        "unit.aliens.etx_servitor",
+        "unit.aliens.razor_skimmer",
+        "building.ali.etx_command_core",
+        "building.ali.etx_fabricator",
+        "building.ali.etx_defense_node",
+        "building.ali.power_coupler",
+        "building.ali.reconfiguration_dock",
+        "building.ali.resonance_core",
     })
     full_ids = [record.get("stableId") for record in full_assets]
-    if len(full_assets) != 35 or len(set(full_ids)) != 35 or set(full_ids) != expected_full_v2_ids:
-        fail("Full V2 checkpoint must cover the completed 35 assets exactly once")
+    if len(full_assets) != 47 or len(set(full_ids)) != 47 or set(full_ids) != expected_full_v2_ids:
+        fail("Full V2 checkpoint must cover the completed 47 assets exactly once")
     assets_by_id = {asset["stableId"]: asset for asset in assets}
     for record in full_assets:
         stable_id = record["stableId"]
@@ -916,7 +928,7 @@ def main() -> None:
         f"martiansAudited={martians_audited} martiansArchivalAudits={martians_archival_audits} martiansGaps={martians_gaps} "
         f"contracts={contract_count} provisionalContracts={provisional_contracts} "
         f"packets=66 confusionPairs={len(pairs)} blindV1=FAIL_0_OF_66 pilotV2=PASS_4_OF_4 "
-        f"fullV2=IN_PROGRESS_35_OF_66 state=HOLD"
+        f"fullV2=IN_PROGRESS_47_OF_66 state=HOLD"
     )
 
 

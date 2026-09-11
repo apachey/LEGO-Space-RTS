@@ -60,7 +60,15 @@ a second full-roster corpus. The complete-roster review remains open.
   interchangeable defense-head composition. A closer 7310 reference resolved
   Mono Jet's single asymmetric engine. MT-101 and MT-201 remain open after two
   candidates each failed to make all six wheels or all four planted legs
-  independently readable. The total Full V2 checkpoint is 35/66.
+  independently readable.
+- All twelve Alien concepts are complete: all six units and all six
+  infrastructure silhouettes. The Mothership remains one selectable carrier
+  whose front, side-bay and jetpack-drone modules stay attached while unfolding.
+  Servitor and Razor Skimmer disclose their cross-set 5617/7646/7691 and
+  7645/7692/7697 construction. The six new buildings also preserve the named
+  donor split: grounded carrier segment, open bay, landed attack craft, opposed
+  energy arcs, transforming shell towers and restrained crystal ring. The total
+  Full V2 checkpoint is 47/66.
 - The official 7301 page proved that Rover has four equal wheel pods. Its older
   two-wheel identity/contract wording predated the page-level audit and was not
   reconciled afterward. The baseline, source ledger, production contract,
@@ -223,8 +231,8 @@ redistributed.
 
 1. Retain the two explicit Martian archival gaps unless usable evidence appears,
    and escalate any gap that prevents a safe production decision.
-2. Continue the accepted source-derived method from the current 35/66
-   checkpoint through the remaining 31 assets, then run the complete
+2. Continue the accepted source-derived method from the current 47/66
+   checkpoint through the remaining 19 assets, then run the complete
    24/44/72 review.
 3. Revise every wrong, uncertain or indistinguishable asset and extend the
    44-pair register wherever the accepted review exposes a new neighbor.
@@ -241,9 +249,9 @@ packet is approved for T083/T085 production yet.
 
 ## Verification state
 
-The current 35/66 Full V2 checkpoint passed `./tools/verify.sh` with zero
+The current 47/66 Full V2 checkpoint passed `./tools/verify.sh` with zero
 blocking or diagnostic failures at
-`Artifacts/Verification/20260911T175406Z-fast-summary.txt`; all 317 tests and
+`Artifacts/Verification/20260911T224152Z-fast-summary.txt`; all 317 tests and
 the T082 identity-baseline integrity stage passed.
 
 The previous 24/66 Full V2 checkpoint, recorded 0/66 V1 rejection and
