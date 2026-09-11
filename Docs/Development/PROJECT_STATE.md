@@ -706,11 +706,14 @@ live; the current schema-9 copy/paste retains the complete experiment.
   director identified Alien Mothership, Worker Robot, Chrome Crusher and Drill
   Craft correctly at 4/4, approving the method for full-roster and camera-scale
   expansion without accepting the future complete corpus.
-- The Full V2 expansion now has a durable 24/66 checkpoint: all 16 Rock Raiders
-  and eight Astronaut concepts use the accepted source-derived matte-black
+- The Full V2 expansion now has a durable 27/66 checkpoint: all 16 Rock Raiders
+  and eleven Astronaut concepts use the accepted source-derived matte-black
   render method, and every output is recorded by stable ID and SHA-256 hash.
-  Mono Jet remains open after two candidates duplicated its source's single
-  asymmetric engine. The remaining 42 assets are not yet rendered, so this does
+  A closer official 7310 reference resolved Mono Jet's single asymmetric engine;
+  Mobile Mining Platform discloses its 7645/7648/7693 modular construction, and
+  MX-81 keeps its mission sections docked to one aircraft. MT-101 and MT-201
+  remain open after two candidates each failed to expose all six wheels or all
+  four planted legs. The remaining 39 assets are not yet rendered, so this does
   not change T082's `BLOCKING_NOW` state or constitute faction approval.
 - The official 7301 instruction page also exposed a stale audit-reconciliation
   error: Rover is a four-wheel open platform, not the two-wheel bike described
@@ -725,7 +728,7 @@ live; the current schema-9 copy/paste retains the complete experiment.
 - T082 remains `BLOCKING_NOW` for T083/T085. All faction source-page audits,
   all 66 production-contract drafts are complete; the first silhouette approach
   failed 0/66, Pilot V2 passed 4/4 and the new full corpus currently contains a
-  hashed 24/66 checkpoint. The remaining 42 source-derived concepts,
+  hashed 27/66 checkpoint. The remaining 39 source-derived concepts,
   complete 24/44/72 review and explicit game-director corpus acceptance remain
   required. Current detail is tracked in `Docs/Development/M85_SUPER_SCOUT_PROGRESS.md`.
 
@@ -751,7 +754,12 @@ step and must be announced when new visual evidence is actually required.
 
 ## Verification state
 
-The current 24/66 Full V2 checkpoint, recorded 0/66 T082 V1 rejection and
+The current 27/66 Full V2 checkpoint passed `./tools/verify.sh` with zero
+blocking or diagnostic failures at
+`Artifacts/Verification/20260911T173844Z-fast-summary.txt`: all 317 tests and
+every fast verification stage passed, including the T082 integrity validator.
+
+The previous 24/66 Full V2 checkpoint, recorded 0/66 T082 V1 rejection and
 game-director 4/4 source-derived Pilot V2 acceptance passed
 `./tools/verify.sh --full` with zero blocking failures at
 `Artifacts/Verification/20260911T124657Z-full-summary.txt`: all 317 tests,

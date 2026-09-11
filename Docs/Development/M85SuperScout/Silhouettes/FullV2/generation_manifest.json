@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "task": "T082",
   "corpus": "SOURCE_DERIVED_FULL_ROSTER_V2",
-  "status": "IN_PROGRESS_ROCK_RAIDERS_16_OF_16_ASTRONAUTS_8_OF_21_TOTAL_24_OF_66",
+  "status": "IN_PROGRESS_ROCK_RAIDERS_16_OF_16_ASTRONAUTS_11_OF_21_TOTAL_27_OF_66",
   "generationTool": "built-in image generation",
   "useCase": "source-derived silhouette concept render",
   "authority": "Generated concept images are review aids only. Canon and the audited official or archival sources remain authoritative; these images do not approve production models or complete T082.",
@@ -13,11 +13,11 @@
     "Exclude labels, logos, UI, scenery, unrelated models and decorative shapes unsupported by the source-derived contract."
   ],
   "progress": {
-    "complete": 24,
+    "complete": 27,
     "required": 66,
     "factions": {
       "RockRaiders": "16_OF_16_COMPLETE",
-      "Astronauts": "8_OF_21",
+      "Astronauts": "11_OF_21",
       "Aliens": "0_OF_12",
       "Martians": "0_OF_17"
     }
@@ -46,6 +46,9 @@
     {"stableId":"unit.astronauts.mission_fighter","sourceSets":["5619","7695"],"specificPrompt":"Extremely thin compact delta interceptor combining the clean swept planforms of 5619 and 7695, with a sharp compact canopy, two forward prongs and a tiny raised rear equipment mass.","output":"Renders/unit_astronauts_mission_fighter.png","outputSha256":"00ac1d3616cc28d21b7c21ce5956faa4f6c6b790699db616a115df1cafedacd8"},
     {"stableId":"unit.astronauts.mx41_switch_fighter","sourceSets":["7647"],"specificPrompt":"Signature ground configuration with one pointed cockpit hull nested into a separate folding wing/chassis slab, exactly six wheels and large visibly hinged side panels.","output":"Renders/unit_astronauts_mx41_switch_fighter.png","outputSha256":"05f943eca88abe2ce826ecd1717037cd98bce76ec5281a9270cf4eebc8c60c85"},
     {"stableId":"unit.astronauts.mx71_recon_dropship","sourceSets":["7692"],"specificPrompt":"Long narrow high-wing lifting aircraft with tall landing contacts and a completely open underside cradle visibly carrying one independent six-wheel reconnaissance rover.","output":"Renders/unit_astronauts_mx71_recon_dropship.png","outputSha256":"fc2c0fe1fdddedfb0a6358f865167dabaec4dc1782d5c3b2c018130c3362b728"},
-    {"stableId":"unit.astronauts.mt51_claw_tank","sourceSets":["7697"],"specificPrompt":"Low separated track blocks supporting a rounded rotating operator body with two long asymmetric articulated arms, one ending in a dominant mechanical claw.","output":"Renders/unit_astronauts_mt51_claw_tank.png","outputSha256":"e13f24299b9e287b3b47cb897564945217240c949fba41e8d917ce128f51dc86"}
+    {"stableId":"unit.astronauts.mt51_claw_tank","sourceSets":["7697"],"specificPrompt":"Low separated track blocks supporting a rounded rotating operator body with two long asymmetric articulated arms, one ending in a dominant mechanical claw.","output":"Renders/unit_astronauts_mt51_claw_tank.png","outputSha256":"e13f24299b9e287b3b47cb897564945217240c949fba41e8d917ce128f51dc86"},
+    {"stableId":"unit.astronauts.mono_jet","sourceSets":["7310"],"specificPrompt":"Tiny true-air open sled with an exposed operator, very low narrow spine and exactly one large cylindrical engine pod on one side; the opposite side remains a thin tail plate with no mirrored cylinder.","output":"Renders/unit_astronauts_mono_jet.png","outputSha256":"331847b8108b6f5b503abb83fa896fa2112c61d57b3e9811ab388b063829b474"},
+    {"stableId":"unit.astronauts.mobile_mining_platform","sourceSets":["7645","7648","7693"],"specificPrompt":"One low tracked modular mining platform combining the 7645 twin front harvesting cutters and crawler body, a visibly docked upright 7648 processing/tool module and one 7693-derived asymmetric side-tool cue, with an exposed intake-to-cargo route.","output":"Renders/unit_astronauts_mobile_mining_platform.png","outputSha256":"7af1401f1d29447ae77dff359a38f2795d215bf94dea22e9edba64ce21d1f370"},
+    {"stableId":"unit.astronauts.mx81_operations_aircraft","sourceSets":["7644"],"specificPrompt":"One fully assembled extremely wide operations aircraft with a pointed central cockpit, long command spine, twin bulky forward pod masses and smaller mission sections visibly docked along the lateral frame with narrow structural gaps.","output":"Renders/unit_astronauts_mx81_operations_aircraft.png","outputSha256":"561a68475ad68fdaa5f058b5f9c889a6242fe84fb97b11a8d473fe3596e731d4"}
   ]
 }
