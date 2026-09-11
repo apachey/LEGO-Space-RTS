@@ -58,9 +58,11 @@ a second full-roster corpus. The complete-roster review remains open.
   Vehicle Bay, Flight Pad and Refit Hub disclose their named Field/Mission donor
   mechanisms; Modular Sentinel discloses a new 7690 pedestal plus 7695-derived
   interchangeable defense-head composition. A closer 7310 reference resolved
-  Mono Jet's single asymmetric engine. MT-101 and MT-201 remain open after two
+  Mono Jet's single asymmetric engine. MT-101 and MT-201 were resolved with a
+  materially different topology-controlled reference method after two earlier
   candidates each failed to make all six wheels or all four planted legs
-  independently readable.
+  independently readable. Their final review candidates now expose all required
+  contacts at once.
 - All twelve Alien concepts are complete: all six units and all six
   infrastructure silhouettes. The Mothership remains one selectable carrier
   whose front, side-bay and jetpack-drone modules stay attached while unfolding.
@@ -78,6 +80,13 @@ a second full-roster corpus. The complete-roster review remains open.
   uses 7317 without inventing exact 3750 geometry. Every composite building's
   official donor sets are recorded in the generation manifest. The total Full
   V2 checkpoint is now 64/66.
+- The topology-controlled MT-101 and MT-201 complete the source-derived corpus
+  at 66/66. Two project-authored count/layout guides preserve six-wheel and
+  four-leg topology while official 7699 and 7649 pages remain the only geometry
+  sources. Six self-contained PNG boards now cover the complete corpus at
+  24/44/72 camera widths in two pages each, using stable blind V-codes. The
+  answer key and every board are hash-locked and remain `HOLD` for game-director
+  review.
 - The official 7301 page proved that Rover has four equal wheel pods. Its older
   two-wheel identity/contract wording predated the page-level audit and was not
   reconciled afterward. The baseline, source ledger, production contract,
@@ -240,9 +249,7 @@ redistributed.
 
 1. Retain the two explicit Martian archival gaps unless usable evidence appears,
    and escalate any gap that prevents a safe production decision.
-2. Resolve MT-101 and MT-201 with a materially different source-composition
-   method from the current 64/66 checkpoint, then run the complete
-   24/44/72 review.
+2. Run the complete 24/44/72 blind review from the six Full V2 PNG boards.
 3. Revise every wrong, uncertain or indistinguishable asset and extend the
    44-pair register wherever the accepted review exposes a new neighbor.
 4. Resolve or escalate every consequential unknown, then request the final
@@ -258,10 +265,14 @@ packet is approved for T083/T085 production yet.
 
 ## Verification state
 
-The current 64/66 Full V2 checkpoint passed `./tools/verify.sh` with zero
-blocking or diagnostic failures at
-`Artifacts/Verification/20260911T230853Z-fast-summary.txt`; all 317 tests and
-the T082 identity-baseline integrity stage passed.
+The review-ready 66/66 Full V2 corpus passed `./tools/verify.sh --full` with
+zero blocking failures at
+`Artifacts/Verification/20260911T232841Z-full-summary.txt`. All 317 tests, the
+T082 identity-baseline integrity stage, deterministic repeat/replay/snapshot
+checks, retained presentation and network gates, deterministic asset
+regeneration, and a fresh macOS export passed. The preserved 60-mover
+`BLOCKING_LATER` M9 stress scenario remains the only diagnostic failure and
+does not block T082 review.
 
 The previous 24/66 Full V2 checkpoint, recorded 0/66 V1 rejection and
 game-director 4/4 Pilot V2 acceptance passed `./tools/verify.sh --full` with

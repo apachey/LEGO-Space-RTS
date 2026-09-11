@@ -706,8 +706,8 @@ live; the current schema-9 copy/paste retains the complete experiment.
   director identified Alien Mothership, Worker Robot, Chrome Crusher and Drill
   Craft correctly at 4/4, approving the method for full-roster and camera-scale
   expansion without accepting the future complete corpus.
-- The Full V2 expansion now has a durable 64/66 checkpoint: all 16 Rock Raiders,
-  nineteen Astronaut concepts, all twelve Alien concepts and all seventeen
+- The Full V2 expansion now has a complete review-ready 66/66 corpus: all 16 Rock Raiders,
+  all twenty-one Astronaut concepts, all twelve Alien concepts and all seventeen
   Martian concepts use the accepted source-derived matte-black render method,
   and every output is recorded by stable ID and SHA-256 hash.
   A closer official 7310 reference resolved Mono Jet's single asymmetric engine;
@@ -716,8 +716,10 @@ live; the current schema-9 copy/paste retains the complete experiment.
   infrastructure silhouettes now preserve their named 7315/7690 descendants or
   explicitly disclose their cross-set donors; the new Sentinel is specifically
   a 7690 service pedestal plus interchangeable 7695-derived defense heads.
-  MT-101 and MT-201 remain open after two candidates each failed to expose all
-  six wheels or all four planted legs. Alien Mothership is explicitly one
+  MT-101 and MT-201 required a materially different topology-controlled reference
+  method after two earlier candidates each failed to expose all six wheels or all
+  four planted legs. Their final review candidates now make all six wheels and
+  all four legs independently countable. Alien Mothership is explicitly one
   selectable carrier whose front, side-bay and jetpack-drone modules remain
   attached while unfolding; it is not split into several units. Servitor,
   Razor Skimmer and all six Alien infrastructure silhouettes disclose their
@@ -726,8 +728,9 @@ live; the current schema-9 copy/paste retains the complete experiment.
   Searcher and the 7317 pneumatic Tube grammar. Aero Skiff claims no exact 1195
   geometry, and Aero Tube Link claims no exact 3750 geometry; both remain
   explicitly bounded by those archival gaps and use verified 7317 construction.
-  The remaining two Astronaut assets are not yet rendered, so
-  this does not change T082's `BLOCKING_NOW` state or constitute faction approval.
+  Six self-contained blind-review PNG boards cover the complete corpus at the
+  24/44/72 camera widths with stable V-codes. This does not change T082's
+  `BLOCKING_NOW` state or constitute corpus approval before game-director review.
 - The official 7301 instruction page also exposed a stale audit-reconciliation
   error: Rover is a four-wheel open platform, not the two-wheel bike described
   by the earlier identity and production drafts. The source ledger, identity,
@@ -741,9 +744,10 @@ live; the current schema-9 copy/paste retains the complete experiment.
 - T082 remains `BLOCKING_NOW` for T083/T085. All faction source-page audits,
   all 66 production-contract drafts are complete; the first silhouette approach
   failed 0/66, Pilot V2 passed 4/4 and the new full corpus currently contains a
-  hashed 64/66 checkpoint. The remaining MT-101 and MT-201 source-derived concepts,
-  complete 24/44/72 review and explicit game-director corpus acceptance remain
-  required. Current detail is tracked in `Docs/Development/M85_SUPER_SCOUT_PROGRESS.md`.
+  hashed 66/66 review-ready corpus with six complete blind boards. The 24/44/72
+  game-director review, any resulting revisions and explicit corpus acceptance
+  remain required. Current detail is tracked in
+  `Docs/Development/M85_SUPER_SCOUT_PROGRESS.md`.
 
 Routine Godot verification is now non-intrusive on macOS: every gameplay smoke
 runs headlessly with an explicit automated-smoke flag, records its real
@@ -767,10 +771,13 @@ step and must be announced when new visual evidence is actually required.
 
 ## Verification state
 
-The current 64/66 Full V2 checkpoint passed `./tools/verify.sh` with zero
-blocking or diagnostic failures at
-`Artifacts/Verification/20260911T230853Z-fast-summary.txt`: all 317 tests and
-every fast verification stage passed, including the T082 integrity validator.
+The review-ready 66/66 Full V2 corpus passed `./tools/verify.sh --full` with
+zero blocking failures at
+`Artifacts/Verification/20260911T232841Z-full-summary.txt`: all 317 tests, the
+T082 integrity validator, deterministic repeat/replay/snapshot checks, retained
+presentation and network gates, deterministic asset regeneration, and a fresh
+macOS export passed. The only diagnostic failure is the preserved 60-mover
+`BLOCKING_LATER` M9 stress scenario; it does not block T082 review.
 
 The previous 24/66 Full V2 checkpoint, recorded 0/66 T082 V1 rejection and
 game-director 4/4 source-derived Pilot V2 acceptance passed

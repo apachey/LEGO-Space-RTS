@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <rect width="1200" height="800" fill="#ffffff"/>
+  <g stroke="#17191c" stroke-width="18" stroke-linejoin="round">
+    <circle cx="600" cy="410" r="150" fill="#aeb6bf"/>
+    <path d="M600 425 L600 130"/>
+    <path d="M600 130 L530 270 L670 270 Z" fill="#17191c"/>
+    <path d="M500 330 L290 200 L170 155" fill="none"/>
+    <path d="M700 330 L910 200 L1030 155" fill="none"/>
+    <path d="M500 490 L290 620 L170 665" fill="none"/>
+    <path d="M700 490 L910 620 L1030 665" fill="none"/>
+  </g>
+  <g fill="#f07b22" stroke="#17191c" stroke-width="16">
+    <rect x="80" y="100" width="210" height="120" rx="28"/>
+    <rect x="910" y="100" width="210" height="120" rx="28"/>
+    <rect x="80" y="580" width="210" height="120" rx="28"/>
+    <rect x="910" y="580" width="210" height="120" rx="28"/>
+  </g>
+  <g font-family="Arial, sans-serif" font-size="44" font-weight="700" text-anchor="middle" fill="#17191c">
+    <text x="600" y="70">MT-201 DEPLOYED TOPOLOGY — EXACTLY FOUR LEGS</text>
+    <text x="185" y="175">FL</text><text x="1015" y="175">FR</text>
+    <text x="185" y="655">RL</text><text x="1015" y="655">RR</text>
+    <text x="600" y="440" font-size="34">ROTATING CORE</text>
+    <text x="600" y="120" font-size="34">VERTICAL DRILL</text>
+  </g>
+</svg>

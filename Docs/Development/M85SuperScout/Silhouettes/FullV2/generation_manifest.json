@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "task": "T082",
   "corpus": "SOURCE_DERIVED_FULL_ROSTER_V2",
-  "status": "IN_PROGRESS_ROCK_RAIDERS_16_OF_16_ASTRONAUTS_19_OF_21_ALIENS_12_OF_12_MARTIANS_17_OF_17_TOTAL_64_OF_66",
+  "status": "REVIEW_READY_ROCK_RAIDERS_16_OF_16_ASTRONAUTS_21_OF_21_ALIENS_12_OF_12_MARTIANS_17_OF_17_TOTAL_66_OF_66_HOLD",
   "generationTool": "built-in image generation",
   "useCase": "source-derived silhouette concept render",
   "authority": "Generated concept images are review aids only. Canon and the audited official or archival sources remain authoritative; these images do not approve production models or complete T082.",
@@ -13,11 +13,11 @@
     "Exclude labels, logos, UI, scenery, unrelated models and decorative shapes unsupported by the source-derived contract."
   ],
   "progress": {
-    "complete": 64,
+    "complete": 66,
     "required": 66,
     "factions": {
       "RockRaiders": "16_OF_16_COMPLETE",
-      "Astronauts": "19_OF_21",
+      "Astronauts": "21_OF_21_COMPLETE",
       "Aliens": "12_OF_12_COMPLETE",
       "Martians": "17_OF_17_COMPLETE"
     }
@@ -86,6 +86,8 @@
     {"stableId":"building.mar.excavation_plant","sourceSets":["7316"],"specificPrompt":"Planted asymmetric processor with a huge crane-claw intake, raised open hopper, visible roller path and one outbound Tube or hypersled handoff.","output":"Renders/building_martians_excavation_plant.png","outputSha256":"82f1c5e1bd846252b105bb9d7c4af1a3915aa723698ac5b247b932c76a77b5f0"},
     {"stableId":"building.mar.deflector_arm","sourceSets":["7313","7316"],"specificPrompt":"Exactly one enormous two-stage articulated arm ending in a broad pushing paddle on a compact radial base with exactly four stabilizer feet.","output":"Renders/building_martians_deflector_arm.png","outputSha256":"977c4fd095c31662a73d8c690973c4da5ef7472c597a9b2235a9a4ff11d2066c"},
     {"stableId":"building.mar.aero_guard_tower","sourceSets":["7314","7317"],"specificPrompt":"Very tall open mast on a compact Tube-side base with exactly two unequal articulated tracking arms derived from Recon-Mech tools.","output":"Renders/building_martians_aero_guard_tower.png","outputSha256":"dc6647b438dd240875e6ceb11dfd02a03d966cea5f68a7fb0bfaaf0e0e2cedb7"},
-    {"stableId":"building.mar.aero_tube_link","sourceSets":["7317","3750"],"specificPrompt":"One long low continuous hollow ribbed Tube span between exactly two mechanical end couplers, with three supports and a visible internal sled corridor; no exact 3750 geometry is claimed.","output":"Renders/building_martians_aero_tube_link.png","outputSha256":"f54b002f700e7f69817c89aacdf30055dafd6d7d8974f636baae984ff6e4d5df"}
+    {"stableId":"building.mar.aero_tube_link","sourceSets":["7317","3750"],"specificPrompt":"One long low continuous hollow ribbed Tube span between exactly two mechanical end couplers, with three supports and a visible internal sled corridor; no exact 3750 geometry is claimed.","output":"Renders/building_martians_aero_tube_link.png","outputSha256":"f54b002f700e7f69817c89aacdf30055dafd6d7d8974f636baae984ff6e4d5df"},
+    {"stableId":"unit.astronauts.mt101_armored_drilling_unit","sourceSets":["7699"],"specificPrompt":"Topology-controlled 7699 reconstruction: long suspended drill carrier with exactly six independently visible wheels, three on each side, exposed suspension, low cockpit and raised central drill carriage.","output":"Renders/unit_astronauts_mt101_armored_drilling_unit.png","outputSha256":"13da06e3ca51dfa72ef3853ee1fb619b2ab4fcc84e3f6aebee966c826c3e6537"},
+    {"stableId":"unit.astronauts.mt201_ultra_drill_walker","sourceSets":["7649"],"specificPrompt":"Topology-controlled deployed 7649 reconstruction: one connected tall drill installation with rotating core, docked observation craft and exactly four independently visible articulated legs and feet.","output":"Renders/unit_astronauts_mt201_ultra_drill_walker.png","outputSha256":"0a6e6c6b7618969d1c69d6103e98f9656155e6480195f9ef26a256bb4f640737"}
   ]
 }

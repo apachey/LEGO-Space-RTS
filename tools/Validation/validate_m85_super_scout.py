@@ -39,6 +39,10 @@ PILOT_V2_MANIFEST = PILOT_V2_OUTPUT / "generation_manifest.json"
 PILOT_V2_BLIND_PNG = PILOT_V2_OUTPUT / "blind_pilot_v2.png"
 FULL_V2_OUTPUT = SILHOUETTE_OUTPUT / "FullV2"
 FULL_V2_MANIFEST = FULL_V2_OUTPUT / "generation_manifest.json"
+FULL_V2_REVIEW_OUTPUT = FULL_V2_OUTPUT / "Review"
+FULL_V2_REVIEW_MANIFEST = FULL_V2_REVIEW_OUTPUT / "review_manifest.json"
+FULL_V2_REVIEW_KEY = FULL_V2_REVIEW_OUTPUT / "BLIND_REVIEW_KEY.md"
+FULL_V2_REVIEW_GENERATOR = ROOT / "tools/generate-m85-full-v2-review.py"
 
 CLASSIFICATIONS = {
     "OFFICIAL_DIRECT": "OFFICIAL-DIRECT",
@@ -365,6 +369,9 @@ def main() -> None:
         CONFUSION, SILHOUETTE_CONCEPTS, BLIND_REVIEW_RESULTS, CONTENT, GENERATOR, SILHOUETTE_GENERATOR,
         PILOT_V2_MANIFEST, PILOT_V2_OUTPUT / "blind_pilot_v2.svg", PILOT_V2_BLIND_PNG,
         PILOT_V2_OUTPUT / "PILOT_V2_KEY.md",
+        FULL_V2_REVIEW_MANIFEST, FULL_V2_REVIEW_KEY, FULL_V2_REVIEW_GENERATOR,
+        FULL_V2_OUTPUT / "ReferenceGuides/mt101_six_wheel_topology.svg",
+        FULL_V2_OUTPUT / "ReferenceGuides/mt201_four_leg_topology.svg",
     ):
         if not path.is_file():
             fail(f"missing {path.relative_to(ROOT)}")
@@ -386,6 +393,7 @@ def main() -> None:
     blind_review_results = json.loads(BLIND_REVIEW_RESULTS.read_text(encoding="utf-8"))
     pilot_v2_manifest = json.loads(PILOT_V2_MANIFEST.read_text(encoding="utf-8"))
     full_v2_manifest = json.loads(FULL_V2_MANIFEST.read_text(encoding="utf-8"))
+    full_v2_review_manifest = json.loads(FULL_V2_REVIEW_MANIFEST.read_text(encoding="utf-8"))
     content = json.loads(CONTENT.read_text(encoding="utf-8"))
     packet_notice = validate_source_analysis_policy(source_analysis_policy)
     if manifest.get("schemaVersion") != 1 or manifest.get("task") != "T082":
@@ -796,14 +804,14 @@ def main() -> None:
         fail("Full V2 generation manifest schema/task mismatch")
     if full_v2_manifest.get("corpus") != "SOURCE_DERIVED_FULL_ROSTER_V2":
         fail("Full V2 manifest corpus identity drifted")
-    if full_v2_manifest.get("status") != "IN_PROGRESS_ROCK_RAIDERS_16_OF_16_ASTRONAUTS_19_OF_21_ALIENS_12_OF_12_MARTIANS_17_OF_17_TOTAL_64_OF_66":
-        fail("Full V2 manifest must retain its in-progress 64/66 checkpoint state")
+    if full_v2_manifest.get("status") != "REVIEW_READY_ROCK_RAIDERS_16_OF_16_ASTRONAUTS_21_OF_21_ALIENS_12_OF_12_MARTIANS_17_OF_17_TOTAL_66_OF_66_HOLD":
+        fail("Full V2 manifest must retain its review-ready 66/66 HOLD state")
     full_progress = full_v2_manifest.get("progress", {})
-    if full_progress.get("complete") != 64 or full_progress.get("required") != 66:
-        fail("Full V2 manifest progress must remain 64 of 66 at this checkpoint")
+    if full_progress.get("complete") != 66 or full_progress.get("required") != 66:
+        fail("Full V2 manifest progress must remain 66 of 66 pending review")
     if full_progress.get("factions") != {
         "RockRaiders": "16_OF_16_COMPLETE",
-        "Astronauts": "19_OF_21",
+        "Astronauts": "21_OF_21_COMPLETE",
         "Aliens": "12_OF_12_COMPLETE",
         "Martians": "17_OF_17_COMPLETE",
     }:
@@ -842,13 +850,15 @@ def main() -> None:
         "building.ali.power_coupler",
         "building.ali.reconfiguration_dock",
         "building.ali.resonance_core",
+        "unit.astronauts.mt101_armored_drilling_unit",
+        "unit.astronauts.mt201_ultra_drill_walker",
     })
     expected_full_v2_ids.update(
         asset["stableId"] for asset in assets if asset["faction"] == "Martians"
     )
     full_ids = [record.get("stableId") for record in full_assets]
-    if len(full_assets) != 64 or len(set(full_ids)) != 64 or set(full_ids) != expected_full_v2_ids:
-        fail("Full V2 checkpoint must cover the completed 64 assets exactly once")
+    if len(full_assets) != 66 or len(set(full_ids)) != 66 or set(full_ids) != expected_full_v2_ids:
+        fail("Full V2 corpus must cover all 66 assets exactly once")
     assets_by_id = {asset["stableId"]: asset for asset in assets}
     for record in full_assets:
         stable_id = record["stableId"]
@@ -866,6 +876,38 @@ def main() -> None:
             fail(f"Full V2 output is not a valid PNG for {stable_id}")
         if hashlib.sha256(output_bytes).hexdigest() != record.get("outputSha256"):
             fail(f"Full V2 image hash drifted for {stable_id}")
+
+    if (
+        full_v2_review_manifest.get("schemaVersion") != 1
+        or full_v2_review_manifest.get("task") != "T082"
+        or full_v2_review_manifest.get("corpus") != "SOURCE_DERIVED_FULL_ROSTER_V2"
+        or full_v2_review_manifest.get("state") != "HOLD_FOR_GAME_DIRECTOR_BLIND_REVIEW"
+    ):
+        fail("Full V2 review manifest identity or HOLD state drifted")
+    if (
+        full_v2_review_manifest.get("cameraWidthsCells") != [24, 44, 72]
+        or full_v2_review_manifest.get("pagesPerWidth") != 2
+        or full_v2_review_manifest.get("assets") != 66
+    ):
+        fail("Full V2 review manifest coverage drifted")
+    expected_review_files = {"BLIND_REVIEW_KEY.md"} | {
+        f"blind_{camera}_cells_page_{page}.png"
+        for camera in (24, 44, 72)
+        for page in (1, 2)
+    }
+    review_records = full_v2_review_manifest.get("files", [])
+    review_files = [record.get("file") for record in review_records]
+    if len(review_files) != len(set(review_files)) or set(review_files) != expected_review_files:
+        fail("Full V2 review manifest must cover its six boards and answer key exactly once")
+    for record in review_records:
+        path = FULL_V2_REVIEW_OUTPUT / record["file"]
+        if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != record.get("sha256"):
+            fail(f"Full V2 review artifact hash drifted for {record['file']}")
+        if path.suffix == ".png" and path.read_bytes()[:8] != b"\x89PNG\r\n\x1a\n":
+            fail(f"Full V2 review board is not a valid PNG: {record['file']}")
+    review_key = FULL_V2_REVIEW_KEY.read_text(encoding="utf-8")
+    if review_key.count("| `V") != 66:
+        fail("Full V2 review key must map all 66 V-codes exactly once")
 
     matrix_dir = ROOT / "Docs/Development/M85SuperScout/Matrices"
     for slug, label in (
@@ -931,7 +973,7 @@ def main() -> None:
         f"martiansAudited={martians_audited} martiansArchivalAudits={martians_archival_audits} martiansGaps={martians_gaps} "
         f"contracts={contract_count} provisionalContracts={provisional_contracts} "
         f"packets=66 confusionPairs={len(pairs)} blindV1=FAIL_0_OF_66 pilotV2=PASS_4_OF_4 "
-        f"fullV2=IN_PROGRESS_64_OF_66 state=HOLD"
+        f"fullV2=REVIEW_READY_66_OF_66 boards=6 state=HOLD"
     )
 
 

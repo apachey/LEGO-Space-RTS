@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <rect width="1200" height="800" fill="#ffffff"/>
+  <g stroke="#17191c" stroke-width="18" stroke-linejoin="round">
+    <path d="M270 250 L870 250 L1030 400 L870 550 L270 550 L150 400 Z" fill="#d8dde2"/>
+    <path d="M130 400 L30 400"/>
+    <path d="M30 400 L115 350 L115 450 Z" fill="#17191c"/>
+    <rect x="400" y="300" width="310" height="200" rx="24" fill="#aeb6bf"/>
+    <path d="M520 325 L300 400 L520 475" fill="none"/>
+  </g>
+  <g fill="#f07b22" stroke="#17191c" stroke-width="16">
+    <circle cx="300" cy="235" r="78"/><circle cx="575" cy="235" r="78"/><circle cx="850" cy="235" r="78"/>
+    <circle cx="300" cy="565" r="78"/><circle cx="575" cy="565" r="78"/><circle cx="850" cy="565" r="78"/>
+  </g>
+  <g font-family="Arial, sans-serif" font-size="52" font-weight="700" text-anchor="middle" fill="#17191c">
+    <text x="300" y="252">1</text><text x="575" y="252">2</text><text x="850" y="252">3</text>
+    <text x="300" y="582">4</text><text x="575" y="582">5</text><text x="850" y="582">6</text>
+    <text x="600" y="100" font-size="46">MT-101 TOPOLOGY — EXACTLY SIX WHEELS</text>
+    <text x="130" y="500" font-size="34">DRILL NOSE</text>
+  </g>
+</svg>

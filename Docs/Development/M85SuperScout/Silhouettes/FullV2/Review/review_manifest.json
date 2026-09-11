@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "task": "T082",
+  "corpus": "SOURCE_DERIVED_FULL_ROSTER_V2",
+  "state": "HOLD_FOR_GAME_DIRECTOR_BLIND_REVIEW",
+  "boardSeed": 85083,
+  "cameraWidthsCells": [
+    24,
+    44,
+    72
+  ],
+  "pagesPerWidth": 2,
+  "assets": 66,
+  "files": [
+    {
+      "file": "BLIND_REVIEW_KEY.md",
+      "sha256": "2d44474589c87b45ee51e622244ec3405395064badd38c9f1af44a25d71615dc"
+    },
+    {
+      "file": "blind_24_cells_page_1.png",
+      "sha256": "1c441ea5ba59ca9bb7f3a7b02c2d8e7f17c81b9f9b7998bb5ce1f84e1f827a83"
+    },
+    {
+      "file": "blind_24_cells_page_2.png",
+      "sha256": "2921326e5b5a8b0ba6e6bef0f33e3825076541d5330ec9fdd26b1a58fcc984b1"
+    },
+    {
+      "file": "blind_44_cells_page_1.png",
+      "sha256": "fa4d96d2fa4eb95acbcf27068d94735b76165539da95c9b7f02d39ffde2a5a83"
+    },
+    {
+      "file": "blind_44_cells_page_2.png",
+      "sha256": "bd9f31b50caf0af1e10764c12cb4ca5506a85e702a3fd3218602464efc7de6f3"
+    },
+    {
+      "file": "blind_72_cells_page_1.png",
+      "sha256": "cb60cba8e7a8d477073cfdb1dcb0fcf24cf9f4a19d77632c9bb6761497b70dca"
+    },
+    {
+      "file": "blind_72_cells_page_2.png",
+      "sha256": "815324bcab660ff3084253cfc46f20141f656e4dbc0b3d2165908d9887c0ca01"
+    }
+  ]
+}
