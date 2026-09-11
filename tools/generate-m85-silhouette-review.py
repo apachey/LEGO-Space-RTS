@@ -549,9 +549,15 @@ The game director recognized 0 of 66 assets on the first 24-cell blind sheets on
 
 The retained V1 files are a reproducible failed experiment and diagnostic baseline, not finished art, gameplay authority or an accepted production input.
 
+## Pilot V2 result — passed
+
+On 2026-09-11 the game director identified all four source-derived renders correctly: Alien Mothership, Worker Robot, Chrome Crusher and Drill Craft. This 4/4 result approves the source-derived silhouette method for expansion to a second complete-roster corpus; it does not accept that future corpus or close T082.
+
+`PilotV2/blind_pilot_v2.png` is the self-contained record of the blind board. The SVG is retained only as an editable layout source because some viewers do not resolve its linked PNG files.
+
 ## Active next step
 
-`PilotV2/blind_pilot_v2.png` is the self-contained review board for four source-derived concept renders before any second 66-asset corpus is produced. It preserves source construction instead of composing assets from generic rectangles, circles and wedges. Its separate answer key must remain closed until the game director records all four identifications. The SVG is retained only as an editable layout source because some viewers do not resolve its linked PNG files.
+Produce a new source-derived 66-asset corpus, then run its complete 24/44/72-cell blind review. Every wrong, uncertain or indistinguishable asset must be revised, and new confusion neighbors must extend the register before final T082 acceptance.
 
 ## Rejected V1 review order — historical only
 

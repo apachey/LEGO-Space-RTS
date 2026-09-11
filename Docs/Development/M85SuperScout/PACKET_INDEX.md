@@ -1,6 +1,6 @@
 # M8.5 T082 — Super Scout packet index
 
-This generated index covers every canonical buildable unit and infrastructure entry. Identity, sources, semantic construction, mechanisms and texture needs exist. The first cross-roster primitive-silhouette draft failed game-director blind review at 0/66 and is rejected; a four-asset source-derived Pilot V2 must pass before another complete corpus is produced. Every packet deliberately remains `HOLD`.
+This generated index covers every canonical buildable unit and infrastructure entry. Identity, sources, semantic construction, mechanisms and texture needs exist. The first cross-roster primitive-silhouette draft failed game-director blind review at 0/66 and is rejected. The source-derived Pilot V2 then passed 4/4, approving that method for a new complete corpus. Every packet deliberately remains `HOLD` until the complete 24/44/72-cell review passes.
 
 | Asset | Stable ID | Faction | Kind | Footprint | State |
 |---|---|---|---|---|---|

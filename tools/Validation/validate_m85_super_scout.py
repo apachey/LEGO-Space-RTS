@@ -611,8 +611,8 @@ def main() -> None:
         fail("confusion register schema/task mismatch")
     if confusion.get("status") != "IN_PROGRESS_SOURCE_DERIVED_SILHOUETTE_REWORK":
         fail("confusion register must not imply completed blind review")
-    if confusion.get("blindReviewState") != "FAILED_24_CELLS_0_OF_66_PILOT_V2_REQUIRED":
-        fail("confusion register must preserve the failed V1 gate and Pilot V2 requirement")
+    if confusion.get("blindReviewState") != "PILOT_V2_PASSED_4_OF_4_FULL_CORPUS_REQUIRED":
+        fail("confusion register must preserve the 4/4 Pilot V2 result and complete-corpus requirement")
     pairs = confusion.get("pairs", [])
     if len(pairs) < 30:
         fail(f"expected at least 30 canonical confusion pairs, found {len(pairs)}")
@@ -701,17 +701,31 @@ def main() -> None:
 
     if blind_review_results.get("schemaVersion") != 1 or blind_review_results.get("task") != "T082":
         fail("blind-review result schema/task mismatch")
-    if blind_review_results.get("status") != "REVISION_REQUIRED":
-        fail("failed blind review must retain revision-required state")
+    if blind_review_results.get("status") != "PILOT_PASSED_FULL_CORPUS_REQUIRED":
+        fail("blind-review result must preserve the Pilot V2 pass without implying T082 acceptance")
     attempts = blind_review_results.get("attempts", [])
-    if len(attempts) != 1:
-        fail("expected exactly one recorded blind-review attempt")
-    attempt = attempts[0]
-    if attempt.get("result") != "FAIL" or attempt.get("recognized") != 0 or attempt.get("total") != 66:
+    if len(attempts) != 2:
+        fail("expected the V1 failure and Pilot V2 pass as two recorded blind-review attempts")
+    failed_attempt, pilot_attempt = attempts
+    if failed_attempt.get("result") != "FAIL" or failed_attempt.get("recognized") != 0 or failed_attempt.get("total") != 66:
         fail("V1 blind-review result must remain the game-director-reported 0/66 failure")
+    expected_responses = {
+        "P01": "Alien Mothership",
+        "P02": "Worker Robot",
+        "P03": "Chrome Crusher",
+        "P04": "Drill Craft",
+    }
+    if (
+        pilot_attempt.get("id") != "T082_PILOT_V2_SOURCE_DERIVED_FOUR_ASSET"
+        or pilot_attempt.get("result") != "PASS"
+        or pilot_attempt.get("recognized") != 4
+        or pilot_attempt.get("total") != 4
+        or pilot_attempt.get("responses") != expected_responses
+    ):
+        fail("Pilot V2 blind-review result must remain the game-director-reported 4/4 pass")
     active_pilot = blind_review_results.get("activePilot", {})
-    if active_pilot.get("id") != "T082_PILOT_V2_SOURCE_DERIVED_FOUR_ASSET" or active_pilot.get("state") != "AWAITING_GAME_DIRECTOR_BLIND_REVIEW":
-        fail("source-derived Pilot V2 must remain awaiting game-director review")
+    if active_pilot.get("id") != "T082_PILOT_V2_SOURCE_DERIVED_FOUR_ASSET" or active_pilot.get("state") != "PASSED_GAME_DIRECTOR_BLIND_REVIEW_4_OF_4":
+        fail("source-derived Pilot V2 must retain the game-director 4/4 pass")
     if active_pilot.get("codes") != ["P01", "P02", "P03", "P04"]:
         fail("Pilot V2 review-code order drifted")
     expected_pilot_artifact = PILOT_V2_BLIND_PNG.relative_to(ROOT).as_posix()
@@ -720,8 +734,8 @@ def main() -> None:
 
     if pilot_v2_manifest.get("schemaVersion") != 1 or pilot_v2_manifest.get("task") != "T082":
         fail("Pilot V2 generation manifest schema/task mismatch")
-    if pilot_v2_manifest.get("status") != "AWAITING_GAME_DIRECTOR_BLIND_REVIEW":
-        fail("Pilot V2 must not imply game-director acceptance")
+    if pilot_v2_manifest.get("status") != "GAME_DIRECTOR_BLIND_REVIEW_PASSED_4_OF_4":
+        fail("Pilot V2 manifest must retain the game-director 4/4 pass")
     if pilot_v2_manifest.get("blindArtifact") != PILOT_V2_BLIND_PNG.name:
         fail("Pilot V2 manifest must identify the self-contained blind PNG")
     blind_png_bytes = PILOT_V2_BLIND_PNG.read_bytes()
@@ -824,7 +838,7 @@ def main() -> None:
         f"aliensAudited={aliens_audited} aliensArchivalAudits={aliens_archival_audits} aliensGaps={aliens_gaps} "
         f"martiansAudited={martians_audited} martiansArchivalAudits={martians_archival_audits} martiansGaps={martians_gaps} "
         f"contracts={contract_count} provisionalContracts={provisional_contracts} "
-        f"packets=66 confusionPairs={len(pairs)} blindV1=FAIL_0_OF_66 pilotV2=AWAITING state=HOLD"
+        f"packets=66 confusionPairs={len(pairs)} blindV1=FAIL_0_OF_66 pilotV2=PASS_4_OF_4 state=HOLD"
     )
 
 

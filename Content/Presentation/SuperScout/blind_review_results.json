@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "T082",
-  "status": "REVISION_REQUIRED",
+  "status": "PILOT_PASSED_FULL_CORPUS_REQUIRED",
   "attempts": [
     {
       "id": "T082_BLIND_V1_ICON_PRIMITIVES",
@@ -18,14 +18,29 @@
         "The test therefore measured recognition of abstract vehicle classes rather than recognition of roster assets."
       ],
       "consequence": "Reject every V1 sheet. Do not continue to the 44- or 72-cell V1 review and do not count the V1 confusion audit as game-director evidence."
+    },
+    {
+      "id": "T082_PILOT_V2_SOURCE_DERIVED_FOUR_ASSET",
+      "date": "2026-09-11",
+      "reviewer": "GAME_DIRECTOR",
+      "result": "PASS",
+      "recognized": 4,
+      "total": 4,
+      "responses": {
+        "P01": "Alien Mothership",
+        "P02": "Worker Robot",
+        "P03": "Chrome Crusher",
+        "P04": "Drill Craft"
+      },
+      "consequence": "Approve the source-derived silhouette method for expansion to a new complete 66-asset corpus. This does not accept the complete roster or close T082."
     }
   ],
   "activePilot": {
     "id": "T082_PILOT_V2_SOURCE_DERIVED_FOUR_ASSET",
-    "state": "AWAITING_GAME_DIRECTOR_BLIND_REVIEW",
+    "state": "PASSED_GAME_DIRECTOR_BLIND_REVIEW_4_OF_4",
     "artifact": "Docs/Development/M85SuperScout/Silhouettes/PilotV2/blind_pilot_v2.png",
     "answerKey": "Docs/Development/M85SuperScout/Silhouettes/PilotV2/PILOT_V2_KEY.md",
     "codes": ["P01", "P02", "P03", "P04"],
-    "rule": "Validate recognizable source construction at neutral review size before producing any second complete-roster or 24/44/72-cell corpus."
+    "rule": "The source-derived method may now expand to a second complete-roster corpus. T082 still requires the complete 24/44/72-cell blind review and explicit game-director corpus acceptance."
   }
 }

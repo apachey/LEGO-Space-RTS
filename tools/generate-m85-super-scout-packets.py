@@ -238,7 +238,7 @@ def packet_text(
             "2. Decompose primary masses and negative spaces from orthogonal evidence.\n"
             "3. Resolve LEGO load path, connection grammar and moving mechanism.\n"
             "4. Complete material/texture and state/animation contracts.\n"
-            "5. Replace the rejected 0/66 primitive silhouette with the source-derived method after Pilot V2 review, then run a new 24/44/72-cell blind review."
+            "5. Apply the game-director-approved source-derived method from the 4/4 Pilot V2 result, then run a new complete 24/44/72-cell blind review."
         )
     else:
         packet_state = "FACTION_CONTRACT_DRAFT — HOLD FOR SILHOUETTE/ROSTER/DIRECTOR REVIEW"
@@ -251,7 +251,7 @@ def packet_text(
             "2. Greybox hero masses, openings and structural load path from the semantic map.\n"
             "3. Validate named pivots, contacts and sockets in the real gameplay camera.\n"
             "4. Author only the specified reusable textures after human material review.\n"
-            "5. Replace the rejected 0/66 primitive silhouette with the source-derived method after Pilot V2 review, then run a new 24/44/72-cell blind review."
+            "5. Apply the game-director-approved source-derived method from the 4/4 Pilot V2 result, then run a new complete 24/44/72-cell blind review."
         )
     source_rows = []
     for set_id in asset["sourceSets"]:
@@ -401,7 +401,7 @@ def index_text(assets: list[dict], contract_ids: set[str]) -> str:
         )
     return f"""# M8.5 T082 — Super Scout packet index
 
-This generated index covers every canonical buildable unit and infrastructure entry. Identity, sources, semantic construction, mechanisms and texture needs exist. The first cross-roster primitive-silhouette draft failed game-director blind review at 0/66 and is rejected; a four-asset source-derived Pilot V2 must pass before another complete corpus is produced. Every packet deliberately remains `HOLD`.
+This generated index covers every canonical buildable unit and infrastructure entry. Identity, sources, semantic construction, mechanisms and texture needs exist. The first cross-roster primitive-silhouette draft failed game-director blind review at 0/66 and is rejected. The source-derived Pilot V2 then passed 4/4, approving that method for a new complete corpus. Every packet deliberately remains `HOLD` until the complete 24/44/72-cell review passes.
 
 | Asset | Stable ID | Faction | Kind | Footprint | State |
 |---|---|---|---|---|---|
@@ -436,7 +436,7 @@ def confusion_text(pairs: list[dict], assets: dict[str, dict]) -> str:
         rows.append(f"| {left} | {right} | {pair['risk']} | {differences} | {pair['state']} |")
     return f"""# M8.5 T082 — confusion register
 
-This register combines the canon-derived baseline with hypotheses exposed by the rejected first 24/44/72-cell primitive boards. The game director recognized 0/66 at 24 cells, so these hypotheses are not accepted blind-review evidence and may change after the source-derived Pilot V2.
+This register combines the canon-derived baseline with hypotheses exposed by the rejected first 24/44/72-cell primitive boards. The game director recognized 0/66 at 24 cells, then identified all four source-derived Pilot V2 renders correctly. These hypotheses remain provisional until the new complete source-derived corpus is reviewed.
 
 | Left | Right | Why they may be confused | Required visible differences | State |
 |---|---|---|---|---|

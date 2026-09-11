@@ -4,7 +4,8 @@
 source-page audits and all 66 faction-internal production-contract drafts are
 complete. The first complete primitive-silhouette corpus failed game-director
 blind review at 0/66 and is rejected. A four-asset source-derived Pilot V2 is
-awaiting review before any second full-roster corpus is produced.
+game-director accepted at 4/4, approving that materially different method for
+a second full-roster corpus. The complete-roster review remains open.
 
 ## Completed in the identity-baseline pass
 
@@ -37,10 +38,12 @@ awaiting review before any second full-roster corpus is produced.
   experiment. Their abstraction into generic primitive icons erased the
   source-model construction the test was supposed to measure.
 - Pilot V2 contains four source-derived generated concept renders grounded in
-  instruction pages whose hashes match the audited evidence. It tests whether
-  preserving actual wheels, legs, cockpit/rider masses, tools, carrier rings
-  and negative spaces restores recognition before a second 66-asset effort.
-  Generated imagery remains a review aid, never source evidence.
+  instruction pages whose hashes match the audited evidence. On 2026-09-11 the
+  game director identified Alien Mothership, Worker Robot, Chrome Crusher and
+  Drill Craft correctly from the blind board: 4/4. Preserving actual wheels,
+  legs, cockpit/rider masses, tools, carrier rings and negative spaces therefore
+  becomes the approved method for the second 66-asset effort. Generated imagery
+  remains a review aid, never source evidence.
 - Four labeled faction proportion boards compare front/side/top envelopes; a
   full-roster scale lineup uses one footprint-class rule; and the 31-building
   skyline plus access/network matrix preserves entrances, production exits,
@@ -197,34 +200,33 @@ redistributed.
 
 1. Retain the two explicit Martian archival gaps unless usable evidence appears,
    and escalate any gap that prevents a safe production decision.
-2. Run the four-asset source-derived Pilot V2 blind review without opening its
-   answer key.
-3. If Pilot V2 is recognizable, use that source-derived method for a new
-   complete corpus and then run 24/44/72 review. If it fails, stop after this
-   second materially different approach and escalate the visual-design method.
-4. Revise every wrong, uncertain or indistinguishable asset and extend the
+2. Use the accepted source-derived method for a new complete 66-asset corpus,
+   then run its 24/44/72 review.
+3. Revise every wrong, uncertain or indistinguishable asset and extend the
    44-pair register wherever the accepted review exposes a new neighbor.
-5. Resolve or escalate every consequential unknown, then request the final
+4. Resolve or escalate every consequential unknown, then request the final
    complete-corpus review.
 
 ## Current decision state
 
 The game director resolved the 1277 source/canon conflict by approving two small
 mirrored ice saws in place of the previously canonical single oversized drill.
-No packet is approved for T083/T085 production yet.
+The game director also passed the four-asset Pilot V2 blind review at 4/4,
+approving the source-derived silhouette method for full-roster expansion. No
+packet is approved for T083/T085 production yet.
 
 ## Verification state
 
-The recorded 0/66 V1 rejection and source-derived four-asset Pilot V2 passed
-`./tools/verify.sh --full`
-with zero blocking failures at
-`Artifacts/Verification/20260911T074752Z-full-summary.txt`. All 317 tests, the
+The recorded 0/66 V1 rejection and game-director 4/4 Pilot V2 acceptance passed
+`./tools/verify.sh --full` with zero blocking failures at
+`Artifacts/Verification/20260911T081346Z-full-summary.txt`. All 317 tests, the
 66-asset Super Scout corpus, 39 source records, 35 primary sources, four
 archival sources, 66 non-provisional production contracts, 19 generated
-matrices, 18 rejected V1 artifacts, explicit blind-review result, four hashed
-Pilot V2 images, all 44 confusion hypotheses, retained presentation/network
-gates and a fresh macOS export passed. This technical PASS preserves rather
-than overrules the game director's visual FAIL.
+matrices, 18 rejected V1 artifacts, explicit blind-review results, four hashed
+Pilot V2 images and exact 4/4 responses, all 44 confusion hypotheses, retained
+presentation/network gates and a fresh macOS export passed. This technical PASS
+preserves both the rejected V1 result and accepted Pilot V2 result without
+implying complete-roster acceptance.
 Stress60 remains the expected 2/60 `BLOCKING_LATER` M9 diagnostic.
 
 Every routine Godot smoke and the exported app emitted the explicit immediate

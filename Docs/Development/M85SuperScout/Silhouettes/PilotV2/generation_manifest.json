@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "task": "T082",
   "pilot": "SOURCE_DERIVED_FOUR_ASSET_V2",
-  "status": "AWAITING_GAME_DIRECTOR_BLIND_REVIEW",
+  "status": "GAME_DIRECTOR_BLIND_REVIEW_PASSED_4_OF_4",
   "generationTool": "built-in image generation",
   "useCase": "sketch-to-render",
   "blindArtifact": "blind_pilot_v2.png",
