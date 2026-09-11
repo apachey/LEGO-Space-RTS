@@ -37,6 +37,8 @@ SILHOUETTE_OUTPUT = ROOT / "Docs/Development/M85SuperScout/Silhouettes"
 PILOT_V2_OUTPUT = SILHOUETTE_OUTPUT / "PilotV2"
 PILOT_V2_MANIFEST = PILOT_V2_OUTPUT / "generation_manifest.json"
 PILOT_V2_BLIND_PNG = PILOT_V2_OUTPUT / "blind_pilot_v2.png"
+FULL_V2_OUTPUT = SILHOUETTE_OUTPUT / "FullV2"
+FULL_V2_MANIFEST = FULL_V2_OUTPUT / "generation_manifest.json"
 
 CLASSIFICATIONS = {
     "OFFICIAL_DIRECT": "OFFICIAL-DIRECT",
@@ -383,6 +385,7 @@ def main() -> None:
     silhouette_concepts = json.loads(SILHOUETTE_CONCEPTS.read_text(encoding="utf-8"))
     blind_review_results = json.loads(BLIND_REVIEW_RESULTS.read_text(encoding="utf-8"))
     pilot_v2_manifest = json.loads(PILOT_V2_MANIFEST.read_text(encoding="utf-8"))
+    full_v2_manifest = json.loads(FULL_V2_MANIFEST.read_text(encoding="utf-8"))
     content = json.loads(CONTENT.read_text(encoding="utf-8"))
     packet_notice = validate_source_analysis_policy(source_analysis_policy)
     if manifest.get("schemaVersion") != 1 or manifest.get("task") != "T082":
@@ -775,6 +778,45 @@ def main() -> None:
     except ET.ParseError as error:
         fail(f"invalid Pilot V2 SVG: {error}")
 
+    if full_v2_manifest.get("schemaVersion") != 1 or full_v2_manifest.get("task") != "T082":
+        fail("Full V2 generation manifest schema/task mismatch")
+    if full_v2_manifest.get("corpus") != "SOURCE_DERIVED_FULL_ROSTER_V2":
+        fail("Full V2 manifest corpus identity drifted")
+    if full_v2_manifest.get("status") != "IN_PROGRESS_ROCK_RAIDERS_16_OF_16_COMPLETE_TOTAL_16_OF_66":
+        fail("Full V2 manifest must retain its in-progress 16/66 checkpoint state")
+    full_progress = full_v2_manifest.get("progress", {})
+    if full_progress.get("complete") != 16 or full_progress.get("required") != 66:
+        fail("Full V2 manifest progress must remain 16 of 66 at this checkpoint")
+    if full_progress.get("factions") != {
+        "RockRaiders": "16_OF_16_COMPLETE",
+        "Astronauts": "0_OF_21",
+        "Aliens": "0_OF_12",
+        "Martians": "0_OF_17",
+    }:
+        fail("Full V2 faction progress drifted")
+    full_assets = full_v2_manifest.get("assets", [])
+    expected_raider_ids = {asset["stableId"] for asset in assets if asset["faction"] == "RockRaiders"}
+    full_ids = [record.get("stableId") for record in full_assets]
+    if len(full_assets) != 16 or len(set(full_ids)) != 16 or set(full_ids) != expected_raider_ids:
+        fail("Full V2 checkpoint must cover every Rock Raiders asset exactly once")
+    assets_by_id = {asset["stableId"]: asset for asset in assets}
+    for record in full_assets:
+        stable_id = record["stableId"]
+        if record.get("sourceSets") != assets_by_id[stable_id]["sourceSets"]:
+            fail(f"Full V2 source-set lineage drifted for {stable_id}")
+        require_nonempty(record, "specificPrompt", f"Full V2 {stable_id}")
+        output = record.get("output", "")
+        output_path = FULL_V2_OUTPUT / output
+        if not output.startswith("Renders/") or output_path.parent != FULL_V2_OUTPUT / "Renders":
+            fail(f"Full V2 output path is invalid for {stable_id}")
+        if not output_path.is_file():
+            fail(f"missing Full V2 image for {stable_id}")
+        output_bytes = output_path.read_bytes()
+        if output_bytes[:8] != b"\x89PNG\r\n\x1a\n" or len(output_bytes) < 24:
+            fail(f"Full V2 output is not a valid PNG for {stable_id}")
+        if hashlib.sha256(output_bytes).hexdigest() != record.get("outputSha256"):
+            fail(f"Full V2 image hash drifted for {stable_id}")
+
     matrix_dir = ROOT / "Docs/Development/M85SuperScout/Matrices"
     for slug, label in (
         ("rock_raiders", "Rock Raiders"),
@@ -838,7 +880,8 @@ def main() -> None:
         f"aliensAudited={aliens_audited} aliensArchivalAudits={aliens_archival_audits} aliensGaps={aliens_gaps} "
         f"martiansAudited={martians_audited} martiansArchivalAudits={martians_archival_audits} martiansGaps={martians_gaps} "
         f"contracts={contract_count} provisionalContracts={provisional_contracts} "
-        f"packets=66 confusionPairs={len(pairs)} blindV1=FAIL_0_OF_66 pilotV2=PASS_4_OF_4 state=HOLD"
+        f"packets=66 confusionPairs={len(pairs)} blindV1=FAIL_0_OF_66 pilotV2=PASS_4_OF_4 "
+        f"fullV2=IN_PROGRESS_16_OF_66 state=HOLD"
     )
 
 

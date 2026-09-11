@@ -706,14 +706,20 @@ live; the current schema-9 copy/paste retains the complete experiment.
   director identified Alien Mothership, Worker Robot, Chrome Crusher and Drill
   Craft correctly at 4/4, approving the method for full-roster and camera-scale
   expansion without accepting the future complete corpus.
+- The Full V2 expansion now has a durable 16/16 Rock Raiders checkpoint: eight
+  units and eight infrastructure concepts use the accepted source-derived
+  matte-black render method, and every output is recorded by stable ID and
+  SHA-256 hash. The remaining 50 assets are not yet rendered, so this does not
+  change T082's `BLOCKING_NOW` state or constitute faction approval.
 - `tools/Validation/validate_m85_super_scout.py` compares the corpus with the
   authoritative runtime roster, checks counts, IDs, classifications, source
   coverage and the three-to-seven silhouette-anchor contract, and rejects stale
   generated packets.
 - T082 remains `BLOCKING_NOW` for T083/T085. All faction source-page audits,
   all 66 production-contract drafts are complete; the first silhouette approach
-  failed 0/66 and Pilot V2 passed 4/4. A new complete source-derived 66-asset
-  corpus, its 24/44/72 review and explicit game-director corpus acceptance remain
+  failed 0/66, Pilot V2 passed 4/4 and the new full corpus currently contains a
+  hashed 16/16 Rock Raiders slice. The remaining 50 source-derived concepts,
+  complete 24/44/72 review and explicit game-director corpus acceptance remain
   required. Current detail is tracked in `Docs/Development/M85_SUPER_SCOUT_PROGRESS.md`.
 
 Routine Godot verification is now non-intrusive on macOS: every gameplay smoke

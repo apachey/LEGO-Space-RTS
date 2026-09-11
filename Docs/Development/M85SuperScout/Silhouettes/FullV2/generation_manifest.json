@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "task": "T082",
+  "corpus": "SOURCE_DERIVED_FULL_ROSTER_V2",
+  "status": "IN_PROGRESS_ROCK_RAIDERS_16_OF_16_COMPLETE_TOTAL_16_OF_66",
+  "generationTool": "built-in image generation",
+  "useCase": "source-derived silhouette concept render",
+  "authority": "Generated concept images are review aids only. Canon and the audited official or archival sources remain authoritative; these images do not approve production models or complete T082.",
+  "sharedPromptConstraints": [
+    "Render one LEGO-like brick-built subject in matte black so recognition depends on geometry rather than faction colour.",
+    "Preserve the audited source construction, locomotion/contact pattern, hero mechanism and identity-bearing negative space.",
+    "Use a clean white studio background, soft neutral shadow, crisp three-quarter isometric view and a fully visible subject.",
+    "Exclude labels, logos, UI, scenery, unrelated models and decorative shapes unsupported by the source-derived contract."
+  ],
+  "progress": {
+    "complete": 16,
+    "required": 66,
+    "factions": {
+      "RockRaiders": "16_OF_16_COMPLETE",
+      "Astronauts": "0_OF_21",
+      "Aliens": "0_OF_12",
+      "Martians": "0_OF_17"
+    }
+  },
+  "assets": [
+    {"stableId":"unit.rock_raiders.crew","sourceSets":["4930"],"specificPrompt":"Compact helmeted worker with backpack/work-light mass and one oversized portable mining or repair tool; reject generic armed infantry.","output":"Renders/unit_rock_raiders_crew.png","outputSha256":"d929c8e7a1b101536e3796d5c710149f14ed7d06500a0a299e0ac770cf4e2123"},
+    {"stableId":"unit.rock_raiders.hover_scout","sourceSets":["4910"],"specificPrompt":"Low open hover deck, exposed operator, forward survey scanner and small rear tool rack; reject a closed speeder or wheeled bike.","output":"Renders/unit_rock_raiders_hover_scout.png","outputSha256":"9799080ead78668e4a1f19415884820643325375d7251c1cb4b636459a0b86d4"},
+    {"stableId":"unit.rock_raiders.drill_craft","sourceSets":["1277"],"specificPrompt":"Low open sled, exposed operator, paired raised side pods and two separate small mirrored forward ice saws; reject wheels, a closed shell or one central drill.","output":"Renders/unit_rock_raiders_drill_craft.png","outputSha256":"66f0b703a00fa398680a7a7a854e81f9e033d32203d2cefbdb5d454d0eaad9fd"},
+    {"stableId":"unit.rock_raiders.rapid_rider","sourceSets":["4920"],"specificPrompt":"Two parallel flotation hulls, open central passenger/cargo gap and paired rear propulsion units; reject a single sealed boat hull.","output":"Renders/unit_rock_raiders_rapid_rider.png","outputSha256":"f5bd64b1ee93bcce016a9a763ba020bfa48372f995ad3c31cd36555323fa0d21"},
+    {"stableId":"unit.rock_raiders.loader_dozer","sourceSets":["4950"],"specificPrompt":"Squat four-wheel industrial loader, broad articulated full-width scoop and rear exposed operator frame; reject tracks or an enclosed bulldozer cab.","output":"Renders/unit_rock_raiders_loader_dozer.png","outputSha256":"503eb6ff1eb8af0fb95ff76859cab4069515bb6a35fca35e03fbc24870ad8dce"},
+    {"stableId":"unit.rock_raiders.granite_grinder","sourceSets":["4940"],"specificPrompt":"Tall bipedal planted legs, long forward central drill boom and high open operator cage; reject a four-legged robot or wheeled drill tank.","output":"Renders/unit_rock_raiders_granite_grinder.png","outputSha256":"3c1cdcc1a5761d7001c25f8d79e73e4baec8ed407108d4bdf4cff5c401333e19"},
+    {"stableId":"unit.rock_raiders.chrome_crusher","sourceSets":["4970"],"specificPrompt":"Long open chassis, four huge wheels, forward cage, massive long drill, exposed hoses and high overhead work-light beam; reject a generic enclosed tank.","output":"Renders/unit_rock_raiders_chrome_crusher.png","outputSha256":"8013b4d76f177504c273d5bc5c41c386b793a1f0fc0f1639a627d11fe3586f7b"},
+    {"stableId":"unit.rock_raiders.tunnel_transport","sourceSets":["4980"],"specificPrompt":"Broad airborne load-bearing beam between two oversized propeller pods and a visibly open underslung cargo cradle; reject a grounded gantry or enclosed aircraft hull.","output":"Renders/unit_rock_raiders_tunnel_transport.png","outputSha256":"48cdc552b458c4b1ac4689f2bfa7b25ea85413a95230da1637e12a4470d40f4e"},
+    {"stableId":"building.rock_raiders.hq","sourceSets":["4990"],"specificPrompt":"Uneven open worksite skyline organized around a command-and-light tower, crane and material-handling bay; reject one sealed headquarters block.","output":"Renders/building_rock_raiders_hq.png","outputSha256":"d1977c1ef9947b8f8ba3b5d8f41bf83880577493ad528bab287a8191512405c1"},
+    {"stableId":"building.rock_raiders.ore_processing_plant","sourceSets":["4990"],"specificPrompt":"Wide receiving hopper, stepped exposed crusher machinery and outbound sorting conveyor as one readable material path; reject a generic factory box.","output":"Renders/building_rock_raiders_ore_processing_plant.png","outputSha256":"f1e7857909bb9b689c70e5038b4e69eb9a0c93584543c7eaf1bb38107a142aa8"},
+    {"stableId":"building.rock_raiders.power_station","sourceSets":["4990"],"specificPrompt":"Compact exposed generator block with one guarded flywheel, exactly two vertical cooling stacks and crew-scale service access; reject a command tower or glowing reactor.","output":"Renders/building_rock_raiders_power_station.png","outputSha256":"8774c4d0245aa1d54fdcba57e8295b63735cbcf481805c02cbb146693d9af9e9"},
+    {"stableId":"building.rock_raiders.vehicle_service_bay","sourceSets":["4990"],"specificPrompt":"Open drive-through vehicle-width lane framed by two braced sides, an overhead travelling gantry, two repair arms and exterior spare-part racks; keep both exits clear.","output":"Renders/building_rock_raiders_vehicle_service_bay.png","outputSha256":"2ddb582ca367dc31a59c1513f3587bba2411cd64959fa0a8a6484bd79acf48b4"},
+    {"stableId":"building.rock_raiders.engineering_workshop","sourceSets":["4940","4970","4990"],"specificPrompt":"Enormous unobstructed production exit, asymmetric heavy gantry, tall side lift, parked tool rig and staged wheel, leg, drill and rotor modules; reject a finished vehicle or blocked garage.","output":"Renders/building_rock_raiders_engineering_workshop.png","outputSha256":"7eb37751cb0efd9168176cf05a12213622159e4f06555cf1704c9de39e5ca938"},
+    {"stableId":"building.rock_raiders.crystal_vault","sourceSets":["4970","4990"],"specificPrompt":"One large faceted crystal physically clamped in an open cage, a thick segmented blast frame and a deliberately small guarded transfer hatch; reject a generator or giant doorway.","output":"Renders/building_rock_raiders_crystal_vault.png","outputSha256":"22f5c608d46d1cb5d877417f90772297ffcb9234ec8f747f12cda17577246119"},
+    {"stableId":"building.rock_raiders.crusher_barrier","sourceSets":["4950"],"specificPrompt":"Low ground-hugging barrier with one broad loader-derived crusher face, a thick crossbeam, wide hydraulic braces and planted feet; reject a turret, bunker or vehicle.","output":"Renders/building_rock_raiders_crusher_barrier.png","outputSha256":"ff68b87014977cd3c72967dfc964473a67d148204d4d8202042558e24aa3c0a7"},
+    {"stableId":"building.rock_raiders.cutter_mast","sourceSets":["4910","4990"],"specificPrompt":"Thin mast on a tripod service base with a pivoting horizontal head carrying one compact cutter disc, a separate scanner dish and a work lamp; reject guns or missiles.","output":"Renders/building_rock_raiders_cutter_mast.png","outputSha256":"b655e0c6d087a1ef442109e8f22a734beb8691a06bf40c27e178478373e48532"}
+  ]
+}

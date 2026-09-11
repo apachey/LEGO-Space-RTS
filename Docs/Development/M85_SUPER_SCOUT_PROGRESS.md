@@ -44,6 +44,11 @@ a second full-roster corpus. The complete-roster review remains open.
   legs, cockpit/rider masses, tools, carrier rings and negative spaces therefore
   becomes the approved method for the second 66-asset effort. Generated imagery
   remains a review aid, never source evidence.
+- The approved method has now been expanded to the complete 16-asset Rock
+  Raiders faction slice: eight units and eight infrastructure silhouettes.
+  Each output is stored with its stable ID, source-set lineage, prompt contract
+  and SHA-256 hash in the in-progress Full V2 manifest. This is a durable
+  generation checkpoint, not a faction approval or complete-roster review.
 - Four labeled faction proportion boards compare front/side/top envelopes; a
   full-roster scale lineup uses one footprint-class rule; and the 31-building
   skyline plus access/network matrix preserves entrances, production exits,
@@ -200,8 +205,9 @@ redistributed.
 
 1. Retain the two explicit Martian archival gaps unless usable evidence appears,
    and escalate any gap that prevents a safe production decision.
-2. Use the accepted source-derived method for a new complete 66-asset corpus,
-   then run its 24/44/72 review.
+2. Continue the accepted source-derived method from the completed 16/16 Rock
+   Raiders slice through the remaining 50 assets, then run the complete
+   24/44/72 review.
 3. Revise every wrong, uncertain or indistinguishable asset and extend the
    44-pair register wherever the accepted review exposes a new neighbor.
 4. Resolve or escalate every consequential unknown, then request the final
