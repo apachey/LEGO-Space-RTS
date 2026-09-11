@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "task": "T082",
   "corpus": "SOURCE_DERIVED_FULL_ROSTER_V2",
-  "status": "IN_PROGRESS_ROCK_RAIDERS_16_OF_16_ASTRONAUTS_19_OF_21_ALIENS_12_OF_12_TOTAL_47_OF_66",
+  "status": "IN_PROGRESS_ROCK_RAIDERS_16_OF_16_ASTRONAUTS_19_OF_21_ALIENS_12_OF_12_MARTIANS_17_OF_17_TOTAL_64_OF_66",
   "generationTool": "built-in image generation",
   "useCase": "source-derived silhouette concept render",
   "authority": "Generated concept images are review aids only. Canon and the audited official or archival sources remain authoritative; these images do not approve production models or complete T082.",
@@ -13,13 +13,13 @@
     "Exclude labels, logos, UI, scenery, unrelated models and decorative shapes unsupported by the source-derived contract."
   ],
   "progress": {
-    "complete": 47,
+    "complete": 64,
     "required": 66,
     "factions": {
       "RockRaiders": "16_OF_16_COMPLETE",
       "Astronauts": "19_OF_21",
       "Aliens": "12_OF_12_COMPLETE",
-      "Martians": "0_OF_17"
+      "Martians": "17_OF_17_COMPLETE"
     }
   },
   "assets": [
@@ -69,6 +69,23 @@
     {"stableId":"building.ali.etx_defense_node","sourceSets":["5617","7692","7697"],"specificPrompt":"Low landed swept attack-craft shell locked into a four-contact cradle with one clearly hinged central hardpoint raised for air interception and a visible charge channel.","output":"Renders/building_aliens_etx_defense_node.png","outputSha256":"7e1be019ba4c9e5b445050aa1765d35c577dc98a7ecea62c7411f99fced92e7c"},
     {"stableId":"building.ali.power_coupler","sourceSets":["7691","7646"],"specificPrompt":"Small triangular three-foot energy node with exactly two opposed mechanical arcs focusing on one extremely thin central conductor; reject a crystal cage, portal or turret.","output":"Renders/building_aliens_power_coupler.png","outputSha256":"77ce0a7e49684fd6300b7597903002720f9e26bba0cbc02dcf4478311d6d6531"},
     {"stableId":"building.ali.reconfiguration_dock","sourceSets":["7646","7693","7691"],"specificPrompt":"Exactly two tall planted folding shell towers suspending one empty transformation cradle on visible hinge arcs above an enormous unobstructed exit lane.","output":"Renders/building_aliens_reconfiguration_dock.png","outputSha256":"6c2f733648e4a699c867d064df21b20934195b60ec9935ee4fbea08e8c5501bf"},
-    {"stableId":"building.ali.resonance_core","sourceSets":["7691","7646"],"specificPrompt":"Compact planted concentric-ring mechanism dominated by one huge upright faceted crystal mass visibly restrained by exactly four countable articulated radial claws.","output":"Renders/building_aliens_resonance_core.png","outputSha256":"b65151800ab401c959ca203ce11ce686cd0912ddbf8c92e0a77144fa2539ea63"}
+    {"stableId":"building.ali.resonance_core","sourceSets":["7691","7646"],"specificPrompt":"Compact planted concentric-ring mechanism dominated by one huge upright faceted crystal mass visibly restrained by exactly four countable articulated radial claws.","output":"Renders/building_aliens_resonance_core.png","outputSha256":"b65151800ab401c959ca203ce11ce686cd0912ddbf8c92e0a77144fa2539ea63"},
+    {"stableId":"unit.martians.worker_robot","sourceSets":["7302"],"specificPrompt":"Tiny open biped with a shallow operator wedge, exactly two articulated legs, exactly two broad feet and one subordinate side repair claw.","output":"Renders/unit_martians_worker_robot.png","outputSha256":"c1dda9ce98e2c8ee4e89de6b539a43809b505ca16f12a5848695df2af161ad76"},
+    {"stableId":"unit.martians.double_hover","sourceSets":["7300"],"specificPrompt":"Tiny open scout with two dominant long parallel forward runners, exposed rider and deliberately unlike round-versus-block rear equipment masses.","output":"Renders/unit_martians_double_hover.png","outputSha256":"764b734e3734b5b143e89487343d95d4fc16f2c016ba292c187c28bf2110df14"},
+    {"stableId":"unit.martians.jet_scooter","sourceSets":["7303"],"specificPrompt":"Long narrow open sled with paired exposed side tubes, clustered short forward nozzles, exposed rider and small rounded rear equipment.","output":"Renders/unit_martians_jet_scooter.png","outputSha256":"301cf65037a2b5f0b0be834e39144a900500fec4e4bb38ad1c65acb0ae409421"},
+    {"stableId":"unit.martians.aero_skiff","sourceSets":["1195","7317"],"specificPrompt":"Light asymmetric open flying platform with one rider, one empty passenger or cargo perch and an exposed underslung 7317-derived pressure-lift mechanism; no exact 1195 geometry is claimed.","output":"Renders/unit_martians_aero_skiff.png","outputSha256":"b413ce669c1e99584f72d01cfdc8f3554cf90f53b162e7aa76383ebbc8ce9046"},
+    {"stableId":"unit.martians.red_planet_cruiser","sourceSets":["7311"],"specificPrompt":"Low broad irregular offset cruiser with exposed operator, long lateral probes and the source docking pedestal permanently integrated beneath it as one connected unit.","output":"Renders/unit_martians_red_planet_cruiser.png","outputSha256":"3879b94c3a2dbddefe9bdf723eaa48e69a03540cd36a3256bd6f62759ee55923"},
+    {"stableId":"unit.martians.recon_mech_rp","sourceSets":["7314"],"specificPrompt":"Tall two-leg Recon-Mech with broad aircraft-like upper craft, tall rear pressure tank, long drill/lance arm, large claw arm and visible hoses.","output":"Renders/unit_martians_recon_mech_rp.png","outputSha256":"c3455260e9d8148660bdbd3f9f2cb2f1bd3d897370a16cfacfc1f1196bb5f0ef"},
+    {"stableId":"unit.martians.red_planet_protector","sourceSets":["7313"],"specificPrompt":"One connected modular tall biped with broad wedge upper craft, exactly two blocky legs and feet, visible waist dock and two long detachable-source emitter arms.","output":"Renders/unit_martians_red_planet_protector.png","outputSha256":"d3b4d58b27701995e19ea62547a88c738716f42ad93485b0f292a942fc437fb9"},
+    {"stableId":"unit.martians.excavation_searcher","sourceSets":["7316"],"specificPrompt":"Gigantic non-humanoid excavator with four planted articulated legs, long forward drill, separate forward claws, tall crane claw, open processor and docked underslung sled.","output":"Renders/unit_martians_excavation_searcher.png","outputSha256":"74f3ef9cddee22741a8d44962ed3aa2d44025a6180df4be0df18818095498c6a"},
+    {"stableId":"building.mar.aero_tube_hangar","sourceSets":["7317"],"specificPrompt":"Sprawling elevated open logistics station around one huge hollow ribbed Tube route, circular coupler, irregular supports, pump and docking towers, crane and empty handling lanes.","output":"Renders/building_martians_aero_tube_hangar.png","outputSha256":"354174b3762879116e761bb4d3ee81e806954ed97370d6728cfe4d69b88abf25"},
+    {"stableId":"building.mar.settlement_station","sourceSets":["7317"],"specificPrompt":"Raised open control deck on exactly four splayed legs above one central Tube junction with exactly three open Tube sockets, local worker platform and storage rack.","output":"Renders/building_martians_settlement_station.png","outputSha256":"bbf04175c69479a850005f832290914397bc576c4419483540bff906a21ad709"},
+    {"stableId":"building.mar.mechanical_workshop","sourceSets":["7313","7314","7316"],"specificPrompt":"Two unequal workshop towers frame an enormous empty walker lane with three different overhead manipulators and exterior racks of legs, feet, tank and hover modules.","output":"Renders/building_martians_mechanical_workshop.png","outputSha256":"f51f84f15fd35bee5b526ff376494689c1b5e844c2dad3c18187ae2ba4d7c9b6"},
+    {"stableId":"building.mar.pressure_generator","sourceSets":["7317"],"specificPrompt":"Compact planted generator dominated by exactly three stacked flattened pressure chambers, exposed lower valves and flywheel, and one short directly coupled hollow Tube.","output":"Renders/building_martians_pressure_generator.png","outputSha256":"a82a5c964d85bcd34b1d5f1a2a05fd06ba90f5673689f65f0e522cf6146bb428"},
+    {"stableId":"building.mar.routing_laboratory","sourceSets":["7317"],"specificPrompt":"Four-way physical Tube switch with exactly four open throats around a rotating drum, two route arms and a tall eccentric open control platform.","output":"Renders/building_martians_routing_laboratory.png","outputSha256":"478749bdd069b5a6255622d411043e59892b8362884c52448fc179298de104a3"},
+    {"stableId":"building.mar.excavation_plant","sourceSets":["7316"],"specificPrompt":"Planted asymmetric processor with a huge crane-claw intake, raised open hopper, visible roller path and one outbound Tube or hypersled handoff.","output":"Renders/building_martians_excavation_plant.png","outputSha256":"82f1c5e1bd846252b105bb9d7c4af1a3915aa723698ac5b247b932c76a77b5f0"},
+    {"stableId":"building.mar.deflector_arm","sourceSets":["7313","7316"],"specificPrompt":"Exactly one enormous two-stage articulated arm ending in a broad pushing paddle on a compact radial base with exactly four stabilizer feet.","output":"Renders/building_martians_deflector_arm.png","outputSha256":"977c4fd095c31662a73d8c690973c4da5ef7472c597a9b2235a9a4ff11d2066c"},
+    {"stableId":"building.mar.aero_guard_tower","sourceSets":["7314","7317"],"specificPrompt":"Very tall open mast on a compact Tube-side base with exactly two unequal articulated tracking arms derived from Recon-Mech tools.","output":"Renders/building_martians_aero_guard_tower.png","outputSha256":"dc6647b438dd240875e6ceb11dfd02a03d966cea5f68a7fb0bfaaf0e0e2cedb7"},
+    {"stableId":"building.mar.aero_tube_link","sourceSets":["7317","3750"],"specificPrompt":"One long low continuous hollow ribbed Tube span between exactly two mechanical end couplers, with three supports and a visible internal sled corridor; no exact 3750 geometry is claimed.","output":"Renders/building_martians_aero_tube_link.png","outputSha256":"f54b002f700e7f69817c89aacdf30055dafd6d7d8974f636baae984ff6e4d5df"}
   ]
 }

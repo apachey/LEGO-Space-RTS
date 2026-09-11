@@ -706,10 +706,10 @@ live; the current schema-9 copy/paste retains the complete experiment.
   director identified Alien Mothership, Worker Robot, Chrome Crusher and Drill
   Craft correctly at 4/4, approving the method for full-roster and camera-scale
   expansion without accepting the future complete corpus.
-- The Full V2 expansion now has a durable 47/66 checkpoint: all 16 Rock Raiders,
-  nineteen Astronaut concepts and all twelve Alien concepts use the accepted
-  source-derived matte-black render method, and every output is recorded by
-  stable ID and SHA-256 hash.
+- The Full V2 expansion now has a durable 64/66 checkpoint: all 16 Rock Raiders,
+  nineteen Astronaut concepts, all twelve Alien concepts and all seventeen
+  Martian concepts use the accepted source-derived matte-black render method,
+  and every output is recorded by stable ID and SHA-256 hash.
   A closer official 7310 reference resolved Mono Jet's single asymmetric engine;
   Mobile Mining Platform discloses its 7645/7648/7693 modular construction, and
   MX-81 keeps its mission sections docked to one aircraft. All eight Astronaut
@@ -721,7 +721,12 @@ live; the current schema-9 copy/paste retains the complete experiment.
   selectable carrier whose front, side-bay and jetpack-drone modules remain
   attached while unfolding; it is not split into several units. Servitor,
   Razor Skimmer and all six Alien infrastructure silhouettes disclose their
-  exact official donor sets. The remaining 19 assets are not yet rendered, so
+  exact official donor sets. The Martian set preserves the corrected two-leg
+  Worker Robot, both modular two-leg combat machines, the four-leg Excavation
+  Searcher and the 7317 pneumatic Tube grammar. Aero Skiff claims no exact 1195
+  geometry, and Aero Tube Link claims no exact 3750 geometry; both remain
+  explicitly bounded by those archival gaps and use verified 7317 construction.
+  The remaining two Astronaut assets are not yet rendered, so
   this does not change T082's `BLOCKING_NOW` state or constitute faction approval.
 - The official 7301 instruction page also exposed a stale audit-reconciliation
   error: Rover is a four-wheel open platform, not the two-wheel bike described
@@ -736,7 +741,7 @@ live; the current schema-9 copy/paste retains the complete experiment.
 - T082 remains `BLOCKING_NOW` for T083/T085. All faction source-page audits,
   all 66 production-contract drafts are complete; the first silhouette approach
   failed 0/66, Pilot V2 passed 4/4 and the new full corpus currently contains a
-  hashed 47/66 checkpoint. The remaining 19 source-derived concepts,
+  hashed 64/66 checkpoint. The remaining MT-101 and MT-201 source-derived concepts,
   complete 24/44/72 review and explicit game-director corpus acceptance remain
   required. Current detail is tracked in `Docs/Development/M85_SUPER_SCOUT_PROGRESS.md`.
 
@@ -762,9 +767,9 @@ step and must be announced when new visual evidence is actually required.
 
 ## Verification state
 
-The current 47/66 Full V2 checkpoint passed `./tools/verify.sh` with zero
+The current 64/66 Full V2 checkpoint passed `./tools/verify.sh` with zero
 blocking or diagnostic failures at
-`Artifacts/Verification/20260911T224152Z-fast-summary.txt`: all 317 tests and
+`Artifacts/Verification/20260911T230853Z-fast-summary.txt`: all 317 tests and
 every fast verification stage passed, including the T082 integrity validator.
 
 The previous 24/66 Full V2 checkpoint, recorded 0/66 T082 V1 rejection and

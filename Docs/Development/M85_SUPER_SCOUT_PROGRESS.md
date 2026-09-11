@@ -67,8 +67,17 @@ a second full-roster corpus. The complete-roster review remains open.
   Servitor and Razor Skimmer disclose their cross-set 5617/7646/7691 and
   7645/7692/7697 construction. The six new buildings also preserve the named
   donor split: grounded carrier segment, open bay, landed attack craft, opposed
-  energy arcs, transforming shell towers and restrained crystal ring. The total
-  Full V2 checkpoint is 47/66.
+  energy arcs, transforming shell towers and restrained crystal ring. That stage
+  brought the Full V2 checkpoint to 47/66.
+- All seventeen Martian concepts are complete: eight units and nine buildings.
+  The set preserves Worker Robot as a tiny open biped, keeps Protector and
+  Recon-Mech as different modular two-leg machines, gives Excavation Searcher
+  four planted legs, and carries 7317's open pneumatic Tube system through the
+  faction infrastructure. Aero Skiff uses verified 7317 pressure and docking
+  grammar without claiming unavailable 1195 geometry; Aero Tube Link likewise
+  uses 7317 without inventing exact 3750 geometry. Every composite building's
+  official donor sets are recorded in the generation manifest. The total Full
+  V2 checkpoint is now 64/66.
 - The official 7301 page proved that Rover has four equal wheel pods. Its older
   two-wheel identity/contract wording predated the page-level audit and was not
   reconciled afterward. The baseline, source ledger, production contract,
@@ -231,8 +240,8 @@ redistributed.
 
 1. Retain the two explicit Martian archival gaps unless usable evidence appears,
    and escalate any gap that prevents a safe production decision.
-2. Continue the accepted source-derived method from the current 47/66
-   checkpoint through the remaining 19 assets, then run the complete
+2. Resolve MT-101 and MT-201 with a materially different source-composition
+   method from the current 64/66 checkpoint, then run the complete
    24/44/72 review.
 3. Revise every wrong, uncertain or indistinguishable asset and extend the
    44-pair register wherever the accepted review exposes a new neighbor.
@@ -249,9 +258,9 @@ packet is approved for T083/T085 production yet.
 
 ## Verification state
 
-The current 47/66 Full V2 checkpoint passed `./tools/verify.sh` with zero
+The current 64/66 Full V2 checkpoint passed `./tools/verify.sh` with zero
 blocking or diagnostic failures at
-`Artifacts/Verification/20260911T224152Z-fast-summary.txt`; all 317 tests and
+`Artifacts/Verification/20260911T230853Z-fast-summary.txt`; all 317 tests and
 the T082 identity-baseline integrity stage passed.
 
 The previous 24/66 Full V2 checkpoint, recorded 0/66 V1 rejection and

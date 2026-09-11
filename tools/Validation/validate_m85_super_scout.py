@@ -796,16 +796,16 @@ def main() -> None:
         fail("Full V2 generation manifest schema/task mismatch")
     if full_v2_manifest.get("corpus") != "SOURCE_DERIVED_FULL_ROSTER_V2":
         fail("Full V2 manifest corpus identity drifted")
-    if full_v2_manifest.get("status") != "IN_PROGRESS_ROCK_RAIDERS_16_OF_16_ASTRONAUTS_19_OF_21_ALIENS_12_OF_12_TOTAL_47_OF_66":
-        fail("Full V2 manifest must retain its in-progress 47/66 checkpoint state")
+    if full_v2_manifest.get("status") != "IN_PROGRESS_ROCK_RAIDERS_16_OF_16_ASTRONAUTS_19_OF_21_ALIENS_12_OF_12_MARTIANS_17_OF_17_TOTAL_64_OF_66":
+        fail("Full V2 manifest must retain its in-progress 64/66 checkpoint state")
     full_progress = full_v2_manifest.get("progress", {})
-    if full_progress.get("complete") != 47 or full_progress.get("required") != 66:
-        fail("Full V2 manifest progress must remain 47 of 66 at this checkpoint")
+    if full_progress.get("complete") != 64 or full_progress.get("required") != 66:
+        fail("Full V2 manifest progress must remain 64 of 66 at this checkpoint")
     if full_progress.get("factions") != {
         "RockRaiders": "16_OF_16_COMPLETE",
         "Astronauts": "19_OF_21",
         "Aliens": "12_OF_12_COMPLETE",
-        "Martians": "0_OF_17",
+        "Martians": "17_OF_17_COMPLETE",
     }:
         fail("Full V2 faction progress drifted")
     full_assets = full_v2_manifest.get("assets", [])
@@ -843,9 +843,12 @@ def main() -> None:
         "building.ali.reconfiguration_dock",
         "building.ali.resonance_core",
     })
+    expected_full_v2_ids.update(
+        asset["stableId"] for asset in assets if asset["faction"] == "Martians"
+    )
     full_ids = [record.get("stableId") for record in full_assets]
-    if len(full_assets) != 47 or len(set(full_ids)) != 47 or set(full_ids) != expected_full_v2_ids:
-        fail("Full V2 checkpoint must cover the completed 47 assets exactly once")
+    if len(full_assets) != 64 or len(set(full_ids)) != 64 or set(full_ids) != expected_full_v2_ids:
+        fail("Full V2 checkpoint must cover the completed 64 assets exactly once")
     assets_by_id = {asset["stableId"]: asset for asset in assets}
     for record in full_assets:
         stable_id = record["stableId"]
@@ -928,7 +931,7 @@ def main() -> None:
         f"martiansAudited={martians_audited} martiansArchivalAudits={martians_archival_audits} martiansGaps={martians_gaps} "
         f"contracts={contract_count} provisionalContracts={provisional_contracts} "
         f"packets=66 confusionPairs={len(pairs)} blindV1=FAIL_0_OF_66 pilotV2=PASS_4_OF_4 "
-        f"fullV2=IN_PROGRESS_47_OF_66 state=HOLD"
+        f"fullV2=IN_PROGRESS_64_OF_66 state=HOLD"
     )
 
 
