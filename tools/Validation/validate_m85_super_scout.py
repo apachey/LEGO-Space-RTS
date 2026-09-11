@@ -406,6 +406,20 @@ def main() -> None:
     if Counter(asset.get("faction") for asset in assets) != Counter(EXPECTED_FACTIONS):
         fail("identity baseline faction counts drifted")
 
+    rover_identity = next(asset for asset in assets if asset["stableId"] == "unit.astronauts.rover")
+    if rover_identity.get("identityAnchors", [None])[0] != "four equal round wheel pods":
+        fail("Astronaut Rover identity must retain the source-verified four-wheel layout")
+    rover_source = next(source for source in ledger.get("sources", []) if source["setId"] == "7301")
+    if "four-wheel" not in rover_source.get("evidenceUse", ""):
+        fail("7301 source ledger must not regress to the rejected two-wheel reading")
+    rover_evidence = next(source for source in astronauts_evidence.get("sources", []) if source["setId"] == "7301")
+    if not any("four-wheel platform" in finding for finding in rover_evidence.get("findings", [])):
+        fail("7301 evidence audit must retain the visually verified four-wheel finding")
+    rover_contract = next(record for record in astronauts_contracts.get("assets", []) if record["stableId"] == "unit.astronauts.rover")
+    rover_pivots = {pivot["name"] for pivot in rover_contract.get("motion", {}).get("pivots", [])}
+    if not {"Pivot_WheelFrontLeft", "Pivot_WheelFrontRight", "Pivot_WheelRearLeft", "Pivot_WheelRearRight"}.issubset(rover_pivots):
+        fail("Astronaut Rover contract must preserve four independently named wheel pivots")
+
     if silhouette_concepts.get("schemaVersion") != 1 or silhouette_concepts.get("task") != "T082":
         fail("silhouette concept schema/task mismatch")
     if silhouette_concepts.get("status") != "REJECTED_GAME_DIRECTOR_BLIND_REVIEW_0_OF_66":
@@ -782,23 +796,33 @@ def main() -> None:
         fail("Full V2 generation manifest schema/task mismatch")
     if full_v2_manifest.get("corpus") != "SOURCE_DERIVED_FULL_ROSTER_V2":
         fail("Full V2 manifest corpus identity drifted")
-    if full_v2_manifest.get("status") != "IN_PROGRESS_ROCK_RAIDERS_16_OF_16_COMPLETE_TOTAL_16_OF_66":
-        fail("Full V2 manifest must retain its in-progress 16/66 checkpoint state")
+    if full_v2_manifest.get("status") != "IN_PROGRESS_ROCK_RAIDERS_16_OF_16_ASTRONAUTS_8_OF_21_TOTAL_24_OF_66":
+        fail("Full V2 manifest must retain its in-progress 24/66 checkpoint state")
     full_progress = full_v2_manifest.get("progress", {})
-    if full_progress.get("complete") != 16 or full_progress.get("required") != 66:
-        fail("Full V2 manifest progress must remain 16 of 66 at this checkpoint")
+    if full_progress.get("complete") != 24 or full_progress.get("required") != 66:
+        fail("Full V2 manifest progress must remain 24 of 66 at this checkpoint")
     if full_progress.get("factions") != {
         "RockRaiders": "16_OF_16_COMPLETE",
-        "Astronauts": "0_OF_21",
+        "Astronauts": "8_OF_21",
         "Aliens": "0_OF_12",
         "Martians": "0_OF_17",
     }:
         fail("Full V2 faction progress drifted")
     full_assets = full_v2_manifest.get("assets", [])
-    expected_raider_ids = {asset["stableId"] for asset in assets if asset["faction"] == "RockRaiders"}
+    expected_full_v2_ids = {asset["stableId"] for asset in assets if asset["faction"] == "RockRaiders"}
+    expected_full_v2_ids.update({
+        "unit.astronauts.expedition_crew",
+        "unit.astronauts.rover",
+        "unit.astronauts.t3_trike",
+        "unit.astronauts.solar_explorer",
+        "unit.astronauts.mission_fighter",
+        "unit.astronauts.mx41_switch_fighter",
+        "unit.astronauts.mx71_recon_dropship",
+        "unit.astronauts.mt51_claw_tank",
+    })
     full_ids = [record.get("stableId") for record in full_assets]
-    if len(full_assets) != 16 or len(set(full_ids)) != 16 or set(full_ids) != expected_raider_ids:
-        fail("Full V2 checkpoint must cover every Rock Raiders asset exactly once")
+    if len(full_assets) != 24 or len(set(full_ids)) != 24 or set(full_ids) != expected_full_v2_ids:
+        fail("Full V2 checkpoint must cover the completed 24 assets exactly once")
     assets_by_id = {asset["stableId"]: asset for asset in assets}
     for record in full_assets:
         stable_id = record["stableId"]
@@ -881,7 +905,7 @@ def main() -> None:
         f"martiansAudited={martians_audited} martiansArchivalAudits={martians_archival_audits} martiansGaps={martians_gaps} "
         f"contracts={contract_count} provisionalContracts={provisional_contracts} "
         f"packets=66 confusionPairs={len(pairs)} blindV1=FAIL_0_OF_66 pilotV2=PASS_4_OF_4 "
-        f"fullV2=IN_PROGRESS_16_OF_66 state=HOLD"
+        f"fullV2=IN_PROGRESS_24_OF_66 state=HOLD"
     )
 
 

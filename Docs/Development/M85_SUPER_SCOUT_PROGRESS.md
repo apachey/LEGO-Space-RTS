@@ -49,6 +49,17 @@ a second full-roster corpus. The complete-roster review remains open.
   Each output is stored with its stable ID, source-set lineage, prompt contract
   and SHA-256 hash in the in-progress Full V2 manifest. This is a durable
   generation checkpoint, not a faction approval or complete-roster review.
+- Eight Astronaut concepts are also complete: Expedition Crew, source-corrected
+  four-wheel Rover, T3-Trike, Solar Explorer, Mission Fighter, MX-41 Switch
+  Fighter, MX-71 Recon Dropship and MT-51 Claw-Tank. Mono Jet remains open after
+  two generated candidates incorrectly duplicated its single asymmetric engine.
+  The total Full V2 checkpoint is 24/66.
+- The official 7301 page proved that Rover has four equal wheel pods. Its older
+  two-wheel identity/contract wording predated the page-level audit and was not
+  reconciled afterward. The baseline, source ledger, production contract,
+  confusion entry and generated packets now agree on four wheels, and validation
+  explicitly prevents the stale two-wheel reading from returning. The rejected
+  V1 primitive artifact remains unchanged as historical failure evidence.
 - Four labeled faction proportion boards compare front/side/top envelopes; a
   full-roster scale lineup uses one footprint-class rule; and the 31-building
   skyline plus access/network matrix preserves entrances, production exits,
@@ -205,8 +216,8 @@ redistributed.
 
 1. Retain the two explicit Martian archival gaps unless usable evidence appears,
    and escalate any gap that prevents a safe production decision.
-2. Continue the accepted source-derived method from the completed 16/16 Rock
-   Raiders slice through the remaining 50 assets, then run the complete
+2. Continue the accepted source-derived method from the current 24/66
+   checkpoint through the remaining 42 assets, then run the complete
    24/44/72 review.
 3. Revise every wrong, uncertain or indistinguishable asset and extend the
    44-pair register wherever the accepted review exposes a new neighbor.
@@ -223,13 +234,15 @@ packet is approved for T083/T085 production yet.
 
 ## Verification state
 
-The recorded 0/66 V1 rejection and game-director 4/4 Pilot V2 acceptance passed
-`./tools/verify.sh --full` with zero blocking failures at
-`Artifacts/Verification/20260911T081346Z-full-summary.txt`. All 317 tests, the
+The current 24/66 Full V2 checkpoint, recorded 0/66 V1 rejection and
+game-director 4/4 Pilot V2 acceptance passed `./tools/verify.sh --full` with
+zero blocking failures at
+`Artifacts/Verification/20260911T124657Z-full-summary.txt`. All 317 tests, the
 66-asset Super Scout corpus, 39 source records, 35 primary sources, four
 archival sources, 66 non-provisional production contracts, 19 generated
 matrices, 18 rejected V1 artifacts, explicit blind-review results, four hashed
-Pilot V2 images and exact 4/4 responses, all 44 confusion hypotheses, retained
+Pilot V2 images and exact 4/4 responses, 24 hashed Full V2 images, the
+source-corrected four-wheel Rover contract, all 44 confusion hypotheses, retained
 presentation/network gates and a fresh macOS export passed. This technical PASS
 preserves both the rejected V1 result and accepted Pilot V2 result without
 implying complete-roster acceptance.

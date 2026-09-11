@@ -83,7 +83,7 @@ Non-removable identity anchors:
 - Forbidden genericization: Do not blend the two source lineages into generic white sci-fi or add military forms unsupported by the mapped expedition function.
 - Nearest-confusion baseline:
 
-- `unit.astronauts.rover` — Both are rugged Life on Mars wheeled field scouts. Mitigations: Rover has two wheels; T3-Trike has one front and two broad rear wheels. / Rover is tiny and open with no centre module; T3-Trike has a large swappable mission bay. / Rover carries a narrow sensor bar; T3-Trike is defined by high articulated suspension.
+- `unit.astronauts.rover` — Both are rugged Life on Mars wheeled field scouts. Mitigations: Rover has four equal small wheels; T3-Trike has three huge wheels around a spherical cockpit. / Rover is tiny and open with no centre module; T3-Trike has a large swappable mission bay. / Rover carries a long scanner/tool boom; T3-Trike is defined by high articulated suspension.
 
 ## D. Construction contract
 

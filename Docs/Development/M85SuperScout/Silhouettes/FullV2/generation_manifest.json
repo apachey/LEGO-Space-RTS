@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "task": "T082",
   "corpus": "SOURCE_DERIVED_FULL_ROSTER_V2",
-  "status": "IN_PROGRESS_ROCK_RAIDERS_16_OF_16_COMPLETE_TOTAL_16_OF_66",
+  "status": "IN_PROGRESS_ROCK_RAIDERS_16_OF_16_ASTRONAUTS_8_OF_21_TOTAL_24_OF_66",
   "generationTool": "built-in image generation",
   "useCase": "source-derived silhouette concept render",
   "authority": "Generated concept images are review aids only. Canon and the audited official or archival sources remain authoritative; these images do not approve production models or complete T082.",
@@ -13,11 +13,11 @@
     "Exclude labels, logos, UI, scenery, unrelated models and decorative shapes unsupported by the source-derived contract."
   ],
   "progress": {
-    "complete": 16,
+    "complete": 24,
     "required": 66,
     "factions": {
       "RockRaiders": "16_OF_16_COMPLETE",
-      "Astronauts": "0_OF_21",
+      "Astronauts": "8_OF_21",
       "Aliens": "0_OF_12",
       "Martians": "0_OF_17"
     }
@@ -38,6 +38,14 @@
     {"stableId":"building.rock_raiders.engineering_workshop","sourceSets":["4940","4970","4990"],"specificPrompt":"Enormous unobstructed production exit, asymmetric heavy gantry, tall side lift, parked tool rig and staged wheel, leg, drill and rotor modules; reject a finished vehicle or blocked garage.","output":"Renders/building_rock_raiders_engineering_workshop.png","outputSha256":"7eb37751cb0efd9168176cf05a12213622159e4f06555cf1704c9de39e5ca938"},
     {"stableId":"building.rock_raiders.crystal_vault","sourceSets":["4970","4990"],"specificPrompt":"One large faceted crystal physically clamped in an open cage, a thick segmented blast frame and a deliberately small guarded transfer hatch; reject a generator or giant doorway.","output":"Renders/building_rock_raiders_crystal_vault.png","outputSha256":"22f5c608d46d1cb5d877417f90772297ffcb9234ec8f747f12cda17577246119"},
     {"stableId":"building.rock_raiders.crusher_barrier","sourceSets":["4950"],"specificPrompt":"Low ground-hugging barrier with one broad loader-derived crusher face, a thick crossbeam, wide hydraulic braces and planted feet; reject a turret, bunker or vehicle.","output":"Renders/building_rock_raiders_crusher_barrier.png","outputSha256":"ff68b87014977cd3c72967dfc964473a67d148204d4d8202042558e24aa3c0a7"},
-    {"stableId":"building.rock_raiders.cutter_mast","sourceSets":["4910","4990"],"specificPrompt":"Thin mast on a tripod service base with a pivoting horizontal head carrying one compact cutter disc, a separate scanner dish and a work lamp; reject guns or missiles.","output":"Renders/building_rock_raiders_cutter_mast.png","outputSha256":"b655e0c6d087a1ef442109e8f22a734beb8691a06bf40c27e178478373e48532"}
+    {"stableId":"building.rock_raiders.cutter_mast","sourceSets":["4910","4990"],"specificPrompt":"Thin mast on a tripod service base with a pivoting horizontal head carrying one compact cutter disc, a separate scanner dish and a work lamp; reject guns or missiles.","output":"Renders/building_rock_raiders_cutter_mast.png","outputSha256":"b655e0c6d087a1ef442109e8f22a734beb8691a06bf40c27e178478373e48532"},
+    {"stableId":"unit.astronauts.expedition_crew","sourceSets":["7301","7690"],"specificPrompt":"Sealed helmeted worker with standardized rectangular field pack, visible modular sockets, shoulder lamp and one large two-handed engineering tool; reject a rifle or combat armor.","output":"Renders/unit_astronauts_expedition_crew.png","outputSha256":"e6b739fb25acbc4afcf02a1ad78afb09bd7f9aeec925f418ff1a98e2ff755088"},
+    {"stableId":"unit.astronauts.rover","sourceSets":["7301"],"specificPrompt":"Tiny open chassis on exactly four equal round wheel pods with an exposed rider, rear equipment box, antenna and an extremely long forward scanner/tool boom ending in a disc.","output":"Renders/unit_astronauts_rover.png","outputSha256":"1f9b1c9c07d35f40e5d64e46f0ea4717015ba1376bc3d4c3e075cd8c82ce680f"},
+    {"stableId":"unit.astronauts.t3_trike","sourceSets":["7312","7694"],"specificPrompt":"Exactly three enormous rugged wheels around a spherical cockpit with long exposed suspension outriggers, arcing hoses, modular tool sockets and a rear antenna.","output":"Renders/unit_astronauts_t3_trike.png","outputSha256":"0a3f27845ad6d0b1447cb7325de0275afd5eccaa9ccc7f20a5adb18d037b071a"},
+    {"stableId":"unit.astronauts.solar_explorer","sourceSets":["7315"],"specificPrompt":"Long articulated ground-service convoy retaining 7315 cockpit, habitat spine, visible couplers, rear circular machinery arch and paired solar panels, with disclosed Rover-style six-wheel bogie adaptation.","output":"Renders/unit_astronauts_solar_explorer.png","outputSha256":"636ae74ed422650d2b6ab66d09abf71487171604774d47d535ee4165869bd42e"},
+    {"stableId":"unit.astronauts.mission_fighter","sourceSets":["5619","7695"],"specificPrompt":"Extremely thin compact delta interceptor combining the clean swept planforms of 5619 and 7695, with a sharp compact canopy, two forward prongs and a tiny raised rear equipment mass.","output":"Renders/unit_astronauts_mission_fighter.png","outputSha256":"00ac1d3616cc28d21b7c21ce5956faa4f6c6b790699db616a115df1cafedacd8"},
+    {"stableId":"unit.astronauts.mx41_switch_fighter","sourceSets":["7647"],"specificPrompt":"Signature ground configuration with one pointed cockpit hull nested into a separate folding wing/chassis slab, exactly six wheels and large visibly hinged side panels.","output":"Renders/unit_astronauts_mx41_switch_fighter.png","outputSha256":"05f943eca88abe2ce826ecd1717037cd98bce76ec5281a9270cf4eebc8c60c85"},
+    {"stableId":"unit.astronauts.mx71_recon_dropship","sourceSets":["7692"],"specificPrompt":"Long narrow high-wing lifting aircraft with tall landing contacts and a completely open underside cradle visibly carrying one independent six-wheel reconnaissance rover.","output":"Renders/unit_astronauts_mx71_recon_dropship.png","outputSha256":"fc2c0fe1fdddedfb0a6358f865167dabaec4dc1782d5c3b2c018130c3362b728"},
+    {"stableId":"unit.astronauts.mt51_claw_tank","sourceSets":["7697"],"specificPrompt":"Low separated track blocks supporting a rounded rotating operator body with two long asymmetric articulated arms, one ending in a dominant mechanical claw.","output":"Renders/unit_astronauts_mt51_claw_tank.png","outputSha256":"e13f24299b9e287b3b47cb897564945217240c949fba41e8d917ce128f51dc86"}
   ]
 }

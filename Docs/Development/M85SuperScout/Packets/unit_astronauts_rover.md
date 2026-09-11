@@ -29,7 +29,7 @@ Open question: The faction-internal construction, motion, socket and material dr
 
 | Source | Primary evidence | Inventory / archival check | Confidence | Intended use |
 |---|---|---|---|---|
-| 7301 — Rover | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7301)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4156314.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7301-1) | PRIMARY_VERIFIED | two-wheel human field rover |
+| 7301 — Rover | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7301)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4156314.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7301-1) | PRIMARY_VERIFIED | four-wheel human field rover with long scanner/tool boom |
 
 ### Source audit [Astronauts:7301]
 
@@ -52,38 +52,38 @@ Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-qu
 
 ## C. Recognition contract
 
-**Silhouette thesis:** A tiny exposed field rover with two dominant wheels and a narrow forward sensor bar.
+**Silhouette thesis:** A tiny exposed four-wheel field rover dominated by a long forward scanner and tool boom.
 
 Non-removable identity anchors:
 
-- two-wheel bike-like profile
+- four equal round wheel pods
 - open rider position
-- front sensor and sample rack
+- long front scanner and tool boom
 
 - Rejected V1 blind-review code: `S19`. Historical failed boards: [24-cell](../Silhouettes/blind_24_cells.svg), [44-cell](../Silhouettes/blind_44_cells.svg), [72-cell](../Silhouettes/blind_72_cells.svg). The game director recognized 0/66 at 24 cells; this primitive concept is not an approved model or accepted evidence.
 - Palette and material hierarchy: Field Systems retain rugged white/light-gray/medium-blue construction; Mission Systems retain clean white/orange/black construction. Shared identity comes from insignia and interfaces, not shape averaging.
 - Forbidden genericization: Do not blend the two source lineages into generic white sci-fi or add military forms unsupported by the mapped expedition function.
 - Nearest-confusion baseline:
 
-- `unit.astronauts.t3_trike` — Both are rugged Life on Mars wheeled field scouts. Mitigations: Rover has two wheels; T3-Trike has one front and two broad rear wheels. / Rover is tiny and open with no centre module; T3-Trike has a large swappable mission bay. / Rover carries a narrow sensor bar; T3-Trike is defined by high articulated suspension.
+- `unit.astronauts.t3_trike` — Both are rugged Life on Mars wheeled field scouts. Mitigations: Rover has four equal small wheels; T3-Trike has three huge wheels around a spherical cockpit. / Rover is tiny and open with no centre module; T3-Trike has a large swappable mission bay. / Rover carries a long scanner/tool boom; T3-Trike is defined by high articulated suspension.
 
 ## D. Construction contract
 
 - Contract state: `SOURCE_VERIFIED`. This is an internally checked draft, not game-director approval.
 - Semantic part map:
-  - Two dominant side wheels — define the bike-like scout stance — SOURCE_VERIFIED.
+  - Four equal round wheel pods — define the tiny low field-rover stance — SOURCE_VERIFIED.
   - Open central rider frame — keeps the vehicle light and exploratory — SOURCE_VERIFIED.
-  - Narrow forward sensor and sample rack — explain passive survey and field collection — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.
-- Structural load path: A narrow exposed spine joins the two wheel axles and carries the rider, front sensor and rear sample rack.
-- Repeated modules / connection grammar: Mirrored wheel pair, central rider frame, forward sensor and rear samples remain readable.
+  - Long forward scanner/tool boom — explains passive survey and field collection — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.
+- Structural load path: A narrow exposed spine joins two wheel axles and carries the rider, long front scanner/tool boom and rear equipment box.
+- Repeated modules / connection grammar: Four equal wheel pods, central rider frame, forward scanner/tool boom and rear equipment remain readable.
 - Source-faithful versus adapted boundary: Passive survey is adapted from exploration equipment; no enclosed hull or combat turret.
 
 ## E. Material and texture contract
 
 - Geometry must carry:
-  - two oversized wheels
+  - four equal round wheel pods
   - open rider gap
-  - forward sensor bar
+  - long forward scanner/tool boom
 - Accepted master-material roles: `Body`, `Accent`, `Tool`, `Rubber`, `Signal`, `Neutral`.
 - Reusable texture requirements:
   - `ast_field_frame_surface` — Restrained molded and brushed variation for rugged blue-gray Field Systems frames without faking structural seams. Channels: Tangent-space normal and linear roughness; body color stays parametric. Resolution: 2048x2048; texel density: 256 px/m at Close; tiling: Shared model-space 3 m repeat across connected frames.; LOD fallback: Half strength at Combat; master roughness only at Strategic. Provenance/state: Project-authored procedural source informed by verified Field Systems surfaces; human review required. `SPECIFIED_NOT_AUTHORED`.
@@ -94,20 +94,22 @@ Non-removable identity anchors:
 
 ## F. State and animation contract
 
-- Locomotion / operation: Fast two-wheel ground travel with bounded body lean.
-- Planted/contact rule: Both wheels track the terrain; idle uses a subtle support settle without inventing a third hero wheel.
+- Locomotion / operation: Fast four-wheel ground travel with restrained chassis pitch.
+- Planted/contact rule: All four wheels track the terrain while the low central spine remains visually level.
 
 | Pivot | Parent | Axis/path and rest-to-extreme motion | Presentation driver |
 |---|---|---|---|
-| `Pivot_WheelLeft` | Asset_Rover | roll on axle | distance traveled |
-| `Pivot_WheelRight` | Asset_Rover | roll on axle | distance traveled |
+| `Pivot_WheelFrontLeft` | Asset_Rover | roll on axle | distance traveled |
+| `Pivot_WheelFrontRight` | Asset_Rover | roll on axle | distance traveled |
+| `Pivot_WheelRearLeft` | Asset_Rover | roll on axle | distance traveled |
+| `Pivot_WheelRearRight` | Asset_Rover | roll on axle | distance traveled |
 | `Pivot_Sensor` | Asset_Rover | short scan pitch arc | survey presentation |
 
 - Required beats:
   - Idle sensor sweep.
-  - Travel with wheel roll and restrained lean.
+  - Travel with four-wheel roll and restrained chassis pitch.
   - Survey pulse aims, emits and returns.
-  - Damage wobbles the exposed frame; wreck preserves both wheels.
+  - Damage wobbles the exposed frame; wreck preserves the four-wheel read.
 - Animation consumes authoritative state and never decides gameplay timing or results.
 
 ## G. Presentation hookups

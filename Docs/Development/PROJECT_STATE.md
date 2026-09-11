@@ -706,11 +706,18 @@ live; the current schema-9 copy/paste retains the complete experiment.
   director identified Alien Mothership, Worker Robot, Chrome Crusher and Drill
   Craft correctly at 4/4, approving the method for full-roster and camera-scale
   expansion without accepting the future complete corpus.
-- The Full V2 expansion now has a durable 16/16 Rock Raiders checkpoint: eight
-  units and eight infrastructure concepts use the accepted source-derived
-  matte-black render method, and every output is recorded by stable ID and
-  SHA-256 hash. The remaining 50 assets are not yet rendered, so this does not
-  change T082's `BLOCKING_NOW` state or constitute faction approval.
+- The Full V2 expansion now has a durable 24/66 checkpoint: all 16 Rock Raiders
+  and eight Astronaut concepts use the accepted source-derived matte-black
+  render method, and every output is recorded by stable ID and SHA-256 hash.
+  Mono Jet remains open after two candidates duplicated its source's single
+  asymmetric engine. The remaining 42 assets are not yet rendered, so this does
+  not change T082's `BLOCKING_NOW` state or constitute faction approval.
+- The official 7301 instruction page also exposed a stale audit-reconciliation
+  error: Rover is a four-wheel open platform, not the two-wheel bike described
+  by the earlier identity and production drafts. The source ledger, identity,
+  contract, confusion entry and generated packets now agree on four wheels;
+  validation locks that evidence-backed correction while leaving rejected V1
+  historical artifacts untouched.
 - `tools/Validation/validate_m85_super_scout.py` compares the corpus with the
   authoritative runtime roster, checks counts, IDs, classifications, source
   coverage and the three-to-seven silhouette-anchor contract, and rejects stale
@@ -718,7 +725,7 @@ live; the current schema-9 copy/paste retains the complete experiment.
 - T082 remains `BLOCKING_NOW` for T083/T085. All faction source-page audits,
   all 66 production-contract drafts are complete; the first silhouette approach
   failed 0/66, Pilot V2 passed 4/4 and the new full corpus currently contains a
-  hashed 16/16 Rock Raiders slice. The remaining 50 source-derived concepts,
+  hashed 24/66 checkpoint. The remaining 42 source-derived concepts,
   complete 24/44/72 review and explicit game-director corpus acceptance remain
   required. Current detail is tracked in `Docs/Development/M85_SUPER_SCOUT_PROGRESS.md`.
 
@@ -744,9 +751,10 @@ step and must be announced when new visual evidence is actually required.
 
 ## Verification state
 
-The recorded 0/66 T082 V1 rejection and game-director 4/4 source-derived Pilot
-V2 acceptance passed `./tools/verify.sh --full` with zero blocking failures at
-`Artifacts/Verification/20260911T081346Z-full-summary.txt`: all 317 tests,
+The current 24/66 Full V2 checkpoint, recorded 0/66 T082 V1 rejection and
+game-director 4/4 source-derived Pilot V2 acceptance passed
+`./tools/verify.sh --full` with zero blocking failures at
+`Artifacts/Verification/20260911T124657Z-full-summary.txt`: all 317 tests,
 the complete 66-asset roster and faction-bound evidence validator,
 deterministic packet generation, the 24-mover gate, compiled content, retained
 M6 networking, T081 round trip, retained M7 presentation gates and a fresh
@@ -759,7 +767,8 @@ sources audited across eight official PDF books with two Martian archival gaps,
 all 66 assets across four factions with structured semantic/motion/material
 contracts and no provisional contract, 19 generated comparison matrices, the
 18 rejected deterministic V1 artifacts, the explicit 0/66 result, four hashed
-Pilot V2 images and exact 4/4 responses, and 44 confusion hypotheses with no roster drift, blind-sheet
+Pilot V2 images and exact 4/4 responses, 24 hashed Full V2 concepts, the
+source-corrected four-wheel Rover contract, and 44 confusion hypotheses with no roster drift, blind-sheet
 label leak or cross-faction evidence leakage. Technical validation does not
 reverse the V1 visual failure or claim complete-roster T082 acceptance.
 Stress60 remained the expected 2/60 `BLOCKING_LATER` M9 diagnostic.
