@@ -49,15 +49,18 @@ a second full-roster corpus. The complete-roster review remains open.
   Each output is stored with its stable ID, source-set lineage, prompt contract
   and SHA-256 hash in the in-progress Full V2 manifest. This is a durable
   generation checkpoint, not a faction approval or complete-roster review.
-- Eleven Astronaut concepts are also complete: Expedition Crew, source-corrected
+- Nineteen Astronaut concepts are also complete: Expedition Crew, source-corrected
   four-wheel Rover, T3-Trike, Solar Explorer, Mission Fighter, MX-41 Switch
   Fighter, MX-71 Recon Dropship, MT-51 Claw-Tank, Mono Jet, Mobile Mining
-  Platform and MX-81 Operations Aircraft. A closer 7310 reference resolved Mono
-  Jet's single asymmetric engine. Mobile Mining Platform explicitly combines
-  the 7645 crawler/cutters, a docked 7648 processing/tool module and a 7693 side
-  tool cue. MT-101 and MT-201 remain open after two candidates each failed to
-  make all six wheels or all four planted legs independently readable. The total
-  Full V2 checkpoint is 27/66.
+  Platform, MX-81 Operations Aircraft and all eight Astronaut infrastructure
+  concepts. MB-01 and Solar Energy Array closely adapt 7690 and 7315; Frontier
+  Extraction Station combines 7691 with 7648 material handling; the Garage,
+  Vehicle Bay, Flight Pad and Refit Hub disclose their named Field/Mission donor
+  mechanisms; Modular Sentinel discloses a new 7690 pedestal plus 7695-derived
+  interchangeable defense-head composition. A closer 7310 reference resolved
+  Mono Jet's single asymmetric engine. MT-101 and MT-201 remain open after two
+  candidates each failed to make all six wheels or all four planted legs
+  independently readable. The total Full V2 checkpoint is 35/66.
 - The official 7301 page proved that Rover has four equal wheel pods. Its older
   two-wheel identity/contract wording predated the page-level audit and was not
   reconciled afterward. The baseline, source ledger, production contract,
@@ -220,8 +223,8 @@ redistributed.
 
 1. Retain the two explicit Martian archival gaps unless usable evidence appears,
    and escalate any gap that prevents a safe production decision.
-2. Continue the accepted source-derived method from the current 27/66
-   checkpoint through the remaining 39 assets, then run the complete
+2. Continue the accepted source-derived method from the current 35/66
+   checkpoint through the remaining 31 assets, then run the complete
    24/44/72 review.
 3. Revise every wrong, uncertain or indistinguishable asset and extend the
    44-pair register wherever the accepted review exposes a new neighbor.
@@ -238,9 +241,9 @@ packet is approved for T083/T085 production yet.
 
 ## Verification state
 
-The current 27/66 Full V2 checkpoint passed `./tools/verify.sh` with zero
+The current 35/66 Full V2 checkpoint passed `./tools/verify.sh` with zero
 blocking or diagnostic failures at
-`Artifacts/Verification/20260911T173844Z-fast-summary.txt`; all 317 tests and
+`Artifacts/Verification/20260911T175406Z-fast-summary.txt`; all 317 tests and
 the T082 identity-baseline integrity stage passed.
 
 The previous 24/66 Full V2 checkpoint, recorded 0/66 V1 rejection and

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "task": "T082",
   "corpus": "SOURCE_DERIVED_FULL_ROSTER_V2",
-  "status": "IN_PROGRESS_ROCK_RAIDERS_16_OF_16_ASTRONAUTS_11_OF_21_TOTAL_27_OF_66",
+  "status": "IN_PROGRESS_ROCK_RAIDERS_16_OF_16_ASTRONAUTS_19_OF_21_TOTAL_35_OF_66",
   "generationTool": "built-in image generation",
   "useCase": "source-derived silhouette concept render",
   "authority": "Generated concept images are review aids only. Canon and the audited official or archival sources remain authoritative; these images do not approve production models or complete T082.",
@@ -13,11 +13,11 @@
     "Exclude labels, logos, UI, scenery, unrelated models and decorative shapes unsupported by the source-derived contract."
   ],
   "progress": {
-    "complete": 27,
+    "complete": 35,
     "required": 66,
     "factions": {
       "RockRaiders": "16_OF_16_COMPLETE",
-      "Astronauts": "11_OF_21",
+      "Astronauts": "19_OF_21",
       "Aliens": "0_OF_12",
       "Martians": "0_OF_17"
     }
@@ -49,6 +49,14 @@
     {"stableId":"unit.astronauts.mt51_claw_tank","sourceSets":["7697"],"specificPrompt":"Low separated track blocks supporting a rounded rotating operator body with two long asymmetric articulated arms, one ending in a dominant mechanical claw.","output":"Renders/unit_astronauts_mt51_claw_tank.png","outputSha256":"e13f24299b9e287b3b47cb897564945217240c949fba41e8d917ce128f51dc86"},
     {"stableId":"unit.astronauts.mono_jet","sourceSets":["7310"],"specificPrompt":"Tiny true-air open sled with an exposed operator, very low narrow spine and exactly one large cylindrical engine pod on one side; the opposite side remains a thin tail plate with no mirrored cylinder.","output":"Renders/unit_astronauts_mono_jet.png","outputSha256":"331847b8108b6f5b503abb83fa896fa2112c61d57b3e9811ab388b063829b474"},
     {"stableId":"unit.astronauts.mobile_mining_platform","sourceSets":["7645","7648","7693"],"specificPrompt":"One low tracked modular mining platform combining the 7645 twin front harvesting cutters and crawler body, a visibly docked upright 7648 processing/tool module and one 7693-derived asymmetric side-tool cue, with an exposed intake-to-cargo route.","output":"Renders/unit_astronauts_mobile_mining_platform.png","outputSha256":"7af1401f1d29447ae77dff359a38f2795d215bf94dea22e9edba64ce21d1f370"},
-    {"stableId":"unit.astronauts.mx81_operations_aircraft","sourceSets":["7644"],"specificPrompt":"One fully assembled extremely wide operations aircraft with a pointed central cockpit, long command spine, twin bulky forward pod masses and smaller mission sections visibly docked along the lateral frame with narrow structural gaps.","output":"Renders/unit_astronauts_mx81_operations_aircraft.png","outputSha256":"561a68475ad68fdaa5f058b5f9c889a6242fe84fb97b11a8d473fe3596e731d4"}
+    {"stableId":"unit.astronauts.mx81_operations_aircraft","sourceSets":["7644"],"specificPrompt":"One fully assembled extremely wide operations aircraft with a pointed central cockpit, long command spine, twin bulky forward pod masses and smaller mission sections visibly docked along the lateral frame with narrow structural gaps.","output":"Renders/unit_astronauts_mx81_operations_aircraft.png","outputSha256":"561a68475ad68fdaa5f058b5f9c889a6242fe84fb97b11a8d473fe3596e731d4"},
+    {"stableId":"building.ast.mb01_eagle_command_base","sourceSets":["7690"],"specificPrompt":"Tall open A-frame gantry containing a suspended long shuttle, with a separate drilling/transfer station, pressure tank, visible hoses and open service pads; reject a sealed headquarters block.","output":"Renders/building_astronauts_mb01_eagle_command_base.png","outputSha256":"acde3ed303d87b33afd9d0a54d5da99eeb81c83743194edaf5954cb6364b8ddb"},
+    {"stableId":"building.ast.field_systems_garage","sourceSets":["7301","7312","7315"],"specificPrompt":"Low rugged open garage with one huge unobstructed field-vehicle lane, unequal exterior racks carrying wheel/tool and field-pod modules, plus an external long scanner boom and parked service arms.","output":"Renders/building_astronauts_field_systems_garage.png","outputSha256":"a0713f68fd44284e74092c845d1e2b53033bf5d92129685bc70b912433445701"},
+    {"stableId":"building.ast.mission_vehicle_bay","sourceSets":["7645","7647","7697","7699"],"specificPrompt":"Clean tall assembly structure with one enormous empty straight vehicle exit, exactly two parallel side assembly rails carrying separate mission modules and one high overhead gantry.","output":"Renders/building_astronauts_mission_vehicle_bay.png","outputSha256":"598c626b2f3a73c4106c030bd40328e36e0dbe0a13c0c6f46e12ceb06622b3f1"},
+    {"stableId":"building.ast.flight_operations_pad","sourceSets":["5619","7644","7692","7695"],"specificPrompt":"Low broad directional arrow-shaped landing deck with an empty launch corridor, two small parked edge service arms and one compact offset flight-control beacon.","output":"Renders/building_astronauts_flight_operations_pad.png","outputSha256":"2ce7de7a6757d125da3806550a0f0fd6c7244c684d39201473c5db2f860ca47e"},
+    {"stableId":"building.ast.service_refit_hub","sourceSets":["7315","7690"],"specificPrompt":"Broad planted service ring around an open central turntable, two dissimilar opposed radial docking arms, two wide ingress gaps and exterior racks of separate replacement modules.","output":"Renders/building_astronauts_service_refit_hub.png","outputSha256":"aa514e67600930c36dc4ce81b81356174b1ba61144768a1b13996fce2420548e"},
+    {"stableId":"building.ast.solar_energy_array","sourceSets":["7315"],"specificPrompt":"Low stationary field base with exactly two countable broad lateral Solar Explorer panel wings, visible hinges, central circular machinery frame and one small control box.","output":"Renders/building_astronauts_solar_energy_array.png","outputSha256":"f52eee23258c90d8d15584c2cee713be3307b4d74d57b14402ce15fa012e9de5"},
+    {"stableId":"building.ast.frontier_extraction_station","sourceSets":["7691","7648"],"specificPrompt":"Narrow stationary linear extraction rig with receiving rail and drill-facing hopper, upright transfer mast, one conspicuous hose, fixed planted feet and an external rack of sealed containers.","output":"Renders/building_astronauts_frontier_extraction_station.png","outputSha256":"3aac4f755874f4f97f939a700e3c67222118d661e78738951d3946eb1eba4be2"},
+    {"stableId":"building.ast.modular_sentinel_defense","sourceSets":["7690","7695"],"specificPrompt":"Stationary pedestal on exactly four visible deployed feet with one detachable blunt sensor/twin-emitter turret head and one smaller alternate rectangular defense head stored on a side rack.","output":"Renders/building_astronauts_modular_sentinel_defense.png","outputSha256":"3ac07814e7a9ccc0251c9ebc0ec1d4e78b74bdbc199e86dcaa8e13f0f2cfe7cd"}
   ]
 }
