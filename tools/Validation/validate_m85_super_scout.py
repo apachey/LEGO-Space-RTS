@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 from collections import Counter
+import hashlib
 import json
 from pathlib import Path
 import random
@@ -28,10 +29,13 @@ ALIENS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/aliens_production_con
 MARTIANS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/martians_production_contracts.json"
 CONFUSION = ROOT / "Content/Presentation/SuperScout/confusion_register.json"
 SILHOUETTE_CONCEPTS = ROOT / "Content/Presentation/SuperScout/silhouette_concepts.json"
+BLIND_REVIEW_RESULTS = ROOT / "Content/Presentation/SuperScout/blind_review_results.json"
 CONTENT = ROOT / "Content/PrototypeEntities.json"
 GENERATOR = ROOT / "tools/generate-m85-super-scout-packets.py"
 SILHOUETTE_GENERATOR = ROOT / "tools/generate-m85-silhouette-review.py"
 SILHOUETTE_OUTPUT = ROOT / "Docs/Development/M85SuperScout/Silhouettes"
+PILOT_V2_OUTPUT = SILHOUETTE_OUTPUT / "PilotV2"
+PILOT_V2_MANIFEST = PILOT_V2_OUTPUT / "generation_manifest.json"
 
 CLASSIFICATIONS = {
     "OFFICIAL_DIRECT": "OFFICIAL-DIRECT",
@@ -355,7 +359,8 @@ def main() -> None:
         ALIENS_EVIDENCE,
         MARTIANS_EVIDENCE,
         ROCK_RAIDERS_CONTRACTS, ASTRONAUTS_CONTRACTS, ALIENS_CONTRACTS, MARTIANS_CONTRACTS,
-        CONFUSION, SILHOUETTE_CONCEPTS, CONTENT, GENERATOR, SILHOUETTE_GENERATOR,
+        CONFUSION, SILHOUETTE_CONCEPTS, BLIND_REVIEW_RESULTS, CONTENT, GENERATOR, SILHOUETTE_GENERATOR,
+        PILOT_V2_MANIFEST, PILOT_V2_OUTPUT / "blind_pilot_v2.svg", PILOT_V2_OUTPUT / "PILOT_V2_KEY.md",
     ):
         if not path.is_file():
             fail(f"missing {path.relative_to(ROOT)}")
@@ -374,6 +379,8 @@ def main() -> None:
     martians_contracts = json.loads(MARTIANS_CONTRACTS.read_text(encoding="utf-8"))
     confusion = json.loads(CONFUSION.read_text(encoding="utf-8"))
     silhouette_concepts = json.loads(SILHOUETTE_CONCEPTS.read_text(encoding="utf-8"))
+    blind_review_results = json.loads(BLIND_REVIEW_RESULTS.read_text(encoding="utf-8"))
+    pilot_v2_manifest = json.loads(PILOT_V2_MANIFEST.read_text(encoding="utf-8"))
     content = json.loads(CONTENT.read_text(encoding="utf-8"))
     packet_notice = validate_source_analysis_policy(source_analysis_policy)
     if manifest.get("schemaVersion") != 1 or manifest.get("task") != "T082":
@@ -396,8 +403,8 @@ def main() -> None:
 
     if silhouette_concepts.get("schemaVersion") != 1 or silhouette_concepts.get("task") != "T082":
         fail("silhouette concept schema/task mismatch")
-    if silhouette_concepts.get("status") != "DRAFT_CONCEPTS_READY_FOR_BLIND_REVIEW":
-        fail("silhouette concepts must remain a draft pending game-director review")
+    if silhouette_concepts.get("status") != "REJECTED_GAME_DIRECTOR_BLIND_REVIEW_0_OF_66":
+        fail("the rejected V1 silhouette status must preserve the game-director result")
     if silhouette_concepts.get("cameraWidthsCells") != [24, 44, 72]:
         fail("silhouette concept camera widths drifted")
     if set(silhouette_concepts.get("reviewRules", {})) != {"blindBoards", "negativeSpace", "scale", "hold"}:
@@ -600,10 +607,10 @@ def main() -> None:
 
     if confusion.get("schemaVersion") != 1 or confusion.get("task") != "T082":
         fail("confusion register schema/task mismatch")
-    if confusion.get("status") != "IN_PROGRESS_SILHOUETTE_DRAFT_AUDIT":
+    if confusion.get("status") != "IN_PROGRESS_SOURCE_DERIVED_SILHOUETTE_REWORK":
         fail("confusion register must not imply completed blind review")
-    if confusion.get("blindReviewState") != "DRAFT_24_44_72_READY_FOR_GAME_DIRECTOR":
-        fail("confusion register must retain the open silhouette-review gate")
+    if confusion.get("blindReviewState") != "FAILED_24_CELLS_0_OF_66_PILOT_V2_REQUIRED":
+        fail("confusion register must preserve the failed V1 gate and Pilot V2 requirement")
     pairs = confusion.get("pairs", [])
     if len(pairs) < 30:
         fail(f"expected at least 30 canonical confusion pairs, found {len(pairs)}")
@@ -690,6 +697,52 @@ def main() -> None:
     if sum(line.startswith("|") for line in building_matrix_text.splitlines()) != 33:
         fail("building access/network matrix must contain one header, separator and 31 buildings")
 
+    if blind_review_results.get("schemaVersion") != 1 or blind_review_results.get("task") != "T082":
+        fail("blind-review result schema/task mismatch")
+    if blind_review_results.get("status") != "REVISION_REQUIRED":
+        fail("failed blind review must retain revision-required state")
+    attempts = blind_review_results.get("attempts", [])
+    if len(attempts) != 1:
+        fail("expected exactly one recorded blind-review attempt")
+    attempt = attempts[0]
+    if attempt.get("result") != "FAIL" or attempt.get("recognized") != 0 or attempt.get("total") != 66:
+        fail("V1 blind-review result must remain the game-director-reported 0/66 failure")
+    active_pilot = blind_review_results.get("activePilot", {})
+    if active_pilot.get("id") != "T082_PILOT_V2_SOURCE_DERIVED_FOUR_ASSET" or active_pilot.get("state") != "AWAITING_GAME_DIRECTOR_BLIND_REVIEW":
+        fail("source-derived Pilot V2 must remain awaiting game-director review")
+    if active_pilot.get("codes") != ["P01", "P02", "P03", "P04"]:
+        fail("Pilot V2 review-code order drifted")
+
+    if pilot_v2_manifest.get("schemaVersion") != 1 or pilot_v2_manifest.get("task") != "T082":
+        fail("Pilot V2 generation manifest schema/task mismatch")
+    if pilot_v2_manifest.get("status") != "AWAITING_GAME_DIRECTOR_BLIND_REVIEW":
+        fail("Pilot V2 must not imply game-director acceptance")
+    pilot_assets = pilot_v2_manifest.get("assets", [])
+    pilot_codes = [record.get("code") for record in pilot_assets]
+    if pilot_codes != ["P01", "P02", "P03", "P04"] or len({record.get("stableId") for record in pilot_assets}) != 4:
+        fail("Pilot V2 must contain four unique, ordered blind assets")
+    pilot_svg = (PILOT_V2_OUTPUT / "blind_pilot_v2.svg").read_text(encoding="utf-8")
+    pilot_key = (PILOT_V2_OUTPUT / "PILOT_V2_KEY.md").read_text(encoding="utf-8")
+    display_names = {asset["stableId"]: asset["displayName"] for asset in assets}
+    for record in pilot_assets:
+        code = record["code"]
+        if pilot_svg.count(f">{code}<") != 1:
+            fail(f"Pilot V2 blind sheet must contain {code} exactly once")
+        if record["stableId"] in pilot_svg or display_names[record["stableId"]] in pilot_svg:
+            fail(f"Pilot V2 blind sheet leaks {record['stableId']}")
+        if f"`{code}`" not in pilot_key or display_names[record["stableId"]] not in pilot_key:
+            fail(f"Pilot V2 answer key does not map {code} exactly")
+        output_path = PILOT_V2_OUTPUT / record["output"]
+        if not output_path.is_file():
+            fail(f"missing Pilot V2 image {record['output']}")
+        actual_hash = hashlib.sha256(output_path.read_bytes()).hexdigest()
+        if actual_hash != record.get("outputSha256"):
+            fail(f"Pilot V2 image hash drifted for {code}")
+    try:
+        ET.parse(PILOT_V2_OUTPUT / "blind_pilot_v2.svg")
+    except ET.ParseError as error:
+        fail(f"invalid Pilot V2 SVG: {error}")
+
     matrix_dir = ROOT / "Docs/Development/M85SuperScout/Matrices"
     for slug, label in (
         ("rock_raiders", "Rock Raiders"),
@@ -753,7 +806,7 @@ def main() -> None:
         f"aliensAudited={aliens_audited} aliensArchivalAudits={aliens_archival_audits} aliensGaps={aliens_gaps} "
         f"martiansAudited={martians_audited} martiansArchivalAudits={martians_archival_audits} martiansGaps={martians_gaps} "
         f"contracts={contract_count} provisionalContracts={provisional_contracts} "
-        f"packets=66 confusionPairs={len(pairs)} state=HOLD"
+        f"packets=66 confusionPairs={len(pairs)} blindV1=FAIL_0_OF_66 pilotV2=AWAITING state=HOLD"
     )
 
 

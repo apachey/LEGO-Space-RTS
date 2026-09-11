@@ -1,9 +1,10 @@
 # M8.5 T082 — SUPER SCOUT PROGRESS
 
 **Status:** in progress. The roster-locked identity baseline, all four faction
-source-page audits, all 66 faction-internal production-contract drafts and the
-first complete cross-roster concept-silhouette audit are complete. The
-game-director blind silhouette and complete-corpus review gates remain open.
+source-page audits and all 66 faction-internal production-contract drafts are
+complete. The first complete primitive-silhouette corpus failed game-director
+blind review at 0/66 and is rejected. A four-asset source-derived Pilot V2 is
+awaiting review before any second full-roster corpus is produced.
 
 ## Completed in the identity-baseline pass
 
@@ -18,21 +19,28 @@ game-director blind silhouette and complete-corpus review gates remain open.
   cannot be mistaken for T082 or game-director acceptance.
 - A generated identity/source matrix lets later audits compare the complete
   roster without copying data between documents.
-- The confusion register now covers 44 internal and cross-faction pairs. The
+- The confusion register covers 44 internal and cross-faction hypotheses. The
   original 31 canon-derived neighbors remain, and 13 additional risks exposed
   by the concept sheets cover tiny workers, hover craft, interceptors, huge
   aircraft, production gantries, defense towers and resource/energy buildings.
   Every pair has exactly three visible differentiation requirements. This is
-  still a draft for blind review, not a claim that every collision is solved.
+  first silhouette method failed blind review, so these remain unaccepted
+  hypotheses rather than evidence that every collision is solved.
 - All 66 assets now have one explicit width/height/length ratio and a
   source-bounded silhouette recipe separating core mass, locomotion/contact,
   hero mechanism, structural frame and identity-bearing negative space.
   These are deliberately cheap concept shapes, not final models or new
   gameplay footprints.
-- Deterministic full-roster black sheets exist at the exact 24/44/72 camera
-  ratios. The six easy-review pages use randomized stable S-codes and contain
-  no names, faction hints, roles, colours, icons or selection rings. A separate
-  answer key prevents the generator from grading its own work.
+- Deterministic full-roster black V1 sheets exist at the exact 24/44/72 camera
+  ratios, but the game director recognized 0/66 assets on the first 24-cell
+  review. Those sheets are now retained only as a reproducible failed
+  experiment. Their abstraction into generic primitive icons erased the
+  source-model construction the test was supposed to measure.
+- Pilot V2 contains four source-derived generated concept renders grounded in
+  instruction pages whose hashes match the audited evidence. It tests whether
+  preserving actual wheels, legs, cockpit/rider masses, tools, carrier rings
+  and negative spaces restores recognition before a second 66-asset effort.
+  Generated imagery remains a review aid, never source evidence.
 - Four labeled faction proportion boards compare front/side/top envelopes; a
   full-roster scale lineup uses one footprint-class rule; and the 31-building
   skyline plus access/network matrix preserves entrances, production exits,
@@ -189,11 +197,14 @@ redistributed.
 
 1. Retain the two explicit Martian archival gaps unless usable evidence appears,
    and escalate any gap that prevents a safe production decision.
-2. Run the game-director blind identification on both pages at 24 cells, then
-   44 and 72 cells, before opening the answer key.
-3. Revise every wrong, uncertain or indistinguishable S-code and extend the
-   44-pair register wherever the blind result exposes a new neighbor.
-4. Resolve or escalate every consequential unknown, then request the final
+2. Run the four-asset source-derived Pilot V2 blind review without opening its
+   answer key.
+3. If Pilot V2 is recognizable, use that source-derived method for a new
+   complete corpus and then run 24/44/72 review. If it fails, stop after this
+   second materially different approach and escalate the visual-design method.
+4. Revise every wrong, uncertain or indistinguishable asset and extend the
+   44-pair register wherever the accepted review exposes a new neighbor.
+5. Resolve or escalate every consequential unknown, then request the final
    complete-corpus review.
 
 ## Current decision state
@@ -204,19 +215,18 @@ No packet is approved for T083/T085 production yet.
 
 ## Verification state
 
-The complete first-pass silhouette corpus passed `./tools/verify.sh --full`
+The recorded 0/66 V1 rejection and source-derived four-asset Pilot V2 passed
+`./tools/verify.sh --full`
 with zero blocking failures at
-`Artifacts/Verification/20260910T115734Z-full-summary.txt`. All 317 tests, the
+`Artifacts/Verification/20260911T074752Z-full-summary.txt`. All 317 tests, the
 66-asset Super Scout corpus, 39 source records, 35 primary sources, four
 archival sources, 66 non-provisional production contracts, 19 generated
-matrices, 18 deterministic silhouette-review artifacts, all 44 confusion
-pairs, retained presentation/network gates and a fresh macOS export passed.
+matrices, 18 rejected V1 artifacts, explicit blind-review result, four hashed
+Pilot V2 images, all 44 confusion hypotheses, retained presentation/network
+gates and a fresh macOS export passed. This technical PASS preserves rather
+than overrules the game director's visual FAIL.
 Stress60 remains the expected 2/60 `BLOCKING_LATER` M9 diagnostic.
 
 Every routine Godot smoke and the exported app emitted the explicit immediate
-exit marker after its real PASS result. The macOS Godot diagnostic-report count
-remained 11 before and after this clean full run. Earlier attempts during the
-smoke-path correction created 11 reports: ten when two verification runs were mistakenly
-allowed to overlap and one later repeated Look Lab launch that exposed the
-remaining implicit-activation defect. Those failed attempts are not treated as
-accepted verification evidence.
+exit marker after its real PASS result. No Godot-named diagnostic report is
+currently present after this clean run.

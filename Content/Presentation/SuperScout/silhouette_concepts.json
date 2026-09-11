@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "T082",
-  "status": "DRAFT_CONCEPTS_READY_FOR_BLIND_REVIEW",
+  "status": "REJECTED_GAME_DIRECTOR_BLIND_REVIEW_0_OF_66",
   "authority": "These are source-bounded concept silhouettes derived from the locked roster identity theses and production contracts. They are not production models, gameplay footprint changes or game-director acceptance.",
   "cameraWidthsCells": [24, 44, 72],
   "reviewRules": {

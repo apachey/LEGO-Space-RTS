@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "task": "T082",
+  "status": "REVISION_REQUIRED",
+  "attempts": [
+    {
+      "id": "T082_BLIND_V1_ICON_PRIMITIVES",
+      "date": "2026-09-11",
+      "cameraWidthCells": 24,
+      "reviewer": "GAME_DIRECTOR",
+      "result": "FAIL",
+      "recognized": 0,
+      "total": 66,
+      "feedback": "якщо чесно я нікого не впізнав",
+      "diagnosis": [
+        "The generator encoded category-level masses instead of the specific source construction.",
+        "Distinctive LEGO assemblies were reduced to generic rectangles, circles and wedges.",
+        "The test therefore measured recognition of abstract vehicle classes rather than recognition of roster assets."
+      ],
+      "consequence": "Reject every V1 sheet. Do not continue to the 44- or 72-cell V1 review and do not count the V1 confusion audit as game-director evidence."
+    }
+  ],
+  "activePilot": {
+    "id": "T082_PILOT_V2_SOURCE_DERIVED_FOUR_ASSET",
+    "state": "AWAITING_GAME_DIRECTOR_BLIND_REVIEW",
+    "artifact": "Docs/Development/M85SuperScout/Silhouettes/PilotV2/blind_pilot_v2.svg",
+    "answerKey": "Docs/Development/M85SuperScout/Silhouettes/PilotV2/PILOT_V2_KEY.md",
+    "codes": ["P01", "P02", "P03", "P04"],
+    "rule": "Validate recognizable source construction at neutral review size before producing any second complete-roster or 24/44/72-cell corpus."
+  }
+}

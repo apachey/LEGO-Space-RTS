@@ -65,9 +65,11 @@ all four faction source-page audits are complete. Forty-three faction-scoped
 source records are visually audited across 48 official books plus one archival
 instruction scan; only Martian sources 1195 and 3750 remain evidence gaps. All
 66 assets now also have faction-internal semantic-construction,
-motion/socket and material/texture-needs drafts plus a complete first-pass
-24/44/72-cell concept-silhouette corpus. The game-director blind silhouette and
-complete-corpus review gates remain open. A post-T069
+motion/socket and material/texture-needs drafts. The first complete primitive
+24/44/72-cell concept-silhouette corpus was rejected after the game director
+recognized 0/66 assets at 24 cells. A four-asset source-derived Pilot V2 now
+tests a materially different method before another full-roster pass. The blind
+silhouette and complete-corpus review gates remain open. A post-T069
 quality revision makes outline/halo independent from
 the style post-pass, hardens profile paste, bounds VFX event memory and avoids
 unrelated live material rebuilds. HUD and health visuals remain excluded from the world Look Lab. The
@@ -695,21 +697,21 @@ live; the current schema-9 copy/paste retains the complete experiment.
   differentiation requirements, and every packet is visibly `HOLD`, so this
   baseline cannot be confused with completed evidence or game-director
   acceptance.
-- The first complete black concept-silhouette corpus covers all 66 assets at
-  the 24/44/72 camera ratios using one shared footprint scale. Six blind-review
-  pages show only randomized stable S-codes; the answer key is separate. Four
-  faction proportion boards, a complete relative-scale lineup and a 31-building
-  skyline/access/network audit expose the intended front/side/top envelopes,
-  entrances, authoritative production exits and physical network gaps before
-  production modeling begins.
+- The first complete black primitive-silhouette corpus covered all 66 assets at
+  the 24/44/72 camera ratios, but the game director recognized 0/66 at the first
+  24-cell gate. Its generic primitive composition is rejected and retained only
+  as a failed baseline. A four-asset Pilot V2 instead reconstructs hashed source
+  instruction views into isolated black concept renders. It must prove basic
+  recognition before that method may expand to the full roster or camera-scale
+  sheets.
 - `tools/Validation/validate_m85_super_scout.py` compares the corpus with the
   authoritative runtime roster, checks counts, IDs, classifications, source
   coverage and the three-to-seven silhouette-anchor contract, and rejects stale
   generated packets.
 - T082 remains `BLOCKING_NOW` for T083/T085. All faction source-page audits,
-  all 66 production-contract drafts and the first cross-roster silhouette and
-  confusion drafts are complete; blind identification, any resulting revisions
-  and explicit game-director corpus acceptance remain required. Current detail is tracked in
+  all 66 production-contract drafts are complete; the first silhouette approach
+  failed 0/66, and Pilot V2 plus a later complete 24/44/72 review and explicit
+  game-director corpus acceptance remain required. Current detail is tracked in
   `Docs/Development/M85_SUPER_SCOUT_PROGRESS.md`.
 
 Routine Godot verification is now non-intrusive on macOS: every gameplay smoke
@@ -734,9 +736,9 @@ step and must be announced when new visual evidence is actually required.
 
 ## Verification state
 
-The T082 first-pass cross-roster silhouette corpus passed
+The recorded 0/66 T082 V1 rejection and source-derived four-asset Pilot V2 passed
 `./tools/verify.sh --full` with zero blocking failures at
-`Artifacts/Verification/20260910T115734Z-full-summary.txt`: all 317 tests,
+`Artifacts/Verification/20260911T074752Z-full-summary.txt`: all 317 tests,
 the complete 66-asset roster and faction-bound evidence validator,
 deterministic packet generation, the 24-mover gate, compiled content, retained
 M6 networking, T081 round trip, retained M7 presentation gates and a fresh
@@ -747,19 +749,17 @@ all 18 Astronaut sources audited across 23 official PDF books, all eight Alien
 sources audited across ten official PDF books, all eight available Martian
 sources audited across eight official PDF books with two Martian archival gaps,
 all 66 assets across four factions with structured semantic/motion/material
-contracts and no provisional contract, 19 generated comparison matrices, 18
-deterministic silhouette-review artifacts, and 44 confusion pairs with no
-roster drift, blind-sheet label leak or cross-faction evidence leakage. It does
-not claim T082 acceptance.
+contracts and no provisional contract, 19 generated comparison matrices, the
+18 rejected deterministic V1 artifacts, the explicit 0/66 result, four hashed
+Pilot V2 images, and 44 confusion hypotheses with no roster drift, blind-sheet
+label leak or cross-faction evidence leakage. Technical validation does not
+reverse the visual failure or claim T082 acceptance.
 Stress60 remained the expected 2/60 `BLOCKING_LATER` M9 diagnostic.
 
 Every routine Godot smoke and the exported app emitted the explicit immediate
-exit marker after its real PASS result. The macOS Godot diagnostic-report count
-remained 11 before and after this clean full run. Earlier attempts during the
-smoke-path correction created 11 reports: ten when two verification runs were mistakenly
-allowed to overlap and one later repeated Look Lab launch that exposed the
-remaining implicit-activation defect. Those failed attempts are retained as
-failed evidence and are not confused with the accepted clean run.
+exit marker after its real PASS result. No Godot-named diagnostic report is
+currently present after this clean run. The rejected V1 silhouette result is a
+visual-design failure, not an automated-test or engine crash.
 
 The recorded T081 game-director acceptance passed `./tools/verify.sh --full`
 with zero blocking failures at

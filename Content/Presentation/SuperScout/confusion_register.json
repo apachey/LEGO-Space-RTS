@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "task": "T082",
-  "status": "IN_PROGRESS_SILHOUETTE_DRAFT_AUDIT",
-  "blindReviewState": "DRAFT_24_44_72_READY_FOR_GAME_DIRECTOR",
+  "status": "IN_PROGRESS_SOURCE_DERIVED_SILHOUETTE_REWORK",
+  "blindReviewState": "FAILED_24_CELLS_0_OF_66_PILOT_V2_REQUIRED",
   "pairs": [
     {"left":"unit.rock_raiders.hover_scout","right":"unit.rock_raiders.rapid_rider","risk":"Both are small low Rock Raider utility craft.","differences":["Hover Scout has one flat survey deck; Rapid Rider has two parallel hulls.","Hover Scout carries a forward scanner; Rapid Rider carries paired rear propulsion.","Hover Scout reads as single-seat information equipment; Rapid Rider preserves an open passenger/cargo gap."],"state":"BASELINE"},
     {"left":"unit.rock_raiders.drill_craft","right":"unit.rock_raiders.granite_grinder","risk":"Both are short-range Raider excavation machines.","differences":["Drill Craft stays low on an open hover sled; Granite Grinder is a tall planted biped.","Drill Craft frames its operator between paired raised side pods; Granite Grinder places the operator high above two large feet.","Drill Craft keeps two small mirrored saw discs; Granite Grinder carries one long drill boom balanced by rear machinery."],"state":"BASELINE"},

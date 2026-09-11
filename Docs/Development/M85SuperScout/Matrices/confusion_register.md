@@ -1,6 +1,6 @@
 # M8.5 T082 — confusion register
 
-This register combines the canon-derived baseline with risks exposed by the first 24/44/72-cell concept boards. It is still not the completed blind review: the game director may add failures or reject a proposed mitigation.
+This register combines the canon-derived baseline with hypotheses exposed by the rejected first 24/44/72-cell primitive boards. The game director recognized 0/66 at 24 cells, so these hypotheses are not accepted blind-review evidence and may change after the source-derived Pilot V2.
 
 | Left | Right | Why they may be confused | Required visible differences | State |
 |---|---|---|---|---|

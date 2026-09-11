@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="1600" viewBox="0 0 1600 1600">
+  <rect width="1600" height="1600" fill="#f4f4f1"/>
+  <style>
+    .card { fill: #ffffff; stroke: #242424; stroke-width: 3; }
+    .code { font: 700 36px sans-serif; fill: #111111; letter-spacing: 2px; }
+    .note { font: 500 20px sans-serif; fill: #444444; }
+  </style>
+  <text x="800" y="46" text-anchor="middle" class="note">T082 BLIND PILOT V2 — identify the four machines from shape only</text>
+
+  <rect x="30" y="75" width="755" height="710" rx="16" class="card"/>
+  <text x="58" y="120" class="code">P01</text>
+  <image x="58" y="135" width="700" height="620" preserveAspectRatio="xMidYMid meet" xlink:href="P01.png"/>
+
+  <rect x="815" y="75" width="755" height="710" rx="16" class="card"/>
+  <text x="843" y="120" class="code">P02</text>
+  <image x="843" y="135" width="700" height="620" preserveAspectRatio="xMidYMid meet" xlink:href="P02.png"/>
+
+  <rect x="30" y="825" width="755" height="710" rx="16" class="card"/>
+  <text x="58" y="870" class="code">P03</text>
+  <image x="58" y="885" width="700" height="620" preserveAspectRatio="xMidYMid meet" xlink:href="P03.png"/>
+
+  <rect x="815" y="825" width="755" height="710" rx="16" class="card"/>
+  <text x="843" y="870" class="code">P04</text>
+  <image x="843" y="885" width="700" height="620" preserveAspectRatio="xMidYMid meet" xlink:href="P04.png"/>
+</svg>

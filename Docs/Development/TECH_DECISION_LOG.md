@@ -1543,6 +1543,26 @@ simulation, public format, dependency or canon. All packets remain `HOLD`.
 This is a preproduction review method only. It changes no gameplay, simulation,
 public format, dependency, architecture or canon. T082 remains `HOLD`.
 
+## 2026-09-11 — Reject category-primitive silhouettes after a 0/66 blind result
+
+- The game director recognized none of the 66 assets on the first 24-cell blind
+  sheets. This rejects the output rather than blaming scale or reviewer memory.
+- The failed generator encoded a core, locomotion, hero tool, frame and negative
+  space with generic vector primitives. Although deterministic and unique by
+  fingerprint, those primitives described vehicle categories rather than the
+  specific source constructions required by T082.
+- The rejected V1 files remain reproducible diagnostic evidence. Their 44- and
+  72-cell reviews are cancelled because enlarging or shrinking an unrecognizable
+  identity does not repair it.
+- A materially different four-asset Pilot V2 reconstructs isolated concept
+  renders from hash-verified instruction pages. Generated imagery is marked as
+  a review aid and never replaces the official/archival source evidence. The
+  pilot must pass basic blind recognition before this method expands to 66
+  assets or exact gameplay-camera scales.
+
+This changes the T082 review method only. It changes no gameplay, simulation,
+public format, dependency, architecture or canon. T082 remains `HOLD`.
+
 ## 2026-09-10 — Keep Alien production mechanical and craft-derived
 
 - The T082 Alien production-contract draft covers all six units and six

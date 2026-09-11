@@ -543,16 +543,24 @@ def answer_key(coded_assets: list[tuple[str, dict]]) -> str:
 def readme_text() -> str:
     return """# M8.5 T082 — cross-roster silhouette review
 
-These files are deterministic black concept silhouettes derived from the locked identity theses and faction production contracts. They are an inexpensive pre-modeling collision test, not finished art and not gameplay authority.
+## V1 result — rejected
 
-## Blind review order
+The game director recognized 0 of 66 assets on the first 24-cell blind sheets on 2026-09-11. The deterministic primitive generator reduced specific LEGO construction to category-level icons, so every `blind_*_cells.svg` V1 sheet is rejected evidence. Do not continue its 44- or 72-cell review and do not use `BLIND_REVIEW_KEY.md` to reinterpret the result as a partial pass.
+
+The retained V1 files are a reproducible failed experiment and diagnostic baseline, not finished art, gameplay authority or an accepted production input.
+
+## Active next step
+
+`PilotV2/blind_pilot_v2.svg` tests four source-derived concept renders before any second 66-asset corpus is produced. It preserves source construction instead of composing assets from generic rectangles, circles and wedges. Its separate answer key must remain closed until the game director records all four identifications.
+
+## Rejected V1 review order — historical only
 
 1. Open both `blind_24_cells_page_1.svg` and `blind_24_cells_page_2.svg` without opening the answer key. Write down the asset name you believe matches every S-code.
 2. Repeat with both 44-cell pages, then both 72-cell pages. Do not use faction, role or footprint hints. The unsplit `blind_*_cells.svg` files are retained as full-roster overview sheets.
 3. Open `BLIND_REVIEW_KEY.md` and mark wrong, uncertain or indistinguishable codes.
 4. Use the faction proportion boards, scale lineup and building skyline/access matrix to diagnose the exact missing distinction.
 
-Passing requires game-director identification or explicit acceptance of a documented mitigation. The generator intentionally never marks this review complete by itself.
+Passing still requires game-director identification or explicit acceptance of a documented mitigation. The generator intentionally never marks a review complete by itself.
 
 ## What the sheets do and do not prove
 
