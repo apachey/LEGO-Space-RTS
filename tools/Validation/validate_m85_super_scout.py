@@ -36,6 +36,7 @@ SILHOUETTE_GENERATOR = ROOT / "tools/generate-m85-silhouette-review.py"
 SILHOUETTE_OUTPUT = ROOT / "Docs/Development/M85SuperScout/Silhouettes"
 PILOT_V2_OUTPUT = SILHOUETTE_OUTPUT / "PilotV2"
 PILOT_V2_MANIFEST = PILOT_V2_OUTPUT / "generation_manifest.json"
+PILOT_V2_BLIND_PNG = PILOT_V2_OUTPUT / "blind_pilot_v2.png"
 
 CLASSIFICATIONS = {
     "OFFICIAL_DIRECT": "OFFICIAL-DIRECT",
@@ -360,7 +361,8 @@ def main() -> None:
         MARTIANS_EVIDENCE,
         ROCK_RAIDERS_CONTRACTS, ASTRONAUTS_CONTRACTS, ALIENS_CONTRACTS, MARTIANS_CONTRACTS,
         CONFUSION, SILHOUETTE_CONCEPTS, BLIND_REVIEW_RESULTS, CONTENT, GENERATOR, SILHOUETTE_GENERATOR,
-        PILOT_V2_MANIFEST, PILOT_V2_OUTPUT / "blind_pilot_v2.svg", PILOT_V2_OUTPUT / "PILOT_V2_KEY.md",
+        PILOT_V2_MANIFEST, PILOT_V2_OUTPUT / "blind_pilot_v2.svg", PILOT_V2_BLIND_PNG,
+        PILOT_V2_OUTPUT / "PILOT_V2_KEY.md",
     ):
         if not path.is_file():
             fail(f"missing {path.relative_to(ROOT)}")
@@ -712,11 +714,27 @@ def main() -> None:
         fail("source-derived Pilot V2 must remain awaiting game-director review")
     if active_pilot.get("codes") != ["P01", "P02", "P03", "P04"]:
         fail("Pilot V2 review-code order drifted")
+    expected_pilot_artifact = PILOT_V2_BLIND_PNG.relative_to(ROOT).as_posix()
+    if active_pilot.get("artifact") != expected_pilot_artifact:
+        fail("Pilot V2 active review must use the self-contained blind PNG")
 
     if pilot_v2_manifest.get("schemaVersion") != 1 or pilot_v2_manifest.get("task") != "T082":
         fail("Pilot V2 generation manifest schema/task mismatch")
     if pilot_v2_manifest.get("status") != "AWAITING_GAME_DIRECTOR_BLIND_REVIEW":
         fail("Pilot V2 must not imply game-director acceptance")
+    if pilot_v2_manifest.get("blindArtifact") != PILOT_V2_BLIND_PNG.name:
+        fail("Pilot V2 manifest must identify the self-contained blind PNG")
+    blind_png_bytes = PILOT_V2_BLIND_PNG.read_bytes()
+    if hashlib.sha256(blind_png_bytes).hexdigest() != pilot_v2_manifest.get("blindArtifactSha256"):
+        fail("Pilot V2 self-contained blind PNG hash drifted")
+    if blind_png_bytes[:8] != b"\x89PNG\r\n\x1a\n" or len(blind_png_bytes) < 24:
+        fail("Pilot V2 self-contained blind artifact is not a valid PNG")
+    blind_png_size = (
+        int.from_bytes(blind_png_bytes[16:20], "big"),
+        int.from_bytes(blind_png_bytes[20:24], "big"),
+    )
+    if blind_png_size != (1600, 1600):
+        fail(f"Pilot V2 blind PNG must be 1600x1600, found {blind_png_size[0]}x{blind_png_size[1]}")
     pilot_assets = pilot_v2_manifest.get("assets", [])
     pilot_codes = [record.get("code") for record in pilot_assets]
     if pilot_codes != ["P01", "P02", "P03", "P04"] or len({record.get("stableId") for record in pilot_assets}) != 4:

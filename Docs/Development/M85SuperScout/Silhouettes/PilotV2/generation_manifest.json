@@ -5,6 +5,8 @@
   "status": "AWAITING_GAME_DIRECTOR_BLIND_REVIEW",
   "generationTool": "built-in image generation",
   "useCase": "sketch-to-render",
+  "blindArtifact": "blind_pilot_v2.png",
+  "blindArtifactSha256": "d09e941c7977f910b3775272ed872d6fb1aae1c535fcfbc46d251ec8ad73b82f",
   "authority": "Generated concept images are review aids only. Official or archival instruction PDFs remain the evidence; these images do not establish source construction, gameplay rules or canon.",
   "sharedPromptConstraints": [
     "Isolate one completed source model on a pure white background.",

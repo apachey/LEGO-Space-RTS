@@ -23,7 +23,7 @@
   "activePilot": {
     "id": "T082_PILOT_V2_SOURCE_DERIVED_FOUR_ASSET",
     "state": "AWAITING_GAME_DIRECTOR_BLIND_REVIEW",
-    "artifact": "Docs/Development/M85SuperScout/Silhouettes/PilotV2/blind_pilot_v2.svg",
+    "artifact": "Docs/Development/M85SuperScout/Silhouettes/PilotV2/blind_pilot_v2.png",
     "answerKey": "Docs/Development/M85SuperScout/Silhouettes/PilotV2/PILOT_V2_KEY.md",
     "codes": ["P01", "P02", "P03", "P04"],
     "rule": "Validate recognizable source construction at neutral review size before producing any second complete-roster or 24/44/72-cell corpus."

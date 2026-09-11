@@ -8,7 +8,7 @@ The retained V1 files are a reproducible failed experiment and diagnostic baseli
 
 ## Active next step
 
-`PilotV2/blind_pilot_v2.svg` tests four source-derived concept renders before any second 66-asset corpus is produced. It preserves source construction instead of composing assets from generic rectangles, circles and wedges. Its separate answer key must remain closed until the game director records all four identifications.
+`PilotV2/blind_pilot_v2.png` is the self-contained review board for four source-derived concept renders before any second 66-asset corpus is produced. It preserves source construction instead of composing assets from generic rectangles, circles and wedges. Its separate answer key must remain closed until the game director records all four identifications. The SVG is retained only as an editable layout source because some viewers do not resolve its linked PNG files.
 
 ## Rejected V1 review order — historical only
 

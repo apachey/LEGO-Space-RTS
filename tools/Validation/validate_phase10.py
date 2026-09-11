@@ -80,6 +80,7 @@ required = [
     'Docs/Development/M85SuperScout/Silhouettes/building_skyline.svg',
     'Docs/Development/M85SuperScout/Silhouettes/building_access_network_matrix.md',
     'Docs/Development/M85SuperScout/Silhouettes/PilotV2/blind_pilot_v2.svg',
+    'Docs/Development/M85SuperScout/Silhouettes/PilotV2/blind_pilot_v2.png',
     'Docs/Development/M85SuperScout/Silhouettes/PilotV2/PILOT_V2_KEY.md',
     'Docs/Development/M85SuperScout/Silhouettes/PilotV2/generation_manifest.json',
     'Docs/Development/M85SuperScout/Silhouettes/PilotV2/P01.png',
