@@ -110,15 +110,16 @@
     {
       "stableId": "unit.martians.red_planet_protector",
       "status": "UNREVIEWED_CORRECTION_CANDIDATE",
-      "directorFinding": "The first edit did not actually restore the source weapon arrangement; 7313 has two connected but deliberately asymmetric shoulder cannon assemblies.",
-      "specificPrompt": "Use case precise-object-edit. Edit only the two shoulder cannon assemblies of the prior matte-black candidate from official 7313 geometry: viewer-left circular dish on a long horizontal boom, viewer-right dish high on an upward-sloping rectangular beam, both visibly connected to their shoulder mounts. Do not mirror them and do not leave either cannon floating; preserve the rest of the model.",
-      "output": "Renders/unit_martians_red_planet_protector_rev2.png",
-      "outputSha256": "ae36e75a23bfaeb483a3ceb62a12965a7a6e3ea814d71760dd244e54bede3016"
+      "directorFinding": "The rev2 weapon edit remained structurally wrong because it preserved a bulky humanoid mech with arm-mounted weapons. Official 7313 is a broad wedge upper craft on a small waist and two thin legs, with no humanoid arms; its unequal cannon booms attach to the top/rear of the craft.",
+      "specificPrompt": "Use case stylized-concept. Rebuild the complete Red Planet Protector from official LEGO Life on Mars set 7313, using the box image as authoritative geometry and the previous candidate only for matte-black review-render style. Make one tall lightweight biped: broad rounded wedge upper craft with thin side fins, a tiny central waist, exactly two long thin slightly splayed legs and small narrow feet, and no humanoid arms. Put exactly two deliberately asymmetric cannon booms on the top/rear of the craft: viewer-left long thin nearly horizontal boom to a large circular muzzle/dish; viewer-right long rectangular boom rising diagonally upward/outward to a large circular muzzle/dish. Both must be visibly connected, both muzzles face generally toward the viewer, and the booms must not be mirrored. Full-body three-quarter front orthographic-like matte-black LEGO-compatible studio render on white; no floating parts, extra weapons, minifigure, logo, text or watermark.",
+      "output": "Renders/unit_martians_red_planet_protector_rev3.png",
+      "outputSha256": "4dd1481384b55dd77848fce313b0cdb9936c7e27ab34e951d662d57503553be9"
     }
   ],
   "supersededRevisionCandidates": [
     {"stableId":"unit.martians.jet_scooter","output":"Renders/unit_martians_jet_scooter_rev1.png","outputSha256":"3ef858510d3dfdd3940b17dcc8f72023762ac22c7db091e243c3b461cb0ecac6","reason":"Superseded by the sleeker rev2 direction."},
     {"stableId":"unit.aliens.etx_alien_strike","output":"Renders/unit_aliens_etx_alien_strike_rev1.png","outputSha256":"11e5edc0520ef1ceac7b9ede0b7dbda941654ebb99e71fae3e6321eeb941066f","reason":"Superseded after explicit flying-only canon correction."},
-    {"stableId":"unit.martians.red_planet_protector","output":"Renders/unit_martians_red_planet_protector_rev1.png","outputSha256":"928a263d85a1e42824fafc6107d73c850d2f41fba9b9b10aa9b85bb5bc6dc6aa","reason":"Superseded because the source-asymmetric shoulder cannons were not fixed."}
+    {"stableId":"unit.martians.red_planet_protector","output":"Renders/unit_martians_red_planet_protector_rev1.png","outputSha256":"928a263d85a1e42824fafc6107d73c850d2f41fba9b9b10aa9b85bb5bc6dc6aa","reason":"Superseded because the source-asymmetric top cannon booms were not fixed."},
+    {"stableId":"unit.martians.red_planet_protector","output":"Renders/unit_martians_red_planet_protector_rev2.png","outputSha256":"ae36e75a23bfaeb483a3ceb62a12965a7a6e3ea814d71760dd244e54bede3016","reason":"Superseded because the narrow weapon edit preserved an incorrect bulky humanoid torso, arm mounts and heavy legs instead of rebuilding the 7313 craft-on-spindly-legs topology."}
   ]
 }

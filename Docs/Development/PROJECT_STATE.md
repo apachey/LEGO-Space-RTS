@@ -742,7 +742,11 @@ live; the current schema-9 copy/paste retains the complete experiment.
   explicit game-director canon correction: ETX Alien Strike is exclusively
   airborne with no siege/deployment state. Second-wave candidates make the
   Strike a continuous crescent aircraft, restore Protector's asymmetric source
-  cannons and make Jet Scooter lower and sleeker. They remain separate from the
+  cannons and make Jet Scooter lower and sleeker. Director review then rejected
+  the Protector rev2 because the narrow weapon edit preserved the wrong bulky
+  humanoid body. Rev3 rebuilds the whole 7313 topology as a broad wedge craft
+  on a tiny waist and two thin legs, with no arms and two unequal top-mounted
+  cannon booms. The candidates remain separate from the
   immutable first-review boards until the wider correction pass is ready.
 - The official 7301 instruction page also exposed a stale audit-reconciliation
   error: Rover is a four-wheel open platform, not the two-wheel bike described

@@ -68,7 +68,7 @@ Non-removable identity anchors:
 - Forbidden genericization: Do not make the asset Alien-lite, a smooth energy object or a joke contraption. Pumps, tubes, legs, clamps and platforms carry identity.
 - Nearest-confusion baseline:
 
-- `unit.martians.red_planet_protector` — Both are large articulated Martian control machines. Mitigations: Protector is a tall twin-foot biped with a detachable upper craft; Searcher is a huge low many-legged excavation chassis. / Protector carries paired long emitter arms; Searcher separates a forward drill/claw module from a tall rear crane. / Protector changes into a compact craft; Searcher exposes an underslung material sled and irregular processing route.
+- `unit.martians.red_planet_protector` — Both are large articulated Martian control machines. Mitigations: Protector is a tall twin-foot biped with a detachable upper craft; Searcher is a huge low many-legged excavation chassis. / Protector carries two unequal top-mounted emitter booms; Searcher separates a forward drill/claw module from a tall rear crane. / Protector changes into a compact craft; Searcher exposes an underslung material sled and irregular processing route.
 
 ## D. Construction contract
 

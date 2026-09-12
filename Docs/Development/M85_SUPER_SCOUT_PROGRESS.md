@@ -96,8 +96,11 @@ a second full-roster corpus. The complete-roster review remains open.
   were not included in the review message. Three first-wave correction
   candidates are preserved. A second correction wave now makes Jet Scooter
   lower and sleeker, restores Red Planet Protector's source-accurate asymmetric
-  shoulder cannons, and rebuilds ETX Alien Strike as one continuous flying
-  crescent craft. The game director explicitly corrected canon: 7693 has no
+  cannon booms, and rebuilds ETX Alien Strike as one continuous flying crescent
+  craft. The Protector rev2 remained wrong because that local weapon edit kept
+  a bulky humanoid body. Rev3 therefore rebuilds the complete 7313 silhouette:
+  broad wedge craft, tiny waist, two thin legs, no arms and unequal top-mounted
+  cannon booms. The game director explicitly corrected canon: 7693 has no
   ground, walking or siege-deployment state. The three new renders remain review
   candidates and do not silently replace the hash-locked first-review boards.
 - The official 7301 page proved that Rover has four equal wheel pods. Its older

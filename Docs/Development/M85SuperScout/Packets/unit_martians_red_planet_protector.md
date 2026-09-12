@@ -54,21 +54,21 @@ Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-qu
 
 ## C. Recognition contract
 
-**Silhouette thesis:** A modular tall biped assembled from a broad wedge craft, twin-foot lower body and two long detachable emitter arms.
+**Silhouette thesis:** A modular tall biped assembled from a broad wedge craft, twin-foot lower body and two unequal top-mounted detachable emitter booms.
 
 Non-removable identity anchors:
 
 - broad wedge upper craft
 - separate twin-foot biped base
-- paired long detachable emitter arms
+- two unequal top-mounted detachable emitter booms
 
 - Rejected V1 blind-review code: `S30`. Historical failed boards: [24-cell](../Silhouettes/blind_24_cells.svg), [44-cell](../Silhouettes/blind_44_cells.svg), [72-cell](../Silhouettes/blind_72_cells.svg). The game director recognized 0/66 at 24 cells; this primitive concept is not an approved model or accepted evidence.
 - Palette and material hierarchy: Blue and sand-red with translucent-neon-green accents, open platforms and visibly articulated mechanics.
 - Forbidden genericization: Do not make the asset Alien-lite, a smooth energy object or a joke contraption. Pumps, tubes, legs, clamps and platforms carry identity.
 - Nearest-confusion baseline:
 
-- `unit.martians.recon_mech_rp` — Both are modular Martian bipeds built around detachable upper craft. Mitigations: Recon-Mech carries a wide asymmetric drill-and-claw span; Protector carries two matched long emitter arms. / Recon-Mech exposes a tall rear pressure tank; Protector preserves a broad wedge nose and separate torso module. / Recon-Mech relocates its leg block behind the cockpit for flight; Protector distributes both leg and torso modules around its low craft state.
-- `unit.martians.excavation_searcher` — Both are large articulated Martian control machines. Mitigations: Protector is a tall twin-foot biped with a detachable upper craft; Searcher is a huge low many-legged excavation chassis. / Protector carries paired long emitter arms; Searcher separates a forward drill/claw module from a tall rear crane. / Protector changes into a compact craft; Searcher exposes an underslung material sled and irregular processing route.
+- `unit.martians.recon_mech_rp` — Both are modular Martian bipeds built around detachable upper craft. Mitigations: Recon-Mech carries separate drill and claw tools at its sides; Protector carries two unequal long emitter booms above the broad wedge craft. / Recon-Mech exposes a tall rear pressure tank; Protector preserves a broad wedge nose and separate torso module. / Recon-Mech relocates its leg block behind the cockpit for flight; Protector distributes both leg and torso modules around its low craft state.
+- `unit.martians.excavation_searcher` — Both are large articulated Martian control machines. Mitigations: Protector is a tall twin-foot biped with a detachable upper craft; Searcher is a huge low many-legged excavation chassis. / Protector carries two unequal top-mounted emitter booms; Searcher separates a forward drill/claw module from a tall rear crane. / Protector changes into a compact craft; Searcher exposes an underslung material sled and irregular processing route.
 
 ## D. Construction contract
 
@@ -76,9 +76,9 @@ Non-removable identity anchors:
 - Semantic part map:
   - Broad wedge upper craft — remains the dominant mobile torso — SOURCE_VERIFIED.
   - Separate twin-foot biped base — visibly carries and braces the upper craft — SOURCE_VERIFIED.
-  - Paired long detachable-source emitter arms — become continuous articulated Guard Sweep tools — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.
-- Structural load path: A reinforced visible waist connection carries the wedge craft into the twin-foot base while both long arms route sweep loads through shoulder braces into the planted stance.
-- Repeated modules / connection grammar: Wedge craft, two-foot lower chassis, paired emitter arms, hoses and stance braces remain readable without hand separation.
+  - Two unequal top-mounted detachable-source emitter booms — become continuous articulated Guard Sweep tools without turning into humanoid arms — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.
+- Structural load path: A reinforced visible waist connection carries the wedge craft into the twin-foot base while both unequal top booms route sweep loads through their craft mounts into the planted stance.
+- Repeated modules / connection grammar: Wedge craft, two-foot lower chassis, two unequal top-mounted emitter booms, hoses and stance braces remain readable without hand separation.
 - Source-faithful versus adapted boundary: The source proves two rebuilt silhouettes but not a continuous transform. The game transition must keep all parts connected and visibly trade movement for frontal bracing.
 
 ## E. Material and texture contract
@@ -86,7 +86,7 @@ Non-removable identity anchors:
 - Geometry must carry:
   - broad wedge upper craft
   - separate twin-foot base
-  - paired long emitter arms
+  - two unequal top-mounted emitter booms
 - Accepted master-material roles: `Body`, `Accent`, `Tool`, `Rubber`, `Glass`, `Signal`, `Lamp`, `Neutral`.
 - Reusable texture requirements:
   - `mar_open_frame_surface` — Restrained molded variation for blue, sand-red and neutral open frames without faking connections or turning Martians into polished Alien machines. Channels: Tangent-space normal and linear roughness; body colors remain parametric. Resolution: 2048x2048; texel density: 256 px/m at Close; tiling: Shared model-space 3 m repeat across connected structural frames.; LOD fallback: Half strength at Combat; master roughness only at Strategic. Provenance/state: Project-authored procedural source informed by verified Life on Mars machinery; human review required. `SPECIFIED_NOT_AUTHORED`.
@@ -105,14 +105,14 @@ Non-removable identity anchors:
 |---|---|---|---|
 | `Pivot_LegLeft` | Asset_RedPlanetProtector | walking step to widened planted stance | movement or authoritative stance progress |
 | `Pivot_LegRight` | Asset_RedPlanetProtector | mirrored step-to-brace arc | movement or authoritative stance progress |
-| `Pivot_EmitterLeft` | Asset_RedPlanetProtector | mobile carry to frontal sweep coverage | stance progress and Guard Sweep |
-| `Pivot_EmitterRight` | Asset_RedPlanetProtector | mirrored coverage arc | stance progress and attack |
+| `Pivot_EmitterLeft` | Asset_RedPlanetProtector | near-horizontal carry to frontal sweep coverage | stance progress and Guard Sweep |
+| `Pivot_EmitterRight` | Asset_RedPlanetProtector | raised unequal boom to complementary coverage arc | stance progress and attack |
 
 - Required beats:
-  - Idle mobile stance keeps wedge and limbs distinct.
-  - Walk carries the long arms clear of feet.
-  - Deploy widens feet, lowers wedge and locks arms before readiness.
-  - Guard Sweep uses physical arm motion; destruction breaks modules only after authoritative failure.
+  - Idle mobile stance keeps wedge, legs and unequal top booms distinct.
+  - Walk carries both booms clear of the legs.
+  - Deploy widens feet, lowers the wedge and locks both booms before readiness.
+  - Guard Sweep uses physical boom motion; destruction breaks modules only after authoritative failure.
 - Animation consumes authoritative state and never decides gameplay timing or results.
 
 ## G. Presentation hookups

@@ -67,7 +67,7 @@ Non-removable identity anchors:
 - Forbidden genericization: Do not make the asset Alien-lite, a smooth energy object or a joke contraption. Pumps, tubes, legs, clamps and platforms carry identity.
 - Nearest-confusion baseline:
 
-- `unit.martians.red_planet_protector` — Both are modular Martian bipeds built around detachable upper craft. Mitigations: Recon-Mech carries a wide asymmetric drill-and-claw span; Protector carries two matched long emitter arms. / Recon-Mech exposes a tall rear pressure tank; Protector preserves a broad wedge nose and separate torso module. / Recon-Mech relocates its leg block behind the cockpit for flight; Protector distributes both leg and torso modules around its low craft state.
+- `unit.martians.red_planet_protector` — Both are modular Martian bipeds built around detachable upper craft. Mitigations: Recon-Mech carries separate drill and claw tools at its sides; Protector carries two unequal long emitter booms above the broad wedge craft. / Recon-Mech exposes a tall rear pressure tank; Protector preserves a broad wedge nose and separate torso module. / Recon-Mech relocates its leg block behind the cockpit for flight; Protector distributes both leg and torso modules around its low craft state.
 
 ## D. Construction contract
 
