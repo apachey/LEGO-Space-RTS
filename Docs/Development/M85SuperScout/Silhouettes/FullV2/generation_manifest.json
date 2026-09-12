@@ -180,6 +180,41 @@
       "specificPrompt": "Use case precise-object-edit. Rebuild the complete 4920 as a small low catamaran work skimmer: two long pointed parallel pontoons around an open center channel, raised operator cowling, two circular forward work lights/tools, high open rear cargo hopper with one rock load, exactly two rear propulsion tubes and a small dish/tool mast. No empty raft, sealed speedboat or stripped frame.",
       "output": "Renders/unit_rock_raiders_rapid_rider_rev1.png",
       "outputSha256": "03da835c5056f33741836541305a1d6d3c9932320615cea6410d701a8530cb32"
+    },
+    {
+      "stableId": "unit.martians.worker_robot",
+      "status": "UNREVIEWED_CORRECTION_CANDIDATE",
+      "directorFinding": "V04 was recognizable but weak. Source-only 7302 correction restores the shallow open wedge, two articulated legs, broad feet and Life on Mars operator. Generated face relief and limb shaping are interpretation. Canonical worker tools remain a later separately reviewed adaptation, not a gameplay removal.",
+      "specificPrompt": "Use case: stylized-concept. Asset: source-faithful monochrome LEGO RTS identity study.\nInput images 1 and 2 are official LEGO 7302 Worker Robot instruction references, not edit targets. Follow the completed robot in image 2 step 7 and cover photo in image 1.\nGenerate one faithful studio three-quarter render of the complete tiny 7302 walking machine and its seated Life on Mars Martian operator. Plain white floor/background, neutral soft shadows, entire object visible with margin, no text. All components and figure uniformly black/dark neutral gray, absolutely no colors.\nPreserve exactly the reference construction and proportions: shallow open rectangular cockpit wedge made of two sloping side bricks around a circular seat; low rear wall with studs; small control tile extended ahead of the seated operator on its thin articulated mount. Exactly TWO short articulated mechanical legs attached to the LEFT AND RIGHT sides, each ending in one broad flat angular foot with a small grille. Feet splayed outward, one gently advanced in the cover walking pose; cockpit only slightly above the two feet, not a tall humanoid mech. Both feet and the open wedge are unambiguously visible.\nOperator is the original 2001 Life on Mars molded Martian with wide wedge-shaped alien head, narrow neck and thin jointed arms, seated with hands at controls. It is not a human minifigure, not a 2007 translucent alien, not an insect or xenomorph.\nNo invented robot arms, repair claw, guns, canopy, wheels, extra legs, vehicle armor, crane or backpack. This is the source identity study; future canonical worker tools are not part of this reconstruction. Visible LEGO studs and simple brick connections. Do not turn the micro-build into a generic sci-fi robot.",
+      "sourceSets": [
+        "7302"
+      ],
+      "sourcePdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130290.pdf",
+      "referencePages": [
+        1,
+        2
+      ],
+      "output": "Renders/unit_martians_worker_robot_rev1.png",
+      "outputSha256": "a92a2fb222d4041ce72e3de95e74bc5daeff748e7f7ff11d88222f3c46ded395",
+      "generationMode": "built-in image_gen; generation with official instruction references"
+    },
+    {
+      "stableId": "unit.astronauts.mx41_switch_fighter",
+      "status": "UNREVIEWED_CORRECTION_CANDIDATE",
+      "directorFinding": "V43 preferred the original source. New 7647 flight correction restores the long closed canopy hull, central gap, narrow full-span folding wing and six drum wheels. Ground state and continuous transformation remain required production coverage.",
+      "specificPrompt": "Use case: stylized-concept. Asset: source-faithful monochrome LEGO RTS identity study.\nImages 1 and 2 are official LEGO 7647 Switch Fighter completed FLIGHT configuration references; image 3 shows its actual folding mechanism, supporting topology only. Reference generation, not an edit.\nGenerate ONE studio three-quarter render of ONLY the actual 7647 human Switch Fighter in FLIGHT configuration. Reconstruct it directly from the official references, preserve source proportions and brick layout, do not redesign. Elevated front three-quarter angle matching image 2; long nose points toward lower left and the whole wing span fits comfortably within frame. White seamless floor/background, neutral soft shadow. Uniform black/dark neutral gray for all bricks, canopy, wheels, pilot and original transparent elements; absolutely no color, labels, logos, text, missiles in flight, exhaust or effects.\nLong low central cockpit hull with tapered pointed flat wedge nose, closed elongated teardrop canopy, central open rectangular equipment gap behind cockpit, large pair of layered curved side fairings, long enclosed rear tube/equipment section and small rear fin. The fairings belong close against the central hull, not huge separate engines. Preserve the conspicuous open gap and source's long fore-aft proportion.\nOne narrow straight FULL-SPAN wing/chassis slab crosses under the middle of the hull, broad sideways span but short front-back depth. Wings are unfolded flat horizontally; rectangular black end tabs fold at their ends per reference. Exactly SIX chunky ribbed drum wheels are retained: three evenly spaced along the rear edge of each wing half, as seen clearly in image 2. They are flight-state source wheel parts, not landing gear beneath a generic swept aircraft. Four compact forward emitter mounts, two per side around midbody, matching the source, neutral grayscale.\nNo separate alien craft or minifigures outside the cockpit. No conventional swept delta wings, giant pods, dangling rover, broad tank mass, additional wheel rows, invented cannons or decorative complexity. The goal is the recognizable original Switch Fighter rather than a creative reinterpretation.",
+      "sourceSets": [
+        "7647"
+      ],
+      "sourcePdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4525547.pdf",
+      "referencePages": [
+        1,
+        63,
+        64
+      ],
+      "output": "Renders/unit_astronauts_mx41_switch_fighter_rev1.png",
+      "outputSha256": "3349e6dd6d6286321140a5f988769df4b10c3a91e0277c537859121a07062d30",
+      "generationMode": "built-in image_gen; generation with official instruction references"
     }
   ],
   "blockedCorrections": [

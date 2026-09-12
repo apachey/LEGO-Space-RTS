@@ -14,6 +14,8 @@ vertical capsule. The director accepted rev3's open horizontal three-arch deck
 and overall source-derived composition for the next composite review.
 MT-101 and MX-71 are explicitly blocked after two image-generation
 approaches each left unresolved source topology.
+New source-only Worker Robot and MX-41 flight-state candidates await review;
+previous accepted candidates and immutable first-review boards remain unchanged.
 
 ## Completed in the identity-baseline pass
 
@@ -302,6 +304,16 @@ approaches each left unresolved source topology.
 
 ## Current evidence classification
 
+The next correction pair returns V04 Worker Robot and V43 MX-41 to their
+official 7302 and 7647 construction. Worker Robot keeps its shallow open wedge,
+two articulated legs, broad feet and Life on Mars operator; generated face
+relief/limb shaping is not source evidence. Its canonical worker tools remain
+a later separately reviewed adaptation, not a gameplay removal. MX-41 keeps
+the long closed canopy hull, central gap, full-span narrow wing and six drum
+wheels in flight state. Ground-state and continuous transformation evidence
+remain required for production. Both are first correction attempts, unreviewed,
+with exact prompts and source pages retained in the FullV2 manifest.
+
 | State | Count | Meaning |
 |---|---:|---|
 | `PRIMARY_VERIFIED` | 35 | A direct official LEGO instruction PDF was located. |
@@ -336,6 +348,13 @@ approving the source-derived silhouette method for full-roster expansion. No
 packet is approved for T083/T085 production yet.
 
 ## Verification state
+
+The Worker Robot / MX-41 correction pair passed `./tools/verify.sh` with
+317/317 tests and zero blocking failures at
+`Artifacts/Verification/20260912T214438Z-fast-summary.txt`, plus the focused
+T082 validator and `git diff --check`. Validation now locks both as unreviewed
+correction candidates and checks their image hashes. No gameplay/runtime code
+changed, no visible Godot session was launched and no new macOS export was made.
 
 The additional director-authorized MB-01 rev3 is an accepted correction candidate;
 its exact built-in generation prompt is retained in the FullV2 manifest.

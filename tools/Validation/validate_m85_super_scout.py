@@ -904,6 +904,8 @@ def main() -> None:
         "unit.rock_raiders.tunnel_transport": "DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE",
         "building.ast.mb01_eagle_command_base": "DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE",
         "unit.rock_raiders.rapid_rider": "DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE",
+        "unit.martians.worker_robot": "UNREVIEWED_CORRECTION_CANDIDATE",
+        "unit.astronauts.mx41_switch_fighter": "UNREVIEWED_CORRECTION_CANDIDATE",
     }
     if {
         record.get("stableId"): record.get("status") for record in revision_candidates
