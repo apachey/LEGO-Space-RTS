@@ -781,8 +781,9 @@ live; the current schema-9 copy/paste retains the complete experiment.
   front pneumatic manifold, branching hoses, separate three-lobed pump and
   four-barrel defense tower. The director explicitly authorized one additional
   MB-01 generation instead of manual blockout: rev3 uses the new photos directly
-  and awaits review; barrel count remains partly occluded in this view. This
-  exception does not authorize extra MX-71 or MT-101 attempts. MX-71's first
+  and is director-accepted for the next composite review; barrel count remains
+  partly occluded in this view and must be retained from source during modeling.
+  This exception does not authorize extra MX-71 or MT-101 attempts. MX-71's first
   correction remained too broad; its second recovered the long narrow spine,
   separate tail booms and close underslung rover but still misplaced and
   simplified the four blue-tipped emitters. Its two allowed image attempts are

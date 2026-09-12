@@ -902,7 +902,7 @@ def main() -> None:
         "unit.astronauts.mobile_mining_platform": "UNREVIEWED_CORRECTION_CANDIDATE",
         "unit.astronauts.mt51_claw_tank": "UNREVIEWED_CORRECTION_CANDIDATE",
         "unit.rock_raiders.tunnel_transport": "DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE",
-        "building.ast.mb01_eagle_command_base": "UNREVIEWED_CORRECTION_CANDIDATE",
+        "building.ast.mb01_eagle_command_base": "DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE",
         "unit.rock_raiders.rapid_rider": "DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE",
     }
     if {

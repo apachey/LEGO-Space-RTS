@@ -10,8 +10,9 @@ correction candidates now also cover the MT-61-derived Mobile Mining Platform
 and MT-51 Claw-Tank. Tunnel Transport and Rapid Rider are individually accepted
 for the next composite review. MB-01 Eagle Command Base has a third candidate,
 explicitly authorized by the director after new photos exposed rev2's incorrect
-vertical capsule. It restores the open horizontal three-arch deck and awaits
-review. MT-101 and MX-71 are explicitly blocked after two image-generation
+vertical capsule. The director accepted rev3's open horizontal three-arch deck
+and overall source-derived composition for the next composite review.
+MT-101 and MX-71 are explicitly blocked after two image-generation
 approaches each left unresolved source topology.
 
 ## Completed in the identity-baseline pass
@@ -138,8 +139,9 @@ approaches each left unresolved source topology.
   front pneumatic manifold, thick branching hoses, separate three-lobed pump
   and side four-barrel defense tower. The director explicitly authorized one
   extra generation rather than a manual blockout. Rev3 uses five source photos
-  directly, excludes the separate spacecraft and awaits review. The barrel
-  count is partly occluded; this image is not multi-angle production evidence.
+  directly, excludes the separate spacecraft and is director-accepted for the
+  next composite review. The barrel count is partly occluded; this image is not
+  multi-angle production evidence.
 - The same priority wave restores 4920 Rapid Rider's complete source read: twin
   pointed pontoons, open center, raised controls, forward work lights, rear
   cargo hopper and paired propulsion tubes. The game director accepted this
@@ -335,8 +337,10 @@ packet is approved for T083/T085 production yet.
 
 ## Verification state
 
-The additional director-authorized MB-01 rev3 is an unreviewed image candidate;
+The additional director-authorized MB-01 rev3 is an accepted correction candidate;
 its exact built-in generation prompt is retained in the FullV2 manifest.
+The acceptance-status update passed the focused T082 validator and
+`git diff --check`; it changes no image, gameplay or runtime code.
 It passed `./tools/verify.sh` with 317/317 tests and zero blocking failures at
 `Artifacts/Verification/20260912T211801Z-fast-summary.txt`, plus the focused
 T082 validator and `git diff --check`. The initial sandboxed invocation was
