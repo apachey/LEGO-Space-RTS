@@ -35,7 +35,7 @@
     {"stableId":"unit.astronauts.solar_explorer","ratios":[2.30,1.45,4.60],"core":"convoy","mobility":"wheels_many","hero":"solar_wings","frame":"modules","negative":"module_gaps"},
     {"stableId":"unit.astronauts.mission_fighter","ratios":[2.25,0.75,2.55],"core":"aircraft","mobility":"swept_wings","hero":"compact_canopy","frame":"sealed","negative":"wing_notches"},
     {"stableId":"unit.astronauts.mx41_switch_fighter","ratios":[2.15,1.25,2.75],"core":"transformer","mobility":"wheels6","hero":"folding_wings","frame":"hinged","negative":"hinge_gaps"},
-    {"stableId":"unit.astronauts.mobile_mining_platform","ratios":[2.70,1.45,3.65],"core":"platform","mobility":"wheels6","hero":"harvest_head","frame":"modules","negative":"process_gap"},
+    {"stableId":"unit.astronauts.mobile_mining_platform","ratios":[2.70,1.45,3.65],"core":"platform","mobility":"tracks","hero":"harvest_head","frame":"modules","negative":"process_gap"},
     {"stableId":"unit.astronauts.mx71_recon_dropship","ratios":[3.10,1.45,3.30],"core":"aircraft","mobility":"high_wings","hero":"rover_cradle","frame":"bridge","negative":"underslung_gap"},
     {"stableId":"unit.astronauts.mt51_claw_tank","ratios":[2.40,1.70,3.20],"core":"vehicle","mobility":"tracks","hero":"claw_and_gun","frame":"turret","negative":"arm_gap"},
     {"stableId":"unit.astronauts.mt101_armored_drilling_unit","ratios":[2.35,1.55,4.10],"core":"vehicle","mobility":"wheels6","hero":"armored_drill","frame":"suspended","negative":"axle_gaps"},

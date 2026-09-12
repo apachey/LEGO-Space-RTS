@@ -899,6 +899,8 @@ def main() -> None:
         "unit.astronauts.mono_jet": "DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE",
         "unit.aliens.alien_jet": "DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE",
         "unit.astronauts.solar_explorer": "DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE",
+        "unit.astronauts.mobile_mining_platform": "UNREVIEWED_CORRECTION_CANDIDATE",
+        "unit.astronauts.mt51_claw_tank": "UNREVIEWED_CORRECTION_CANDIDATE",
     }
     if {
         record.get("stableId"): record.get("status") for record in revision_candidates
@@ -910,6 +912,19 @@ def main() -> None:
             fail(f"missing Full V2 revision candidate for {record.get('stableId')}")
         if hashlib.sha256(output.read_bytes()).hexdigest() != record.get("outputSha256"):
             fail(f"Full V2 revision candidate hash drifted for {record.get('stableId')}")
+
+    blocked_corrections = full_v2_manifest.get("blockedCorrections", [])
+    if len(blocked_corrections) != 1:
+        fail("Full V2 must record exactly one currently blocked correction")
+    blocked_mt101 = blocked_corrections[0]
+    if (
+        blocked_mt101.get("stableId") != "unit.astronauts.mt101_armored_drilling_unit"
+        or blocked_mt101.get("status")
+        != "TWO_IMAGE_GENERATION_APPROACHES_EXHAUSTED_REQUIRES_CONTROLLED_BLOCKOUT"
+        or len(blocked_mt101.get("attempts", [])) != 2
+        or not blocked_mt101.get("nextStep")
+    ):
+        fail("MT-101 blocked correction record drifted")
 
     if (
         full_v2_review_manifest.get("schemaVersion") != 1

@@ -124,10 +124,12 @@ This generated review records what the available official instructions or labele
 - View/mechanism coverage: front=VERIFIED book 2 p38-66; rear=VERIFIED book 2 p44-66; leftRight=VERIFIED both books; top=VERIFIED book 2 p18-63; threeQuarter=VERIFIED covers and book 2 p43-66; undersideInterior=VERIFIED book 1 p27-75 and book 2 p18-45; mechanism=VERIFIED book 2 p45-63 powered twin harvesting wheels and tracked conversion
 - Verified findings:
   - Crystal Reaper configuration is defined by two enormous exposed harvesting wheels mounted ahead of a low tracked body.
+  - Two distinct articulated manipulators remain visible around the front harvesting area instead of being collapsed into the saws.
+  - The substantial upper cockpit/processing assembly docks directly onto the tracked chassis and retains a clear detachable-spacecraft seam; it is not a trailer.
   - Orange structural rails, cables and motor blocks remain visible around the white mission shell.
-  - The source separates cab, tool modules and running gear, supporting one configurable Mobile Mining Platform family rather than a generic sealed harvester.
+  - The source separates cockpit craft, tool modules and running gear, supporting one configurable Mobile Mining Platform family rather than a generic sealed harvester.
 - Remaining evidence gaps:
-  - The exact boundary between reusable Mobile Mining Platform chassis and Crystal-only harvesting module must be fixed during the asset-specific refit plan.
+  - The source proves the detachable upper spacecraft assembly, but its exact gameplay processing role and the boundary between reusable Mobile Mining Platform chassis and Crystal-only harvesting module must be fixed during the asset-specific refit plan.
 
 ## 7647 — MX-41 Switch Fighter
 
@@ -313,6 +315,7 @@ This generated review records what the available official instructions or labele
   - MT-51 is organized around a circular orange-canopy upper body rotating above a low, wide tracked frame.
   - Long independently articulated tool/claw arms radiate from the turret instead of forming a conventional forward gun.
   - The broad running gear stays visually separate from the rotating body, supporting movement and weapon orientation in different directions.
+  - The separately constructed Alien ambush craft belongs to the opposing side of the mixed set and must never be fused into the Claw-Tank silhouette.
 - Remaining evidence gaps:
   - The source demonstrates manual rotation and arm movement but not the game's exact multi-target attack cycle or fighting-retreat locomotion; animation timing remains open.
 
@@ -332,7 +335,8 @@ This generated review records what the available official instructions or labele
 - View/mechanism coverage: front=VERIFIED book 2 p24-43; rear=VERIFIED book 2 p27-43; leftRight=VERIFIED both books; top=VERIFIED book 2 p2-43; threeQuarter=VERIFIED covers and book 2 p35-43; undersideInterior=VERIFIED book 1 p30-47 and book 2 p2-27; mechanism=VERIFIED book 2 p35-43 rotating drill carriage and movable rear module
 - Verified findings:
   - MT-101 is a long open heavy chassis suspended between six individually mounted oversized orange wheels.
-  - The armored white cockpit sits low at the front while the raised drilling carriage remains exposed above the central/rear frame.
-  - The long drill rotates on its own elevated mount, preserving a machine-tool identity instead of becoming a conventional tank cannon.
+  - The steep armored cockpit is a permanent part of the main vehicle at the front; the separate small support flyer does not replace or remove it.
+  - The raised drilling carriage remains exposed above the central/rear frame, while a separate smaller gun/tool assembly retains its own mount.
+  - The long drill rotates independently and may not be merged with the secondary gun/tool into one conventional tank cannon.
 - Remaining evidence gaps:
   - The spring-projectile play action is not the game's contact-drill behavior; final drill reach, impact pose and chassis suspension response require a production animation plan.

@@ -45,8 +45,9 @@ Open question: The faction-internal construction, motion, socket and material dr
 - View/mechanism coverage: front=VERIFIED book 2 p24-43; rear=VERIFIED book 2 p27-43; leftRight=VERIFIED both books; top=VERIFIED book 2 p2-43; threeQuarter=VERIFIED covers and book 2 p35-43; undersideInterior=VERIFIED book 1 p30-47 and book 2 p2-27; mechanism=VERIFIED book 2 p35-43 rotating drill carriage and movable rear module
 - Verified findings:
   - MT-101 is a long open heavy chassis suspended between six individually mounted oversized orange wheels.
-  - The armored white cockpit sits low at the front while the raised drilling carriage remains exposed above the central/rear frame.
-  - The long drill rotates on its own elevated mount, preserving a machine-tool identity instead of becoming a conventional tank cannon.
+  - The steep armored cockpit is a permanent part of the main vehicle at the front; the separate small support flyer does not replace or remove it.
+  - The raised drilling carriage remains exposed above the central/rear frame, while a separate smaller gun/tool assembly retains its own mount.
+  - The long drill rotates independently and may not be merged with the secondary gun/tool into one conventional tank cannon.
 - Remaining evidence gaps:
   - The spring-projectile play action is not the game's contact-drill behavior; final drill reach, impact pose and chassis suspension response require a production animation plan.
 
@@ -56,12 +57,13 @@ Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-qu
 
 ## C. Recognition contract
 
-**Silhouette thesis:** A long six-wheel armored drill carrier whose suspended chassis frames a massive central nose tool.
+**Silhouette thesis:** A long six-wheel armored drill carrier with a permanent steep forward cockpit and separate raised drill and secondary gun/tool mechanisms.
 
 Non-removable identity anchors:
 
 - six large suspended wheels
-- central armored drill nose
+- permanent steep forward cockpit
+- raised drill separate from secondary gun/tool
 - long white-orange equipment deck
 
 - Rejected V1 blind-review code: `S10`. Historical failed boards: [24-cell](../Silhouettes/blind_24_cells.svg), [44-cell](../Silhouettes/blind_44_cells.svg), [72-cell](../Silhouettes/blind_72_cells.svg). The game director recognized 0/66 at 24 cells; this primitive concept is not an approved model or accepted evidence.
@@ -78,11 +80,12 @@ Non-removable identity anchors:
 - Contract state: `SOURCE_VERIFIED`. This is an internally checked draft, not game-director approval.
 - Semantic part map:
   - Six independently mounted orange wheels — carry the huge suspended chassis — SOURCE_VERIFIED.
-  - Low armored forward cockpit — protects the operator behind the nose — SOURCE_VERIFIED.
+  - Permanent steep armored forward cockpit — remains part of the main vehicle rather than detaching with the small support flyer — SOURCE_VERIFIED.
   - Elevated rotating drill carriage — delivers the anti-heavy contact tool through an exposed machine path — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.
-- Structural load path: Six wheel mounts support a long open chassis; the raised drill carriage transfers thrust into the central rails while rear equipment balances it.
-- Repeated modules / connection grammar: Six wheel modules, forward cockpit, long chassis, drill carriage and rear service equipment.
-- Source-faithful versus adapted boundary: Source projectile play does not define combat; the long drill establishes physical contact and cannot open authored terrain routes.
+  - Separate secondary gun/tool mount — stays visually and mechanically distinct from the drill — SOURCE_VERIFIED.
+- Structural load path: Six wheel mounts support a long open chassis; the permanent forward cockpit braces the nose while the raised drill carriage transfers thrust into the central rails and rear equipment balances it.
+- Repeated modules / connection grammar: Six wheel modules, permanent forward cockpit, long chassis, independent drill carriage, separate secondary gun/tool and rear service equipment; the small support flyer is excluded.
+- Source-faithful versus adapted boundary: Source projectile play does not define combat; the long drill establishes physical contact and cannot open authored terrain routes. The secondary gun/tool may not be merged into the drill merely to simplify the silhouette.
 
 ## E. Material and texture contract
 

@@ -46,10 +46,12 @@ Open question: The faction-internal construction, motion, socket and material dr
 - View/mechanism coverage: front=VERIFIED book 2 p38-66; rear=VERIFIED book 2 p44-66; leftRight=VERIFIED both books; top=VERIFIED book 2 p18-63; threeQuarter=VERIFIED covers and book 2 p43-66; undersideInterior=VERIFIED book 1 p27-75 and book 2 p18-45; mechanism=VERIFIED book 2 p45-63 powered twin harvesting wheels and tracked conversion
 - Verified findings:
   - Crystal Reaper configuration is defined by two enormous exposed harvesting wheels mounted ahead of a low tracked body.
+  - Two distinct articulated manipulators remain visible around the front harvesting area instead of being collapsed into the saws.
+  - The substantial upper cockpit/processing assembly docks directly onto the tracked chassis and retains a clear detachable-spacecraft seam; it is not a trailer.
   - Orange structural rails, cables and motor blocks remain visible around the white mission shell.
-  - The source separates cab, tool modules and running gear, supporting one configurable Mobile Mining Platform family rather than a generic sealed harvester.
+  - The source separates cockpit craft, tool modules and running gear, supporting one configurable Mobile Mining Platform family rather than a generic sealed harvester.
 - Remaining evidence gaps:
-  - The exact boundary between reusable Mobile Mining Platform chassis and Crystal-only harvesting module must be fixed during the asset-specific refit plan.
+  - The source proves the detachable upper spacecraft assembly, but its exact gameplay processing role and the boundary between reusable Mobile Mining Platform chassis and Crystal-only harvesting module must be fixed during the asset-specific refit plan.
 
 ### Source audit [Astronauts:7648]
 
@@ -88,12 +90,13 @@ Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-qu
 
 ## C. Recognition contract
 
-**Silhouette thesis:** A modular mining platform whose harvesting head and detachable processing bay dominate a noncombat chassis.
+**Silhouette thesis:** A modular mining platform whose Crystal Reaper state is dominated by twin front harvesting wheels, two manipulators and a directly docked detachable spacecraft/processing module.
 
 Non-removable identity anchors:
 
-- wide harvesting or drill head
-- detachable processing module
+- twin front harvesting wheels or alternate drill head
+- two articulated manipulator arms
+- directly docked detachable spacecraft/processing module
 - visible crystal or ore handling path
 
 - Rejected V1 blind-review code: `S54`. Historical failed boards: [24-cell](../Silhouettes/blind_24_cells.svg), [44-cell](../Silhouettes/blind_44_cells.svg), [72-cell](../Silhouettes/blind_72_cells.svg). The game director recognized 0/66 at 24 cells; this primitive concept is not an approved model or accepted evidence.
@@ -107,12 +110,13 @@ Non-removable identity anchors:
 
 - Contract state: `CANON_DERIVED_ADAPTATION`. This is an internally checked draft, not game-director approval.
 - Semantic part map:
-  - Broad replaceable harvesting head — distinguishes Ore Drill from Crystal Reaper function — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.
-  - Detachable processing module — receives and routes extracted material — SOURCE_VERIFIED.
+  - Broad replaceable harvesting head — distinguishes Ore Drill from Crystal Reaper function; the 7645 state preserves two enormous front harvesting wheels — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.
+  - Two articulated front manipulators — remain separate from the harvesting wheels and physically handle material — SOURCE_VERIFIED.
+  - Directly docked detachable spacecraft/processing module — receives and routes extracted material without reading as a trailer — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.
   - Visible material path and cargo space — keep the unit economic rather than military — CANON_DERIVED_ADAPTATION.
-- Structural load path: A broad low ground chassis carries the operator and processing bay while a standardized front mount transfers tool load to wheels/tracks.
-- Repeated modules / connection grammar: Shared chassis, Ore Drill head, Crystal Reaper head, processing module and visible container route.
-- Source-faithful versus adapted boundary: 7645, 7648 and 7693 provide coherent donor modules; exact components must stay labeled rather than being averaged into generic mining geometry.
+- Structural load path: A broad low ground chassis carries the operator and directly docked upper module while a standardized front mount transfers tool load to wheels/tracks; the two manipulators route through independent side joints.
+- Repeated modules / connection grammar: Shared chassis, Ore Drill head, Crystal Reaper twin-wheel head, two manipulators, detachable upper spacecraft/processing module and visible container route.
+- Source-faithful versus adapted boundary: 7645 proves a detachable upper spacecraft assembly, twin harvesting wheels and two manipulators. The game keeps them inside one selectable configurable Mobile Mining Platform; 7648 and 7693 provide additional labeled donor modules rather than averaged generic mining geometry.
 
 ## E. Material and texture contract
 

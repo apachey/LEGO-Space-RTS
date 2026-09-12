@@ -759,8 +759,17 @@ live; the current schema-9 copy/paste retains the complete experiment.
   On 2026-09-12 the game director accepted the new Mono Jet, the first
   monochrome Alien Jet attempt and the new Solar Explorer as individual
   correction candidates for the next composite review. The colored second
-  Alien Jet attempt is explicitly excluded. T082 remains on hold until the
-  remaining priority corrections and renewed 24-cell blind review are complete.
+  Alien Jet attempt is explicitly excluded. The next correction wave restores
+  MT-61 Crystal Reaper's directly docked detachable upper spacecraft/processing
+  module, two manipulators and twin harvesting wheels, and removes the separate
+  Alien ambush craft read from MT-51 Claw-Tank while preserving its tracked
+  rotating-body layout. Both remain unreviewed candidates. MT-101 remains open:
+  one new image-generation approach preserved all six wheels but still obscured
+  its permanent cockpit, while a direct-cover approach restored the cockpit and
+  separate upper mechanisms but hid part of the six-wheel topology. The
+  two-attempt rule stops further free-form generation; its next pass requires a
+  controlled source-trace blockout. T082 remains on hold until the remaining
+  priority corrections and renewed 24-cell blind review are complete.
 - The official 7301 instruction page also exposed a stale audit-reconciliation
   error: Rover is a four-wheel open platform, not the two-wheel bike described
   by the earlier identity and production drafts. The source ledger, identity,
@@ -800,6 +809,15 @@ step and must be announced when new visual evidence is actually required.
 - network replay chunk format **1**.
 
 ## Verification state
+
+The source-decomposition correction for the MT-61-derived Mobile Mining
+Platform and MT-51 Claw-Tank, together with the explicit two-attempt MT-101
+block, passed `./tools/verify.sh --full` with zero blocking failures at
+`Artifacts/Verification/20260912T091133Z-full-summary.txt`. All 317 tests,
+T082 integrity, deterministic repeat/replay/snapshot checks, content and asset
+regeneration, retained headless presentation/network gates and the macOS export
+passed. The preserved 60-mover M9 stress scenario remains the only
+`BLOCKING_LATER` diagnostic failure.
 
 The 7693 exclusively-airborne canon correction, synchronized runtime metadata
 and second-wave Jet Scooter / ETX Alien Strike / Red Planet Protector render

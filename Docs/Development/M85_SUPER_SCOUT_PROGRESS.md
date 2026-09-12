@@ -5,7 +5,10 @@ source-page audits and all 66 faction-internal production-contract drafts are
 complete. The first complete primitive-silhouette corpus failed game-director
 blind review at 0/66 and is rejected. A four-asset source-derived Pilot V2 is
 game-director accepted at 4/4, approving that materially different method for
-a second full-roster corpus. The complete-roster review remains open.
+a second full-roster corpus. The complete-roster review remains open. Current
+correction candidates now also cover the MT-61-derived Mobile Mining Platform
+and MT-51 Claw-Tank; MT-101 remains explicitly blocked after two image-generation
+approaches failed different parts of its combined cockpit/tool/wheel topology.
 
 ## Completed in the identity-baseline pass
 
@@ -87,6 +90,15 @@ a second full-roster corpus. The complete-roster review remains open.
   24/44/72 camera widths in two pages each, using stable blind V-codes. The
   answer key and every board are hash-locked and remain `HOLD` for game-director
   review.
+- The first 24-cell review supersedes the earlier claim that MT-101's topology
+  was fully resolved. The reviewed image counted six wheels but omitted the
+  source's permanent steep forward cockpit and blurred the secondary gun/tool
+  into the drill system. A multi-page reconstruction still left the cockpit
+  ambiguous; a materially different direct-cover reconstruction restored the
+  cockpit and independent upper mechanisms but hid part of the six-wheel
+  topology. Per the two-attempt rule, neither output is promoted to a revision
+  candidate. The next MT-101 pass must use a controlled source-trace blockout
+  that locks all three obligations before detail.
 - The game director's first Full V2 24-cell review requires revision and stops
   the 44/72-cell progression. Eleven candidates were strong without requested
   structural changes, Red Planet Protector was conditionally strong after a
@@ -103,6 +115,14 @@ a second full-roster corpus. The complete-roster review remains open.
   cannon booms. The game director explicitly corrected canon: 7693 has no
   ground, walking or siege-deployment state. The three new renders remain review
   candidates and do not silently replace the hash-locked first-review boards.
+- A later source-decomposition correction wave now adds two unreviewed
+  candidates. The 7645 Crystal Reaper state restores two huge front harvesting
+  wheels, two distinct manipulators and a detachable upper spacecraft/processing
+  module docked directly to the tracked chassis instead of reading as a trailer.
+  The 7697 Claw-Tank keeps its two continuous track runs and central rotating
+  cockpit while replacing the oversized curved spacecraft read with a compact
+  three-prong mechanical claw; the separate Alien ambush craft is explicitly
+  excluded from the tank asset.
 - The official 7301 page proved that Rover has four equal wheel pods. Its older
   two-wheel identity/contract wording predated the page-level audit and was not
   reconciled afterward. The baseline, source ledger, production contract,
@@ -266,7 +286,8 @@ redistributed.
 1. Retain the two explicit Martian archival gaps unless usable evidence appears,
    and escalate any gap that prevents a safe production decision.
 2. Revise the failed and ambiguous 24-cell silhouettes using the resolved
-   exclusively-airborne ETX Alien Strike contract, collect V51-V56, then rerun the 24-cell
+   exclusively-airborne ETX Alien Strike contract, resolve MT-101 through a
+   controlled source-trace blockout, collect V51-V56, then rerun the 24-cell
    blind review before continuing to 44/72.
 3. Revise every wrong, uncertain or indistinguishable asset and extend the
    44-pair register wherever the accepted review exposes a new neighbor.
@@ -285,6 +306,15 @@ approving the source-derived silhouette method for full-roster expansion. No
 packet is approved for T083/T085 production yet.
 
 ## Verification state
+
+The source-decomposition correction for the MT-61-derived Mobile Mining
+Platform and MT-51 Claw-Tank, together with the explicit two-attempt MT-101
+block, passed `./tools/verify.sh --full` with zero blocking failures at
+`Artifacts/Verification/20260912T091133Z-full-summary.txt`. All 317 tests,
+T082 integrity, deterministic repeat/replay/snapshot checks, content and asset
+regeneration, retained headless presentation/network gates and the macOS export
+passed. The preserved 60-mover M9 stress scenario remains the only
+`BLOCKING_LATER` diagnostic failure.
 
 The 7693 exclusively-airborne canon correction, synchronized runtime metadata
 and second-wave Jet Scooter / ETX Alien Strike / Red Planet Protector render

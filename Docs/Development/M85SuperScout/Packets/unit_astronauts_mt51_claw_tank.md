@@ -46,6 +46,7 @@ Open question: The faction-internal construction, motion, socket and material dr
   - MT-51 is organized around a circular orange-canopy upper body rotating above a low, wide tracked frame.
   - Long independently articulated tool/claw arms radiate from the turret instead of forming a conventional forward gun.
   - The broad running gear stays visually separate from the rotating body, supporting movement and weapon orientation in different directions.
+  - The separately constructed Alien ambush craft belongs to the opposing side of the mixed set and must never be fused into the Claw-Tank silhouette.
 - Remaining evidence gaps:
   - The source demonstrates manual rotation and arm movement but not the game's exact multi-target attack cycle or fighting-retreat locomotion; animation timing remains open.
 
@@ -79,7 +80,7 @@ Non-removable identity anchors:
   - Asymmetric articulated claw and tool arms — engage nearby light targets without resembling a tank cannon — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.
 - Structural load path: Two track blocks support a central turntable; the circular upper body routes each long arm load through the rotating ring.
 - Repeated modules / connection grammar: Mirrored tracks, rotating cockpit, claw arm and opposing tool/weapon arm.
-- Source-faithful versus adapted boundary: Combat timing is adapted, but rotation and articulation follow the source mechanisms; no conventional turret barrel.
+- Source-faithful versus adapted boundary: Combat timing is adapted, but rotation and articulation follow the source mechanisms; no conventional turret barrel. The separate Alien ambush craft in set 7697 is excluded from the Claw-Tank asset.
 
 ## E. Material and texture contract
 
