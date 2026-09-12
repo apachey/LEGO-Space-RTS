@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "task": "T082",
   "corpus": "SOURCE_DERIVED_FULL_ROSTER_V2",
-  "status": "REVIEW_READY_ROCK_RAIDERS_16_OF_16_ASTRONAUTS_21_OF_21_ALIENS_12_OF_12_MARTIANS_17_OF_17_TOTAL_66_OF_66_HOLD",
+  "status": "REVISION_REQUIRED_AFTER_24_CELL_REVIEW_66_OF_66_HOLD",
   "generationTool": "built-in image generation",
   "useCase": "source-derived silhouette concept render",
   "authority": "Generated concept images are review aids only. Canon and the audited official or archival sources remain authoritative; these images do not approve production models or complete T082.",
@@ -89,5 +89,31 @@
     {"stableId":"building.mar.aero_tube_link","sourceSets":["7317","3750"],"specificPrompt":"One long low continuous hollow ribbed Tube span between exactly two mechanical end couplers, with three supports and a visible internal sled corridor; no exact 3750 geometry is claimed.","output":"Renders/building_martians_aero_tube_link.png","outputSha256":"f54b002f700e7f69817c89aacdf30055dafd6d7d8974f636baae984ff6e4d5df"},
     {"stableId":"unit.astronauts.mt101_armored_drilling_unit","sourceSets":["7699"],"specificPrompt":"Topology-controlled 7699 reconstruction: long suspended drill carrier with exactly six independently visible wheels, three on each side, exposed suspension, low cockpit and raised central drill carriage.","output":"Renders/unit_astronauts_mt101_armored_drilling_unit.png","outputSha256":"13da06e3ca51dfa72ef3853ee1fb619b2ab4fcc84e3f6aebee966c826c3e6537"},
     {"stableId":"unit.astronauts.mt201_ultra_drill_walker","sourceSets":["7649"],"specificPrompt":"Topology-controlled deployed 7649 reconstruction: one connected tall drill installation with rotating core, docked observation craft and exactly four independently visible articulated legs and feet.","output":"Renders/unit_astronauts_mt201_ultra_drill_walker.png","outputSha256":"0a6e6c6b7618969d1c69d6103e98f9656155e6480195f9ef26a256bb4f640737"}
+  ],
+  "revisionCandidates": [
+    {
+      "stableId": "unit.martians.jet_scooter",
+      "status": "UNREVIEWED_CORRECTION_CANDIDATE",
+      "directorFinding": "Recognizable but too long; shorten it while preserving the source identity.",
+      "specificPrompt": "Shorten the Jet Scooter substantially into a compact one-rider scooter while preserving its twin front nozzles, handlebars, rider and LEGO construction language.",
+      "output": "Renders/unit_martians_jet_scooter_rev1.png",
+      "outputSha256": "3ef858510d3dfdd3940b17dcc8f72023762ac22c7db091e243c3b461cb0ecac6"
+    },
+    {
+      "stableId": "unit.aliens.etx_alien_strike",
+      "status": "BLOCKED_CANON_CONFLICT",
+      "directorFinding": "The image's long walking limbs are invented; the official set is not legged.",
+      "specificPrompt": "Remove every invented walking leg and foot, preserving the low central hull, crescent side structures, forked rear and centered front weapon.",
+      "output": "Renders/unit_aliens_etx_alien_strike_rev1.png",
+      "outputSha256": "11e5edc0520ef1ceac7b9ede0b7dbda941654ebb99e71fae3e6321eeb941066f"
+    },
+    {
+      "stableId": "unit.martians.red_planet_protector",
+      "status": "UNREVIEWED_CORRECTION_CANDIDATE",
+      "directorFinding": "Strong candidate once the displaced left weapon is restored to its attachment.",
+      "specificPrompt": "Restore the displaced left-side cannon to its matching shoulder hardpoint while keeping the rest of the model unchanged.",
+      "output": "Renders/unit_martians_red_planet_protector_rev1.png",
+      "outputSha256": "928a263d85a1e42824fafc6107d73c850d2f41fba9b9b10aa9b85bb5bc6dc6aa"
+    }
   ]
 }

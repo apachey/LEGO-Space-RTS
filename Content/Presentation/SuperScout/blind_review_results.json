@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "T082",
-  "status": "PILOT_PASSED_FULL_CORPUS_REQUIRED",
+  "status": "FULL_V2_24_CELL_REVISION_REQUIRED",
   "attempts": [
     {
       "id": "T082_BLIND_V1_ICON_PRIMITIVES",
@@ -33,6 +33,42 @@
         "P04": "Drill Craft"
       },
       "consequence": "Approve the source-derived silhouette method for expansion to a new complete 66-asset corpus. This does not accept the complete roster or close T082."
+    },
+    {
+      "id": "T082_FULL_V2_SOURCE_DERIVED_24_CELL",
+      "date": "2026-09-12",
+      "cameraWidthCells": 24,
+      "reviewer": "GAME_DIRECTOR",
+      "result": "REVISION_REQUIRED",
+      "reviewed": 60,
+      "total": 66,
+      "missingCodes": ["V51", "V52", "V53", "V54", "V55", "V56"],
+      "strongCandidates": ["V02", "V03", "V11", "V19", "V22", "V26", "V31", "V39", "V48", "V59", "V62"],
+      "conditionalCandidate": {
+        "code": "V20",
+        "condition": "Restore the displaced left weapon attachment."
+      },
+      "priorityCorrections": {
+        "V08": "Shorten Jet Scooter while retaining its recognizable source construction.",
+        "V12": "Remove the invented long walking limbs from ETX Alien Strike; reconcile the low source craft with the canonical deployed-siege support requirement before replacing the active concept.",
+        "V16": "Rebuild Mono Jet from the official source proportions; the current result is not acceptable.",
+        "V17": "Restore Alien Jet's open pilot construction, theme-specific silhouette and correct forward weapon.",
+        "V18": "Represent Solar Explorer as a non-wheeled modular carrier with only its internal small rover using wheels.",
+        "V21": "Restore MT-101's permanent cockpit and keep the gun distinct from the drill.",
+        "V23": "Restore the MT-61-derived detachable spacecraft module and two manipulators; remove the unsupported trailer read.",
+        "V34": "Separate the source spacecraft from MT-51 Claw-Tank so the tank silhouette reads cleanly.",
+        "V38": "Rebuild MB-01 Eagle Command Base closer to its source layout.",
+        "V46": "Rebuild Tunnel Transport; the current source interpretation is unacceptable.",
+        "V50": "Restore MX-71 Recon Dropship's own high-wing form instead of a generic heavy carryall.",
+        "V58": "Restore Rapid Rider's source silhouette and proportions."
+      },
+      "systemicDiagnosis": [
+        "Several source-derived units are recognizable but contain incorrect detachable-module, weapon, cockpit, landing-contact or vehicle-proportion decisions.",
+        "Many adapted buildings communicate only a generic support-building category and sometimes the wrong faction.",
+        "The weakest new-content silhouettes do not communicate whether they fly, walk, deploy or operate as fixed structures.",
+        "Do not proceed to the 44- or 72-cell review until the 24-cell failures are revised."
+      ],
+      "consequence": "Keep T082 on HOLD. Preserve the strong candidates, revise the failed or ambiguous silhouettes, resolve the ETX Alien Strike canon conflict explicitly, then rerun the 24-cell blind review before testing wider camera distances."
     }
   ],
   "activePilot": {
@@ -42,5 +78,15 @@
     "answerKey": "Docs/Development/M85SuperScout/Silhouettes/PilotV2/PILOT_V2_KEY.md",
     "codes": ["P01", "P02", "P03", "P04"],
     "rule": "The source-derived method may now expand to a second complete-roster corpus. T082 still requires the complete 24/44/72-cell blind review and explicit game-director corpus acceptance."
+  },
+  "activeFullV2": {
+    "id": "T082_FULL_V2_SOURCE_DERIVED_24_CELL",
+    "state": "REVISION_REQUIRED_AFTER_GAME_DIRECTOR_24_CELL_REVIEW",
+    "artifactPages": [
+      "Docs/Development/M85SuperScout/Silhouettes/FullV2/Review/blind_24_cells_page_1.png",
+      "Docs/Development/M85SuperScout/Silhouettes/FullV2/Review/blind_24_cells_page_2.png"
+    ],
+    "answerKey": "Docs/Development/M85SuperScout/Silhouettes/FullV2/Review/BLIND_REVIEW_KEY.md",
+    "rule": "Revise the failed and ambiguous 24-cell silhouettes before continuing to the 44- and 72-cell review."
   }
 }

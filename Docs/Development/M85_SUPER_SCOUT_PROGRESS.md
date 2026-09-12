@@ -87,6 +87,17 @@ a second full-roster corpus. The complete-roster review remains open.
   24/44/72 camera widths in two pages each, using stable blind V-codes. The
   answer key and every board are hash-locked and remain `HOLD` for game-director
   review.
+- The game director's first Full V2 24-cell review requires revision and stops
+  the 44/72-cell progression. Eleven candidates were strong without requested
+  structural changes, Red Planet Protector was conditionally strong after a
+  weapon-attachment correction, several recognizable source units need exact
+  cockpit/module/tool/proportion repairs, and many adapted buildings read only
+  as generic support structures or even as the wrong faction. Responses V51-V56
+  were not included in the review message. Three first-wave correction
+  candidates are preserved: shorter Jet Scooter, legless ETX Alien Strike and
+  reattached Red Planet Protector weapon. The ETX candidate is blocked because
+  zero supports conflicts with the current canonical deployed-siege brace
+  requirement; it cannot replace the active image without explicit resolution.
 - The official 7301 page proved that Rover has four equal wheel pods. Its older
   two-wheel identity/contract wording predated the page-level audit and was not
   reconciled afterward. The baseline, source ledger, production contract,
@@ -249,7 +260,9 @@ redistributed.
 
 1. Retain the two explicit Martian archival gaps unless usable evidence appears,
    and escalate any gap that prevents a safe production decision.
-2. Run the complete 24/44/72 blind review from the six Full V2 PNG boards.
+2. Revise the failed and ambiguous 24-cell silhouettes, resolve the ETX Alien
+   Strike deployed-support conflict, collect V51-V56, then rerun the 24-cell
+   blind review before continuing to 44/72.
 3. Revise every wrong, uncertain or indistinguishable asset and extend the
    44-pair register wherever the accepted review exposes a new neighbor.
 4. Resolve or escalate every consequential unknown, then request the final
@@ -264,6 +277,12 @@ approving the source-derived silhouette method for full-roster expansion. No
 packet is approved for T083/T085 production yet.
 
 ## Verification state
+
+The recorded Full V2 24-cell revision gate and its three preserved first-wave
+correction candidates passed `./tools/verify.sh` with zero blocking or
+diagnostic failures at
+`Artifacts/Verification/20260912T004323Z-fast-summary.txt`. All 317 tests and
+every fast verification stage passed; Godot remained fully headless.
 
 The review-ready 66/66 Full V2 corpus passed `./tools/verify.sh --full` with
 zero blocking failures at

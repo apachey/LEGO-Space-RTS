@@ -731,6 +731,15 @@ live; the current schema-9 copy/paste retains the complete experiment.
   Six self-contained blind-review PNG boards cover the complete corpus at the
   24/44/72 camera widths with stable V-codes. This does not change T082's
   `BLOCKING_NOW` state or constitute corpus approval before game-director review.
+- The first Full V2 24-cell game-director review is complete for 60/66 codes and
+  requires revision; V51-V56 were not included. The strong candidates remain
+  preserved, while incorrect source geometry, generic cross-faction buildings
+  and ambiguous movement/operation silhouettes must be repaired before a new
+  24-cell review. Initial correction candidates exist for Jet Scooter, ETX
+  Alien Strike and Red Planet Protector. ETX Alien Strike is an explicit
+  conflict: the reviewed render's insect-like limbs are wrong, but the current
+  canonical contract still requires deployed siege braces, so the legless
+  candidate is not active pending game-director resolution.
 - The official 7301 instruction page also exposed a stale audit-reconciliation
   error: Rover is a four-wheel open platform, not the two-wheel bike described
   by the earlier identity and production drafts. The source ledger, identity,
@@ -770,6 +779,13 @@ step and must be announced when new visual evidence is actually required.
 - network replay chunk format **1**.
 
 ## Verification state
+
+The recorded Full V2 24-cell revision gate and its three preserved first-wave
+correction candidates passed `./tools/verify.sh` with zero blocking or
+diagnostic failures at
+`Artifacts/Verification/20260912T004323Z-fast-summary.txt`. All 317 tests and
+every fast verification stage passed; Godot smoke processes remained headless
+and used the project immediate-exit path.
 
 The review-ready 66/66 Full V2 corpus passed `./tools/verify.sh --full` with
 zero blocking failures at

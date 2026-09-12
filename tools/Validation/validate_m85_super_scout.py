@@ -726,12 +726,12 @@ def main() -> None:
 
     if blind_review_results.get("schemaVersion") != 1 or blind_review_results.get("task") != "T082":
         fail("blind-review result schema/task mismatch")
-    if blind_review_results.get("status") != "PILOT_PASSED_FULL_CORPUS_REQUIRED":
-        fail("blind-review result must preserve the Pilot V2 pass without implying T082 acceptance")
+    if blind_review_results.get("status") != "FULL_V2_24_CELL_REVISION_REQUIRED":
+        fail("blind-review result must preserve the Full V2 24-cell revision gate")
     attempts = blind_review_results.get("attempts", [])
-    if len(attempts) != 2:
-        fail("expected the V1 failure and Pilot V2 pass as two recorded blind-review attempts")
-    failed_attempt, pilot_attempt = attempts
+    if len(attempts) != 3:
+        fail("expected the V1 failure, Pilot V2 pass and Full V2 24-cell review")
+    failed_attempt, pilot_attempt, full_v2_attempt = attempts
     if failed_attempt.get("result") != "FAIL" or failed_attempt.get("recognized") != 0 or failed_attempt.get("total") != 66:
         fail("V1 blind-review result must remain the game-director-reported 0/66 failure")
     expected_responses = {
@@ -756,6 +756,20 @@ def main() -> None:
     expected_pilot_artifact = PILOT_V2_BLIND_PNG.relative_to(ROOT).as_posix()
     if active_pilot.get("artifact") != expected_pilot_artifact:
         fail("Pilot V2 active review must use the self-contained blind PNG")
+    if (
+        full_v2_attempt.get("id") != "T082_FULL_V2_SOURCE_DERIVED_24_CELL"
+        or full_v2_attempt.get("result") != "REVISION_REQUIRED"
+        or full_v2_attempt.get("reviewed") != 60
+        or full_v2_attempt.get("total") != 66
+        or full_v2_attempt.get("missingCodes") != ["V51", "V52", "V53", "V54", "V55", "V56"]
+    ):
+        fail("Full V2 24-cell result must retain the game-director revision gate and six missing responses")
+    active_full_v2 = blind_review_results.get("activeFullV2", {})
+    if (
+        active_full_v2.get("id") != "T082_FULL_V2_SOURCE_DERIVED_24_CELL"
+        or active_full_v2.get("state") != "REVISION_REQUIRED_AFTER_GAME_DIRECTOR_24_CELL_REVIEW"
+    ):
+        fail("Full V2 active review state must remain revision-required")
 
     if pilot_v2_manifest.get("schemaVersion") != 1 or pilot_v2_manifest.get("task") != "T082":
         fail("Pilot V2 generation manifest schema/task mismatch")
@@ -804,8 +818,8 @@ def main() -> None:
         fail("Full V2 generation manifest schema/task mismatch")
     if full_v2_manifest.get("corpus") != "SOURCE_DERIVED_FULL_ROSTER_V2":
         fail("Full V2 manifest corpus identity drifted")
-    if full_v2_manifest.get("status") != "REVIEW_READY_ROCK_RAIDERS_16_OF_16_ASTRONAUTS_21_OF_21_ALIENS_12_OF_12_MARTIANS_17_OF_17_TOTAL_66_OF_66_HOLD":
-        fail("Full V2 manifest must retain its review-ready 66/66 HOLD state")
+    if full_v2_manifest.get("status") != "REVISION_REQUIRED_AFTER_24_CELL_REVIEW_66_OF_66_HOLD":
+        fail("Full V2 manifest must retain its post-review revision-required HOLD state")
     full_progress = full_v2_manifest.get("progress", {})
     if full_progress.get("complete") != 66 or full_progress.get("required") != 66:
         fail("Full V2 manifest progress must remain 66 of 66 pending review")
@@ -876,6 +890,23 @@ def main() -> None:
             fail(f"Full V2 output is not a valid PNG for {stable_id}")
         if hashlib.sha256(output_bytes).hexdigest() != record.get("outputSha256"):
             fail(f"Full V2 image hash drifted for {stable_id}")
+
+    revision_candidates = full_v2_manifest.get("revisionCandidates", [])
+    expected_revision_candidates = {
+        "unit.martians.jet_scooter": "UNREVIEWED_CORRECTION_CANDIDATE",
+        "unit.aliens.etx_alien_strike": "BLOCKED_CANON_CONFLICT",
+        "unit.martians.red_planet_protector": "UNREVIEWED_CORRECTION_CANDIDATE",
+    }
+    if {
+        record.get("stableId"): record.get("status") for record in revision_candidates
+    } != expected_revision_candidates:
+        fail("Full V2 first-wave revision candidate set or state drifted")
+    for record in revision_candidates:
+        output = FULL_V2_OUTPUT / record.get("output", "")
+        if not output.is_file():
+            fail(f"missing Full V2 revision candidate for {record.get('stableId')}")
+        if hashlib.sha256(output.read_bytes()).hexdigest() != record.get("outputSha256"):
+            fail(f"Full V2 revision candidate hash drifted for {record.get('stableId')}")
 
     if (
         full_v2_review_manifest.get("schemaVersion") != 1
@@ -973,7 +1004,7 @@ def main() -> None:
         f"martiansAudited={martians_audited} martiansArchivalAudits={martians_archival_audits} martiansGaps={martians_gaps} "
         f"contracts={contract_count} provisionalContracts={provisional_contracts} "
         f"packets=66 confusionPairs={len(pairs)} blindV1=FAIL_0_OF_66 pilotV2=PASS_4_OF_4 "
-        f"fullV2=REVIEW_READY_66_OF_66 boards=6 state=HOLD"
+        f"fullV2=REVISION_REQUIRED_AFTER_24_CELL_REVIEW boards=6 state=HOLD"
     )
 
 
