@@ -14,7 +14,8 @@ vertical capsule. The director accepted rev3's open horizontal three-arch deck
 and overall source-derived composition for the next composite review.
 MT-101 and MX-71 are explicitly blocked after two image-generation
 approaches each left unresolved source topology.
-New source-only Worker Robot and MX-41 flight-state candidates await review;
+Source-only Worker Robot and MX-41 flight-state candidates are director-accepted
+for the next composite review;
 previous accepted candidates and immutable first-review boards remain unchanged.
 
 ## Completed in the identity-baseline pass
@@ -311,7 +312,8 @@ relief/limb shaping is not source evidence. Its canonical worker tools remain
 a later separately reviewed adaptation, not a gameplay removal. MX-41 keeps
 the long closed canopy hull, central gap, full-span narrow wing and six drum
 wheels in flight state. Ground-state and continuous transformation evidence
-remain required for production. Both are first correction attempts, unreviewed,
+remain required for production. The director accepted both first correction
+attempts for the next composite review,
 with exact prompts and source pages retained in the FullV2 manifest.
 
 | State | Count | Meaning |
@@ -355,6 +357,8 @@ The Worker Robot / MX-41 correction pair passed `./tools/verify.sh` with
 T082 validator and `git diff --check`. Validation now locks both as unreviewed
 correction candidates and checks their image hashes. No gameplay/runtime code
 changed, no visible Godot session was launched and no new macOS export was made.
+The subsequent acceptance-only update passed the focused T082 validator and
+`git diff --check`; both accepted image hashes remain unchanged.
 
 The additional director-authorized MB-01 rev3 is an accepted correction candidate;
 its exact built-in generation prompt is retained in the FullV2 manifest.

@@ -789,8 +789,9 @@ live; the current schema-9 copy/paste retains the complete experiment.
   simplified the four blue-tipped emitters. Its two allowed image attempts are
   exhausted, so the next step is a controlled source-trace blockout rather than
   a third free-form generation.
-  The next pair adds unreviewed source-only 7302 Worker Robot and 7647 MX-41
-  flight-state corrections: compact open biped versus long cockpit hull and
+  The director accepted the source-only 7302 Worker Robot and 7647 MX-41
+  flight-state corrections for the next composite review: compact open biped
+  versus long cockpit hull and
   narrow folding wing with six wheels. Generated Martian facial relief is not
   source evidence; canonical worker tools and MX-41 ground/transform coverage
   remain production obligations. Accepted candidates are unchanged.
