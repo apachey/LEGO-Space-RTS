@@ -67,7 +67,7 @@ Non-removable identity anchors:
 - Forbidden genericization: Do not blend the two source lineages into generic white sci-fi or add military forms unsupported by the mapped expedition function.
 - Nearest-confusion baseline:
 
-- `unit.astronauts.solar_explorer` — Both are large modular Astronaut support assets. Mitigations: Solar Explorer is a long ground convoy; MX-81 is a very wide true-air wing. / Solar Explorer is bookended by flat solar panels; MX-81 carries several detachable mission pods. / Solar Explorer retains rugged Field construction; MX-81 uses clean high-performance Mission geometry.
+- `unit.astronauts.solar_explorer` — Both are large modular Astronaut support assets. Mitigations: Solar Explorer is a long three-module ground carrier on subordinate adapted running gear; MX-81 is a very wide true-air wing. / Solar Explorer is dominated by one curved honeycomb habitat canopy and a circular rear frame; MX-81 carries several detachable mission pods across its span. / Solar Explorer retains rugged Field construction; MX-81 uses clean high-performance Mission geometry.
 - `unit.aliens.alien_mothership` — Both are huge extremely wide airborne command/support silhouettes. Mitigations: MX-81 is a long command spine crossed by distinct wing and pod modules; Mothership is one interrupted circular hull. / MX-81 preserves several gaps between detachable mission pods; Mothership preserves one continuous open machinery channel. / MX-81 has a clear nose-to-tail direction; Mothership reads radially until its tail and bay opening establish heading.
 
 ## D. Construction contract

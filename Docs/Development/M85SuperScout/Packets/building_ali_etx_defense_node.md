@@ -44,9 +44,9 @@ Open question: The faction-internal construction, motion, socket and material dr
 - Verified findings:
   - Alien Jet is an extremely small open craft built around a broad swept black plate rather than an enclosed fuselage.
   - Two tall flexible lime arches rise over the exposed pilot and dominate the profile from the front and side.
-  - A single forward yellow emitter and short rear equipment block keep the craft directional despite its minimal body.
+  - Two short lateral arms end in one small yellow-green emitter each; the compact rear block supports the open pilot without becoming a canopy.
 - Remaining evidence gaps:
-  - Clean rear and underside views are still required before fixing propulsion, landing and weapon sockets for the production Alien Jet.
+  - The source establishes two lateral emitters but does not independently establish their gameplay firing relationship; authoritative weapon behavior remains unchanged by this visual audit.
 
 ### Source audit [Aliens:7692]
 

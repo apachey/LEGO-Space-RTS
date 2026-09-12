@@ -70,15 +70,15 @@ Open question: The faction-internal construction, motion, socket and material dr
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130810.pdf)
 - Construction map:
-  - Evidence pages 2-7: Forward cockpit and low exploration nose module.
-  - Evidence pages 8-17: Long modular habitation/cargo body plus separate small support pod.
-  - Evidence pages 18-23: Twin-panel solar/service tail built around a tall circular frame and attached to the long body.
+  - Evidence pages 2-7: Detachable forward cockpit craft with low exploration nose and broad side plates.
+  - Evidence pages 8-17: Long modular habitation/cargo body under one curved honeycomb canopy plus separate small support pod.
+  - Evidence pages 18-23: Compact rear service section with circular frame, dome and paired small fins attached to the long body.
   - Evidence pages 24-26: Cross-set alternate models and extended modular combinations; not direct production geometry.
 - View/mechanism coverage: front=VERIFIED p1 and p22-23; rear=PARTIAL p18-23; leftRight=VERIFIED p2-23; top=VERIFIED p2-23; threeQuarter=VERIFIED p1 and p22-26; undersideInterior=VERIFIED p2-21 staged construction; mechanism=PARTIAL p18-23 separable solar/service module; deployment not demonstrated
 - Verified findings:
-  - Solar Explorer identity comes from a long low modular convoy body rather than a single compact rover.
-  - The rear service section carries two broad solar wings around a tall circular machinery frame.
-  - Cockpit, habitat/cargo body, support pod and solar tail remain independently readable modules.
+  - Solar Explorer identity comes from one long low non-wheeled modular carrier rather than from the separate small four-wheel rover.
+  - The central habitat/cargo box is covered by one large curved honeycomb canopy; the compact rear section is organized around a circular frame, dome and paired small fins.
+  - Detachable cockpit craft, habitat/cargo body, support pod and rear service section remain independently readable modules.
 - Remaining evidence gaps:
   - The manual supports separable modules but not the game's deployed Forward Service state; stabilizers, access route and deployment motion remain explicit adaptation work.
 

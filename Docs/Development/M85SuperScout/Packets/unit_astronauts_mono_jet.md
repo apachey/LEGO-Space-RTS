@@ -39,9 +39,9 @@ Open question: The faction-internal construction, motion, socket and material dr
   - Evidence pages 1-2: Complete eleven-step Mono Jet build with side, top and final operator views.
 - View/mechanism coverage: front=PARTIAL p2 final view; rear=VERIFIED p2 steps 9-11; leftRight=VERIFIED p1-2 construction rotation; top=VERIFIED p1-2; threeQuarter=VERIFIED p1 cover and p2 final; undersideInterior=VERIFIED p1 bare plate and engine pod sequence; mechanism=MISSING static micro-flyer
 - Verified findings:
-  - The Mono Jet is a long one-person sled with no enclosed fuselage.
-  - A single large cylindrical engine pod sits on one side of the narrow wing/deck, creating deliberate asymmetry.
-  - The opposite-side tail plate and exposed operator prevent it from reading as a conventional symmetric fighter.
+  - The Mono Jet is an extremely compact asymmetric one-person craft with no enclosed fuselage.
+  - One dominant treaded cylindrical drum sits directly between a shrouded conical nozzle and the tiny operator platform.
+  - The exposed operator, short wedge deck and small axle-mounted signal dish prevent it from reading as a long or symmetric fighter.
 - Remaining evidence gaps:
   - The manual does not establish landing gear or control-surface motion; both remain presentation adaptations.
 
@@ -51,38 +51,38 @@ Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-qu
 
 ## C. Recognition contract
 
-**Silhouette thesis:** A compact one-person field aircraft built around a single narrow jet body and exposed control frame.
+**Silhouette thesis:** An extremely compact one-person field craft built around one dominant transverse drum between a shrouded nozzle and tiny exposed control deck.
 
 Non-removable identity anchors:
 
-- single slim fuselage
-- open cockpit
-- short improvised field wings
+- single dominant cylindrical drum
+- side shrouded conical nozzle
+- tiny open operator wedge
 
 - Rejected V1 blind-review code: `S16`. Historical failed boards: [24-cell](../Silhouettes/blind_24_cells.svg), [44-cell](../Silhouettes/blind_44_cells.svg), [72-cell](../Silhouettes/blind_72_cells.svg). The game director recognized 0/66 at 24 cells; this primitive concept is not an approved model or accepted evidence.
 - Palette and material hierarchy: Field Systems retain rugged white/light-gray/medium-blue construction; Mission Systems retain clean white/orange/black construction. Shared identity comes from insignia and interfaces, not shape averaging.
 - Forbidden genericization: Do not blend the two source lineages into generic white sci-fi or add military forms unsupported by the mapped expedition function.
 - Nearest-confusion baseline:
 
-- `unit.astronauts.mission_fighter` — Both are small true-air Astronaut craft. Mitigations: Mono Jet is a narrow improvised field fuselage; Mission Fighter has a crisp swept mission-wing plan. / Mono Jet has an open cockpit; Mission Fighter uses a compact enclosed blue canopy. / Mono Jet remains Field white/gray/blue; Mission Fighter uses strong white/orange Mission blocks.
+- `unit.astronauts.mission_fighter` — Both are small true-air Astronaut craft. Mitigations: Mono Jet is an asymmetric drum-and-platform microcraft; Mission Fighter has a crisp swept mission-wing plan. / Mono Jet exposes its operator beside the dominant drum; Mission Fighter uses a compact enclosed blue canopy. / Mono Jet remains Field white/gray/blue; Mission Fighter uses strong white/orange Mission blocks.
 
 ## D. Construction contract
 
 - Contract state: `SOURCE_VERIFIED`. This is an internally checked draft, not game-director approval.
 - Semantic part map:
-  - Single slim fuselage — defines the tiny improvised field aircraft — SOURCE_VERIFIED.
-  - Open cockpit/control frame — keeps the pilot exposed and the craft light — SOURCE_VERIFIED.
-  - Short field wings and rear propulsion — separate it from clean Mission fighters — SOURCE_VERIFIED.
-- Structural load path: One narrow longitudinal spine carries the pilot, short wings and rear engine without a deep shell.
-- Repeated modules / connection grammar: Central fuselage, paired short wings and compact propulsion cluster.
-- Source-faithful versus adapted boundary: True-air behavior and light precision attack are canonical adaptations; silhouette remains the direct 7310 flyer.
+  - Single dominant transverse drum — defines the tiny asymmetric field craft — SOURCE_VERIFIED.
+  - Side shrouded conical nozzle — keeps propulsion concentrated on one side — SOURCE_VERIFIED.
+  - Tiny open operator wedge and axle-mounted dish — preserve the exposed microcraft scale — SOURCE_VERIFIED.
+- Structural load path: One short transverse axle joins the dominant drum, shrouded nozzle and tiny operator platform without a long fuselage.
+- Repeated modules / connection grammar: Drum/nozzle assembly, exposed control wedge and small axle-mounted dish remain independently readable.
+- Source-faithful versus adapted boundary: True-air behavior and light precision attack are canonical adaptations; silhouette remains the direct compact 7310 craft.
 
 ## E. Material and texture contract
 
 - Geometry must carry:
-  - single slim fuselage
-  - open cockpit
-  - short improvised wings
+  - single dominant cylindrical drum
+  - side shrouded conical nozzle
+  - tiny open operator wedge
 - Accepted master-material roles: `Body`, `Accent`, `Tool`, `Glass`, `Signal`, `Neutral`.
 - Reusable texture requirements:
   - `ast_field_frame_surface` — Restrained molded and brushed variation for rugged blue-gray Field Systems frames without faking structural seams. Channels: Tangent-space normal and linear roughness; body color stays parametric. Resolution: 2048x2048; texel density: 256 px/m at Close; tiling: Shared model-space 3 m repeat across connected frames.; LOD fallback: Half strength at Combat; master roughness only at Strategic. Provenance/state: Project-authored procedural source informed by verified Field Systems surfaces; human review required. `SPECIFIED_NOT_AUTHORED`.
@@ -92,19 +92,19 @@ Non-removable identity anchors:
 
 ## F. State and animation contract
 
-- Locomotion / operation: True air; agile banking around a narrow fuselage.
+- Locomotion / operation: True air; agile banking around the compact transverse drum assembly.
 - Planted/contact rule: No ground contact in normal operation; hover datum and shadow communicate altitude.
 
 | Pivot | Parent | Axis/path and rest-to-extreme motion | Presentation driver |
 |---|---|---|---|
-| `Pivot_WingLeft` | Asset_MonoJet | small flight-load flex only | turn intensity |
-| `Pivot_WingRight` | Asset_MonoJet | mirrored flight-load flex only | turn intensity |
+| `Pivot_Drum` | Asset_MonoJet | restrained axle rotation if needed for propulsion presentation | flight thrust presentation |
+| `Pivot_SignalDish` | Asset_MonoJet | small bounded signal or aim arc while remaining attached beside the controls | survey or attack presentation |
 
 - Required beats:
   - Idle air loiter.
-  - Travel banks cleanly without helicopter bob.
-  - Attack aligns the slim nose before fire.
-  - Damage destabilizes one wing; destruction separates the rear engine.
+  - Travel banks the compact asymmetric body without helicopter bob.
+  - Attack aligns the operator wedge before fire.
+  - Damage destabilizes the drum/nozzle assembly; destruction separates it from the operator platform.
 - Animation consumes authoritative state and never decides gameplay timing or results.
 
 ## G. Presentation hookups
@@ -118,7 +118,7 @@ Non-removable identity anchors:
 - Verified fact: stable identity, source evidence and the source-supported assemblies cited above.
 - Canon-derived interpretation: gameplay function, adaptation boundary, contact behavior and presentation drivers are explicitly labeled in the contract.
 - Remaining source/design decisions:
-  - Clean underside propulsion reference remains limited and cannot authorize a large engine pod.
+  - The source does not prove that the drum rotates in operation; any rotation remains restrained presentation-only adaptation pending blockout review.
 - Cross-roster silhouette and game-director review remain open; this contract does not authorize production modeling.
 
 ## I. Build handoff

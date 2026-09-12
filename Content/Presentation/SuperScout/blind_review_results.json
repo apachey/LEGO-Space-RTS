@@ -51,9 +51,6 @@
       "priorityCorrections": {
         "V08": "Shorten Jet Scooter while retaining its recognizable source construction.",
         "V12": "Replace the invented legged interpretation with the canon-correct exclusively airborne 7693 crescent craft; no ground or siege state exists.",
-        "V16": "Rebuild Mono Jet from the official source proportions; the current result is not acceptable.",
-        "V17": "Restore Alien Jet's open pilot construction, theme-specific silhouette and correct forward weapon.",
-        "V18": "Represent Solar Explorer as a non-wheeled modular carrier with only its internal small rover using wheels.",
         "V21": "Restore MT-101's permanent cockpit and keep the gun distinct from the drill.",
         "V23": "Restore the MT-61-derived detachable spacecraft module and two manipulators; remove the unsupported trailer read.",
         "V34": "Separate the source spacecraft from MT-51 Claw-Tank so the tank silhouette reads cleanly.",
@@ -61,6 +58,11 @@
         "V46": "Rebuild Tunnel Transport; the current source interpretation is unacceptable.",
         "V50": "Restore MX-71 Recon Dropship's own high-wing form instead of a generic heavy carryall.",
         "V58": "Restore Rapid Rider's source silhouette and proportions."
+      },
+      "acceptedIndividualCorrections": {
+        "V16": "Compact asymmetric Mono Jet correction accepted for the next composite review.",
+        "V17": "First monochrome Alien Jet correction accepted; the later colored variant is excluded.",
+        "V18": "Non-wheeled three-module Solar Explorer correction accepted for the next composite review."
       },
       "systemicDiagnosis": [
         "Several source-derived units are recognizable but contain incorrect detachable-module, weapon, cockpit, landing-contact or vehicle-proportion decisions.",

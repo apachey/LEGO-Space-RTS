@@ -46,9 +46,9 @@ This generated review records what the available official instructions or labele
   - Evidence pages 1-2: Complete eleven-step Mono Jet build with side, top and final operator views.
 - View/mechanism coverage: front=PARTIAL p2 final view; rear=VERIFIED p2 steps 9-11; leftRight=VERIFIED p1-2 construction rotation; top=VERIFIED p1-2; threeQuarter=VERIFIED p1 cover and p2 final; undersideInterior=VERIFIED p1 bare plate and engine pod sequence; mechanism=MISSING static micro-flyer
 - Verified findings:
-  - The Mono Jet is a long one-person sled with no enclosed fuselage.
-  - A single large cylindrical engine pod sits on one side of the narrow wing/deck, creating deliberate asymmetry.
-  - The opposite-side tail plate and exposed operator prevent it from reading as a conventional symmetric fighter.
+  - The Mono Jet is an extremely compact asymmetric one-person craft with no enclosed fuselage.
+  - One dominant treaded cylindrical drum sits directly between a shrouded conical nozzle and the tiny operator platform.
+  - The exposed operator, short wedge deck and small axle-mounted signal dish prevent it from reading as a long or symmetric fighter.
 - Remaining evidence gaps:
   - The manual does not establish landing gear or control-surface motion; both remain presentation adaptations.
 
@@ -78,15 +78,15 @@ This generated review records what the available official instructions or labele
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130810.pdf)
 - Construction map:
-  - Evidence pages 2-7: Forward cockpit and low exploration nose module.
-  - Evidence pages 8-17: Long modular habitation/cargo body plus separate small support pod.
-  - Evidence pages 18-23: Twin-panel solar/service tail built around a tall circular frame and attached to the long body.
+  - Evidence pages 2-7: Detachable forward cockpit craft with low exploration nose and broad side plates.
+  - Evidence pages 8-17: Long modular habitation/cargo body under one curved honeycomb canopy plus separate small support pod.
+  - Evidence pages 18-23: Compact rear service section with circular frame, dome and paired small fins attached to the long body.
   - Evidence pages 24-26: Cross-set alternate models and extended modular combinations; not direct production geometry.
 - View/mechanism coverage: front=VERIFIED p1 and p22-23; rear=PARTIAL p18-23; leftRight=VERIFIED p2-23; top=VERIFIED p2-23; threeQuarter=VERIFIED p1 and p22-26; undersideInterior=VERIFIED p2-21 staged construction; mechanism=PARTIAL p18-23 separable solar/service module; deployment not demonstrated
 - Verified findings:
-  - Solar Explorer identity comes from a long low modular convoy body rather than a single compact rover.
-  - The rear service section carries two broad solar wings around a tall circular machinery frame.
-  - Cockpit, habitat/cargo body, support pod and solar tail remain independently readable modules.
+  - Solar Explorer identity comes from one long low non-wheeled modular carrier rather than from the separate small four-wheel rover.
+  - The central habitat/cargo box is covered by one large curved honeycomb canopy; the compact rear section is organized around a circular frame, dome and paired small fins.
+  - Detachable cockpit craft, habitat/cargo body, support pod and rear service section remain independently readable modules.
 - Remaining evidence gaps:
   - The manual supports separable modules but not the game's deployed Forward Service state; stabilizers, access route and deployment motion remain explicit adaptation work.
 

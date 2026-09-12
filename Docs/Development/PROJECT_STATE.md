@@ -748,6 +748,19 @@ live; the current schema-9 copy/paste retains the complete experiment.
   on a tiny waist and two thin legs, with no arms and two unequal top-mounted
   cannon booms. The candidates remain separate from the
   immutable first-review boards until the wider correction pass is ready.
+  Director-supplied multi-angle references then corrected three more source
+  reads: Mono Jet is a compact asymmetric drum/nozzle/operator assembly rather
+  than a long sled; Alien Jet has an open pilot under two arches with two small
+  lateral emitters; and the source-faithful complete Solar Explorer is a
+  non-wheeled three-module assembly whose separate small rover is the wheeled
+  component. Current gameplay canon still requires Solar Explorer to become a
+  large wheeled ground-support unit, so its future production running gear
+  remains an explicit adaptation rather than a claimed part of set 7315.
+  On 2026-09-12 the game director accepted the new Mono Jet, the first
+  monochrome Alien Jet attempt and the new Solar Explorer as individual
+  correction candidates for the next composite review. The colored second
+  Alien Jet attempt is explicitly excluded. T082 remains on hold until the
+  remaining priority corrections and renewed 24-cell blind review are complete.
 - The official 7301 instruction page also exposed a stale audit-reconciliation
   error: Rover is a four-wheel open platform, not the two-wheel bike described
   by the earlier identity and production drafts. The source ledger, identity,

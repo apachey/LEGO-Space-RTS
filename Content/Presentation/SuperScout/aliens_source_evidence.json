@@ -12,8 +12,8 @@
       "instructionPdfs": [{"url":"https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4525566.pdf","pageCount":2,"sha256":"0f38e4ad2fd865fb472cfe06d6b244b37f9d3d284aad78769543430abd830547"}],
       "constructionRanges": [{"pages":"1","evidence":"Complete five-step Alien Jet build with exposed pilot, swept black deck and paired flexible lime arches."},{"pages":"2","evidence":"Promotional reverse page; no additional construction evidence."}],
       "viewCoverage": {"front":"PARTIAL p1 cover and final step","rear":"PARTIAL p1 staged build","leftRight":"PARTIAL p1 construction sequence","top":"VERIFIED p1 steps 3-5","threeQuarter":"VERIFIED p1 cover and final step","undersideInterior":"PARTIAL p1 bare plate sequence","mechanism":"PARTIAL p1 flexible lime arches; no authored flight or weapon motion"},
-      "findings": ["Alien Jet is an extremely small open craft built around a broad swept black plate rather than an enclosed fuselage.","Two tall flexible lime arches rise over the exposed pilot and dominate the profile from the front and side.","A single forward yellow emitter and short rear equipment block keep the craft directional despite its minimal body."],
-      "openGaps": ["Clean rear and underside views are still required before fixing propulsion, landing and weapon sockets for the production Alien Jet."]
+      "findings": ["Alien Jet is an extremely small open craft built around a broad swept black plate rather than an enclosed fuselage.","Two tall flexible lime arches rise over the exposed pilot and dominate the profile from the front and side.","Two short lateral arms end in one small yellow-green emitter each; the compact rear block supports the open pilot without becoming a canopy."],
+      "openGaps": ["The source establishes two lateral emitters but does not independently establish their gameplay firing relationship; authoritative weapon behavior remains unchanged by this visual audit."]
     },
     {
       "setId": "7645",

@@ -114,6 +114,30 @@
       "specificPrompt": "Use case stylized-concept. Rebuild the complete Red Planet Protector from official LEGO Life on Mars set 7313, using the box image as authoritative geometry and the previous candidate only for matte-black review-render style. Make one tall lightweight biped: broad rounded wedge upper craft with thin side fins, a tiny central waist, exactly two long thin slightly splayed legs and small narrow feet, and no humanoid arms. Put exactly two deliberately asymmetric cannon booms on the top/rear of the craft: viewer-left long thin nearly horizontal boom to a large circular muzzle/dish; viewer-right long rectangular boom rising diagonally upward/outward to a large circular muzzle/dish. Both must be visibly connected, both muzzles face generally toward the viewer, and the booms must not be mirrored. Full-body three-quarter front orthographic-like matte-black LEGO-compatible studio render on white; no floating parts, extra weapons, minifigure, logo, text or watermark.",
       "output": "Renders/unit_martians_red_planet_protector_rev3.png",
       "outputSha256": "4dd1481384b55dd77848fce313b0cdb9936c7e27ab34e951d662d57503553be9"
+    },
+    {
+      "stableId": "unit.astronauts.mono_jet",
+      "status": "DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE",
+      "directorFinding": "The corrected compact asymmetric Mono Jet is accepted for the next composite review.",
+      "specificPrompt": "Use case precise-object-edit. Reconstruct the exact compact 7310 Mono Jet around one dominant treaded cylindrical drum, one immediately adjacent shrouded conical nozzle, a tiny open operator platform with short wedge nose, and one small axle-mounted dish beside the controls. No long chassis, mirrored engine, wheels, wings or enclosed canopy; matte-black isolated review render.",
+      "output": "Renders/unit_astronauts_mono_jet_rev1.png",
+      "outputSha256": "7f026fbe9f0565e1818a1f9d2c334a15199d21acedc6b88aeb29cb593ed9e7f7"
+    },
+    {
+      "stableId": "unit.aliens.alien_jet",
+      "status": "DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE",
+      "directorFinding": "The first monochrome correction is accepted; the later colored variant is rejected for this silhouette corpus.",
+      "specificPrompt": "Use case source-faithful reconstruction. Preserve the tiny open 5617 swept plate, exposed central alien pilot, exactly two tall flexible conduit arches, two short lateral arms and one small emitter at each arm tip. No canopy, nose cannon, landing legs or extra wings; matte-black isolated review render.",
+      "output": "Renders/unit_aliens_alien_jet_rev1.png",
+      "outputSha256": "380df77ddea28878da8db5533a901d3264570ff18c4f6e3c09f433e8c95580a0"
+    },
+    {
+      "stableId": "unit.astronauts.solar_explorer",
+      "status": "DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE",
+      "directorFinding": "The corrected complete three-module Solar Explorer is accepted as a non-wheeled carrier for the next composite review.",
+      "specificPrompt": "Use case precise-object-edit. Preserve the complete connected 7315 system: detachable low pointed cockpit craft, long central habitat/cargo box under one curved honeycomb canopy, and compact rear circular-frame service module with dome and two small fins. The carrier has only tiny underside pads and no road wheels; exclude the separate wheeled rover and loose crystal; matte-black isolated review render.",
+      "output": "Renders/unit_astronauts_solar_explorer_rev1.png",
+      "outputSha256": "47e04d40cf1147d9c645548e790c69240f88b8e1b98f729839f7d8f1ba6f39c3"
     }
   ],
   "supersededRevisionCandidates": [

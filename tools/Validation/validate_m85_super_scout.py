@@ -896,6 +896,9 @@ def main() -> None:
         "unit.martians.jet_scooter": "UNREVIEWED_CORRECTION_CANDIDATE",
         "unit.aliens.etx_alien_strike": "UNREVIEWED_CORRECTION_CANDIDATE",
         "unit.martians.red_planet_protector": "UNREVIEWED_CORRECTION_CANDIDATE",
+        "unit.astronauts.mono_jet": "DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE",
+        "unit.aliens.alien_jet": "DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE",
+        "unit.astronauts.solar_explorer": "DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE",
     }
     if {
         record.get("stableId"): record.get("status") for record in revision_candidates

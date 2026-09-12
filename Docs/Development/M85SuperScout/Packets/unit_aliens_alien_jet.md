@@ -42,9 +42,9 @@ Open question: The faction-internal construction, motion, socket and material dr
 - Verified findings:
   - Alien Jet is an extremely small open craft built around a broad swept black plate rather than an enclosed fuselage.
   - Two tall flexible lime arches rise over the exposed pilot and dominate the profile from the front and side.
-  - A single forward yellow emitter and short rear equipment block keep the craft directional despite its minimal body.
+  - Two short lateral arms end in one small yellow-green emitter each; the compact rear block supports the open pilot without becoming a canopy.
 - Remaining evidence gaps:
-  - Clean rear and underside views are still required before fixing propulsion, landing and weapon sockets for the production Alien Jet.
+  - The source establishes two lateral emitters but does not independently establish their gameplay firing relationship; authoritative weapon behavior remains unchanged by this visual audit.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 
@@ -52,13 +52,14 @@ Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-qu
 
 ## C. Recognition contract
 
-**Silhouette thesis:** A tiny open black-lime interceptor with a swept plate body and two bright arches above its pilot.
+**Silhouette thesis:** A tiny open black-lime interceptor with a swept plate body, two bright arches above its pilot and paired lateral bulb emitters.
 
 Non-removable identity anchors:
 
 - broad swept plate body
 - exposed central alien pilot
 - paired tall lime conduit arches
+- two short lateral bulb emitters
 
 - Rejected V1 blind-review code: `S28`. Historical failed boards: [24-cell](../Silhouettes/blind_24_cells.svg), [44-cell](../Silhouettes/blind_44_cells.svg), [72-cell](../Silhouettes/blind_72_cells.svg). The game director recognized 0/66 at 24 cells; this primitive concept is not an approved model or accepted evidence.
 - Palette and material hierarchy: Black and bright lime with dark mechanics and disciplined translucent-neon-green energy or crystal elements.
@@ -75,9 +76,9 @@ Non-removable identity anchors:
   - Broad swept black plate — creates the tiny interceptor plan — SOURCE_VERIFIED.
   - Exposed central alien pilot — preserves the open micro-craft scale — SOURCE_VERIFIED.
   - Two tall lime conduit arches — dominate front and side recognition — SOURCE_VERIFIED.
-- Structural load path: One swept plate carries the open pilot frame, paired flexible arches, forward emitter and compact rear equipment block.
-- Repeated modules / connection grammar: Swept deck, pilot/control center, paired arches and nose emitter remain independently readable.
-- Source-faithful versus adapted boundary: True-air interpolation and energy pulse timing are adapted; no enclosed canopy, bulky engine pod or folding nose panels.
+- Structural load path: One swept plate carries the open pilot frame, paired flexible arches, two short lateral emitter arms and compact rear equipment block.
+- Repeated modules / connection grammar: Swept deck, pilot/control center, paired arches and one small emitter at each lateral tip remain independently readable.
+- Source-faithful versus adapted boundary: True-air interpolation and energy pulse timing are adapted; no enclosed canopy, central nose cannon, bulky engine pod or folding nose panels.
 
 ## E. Material and texture contract
 
@@ -85,6 +86,7 @@ Non-removable identity anchors:
   - broad swept plate
   - open pilot cavity
   - paired tall lime arches
+  - paired short lateral bulb emitters
 - Accepted master-material roles: `Body`, `Accent`, `Tool`, `Glass`, `Signal`, `Neutral`.
 - Reusable texture requirements:
   - `ali_black_hull_surface` — Restrained molded black-shell roughness variation across craft-derived hulls without inventing biological skin or panel structure. Channels: Tangent-space normal and linear roughness; black body color remains parametric. Resolution: 2048x2048; texel density: 256 px/m at Close; tiling: Shared model-space 4 m repeat across connected hull modules.; LOD fallback: Half strength at Combat; master roughness only at Strategic. Provenance/state: Project-authored procedural source informed by verified Mars Mission Alien hulls; human review required. `SPECIFIED_NOT_AUTHORED`.
@@ -106,13 +108,13 @@ Non-removable identity anchors:
 - Required beats:
   - Idle aggressive loiter.
   - Travel uses crisp banking around the flat plate.
-  - Attack brightens the forward emitter for one bounded pulse.
+  - Attack brightens the paired lateral emitters for one bounded pulse.
   - Damage destabilizes one arch; destruction breaks plate and rear block.
 - Animation consumes authoritative state and never decides gameplay timing or results.
 
 ## G. Presentation hookups
 
-- Required presentation sockets: `Socket_Selection`, `Socket_Health`, `Socket_Muzzle`, `Socket_Engine`, `Socket_Surge`, `Socket_AudioFlight`.
+- Required presentation sockets: `Socket_Selection`, `Socket_Health`, `Socket_MuzzleLeft`, `Socket_MuzzleRight`, `Socket_Engine`, `Socket_Surge`, `Socket_AudioFlight`.
 - These sockets are presentation references only and never own targeting, collision, movement, transport or production truth.
 - Identification Tile placement, icon silhouette, portrait camera and reduced-presentation fallback remain `HOLD — PRESENTATION AUDIT REQUIRED`.
 
@@ -121,7 +123,7 @@ Non-removable identity anchors:
 - Verified fact: stable identity, source evidence and the source-supported assemblies cited above.
 - Canon-derived interpretation: gameplay function, adaptation boundary, contact behavior and presentation drivers are explicitly labeled in the contract.
 - Remaining source/design decisions:
-  - Rear propulsion and landing detail remain subordinate until better rear/underside evidence appears.
+  - The source fixes two lateral visual emitters; their authoritative firing relationship remains a later weapon-presentation decision.
 - Cross-roster silhouette and game-director review remain open; this contract does not authorize production modeling.
 
 ## I. Build handoff
