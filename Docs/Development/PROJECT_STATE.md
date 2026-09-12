@@ -795,6 +795,11 @@ live; the current schema-9 copy/paste retains the complete experiment.
   narrow folding wing with six wheels. Generated Martian facial relief is not
   source evidence; canonical worker tools and MX-41 ground/transform coverage
   remain production obligations. Accepted candidates are unchanged.
+  The next source-only correction pair adds unreviewed Mission Fighter (7695)
+  and Rover (7301) first attempts: closed canopy and crooked plate wings versus
+  compact open four-sphere-wheel rover with horizontal side scanner. Exact
+  prompts and image hashes are retained. This does not replace Mission Fighter's
+  canonical 5619/7695 family or approve either image for production.
 - The official 7301 instruction page also exposed a stale audit-reconciliation
   error: Rover is a four-wheel open platform, not the two-wheel bike described
   by the earlier identity and production drafts. The source ledger, identity,

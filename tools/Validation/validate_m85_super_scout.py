@@ -906,6 +906,8 @@ def main() -> None:
         "unit.rock_raiders.rapid_rider": "DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE",
         "unit.martians.worker_robot": "DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE",
         "unit.astronauts.mx41_switch_fighter": "DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE",
+        "unit.astronauts.mission_fighter": "UNREVIEWED_CORRECTION_CANDIDATE",
+        "unit.astronauts.rover": "UNREVIEWED_CORRECTION_CANDIDATE",
     }
     if {
         record.get("stableId"): record.get("status") for record in revision_candidates
