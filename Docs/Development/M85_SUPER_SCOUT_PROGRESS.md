@@ -17,9 +17,9 @@ approaches each left unresolved source topology.
 Source-only Worker Robot and MX-41 flight-state candidates are director-accepted
 for the next composite review;
 previous accepted candidates and immutable first-review boards remain unchanged.
-The next pair adds unreviewed source-only Mission Fighter (7695) and Rover
-(7301) first correction candidates. Their exact prompts, source pages and hashes
-are retained; neither is accepted or approved for production.
+The director accepted the source-only Mission Fighter (7695) and Rover (7301)
+first correction candidates for the next composite review. Exact prompts,
+source pages and hashes are retained; neither is approved for production.
 
 ## Completed in the identity-baseline pass
 
@@ -315,7 +315,8 @@ emitters; this source-only identity study does not replace the canonical
 5619/7695 source family. Rover restores the compact open chassis, four spherical
 wheels, asymmetric horizontal scanner and short rear antenna. Canopy faceting,
 figure relief, rear-block proportions and wheel occlusion are generated
-interpretation, not evidence. Both remain unreviewed. Accepted images and
+interpretation, not evidence. The director accepted both first correction
+attempts for the next composite review. Accepted images and
 immutable review boards are unchanged.
 
 The next correction pair returns V04 Worker Robot and V43 MX-41 to their
@@ -371,6 +372,8 @@ with 317/317 tests and zero blocking failures at
 The validator locks both unreviewed candidate records and their image hashes.
 No gameplay/runtime code or canon changed; no visible Godot session was launched
 and no new macOS export was made.
+The subsequent acceptance-only update passed the focused T082 validator and
+`git diff --check`; both image hashes remain unchanged.
 
 The Worker Robot / MX-41 correction pair passed `./tools/verify.sh` with
 317/317 tests and zero blocking failures at
