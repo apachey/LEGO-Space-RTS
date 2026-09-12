@@ -775,10 +775,14 @@ live; the current schema-9 copy/paste retains the complete experiment.
   the next composite review. Rapid Rider now restores the complete 4920
   catamaran, controls, work lights, cargo hopper and paired rear propulsion and
   is also director-accepted for that review. The first 7690 MB-01 correction
-  wrongly incorporated the separate spacecraft into the base. Its second and
-  final image attempt instead preserves the actual open A-frame, empty
-  octagonal mission ring, elevated command capsule, pneumatic station, thick
-  hoses and separate pressure reservoir and awaits review. MX-71's first
+  wrongly incorporated the separate spacecraft into the base. Rev2 removed it
+  but invented a vertical capsule. New director-supplied source photos establish
+  the horizontal open three-arch command deck, octagonal portal, A-frame,
+  front pneumatic manifold, branching hoses, separate three-lobed pump and
+  four-barrel defense tower. The director explicitly authorized one additional
+  MB-01 generation instead of manual blockout: rev3 uses the new photos directly
+  and awaits review; barrel count remains partly occluded in this view. This
+  exception does not authorize extra MX-71 or MT-101 attempts. MX-71's first
   correction remained too broad; its second recovered the long narrow spine,
   separate tail booms and close underslung rover but still misplaced and
   simplified the four blue-tipped emitters. Its two allowed image attempts are

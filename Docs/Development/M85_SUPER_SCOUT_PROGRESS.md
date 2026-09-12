@@ -8,9 +8,10 @@ game-director accepted at 4/4, approving that materially different method for
 a second full-roster corpus. The complete-roster review remains open. Current
 correction candidates now also cover the MT-61-derived Mobile Mining Platform
 and MT-51 Claw-Tank. Tunnel Transport and Rapid Rider are individually accepted
-for the next composite review. MB-01 Eagle Command Base has a second and final
-image candidate after the first correction wrongly incorporated its separate
-spacecraft. MT-101 and MX-71 are explicitly blocked after two image-generation
+for the next composite review. MB-01 Eagle Command Base has a third candidate,
+explicitly authorized by the director after new photos exposed rev2's incorrect
+vertical capsule. It restores the open horizontal three-arch deck and awaits
+review. MT-101 and MX-71 are explicitly blocked after two image-generation
 approaches each left unresolved source topology.
 
 ## Completed in the identity-baseline pass
@@ -131,10 +132,14 @@ approaches each left unresolved source topology.
   arched hoses and broad landing feet instead of a stretched three-part beam.
   The game director accepted this correction for the next composite review.
   The first MB-01 correction remained wrong because it made 7690's separate
-  spacecraft the dominant suspended mass. The second and final image attempt
-  removes the spacecraft and concentrates the building on its actual open
-  A-frame, empty octagonal mission ring, elevated command capsule, pneumatic
-  station, thick hose network and separate three-lobed pressure reservoir.
+  spacecraft the dominant suspended mass. Rev2 removed it but wrongly invented
+  a vertical command capsule. New director-supplied photos establish an open
+  horizontal three-arch command deck, octagonal portal beneath it, A-frame,
+  front pneumatic manifold, thick branching hoses, separate three-lobed pump
+  and side four-barrel defense tower. The director explicitly authorized one
+  extra generation rather than a manual blockout. Rev3 uses five source photos
+  directly, excludes the separate spacecraft and awaits review. The barrel
+  count is partly occluded; this image is not multi-angle production evidence.
 - The same priority wave restores 4920 Rapid Rider's complete source read: twin
   pointed pontoons, open center, raised controls, forward work lights, rear
   cargo hopper and paired propulsion tubes. The game director accepted this
@@ -330,7 +335,14 @@ packet is approved for T083/T085 production yet.
 
 ## Verification state
 
-The latest priority correction wave, including the director-accepted Tunnel
+The additional director-authorized MB-01 rev3 is an unreviewed image candidate;
+its exact built-in generation prompt is retained in the FullV2 manifest.
+It passed `./tools/verify.sh` with 317/317 tests and zero blocking failures at
+`Artifacts/Verification/20260912T211801Z-fast-summary.txt`, plus the focused
+T082 validator and `git diff --check`. The initial sandboxed invocation was
+stopped during restore; the completed run used the required build-tool access.
+No runtime changes or new macOS export were made for this image-only revision.
+The preceding priority correction wave, including the director-accepted Tunnel
 Transport and Rapid Rider, the second-attempt MB-01 Eagle Command Base and the
 explicit MX-71/MT-101 two-attempt blocks, passed `./tools/verify.sh --full` with
 zero blocking failures at `Artifacts/Verification/20260912T135031Z-full-summary.txt`.
