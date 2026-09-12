@@ -31,7 +31,7 @@ Open question: The faction-internal construction, motion, socket and material dr
 |---|---|---|---|---|
 | 7645 — MT-61 Crystal Reaper | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7645)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4534846.pdf)<br>[official PDF 2](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4549395.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7645-1) | PRIMARY_VERIFIED | harvesting blades, mining modules and small alien craft |
 | 7648 — MT-21 Mobile Mining Unit | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7648)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4525546.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7648-1) | PRIMARY_VERIFIED | mobile mining and detachable support module |
-| 7693 — ETX Alien Strike | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7693)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4523183.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7693-1) | PRIMARY_VERIFIED | alien strike transformation and human mining module |
+| 7693 — ETX Alien Strike | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7693)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4523183.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7693-1) | PRIMARY_VERIFIED | exclusively airborne alien strike craft articulation and human mining module |
 
 ### Source audit [Astronauts:7645]
 
@@ -73,7 +73,7 @@ Open question: The faction-internal construction, motion, socket and material dr
 - Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4523183.pdf)
 - Construction map:
   - Evidence pages 3-16: Compact human mining vehicle with orange canopy, low four-wheel chassis and tall side tool arm.
-  - Evidence pages 17-51: Large transforming alien strike craft; supporting opposition evidence.
+  - Evidence pages 17-51: Large exclusively airborne alien strike craft with articulated crescent panels; supporting opposition evidence.
 - View/mechanism coverage: front=PARTIAL p12-16 human vehicle; rear=PARTIAL p13-16 human vehicle; leftRight=VERIFIED p3-16; top=VERIFIED p3-16; threeQuarter=VERIFIED p1 and p15-16; undersideInterior=VERIFIED p3-12 bare human chassis; mechanism=PARTIAL p13-16 hinged side tool; extraction action not demonstrated
 - Verified findings:
   - The human mining module is a short low vehicle with a prominent orange cockpit and exposed wheelbase.

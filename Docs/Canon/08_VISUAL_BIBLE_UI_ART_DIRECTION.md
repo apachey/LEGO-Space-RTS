@@ -1623,9 +1623,9 @@ Support modules extend, stabilizers set and service surfaces become accessible.
 
 Heavy frame anchors; drilling architecture becomes the dominant silhouette.
 
-## ETX Alien Strike — 2.8s
+## ETX Alien Strike — airborne articulation
 
-Curved flight shell unfolds downward/outward into a fixed siege cradle.
+The two crescent side lobes and smaller hinged panels may articulate during banking, aiming and damage response, but the craft remains one continuous airborne silhouette. It never grows legs, plants braces or unfolds into a siege cradle.
 
 ## ETX Alien Infiltrator — 2.0s
 
@@ -2037,7 +2037,7 @@ Cleaner Mission Systems light and mechanical locking effects distinguish it from
 
 ## ETX Alien Strike
 
-Long-range resonant siege bolt.
+Long-range airborne structure-assault resonator bolt.
 
 Visible slow projectile with compact impact compression rather than fireball.
 
@@ -3148,7 +3148,7 @@ Transform/Deploy/Reconfigure icons always show:
 Examples:
 
 - Switch Fighter: wheels → wing profile;
-- Alien Strike: flight hull → anchored cradle;
+- Alien Strike has no state-change icon; its hinged panels are presentation articulation only;
 - Searcher: walking legs → braced legs.
 
 No generic lightning-bolt “special ability” icon is accepted.
@@ -4485,7 +4485,7 @@ Unreleased 7728 and 7729 remain outside the released-canon denominator.
 | ETX Servitor | NEW — MM subcraft/ETX clamps | tiny central core with folding clamps | black/lime | unfold tools | top microtile | clamp misalignment | tool core / hover worker | robot drone cliché |
 | Alien Jet | OD — 5617 | swept small black/lime fighter | black/lime | folding front, fast bank | tail tile | wing section | swept jet / air scout | modern jet |
 | Razor Skimmer | CA — mixed-set alien craft | low forward-pointing curved hull | black/lime | low hover/bank | upper tile | outer panel | low razor shape / harassment craft | generic hover tank |
-| ETX Alien Strike | OA — 7693 | curved flight craft → spread siege cradle | black/lime | 2.8s reconfigure | top/wing tile | exposed transform joints | flight vs cradle / state | generic artillery |
+| ETX Alien Strike | OA — 7693 | continuous curved airborne craft with twin crescent lobes and lime tail blades | black/lime | flight banking, panel articulation and emitter aim only | top/wing tile | exposed hinges and outer panel damage | unmistakable crescent airframe / structure assault | generic artillery or invented legs |
 | ETX Alien Infiltrator | OA — 7646 | compact craft → walker | black/lime | 2.0s reconfigure | top shell tile | leg/hull sections | folding walker / heavy ETX | insectoid creature |
 | Alien Mothership | OA — 7691 | huge segmented multi-craft hull | black/lime | relay, subcraft/hull motion | multiple sparse hull plates | 3-beat sectional failure | vast radial hull / unmistakable Huge air | bio-mothership |
 | ETX Command Core | NEW — Mothership/craft | landed command hull with folded fins | black/lime | landing/unfolding | upper hull tile | section separation | landed craft / compact HQ | temple |
@@ -4667,9 +4667,9 @@ The following decisions are now authoritative.
 
 34. Light, General, Breach, Siege, Anti-Air and Control are communicated primarily through mechanical/VFX behavior rather than six universal effect colors.
 
-35. Granite Grinder, Chrome Crusher, MT-201, Alien Strike and Excavation Searcher have intentionally different siege visual identities.
+35. Granite Grinder, Chrome Crusher, MT-201 and Excavation Searcher have intentionally different ground siege visual identities; Alien Strike's structure pressure remains visually and mechanically airborne.
 
-36. Alien Surge visually communicates faster operating cadence and transformation speed only, preserving the actual Phase 06 mechanic.
+36. Alien Surge visually communicates faster operating cadence and eligible transformation speed only; Alien Strike receives cadence, not a transformation it does not have.
 
 37. Martian displacement and Stability are physical/mechanical rather than magical.
 

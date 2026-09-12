@@ -49,8 +49,8 @@ The canonical Phase 03 solution is:
 | Anti-light | Loader Dozer | T3-Trike, Claw-Tank, Switch Fighter | Razor Skimmer | Jet Scooter / Cruiser |
 | Anti-heavy | Granite Grinder / Chrome Crusher | Armored Drilling Unit | Infiltrator combat state | Red Planet Protector |
 | Anti-air | Cutter Mast | Mission Fighter / Sentinel module | Alien Jet / ETX Defense Node | Recon-Mech / Aero Guard Tower |
-| True air | Tunnel Transport only | Mono Jet, fighters, dropship, Operations Aircraft | Alien Jet, Strike flight state, Mothership | Aero Skiff only |
-| Siege | Granite Grinder / Chrome Crusher | Ultra-Drill Walker / Armored Drilling Unit | ETX Alien Strike deployed state | Excavation Searcher |
+| True air | Tunnel Transport only | Mono Jet, fighters, dropship, Operations Aircraft | Alien Jet, ETX Alien Strike, Mothership | Aero Skiff only |
+| Siege / structure assault | Granite Grinder / Chrome Crusher | Ultra-Drill Walker / Armored Drilling Unit | ETX Alien Strike airborne structure assault | Excavation Searcher |
 | Harassment | Rapid Rider insertions / Loader groups | air, Switch Fighter, mobile combined arms | signature Razor/Jet pressure | Jet Scooter / Tube-assisted raids |
 | Transport | Rapid Rider / Tunnel Transport | Recon Dropship / Solar Explorer | Mothership carrier | Aero Skiff + Aero Tube Network |
 | Repair/support | Crew + Worksite servicing | Solar Explorer / Service Hub | Resonance infrastructure; Infiltrator disruption | Worker Robot / Excavation Searcher / Tubes |
@@ -924,28 +924,30 @@ Therefore most Alien NEW GAME CONTENT is economic and architectural rather than 
 **ORIGIN:** OFFICIAL-ADAPTED  
 **SOURCE SETS / MOTIFS:** 7693 ETX Alien Strike.
 
-**GAMEPLAY CLASS:** Transforming strike / siege craft  
+**CANON CORRECTION — 2026-09-12:** The 7693 craft is exclusively airborne. Hinged source panels articulate its flying shape; they do not establish a deployed, walking or ground siege state. Earlier references to an Alien Strike transformation or siege cradle are superseded.
+
+**GAMEPLAY CLASS:** True-air structure-assault craft
 **TECH STAGE:** Mid
 
 **PRIMARY ROLE:** Structure assault.
 
 **SECONDARY ROLE:** Mobile attack support.
 
-**MOVEMENT:** True air in Strike state; stationary/ground-targetable when deployed.
+**MOVEMENT:** Exclusively true air. Its exact low/high flight presentation is intentionally deferred.
 
-**ATTACK / TOOL BEHAVIOR:** Flight state attacks lightly. Deployed ETX state concentrates energy into long-range structure pressure.
+**ATTACK / TOOL BEHAVIOR:** Attacks structures from the air with a long-range resonant weapon while retaining its true-air, air-targetable state.
 
-**SPECIAL MECHANIC:** Deploy / Reconfigure.
+**SPECIAL MECHANIC:** No tactical state change or deployment.
 
-**STRENGTHS:** Can move rapidly between siege positions.
+**STRENGTHS:** Reaches structure-attack positions across terrain and can relocate without entering a ground state.
 
-**WEAKNESSES:** Deployment is telegraphed and leaves it vulnerable.
+**WEAKNESSES:** Expensive dedicated air target; vulnerable to interceptors and anti-air, and constrained by its weapon's minimum range.
 
-**COUNTERPLAY:** Attack during transition, flank the deployed craft, or force frequent relocation.
+**COUNTERPLAY:** Screen structures with anti-air/interceptors and force the craft away from its preferred firing distance.
 
-**VISUAL READ:** Major physical rearrangement from swept flying craft into widened deployed attack geometry.
+**VISUAL READ:** One continuous curved flying craft: central cockpit/keel, two huge crescent side lobes, forward emitter and long lime tail blades; no legs, planted braces or siege cradle.
 
-**SOURCE-FIDELITY NOTES:** Transformation is source-derived and serves the Phase 02 Alien mobile-to-high-output doctrine.
+**SOURCE-FIDELITY NOTES:** The official source supports hinged articulation inside an airborne craft but does not support a ground or siege transformation.
 
 ---
 
@@ -1622,7 +1624,7 @@ A **true-air unit** moves in the air layer and normally ignores:
 - ground rubble;
 - normal ground chokepoints.
 
-True-air units remain airborne unless their own source-derived transformation explicitly changes their state.
+True-air units remain airborne unless their own source-derived transformation explicitly changes their state. ETX Alien Strike has no such transformation.
 
 Examples:
 
@@ -1632,7 +1634,7 @@ Examples:
 - Recon Dropship;
 - Operations Aircraft;
 - Alien Jet;
-- Alien Strike flight state;
+- ETX Alien Strike;
 - Alien Mothership;
 - Aero Skiff.
 
@@ -1714,7 +1716,7 @@ Air cannot invalidate terrain because:
 - aircraft cannot hold most territorial objectives by themselves;
 - dedicated anti-air is available before advanced air dominates;
 - major air units require Energy and production infrastructure;
-- true-air siege capability is deliberately limited;
+- true-air structure-assault capability is deliberately limited;
 - most heavy combat power remains on the ground;
 - transport unloading requires valid ground locations;
 - important static defenses punish unsupported air.
@@ -1735,7 +1737,6 @@ Canonical examples:
 
 - MX-41 Switch Fighter;
 - ETX Alien Infiltrator;
-- ETX Alien Strike;
 - Red Planet Protector.
 
 Each receives at most one primary transformation command.
@@ -1749,7 +1750,6 @@ Used where a machine changes from mobile to stationary operational behavior.
 Examples:
 
 - MT-201 Ultra-Drill Walker drill deployment;
-- Alien Strike siege state;
 - Solar Explorer service deployment;
 - Martian positional apparatus.
 
@@ -2352,17 +2352,17 @@ Adds:
 
 ---
 
-### 3. ETX SIEGE WINDOW
+### 3. ETX AIR ASSAULT WINDOW
 
 **Core:** Alien Strike craft + Jet air cover.
 
-**Purpose:** Rapidly establish and relocate siege positions.
+**Purpose:** Rapidly establish and relocate airborne structure pressure.
 
 **Strength:** Strong structure pressure with unusual approach vectors.
 
-**Vulnerability:** Deployed state.
+**Vulnerability:** Dedicated anti-air and interceptors.
 
-**Counters:** flank before the Surge accomplishes enough.
+**Counters:** force the craft away from its minimum-range firing envelope before the Surge accomplishes enough.
 
 **Economic commitment:** High Charge.
 
@@ -2534,7 +2534,7 @@ Razor = ground-hover anti-light pressure.
 
 ### Alien Strike vs Infiltrator
 
-Alien Strike = siege.
+Alien Strike = exclusively airborne structure assault.
 
 Infiltrator = anti-heavy/detection frontline.
 
@@ -2977,7 +2977,7 @@ Those functions are already complete using released material.
 | ETX Servitor | New, source-derived | Worker | Ground hover | Early | Economy/building | Compact/mobile | Fragile |
 | Alien Jet | 5617 | Scout/interceptor | True air | Early | AA/recon | Speed | Fragile |
 | Razor Skimmer | Mixed-set Alien craft | Light attacker | Ground hover | Early | Harassment | Tempo | Poor vs heavy |
-| ETX Alien Strike | 7693 | Siege transformer | Air/deployed | Mid | Structures | Mobile siege | Vulnerable deployment |
+| ETX Alien Strike | 7693 | Airborne structure attacker | True air | Mid | Structures | Terrain-independent approach | Dedicated AA / minimum range |
 | ETX Alien Infiltrator | 7646 | Anti-heavy/detector | Craft/walker | Mid | Heavy targets | Flexible threat | Expensive |
 | Alien Mothership | 7691 | Carrier/support | True air | Advanced | Strategic pressure | Reach/support | Major AA target |
 
@@ -3046,7 +3046,7 @@ Those functions are already complete using released material.
 | Anti-light | Loader | T3 / Claw | Razor | Scooter / Cruiser |
 | Anti-heavy | Grinder / Crusher | Armored Drill | Infiltrator | Protector |
 | Anti-air | Cutter Mast | Mission Fighter/Sentinel | Jet/Node | Recon-Mech/Tower |
-| Siege | Grinder/Crusher | Ultra-Drill | Alien Strike | Searcher |
+| Siege / structure assault | Grinder/Crusher | Ultra-Drill | Alien Strike (airborne) | Searcher |
 | Transport | Rapid Rider/Tunnel | Dropship/Solar | Mothership | Tubes/Aero Skiff |
 | Support | Crew/Worksite | Solar/Refit | Charge/infiltration | Tubes/Searcher |
 | Information | Scout geology | Best general recon | Aggressive recon | Network-local info |

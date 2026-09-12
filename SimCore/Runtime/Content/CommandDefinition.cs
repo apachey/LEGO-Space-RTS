@@ -123,7 +123,6 @@ public static class CanonicalCommandDefinitions
         "component.transformation",
         "unit.astronauts.solar_explorer",
         "unit.astronauts.mt201_ultra_drill_walker",
-        "unit.aliens.etx_alien_strike",
         "unit.aliens.etx_alien_infiltrator",
         "building.ali.etx_defense_node"
     };

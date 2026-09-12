@@ -94,26 +94,31 @@
     {
       "stableId": "unit.martians.jet_scooter",
       "status": "UNREVIEWED_CORRECTION_CANDIDATE",
-      "directorFinding": "Recognizable but too long; shorten it while preserving the source identity.",
-      "specificPrompt": "Shorten the Jet Scooter substantially into a compact one-rider scooter while preserving its twin front nozzles, handlebars, rider and LEGO construction language.",
-      "output": "Renders/unit_martians_jet_scooter_rev1.png",
-      "outputSha256": "3ef858510d3dfdd3940b17dcc8f72023762ac22c7db091e243c3b461cb0ecac6"
+      "directorFinding": "The first correction became compact but the final craft should be a little sleeker while retaining the recognizable 7303 construction.",
+      "specificPrompt": "Use case precise-object-edit. Edit the prior matte-black Jet Scooter candidate using the official 7303 box art as authoritative geometry: lower the deck, slim the bulky central and rear blocks, make the two long exposed side tubes dominant, keep a compact open rider and paired front nozzles, and make the craft light, fast and narrow. Exactly one rider; no canopy, wheels, wings or extra weapons.",
+      "output": "Renders/unit_martians_jet_scooter_rev2.png",
+      "outputSha256": "96cf56cadc8083d6eb074ce530de994d4f4feebbd6a602250f24fd1820e9a788"
     },
     {
       "stableId": "unit.aliens.etx_alien_strike",
-      "status": "BLOCKED_CANON_CONFLICT",
-      "directorFinding": "The image's long walking limbs are invented; the official set is not legged.",
-      "specificPrompt": "Remove every invented walking leg and foot, preserving the low central hull, crescent side structures, forked rear and centered front weapon.",
-      "output": "Renders/unit_aliens_etx_alien_strike_rev1.png",
-      "outputSha256": "11e5edc0520ef1ceac7b9ede0b7dbda941654ebb99e71fae3e6321eeb941066f"
+      "status": "UNREVIEWED_CORRECTION_CANDIDATE",
+      "directorFinding": "Canon is corrected: 7693 is exclusively airborne and must never be interpreted as a legged, planted or siege-deployed unit.",
+      "specificPrompt": "Use case style-transfer. Create a T082 matte-black isolated render from the official 7693 geometry: one exclusively flying attack craft with a continuous curved arc, central cockpit, crescent wing sections, exposed pilot, twin long lime-rail shapes around the nose weapon, centered cannon and thin tail blades. Zero legs, feet, braces, landing pads, siege or walking anatomy; no scenery, logo, text or color.",
+      "output": "Renders/unit_aliens_etx_alien_strike_rev2.png",
+      "outputSha256": "60e3ccabf7f765062723746b287cd180a0e7a1fbac99b6de3071d0202535b686"
     },
     {
       "stableId": "unit.martians.red_planet_protector",
       "status": "UNREVIEWED_CORRECTION_CANDIDATE",
-      "directorFinding": "Strong candidate once the displaced left weapon is restored to its attachment.",
-      "specificPrompt": "Restore the displaced left-side cannon to its matching shoulder hardpoint while keeping the rest of the model unchanged.",
-      "output": "Renders/unit_martians_red_planet_protector_rev1.png",
-      "outputSha256": "928a263d85a1e42824fafc6107d73c850d2f41fba9b9b10aa9b85bb5bc6dc6aa"
+      "directorFinding": "The first edit did not actually restore the source weapon arrangement; 7313 has two connected but deliberately asymmetric shoulder cannon assemblies.",
+      "specificPrompt": "Use case precise-object-edit. Edit only the two shoulder cannon assemblies of the prior matte-black candidate from official 7313 geometry: viewer-left circular dish on a long horizontal boom, viewer-right dish high on an upward-sloping rectangular beam, both visibly connected to their shoulder mounts. Do not mirror them and do not leave either cannon floating; preserve the rest of the model.",
+      "output": "Renders/unit_martians_red_planet_protector_rev2.png",
+      "outputSha256": "ae36e75a23bfaeb483a3ceb62a12965a7a6e3ea814d71760dd244e54bede3016"
     }
+  ],
+  "supersededRevisionCandidates": [
+    {"stableId":"unit.martians.jet_scooter","output":"Renders/unit_martians_jet_scooter_rev1.png","outputSha256":"3ef858510d3dfdd3940b17dcc8f72023762ac22c7db091e243c3b461cb0ecac6","reason":"Superseded by the sleeker rev2 direction."},
+    {"stableId":"unit.aliens.etx_alien_strike","output":"Renders/unit_aliens_etx_alien_strike_rev1.png","outputSha256":"11e5edc0520ef1ceac7b9ede0b7dbda941654ebb99e71fae3e6321eeb941066f","reason":"Superseded after explicit flying-only canon correction."},
+    {"stableId":"unit.martians.red_planet_protector","output":"Renders/unit_martians_red_planet_protector_rev1.png","outputSha256":"928a263d85a1e42824fafc6107d73c850d2f41fba9b9b10aa9b85bb5bc6dc6aa","reason":"Superseded because the source-asymmetric shoulder cannons were not fixed."}
   ]
 }

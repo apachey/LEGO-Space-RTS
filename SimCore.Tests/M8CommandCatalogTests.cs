@@ -110,6 +110,14 @@ public sealed class M8CommandCatalogTests
                 Is.Zero, "Utility Mechanisms upgrades Protector Stance effects; it does not unlock the base stance.");
             Assert.That(catalog.Commands.Single(c => c.CommandType == SimCommandType.StateChange).EligibleEntityTags,
                 Does.Contain("building.ali.etx_defense_node"));
+            Assert.That(catalog.Commands.Single(c => c.CommandType == SimCommandType.StateChange).EligibleEntityTags,
+                Does.Contain("unit.aliens.etx_alien_infiltrator"));
+            Assert.That(catalog.Commands.Single(c => c.CommandType == SimCommandType.StateChange).EligibleEntityTags,
+                Does.Not.Contain("unit.aliens.etx_alien_strike"),
+                "ETX Alien Strike is exclusively airborne and has no state-change command.");
+            Assert.That(catalog.Research.Single(r => r.StableKey == "research.ali.siege_phase_coupling").UnlockTags,
+                Is.EqualTo(new[] { "unit.aliens.etx_alien_strike" }),
+                "The compatibility research key unlocks the airborne craft only, never a siege-deployment capability.");
             Assert.That(catalog.Commands.Any(c => c.CommandType == SimCommandType.ReorderProduction), Is.True);
             Assert.That(catalog.Commands.Any(c => c.CommandType == SimCommandType.CancelMissionRefit), Is.True);
             Assert.That(catalog.Commands.Single(c => c.CommandType == SimCommandType.Unload).QueuePolicy, Is.EqualTo(CommandQueuePolicy.Conditional));

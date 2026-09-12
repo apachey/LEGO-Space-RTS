@@ -31,7 +31,6 @@ Phase 06 establishes the relevant canonical timing anchors:
 - MX-41 transformation — **2.25s**;
 - Solar Explorer deploy — **3.0s**;
 - MT-201 deploy — **3.5s**;
-- Alien Strike reconfiguration — **2.8s**;
 - Alien Infiltrator reconfiguration — **2.0s**;
 - Mission Refit Configuration Lock — **20s**;
 - Alien Surge — **50 Charge / 18s**;
@@ -2192,20 +2191,7 @@ Enemy Surge zones are shown only while legitimately visible.
 
 # PART LXIV — ALIEN RECONFIGURATION UX
 
-ETX Alien Strike and ETX Alien Infiltrator use Q — State Change.
-
-## ALIEN STRIKE
-
-Flight ↔ Siege.
-
-Panel communicates:
-
-- current state;
-- target state;
-- 2.8s transition;
-- gained siege role;
-- lost mobility/air state;
-- 8s reversal lock.
+ETX Alien Infiltrator uses Q — State Change. ETX Alien Strike is exclusively airborne and has no state-change command.
 
 ## INFILTRATOR
 
@@ -2667,13 +2653,12 @@ Placement preview shows:
 
 ## ALIEN STRIKE
 
-Q reconfigures Flight → Siege.
+The normal attack/selection UI shows:
 
-Siege mode shows:
-
+- its dedicated airborne structure-assault role;
 - 9-cell attack range;
 - current minimum-range relationship where applicable;
-- immobility/state sacrifice.
+- true-air target-layer vulnerability.
 
 ## EXCAVATION SEARCHER
 
@@ -3507,7 +3492,7 @@ During a transformation/deployment progress bar, the cancellable portion is visu
 
 Phase 06 thresholds remain authoritative:
 
-- MX-41 / Alien Strike / Infiltrator — cancel before 40%;
+- MX-41 / Infiltrator — cancel before 40%;
 - most deployment states — cancel before 50%.
 
 Before threshold:

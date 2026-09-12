@@ -894,13 +894,13 @@ def main() -> None:
     revision_candidates = full_v2_manifest.get("revisionCandidates", [])
     expected_revision_candidates = {
         "unit.martians.jet_scooter": "UNREVIEWED_CORRECTION_CANDIDATE",
-        "unit.aliens.etx_alien_strike": "BLOCKED_CANON_CONFLICT",
+        "unit.aliens.etx_alien_strike": "UNREVIEWED_CORRECTION_CANDIDATE",
         "unit.martians.red_planet_protector": "UNREVIEWED_CORRECTION_CANDIDATE",
     }
     if {
         record.get("stableId"): record.get("status") for record in revision_candidates
     } != expected_revision_candidates:
-        fail("Full V2 first-wave revision candidate set or state drifted")
+        fail("Full V2 active revision candidate set or state drifted")
     for record in revision_candidates:
         output = FULL_V2_OUTPUT / record.get("output", "")
         if not output.is_file():

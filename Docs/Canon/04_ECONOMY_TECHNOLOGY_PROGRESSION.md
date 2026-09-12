@@ -1922,7 +1922,7 @@ Mono Jet's light craft rack is incorporated into the official-derived Eagle Comm
 | ETX Servitor | ETX Command Core / ETX Fabricator | None | 50 | 5 | 0 | 1 | 16s |
 | Alien Jet | ETX Fabricator | None | 95 | 35 | 0 | 2 | 28s |
 | Razor Skimmer | ETX Fabricator | None | 105 | 25 | 0 | 2 | 30s |
-| ETX Alien Strike | Reconfiguration Dock | Siege Phase Coupling | 190 | 60 | 1 | 4 | 50s |
+| ETX Alien Strike | Reconfiguration Dock | Aerial Strike Coupling | 190 | 60 | 1 | 4 | 50s |
 | ETX Alien Infiltrator | Reconfiguration Dock | Infiltration Matrix | 210 | 65 | 2 | 4 | 55s |
 | Alien Mothership | Reconfiguration Dock | Advanced Resonance Architecture | 420 | 160 | 6 | 8 | 95s |
 
@@ -2220,7 +2220,7 @@ Mars Mission is therefore not a replacement tier for Life on Mars technology.
 | ETX Reconfiguration Matrix | Progression | 160 / 65 / 2 | 55s | Mid stage; unlocks Reconfiguration Dock |
 | Expanded Resonance Lattice | Faction System | 170 / 70 / 3 | 60s | Core slots increase 4→6; Charge gained per Crystal remains unchanged |
 | Infiltration Matrix | Combat/Operational | 150 / 55 / 2 | 50s | Unlocks ETX Alien Infiltrator |
-| Siege Phase Coupling | Combat/Operational | 150 / 55 / 2 | 50s | Unlocks ETX Alien Strike and its deployed siege system |
+| Aerial Strike Coupling | Combat/Operational | 150 / 55 / 2 | 50s | Unlocks the exclusively airborne ETX Alien Strike structure-assault craft |
 | Defense Resonance Shunt | Faction System | 120 / 50 / 1 | 45s | Enables emergency Defense Node Charge expenditure |
 | Advanced Resonance Architecture | Progression | 240 / 110 / 5 | 80s | Requires four committed Crystals; Advanced stage; unlocks Alien Mothership |
 | Mothership Resonance Relay | Operational | 190 / 80 / 3 | 60s | Mothership becomes a valid mobile Surge anchor |
@@ -2975,7 +2975,7 @@ Resonance Core + Fabricator
 → **ETX Reconfiguration Matrix**  
  → Reconfiguration Dock  
   → Infiltration Matrix → ETX Alien Infiltrator  
-  → Siege Phase Coupling → ETX Alien Strike  
+  → Aerial Strike Coupling → ETX Alien Strike
  → Expanded Resonance Lattice
 
 Reconfiguration Dock + four committed Crystals  

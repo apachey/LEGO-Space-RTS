@@ -1521,6 +1521,28 @@ simulation statistics, public formats, architecture or dependencies.
 This is preproduction implementation detail only. It changes no gameplay,
 simulation, public format, dependency or canon. All packets remain `HOLD`.
 
+## 2026-09-12 — Correct ETX Alien Strike to an exclusively airborne unit
+
+- The game director rejected the unsupported 7693 siege/deployment reading.
+  ETX Alien Strike is one continuous flying craft; its source hinges articulate
+  panels within the airborne silhouette and never create legs, planted braces
+  or a ground state.
+- The craft keeps its mid-game structure-assault job and existing economy
+  commitment, but applies that pressure while remaining true air. Its
+  counterplay is anti-air/interception plus the existing minimum range, not a
+  vulnerable deployment transition.
+- The state-change command and siege-deployment unlock tag no longer include
+  ETX Alien Strike. Surge still improves its weapon cadence but does not invent
+  a transformation.
+- The internal key `research.ali.siege_phase_coupling` is retained temporarily
+  as a compatibility identifier so existing compiled content, saves and replays
+  are not broken. Its player-facing canonical concept is now **Aerial Strike
+  Coupling**, and it unlocks only the airborne unit.
+
+This is an explicitly authorized gameplay/source canon correction. It changes
+Alien Strike's state model and counterplay, but does not change public data
+formats, architecture or dependencies.
+
 ## 2026-09-10 — Use deterministic concept silhouettes before T082 production modeling
 
 - Every roster asset receives an explicit concept recipe made from five
@@ -1571,10 +1593,11 @@ public format, dependency, architecture or canon. T082 remains `HOLD`.
 - Black hull construction, bright-lime conduits and bounded crystal/energy
   hardware carry the shared faction language. Organic tissue, insect bodies,
   nests, tentacles and generic black-neon towers remain excluded.
-- Source transformations remain legible: Alien Strike and Infiltrator have
-  explicit moving sections and planted contacts, while Razor Skimmer and ETX
-  Servitor retain unresolved donor-selection reviews instead of silently
-  averaging source craft.
+- The original draft treated both Alien Strike and Infiltrator as transforms.
+  The 2026-09-12 canon correction supersedes that Strike assumption: only the
+  Infiltrator retains explicit planted contacts, while Alien Strike remains
+  exclusively airborne. Razor Skimmer and ETX Servitor retain unresolved
+  donor-selection reviews instead of silently averaging source craft.
 - Alien Mothership remains one selectable unit whose integrated craft sections
   and bays unfold. Possible internal unit production remains a separate
   game-director proposal; eligible units, price, build time, capacity and state

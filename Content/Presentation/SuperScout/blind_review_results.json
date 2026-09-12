@@ -50,7 +50,7 @@
       },
       "priorityCorrections": {
         "V08": "Shorten Jet Scooter while retaining its recognizable source construction.",
-        "V12": "Remove the invented long walking limbs from ETX Alien Strike; reconcile the low source craft with the canonical deployed-siege support requirement before replacing the active concept.",
+        "V12": "Replace the invented legged interpretation with the canon-correct exclusively airborne 7693 crescent craft; no ground or siege state exists.",
         "V16": "Rebuild Mono Jet from the official source proportions; the current result is not acceptable.",
         "V17": "Restore Alien Jet's open pilot construction, theme-specific silhouette and correct forward weapon.",
         "V18": "Represent Solar Explorer as a non-wheeled modular carrier with only its internal small rover using wheels.",
@@ -68,7 +68,7 @@
         "The weakest new-content silhouettes do not communicate whether they fly, walk, deploy or operate as fixed structures.",
         "Do not proceed to the 44- or 72-cell review until the 24-cell failures are revised."
       ],
-      "consequence": "Keep T082 on HOLD. Preserve the strong candidates, revise the failed or ambiguous silhouettes, resolve the ETX Alien Strike canon conflict explicitly, then rerun the 24-cell blind review before testing wider camera distances."
+      "consequence": "Keep T082 on HOLD. Preserve the strong candidates, revise the failed or ambiguous silhouettes, apply the resolved exclusively-airborne ETX Alien Strike canon correction, then rerun the 24-cell blind review before testing wider camera distances."
     }
   ],
   "activePilot": {

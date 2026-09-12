@@ -5190,7 +5190,7 @@ The following matrix establishes an implementation path for all 35 buildable uni
 | ETX Servitor | Hover / Tiny | none | worker | folding clamps | Alien construction |
 | Alien Jet | Air / Small | AA/strafe | Surge | folding craft | Surge cadence |
 | Razor Skimmer | Hover / Small | anti-light | Surge | low curved hull | harassment |
-| ETX Alien Strike | Air/deployed / Medium | siege | reconfigure/Surge | flight→cradle | minimum range |
+| ETX Alien Strike | True air / Medium | airborne structure assault | Surge cadence only | continuous crescent flight craft; hinged presentation articulation only | anti-air / minimum range |
 | ETX Alien Infiltrator | Hover/Walker / Medium | anti-heavy | transform/detect/Surge | craft→walker | state components |
 | Alien Mothership | Air / Huge | modest support | carrier/relay/Surge | multi-part flagship | carrier + relay |
 | Worker Robot | Walker / Tiny | weak tool | worker/Tube | open walker | Tube eligibility |

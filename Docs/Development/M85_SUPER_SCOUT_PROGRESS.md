@@ -94,10 +94,12 @@ a second full-roster corpus. The complete-roster review remains open.
   cockpit/module/tool/proportion repairs, and many adapted buildings read only
   as generic support structures or even as the wrong faction. Responses V51-V56
   were not included in the review message. Three first-wave correction
-  candidates are preserved: shorter Jet Scooter, legless ETX Alien Strike and
-  reattached Red Planet Protector weapon. The ETX candidate is blocked because
-  zero supports conflicts with the current canonical deployed-siege brace
-  requirement; it cannot replace the active image without explicit resolution.
+  candidates are preserved. A second correction wave now makes Jet Scooter
+  lower and sleeker, restores Red Planet Protector's source-accurate asymmetric
+  shoulder cannons, and rebuilds ETX Alien Strike as one continuous flying
+  crescent craft. The game director explicitly corrected canon: 7693 has no
+  ground, walking or siege-deployment state. The three new renders remain review
+  candidates and do not silently replace the hash-locked first-review boards.
 - The official 7301 page proved that Rover has four equal wheel pods. Its older
   two-wheel identity/contract wording predated the page-level audit and was not
   reconciled afterward. The baseline, source ledger, production contract,
@@ -260,8 +262,8 @@ redistributed.
 
 1. Retain the two explicit Martian archival gaps unless usable evidence appears,
    and escalate any gap that prevents a safe production decision.
-2. Revise the failed and ambiguous 24-cell silhouettes, resolve the ETX Alien
-   Strike deployed-support conflict, collect V51-V56, then rerun the 24-cell
+2. Revise the failed and ambiguous 24-cell silhouettes using the resolved
+   exclusively-airborne ETX Alien Strike contract, collect V51-V56, then rerun the 24-cell
    blind review before continuing to 44/72.
 3. Revise every wrong, uncertain or indistinguishable asset and extend the
    44-pair register wherever the accepted review exposes a new neighbor.
@@ -272,17 +274,23 @@ redistributed.
 
 The game director resolved the 1277 source/canon conflict by approving two small
 mirrored ice saws in place of the previously canonical single oversized drill.
+The game director also corrected 7693 to an exclusively airborne ETX Alien
+Strike with no deploy/reconfigure mode; low-versus-high flight presentation is
+deliberately deferred.
 The game director also passed the four-asset Pilot V2 blind review at 4/4,
 approving the source-derived silhouette method for full-roster expansion. No
 packet is approved for T083/T085 production yet.
 
 ## Verification state
 
-The recorded Full V2 24-cell revision gate and its three preserved first-wave
-correction candidates passed `./tools/verify.sh` with zero blocking or
-diagnostic failures at
-`Artifacts/Verification/20260912T004323Z-fast-summary.txt`. All 317 tests and
-every fast verification stage passed; Godot remained fully headless.
+The 7693 exclusively-airborne canon correction, synchronized runtime metadata
+and second-wave Jet Scooter / ETX Alien Strike / Red Planet Protector render
+candidates passed `./tools/verify.sh --full` with zero blocking failures at
+`Artifacts/Verification/20260912T012019Z-full-summary.txt`. All 317 tests,
+T082 integrity, content regeneration, deterministic replay/snapshot checks,
+headless Godot/network presentation gates, deterministic Blender regeneration
+and the macOS export passed. The preserved 60-mover M9 stress scenario remains
+the only `BLOCKING_LATER` diagnostic failure.
 
 The review-ready 66/66 Full V2 corpus passed `./tools/verify.sh --full` with
 zero blocking failures at

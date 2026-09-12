@@ -30,7 +30,7 @@ Open question: The faction-internal construction, motion, socket and material dr
 | Source | Primary evidence | Inventory / archival check | Confidence | Intended use |
 |---|---|---|---|---|
 | 7646 — ETX Alien Infiltrator | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7646)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4534848.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7646-1) | PRIMARY_VERIFIED | alien craft-to-walker transformation |
-| 7693 — ETX Alien Strike | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7693)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4523183.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7693-1) | PRIMARY_VERIFIED | alien strike transformation and human mining module |
+| 7693 — ETX Alien Strike | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7693)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4523183.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7693-1) | PRIMARY_VERIFIED | exclusively airborne alien strike craft articulation and human mining module |
 | 7691 — ETX Alien Mothership Assault | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7691)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4516029.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7691-1) | PRIMARY_VERIFIED | alien mothership, detachable craft and human extraction station |
 
 ### Source audit [Aliens:7646]
@@ -58,13 +58,13 @@ Open question: The faction-internal construction, motion, socket and material dr
   - Evidence pages 3-16: Astronaut mining vehicle; supporting opposition evidence.
   - Evidence pages 17-35: ETX Alien Strike central keel, hinged side frames, paired crescent lobes, detachable corner modules and long translucent-lime tail blades.
   - Evidence pages 36-59: Cross-set alternate astronaut craft; not direct Alien Strike production geometry.
-- View/mechanism coverage: front=VERIFIED p28-35; rear=PARTIAL p28-35; leftRight=VERIFIED p17-35; top=VERIFIED p17-35; threeQuarter=VERIFIED cover and p28-35; undersideInterior=VERIFIED p17-28 staged open frame; mechanism=PARTIAL p24-35 hinged crescent/side modules and detachable corner pads; no complete flight-to-siege sequence
+- View/mechanism coverage: front=VERIFIED p28-35; rear=PARTIAL p28-35; leftRight=VERIFIED p17-35; top=VERIFIED p17-35; threeQuarter=VERIFIED cover and p28-35; undersideInterior=VERIFIED p17-28 staged open frame; mechanism=VERIFIED p24-35 hinged crescent/side modules and detachable corner pads within one airborne craft; no ground, walking or siege-deployment sequence
 - Verified findings:
   - Alien Strike is built around a long central black keel with a lime multi-blade tail and two huge crescent side lobes.
-  - The lobes and smaller corner pads attach through visible pivots, creating a much wider final attack geometry around the narrow flight spine.
+  - The lobes and smaller corner pads attach through visible pivots that articulate the continuous flying silhouette; they are not legs, planted braces or a ground mode.
   - Gray central structure, red forward facets and translucent-lime tail layers remain deliberately exposed inside the black shell.
 - Remaining evidence gaps:
-  - The manual proves rearrangeable hinged modules but does not show the game's exact flight and planted siege endpoints, support contacts or high-output weapon path; those states require explicit adaptation.
+  - Exact low/high flight presentation, banking range and emitter-aim articulation remain production decisions; none may introduce a ground or siege state.
 
 ### Source audit [Aliens:7691]
 

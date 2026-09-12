@@ -127,7 +127,7 @@
       "setId": "7693",
       "evidenceState": "OFFICIAL_PDF_VISUALLY_AUDITED",
       "instructionPdfs": [{"url":"https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4523183.pdf","pageCount":60,"sha256":"0faf9ebb3927f8a7ade575e72b3b027b4bd246527f67bd285ead69b38bb93439"}],
-      "constructionRanges": [{"pages":"3-16","evidence":"Compact human mining vehicle with orange canopy, low four-wheel chassis and tall side tool arm."},{"pages":"17-51","evidence":"Large transforming alien strike craft; supporting opposition evidence."}],
+      "constructionRanges": [{"pages":"3-16","evidence":"Compact human mining vehicle with orange canopy, low four-wheel chassis and tall side tool arm."},{"pages":"17-51","evidence":"Large exclusively airborne alien strike craft with articulated crescent panels; supporting opposition evidence."}],
       "viewCoverage": {"front":"PARTIAL p12-16 human vehicle","rear":"PARTIAL p13-16 human vehicle","leftRight":"VERIFIED p3-16","top":"VERIFIED p3-16","threeQuarter":"VERIFIED p1 and p15-16","undersideInterior":"VERIFIED p3-12 bare human chassis","mechanism":"PARTIAL p13-16 hinged side tool; extraction action not demonstrated"},
       "findings": ["The human mining module is a short low vehicle with a prominent orange cockpit and exposed wheelbase.","One tall side-mounted tool arm creates deliberate asymmetry around the otherwise compact body.","The vehicle supports the small Ore-oriented configuration of the composite Mobile Mining Platform family."],
       "openGaps": ["The manual does not show a complete extraction cycle, so the tool contact, material intake and deployment state must be derived with corroboration from 7645/7648."]

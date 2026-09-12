@@ -331,7 +331,7 @@ internal static class CanonicalResearchDefinitions
             Def("research.ali.resonant_recovery_latches", "Aliens", ResearchCategory.Economic | ResearchCategory.Recovery, "building.ali.resonance_core", 120, 45, 1, 45,
                 modifiers: Mods(Add("parameter.ali.resonance_core.additional_intact_salvage_crystals", 1))),
             Def("research.ali.siege_phase_coupling", "Aliens", ResearchCategory.Combat | ResearchCategory.Operational, "building.ali.reconfiguration_dock", 150, 55, 2, 50,
-                unlocks: Unlock("capability.ali.etx_alien_strike.siege_deployment", "unit.aliens.etx_alien_strike")),
+                unlocks: Unlock("unit.aliens.etx_alien_strike")),
 
             Def("research.ast.aerospace_coordination", "Astronauts", ResearchCategory.Operational, "building.ast.service_refit_hub", 150, 60, 2, 55,
                 Req(Research("research.ast.mission_operations_integration")),

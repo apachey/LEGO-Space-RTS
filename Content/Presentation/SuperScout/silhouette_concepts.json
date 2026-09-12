@@ -53,7 +53,7 @@
     {"stableId":"unit.aliens.etx_servitor","ratios":[0.95,0.75,1.10],"core":"pod","mobility":"hover","hero":"single_manipulator","frame":"curved","negative":"core_gap"},
     {"stableId":"unit.aliens.alien_jet","ratios":[1.90,0.70,2.15],"core":"aircraft","mobility":"swept_plate","hero":"twin_arches","frame":"open","negative":"cockpit"},
     {"stableId":"unit.aliens.razor_skimmer","ratios":[1.75,0.35,2.50],"core":"sled","mobility":"hover","hero":"twin_prongs","frame":"low","negative":"core_notch"},
-    {"stableId":"unit.aliens.etx_alien_strike","ratios":[2.45,1.00,2.65],"core":"transformer","mobility":"wing_halves","hero":"central_core","frame":"siege_split","negative":"wing_gap"},
+    {"stableId":"unit.aliens.etx_alien_strike","ratios":[2.45,1.00,2.65],"core":"aircraft","mobility":"wing_halves","hero":"central_core","frame":"split_shell","negative":"wing_gap"},
     {"stableId":"unit.aliens.etx_alien_infiltrator","ratios":[2.20,2.70,3.40],"core":"transformer","mobility":"legs3","hero":"rotating_nose","frame":"tripartite","negative":"leg_gaps"},
     {"stableId":"unit.aliens.alien_mothership","ratios":[5.80,1.35,5.80],"core":"disc","mobility":"hover","hero":"open_channel_bays","frame":"unfolding","negative":"machinery_channel"},
     {"stableId":"building.ali.etx_command_core","ratios":[5.00,3.40,5.20],"core":"cradle","mobility":"planted","hero":"raised_core","frame":"radial_shell","negative":"seam_entrances"},

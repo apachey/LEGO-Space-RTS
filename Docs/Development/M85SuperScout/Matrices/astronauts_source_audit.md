@@ -253,7 +253,7 @@ This generated review records what the available official instructions or labele
 - Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4523183.pdf)
 - Construction map:
   - Evidence pages 3-16: Compact human mining vehicle with orange canopy, low four-wheel chassis and tall side tool arm.
-  - Evidence pages 17-51: Large transforming alien strike craft; supporting opposition evidence.
+  - Evidence pages 17-51: Large exclusively airborne alien strike craft with articulated crescent panels; supporting opposition evidence.
 - View/mechanism coverage: front=PARTIAL p12-16 human vehicle; rear=PARTIAL p13-16 human vehicle; leftRight=VERIFIED p3-16; top=VERIFIED p3-16; threeQuarter=VERIFIED p1 and p15-16; undersideInterior=VERIFIED p3-12 bare human chassis; mechanism=PARTIAL p13-16 hinged side tool; extraction action not demonstrated
 - Verified findings:
   - The human mining module is a short low vehicle with a prominent orange cockpit and exposed wheelbase.

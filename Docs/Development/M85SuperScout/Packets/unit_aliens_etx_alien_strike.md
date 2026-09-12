@@ -10,7 +10,7 @@
 
 - Faction: `Aliens`
 - Kind: `Unit`
-- Gameplay role: Air / deployed siege
+- Gameplay role: Exclusive true-air structure assault
 - Authoritative footprint: `Medium`
 - Source classification: `OFFICIAL-ADAPTED`
 - Approved source sets/motifs: 7693
@@ -29,7 +29,7 @@ Open question: The faction-internal construction, motion, socket and material dr
 
 | Source | Primary evidence | Inventory / archival check | Confidence | Intended use |
 |---|---|---|---|---|
-| 7693 — ETX Alien Strike | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7693)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4523183.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7693-1) | PRIMARY_VERIFIED | alien strike transformation and human mining module |
+| 7693 — ETX Alien Strike | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7693)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4523183.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7693-1) | PRIMARY_VERIFIED | exclusively airborne alien strike craft articulation and human mining module |
 
 ### Source audit [Aliens:7693]
 
@@ -39,13 +39,13 @@ Open question: The faction-internal construction, motion, socket and material dr
   - Evidence pages 3-16: Astronaut mining vehicle; supporting opposition evidence.
   - Evidence pages 17-35: ETX Alien Strike central keel, hinged side frames, paired crescent lobes, detachable corner modules and long translucent-lime tail blades.
   - Evidence pages 36-59: Cross-set alternate astronaut craft; not direct Alien Strike production geometry.
-- View/mechanism coverage: front=VERIFIED p28-35; rear=PARTIAL p28-35; leftRight=VERIFIED p17-35; top=VERIFIED p17-35; threeQuarter=VERIFIED cover and p28-35; undersideInterior=VERIFIED p17-28 staged open frame; mechanism=PARTIAL p24-35 hinged crescent/side modules and detachable corner pads; no complete flight-to-siege sequence
+- View/mechanism coverage: front=VERIFIED p28-35; rear=PARTIAL p28-35; leftRight=VERIFIED p17-35; top=VERIFIED p17-35; threeQuarter=VERIFIED cover and p28-35; undersideInterior=VERIFIED p17-28 staged open frame; mechanism=VERIFIED p24-35 hinged crescent/side modules and detachable corner pads within one airborne craft; no ground, walking or siege-deployment sequence
 - Verified findings:
   - Alien Strike is built around a long central black keel with a lime multi-blade tail and two huge crescent side lobes.
-  - The lobes and smaller corner pads attach through visible pivots, creating a much wider final attack geometry around the narrow flight spine.
+  - The lobes and smaller corner pads attach through visible pivots that articulate the continuous flying silhouette; they are not legs, planted braces or a ground mode.
   - Gray central structure, red forward facets and translucent-lime tail layers remain deliberately exposed inside the black shell.
 - Remaining evidence gaps:
-  - The manual proves rearrangeable hinged modules but does not show the game's exact flight and planted siege endpoints, support contacts or high-output weapon path; those states require explicit adaptation.
+  - Exact low/high flight presentation, banking range and emitter-aim articulation remain production decisions; none may introduce a ground or siege state.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 
@@ -53,38 +53,38 @@ Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-qu
 
 ## C. Recognition contract
 
-**Silhouette thesis:** A curved attack craft whose wing halves unfold into a planted siege frame around the central core.
+**Silhouette thesis:** A continuous curved flying attack craft whose central keel, twin crescent lobes, exposed cockpit and long lime tail blades remain airborne in every gameplay state.
 
 Non-removable identity anchors:
 
-- split curved wing shell
-- central crystal-cockpit mass
-- visible deployed ground braces
+- continuous curved airframe
+- central cockpit and forward emitter
+- paired crescent lobes with long lime tail blades
 
 - Rejected V1 blind-review code: `S53`. Historical failed boards: [24-cell](../Silhouettes/blind_24_cells.svg), [44-cell](../Silhouettes/blind_44_cells.svg), [72-cell](../Silhouettes/blind_72_cells.svg). The game director recognized 0/66 at 24 cells; this primitive concept is not an approved model or accepted evidence.
 - Palette and material hierarchy: Black and bright lime with dark mechanics and disciplined translucent-neon-green energy or crystal elements.
 - Forbidden genericization: Do not use insect bodies, biological tissue, nests, tentacles or generic black-neon towers. Construction must remain craft-derived and mechanical.
 - Nearest-confusion baseline:
 
-- `unit.aliens.etx_alien_infiltrator` — Both are medium transforming ETX craft. Mitigations: Alien Strike unfolds wide into planted siege braces; Infiltrator rises on three planted members. / Alien Strike preserves two huge crescent lobes and a lime tail; Infiltrator preserves a long split nose and paired curved side modules. / Alien Strike's deployed state points fire outward; Infiltrator's walker state places the crew core above an anti-heavy contact stance.
+- `unit.aliens.etx_alien_infiltrator` — Both are medium ETX craft with large curved black-lime modules. Mitigations: Alien Strike remains a continuous flying crescent craft; Infiltrator rises on three planted members. / Alien Strike preserves two huge lateral crescent lobes and a long lime tail; Infiltrator preserves a long split nose and paired curved side modules. / Alien Strike keeps its cockpit and emitter on a horizontal airframe; Infiltrator's walker state places the crew core above an anti-heavy contact stance.
 
 ## D. Construction contract
 
 - Contract state: `CANON_DERIVED_ADAPTATION`. This is an internally checked draft, not game-director approval.
 - Semantic part map:
-  - Long central keel and lime tail blades — remain the directional spine in both states — SOURCE_VERIFIED.
-  - Two huge crescent side lobes — widen from flight shell into siege frame — SOURCE_VERIFIED.
-  - Planted corner contacts and concentrated emitter path — convert the hinged source modules into readable siege operation — CANON_DERIVED_ADAPTATION.
-- Structural load path: The central keel carries the cockpit/core and tail while visible side hinges route each crescent lobe into adapted planted contacts.
-- Repeated modules / connection grammar: Central flight spine, mirrored crescent lobes, corner pads, tail blades and siege emitter remain one transforming craft.
-- Source-faithful versus adapted boundary: The source proves hinges but not final endpoints. Production must preserve those modules while presenting credible flight and planted states without hand separation.
+  - Long central keel and lime tail blades — form the permanent directional spine of the airborne craft — SOURCE_VERIFIED.
+  - Two huge crescent side lobes — define one continuous curved flight silhouette around the central cockpit — SOURCE_VERIFIED.
+  - Centered forward emitter and exposed red/lime facets — communicate structure assault without invented landing anatomy — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.
+- Structural load path: The central keel carries the exposed cockpit, forward emitter and tail while visible side hinges keep both crescent lobes mechanically connected throughout airborne articulation.
+- Repeated modules / connection grammar: Central flight spine, mirrored crescent lobes, corner panels, cockpit, nose rails, tail blades and emitter remain one exclusively airborne craft.
+- Source-faithful versus adapted boundary: Hinged panels may bank, aim or react to damage, but production may not turn them into legs, planted braces, landing pads or a siege cradle.
 
 ## E. Material and texture contract
 
 - Geometry must carry:
-  - long keel and tail blades
-  - paired huge crescents
-  - visible planted siege braces
+  - long keel and lime tail blades
+  - paired huge crescent lobes
+  - central cockpit and forward emitter
 - Accepted master-material roles: `Body`, `Accent`, `Tool`, `Glass`, `Signal`, `Neutral`.
 - Reusable texture requirements:
   - `ali_black_hull_surface` — Restrained molded black-shell roughness variation across craft-derived hulls without inventing biological skin or panel structure. Channels: Tangent-space normal and linear roughness; black body color remains parametric. Resolution: 2048x2048; texel density: 256 px/m at Close; tiling: Shared model-space 4 m repeat across connected hull modules.; LOD fallback: Half strength at Combat; master roughness only at Strategic. Provenance/state: Project-authored procedural source informed by verified Mars Mission Alien hulls; human review required. `SPECIFIED_NOT_AUTHORED`.
@@ -95,25 +95,25 @@ Non-removable identity anchors:
 
 ## F. State and animation contract
 
-- Locomotion / operation: True air in Strike state; stationary ground-targetable siege platform when deployed.
-- Planted/contact rule: No ground contact in flight; all adapted braces lock before siege readiness.
+- Locomotion / operation: Exclusively true air with deliberate crescent-airframe banking; exact low/high flight presentation is deferred.
+- Planted/contact rule: No battlefield ground contact in any gameplay state.
 
 | Pivot | Parent | Axis/path and rest-to-extreme motion | Presentation driver |
 |---|---|---|---|
-| `Pivot_CrescentLeft` | Asset_AlienStrike | flight shell to wide planted siege arc | authoritative deployment progress |
-| `Pivot_CrescentRight` | Asset_AlienStrike | mirrored deployment arc | authoritative deployment progress |
-| `Pivot_Emitter` | Asset_AlienStrike | stowed channel to forward siege aim | siege attack progress |
+| `Pivot_CrescentLeft` | Asset_AlienStrike | restrained airborne bank and aim articulation while remaining part of the continuous wing arc | presentation banking and aim |
+| `Pivot_CrescentRight` | Asset_AlienStrike | mirrored restrained airborne articulation | presentation banking and aim |
+| `Pivot_Emitter` | Asset_AlienStrike | bounded forward aim within the central nose channel | structure-assault attack progress |
 
 - Required beats:
-  - Idle flight loiter.
-  - Flight travel keeps crescents swept.
-  - Deploy lands, opens and locks contacts before weapon-ready signal.
-  - Siege attack charges along the keel; damage does not change authoritative state timing.
+  - Idle airborne loiter preserves the complete crescent silhouette.
+  - Travel banks the connected lobes without opening a second state.
+  - Attack charges along the central keel and fires while the craft remains airborne.
+  - Damage may misalign an outer panel; destruction separates modules only after unit death.
 - Animation consumes authoritative state and never decides gameplay timing or results.
 
 ## G. Presentation hookups
 
-- Required presentation sockets: `Socket_Selection`, `Socket_Health`, `Socket_Muzzle`, `Socket_BraceLeft`, `Socket_BraceRight`, `Socket_Surge`, `Socket_AudioTransform`.
+- Required presentation sockets: `Socket_Selection`, `Socket_Health`, `Socket_Muzzle`, `Socket_Engine`, `Socket_Surge`, `Socket_AudioFlight`.
 - These sockets are presentation references only and never own targeting, collision, movement, transport or production truth.
 - Identification Tile placement, icon silhouette, portrait camera and reduced-presentation fallback remain `HOLD — PRESENTATION AUDIT REQUIRED`.
 
@@ -122,7 +122,7 @@ Non-removable identity anchors:
 - Verified fact: stable identity, source evidence and the source-supported assemblies cited above.
 - Canon-derived interpretation: gameplay function, adaptation boundary, contact behavior and presentation drivers are explicitly labeled in the contract.
 - Remaining source/design decisions:
-  - The final planted endpoints and continuous load path need director-approved transformation blockout.
+  - Exact low/high flight presentation and allowable panel-articulation range require later production review; no ground mode is permitted.
 - Cross-roster silhouette and game-director review remain open; this contract does not authorize production modeling.
 
 ## I. Build handoff

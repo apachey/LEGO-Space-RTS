@@ -643,8 +643,10 @@ live; the current schema-9 copy/paste retains the complete experiment.
   official books. Faction-and-set evidence keys isolate opposing builds inside
   mixed boxes. The pass distinguishes the small-craft families, verifies the
   Infiltrator's three-leg conversion and Mothership's open circular carrier
-  construction, and leaves the Strike siege endpoints and composite Razor
-  construction as explicit adaptations rather than guesses.
+  construction. The earlier Strike siege-endpoint inference is explicitly
+  superseded: 7693 is exclusively airborne, and its hinges only articulate the
+  continuous flight craft. Composite Razor construction remains an explicit
+  adaptation rather than a guess.
 - The Martian pass visually audited all eight available mapped sources across
   eight official books and retained 1195/3750 as explicit archival gaps. It
   corrects the small-craft and Worker Robot profiles, verifies distinct modular
@@ -675,7 +677,7 @@ live; the current schema-9 copy/paste retains the complete experiment.
   specified-but-not-authored reusable texture families.
 - The Alien contract pass covers all six units and six infrastructure entries.
   Black/lime craft-derived mechanics, readable crescents, bay openings,
-  articulated planted frames and bounded crystal hardware replace generic
+  source-specific articulated frames and bounded crystal hardware replace generic
   biological or interchangeable black-neon forms. The Mothership is one
   selectable unfolding unit; training units inside it remains an explicitly
   unresolved gameplay proposal rather than an assumed production rule. Four
@@ -736,10 +738,12 @@ live; the current schema-9 copy/paste retains the complete experiment.
   preserved, while incorrect source geometry, generic cross-faction buildings
   and ambiguous movement/operation silhouettes must be repaired before a new
   24-cell review. Initial correction candidates exist for Jet Scooter, ETX
-  Alien Strike and Red Planet Protector. ETX Alien Strike is an explicit
-  conflict: the reviewed render's insect-like limbs are wrong, but the current
-  canonical contract still requires deployed siege braces, so the legless
-  candidate is not active pending game-director resolution.
+  Alien Strike and Red Planet Protector. The conflict is now resolved by
+  explicit game-director canon correction: ETX Alien Strike is exclusively
+  airborne with no siege/deployment state. Second-wave candidates make the
+  Strike a continuous crescent aircraft, restore Protector's asymmetric source
+  cannons and make Jet Scooter lower and sleeker. They remain separate from the
+  immutable first-review boards until the wider correction pass is ready.
 - The official 7301 instruction page also exposed a stale audit-reconciliation
   error: Rover is a four-wheel open platform, not the two-wheel bike described
   by the earlier identity and production drafts. The source ledger, identity,
@@ -780,12 +784,14 @@ step and must be announced when new visual evidence is actually required.
 
 ## Verification state
 
-The recorded Full V2 24-cell revision gate and its three preserved first-wave
-correction candidates passed `./tools/verify.sh` with zero blocking or
-diagnostic failures at
-`Artifacts/Verification/20260912T004323Z-fast-summary.txt`. All 317 tests and
-every fast verification stage passed; Godot smoke processes remained headless
-and used the project immediate-exit path.
+The 7693 exclusively-airborne canon correction, synchronized runtime metadata
+and second-wave Jet Scooter / ETX Alien Strike / Red Planet Protector render
+candidates passed `./tools/verify.sh --full` with zero blocking failures at
+`Artifacts/Verification/20260912T012019Z-full-summary.txt`. All 317 tests,
+T082 integrity, content regeneration, deterministic replay/snapshot checks,
+headless Godot/network presentation gates, deterministic Blender regeneration
+and the macOS export passed. The preserved 60-mover M9 stress scenario remains
+the only `BLOCKING_LATER` diagnostic failure.
 
 The review-ready 66/66 Full V2 corpus passed `./tools/verify.sh --full` with
 zero blocking failures at

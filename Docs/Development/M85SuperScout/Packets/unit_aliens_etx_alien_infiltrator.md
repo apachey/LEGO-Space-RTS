@@ -67,7 +67,7 @@ Non-removable identity anchors:
 - Forbidden genericization: Do not use insect bodies, biological tissue, nests, tentacles or generic black-neon towers. Construction must remain craft-derived and mechanical.
 - Nearest-confusion baseline:
 
-- `unit.aliens.etx_alien_strike` — Both are medium transforming ETX craft. Mitigations: Alien Strike unfolds wide into planted siege braces; Infiltrator rises on three planted members. / Alien Strike preserves two huge crescent lobes and a lime tail; Infiltrator preserves a long split nose and paired curved side modules. / Alien Strike's deployed state points fire outward; Infiltrator's walker state places the crew core above an anti-heavy contact stance.
+- `unit.aliens.etx_alien_strike` — Both are medium ETX craft with large curved black-lime modules. Mitigations: Alien Strike remains a continuous flying crescent craft; Infiltrator rises on three planted members. / Alien Strike preserves two huge lateral crescent lobes and a long lime tail; Infiltrator preserves a long split nose and paired curved side modules. / Alien Strike keeps its cockpit and emitter on a horizontal airframe; Infiltrator's walker state places the crew core above an anti-heavy contact stance.
 
 ## D. Construction contract
 

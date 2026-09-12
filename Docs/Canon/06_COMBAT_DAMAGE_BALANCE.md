@@ -696,7 +696,7 @@ The five important siege relationships remain deliberately different.
 | **Chrome Crusher** | Very durable advanced direct breacher; highest Raider structure pressure; must physically reach target |
 | **MT-101** | Mobile anti-heavy heavy assault; modest secondary structure function; no siege deployment |
 | **MT-201** | Primary Astronaut siege; physically anchors at the structure and applies enormous contact drill pressure |
-| **ETX Alien Strike** | Highly mobile air relocation → vulnerable long-range deployed siege |
+| **ETX Alien Strike** | Exclusively airborne long-range structure assault; vulnerable to dedicated anti-air and its minimum range |
 | **Excavation Searcher** | Medium-range articulated positional siege combined with mechanical manipulation |
 
 Siege units require protection.
@@ -921,8 +921,6 @@ Martian sustain remains weaker than Raider sustain and depends on extraction/rep
 | Solar Explorer → Mobile | Undeploy | 2.5s | No | No | Normal | Before 50% | 8s |
 | MT-201 → Drill | Deploy | 3.5s | No | No | Normal, immobile | Before 50%; 0.8s return | 10s |
 | MT-201 → Travel | Undeploy | 3.0s | No | No | Normal | Before 50% | 10s |
-| Alien Strike → Siege | Reconfigure | 2.8s | No | No | Air + ground | Before 40% | 8s |
-| Alien Strike → Flight | Reconfigure | 2.8s | No | No | Air + ground | Before 40% | 8s |
 | Infiltrator Craft ↔ Walker | Reconfigure | 2.0s | No | No | Ground-targetable throughout | Before 40% | 6s |
 | Protector → Stance | Deploy | 2.4s | No | No | Normal | Before 50% | 8s |
 | Protector → Mobile | Undeploy | 2.0s | No | No | Normal | Before 50% | 8s |
@@ -1008,7 +1006,7 @@ Equivalent sustained DPS increase:
 
 # +25%
 
-### 2. ETX RECONFIGURATION SPEED
+### 2. ELIGIBLE ETX RECONFIGURATION SPEED
 
 Alien source-derived transformation/deployment durations:
 
@@ -1048,7 +1046,7 @@ A unit:
 
 Reload progress is proportionally remapped, preventing free instant shots.
 
-A transformation receives the ×0.70 duration only if Surge is active when the transformation begins.
+An eligible transformation receives the ×0.70 duration only if Surge is active when the transformation begins. ETX Alien Strike has no transformation and receives only the cadence benefit.
 
 Multiple Surge zones do not stack.
 
@@ -1060,35 +1058,24 @@ The Charge is already spent during the buildup.
 
 ---
 
-# PART XXVI — ALIEN TRANSFORMATION BALANCE
+# PART XXVI — ALIEN COMBAT-STATE BALANCE
 
 ## ETX ALIEN STRIKE
 
-### FLIGHT
+**CANON CORRECTION — 2026-09-12:** ETX Alien Strike has one exclusively airborne state. Earlier flight/deployed transformation rules are superseded.
 
-- true air;
+- true air at all times;
+- exact low/high flight presentation deferred;
 - speed 2.35;
-- 14 General / 1.25s;
-- DPS 11.20;
-- range 4.5;
-- can attack ground and air;
-- moderate combat only.
-
-### DEPLOYED
-
-- stationary ground-targetable Medium Machine;
 - 40 Siege / 1.70s;
 - DPS 23.53;
 - range 9.0;
 - minimum range 3.0;
 - 0.75 splash;
 - slow 6-cell/s positional projectile.
-
-Flight gains mobility.
-
-Deployment gains structure pressure.
-
-Neither is universally superior.
+- attacks ground targets with a structure-specialist weapon;
+- retains its true-air, air-targetable state while firing;
+- has no deployment, reconfiguration, ground target layer or transition timing.
 
 ## ETX ALIEN INFILTRATOR
 
@@ -1778,9 +1765,9 @@ No death-ball combat aura.
 
 Unlocks Surge.
 
-### SIEGE PHASE COUPLING
+### AERIAL STRIKE COUPLING
 
-Unlocks Strike siege transformation.
+Unlocks the exclusively airborne ETX Alien Strike.
 
 ### INFILTRATION MATRIX
 
@@ -2078,7 +2065,7 @@ All costs below are inherited from Phase 04.
 | ETX Servitor | Early | 50/5/0 | 1 | 110 | Light /0 | Tiny | Hover | 1.65 | Quick/Agile | 8/— |
 | Alien Jet | Early | 95/35/0 | 2 | 180 | Light /0 | Small | True air | 3.10 | Snap/Agile | 12/— |
 | Razor Skimmer | Early | 105/25/0 | 2 | 210 | Light /1 | Small | Hover | 2.30 | Snap/Agile | 10/— |
-| ETX Alien Strike | Mid | 190/60/1 | 4 | 330 | Medium /1 | Medium | True air / deployed | 2.35 /0 | Quick/Quick | 10/— |
+| ETX Alien Strike | Mid | 190/60/1 | 4 | 330 | Medium /1 | Medium | True air | 2.35 | Quick/Quick | 10/— |
 | ETX Alien Infiltrator | Mid | 210/65/2 | 4 | 360 | Medium /2 craft; Heavy /3 walker | Medium | Hover / Walker | 2.05 /1.25 | Quick→Heavy / Quick→Std | 13→11 /9 |
 | Alien Mothership | Advanced | 420/160/6 | 8 | 1,200 | Massive /4 | Huge | True air | 1.65 | Heavy/Massive | 14/6 |
 
@@ -2090,8 +2077,7 @@ All costs below are inherited from Phase 04.
 | Alien Jet | A | Interceptor Pulse | 18 AA/0.95/18.95 | 5.0 | Guided12 | Surge eligible | Mothership | Air; Mission Fighter |
 | Alien Jet | G | Ground Strafe | 8 Light/1.10/7.27 | 3.8 | Pulse12 | Surge eligible | Mothership | Light harassment |
 | Razor | G | Razor Pulse | 15 Light/1.2/12.50 | 4.0 | Projectile10 | Surge eligible | Mothership | Workers/Light; durable lines |
-| Strike Flight | G+A | Strike Pulse | 14 General/1.25/11.20 | 4.5 | Pulse12 | Transform2.8s | Dock/Mothership | Mobility |
-| Strike Siege | G | Siege Resonator | 40 Siege/1.7/23.53 | 9.0; min3 | Slow6, splash0.75 | Stationary | Dock/Mothership | Structures; flank |
+| Alien Strike | G | Structure Resonator | 40 Siege/1.7/23.53 | 9.0; min3 | Slow6, splash0.75 | Always true air; no state change | Dock/Mothership | Structures; AA/interceptors/minimum range |
 | Infiltrator Craft | G | Infiltration Pulse | 10 Gen/1.2/8.33 | 4.0 | Pulse12 | Transform2s | Dock/Mothership | Info |
 | Infiltrator Walker | G | Heavy Disruptor | 34 Breach/1.25/27.20 | 3.5 | Projectile8 | Heavy state | Dock/Mothership | Heavy; light focus |
 | Mothership | G+A | Mothership Pulse | 18 General/1.0/18 | 5.5 | Pulse12 | Surge anchor upgrade | internal10 HP/s; cap10 | Support; heavy AA |
@@ -2272,7 +2258,7 @@ The mid-game roster obtains clear reasons to exist.
 
 **Mission Fighter:** dedicated air superiority.
 
-**Alien Strike:** mobile siege.
+**Alien Strike:** exclusively airborne long-range structure assault.
 
 **Alien Infiltrator:** anti-heavy state/information craft.
 
@@ -2421,7 +2407,7 @@ Martians can reinforce through surviving Stations.
 
 Surge can overwhelm one location but cannot accelerate movement outside the zone.
 
-Alien Strike's deployed state is vulnerable to Searcher/Protector manipulation only within their limited ground interaction ranges.
+Alien Strike is true air and cannot be displaced by Searcher/Protector ground manipulation.
 
 Mothership cannot be displaced because it is true air.
 
@@ -2501,7 +2487,7 @@ Approximate TTK against 1,700-HP Structure/A3 production:
 - **2 Chrome Crushers:** ~17.6s
 - **1 Excavation Searcher braced:** ~44.6s
 - **2 Searchers:** ~22.3s
-- **1 Alien Strike deployed:** ~51s
+- **1 Alien Strike:** ~51s
 - **2 Alien Strikes:** ~25.7s.
 
 The differences correspond to their battlefield risks:
@@ -2510,7 +2496,7 @@ MT-201/Chrome must fight close.
 
 Searcher operates somewhat behind the line and controls position.
 
-Alien Strike has 9-cell range and superior strategic relocation.
+Alien Strike has 9-cell range and superior strategic relocation, but remains exposed to anti-air throughout the attack.
 
 ---
 
@@ -2616,7 +2602,7 @@ Additional army positioning or focus is required.
 
 ## CORRECT SIEGE
 
-One deployed Alien Strike attacks from:
+One Alien Strike attacks from:
 
 - 9 range;
 - outside Sentinel Ground's 6 range.
@@ -2647,7 +2633,7 @@ Mass defense therefore yields the rest of the map economically.
 Representative force:
 
 - 4 Razor Skimmers;
-- 2 deployed Alien Strikes.
+- 2 Alien Strikes.
 
 Raw firing output:
 
@@ -2916,12 +2902,11 @@ Solar deployment/refit usually occurs between fights.
 
 ## ALIENS
 
-**2–3**
+**1–2**
 
 Typical:
 
 - Surge;
-- Strike transformation;
 - Infiltrator transformation.
 
 No individual Razor/Jet active ability is required.
@@ -3274,7 +3259,6 @@ Armor:
 | MX-41 Transform | Unit command |2.25s|8s|No|No|Ground↔true air|Cancel before40% |
 | Solar Service Deploy | Unit command |3.0s/2.5s|8s|No|No|repair/refit access|Cancel before50% |
 | MT-201 Drill Deploy | Unit command |3.5/3.0s|10s|No|No|Travel↔41.33 Siege DPS|Cancel before50% |
-| Alien Strike Reconfigure | Unit command |2.8s; 1.96s Surged|8s|No|No|Air↔9-range siege|Air+ground targetable |
 | Infiltrator Reconfigure | Unit command |2.0s;1.4 Surged|6s|No|No|Hover info↔Heavy walker|Cancel before40% |
 | Alien Surge | Faction command |0.75 telegraph +18s|Charge-limited|Yes|Yes|Cooldown×0.80; ETX transform×0.70|Leaving zone removes cadence |
 | Defense Resonance Shunt | Faction command |12s|Charge-limited|—|Yes|Node CD×0.75, track+30%|Ends with timer |
@@ -3371,7 +3355,7 @@ The following are structural canon:
 - role-aware formation;
 - contact approach-slot system;
 - transport passenger survival rule;
-- Surge affects cadence and ETX transformation, not movement/HP/range;
+- Surge affects cadence and eligible ETX transformations, not movement/HP/range;
 - no Surge stacking;
 - Massive immunity to Martian displacement;
 - 8-second Stability after displacement;
@@ -3476,7 +3460,7 @@ Phase 06 establishes the following authoritative combat canon.
 
 24. MT-201 is the Astronaut primary close physical siege platform.
 
-25. Alien Strike is mobile long-range reconfigurable siege.
+25. Alien Strike is exclusively airborne long-range structure assault with no deploy/reconfigure state.
 
 26. Excavation Searcher is positional medium-range mechanical siege/control.
 
@@ -3502,7 +3486,7 @@ Phase 06 establishes the following authoritative combat canon.
 
 37. Solar Explorer deploy baseline is 3.0s.
 
-38. Alien Strike reconfiguration is 2.8s baseline.
+38. Alien Strike has no reconfiguration timing; older 2.8s references are superseded.
 
 39. Infiltrator reconfiguration is 2.0s baseline.
 
@@ -3510,7 +3494,7 @@ Phase 06 establishes the following authoritative combat canon.
 
 41. Alien Surge provides:
    - weapon cooldown ×0.80;
-   - ETX transform/deploy time ×0.70;
+   - eligible ETX transform/deploy time ×0.70 (not Alien Strike, which has no state change);
    - no movement, HP, armor, range or per-hit damage increase.
 
 42. Surge does not stack.
@@ -3692,7 +3676,6 @@ Must expose without clutter:
 
 Must expose:
 
-- Alien Strike reconfiguration;
 - Infiltrator reconfiguration;
 - 50-Charge Surge;
 - valid Core/Mothership Surge anchors;
