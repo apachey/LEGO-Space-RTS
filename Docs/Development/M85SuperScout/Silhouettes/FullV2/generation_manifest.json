@@ -247,6 +247,61 @@
       "output": "Renders/unit_astronauts_rover_rev1.png",
       "outputSha256": "2bea5a57ea4e6143763e0ab38b8da82143952ccd14a6989a0d3d0abba5864c50",
       "generationMode": "built-in image_gen; generation with official instruction references"
+    },
+    {
+      "stableId": "unit.aliens.alien_mothership",
+      "status": "UNREVIEWED_CORRECTION_CANDIDATE",
+      "directorFinding": "First correction for V51 restores the complete docked 7691 flagship: long crescent-wing front craft, circular open carrier, two seated side modules, two outer jetpack modules and four tail blades. All sections remain one connected selectable unit. Generated alien anatomy differs from the source, and some printed details became relief; operator molds and exact part connections remain source-led production obligations.",
+      "specificPrompt": "Use case: stylized-concept. Asset: source-faithful monochrome LEGO RTS identity study.\nInput images: Image 1 is the authoritative official 7691 COMPLETE docked Mothership in step 8, image 2 shows its bare carrier hull and tail, image 3 shows the two actual alien jetpack modules. Reference generation, not image editing.\nGenerate ONE studio elevated front three-quarter render of the ENTIRE fully assembled LEGO 7691 Alien Mothership exactly as image 1. The whole craft must fit with margin, white seamless background, neutral shadow. Uniform black/dark neutral gray for every brick, hose, original transparent component and alien figure, absolutely no color, logo, text or effects.\nPreserve the complete source topology: large FLAT circular carrier ring with open central machinery channel; long central fore-aft backbone through the ring; four long thin rear tail blades spread from the raised rear backbone. Dock the long forward craft on the centerline extending far ahead of the circular ring. That forward craft has a narrow double-pronged nose, two curved hoses and exactly TWO very large swept crescent blade wings extending downward/outward in the image's plan view. These front wings are essential and must not be omitted or folded inward against the ring.\nTwo separate narrow seated side weapon modules are visibly docked on top of the circular carrier, one each side of the backbone; each has one alien operator and paired forward barrels. Two additional thin horizontal lateral booms stretch beyond the ring, each terminating in one small round-disc jetpack module with three short plate lobes, twin slender emitter rods and its alien operator. Match their source relative sizes and attachment points. Figures are the original translucent Mars Mission aliens rendered neutral gray, not humans, Martians, insect monsters or xenomorphs.\nAll hull modules remain docked in one connected flagship. Visible studs, simple LEGO plates, original negative spaces. No separate loose vehicles, extra saucer discs, missing front section, invented enclosed cabin, thick armor, generic UFO dome, giant gun, walking legs, landing wheel chassis or redesign. Priority: complete recognizable flagship arrangement, not ornamental detail.",
+      "sourceSets": [
+        "7691"
+      ],
+      "sourcePdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4516029.pdf",
+      "referencePages": [
+        68,
+        49,
+        67
+      ],
+      "output": "Renders/unit_aliens_alien_mothership_rev1.png",
+      "outputSha256": "95804c387d2ed74b13017466feec159552e92d7b952cb3ec4889a7dd94d6a11b",
+      "generationMode": "built-in image_gen; generation with official instruction references"
+    }
+  ],
+  "sourceStudies": [
+    {
+      "studyId": "donor.7691.human_station",
+      "targetStableId": "building.ast.frontier_extraction_station",
+      "status": "UNREVIEWED_SOURCE_INTERPRETATION_NOT_FINAL_BUILDING",
+      "finding": "Reconstructs the human 7691 pneumatic station only, not the canon-mapped 7691/7648 processing composition. Operator column, four-tube launcher and three-lobed pump restore human source grammar. Launcher is not an ore processor; any replacement with receiving/handling equipment requires director approval. Generated joints and ribbing are not verified source parts.",
+      "specificPrompt": "Use case: stylized-concept. Asset: source-faithful monochrome LEGO RTS donor identity study for Frontier Extraction Station.\nImage 1 is the official LEGO 7691 completed HUMAN pneumatic station, authoritative geometry reference, not an edit target. Generate ONE studio elevated three-quarter render of this complete stationary human assembly only. Preserve the exact source topology and proportions, do not redesign the station as a generic industrial factory or add mining machines. Plain white floor/background, soft neutral shadow, entire assembly fits with margin. Uniform black/dark neutral gray for all parts, hose and TWO human minifigures, absolutely no color, text, logo or watermark.\nOne very narrow studded ground rail/platform forms the station's base; simple upright open operator column with a seat and exposed controls at its top. Exactly FOUR parallel long launch tubes grouped as a square two-by-two cluster tilt upward ahead of the upper operator, in one ribbed mount, with rounded ends. Preserve the light skeletal frame, small side fins, thin looped hoses and lower access/work platform as illustrated, not a massive armored turret. One upper seated human astronaut and one lower human astronaut at the lower equipment controls, recognizable standard LEGO helmet/head/body anatomy.\nOne thick long corrugated pneumatic hose visibly joins the middle of that operator column to a separate squat ground pump. Pump has a white-brick-shaped fluted angular base with THREE stacked broad rounded black bellows/disc lobes on top. Preserve the separation and connecting hose rather than merging pump and station into a sealed building. Original small thin utility arm/tool remains beside lower frame.\nExclude alien Mothership, alien figures, extra vehicles, invented conveyor, hopper, drills, storage racks or new towers. This is reconstruction of the 7691 HUMAN donor, not an approved final multi-donor resource-processing design. No floating parts or props.",
+      "sourceSets": [
+        "7691"
+      ],
+      "sourcePdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4516029.pdf",
+      "referencePages": [
+        26
+      ],
+      "output": "Renders/building_astronauts_frontier_extraction_station_source_rev1.png",
+      "outputSha256": "baa7cfce6ab40e745271166d671e658773f6f175ba17c84bdaf7ec9d0b40e8c7",
+      "generationMode": "built-in image_gen; generation with official instruction references"
+    },
+    {
+      "studyId": "donor.7315.solar_module",
+      "targetStableId": "building.ast.solar_energy_array",
+      "status": "UNREVIEWED_SOURCE_INTERPRETATION_NOT_FINAL_BUILDING",
+      "finding": "Isolates the 7315 central rectangular frame and curved honeycomb canopy. This is the actual donor identity study, not a completed Solar Energy Array: the canonical paired broad hinged panels still require an approved adaptation. Generated rim hinges, technological relief and opaque shell interpretation are not source facts; source surface graphics must remain printing rather than invented structural armor.",
+      "specificPrompt": "Use case: stylized-concept. Asset: monochrome official LEGO source-module study, not a final RTS building design.\nImages 1 and 2 are official completed 7315 Solar Explorer references. Use ONLY the long CENTRAL rectangular habitat/cargo module underneath its curved honeycomb solar canopy as the subject; all other modules are excluded. These are reference images, not edit targets.\nGenerate ONE faithful elevated three-quarter studio render of that isolated central source module. Keep its actual rectangular white-brick frame, low narrow feet/support pads and ONE large curved thin panel/canopy wrapping over the frame from side to side. Preserve original connections and proportions. Match the source's long low half-cylinder canopy with honeycomb surface pattern and printed technological strips at the lower edges. Render the honeycomb and strips as subtle flat gray surface printing, not raised armor, crystal geometry or glowing energy. Every part uniformly matte black/dark neutral gray, absolutely no original red, white or blue colors. White seamless floor/background, soft neutral shadows, entire module comfortably visible with margin.\nThe canopy is closed, as in the official completed views; do not invent unfolding wings or new hinges in this study. Visible small LEGO studs and brick edges only where source exposed. Exclude the forward cockpit craft, rear circular-frame service module, robot support pod, wheeled rover, astronauts, weapons and antennas. No giant dish, satellite mast, alien curved claws, invented paired solar arrays, tall pedestal, greenhouse plants, terrain, text, logos or watermark. Preserve recognizable Solar Explorer donor construction. This image establishes the actual panel donor shape only and does NOT substitute for the later director-approved Solar Energy Array adaptation.",
+      "sourceSets": [
+        "7315"
+      ],
+      "sourcePdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130810.pdf",
+      "referencePages": [
+        17,
+        23
+      ],
+      "output": "Renders/building_astronauts_solar_energy_array_source_rev1.png",
+      "outputSha256": "dd6568c0b534ef43176a50ba17168c9ff9723a4f0f9e673c5ca4914d86640c0e",
+      "generationMode": "built-in image_gen; generation with official instruction references"
     }
   ],
   "blockedCorrections": [

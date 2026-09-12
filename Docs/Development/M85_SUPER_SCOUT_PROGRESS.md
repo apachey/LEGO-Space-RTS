@@ -20,6 +20,11 @@ previous accepted candidates and immutable first-review boards remain unchanged.
 The director accepted the source-only Mission Fighter (7695) and Rover (7301)
 first correction candidates for the next composite review. Exact prompts,
 source pages and hashes are retained; neither is approved for production.
+The larger block adds a complete docked Mothership first correction and two
+isolated official donor studies (7691 human station and 7315 solar module).
+Four composed-design proposals await director approval before final concept
+generation. The earlier six-response recording omission is corrected from the
+original director message; all 66 initial responses were supplied.
 
 ## Completed in the identity-baseline pass
 
@@ -116,7 +121,9 @@ source pages and hashes are retained; neither is approved for production.
   weapon-attachment correction, several recognizable source units need exact
   cockpit/module/tool/proportion repairs, and many adapted buildings read only
   as generic support structures or even as the wrong faction. Responses V51-V56
-  were not included in the review message. Three first-wave correction
+  were present in the original message but omitted by the recording pass; they
+  are now restored verbatim without changing the revision-required result.
+  Three first-wave correction
   candidates are preserved. A second correction wave now makes Jet Scooter
   lower and sleeker, restores Red Planet Protector's source-accurate asymmetric
   cannon booms, and rebuilds ETX Alien Strike as one continuous flying crescent
@@ -308,6 +315,26 @@ source pages and hashes are retained; neither is approved for production.
 
 ## Current evidence classification
 
+The larger block restores V51's complete docked 7691 composition: crescent-wing
+front craft, open circular carrier, two seated side craft, two outer jetpack
+modules and four tail blades. It remains one connected Mothership and an
+unreviewed first correction candidate. Generated alien anatomy is wrong and
+must not guide operator modeling. No training/launch gameplay has changed.
+
+Two separate source studies isolate the human 7691 pneumatic station and the
+curved 7315 solar module. They are NOT final Frontier Extraction Station or
+Solar Energy Array designs and must not replace their corpus entries. The
+station's four launcher tubes are not processing equipment; the solar-module
+study's generated hinges/relief are not source evidence. Exact prompts, source
+pages and hashes are retained in `sourceStudies` in the FullV2 manifest.
+
+`Content/Presentation/SuperScout/composed_design_proposals.json` contains four
+pending proposals for Solar Energy Array, Frontier Extraction Station, ETX
+Servitor and ETX Defense Node. Every proposal names its canonical function,
+method, official donors, exact components, load path, new work, rejected
+alternatives and visible game consequence. No proposed composition is generated
+or promoted to a production contract before director approval.
+
 V55 Mission Fighter and V56 Rover now have first correction candidates generated
 directly from official completed 7695 page 13 and 7301 page 1. Mission Fighter
 restores the closed long canopy, crooked thin plate wings and paired root
@@ -345,7 +372,8 @@ redistributed.
    and escalate any gap that prevents a safe production decision.
 2. Revise the failed and ambiguous 24-cell silhouettes using the resolved
    exclusively-airborne ETX Alien Strike contract, resolve MT-101 through a
-   controlled source-trace blockout, collect V51-V56, then rerun the 24-cell
+   controlled source-trace blockout, resolve the supplied V51-V56 findings,
+   then rerun the 24-cell
    blind review before continuing to 44/72.
 3. Revise every wrong, uncertain or indistinguishable asset and extend the
    44-pair register wherever the accepted review exposes a new neighbor.
@@ -364,6 +392,16 @@ approving the source-derived silhouette method for full-roster expansion. No
 packet is approved for T083/T085 production yet.
 
 ## Verification state
+
+The larger Mothership/donor/proposal block passed `./tools/verify.sh --full`
+with 317/317 NUnit tests, eight director-review recording guard tests and zero
+blocking failures at `Artifacts/Verification/20260912T221841Z-full-summary.txt`.
+The focused T082 validator, review-guard script and `git diff --check` also
+passed. Deterministic repeat/replay/snapshot checks, retained headless gates,
+byte-identical content/GLB regeneration and the macOS export passed. Stress60
+retains its existing 2/60 `BLOCKING_LATER` M9 diagnostic failure. No visible
+Godot window was launched; the exported app remains the existing playable
+implementation, not an integration of these preproduction images.
 
 The Mission Fighter / Rover first correction pair passed `./tools/verify.sh`
 with 317/317 tests and zero blocking failures at

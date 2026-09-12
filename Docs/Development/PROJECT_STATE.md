@@ -733,8 +733,11 @@ live; the current schema-9 copy/paste retains the complete experiment.
   Six self-contained blind-review PNG boards cover the complete corpus at the
   24/44/72 camera widths with stable V-codes. This does not change T082's
   `BLOCKING_NOW` state or constitute corpus approval before game-director review.
-- The first Full V2 24-cell game-director review is complete for 60/66 codes and
-  requires revision; V51-V56 were not included. The strong candidates remain
+- The first Full V2 24-cell game-director review is complete for all 66 codes and
+  requires revision. An earlier recording pass omitted V51-V56 despite their
+  presence in the original director message; their responses are now recovered
+  verbatim, and validation protects complete coverage. The strong candidates
+  remain
   preserved, while incorrect source geometry, generic cross-faction buildings
   and ambiguous movement/operation silhouettes must be repaired before a new
   24-cell review. Initial correction candidates exist for Jet Scooter, ETX
@@ -801,6 +804,14 @@ live; the current schema-9 copy/paste retains the complete experiment.
   compact open four-sphere-wheel rover with horizontal side scanner. Exact
   prompts and image hashes are retained. This does not replace Mission Fighter's
   canonical 5619/7695 family or approve either image for production.
+  The larger correction block adds one unreviewed complete docked Mothership
+  first attempt and two isolated source studies: 7691's human pneumatic station
+  and 7315's curved solar module. Donor studies are not final building concepts;
+  generated operator anatomy/relief remain interpretation. Four explicit
+  donor/connection/adaptation proposals for Solar Energy Array, Frontier
+  Extraction Station, ETX Servitor and ETX Defense Node await director approval.
+  Accepted images, original boards, MT-101/MX-71 stop gates and gameplay remain
+  unchanged. T082 still requires renewed complete 24/44/72-cell acceptance.
 - The official 7301 instruction page also exposed a stale audit-reconciliation
   error: Rover is a four-wheel open platform, not the two-wheel bike described
   by the earlier identity and production drafts. The source ledger, identity,

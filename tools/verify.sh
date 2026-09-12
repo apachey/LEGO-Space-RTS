@@ -455,6 +455,7 @@ run_stage "[BLOCKING_NOW] HeadlessSim compiled-content smoke" "headless" dotnet 
 run_stage "[BLOCKING_NOW] Godot C# PrototypeRTS headless smoke" "godot" godot_smoke
 run_stage "[BLOCKING_NOW T081] Blender/GLB asset-pipeline contract" "m85-asset-static" python3 "${ROOT}/tools/Validation/validate_m85_asset_pipeline.py"
 run_stage "[BLOCKING_NOW T082] Super Scout identity-baseline integrity" "m85-super-scout" python3 "${ROOT}/tools/Validation/validate_m85_super_scout.py"
+run_stage "[BLOCKING_NOW T082] Super Scout director-review recording guards" "m85-review-guards" python3 "${ROOT}/tools/Validation/test_m85_super_scout_review_guards.py"
 run_stage "[BLOCKING_NOW T081] Godot imported asset round trip" "m85-asset-godot" godot_m85_asset_pipeline_smoke
 run_stage "[BLOCKING_NOW T058] Godot ENet dedicated host with two clients" "m6-transport" godot_m6_transport_smoke
 run_stage "[BLOCKING_NOW T059] Godot server command authority over ENet" "m6-command" godot_m6_command_smoke

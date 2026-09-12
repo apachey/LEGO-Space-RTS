@@ -19,6 +19,7 @@ MANIFEST = ROOT / "Content/Presentation/SuperScout/roster_identity_baseline.json
 LEDGER = ROOT / "Content/Presentation/SuperScout/source_ledger.json"
 INSTRUCTION_INDEX = ROOT / "Content/Presentation/SuperScout/source_instruction_index.json"
 SOURCE_ANALYSIS_POLICY = ROOT / "Content/Presentation/SuperScout/source_analysis_policy.json"
+COMPOSED_DESIGN_PROPOSALS = ROOT / "Content/Presentation/SuperScout/composed_design_proposals.json"
 ROCK_RAIDERS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/rock_raiders_source_evidence.json"
 ASTRONAUTS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/astronauts_source_evidence.json"
 ALIENS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/aliens_source_evidence.json"
@@ -244,6 +245,25 @@ def validate_source_analysis_policy(policy: dict) -> str:
     proposal_fields = policy.get("composedDesignProposalFields", [])
     if len(proposal_fields) != 10 or len(proposal_fields) != len(set(proposal_fields)):
         fail("composed-design proposal contract is incomplete")
+    proposed_designs = json.loads(COMPOSED_DESIGN_PROPOSALS.read_text(encoding="utf-8"))
+    if proposed_designs.get("schemaVersion") != 1 or proposed_designs.get("task") != "T082" or proposed_designs.get("status") != "PROPOSED_DESIGNS_REQUIRE_DIRECTOR_APPROVAL":
+        fail("composed designs must remain pending director approval")
+    proposals = proposed_designs.get("proposals", [])
+    expected_proposals = {
+        "building.ast.solar_energy_array",
+        "building.ast.frontier_extraction_station",
+        "unit.aliens.etx_servitor",
+        "building.ali.etx_defense_node",
+    }
+    if len(proposals) != 4 or {record.get("targetStableId") for record in proposals} != expected_proposals:
+        fail("the four reviewed-scope composed proposals drifted")
+    for record in proposals:
+        for field in proposal_fields:
+            require_nonempty(record, field, f"composed proposal {record.get('targetStableId')}")
+        if record.get("selectedMethod") not in {method["id"] for method in policy["candidateConstructionMethods"]}:
+            fail("a composed proposal uses an unexplained construction method")
+        if not record["directorDecision"].startswith("PENDING:"):
+            fail("a composed proposal was silently accepted")
     game_titles = [game.get("title") for game in policy.get("gameReferencePool", [])]
     if game_titles != ["LEGO Rock Raiders", "CrystAlien Conflict", "LEGO Battles (Nintendo DS)"]:
         fail("required official-game reference pool drifted")
@@ -362,7 +382,7 @@ def validate_production_contracts(
 
 def main() -> None:
     for path in (
-        MANIFEST, LEDGER, INSTRUCTION_INDEX, SOURCE_ANALYSIS_POLICY, ROCK_RAIDERS_EVIDENCE, ASTRONAUTS_EVIDENCE,
+        MANIFEST, LEDGER, INSTRUCTION_INDEX, SOURCE_ANALYSIS_POLICY, COMPOSED_DESIGN_PROPOSALS, ROCK_RAIDERS_EVIDENCE, ASTRONAUTS_EVIDENCE,
         ALIENS_EVIDENCE,
         MARTIANS_EVIDENCE,
         ROCK_RAIDERS_CONTRACTS, ASTRONAUTS_CONTRACTS, ALIENS_CONTRACTS, MARTIANS_CONTRACTS,
@@ -759,11 +779,23 @@ def main() -> None:
     if (
         full_v2_attempt.get("id") != "T082_FULL_V2_SOURCE_DERIVED_24_CELL"
         or full_v2_attempt.get("result") != "REVISION_REQUIRED"
-        or full_v2_attempt.get("reviewed") != 60
+        or full_v2_attempt.get("reviewed") != 66
         or full_v2_attempt.get("total") != 66
-        or full_v2_attempt.get("missingCodes") != ["V51", "V52", "V53", "V54", "V55", "V56"]
+        or full_v2_attempt.get("missingCodes") != []
+        or full_v2_attempt.get("reviewedCodes") != [f"V{i:02d}" for i in range(1, 67)]
+        or full_v2_attempt.get("reviewed") != len(full_v2_attempt.get("reviewedCodes", []))
     ):
-        fail("Full V2 24-cell result must retain the game-director revision gate and six missing responses")
+        fail("Full V2 24-cell result must retain the revision gate and complete 66-code director coverage")
+    recovered_responses = {
+        "V51": "складений і дещо деформований, не повний мазерщіп",
+        "V52": "гадки не маю, бачу марсіанина і купу всякого буллщету",
+        "V53": "шматок труби",
+        "V54": "виглядає наче супутник людській, але його переробили прибульців, ме",
+        "V55": "MX-11 Astro Fighter, але більше зрозумів по кабіні, мало чого схожого, так собі",
+        "V56": "ровер з компенсацією...",
+    }
+    if full_v2_attempt.get("recoveredResponses") != recovered_responses or not full_v2_attempt.get("recordCorrection"):
+        fail("the six recovered original director responses or correction provenance drifted")
     active_full_v2 = blind_review_results.get("activeFullV2", {})
     if (
         active_full_v2.get("id") != "T082_FULL_V2_SOURCE_DERIVED_24_CELL"
@@ -908,6 +940,7 @@ def main() -> None:
         "unit.astronauts.mx41_switch_fighter": "DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE",
         "unit.astronauts.mission_fighter": "DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE",
         "unit.astronauts.rover": "DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE",
+        "unit.aliens.alien_mothership": "UNREVIEWED_CORRECTION_CANDIDATE",
     }
     if {
         record.get("stableId"): record.get("status") for record in revision_candidates
@@ -919,6 +952,49 @@ def main() -> None:
             fail(f"missing Full V2 revision candidate for {record.get('stableId')}")
         if hashlib.sha256(output.read_bytes()).hexdigest() != record.get("outputSha256"):
             fail(f"Full V2 revision candidate hash drifted for {record.get('stableId')}")
+
+    accepted_code_by_id = {
+        "unit.astronauts.mono_jet": "V16",
+        "unit.aliens.alien_jet": "V17",
+        "unit.astronauts.solar_explorer": "V18",
+        "building.ast.mb01_eagle_command_base": "V38",
+        "unit.rock_raiders.tunnel_transport": "V46",
+        "unit.rock_raiders.rapid_rider": "V58",
+        "unit.martians.worker_robot": "V04",
+        "unit.astronauts.mx41_switch_fighter": "V43",
+        "unit.astronauts.mission_fighter": "V55",
+        "unit.astronauts.rover": "V56",
+    }
+    accepted_ids = {record["stableId"] for record in revision_candidates if record["status"] == "DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE"}
+    accepted_corrections = full_v2_attempt.get("acceptedIndividualCorrections", {})
+    if accepted_ids != set(accepted_code_by_id) or set(accepted_corrections) != set(accepted_code_by_id.values()) or not all(accepted_corrections.values()):
+        fail("accepted correction records disagree with the director review ledger")
+
+    source_studies = full_v2_manifest.get("sourceStudies", [])
+    expected_source_studies = {
+        "donor.7691.human_station": "building.ast.frontier_extraction_station",
+        "donor.7315.solar_module": "building.ast.solar_energy_array",
+    }
+    if len(source_studies) != len(expected_source_studies) or {
+        record.get("studyId"): record.get("targetStableId") for record in source_studies
+    } != expected_source_studies:
+        fail("the two isolated official donor studies drifted")
+    for record in source_studies:
+        if record.get("status") != "UNREVIEWED_SOURCE_INTERPRETATION_NOT_FINAL_BUILDING":
+            fail("a donor study was silently promoted to a final building")
+        for field in ("finding", "specificPrompt", "sourcePdf", "generationMode"):
+            require_nonempty(record, field, f"donor study {record.get('studyId')}")
+        source_sets = record.get("sourceSets", [])
+        if len(source_sets) != 1 or source_sets[0] not in instruction_by_id or record["sourcePdf"] not in instruction_by_id[source_sets[0]]["pdfUrls"]:
+            fail("a donor study has an unverified official PDF lineage")
+        if not record.get("referencePages") or not all(isinstance(page, int) and page > 0 for page in record["referencePages"]):
+            fail("a donor study has invalid reference pages")
+        output = FULL_V2_OUTPUT / record.get("output", "")
+        if output.parent != FULL_V2_OUTPUT / "Renders" or not output.is_file():
+            fail(f"missing or invalid donor output for {record.get('studyId')}")
+        output_bytes = output.read_bytes()
+        if output_bytes[:8] != b"\x89PNG\r\n\x1a\n" or hashlib.sha256(output_bytes).hexdigest() != record.get("outputSha256"):
+            fail(f"donor study PNG or hash drifted for {record.get('studyId')}")
 
     blocked_corrections = full_v2_manifest.get("blockedCorrections", [])
     if len(blocked_corrections) != 2:

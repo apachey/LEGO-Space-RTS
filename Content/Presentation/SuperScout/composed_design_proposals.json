@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "task": "T082",
+  "status": "PROPOSED_DESIGNS_REQUIRE_DIRECTOR_APPROVAL",
+  "authority": "Preproduction proposals only; no canon, gameplay or production-contract change. Generated donor studies are interpretation, never construction evidence.",
+  "proposals": [
+    {
+      "targetStableId": "building.ast.solar_energy_array",
+      "canonicalFunction": "Large ground Energy structure; recognizable Solar Explorer-derived panels, paired broad solar wings and tilting support hinges.",
+      "selectedMethod": "OFFICIAL_SUBASSEMBLY_DERIVATION",
+      "sourceSetsAndGames": "7315 central solar-canopy module, official PDF 4130810 pages 17/23. No game model copied.",
+      "exactSourceComponents": "Two copies of the curved honeycomb panel skin and its lower connection edge; original rectangular central-module frame and low supports. Honeycomb and technological bands stay surface printing, not structural armor.",
+      "connectionAndLoadPath": "Proposed new shared low central beam ties the ground pads together. Each curved panel is held at its original lower connection edge by one added hinge rail; both hinge rails load into the central beam. A small source-style control block sits between them.",
+      "whatIsNewOrChanged": "Promote and repeat the official panel subassembly into a fixed ground array; panel orientation, paired hinge rails, central cross-bracing and control-block layout are new adaptation. No new Energy behavior or deploy command.",
+      "rejectedAlternatives": "Keeping the whole closed habitat module reads as a shed. Flat rectangular satellite panels lose the 7315 identity. A tall dish reinforces V54's wrong satellite/alien read.",
+      "visibleGameplayConsequence": "A low wide symmetric pair of curved solar wings, not a vehicle or antenna. The center remains open and human service hardware is subordinate; daylight panel tilt is presentation only.",
+      "directorDecision": "PENDING: approve the paired curved-panel arrangement before generating the final building concept."
+    },
+    {
+      "targetStableId": "building.ast.frontier_extraction_station",
+      "canonicalFunction": "Compact human resource receiving/processing and remote extraction support; canonical 7691/7648 composition.",
+      "selectedMethod": "OFFICIAL_CROSS_SET_COMBINATION",
+      "sourceSetsAndGames": "7691 human pneumatic station, official PDF 4516029 pages 3-26; 7648 independent articulated extraction/tool mast, PDF 4525546 pages 17-28. No game model copied.",
+      "exactSourceComponents": "7691 narrow ground rail, upper open operator platform, flexible loops, thick transfer hose and three-lobed pump; 7648 separate upright tool-mast articulation grammar. Do not relabel 7691's four launcher tubes as an ore processor.",
+      "connectionAndLoadPath": "Retain 7691's grounded rail and column. Replace the launcher head with a proposed low receiving mouth supported directly on the rail, not hanging from the seat. Mount the 7648-inspired handling mast beside that mouth on a braced fixed foot. Hose joins the receiving box to the distinct pump; operator platform remains above the handling area.",
+      "whatIsNewOrChanged": "The receiving mouth/box, fixed mast foot, internal transfer routing and replacement of the four-tube launcher are new adaptation. Mast loses its separate wheeled chassis; no extra buildable vehicle is introduced.",
+      "rejectedAlternatives": "Copying the launcher unchanged makes a defense station, not an economic receiver. A Rock Raiders conveyor steals another faction's identity. A sealed white factory removes the source's human pneumatic grammar.",
+      "visibleGameplayConsequence": "Operator over a clearly open receiving bay, one articulated handling mast and a separately visible bellows pump. Incoming material has an obvious ground-level destination; pump/mast motions show processing without controlling gameplay.",
+      "directorDecision": "PENDING: approve replacing the launch tubes with a low receiver and a fixed source-inspired handling mast."
+    },
+    {
+      "targetStableId": "unit.aliens.etx_servitor",
+      "canonicalFunction": "Tiny mechanical ground-hover worker; harvest/build/repair through articulated clamps and unfolding hull sections, no meaningful combat.",
+      "selectedMethod": "OFFICIAL_CROSS_SET_COMBINATION",
+      "sourceSetsAndGames": "5617 swept plate/deck construction; 7691 exposed central machinery channel; 7646 articulated module and flexible-conduit grammar. Audited official sources only; no fan MOC or copied game model.",
+      "exactSourceComponents": "Shortened 5617 swept black plate as lower shell; one small 7691-style gray machinery-rail/core segment; 7646-style hinged connection and short lime conduit to a single work clamp. These are source grammar donors, not a claim that an official worker/clamp assembly exists.",
+      "connectionAndLoadPath": "Central mechanical core bolts directly across the hover deck. One new articulated utility arm hinges to that core, ending in a compact two-jaw clamp ahead of the deck. A low split shell opens around the hinge; conduit connects core to arm. No biological limbs or planted feet.",
+      "whatIsNewOrChanged": "Uncrewed sealed mechanical core, utility arm/clamp, split-shell mounts and their tiny relative proportions are new. Remove 5617's guns, operator seat and tall arches. Hover lift remains source-clad presentation, not an invented physics system.",
+      "rejectedAlternatives": "Pilot seated under tall arches reads as Alien Jet. A levitating giant crystal reads as self-mining magic. A four-leg insect loses the canonical spacecraft-derived ground-hover worker.",
+      "visibleGameplayConsequence": "Small low asymmetric work machine with one obvious clamp and no weapon tips. During work the clamp reaches toward external material while the shell opens; the worker itself is not the resource. Silhouette stays below Alien Jet's tall arches.",
+      "directorDecision": "PENDING: approve the low uncrewed shell with one forward articulated clamp before any concept generation."
+    },
+    {
+      "targetStableId": "building.ali.etx_defense_node",
+      "canonicalFunction": "Fixed grounded attack-craft defense with Ground Pulse and Air Lance configurations; canonical refit changes purpose, not locomotion.",
+      "selectedMethod": "OFFICIAL_SUBASSEMBLY_DERIVATION",
+      "sourceSetsAndGames": "7697 small Alien crescent craft, official PDF 4515381 pages 3-15; 7692 narrow twin-blade craft, official PDF 4524070 pages 13-23. Existing 5617 emitter grammar remains compatible; no new donor faction.",
+      "exactSourceComponents": "Ground Pulse borrows 7697's flat crescent plate arrangement and paired emitter mounts. Air Lance borrows 7692's narrow upright curved blades, central slot and emitter grouping. Do not attach either variant to a generic turret tower.",
+      "connectionAndLoadPath": "Proposed common low grounded cradle braces the craft's central spine on broad flat contact pads. One clearly connected aiming hinge carries the emitter frame; the outer shell panels brace the cradle rather than pretending to be walking legs. Both variants use the same fixed central attachment.",
+      "whatIsNewOrChanged": "Common ground cradle/contact pads, target-facing aiming hinge and readable variant attachment are new adaptation. Mounted weapons use existing authoritative behavior; no flying/walking mode or additional transform mechanic.",
+      "rejectedAlternatives": "One ambiguous floating platform repeats V35's locomotion confusion. Conventional barrel turret erases ETX source identity. Copying the whole flying donor without fixed contact structure does not read as a building.",
+      "visibleGameplayConsequence": "Ground Pulse is low, broad and forward-facing; Air Lance is narrow and raised toward the sky. Both have unmistakable planted supports and the same grounded base, so neither reads as a roaming craft or insect.",
+      "directorDecision": "PENDING: approve the common low fixed cradle and these two source-distinct heads before generating concepts."
+    }
+  ]
+}
