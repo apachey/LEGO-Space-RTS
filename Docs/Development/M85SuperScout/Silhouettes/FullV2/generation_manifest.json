@@ -154,6 +154,38 @@
       "specificPrompt": "Use case precise-object-edit. Preserve the earlier matte-black 7697 Claw-Tank's two continuous track runs, central rotating cockpit and T-shaped asymmetric arms, but replace the oversized crescent/spacecraft-reading assembly with the official compact open three-prong mechanical claw attached directly by an obvious joint. Keep the opposite narrow twin tool/gun arm; no Alien craft, extra track pods or secondary vehicle.",
       "output": "Renders/unit_astronauts_mt51_claw_tank_rev1.png",
       "outputSha256": "b408585ba6d0269bb6176cd26755c86198801677f951273f3614c928db9427d3"
+    },
+    {
+      "stableId": "unit.rock_raiders.tunnel_transport",
+      "status": "UNREVIEWED_CORRECTION_CANDIDATE",
+      "directorFinding": "Rebuild Tunnel Transport because the earlier stretched three-part bar did not preserve the compact asymmetric 4980 construction.",
+      "specificPrompt": "Use case precise-object-edit. Rebuild 4980 as one compact asymmetric heavy airborne machine: an open truss cockpit/cargo cage, two bulky rotor-engine towers placed diagonally across a broad skeletal cross-frame, exactly two exposed four-blade rotors, arched hoses, broad landing feet and an open load area. Exclude the separate wheeled vehicle and loose cargo; no long smooth beam or conventional helicopter hull.",
+      "output": "Renders/unit_rock_raiders_tunnel_transport_rev1.png",
+      "outputSha256": "eefdfda6a57debd770d50543d3579ede7dba53b945b7cde04c88eddef75983ea"
+    },
+    {
+      "stableId": "building.ast.mb01_eagle_command_base",
+      "status": "UNREVIEWED_CORRECTION_CANDIDATE",
+      "directorFinding": "Rebuild MB-01 closer to the source layout instead of a dispersed generic service station.",
+      "specificPrompt": "Use case precise-object-edit. Rebuild 7690 as an open complex dominated by the official tall triangular A-frame gantry with black braces and a circular mission ring, a long pointed shuttle visibly docked through the upper-middle, and one compact transfer station connected by a looping hose to the distinctive low three-lobed pressure reservoir. Preserve open pads and negative space; no scattered generic platforms or invented towers.",
+      "output": "Renders/building_astronauts_mb01_eagle_command_base_rev1.png",
+      "outputSha256": "ac1c15c6e66c02d8b5d769c8dc6a42847dea2fdf86061b2376b61f5310118213"
+    },
+    {
+      "stableId": "unit.rock_raiders.rapid_rider",
+      "status": "UNREVIEWED_CORRECTION_CANDIDATE",
+      "directorFinding": "Restore the complete 4920 Rapid Rider after the earlier silhouette lost most of its equipment and source proportions.",
+      "specificPrompt": "Use case precise-object-edit. Rebuild the complete 4920 as a small low catamaran work skimmer: two long pointed parallel pontoons around an open center channel, raised operator cowling, two circular forward work lights/tools, high open rear cargo hopper with one rock load, exactly two rear propulsion tubes and a small dish/tool mast. No empty raft, sealed speedboat or stripped frame.",
+      "output": "Renders/unit_rock_raiders_rapid_rider_rev1.png",
+      "outputSha256": "03da835c5056f33741836541305a1d6d3c9932320615cea6410d701a8530cb32"
+    },
+    {
+      "stableId": "unit.astronauts.mx71_recon_dropship",
+      "status": "UNREVIEWED_CORRECTION_CANDIDATE",
+      "directorFinding": "Restore 7692's own long narrow high-wing lifting profile instead of a broad generic Carryall silhouette.",
+      "specificPrompt": "Use case stylized-concept, direct source reconstruction. Lock 7692 to a long narrow near-side profile with a steep forward cockpit, modest rectangular forward wings, a long central spine forking into two thin tail booms with round engine pods and tall fins, two separate cylindrical side modules, four small landing feet and an open cradle carrying one compact six-wheel drill rover. No broad bat-wing, Dune carryall or cargo-plane mass.",
+      "output": "Renders/unit_astronauts_mx71_recon_dropship_rev1.png",
+      "outputSha256": "513bdca746a01949ed56829bc6295a03b625e16c0617d71b5b1c4f9995e52b2b"
     }
   ],
   "blockedCorrections": [

@@ -901,6 +901,10 @@ def main() -> None:
         "unit.astronauts.solar_explorer": "DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE",
         "unit.astronauts.mobile_mining_platform": "UNREVIEWED_CORRECTION_CANDIDATE",
         "unit.astronauts.mt51_claw_tank": "UNREVIEWED_CORRECTION_CANDIDATE",
+        "unit.rock_raiders.tunnel_transport": "UNREVIEWED_CORRECTION_CANDIDATE",
+        "building.ast.mb01_eagle_command_base": "UNREVIEWED_CORRECTION_CANDIDATE",
+        "unit.rock_raiders.rapid_rider": "UNREVIEWED_CORRECTION_CANDIDATE",
+        "unit.astronauts.mx71_recon_dropship": "UNREVIEWED_CORRECTION_CANDIDATE",
     }
     if {
         record.get("stableId"): record.get("status") for record in revision_candidates
