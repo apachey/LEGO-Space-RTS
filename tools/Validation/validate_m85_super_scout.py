@@ -901,10 +901,9 @@ def main() -> None:
         "unit.astronauts.solar_explorer": "DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE",
         "unit.astronauts.mobile_mining_platform": "UNREVIEWED_CORRECTION_CANDIDATE",
         "unit.astronauts.mt51_claw_tank": "UNREVIEWED_CORRECTION_CANDIDATE",
-        "unit.rock_raiders.tunnel_transport": "UNREVIEWED_CORRECTION_CANDIDATE",
+        "unit.rock_raiders.tunnel_transport": "DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE",
         "building.ast.mb01_eagle_command_base": "UNREVIEWED_CORRECTION_CANDIDATE",
-        "unit.rock_raiders.rapid_rider": "UNREVIEWED_CORRECTION_CANDIDATE",
-        "unit.astronauts.mx71_recon_dropship": "UNREVIEWED_CORRECTION_CANDIDATE",
+        "unit.rock_raiders.rapid_rider": "DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE",
     }
     if {
         record.get("stableId"): record.get("status") for record in revision_candidates
@@ -918,9 +917,10 @@ def main() -> None:
             fail(f"Full V2 revision candidate hash drifted for {record.get('stableId')}")
 
     blocked_corrections = full_v2_manifest.get("blockedCorrections", [])
-    if len(blocked_corrections) != 1:
-        fail("Full V2 must record exactly one currently blocked correction")
-    blocked_mt101 = blocked_corrections[0]
+    if len(blocked_corrections) != 2:
+        fail("Full V2 must record exactly two currently blocked corrections")
+    blocked_by_id = {record.get("stableId"): record for record in blocked_corrections}
+    blocked_mt101 = blocked_by_id.get("unit.astronauts.mt101_armored_drilling_unit", {})
     if (
         blocked_mt101.get("stableId") != "unit.astronauts.mt101_armored_drilling_unit"
         or blocked_mt101.get("status")
@@ -929,6 +929,18 @@ def main() -> None:
         or not blocked_mt101.get("nextStep")
     ):
         fail("MT-101 blocked correction record drifted")
+    blocked_mx71 = blocked_by_id.get("unit.astronauts.mx71_recon_dropship", {})
+    blocked_mx71_output = FULL_V2_OUTPUT / blocked_mx71.get("output", "")
+    if (
+        blocked_mx71.get("status")
+        != "TWO_IMAGE_GENERATION_APPROACHES_EXHAUSTED_REQUIRES_CONTROLLED_BLOCKOUT"
+        or len(blocked_mx71.get("attempts", [])) != 2
+        or not blocked_mx71.get("nextStep")
+        or not blocked_mx71_output.is_file()
+        or hashlib.sha256(blocked_mx71_output.read_bytes()).hexdigest()
+        != blocked_mx71.get("outputSha256")
+    ):
+        fail("MX-71 blocked correction record drifted")
 
     if (
         full_v2_review_manifest.get("schemaVersion") != 1

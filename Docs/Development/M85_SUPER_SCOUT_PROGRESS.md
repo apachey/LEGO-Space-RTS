@@ -7,10 +7,11 @@ blind review at 0/66 and is rejected. A four-asset source-derived Pilot V2 is
 game-director accepted at 4/4, approving that materially different method for
 a second full-roster corpus. The complete-roster review remains open. Current
 correction candidates now also cover the MT-61-derived Mobile Mining Platform
-and MT-51 Claw-Tank, plus source-closer Tunnel Transport, MB-01 Eagle Command
-Base, Rapid Rider and MX-71 Recon Dropship revisions; MT-101 remains explicitly
-blocked after two image-generation approaches failed different parts of its
-combined cockpit/tool/wheel topology.
+and MT-51 Claw-Tank. Tunnel Transport and Rapid Rider are individually accepted
+for the next composite review. MB-01 Eagle Command Base has a second and final
+image candidate after the first correction wrongly incorporated its separate
+spacecraft. MT-101 and MX-71 are explicitly blocked after two image-generation
+approaches each left unresolved source topology.
 
 ## Completed in the identity-baseline pass
 
@@ -125,20 +126,26 @@ combined cockpit/tool/wheel topology.
   cockpit while replacing the oversized curved spacecraft read with a compact
   three-prong mechanical claw; the separate Alien ambush craft is explicitly
   excluded from the tank asset.
-- The following priority wave adds two more unreviewed first-attempt candidates.
-  Tunnel Transport now follows 4980 as a compact asymmetric skeletal aircraft
+- The following priority wave added a compact asymmetric 4980 Tunnel Transport
   with two diagonally spaced rotor towers, an open truss cockpit/load cage,
   arched hoses and broad landing feet instead of a stretched three-part beam.
-  MB-01 Eagle Command Base now concentrates its read around the 7690 tall open
-  A-frame, circular mission ring, docked shuttle and the separate hose-linked
-  three-lobed pressure reservoir instead of a dispersed generic station.
+  The game director accepted this correction for the next composite review.
+  The first MB-01 correction remained wrong because it made 7690's separate
+  spacecraft the dominant suspended mass. The second and final image attempt
+  removes the spacecraft and concentrates the building on its actual open
+  A-frame, empty octagonal mission ring, elevated command capsule, pneumatic
+  station, thick hose network and separate three-lobed pressure reservoir.
 - The same priority wave restores 4920 Rapid Rider's complete source read: twin
   pointed pontoons, open center, raised controls, forward work lights, rear
-  cargo hopper and paired propulsion tubes. MX-71 required both allowed image
+  cargo hopper and paired propulsion tubes. The game director accepted this
+  correction for the next composite review. MX-71 required both allowed image
   attempts: the first remained too broad and Carryall-like, while the second
-  removed the old render from its references and recovered 7692's long narrow
-  spine, separate tail booms, modest wings and close underslung six-wheel rover.
-  Only the second MX-71 output is retained as an unreviewed candidate.
+  recovered 7692's long narrow spine, separate tail booms, modest wings and
+  close underslung six-wheel rover. The second still simplified and misplaced
+  the source's four blue-tipped forward emitters instead of preserving the two
+  mirrored pairs around the cockpit. The two-attempt rule therefore stops
+  further free-form generation; a controlled source-trace blockout must retain
+  the recovered airframe while locking the weapon topology.
 - The official 7301 page proved that Rover has four equal wheel pods. Its older
   two-wheel identity/contract wording predated the page-level audit and was not
   reconciled afterward. The baseline, source ledger, production contract,
@@ -323,15 +330,14 @@ packet is approved for T083/T085 production yet.
 
 ## Verification state
 
-The latest priority correction wave, including Tunnel Transport, MB-01 Eagle
-Command Base, Rapid Rider and the second-attempt MX-71 Recon Dropship alongside
-the earlier MT-61/MT-51 corrections and explicit MT-101 two-attempt block,
-passed `./tools/verify.sh --full` with zero blocking failures at
-`Artifacts/Verification/20260912T132219Z-full-summary.txt`. All 317 tests, T082
-integrity, deterministic repeat/replay/snapshot checks, content and asset
-regeneration, retained headless presentation/network gates and the macOS export
-passed. The preserved 60-mover M9 stress scenario remains the only
-`BLOCKING_LATER` diagnostic failure.
+The latest priority correction wave, including the director-accepted Tunnel
+Transport and Rapid Rider, the second-attempt MB-01 Eagle Command Base and the
+explicit MX-71/MT-101 two-attempt blocks, passed `./tools/verify.sh --full` with
+zero blocking failures at `Artifacts/Verification/20260912T135031Z-full-summary.txt`.
+All 317 tests, T082 integrity, deterministic repeat/replay/snapshot checks,
+content and asset regeneration, retained headless presentation/network gates
+and the macOS export passed. The preserved 60-mover M9 stress scenario remains
+the only `BLOCKING_LATER` diagnostic failure.
 
 The 7693 exclusively-airborne canon correction, synchronized runtime metadata
 and second-wave Jet Scooter / ETX Alien Strike / Red Planet Protector render

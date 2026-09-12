@@ -770,15 +770,20 @@ live; the current schema-9 copy/paste retains the complete experiment.
   two-attempt rule stops further free-form generation; its next pass requires a
   controlled source-trace blockout. T082 remains on hold until the remaining
   priority corrections and renewed 24-cell blind review are complete.
-  The next source-closer correction candidates also rebuild 4980 Tunnel
-  Transport as a compact asymmetric two-rotor skeletal airlifter and 7690 MB-01
-  Eagle Command Base around its tall open A-frame, docked shuttle, circular
-  mission ring and hose-linked pressure reservoir. Both remain unreviewed.
-  Rapid Rider now restores the complete 4920 catamaran, controls, work lights,
-  cargo hopper and paired rear propulsion. MX-71's first correction remained
-  too broad; its second and final allowed image attempt removes the old render
-  as a reference and recovers 7692's long narrow spine, separate tail booms and
-  close underslung rover. These two also remain unreviewed.
+  The next source-closer correction rebuilds 4980 Tunnel Transport as a compact
+  asymmetric two-rotor skeletal airlifter; the game director accepted it for
+  the next composite review. Rapid Rider now restores the complete 4920
+  catamaran, controls, work lights, cargo hopper and paired rear propulsion and
+  is also director-accepted for that review. The first 7690 MB-01 correction
+  wrongly incorporated the separate spacecraft into the base. Its second and
+  final image attempt instead preserves the actual open A-frame, empty
+  octagonal mission ring, elevated command capsule, pneumatic station, thick
+  hoses and separate pressure reservoir and awaits review. MX-71's first
+  correction remained too broad; its second recovered the long narrow spine,
+  separate tail booms and close underslung rover but still misplaced and
+  simplified the four blue-tipped emitters. Its two allowed image attempts are
+  exhausted, so the next step is a controlled source-trace blockout rather than
+  a third free-form generation.
 - The official 7301 instruction page also exposed a stale audit-reconciliation
   error: Rover is a four-wheel open platform, not the two-wheel bike described
   by the earlier identity and production drafts. The source ledger, identity,
@@ -819,15 +824,14 @@ step and must be announced when new visual evidence is actually required.
 
 ## Verification state
 
-The latest priority correction wave, including Tunnel Transport, MB-01 Eagle
-Command Base, Rapid Rider and the second-attempt MX-71 Recon Dropship alongside
-the earlier MT-61/MT-51 corrections and explicit MT-101 two-attempt block,
-passed `./tools/verify.sh --full` with zero blocking failures at
-`Artifacts/Verification/20260912T132219Z-full-summary.txt`. All 317 tests, T082
-integrity, deterministic repeat/replay/snapshot checks, content and asset
-regeneration, retained headless presentation/network gates and the macOS export
-passed. The preserved 60-mover M9 stress scenario remains the only
-`BLOCKING_LATER` diagnostic failure.
+The latest priority correction wave, including the director-accepted Tunnel
+Transport and Rapid Rider, the second-attempt MB-01 Eagle Command Base and the
+explicit MX-71/MT-101 two-attempt blocks, passed `./tools/verify.sh --full` with
+zero blocking failures at `Artifacts/Verification/20260912T135031Z-full-summary.txt`.
+All 317 tests, T082 integrity, deterministic repeat/replay/snapshot checks,
+content and asset regeneration, retained headless presentation/network gates
+and the macOS export passed. The preserved 60-mover M9 stress scenario remains
+the only `BLOCKING_LATER` diagnostic failure.
 
 The 7693 exclusively-airborne canon correction, synchronized runtime metadata
 and second-wave Jet Scooter / ETX Alien Strike / Red Planet Protector render

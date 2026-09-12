@@ -157,8 +157,8 @@
     },
     {
       "stableId": "unit.rock_raiders.tunnel_transport",
-      "status": "UNREVIEWED_CORRECTION_CANDIDATE",
-      "directorFinding": "Rebuild Tunnel Transport because the earlier stretched three-part bar did not preserve the compact asymmetric 4980 construction.",
+      "status": "DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE",
+      "directorFinding": "The compact asymmetric 4980 Tunnel Transport correction is accepted for the next composite review.",
       "specificPrompt": "Use case precise-object-edit. Rebuild 4980 as one compact asymmetric heavy airborne machine: an open truss cockpit/cargo cage, two bulky rotor-engine towers placed diagonally across a broad skeletal cross-frame, exactly two exposed four-blade rotors, arched hoses, broad landing feet and an open load area. Exclude the separate wheeled vehicle and loose cargo; no long smooth beam or conventional helicopter hull.",
       "output": "Renders/unit_rock_raiders_tunnel_transport_rev1.png",
       "outputSha256": "eefdfda6a57debd770d50543d3579ede7dba53b945b7cde04c88eddef75983ea"
@@ -166,26 +166,18 @@
     {
       "stableId": "building.ast.mb01_eagle_command_base",
       "status": "UNREVIEWED_CORRECTION_CANDIDATE",
-      "directorFinding": "Rebuild MB-01 closer to the source layout instead of a dispersed generic service station.",
-      "specificPrompt": "Use case precise-object-edit. Rebuild 7690 as an open complex dominated by the official tall triangular A-frame gantry with black braces and a circular mission ring, a long pointed shuttle visibly docked through the upper-middle, and one compact transfer station connected by a looping hose to the distinctive low three-lobed pressure reservoir. Preserve open pads and negative space; no scattered generic platforms or invented towers.",
-      "output": "Renders/building_astronauts_mb01_eagle_command_base_rev1.png",
-      "outputSha256": "ac1c15c6e66c02d8b5d769c8dc6a42847dea2fdf86061b2376b61f5310118213"
+      "directorFinding": "The first correction wrongly made the separate 7690 spacecraft the base's dominant mass. The second and final image attempt removes it and restores the actual open command-frame composition.",
+      "specificPrompt": "Use case precise-object-edit. Preserve the monochrome studio render treatment but completely rebuild the 7690 structure as one wide open skeletal A-frame command gantry with a large empty octagonal mission ring, an asymmetric tall side tower carrying the cylindrical command capsule, a separate pneumatic operator/transfer station, several thick corrugated hoses and a separate squat triple-lobed pressure tank. The spacecraft is a separate vehicle and must not appear in or on the base; no sealed headquarters block or invented roof.",
+      "output": "Renders/building_astronauts_mb01_eagle_command_base_rev2.png",
+      "outputSha256": "cc7796cb9217cba7a1810dd4e9ffa42c99083f9093528bdc810aea4e2239ee94"
     },
     {
       "stableId": "unit.rock_raiders.rapid_rider",
-      "status": "UNREVIEWED_CORRECTION_CANDIDATE",
-      "directorFinding": "Restore the complete 4920 Rapid Rider after the earlier silhouette lost most of its equipment and source proportions.",
+      "status": "DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE",
+      "directorFinding": "The complete 4920 Rapid Rider correction is accepted for the next composite review.",
       "specificPrompt": "Use case precise-object-edit. Rebuild the complete 4920 as a small low catamaran work skimmer: two long pointed parallel pontoons around an open center channel, raised operator cowling, two circular forward work lights/tools, high open rear cargo hopper with one rock load, exactly two rear propulsion tubes and a small dish/tool mast. No empty raft, sealed speedboat or stripped frame.",
       "output": "Renders/unit_rock_raiders_rapid_rider_rev1.png",
       "outputSha256": "03da835c5056f33741836541305a1d6d3c9932320615cea6410d701a8530cb32"
-    },
-    {
-      "stableId": "unit.astronauts.mx71_recon_dropship",
-      "status": "UNREVIEWED_CORRECTION_CANDIDATE",
-      "directorFinding": "Restore 7692's own long narrow high-wing lifting profile instead of a broad generic Carryall silhouette.",
-      "specificPrompt": "Use case stylized-concept, direct source reconstruction. Lock 7692 to a long narrow near-side profile with a steep forward cockpit, modest rectangular forward wings, a long central spine forking into two thin tail booms with round engine pods and tall fins, two separate cylindrical side modules, four small landing feet and an open cradle carrying one compact six-wheel drill rover. No broad bat-wing, Dune carryall or cargo-plane mass.",
-      "output": "Renders/unit_astronauts_mx71_recon_dropship_rev1.png",
-      "outputSha256": "513bdca746a01949ed56829bc6295a03b625e16c0617d71b5b1c4f9995e52b2b"
     }
   ],
   "blockedCorrections": [
@@ -198,12 +190,25 @@
         "A direct official-cover reconstruction restored the steep permanent cockpit and separated the upper mechanisms, but the camera and chassis overlap no longer made all six wheels independently countable."
       ],
       "nextStep": "Do not generate a third free-form image. Build or render a topology-controlled source-trace blockout that locks the cockpit, six contact wheels and two independent tool mounts before surface detail."
+    },
+    {
+      "stableId": "unit.astronauts.mx71_recon_dropship",
+      "status": "TWO_IMAGE_GENERATION_APPROACHES_EXHAUSTED_REQUIRES_CONTROLLED_BLOCKOUT",
+      "directorFinding": "The second image recovered the long 7692 aircraft and close rover cradle, but the weapon composition is still wrong: the source has four short blue-tipped emitters arranged as mirrored forward pairs around the cockpit rather than the candidate's reduced asymmetric gun layout.",
+      "attempts": [
+        "The first direct correction retained a broad Carryall-like body and did not recover the source aircraft's narrow composition.",
+        "The second reconstruction restored the long spine, twin tail booms and close underslung rover, but simplified and misplaced the four forward emitter weapons."
+      ],
+      "output": "Renders/unit_astronauts_mx71_recon_dropship_rev1.png",
+      "outputSha256": "513bdca746a01949ed56829bc6295a03b625e16c0617d71b5b1c4f9995e52b2b",
+      "nextStep": "Do not generate a third free-form image. Use a topology-controlled source-trace blockout that locks the existing accepted airframe improvements while placing four short blue-tipped emitters as two mirrored forward pairs around the cockpit."
     }
   ],
   "supersededRevisionCandidates": [
     {"stableId":"unit.martians.jet_scooter","output":"Renders/unit_martians_jet_scooter_rev1.png","outputSha256":"3ef858510d3dfdd3940b17dcc8f72023762ac22c7db091e243c3b461cb0ecac6","reason":"Superseded by the sleeker rev2 direction."},
     {"stableId":"unit.aliens.etx_alien_strike","output":"Renders/unit_aliens_etx_alien_strike_rev1.png","outputSha256":"11e5edc0520ef1ceac7b9ede0b7dbda941654ebb99e71fae3e6321eeb941066f","reason":"Superseded after explicit flying-only canon correction."},
     {"stableId":"unit.martians.red_planet_protector","output":"Renders/unit_martians_red_planet_protector_rev1.png","outputSha256":"928a263d85a1e42824fafc6107d73c850d2f41fba9b9b10aa9b85bb5bc6dc6aa","reason":"Superseded because the source-asymmetric top cannon booms were not fixed."},
-    {"stableId":"unit.martians.red_planet_protector","output":"Renders/unit_martians_red_planet_protector_rev2.png","outputSha256":"ae36e75a23bfaeb483a3ceb62a12965a7a6e3ea814d71760dd244e54bede3016","reason":"Superseded because the narrow weapon edit preserved an incorrect bulky humanoid torso, arm mounts and heavy legs instead of rebuilding the 7313 craft-on-spindly-legs topology."}
+    {"stableId":"unit.martians.red_planet_protector","output":"Renders/unit_martians_red_planet_protector_rev2.png","outputSha256":"ae36e75a23bfaeb483a3ceb62a12965a7a6e3ea814d71760dd244e54bede3016","reason":"Superseded because the narrow weapon edit preserved an incorrect bulky humanoid torso, arm mounts and heavy legs instead of rebuilding the 7313 craft-on-spindly-legs topology."},
+    {"stableId":"building.ast.mb01_eagle_command_base","output":"Renders/building_astronauts_mb01_eagle_command_base_rev1.png","outputSha256":"ac1c15c6e66c02d8b5d769c8dc6a42847dea2fdf86061b2376b61f5310118213","reason":"Superseded because it incorrectly treated the separate 7690 spacecraft as the base's dominant suspended mass."}
   ]
 }
