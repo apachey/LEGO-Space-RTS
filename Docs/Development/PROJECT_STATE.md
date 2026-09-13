@@ -824,6 +824,13 @@ live; the current schema-9 copy/paste retains the complete experiment.
   still require disclosed proposals and director review. Details are in
   `Docs/Development/M85_T082_ALIEN_CANON_REWRITE.md`; original research is in
   `Docs/Development/M85_T082_COMPOSED_REVIEW_AND_BIOMECHANICAL_CONFLICT.md`.
+  A separate solar composed revision 2 now implements the director-requested
+  six flat human panels in two rows of three; it remains unreviewed, with its
+  exact edit prompt, authority and hash retained alongside the historical image.
+  Three revised Alien compositions disclose worker role, concrete shell donors,
+  recessed supports/conduits and one shared rooted defense foundation; they are
+  PENDING_DIRECTOR_GENERATION_APPROVAL, not generated or production-accepted.
+  See `Docs/Development/M85_T082_SOLAR_AND_BIOMECHANICAL_REVISION_BLOCK.md`.
   Accepted images, original boards, MT-101/MX-71 stop gates and gameplay remain
   unchanged. T082 still requires renewed complete 24/44/72-cell acceptance.
 - The official 7301 instruction page also exposed a stale audit-reconciliation

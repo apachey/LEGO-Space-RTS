@@ -12,6 +12,32 @@ import validate_m85_super_scout as validator
 
 
 class ReviewGuardTests(unittest.TestCase):
+    def test_solar_correction_generation_cannot_accept_image(self):
+        def mutate(fixture):
+            fixture["composedRevisionCandidates"][0]["status"] = "DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE"
+        self.assert_rejected(validator.FULL_V2_MANIFEST, mutate,
+                             "generation-only review/attempt boundary")
+
+    def test_solar_correction_cannot_hide_third_attempt(self):
+        def mutate(fixture):
+            fixture["composedRevisionCandidates"][0]["attemptNumber"] = 3
+        self.assert_rejected(validator.FULL_V2_MANIFEST, mutate,
+                             "generation-only review/attempt boundary")
+
+    def test_solar_revision_requires_its_exact_image_hash(self):
+        def mutate(fixture):
+            fixture["composedRevisionCandidates"][0]["outputSha256"] = "0" * 64
+        self.assert_rejected(validator.FULL_V2_MANIFEST, mutate,
+                             "solar revision PNG or hash drifted")
+
+    def test_original_approval_cannot_authorize_revised_alien_anatomy(self):
+        def mutate(fixture):
+            fixture["composedRevisionProposals"][0].update(
+                status="DIRECTOR_APPROVED_CONCEPT_GENERATION_ONLY",
+                approvalEvidence="Historical original composition approval")
+        self.assert_rejected(validator.FULL_V2_MANIFEST, mutate,
+                             "separate director generation approval")
+
     def test_biomechanical_canon_cannot_authorize_gameplay(self):
         self.assert_rejected(validator.ALIEN_BIOMECHANICAL_POLICY,
                              lambda fixture: fixture.update(gameplayImpact="SWARM_PRODUCTION"),

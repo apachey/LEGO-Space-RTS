@@ -442,6 +442,76 @@
       "generationMode": "built-in image_gen; official donor references and director-approved composition"
     }
   ],
+  "composedRevisionCandidates": [
+    {
+      "candidateId": "composition.solar_energy_array.rev2",
+      "stableId": "building.ast.solar_energy_array",
+      "configuration": "human_flat_panels_2_by_3",
+      "status": "UNREVIEWED_COMPOSED_DESIGN_CANDIDATE",
+      "attemptNumber": 2,
+      "supersedesCandidateId": "composition.solar_energy_array.rev1",
+      "directorGenerationAuthority": "нехай воно буде більше схоже на типові людські сонячні панелі, можливо 2х3, тобто в 2 ряди по три",
+      "approvalScope": "SOLAR_CORRECTION_GENERATION_ONLY_NOT_IMAGE_ACCEPTANCE",
+      "sourceReferences": [
+        {
+          "setId": "7315",
+          "pdfUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130810.pdf",
+          "pages": [
+            17,
+            23
+          ]
+        }
+      ],
+      "referenceImage": "Renders/building_astronauts_solar_energy_array_composed_rev1.png",
+      "newAdaptation": "Director-requested conventional flat photovoltaic array replaces the curved 7315 donor canopy: six rectangular panels in two rows of three. The array layout, rails and brackets are new adaptation, not an official 7315 assembly.",
+      "finding": "Six separate flat rectangular panel faces are countable in one tilted 2-by-3 plane. Low shared beams, planted pads and a compact human control block remain; hidden underside brackets require later controlled geometry review. Grayscale studio concept only, not production acceptance.",
+      "specificPrompt": "Use case: precise-object-edit\nAsset type: LEGO Space RTS Solar Energy Array preproduction review concept, revision 2.\nInput image 1 is the edit target, a rejected curved-panel solar array; it is generated interpretation, not official construction evidence.\nPrimary request: replace the two curved honeycomb wings with EXACTLY SIX ordinary HUMAN rectangular photovoltaic panels arranged as ONE coherent 2-row by 3-column array. Two rows each have three identical flat rectangles. All six face in the same direction on one gently tilted common plane; narrow clear frame seams make all six panels individually countable from this view. This must instantly read as a conventional terrestrial human solar installation adapted into Life on Mars LEGO construction, not alien wings or a satellite.\nKeep the target's low grounded LEGO-derived beam-and-pad support character, compact human control block, overall review scale, matte monochrome finish and white studio backdrop. Adapt the support beams only as necessary to credibly carry the new six-panel grid: two long rear cross rails, modest hinge/bracket connections and wide planted pads, nothing floating. No enclosed habitat or vehicle. The six flat panel faces use subdued regular square photovoltaic cell grids as SURFACE PRINTING only, no honeycomb, no raised circuit armor. Edge frames and support connectors are physical LEGO-like geometry; no excessive studs on solar faces.\nStyle: clean matte black/dark-neutral-gray three-dimensional silhouette-review render, every part grayscale, no blue solar color, no accent color, no transparent neon, no dramatic shine. Soft neutral illumination exposes structure without hiding the panel count. Single centered object, elevated three-quarter camera that shows the whole 2x3 rectangular array and grounded supports, generous white margins, no crop.\nAvoid: paired curved wings, six giant separate towers, accidental third row, additional panels, antenna dish, satellite mast, wheels, crew, weapons, background scene, text, labels, logos, watermark. No gameplay change implied.",
+      "output": "Renders/building_astronauts_solar_energy_array_composed_rev2.png",
+      "outputSha256": "647d7cdac0e6edf5ba512a982e734d977d9e0cf273d663ffade368a6c73986d6",
+      "generationMode": "built-in image_gen; edit of historical generated candidate, not official source evidence",
+      "gameplayImpact": "NONE"
+    }
+  ],
+  "composedRevisionProposalDocument": "Docs/Development/M85_T082_SOLAR_AND_BIOMECHANICAL_REVISION_BLOCK.md",
+  "composedRevisionProposals": [
+    {
+      "proposalId": "composition.etx_servitor.biomechanical.rev2",
+      "stableId": "unit.aliens.etx_servitor",
+      "configuration": "low_uncrewed_integrated_utility_clamp",
+      "sourceSets": [
+        "5617",
+        "7646",
+        "7691"
+      ],
+      "status": "PENDING_DIRECTOR_GENERATION_APPROVAL",
+      "approvalEvidence": null,
+      "generatedOutput": null
+    },
+    {
+      "proposalId": "composition.etx_defense_node.ground_pulse.biomechanical.rev2",
+      "stableId": "building.ali.etx_defense_node",
+      "configuration": "ground_pulse",
+      "sourceSets": [
+        "7697",
+        "7691"
+      ],
+      "status": "PENDING_DIRECTOR_GENERATION_APPROVAL",
+      "approvalEvidence": null,
+      "generatedOutput": null
+    },
+    {
+      "proposalId": "composition.etx_defense_node.air_lance.biomechanical.rev2",
+      "stableId": "building.ali.etx_defense_node",
+      "configuration": "air_lance",
+      "sourceSets": [
+        "7692",
+        "7691"
+      ],
+      "status": "PENDING_DIRECTOR_GENERATION_APPROVAL",
+      "approvalEvidence": null,
+      "generatedOutput": null
+    }
+  ],
   "blockedCorrections": [
     {
       "stableId": "unit.astronauts.mt101_armored_drilling_unit",

@@ -1077,6 +1077,58 @@ def main() -> None:
         if output_bytes[:8] != b"\x89PNG\r\n\x1a\n" or hashlib.sha256(output_bytes).hexdigest() != record.get("outputSha256"):
             fail(f"composed candidate PNG or hash drifted for {record['candidateId']}")
 
+    # New revisions have their own authority; original composition approval is
+    # historical and must not silently authorize revised biomechanical anatomy.
+    revisions = full_v2_manifest.get("composedRevisionCandidates", [])
+    if len(revisions) != 1:
+        fail("the solar revision must remain a separately recorded candidate")
+    solar = revisions[0]
+    if (solar.get("candidateId") != "composition.solar_energy_array.rev2"
+            or solar.get("stableId") != "building.ast.solar_energy_array"
+            or solar.get("configuration") != "human_flat_panels_2_by_3"
+            or solar.get("status") != "UNREVIEWED_COMPOSED_DESIGN_CANDIDATE"
+            or solar.get("attemptNumber") != 2
+            or solar.get("supersedesCandidateId") != "composition.solar_energy_array.rev1"
+            or solar.get("gameplayImpact") != "NONE"
+            or solar.get("approvalScope") != "SOLAR_CORRECTION_GENERATION_ONLY_NOT_IMAGE_ACCEPTANCE"):
+        fail("solar revision lost its generation-only review/attempt boundary")
+    for field in ("directorGenerationAuthority", "newAdaptation", "finding", "specificPrompt", "generationMode"):
+        require_nonempty(solar, field, "solar revision")
+    references = solar.get("sourceReferences", [])
+    if (len(references) != 1 or references[0].get("setId") != "7315"
+            or references[0].get("pdfUrl") not in instruction_by_id["7315"]["pdfUrls"]
+            or references[0].get("pages") != [17, 23]):
+        fail("solar revision lost audited source lineage")
+    historical_solar = next(record for record in composed_candidates
+                            if record["candidateId"] == "composition.solar_energy_array.rev1")
+    if solar.get("referenceImage") != historical_solar["output"]:
+        fail("solar revision lost its historical edit target")
+    output = FULL_V2_OUTPUT / solar.get("output", "")
+    if output.parent != FULL_V2_OUTPUT / "Renders" or not output.is_file():
+        fail("solar revision output missing or outside review renders")
+    output_bytes = output.read_bytes()
+    if output_bytes[:8] != b"\x89PNG\r\n\x1a\n" or hashlib.sha256(output_bytes).hexdigest() != solar.get("outputSha256"):
+        fail("solar revision PNG or hash drifted")
+    proposals = full_v2_manifest.get("composedRevisionProposals", [])
+    expected_proposals = {
+        "composition.etx_servitor.biomechanical.rev2": ("unit.aliens.etx_servitor", "low_uncrewed_integrated_utility_clamp", ["5617", "7646", "7691"]),
+        "composition.etx_defense_node.ground_pulse.biomechanical.rev2": ("building.ali.etx_defense_node", "ground_pulse", ["7697", "7691"]),
+        "composition.etx_defense_node.air_lance.biomechanical.rev2": ("building.ali.etx_defense_node", "air_lance", ["7692", "7691"]),
+    }
+    if len(proposals) != 3 or {proposal.get("proposalId") for proposal in proposals} != set(expected_proposals):
+        fail("the three revised Alien proposals drifted")
+    for proposal in proposals:
+        stable_id, configuration, source_sets = expected_proposals[proposal["proposalId"]]
+        if (proposal.get("stableId") != stable_id or proposal.get("configuration") != configuration
+                or proposal.get("sourceSets") != source_sets
+                or proposal.get("status") != "PENDING_DIRECTOR_GENERATION_APPROVAL"
+                or "approvalEvidence" not in proposal or proposal["approvalEvidence"] is not None
+                or "generatedOutput" not in proposal or proposal["generatedOutput"] is not None):
+            fail("revised Alien anatomy lacks separate director generation approval")
+    proposal_doc = ROOT / full_v2_manifest.get("composedRevisionProposalDocument", "")
+    if proposal_doc.parent != ROOT / "Docs/Development" or not proposal_doc.is_file():
+        fail("revised Alien proposals lack their disclosed composition document")
+
     blocked_corrections = full_v2_manifest.get("blockedCorrections", [])
     if len(blocked_corrections) != 2:
         fail("Full V2 must record exactly two currently blocked corrections")

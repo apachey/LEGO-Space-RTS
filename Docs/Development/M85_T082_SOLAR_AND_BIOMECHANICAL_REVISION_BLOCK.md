@@ -1,0 +1,207 @@
+# T082 — solar correction and coherent biomechanical proposal block
+
+Date: 2026-09-13. Branch: `codex/m85-t082`; not merged.
+Authority: Phase 02A governs Alien identity. This is production preproduction,
+not a further canon rewrite or permission to change gameplay.
+
+## Delivered solar correction — image review still required
+
+Director request: “нехай воно буде більше схоже на типові людські сонячні
+панелі, можливо 2х3, тобто в 2 ряди по три”.
+
+![Solar Energy Array, composed revision 2](/Users/pavlosidash/Developer/Lego-Space-RTS/Docs/Development/M85SuperScout/Silhouettes/FullV2/Renders/building_astronauts_solar_energy_array_composed_rev2.png)
+
+One image-generation edit now replaces revision 1's curved honeycomb wings
+with six conventional flat rectangular photovoltaic panels, two rows of three
+in one gently tilted plane. It retains low shared support beams, grounded pads
+and a compact human control block. All parts remain monochrome for shape review.
+Panel printing is a flat square cell grid, not raised armor.
+
+7315 supplies human solar-function and connected frame/support lineage, not a
+literal six-panel assembly. Flattening the canopy, the six-panel layout and its
+support rails/brackets are the director-requested NEW ADAPTATION. This is not
+an official LEGO alternate build. The underside is partly occluded: the image
+does not prove every bracket or an animation-ready construction model.
+
+Output: `M85SuperScout/Silhouettes/FullV2/Renders/building_astronauts_solar_energy_array_composed_rev2.png`.
+Exact prompt, edit target, generation-only authority and SHA-256 are retained
+in Full V2's `composedRevisionCandidates`. Attempt 2 of this composed design;
+no third free-form attempt is implied. Revision 1 and all original boards remain.
+Status: UNREVIEWED; no replacement in production packets or acceptance boards.
+Canonical energy output/reserve and gameplay remain unchanged.
+
+## Three proposed Alien compositions — NOT generated or approved
+
+The following replaces the old ordinary-robot/mostly-mechanical composition
+direction. The earlier approval of those original proposals is historical and
+does not authorize this new anatomy. Each proposal explains role, donor,
+structural connection and adaptation. The manifest records three separate
+PENDING_DIRECTOR_GENERATION_APPROVAL entries with no approval or output.
+
+### 1. ETX Servitor — economic worker, not soldier
+
+Role: collects Ore/Crystals, constructs Alien buildings and repairs Alien
+structures. Retains canonical ground-hover movement and worker rules. No
+meaningful weapon, pilot, walking transformation or new harvesting mechanic.
+
+Proposed appearance: a low closed armored pod, broader at the rear and tapering
+to a short split utility mouth. Two side shell valves surround a recessed ribbed
+support core. Short living conduits join the core to shell roots and the tool;
+they are visible through deliberate narrow gaps, not draped randomly outside.
+One bifurcating hull-integrated clamp holds external cargo. No separate human
+robot arm, humanoid face or resource crystal growing out of the body.
+
+Donor and connection plan:
+
+- **5617 Alien Jet:** compact low chassis/shell footprint. Remove rider seat,
+  rider-protecting arches and gun pods rather than reclassifying weapons as tools.
+- **7646 ETX Alien Infiltrator:** split-shell articulation and short root
+  connections, reduced to two attached side valves. No walking limbs or borrowed
+  walking mode. Both shell roots attach to the central load-bearing spine.
+- **7691 Mothership + official interior promo:** recessed rib/support and
+  branching-conduit grammar links this worker to the fleet's biomechanical
+  family. Do not transplant a complete Mothership or claim its cutaway proves
+  this dedicated worker's anatomy.
+- **NEW ADAPTATION:** uncrewed closed worker body, scaled support core and the
+  integrated two-jaw utility organ/interface. The clamp's purpose replaces the
+  old contemporary hydraulic arm; its cargo stays visibly separate from body.
+
+Recognition gate: immediately reads as small Alien economic support, not a
+Martian Worker Robot, combat Alien Jet or a generic animal/drone from StarCraft.
+Recessed supports/conduits must still be legible without color. Hover clearance
+must be visible, but no invented landing feet or flight-altitude rules.
+
+### 2. Ground Pulse — fixed anti-ground defense
+
+Role: the existing Defense Node's ground-target configuration. Not mobile,
+not a tank and not a new artillery/siege mode.
+
+Proposed appearance: broad low broken-ring head surrounding a recessed armored
+core, with emitters distributed on its outer curved shell lobes. A visible
+horizontal firing direction distinguishes it from Air Lance. Keep a clear
+central opening; do not put a whole piloted craft onto a pedestal.
+
+Donor and connection plan:
+
+- **7697 ETX Alien Assault:** three curved shell lobes and distributed outer
+  emitter grammar. Recombine attached shell sections into a low defensive crown;
+  remove cockpit/seat. Original craft identity remains recognizable in the
+  crescents and emitter positions, not in a complete vehicle perched on top.
+- **7691 + interior promo:** one recessed ribbed support core and short branching
+  conduits under the crown. Armored shell connects through short structural
+  roots to this core; conduits serve these actual connections.
+- **CrystAlien Conflict Assault Turret:** method precedent for transforming
+  craft-derived curved parts into a rooted defensive assembly. Its gameplay,
+  staffing and exact artwork are not copied.
+- **NEW ADAPTATION:** shared stationary root assembly described below, an
+  uncrewed core and recombined low firing crown. No new damage/range/staffing.
+
+### 3. Air Lance — fixed anti-air defense
+
+Role: the existing Defense Node's air-target configuration, not a separate unit
+or a general anti-ground cannon.
+
+Proposed appearance: narrow upward-facing split-blade head with an open central
+slot, rising from EXACTLY the same grounded core as Ground Pulse. The emitter
+axis must point into the sky with the blade assembly, not remain horizontal
+under raised decorative blades.
+
+Donor and connection plan:
+
+- **7692 ETX Alien Spacecraft:** paired narrow curved blade sections and the
+  three-emitter cluster. The original cluster is at the craft's REAR: moving
+  and reorienting it into this upward firing head is explicitly NEW ADAPTATION,
+  not evidence that the official spacecraft has a front triple gun. The side
+  weapon remains a different source assembly and is not blended into this group.
+- **7691 + interior promo:** the same recessed support/conduit system as Ground
+  Pulse, not an independent decorative organic tower.
+- **NEW ADAPTATION:** narrow upward aiming connection and reoriented cluster
+  attached to the central spine between the split blades. Remove pilot/cockpit
+  and flight body; no detachable fighter or new refit rules.
+
+### Shared defense foundation — one family, not two unrelated bases
+
+Both configurations use one low armored central capsule over a load-bearing
+ribbed spine. Four short flared shell roots end in broad fixed ground-contact
+pads. These are static connected foundations, not articulated legs. Branching
+conduits remain recessed between core and shell roots. The weapon head attaches
+directly above the spine through a compact aiming interface; no long pedestal,
+exposed human hydraulic piston or giant crystal used as a substitute for body.
+
+The four-root foundation and scaled internal anatomy are NEW ADAPTATION. LEGO
+exterior assemblies determine the shell/connection language; official promo
+supports the biomechanical identity, not this exact foundation design. Shell,
+support, conduit, emitter and cargo/material interfaces remain distinct.
+
+If generation is approved: generate Ground Pulse first, then derive Air Lance
+as an edit referencing that result, explicitly preserving the entire lower
+capsule, four contact roots and camera. This addresses the old independent
+prompts' different foundations. Each result still needs separate image review.
+Maximum two materially different image approaches per subject; no automatic
+retry until success and no permission for other stopped subjects.
+
+## Alternatives considered
+
+1. **Complete craft on a generic base:** recognizable donor, but little genuine
+   hybridization and reads as a parked vehicle. Rejected for these defenses.
+2. **Recolor ordinary industrial robotics:** economical and clear tooling, but
+   repeats the rejected Servitor's human-machine identity. Rejected.
+3. **Freehand creature/hive sculpture:** strong biology, weak LEGO/source identity
+   and risks generic Zerg/Protoss substitution. Rejected.
+4. **Controlled source-trace/blockout before rendering:** strongest connection
+   control and a valid alternative if these proposals fail shape review. This
+   remains required for already-stopped MT-101/MX-71, not a third free-form image.
+
+## Source confidence and review boundary
+
+Official instruction lineage (page numbers are the existing audited PDF pages):
+
+- [5617](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4525566.pdf), p1.
+- [7646](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4534848.pdf), p29–68.
+- [7691](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4516029.pdf), p28–49 body, p50–67 subcraft.
+- [7697](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4515381.pdf), p3–15.
+- [7692](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4524070.pdf), p13–23.
+- [7315](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130810.pdf), p17/23.
+
+Existing researched promo evidence, retained by the shared production policy:
+[BrickMaster 2007 cutaway](https://archive.org/details/brickmaster-issue17/page/n5/mode/1up)
+supports skeletal/vascular VISUAL INFERENCE; do not claim literal blood labels.
+[LEGO Club 2008 cutaway](https://archive.org/details/LEGOClubMagazineUS-JulyAugust2008-Miniland/page/n19/mode/1up)
+explicitly labels a Bio-Organic antigravity propulsion drive. These sources
+support biological technology, not literal proof of every proposed new organ.
+Game comparison is available in the archived
+[Assault Turret artwork](https://www.spriters-resource.com/browser_games/legomarsmissioncrystalienconflict/asset/134216/)
+and [secondary unit entry](https://brickipedia.fandom.com/wiki/CrystAlien_Conflict/Assault_Turret).
+This block uses the repository's already-audited evidence; no new source finding
+or fan MOC is promoted to authority.
+
+Generation approval is the next decision for these THREE revised Alien
+compositions only. It would not accept images, finalize materials, add crew,
+alter canonical values or resume T083/T085. Frontier's accepted next-review
+direction and all other accepted images remain unchanged. T082 complete
+24/44/72-cell corpus acceptance remains BLOCKING_NOW; no new gameplay build or
+manual playtest is needed for this image/proposal review.
+
+## Executed verification and handoff
+
+- `python3 tools/Validation/validate_m85_super_scout.py` — PASS.
+- `python3 tools/Validation/test_m85_super_scout_review_guards.py` — 20/20 PASS.
+  Original 16 guards remain; four new negative cases protect solar image
+  acceptance, attempt count, image hash and separate revised-anatomy approval.
+- `./tools/verify.sh` — PASS; 317/317 NUnit and all 23 BLOCKING_NOW stages pass.
+  Summary: `Artifacts/Verification/20260913T091734Z-fast-summary.txt`.
+- `git diff --check` — PASS after final document/provenance edits.
+
+The general harness ran outside the sandbox to permit normal dependency
+restore and local network tests. Godot smoke sessions were headless with crash
+handling disabled and project immediate exit; no visible Godot launch/capture.
+This fast run does not rerun the full 100-repeat/M9 stress diagnostic or export
+a new macOS app. No concept is integrated into the existing playable build.
+
+Files changed: one new solar image and its manifest provenance; one proposal/
+handoff document and current PROJECT_STATE; validator and four regression tests.
+Canon impact: NONE in this block. Gameplay/data formats/dependencies unchanged.
+Manual review: solar appearance and generation approval for the three disclosed
+Alien compositions only. Remaining risks: generated solar underside not fully
+resolved; proposed Alien anatomy still unapproved; complete corpus acceptance
+still required. Work remains on `codex/m85-t082`, not merged into main.
