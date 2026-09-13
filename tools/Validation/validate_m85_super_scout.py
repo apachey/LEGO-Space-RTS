@@ -52,6 +52,8 @@ MX71_LOCALIZED_EDIT = ROOT / "ArtSource/M85/Preproduction/MX71LocalizedWeaponEdi
 MX71_LOCALIZED_REVIEW = ROOT / "Content/Presentation/SuperScout/mx71_localized_appearance_review.json"
 CURRENT_COMPARISON = FULL_V2_OUTPUT / "CurrentComparisonV1/selection_manifest.json"
 CLAW_ARM_CORRECTION = ROOT / "ArtSource/M85/Preproduction/ClawTankArmCorrectionV2/edit_manifest.json"
+CLAW_APPEARANCE_REVIEW = ROOT / "Content/Presentation/SuperScout/claw_tank_appearance_review.json"
+MT101_COMPLETED_APPEARANCE = ROOT / "ArtSource/M85/Preproduction/MT101ControlledAppearanceV1/edit_manifest.json"
 
 CLASSIFICATIONS = {
     "OFFICIAL_DIRECT": "OFFICIAL-DIRECT",
@@ -668,6 +670,59 @@ def validate_claw_arm_correction() -> None:
         fail("Claw correction bypassed appearance review or overclaimed pixel proof")
 
 
+def validate_claw_appearance_review() -> None:
+    record = json.loads(CLAW_APPEARANCE_REVIEW.read_text(encoding="utf-8"))
+    evidence = {
+        "date": "2026-09-13", "reviewer": "game director", "message": "+", "reviewedCommit": "038fc8a",
+        "scope": "Accept only the displayed completed Claw-Tank second localized arm correction: viewer-left claw, viewer-right gun, no extra right appendage. No other asset, production model or complete T082 acceptance.",
+    }
+    if record.get("approvalEvidence") != evidence:
+        fail("Claw review lost exact director approval")
+    if (record.get("stableId"), record.get("file"), record.get("sha256")) != (
+            "unit.astronauts.mt51_claw_tank",
+            "ArtSource/M85/Preproduction/ClawTankArmCorrectionV2/claw_tank_arms_rev2.png",
+            "5daea3689075e0ee6b116717bc39c58ff3e7ccf894daa17ef21fe01ec8e73c59"):
+        fail("Claw review accepted another asset or substituted image")
+    if (record.get("status"), record.get("productionAccepted"), record.get("canonImpact")) != (
+            "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW", False, "NONE"):
+        fail("Claw review expanded approval into production")
+    if record.get("pending") != ["Source-led production topology, animation and full-roster gameplay-camera acceptance"]:
+        fail("Claw review hid remaining production gates")
+
+
+def validate_mt101_completed_appearance() -> None:
+    record = json.loads(MT101_COMPLETED_APPEARANCE.read_text(encoding="utf-8"))
+    if (record.get("stableId"), record.get("status"), record.get("productionAccepted"), record.get("canonImpact")) != (
+            "unit.astronauts.mt101_armored_drilling_unit", "UNREVIEWED_CONTROLLED_COMPLETED_APPEARANCE", False, "NONE"):
+        fail("MT completed appearance expanded acceptance")
+    if (record.get("historicalFreeFormAttempts"), record.get("nativeApproaches"), record.get("rasterFinishingAttempts"), record.get("tool"), record.get("useCase")) != (
+            2, 1, 1, "built-in image_gen", "sketch-to-render"):
+        fail("MT completed appearance hid retries or changed controlled workflow")
+    authority = record.get("authority", {})
+    if authority.get("continuationMessage") != "далі" or authority.get("taskBaseCommit") != "038fc8a" or authority.get("scope") != "Finish the already recorded controlled native MT-101 construction into a completed raster appearance; no third free-form reconstruction, dimension approval, gameplay change or production acceptance.":
+        fail("MT completed appearance lost controlled continuation authority")
+    expected_sources = [
+        ("NATIVE_CONSTRUCTION_LAYOUT", "ArtSource/M85/Preproduction/SourceLockedCorrectionsV1Finished/mt101_appearance.png", "c378b20e3eca87b9f36879edf9e7284ba4fccad8e6485fe73b0afbf8674f8944"),
+        ("NATIVE_SIX_WHEEL_TOPOLOGY_CONTROL", "ArtSource/M85/Preproduction/SourceLockedCorrectionsV1Finished/mt101_finished_overhead.png", "41391a14a7b6f079b459caf8db55e54eb3754d158ad938b5c0598563b315c317"),
+        ("OFFICIAL_EXTERIOR_REFERENCE_ONLY", "ArtSource/M85/Preproduction/MT101ControlledAppearanceV1/reference_7699_book2_cover.png", "cbb37fddf08f16da2300178cfe97ecf72d91c9caff56be04fb3186c81f69fcdd"),
+        ("OFFICIAL_MODULE_AND_LAUNCHER_OWNERSHIP_ONLY", "ArtSource/M85/Preproduction/MT101ControlledAppearanceV1/reference_7699_book2_page43.png", "6bab21ecc3a968db564589af8cbe00411ccdc41a9cb4d26336d9d38ab126edfb"),
+        ("ACCEPTED_MONOCHROME_FINISH_ONLY_NOT_GEOMETRY", "ArtSource/M85/Preproduction/ClawTankArmCorrectionV2/claw_tank_arms_rev2.png", "5daea3689075e0ee6b116717bc39c58ff3e7ccf894daa17ef21fe01ec8e73c59"),
+    ]
+    if [(a.get("role"), a.get("file"), a.get("sha256")) for a in record.get("inputs", [])] != expected_sources:
+        fail("MT completed appearance changed native/source/style input ownership")
+    for _, path, digest in expected_sources:
+        if hashlib.sha256((ROOT / path).read_bytes()).hexdigest() != digest:
+            fail("MT completed appearance source bytes changed")
+    output = {"file": "mt101_completed_rev1.png", "sha256": "0c1f5ed2eaea7103bc5f2c7bca3fce190d0a90f0a1ef728ba9576868e939e291"}
+    if record.get("output") != output or hashlib.sha256((MT101_COMPLETED_APPEARANCE.parent / output["file"]).read_bytes()).hexdigest() != output["sha256"]:
+        fail("MT completed appearance output changed")
+    if record.get("promptFile") != "edit_prompt.txt" or record.get("promptSha256") != "e713214219d00e8d17ff16f9aa469f4e588ca8e9163b32670bdb02476a173700" or hashlib.sha256((MT101_COMPLETED_APPEARANCE.parent / "edit_prompt.txt").read_bytes()).hexdigest() != record["promptSha256"]:
+        fail("MT completed appearance lost exact prompt provenance")
+    inspection = record.get("inspection", {})
+    if (inspection.get("visibleMainWheels"), inspection.get("occludedMainWheels"), inspection.get("sixWheelRasterTopologyProven"), inspection.get("pixelIdentityClaimed"), inspection.get("requiresDirectorAppearanceReview")) != (4, 2, False, False, True):
+        fail("MT completed appearance hid occlusion or overclaimed pixel proof")
+
+
 def validate_current_comparison() -> None:
     record = json.loads(CURRENT_COMPARISON.read_text(encoding="utf-8"))
     if (record.get("gate"), record.get("state"), record.get("productionAccepted"), record.get("canonImpact")) != (
@@ -682,7 +737,7 @@ def validate_current_comparison() -> None:
     if (claw.get("file"), claw.get("sha256"), claw.get("status")) != (
             "ArtSource/M85/Preproduction/ClawTankArmCorrectionV2/claw_tank_arms_rev2.png",
             "5daea3689075e0ee6b116717bc39c58ff3e7ccf894daa17ef21fe01ec8e73c59",
-            "UNREVIEWED_LOCALIZED_ARM_CORRECTION_CANDIDATE"):
+            "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW"):
         fail("current comparison resurrected rejected Claw arm composition")
     mx = json.loads(MX71_LOCALIZED_REVIEW.read_text(encoding="utf-8"))
     if any(by_id[mx["stableId"]].get(k) != mx[k] for k in ("file", "sha256", "status")):
@@ -692,9 +747,14 @@ def validate_current_comparison() -> None:
     defense = by_id["building.ali.etx_defense_node"]
     if (defense.get("configuration"), defense.get("alternate", {}).get("configuration")) != ("ground_pulse", "air_lance"):
         fail("current comparison lost accepted defense configuration")
-    if by_id["unit.astronauts.mt101_armored_drilling_unit"].get("status") != "UNRESOLVED_CONTEXT_NOT_FINISHED_APPEARANCE":
+    mt = by_id["unit.astronauts.mt101_armored_drilling_unit"]
+    if (mt.get("status"), mt.get("file"), mt.get("sha256")) != (
+            "UNREVIEWED_CONTROLLED_COMPLETED_APPEARANCE",
+            "ArtSource/M85/Preproduction/MT101ControlledAppearanceV1/mt101_completed_rev1.png",
+            "0c1f5ed2eaea7103bc5f2c7bca3fce190d0a90f0a1ef728ba9576868e939e291"):
         fail("current comparison promoted unresolved MT appearance")
-    pending = sorted(["unit.astronauts.mobile_mining_platform", "unit.astronauts.mt51_claw_tank", "unit.astronauts.mt101_armored_drilling_unit"])
+    pending = sorted(["unit.astronauts.mobile_mining_platform", "unit.astronauts.mt101_armored_drilling_unit",
+                      "unit.aliens.etx_alien_strike", "unit.martians.jet_scooter", "unit.martians.red_planet_protector"])
     if record.get("priorityPending") != pending:
         fail("current comparison hid priority review gaps")
     generated = subprocess.run([sys.executable, str(ROOT / "tools/generate-m85-current-comparison.py"), "--check"],
@@ -710,6 +770,8 @@ def main() -> None:
     validate_mx71_localized_edit()
     validate_mx71_localized_review()
     validate_claw_arm_correction()
+    validate_claw_appearance_review()
+    validate_mt101_completed_appearance()
     validate_current_comparison()
     for path in (
         MANIFEST, LEDGER, INSTRUCTION_INDEX, SOURCE_ANALYSIS_POLICY, COMPOSED_DESIGN_PROPOSALS, ROCK_RAIDERS_EVIDENCE, ASTRONAUTS_EVIDENCE,

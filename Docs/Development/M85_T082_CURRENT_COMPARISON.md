@@ -51,8 +51,10 @@ viewer-right = gun arm, without a right claw or third lateral appendage.
 One built-in localized edit replaces the left barrel tips with a simple
 two-jaw gripper and deletes the extra right pincer and its branch, retaining
 the right twin-barrel gun, cockpit, tracks and T-pose. This is correction
-attempt 2; no further retry is authorized. It remains
-`UNREVIEWED_LOCALIZED_ARM_CORRECTION_CANDIDATE`, not director-accepted art.
+attempt 2; no further retry is authorized. The later director `+` to `038fc8a`
+accepts this completed appearance for comparative review, recorded separately
+in `Content/Presentation/SuperScout/claw_tank_appearance_review.json`.
+Its generation-time unreviewed status remains historical; production is HOLD.
 
 ![Claw-Tank corrected candidate](/Users/pavlosidash/Developer/Lego-Space-RTS/ArtSource/M85/Preproduction/ClawTankArmCorrectionV2/claw_tank_arms_rev2.png)
 
@@ -66,20 +68,30 @@ automatically prove image topology or pixel-exact preservation.
 
 ## Remaining scope / manual judgement
 
-Review only the two completed appearances above: source resemblance and whether
-their intended roles are readable. No dimension reapproval, setup, playtest or
-primitive-blockout approval is requested. Approval of this pair would not
-approve the 66-entry gallery, MT-101, configuration coverage or production.
+Claw's appearance is now accepted; do not ask for its approval again.
+The next completed four-image batch is recorded in
+`Docs/Development/M85_T082_OPEN_APPEARANCE_BATCH.md`: Crystal Reaper,
+Alien Strike, Jet Scooter and Red Planet Protector. Source resemblance and
+tool/body composition need human judgement, not another size/blockout gate.
+This batch cannot approve the 66-entry gallery, MT-101, configurations or production.
 
-MT-101 still needs a completed source-controlled appearance after its two
-free-form attempts. The existing native source construction remains available
-internally; it is not handed off as finished art. Its old FullV2 raster in the
-gallery is visibly marked unresolved context. Earlier unreviewed Jet Scooter,
+Continuation 2026-09-14: MT-101 now selects its first controlled completed
+native-to-raster appearance, still unreviewed. Native construction remains
+internal control; the old unresolved FullV2 raster is no longer selected.
+See `Docs/Development/M85_T082_MT101_CONTROLLED_APPEARANCE.md` for the exact
+prompt, source references and visible-wheel limitation. Earlier unreviewed Jet Scooter,
 Strike and Protector records remain unreviewed; no historical user finding is
 silently reclassified. Mothership's operators/raised printing and the two
 Martian archival gaps also remain disclosed. T082/T083 remain HOLD.
 
 ## Files / verification / regression / build
+
+Latest Claw approval/MT finishing continuation: new separate approval record,
+MT completed raster/prompt/reference copies/provenance and eight added guards
+(all previous 61 retained). `./tools/verify.sh`: PASS 23 fast blocking stages,
+317 NUnit tests and 69 review guards, zero blocking/diagnostic failures,
+at `Artifacts/Verification/20260913T222650Z-fast-summary.txt` (UTC).
+Validator, byte-exact gallery regeneration and `git diff --check`: PASS.
 
 Files: Claw image/prompt/reference/edit record, separate MX image-review record,
 gallery generator + generated HTML/

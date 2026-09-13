@@ -12,6 +12,40 @@ import validate_m85_super_scout as validator
 
 
 class ReviewGuardTests(unittest.TestCase):
+    def test_mt_completed_appearance_cannot_auto_accept(self):
+        self.assert_rejected(validator.MT101_COMPLETED_APPEARANCE,
+                             lambda f: f.update(status="DIRECTOR_ACCEPTED"), "expanded acceptance")
+
+    def test_mt_completed_appearance_cannot_hide_raster_retry(self):
+        self.assert_rejected(validator.MT101_COMPLETED_APPEARANCE,
+                             lambda f: f.update(rasterFinishingAttempts=2), "hid retries")
+
+    def test_mt_completed_appearance_cannot_claim_six_visible_wheels(self):
+        self.assert_rejected(validator.MT101_COMPLETED_APPEARANCE,
+                             lambda f: f["inspection"].update(sixWheelRasterTopologyProven=True),
+                             "hid occlusion")
+
+    def test_mt_completed_appearance_keeps_native_as_layout_only(self):
+        self.assert_rejected(validator.MT101_COMPLETED_APPEARANCE,
+                             lambda f: f["inputs"][0].update(role="ACCEPTED_APPEARANCE"),
+                             "input ownership")
+
+    def test_claw_review_requires_exact_director_evidence(self):
+        self.assert_rejected(validator.CLAW_APPEARANCE_REVIEW,
+                             lambda f: f.pop("approvalEvidence"), "exact director approval")
+
+    def test_claw_review_cannot_accept_production(self):
+        self.assert_rejected(validator.CLAW_APPEARANCE_REVIEW,
+                             lambda f: f.update(productionAccepted=True), "approval into production")
+
+    def test_claw_review_cannot_accept_mt61_by_omission(self):
+        self.assert_rejected(validator.CLAW_APPEARANCE_REVIEW,
+                             lambda f: f.update(stableId="unit.astronauts.mobile_mining_platform"), "another asset")
+
+    def test_claw_review_cannot_hide_production_gates(self):
+        self.assert_rejected(validator.CLAW_APPEARANCE_REVIEW,
+                             lambda f: f.update(pending=[]), "remaining production gates")
+
     def test_claw_correction_cannot_reverse_arm_ownership(self):
         self.assert_rejected(validator.CLAW_ARM_CORRECTION,
                              lambda f: f["requiredArmLayout"].update(left="GUN", right="CLAW"),

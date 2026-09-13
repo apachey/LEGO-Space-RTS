@@ -8,9 +8,11 @@
   "productionAccepted": false,
   "canonImpact": "NONE",
   "priorityPending": [
+    "unit.aliens.etx_alien_strike",
     "unit.astronauts.mobile_mining_platform",
     "unit.astronauts.mt101_armored_drilling_unit",
-    "unit.astronauts.mt51_claw_tank"
+    "unit.martians.jet_scooter",
+    "unit.martians.red_planet_protector"
   ],
   "selections": [
     {
@@ -292,19 +294,19 @@
       "stableId": "unit.astronauts.mt51_claw_tank",
       "file": "ArtSource/M85/Preproduction/ClawTankArmCorrectionV2/claw_tank_arms_rev2.png",
       "sha256": "5daea3689075e0ee6b116717bc39c58ff3e7ccf894daa17ef21fe01ec8e73c59",
-      "status": "UNREVIEWED_LOCALIZED_ARM_CORRECTION_CANDIDATE",
-      "origin": "ClawTankArmCorrectionV2/edit_manifest.json",
+      "status": "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW",
+      "origin": "claw_tank_appearance_review.json",
       "code": "C26",
       "name": "MT-51 Claw-Tank",
       "faction": "Astronauts",
-      "priorityPending": true
+      "priorityPending": false
     },
     {
       "stableId": "unit.astronauts.mt101_armored_drilling_unit",
-      "file": "Docs/Development/M85SuperScout/Silhouettes/FullV2/Renders/unit_astronauts_mt101_armored_drilling_unit.png",
-      "sha256": "13da06e3ca51dfa72ef3853ee1fb619b2ab4fcc84e3f6aebee966c826c3e6537",
-      "status": "UNRESOLVED_CONTEXT_NOT_FINISHED_APPEARANCE",
-      "origin": "FullV2/generation_manifest.json:assets",
+      "file": "ArtSource/M85/Preproduction/MT101ControlledAppearanceV1/mt101_completed_rev1.png",
+      "sha256": "0c1f5ed2eaea7103bc5f2c7bca3fce190d0a90f0a1ef728ba9576868e939e291",
+      "status": "UNREVIEWED_CONTROLLED_COMPLETED_APPEARANCE",
+      "origin": "MT101ControlledAppearanceV1/edit_manifest.json",
       "code": "C27",
       "name": "MT-101 Armored Drilling Unit",
       "faction": "Astronauts",
@@ -463,7 +465,7 @@
       "code": "C41",
       "name": "ETX Alien Strike",
       "faction": "Aliens",
-      "priorityPending": false
+      "priorityPending": true
     },
     {
       "stableId": "unit.aliens.etx_alien_infiltrator",
@@ -593,7 +595,7 @@
       "code": "C52",
       "name": "Jet Scooter",
       "faction": "Martians",
-      "priorityPending": false
+      "priorityPending": true
     },
     {
       "stableId": "unit.martians.aero_skiff",
@@ -637,7 +639,7 @@
       "code": "C56",
       "name": "Red Planet Protector",
       "faction": "Martians",
-      "priorityPending": false
+      "priorityPending": true
     },
     {
       "stableId": "unit.martians.excavation_searcher",

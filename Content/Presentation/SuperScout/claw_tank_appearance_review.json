@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "stableId": "unit.astronauts.mt51_claw_tank",
+  "status": "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW",
+  "approvalEvidence": {
+    "date": "2026-09-13",
+    "reviewer": "game director",
+    "message": "+",
+    "reviewedCommit": "038fc8a",
+    "scope": "Accept only the displayed completed Claw-Tank second localized arm correction: viewer-left claw, viewer-right gun, no extra right appendage. No other asset, production model or complete T082 acceptance."
+  },
+  "file": "ArtSource/M85/Preproduction/ClawTankArmCorrectionV2/claw_tank_arms_rev2.png",
+  "sha256": "5daea3689075e0ee6b116717bc39c58ff3e7ccf894daa17ef21fe01ec8e73c59",
+  "productionAccepted": false,
+  "canonImpact": "NONE",
+  "pending": ["Source-led production topology, animation and full-roster gameplay-camera acceptance"],
+  "historicalBoundary": "Later appearance approval supersedes the original unreviewed generation state only through this review. Earlier rejected composition, prompts, hashes and two-attempt limit remain unchanged. MT-61 and other images are not accepted by this Claw-only response."
+}

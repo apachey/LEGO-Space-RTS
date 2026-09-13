@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "stableId": "unit.astronauts.mt101_armored_drilling_unit",
+  "status": "UNREVIEWED_CONTROLLED_COMPLETED_APPEARANCE",
+  "productionAccepted": false,
+  "canonImpact": "NONE",
+  "tool": "built-in image_gen",
+  "useCase": "sketch-to-render",
+  "historicalFreeFormAttempts": 2,
+  "nativeApproaches": 1,
+  "rasterFinishingAttempts": 1,
+  "authority": {
+    "date": "2026-09-14",
+    "continuationMessage": "далі",
+    "taskBaseCommit": "038fc8a",
+    "approvedNextStepSource": "Docs/Development/PROJECT_STATE.md and Docs/Development/M85_T082_SOURCE_LOCKED_CORRECTIONS.md",
+    "scope": "Finish the already recorded controlled native MT-101 construction into a completed raster appearance; no third free-form reconstruction, dimension approval, gameplay change or production acceptance."
+  },
+  "inputs": [
+    {"role": "NATIVE_CONSTRUCTION_LAYOUT", "file": "ArtSource/M85/Preproduction/SourceLockedCorrectionsV1Finished/mt101_appearance.png", "sha256": "c378b20e3eca87b9f36879edf9e7284ba4fccad8e6485fe73b0afbf8674f8944"},
+    {"role": "NATIVE_SIX_WHEEL_TOPOLOGY_CONTROL", "file": "ArtSource/M85/Preproduction/SourceLockedCorrectionsV1Finished/mt101_finished_overhead.png", "sha256": "41391a14a7b6f079b459caf8db55e54eb3754d158ad938b5c0598563b315c317"},
+    {"role": "OFFICIAL_EXTERIOR_REFERENCE_ONLY", "file": "ArtSource/M85/Preproduction/MT101ControlledAppearanceV1/reference_7699_book2_cover.png", "sha256": "cbb37fddf08f16da2300178cfe97ecf72d91c9caff56be04fb3186c81f69fcdd", "officialPdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517777.pdf", "page": 1},
+    {"role": "OFFICIAL_MODULE_AND_LAUNCHER_OWNERSHIP_ONLY", "file": "ArtSource/M85/Preproduction/MT101ControlledAppearanceV1/reference_7699_book2_page43.png", "sha256": "6bab21ecc3a968db564589af8cbe00411ccdc41a9cb4d26336d9d38ab126edfb", "officialPdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517777.pdf", "page": 43},
+    {"role": "ACCEPTED_MONOCHROME_FINISH_ONLY_NOT_GEOMETRY", "file": "ArtSource/M85/Preproduction/ClawTankArmCorrectionV2/claw_tank_arms_rev2.png", "sha256": "5daea3689075e0ee6b116717bc39c58ff3e7ccf894daa17ef21fe01ec8e73c59"}
+  ],
+  "promptFile": "edit_prompt.txt",
+  "promptSha256": "e713214219d00e8d17ff16f9aa469f4e588ca8e9163b32670bdb02476a173700",
+  "output": {"file": "mt101_completed_rev1.png", "sha256": "0c1f5ed2eaea7103bc5f2c7bca3fce190d0a90f0a1ef728ba9576868e939e291"},
+  "inspection": {
+    "visualFinding": "Finished studs/panels/glazing and seated human operator; steep closed front cabin, separate circular ball launcher and articulated side auger, docked rear cockpit/tubes/fins. Main three-quarter native layout visually retained.",
+    "visibleMainWheels": 4,
+    "occludedMainWheels": 2,
+    "sixWheelRasterTopologyProven": false,
+    "pixelIdentityClaimed": false,
+    "requiresDirectorAppearanceReview": true
+  },
+  "pending": ["Director source-resemblance and completed-appearance acceptance", "Final source-led wheel/cabin/tool/docking topology, animations and gameplay-camera acceptance"],
+  "boundary": "Native construction remains internal control, not the final appearance selection. This is its first controlled raster finishing, not a third free-form design retry. Raster may drift from source/native geometry; no pixel or certified buildability proof. Other four displayed correction images, accepted MX71/Claw bytes and historical boards remain unchanged and are not newly approved."
+}

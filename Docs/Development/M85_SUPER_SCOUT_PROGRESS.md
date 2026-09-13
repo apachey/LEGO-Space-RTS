@@ -14,7 +14,9 @@ vertical capsule. The director accepted rev3's open horizontal three-arch deck
 and overall source-derived composition for the next composite review.
 MT-101 and MX-71 retain their historical two-free-form-attempt stops;
 the recorded controlled next step has source-informed native topology checks.
-MT-101 remains unreviewed. The director corrected the MX-71 handoff: its earlier
+MT-101 now has a first controlled native-to-raster completed appearance, still
+unreviewed; the native construction is internal control, not final art.
+The director corrected the MX-71 handoff: its earlier
 successful generated airframe is the appearance basis; the native render is
 internal only. The subsequent `+` authorizes a weapons-only edit of that exact
 base. The later `+` to `6a211dc` accepts that completed localized edit for
@@ -40,6 +42,27 @@ original director message; all 66 initial responses were supplied.
 
 ## Completed in the identity-baseline pass
 
+Latest continuation: the director's `+` to `038fc8a` accepts only the displayed
+Claw-Tank localized second correction for comparative appearance review.
+Exact authority/image hash are in `Content/Presentation/SuperScout/claw_tank_appearance_review.json`.
+Historical generation status and both correction attempts remain unchanged.
+The current gallery marks Claw accepted and excludes it from pending priority.
+The next coherent handoff assembles the four existing completed open corrections:
+Crystal Reaper, Alien Strike, Jet Scooter and Protector, with gameplay roles.
+The 2026-09-14 continuation then finishes MT-101 from the recorded native
+construction with one built-in raster pass, not a third free-form reconstruction.
+The gallery selects this unreviewed completed appearance; four main wheels are
+visible and two far contacts remain occluded, not automatically proven by raster.
+No approval of the other four images or production is inferred. Eight new
+authority/scope/finishing guards preserve the previous 61 cases (69 total).
+See `Docs/Development/M85_T082_OPEN_APPEARANCE_BATCH.md`.
+MT-101 prompt, source controls and appearance:
+`Docs/Development/M85_T082_MT101_CONTROLLED_APPEARANCE.md`.
+Verification: `./tools/verify.sh` PASS 23 fast blocking stages, 317 NUnit tests
+and 69 review guards, zero blocking/diagnostic failures, at
+`Artifacts/Verification/20260913T222650Z-fast-summary.txt` (UTC).
+Exact gallery regeneration and `git diff --check`: PASS.
+
 Latest director correction: Claw-Tank must have one claw on viewer-left and
 one gun arm on viewer-right, no right claw. The earlier correction mistakenly
 replaced the excluded Alien spacecraft with a claw; rev1 is rejected for that
@@ -47,8 +70,9 @@ composition, not accepted by omission. One localized second correction now
 replaces left barrel tips with one two-jaw gripper and deletes the extra right
 pincer/branch while retaining the right gun. Exact authority, prompt, source
 page and hashes are in `ArtSource/M85/Preproduction/ClawTankArmCorrectionV2/`.
-The current gallery selects this unreviewed candidate. Appearance acceptance
-remains pending; no third retry or production integration is authorized.
+At generation time the gallery selected this unreviewed candidate. The later
+appearance acceptance is recorded above; no third retry or production
+integration is authorized.
 Five new negative guards preserve ownership, delete-versus-replace intent,
 attempt count, unreviewed status and current selection.
 Verification: `./tools/verify.sh` PASS 23/23 fast blocking stages, 317 NUnit
@@ -60,8 +84,9 @@ recorded in `Content/Presentation/SuperScout/mx71_localized_appearance_review.js
 A separate `FullV2/CurrentComparisonV1/` gallery assembles all 66 identities and
 67 existing image views, retaining both accepted defense configurations.
 It is DIAGNOSTIC, named and unscaled, not a fresh blind/game-camera acceptance
-or production promotion. MT-61 and Claw-Tank corrections remain review candidates;
-MT-101's old raster is unresolved context, never a finished-native approval gate.
+or production promotion. MT-61 remains a review candidate; Claw is now accepted;
+MT-101's old unresolved raster is historical; the current selection now uses
+the completed controlled appearance above, never a finished-native approval gate.
 Earlier unreviewed Jet Scooter, Strike and Protector records and Mothership's
 source corrections remain open. Historical boards and image bytes are unchanged.
 See `Docs/Development/M85_T082_CURRENT_COMPARISON.md`.

@@ -884,17 +884,31 @@ live; the current schema-9 copy/paste retains the complete experiment.
   and 67 existing views, including both accepted defense heads and the accepted
   localized MX image, rather than resurrecting rejected variants/donor studies.
   This is DIAGNOSTIC, not a new blind/game-camera review or complete acceptance.
-  MT-61 and Claw-Tank are the next completed priority candidates for review;
-  MT-101 still requires a finished appearance, with its old raster kept only as
-  unresolved context. Earlier unreviewed correction records are not auto-accepted.
+  Earlier unreviewed correction records are not auto-accepted. Claw's later
+  approval and MT-101's completed appearance are recorded below; old unresolved
+  MT art remains historical, not the current gallery selection.
   See `Docs/Development/M85_T082_CURRENT_COMPARISON.md`.
   The director then rejected Claw rev1's extra right claw and clarified the
   picture-relative layout: one left claw, one right gun arm. The previous
   prompt incorrectly converted the excluded Alien craft into a claw.
   One localized second correction in `ArtSource/M85/Preproduction/ClawTankArmCorrectionV2/`
   restores the left gripper and removes the extra right branch. The gallery
-  selects this unreviewed candidate; no image/production acceptance or further
-  retry is inferred. Ownership, deletion intent and selected bytes are guarded.
+  initially selected this unreviewed candidate. The later director `+` to
+  `038fc8a` accepts only that Claw appearance for comparative review, separately
+  recorded in `Content/Presentation/SuperScout/claw_tank_appearance_review.json`.
+  The gallery now marks it accepted; production/further retries are not approved.
+  The next completed four-image handoff is Crystal Reaper, Alien Strike,
+  Jet Scooter and Protector, all still open review candidates.
+  See `Docs/Development/M85_T082_OPEN_APPEARANCE_BATCH.md`.
+  The 2026-09-14 `далі` continues the recorded controlled MT-101 construction
+  into one completed monochrome raster appearance, not a third free-form design
+  retry. The current gallery selects this unreviewed image. Permanent closed
+  cabin, separate upper launcher/side auger and docked rear craft are visible;
+  four wheels are visible, two far contacts remain occluded, so six-wheel raster
+  topology and source fidelity are not automatically proven. Exact input roles,
+  prompt, output hashes and attempt counts are guarded (69 cases total).
+  See `Docs/Development/M85_T082_MT101_CONTROLLED_APPEARANCE.md`.
+  Ownership, deletion intent, approval scope and selected bytes are guarded.
   Actual saved mesh transforms and nine negative native control fixtures pass.
   See `Docs/Development/M85_T082_SOURCE_LOCKED_CORRECTIONS.md`.
   Accepted image bytes, original boards, historical two-attempt stops and gameplay
@@ -939,10 +953,18 @@ step and must be announced when new visual evidence is actually required.
 
 ## Verification state
 
+The Claw appearance-approval record and controlled MT-101 completed appearance
+passed `./tools/verify.sh`: all 23 fast blocking stages, 317 NUnit tests and
+69 review guards, zero blocking/diagnostic failures, at
+`Artifacts/Verification/20260913T222650Z-fast-summary.txt` (UTC run ID).
+Exact gallery regeneration and `git diff --check` pass. MT-101 is visually
+inspected but unreviewed; no raster topology proof or new playable export.
+
 The Claw-Tank localized arm correction passed `./tools/verify.sh`: all 23 fast
 blocking stages, 317 NUnit tests and 61 review-record guards, zero blocking or
 diagnostic failures, at `Artifacts/Verification/20260913T185521Z-fast-summary.txt`.
-The new image is visually inspected, not director-accepted; automated guards
+The image was initially visually inspected and later director-accepted only
+for comparative appearance as recorded above; automated guards
 protect source/prompt hashes, arm-role requirements and current-gallery selection,
 not image topology. No new playable export or runtime/model integration.
 
