@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "status": "COMPLETED_APPEARANCE_CONCEPT_REQUIRES_DIRECTOR_REVIEW",
+  "date": "2026-09-13",
+  "authority": "Director requested completed appearance after accepting dimensions; construction blockouts are internal checks, not a new approval gate.",
+  "tool": "image_gen.imagegen",
+  "workflow": "Controlled native geometry targets followed by sketch-to-render appearance finishing. Not a third free-form composition revision.",
+  "director_appearance_accepted": false,
+  "production_accepted": false,
+  "canon_impact": "NONE",
+  "old_manifests_untouched": true,
+  "native_audit": "appearance_audit.json",
+  "limitations": [
+    "Native dimensions and foundation equality do not prove raster dimensions or pixel-identical foundations.",
+    "Raster molded-part seams and embossed LEGO stud lettering are generated interpretations, not official product or physical-buildability evidence.",
+    "No gameplay import, GLB, production rig, LOD or playable-build update."
+  ],
+  "assets": [
+    {
+      "id": "servitor",
+      "output": "servitor_appearance.png",
+      "sha256": "86135fbca520d402cef5d94f9ff76d2f293191aebfdfc681e751a5521101db21",
+      "native_target": "servitor_finished.png",
+      "reference_inputs": [
+        "/Users/pavlosidash/Developer/Lego-Space-RTS/ArtSource/M85/Preproduction/AlienCompletedAppearanceV1/servitor_finished.png",
+        "/private/tmp/lego-space-rts-t082-sources/aliens/rendered/5617-p01.png"
+      ],
+      "official_reference_url": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4525566.pdf",
+      "reference_page": "5617-p01.png",
+      "prompt": "Use case: sketch-to-render.\nAsset type: finished LEGO Space RTS visual concept for director review, NOT an intermediate blockout.\nImage 1 is the exact construction/proportion target, from a native 3D model. Image 2 is official LEGO Mars Mission construction/material style reference only, NOT a layout to copy.\nFinish image 1 as a convincing completed LEGO toy-scale model product render. Preserve its overall footprint, relative height, major masses, connected modules, camera and subject count. Replace faceted CAD-looking surfaces with recognizable broad molded LEGO curved slopes, wedge plates, attached roots, a few full-size connection studs and physically readable simple joins. Do NOT merely recolor the primitive model. Do NOT add dense geometry. Construction complexity comparable to official small/medium Mars Mission models: large simple pieces, not layered sci-fi greebles.\nUse source-family black armor, restrained opaque lime molded inserts, dark-gray connected structure, transparent yellow-green small energy interfaces, and a few recessed pale internal support / dark-green living links. Living links only in narrow protected structural slots, not exposed skin, machine hydraulics, loose tentacles or decorative veins. Opaque lime never glows.\nNeutral light gray studio backdrop, clean soft light, readable black surfaces, subject fills frame with modest margin, grounded soft contact shadow or visible worker hover clearance. Completed crisp product/concept render, no cinematic environment, no typography, no logos, no watermarks, no pilot, no extra props. Do not increase detail to create polish.\nSubject: ETX Servitor, a small uncrewed economic hover worker for ore/crystal collection, construction and repair; NOT a combat craft or humanoid robot.\nInvariants: Body 6x8 connector-grid units, only 8 plates high, overall length 10 with the SHORT two-jaw utility clamp. Two broad connected side shell valves enclose a low body and narrow protected support slot. Finish the mouth as a convincing attached paired molded utility clamp, NOT guns or a human robot arm. Retain four large rear connection studs, not rows of studs. The whole craft is small minifigure-scale. Closed uncrewed hull, no cockpit/seat/alien rider, no legs, no weapons, no crystal permanently attached to body. Donor reference supplies small-chassis simplicity, NOT its pilot or lime rider arches. The two valves should read as compact molded curved shell pieces rather than two massive plain bricks. No StarCraft drone or generic present-day machine.",
+      "completed_appearance_variants": 1,
+      "original_generated_file": "/Users/pavlosidash/.codex/generated_images/01a08328-d788-7e20-ab4f-19f41ce08f88/exec-ba66d17c-3faa-40fb-94dd-759c1cf28a95.png",
+      "dispatch_note": "Completed interrupted dispatch recovered; not regenerated."
+    },
+    {
+      "id": "ground_pulse",
+      "output": "ground_pulse_appearance.png",
+      "sha256": "c980932a8af360892eab7eb45aa25ea6932850ba3d9ea5f4aa5a9ed1dda4372b",
+      "native_target": "ground_pulse_finished.png",
+      "reference_inputs": [
+        "/Users/pavlosidash/Developer/Lego-Space-RTS/ArtSource/M85/Preproduction/AlienCompletedAppearanceV1/ground_pulse_finished.png",
+        "/private/tmp/lego-space-rts-t082-sources/aliens/rendered/7697-p15.png"
+      ],
+      "official_reference_url": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4515381.pdf",
+      "reference_page": "7697-p15.png",
+      "prompt": "Use case: sketch-to-render.\nAsset type: finished LEGO Space RTS visual concept for director review, NOT an intermediate blockout.\nImage 1 is the exact construction/proportion target, from a native 3D model. Image 2 is official LEGO Mars Mission construction/material style reference only, NOT a layout to copy.\nFinish image 1 as a convincing completed LEGO toy-scale model product render. Preserve its overall footprint, relative height, major masses, connected modules, camera and subject count. Replace faceted CAD-looking surfaces with recognizable broad molded LEGO curved slopes, wedge plates, attached roots, a few full-size connection studs and physically readable simple joins. Do NOT merely recolor the primitive model. Do NOT add dense geometry. Construction complexity comparable to official small/medium Mars Mission models: large simple pieces, not layered sci-fi greebles.\nUse source-family black armor, restrained opaque lime molded inserts, dark-gray connected structure, transparent yellow-green small energy interfaces, and a few recessed pale internal support / dark-green living links. Living links only in narrow protected structural slots, not exposed skin, machine hydraulics, loose tentacles or decorative veins. Opaque lime never glows.\nNeutral light gray studio backdrop, clean soft light, readable black surfaces, subject fills frame with modest margin, grounded soft contact shadow or visible worker hover clearance. Completed crisp product/concept render, no cinematic environment, no typography, no logos, no watermarks, no pilot, no extra props. Do not increase detail to create polish.\nSubject: Ground Pulse fixed anti-ground defense, a source-derived low three-segment broken-ring emitter crown, NOT a siege/mobile unit.\nInvariants: 12x12 connector-grid base envelope, total height 15 plates. EXACTLY THREE broad attached curved crown segments, a clear central opening, three simple radial structural roots and THREE radially horizontal emitters with small transparent ends. Keep the three equal 120-degree crown segments readable: do not merge into two crescents or a single continuous ring. Keep exactly four broad stationary ground-contact pads and connected fixed shell roots around the low armored central capsule. These are fixed foundations NOT articulated walking legs. Refine the same base as in image 1 rather than adding a generic rectangular tower. A few recessed protected living interfaces attach the capsule to actual roots. No fighter perched atop base, no giant crystal, no operator, no new barrels. Official reference informs broad curved parts and emitter interfaces, not the original piloted vehicle layout.",
+      "completed_appearance_variants": 1,
+      "original_generated_file": "/Users/pavlosidash/.codex/generated_images/01a08328-d788-7e20-ab4f-19f41ce08f88/exec-80d66ffb-1549-47be-ab8c-b400e8e199ae.png",
+      "dispatch_note": "Interrupted original dispatch had no recoverable output; same prompt/input resubmitted once to complete it. No visual redesign or second selected variant."
+    },
+    {
+      "id": "air_lance",
+      "output": "air_lance_appearance.png",
+      "sha256": "0feae82a044f62af8c3245fca9325c29f014968ab817eafa5dce4b0d0f3419cd",
+      "native_target": "air_lance_finished.png",
+      "reference_inputs": [
+        "/Users/pavlosidash/Developer/Lego-Space-RTS/ArtSource/M85/Preproduction/AlienCompletedAppearanceV1/air_lance_finished.png",
+        "/private/tmp/lego-space-rts-t082-sources/aliens/rendered/7692-p23.png"
+      ],
+      "official_reference_url": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4524070.pdf",
+      "reference_page": "7692-p23.png",
+      "prompt": "Use case: sketch-to-render.\nAsset type: finished LEGO Space RTS visual concept for director review, NOT an intermediate blockout.\nImage 1 is the exact construction/proportion target, from a native 3D model. Image 2 is official LEGO Mars Mission construction/material style reference only, NOT a layout to copy.\nFinish image 1 as a convincing completed LEGO toy-scale model product render. Preserve its overall footprint, relative height, major masses, connected modules, camera and subject count. Replace faceted CAD-looking surfaces with recognizable broad molded LEGO curved slopes, wedge plates, attached roots, a few full-size connection studs and physically readable simple joins. Do NOT merely recolor the primitive model. Do NOT add dense geometry. Construction complexity comparable to official small/medium Mars Mission models: large simple pieces, not layered sci-fi greebles.\nUse source-family black armor, restrained opaque lime molded inserts, dark-gray connected structure, transparent yellow-green small energy interfaces, and a few recessed pale internal support / dark-green living links. Living links only in narrow protected structural slots, not exposed skin, machine hydraulics, loose tentacles or decorative veins. Opaque lime never glows.\nNeutral light gray studio backdrop, clean soft light, readable black surfaces, subject fills frame with modest margin, grounded soft contact shadow or visible worker hover clearance. Completed crisp product/concept render, no cinematic environment, no typography, no logos, no watermarks, no pilot, no extra props. Do not increase detail to create polish.\nSubject: Air Lance fixed anti-air defense, narrow split-blade UPWARD firing head on the SAME four-contact foundation design as the Ground Pulse native model.\nInvariants: 12x12 connector-grid base envelope, total height 26 plates. Exactly two broad upright attached black curved blade panels, separated by a narrow central slot, with THREE upward-pointing short emitters on one connected support between them. The source's rear triple cluster is deliberately relocated and reoriented UPWARD, not mixed with its side/front gun. Retain direct visible root collars / protected support connection. Keep the base from image 1 exactly in design: four stationary wide pads, four short fixed roots, low central armored capsule and two small green interfaces. No moving/walking legs, pedestal elongation, floating blade, extra cannon, cockpit, rider, crystal tower. Lime accent follows each blade's inner curve, simple molded strip not dense circuitry. Source reference only supplies paired curved blades and rear three-tip emitter grammar; do not transplant whole spacecraft.",
+      "completed_appearance_variants": 1,
+      "original_generated_file": "/Users/pavlosidash/.codex/generated_images/01a08328-d788-7e20-ab4f-19f41ce08f88/exec-ac5dbadf-e1c9-42f0-b96c-030260460cbb.png",
+      "dispatch_note": "Completed interrupted dispatch recovered; not regenerated."
+    }
+  ]
+}

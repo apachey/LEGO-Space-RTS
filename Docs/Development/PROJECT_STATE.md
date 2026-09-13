@@ -845,9 +845,15 @@ live; the current schema-9 copy/paste retains the complete experiment.
   Controlled source-informed native 3D drafts now preserve those accepted
   dimensions, retain all three Ground Pulse crescents and use exactly matching
   lower defense geometry. One editable preproduction source and two common-scale
-  three-quarter/overhead boards are ready for exterior/complexity review, not
-  renewed size approval or production acceptance. See
-  `Docs/Development/M85_T082_ALIEN_SHAPE_DRAFTS.md`.
+  three-quarter/overhead boards remain internal construction checks. The director
+  clarified that these unfinished drafts are not an approval gate: completed
+  appearance is the requested handoff after size acceptance. Three controlled
+  native-to-raster finished concepts now exist for Servitor, Ground Pulse and
+  Air Lance, with exact prompts, references and hashes retained. These are
+  COMPLETED_APPEARANCE_CONCEPT_REQUIRES_DIRECTOR_REVIEW, not integrated or
+  production-accepted models; native bounds do not prove raster dimensions.
+  See `Docs/Development/M85_T082_ALIEN_COMPLETED_APPEARANCE.md`; historical
+  drafts remain in `Docs/Development/M85_T082_ALIEN_SHAPE_DRAFTS.md`.
   Accepted images, original boards, MT-101/MX-71 stop gates and gameplay remain
   unchanged. T082 still requires renewed complete 24/44/72-cell acceptance.
 - The official 7301 instruction page also exposed a stale audit-reconciliation

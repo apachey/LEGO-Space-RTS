@@ -1,0 +1,67 @@
+{
+  "Servitor": {
+    "bounds_studs": [
+      6.000000052154064,
+      10.00000024214387,
+      3.199999948265031
+    ],
+    "mesh_modules": 22,
+    "triangles": 792,
+    "status": "COMPLETED_EXTERIOR_CONCEPT_REQUIRES_DIRECTOR_REVIEW",
+    "evaluated_bounds_studs": [
+      6.000000052154064,
+      10.00000024214387,
+      3.199999948265031
+    ]
+  },
+  "GroundPulse": {
+    "bounds_studs": [
+      12.000000104308128,
+      12.000000104308128,
+      6.000000052154064
+    ],
+    "mesh_modules": 48,
+    "triangles": 2140,
+    "status": "COMPLETED_EXTERIOR_CONCEPT_REQUIRES_DIRECTOR_REVIEW",
+    "evaluated_bounds_studs": [
+      12.000000104308128,
+      12.000000104308128,
+      6.000000052154064
+    ]
+  },
+  "AirLance": {
+    "bounds_studs": [
+      12.000000104308128,
+      12.000000104308128,
+      10.400000028312206
+    ],
+    "mesh_modules": 42,
+    "triangles": 1344,
+    "status": "COMPLETED_EXTERIOR_CONCEPT_REQUIRES_DIRECTOR_REVIEW",
+    "evaluated_bounds_studs": [
+      12.000000104308128,
+      12.000000104308128,
+      10.400000028312206
+    ]
+  },
+  "shared_foundation_sha256": "f0c5d77d40b3115ba3d753879c12df1b5ad3ae9a16cf5a2ba5b8b7c334290694",
+  "checks": {
+    "accepted_envelopes": "PASS",
+    "worker_body_tool_separation": "PASS",
+    "identical_defense_foundations": "PASS",
+    "three_ground_lobes": "PASS",
+    "ground_horizontal_air_upward_axes": "PASS",
+    "evaluated_finished_envelopes": "PASS",
+    "source_family_material_roles": "PASS",
+    "no_permanent_emission": "PASS"
+  },
+  "files_sha256": {
+    "alien_finished_concepts_v1.blend": "7388b486a57bb0262f9aaed2288d49513f06297eaa94e936e9c106bf0156da05",
+    "servitor_finished.png": "fa69ae33f3cf471181b011cd5df1000f117d513ae239935e938a4cc4d73c7f11",
+    "servitor_top.png": "575022ea70942fec4babadc16455c4fbb59f95c3ae9acc9a79e07bd72366c349",
+    "ground_pulse_finished.png": "2383cee35a8eee1709d72f6d59d0fb7911df06ed5bb5c1e8bcb8b73511b3cd93",
+    "ground_pulse_top.png": "e48a850e17be53f15ba7d26b9d118c6b8ee0c3093ef8065acd866b1d21a31e36",
+    "air_lance_finished.png": "bf4e222e840d39c3494acd2aaec6aa9d733038ee4024775c778a71c61368569a",
+    "air_lance_top.png": "b02a2f7ee52a9f229b2ced64f21137cc2f446fdc64e051aaf363f6ed6a736683"
+  }
+}

@@ -629,6 +629,12 @@ approval of size normally mean continue the approved work, not deliver another
 confirmation-only handoff. Preserve all canon, scope and stop-rule boundaries;
 approval of one property is not approval of unreviewed properties.
 
+Director clarification 2026-09-13: construction blockouts are internal checks,
+not a mandatory director approval gate. After dimensions are accepted, finish
+the already-authorized visual concept and show a completed appearance for
+review; do not ask the director to judge unfinished primitive geometry.
+Final appearance still requires acceptance before production integration.
+
 Hand off when there is a substantive result for review, a completed bounded
 task, or a genuine blocker/new decision. Necessary progress updates should
 contain actual progress or useful findings, not repeated promises about cadence.
