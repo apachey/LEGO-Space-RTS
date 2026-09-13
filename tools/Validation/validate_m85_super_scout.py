@@ -48,6 +48,7 @@ FULL_V2_REVIEW_GENERATOR = ROOT / "tools/generate-m85-full-v2-review.py"
 COMPLETED_ALIEN_APPEARANCE = ROOT / "ArtSource/M85/Preproduction/AlienCompletedAppearanceV1/completed_appearance_manifest.json"
 COMPLETED_COMPOSITION_REVIEW = ROOT / "Content/Presentation/SuperScout/completed_composition_review.json"
 SOURCE_LOCKED_CORRECTIONS = ROOT / "ArtSource/M85/Preproduction/SourceLockedCorrectionsV1Finished/source_locked_audit.json"
+MX71_LOCALIZED_EDIT = ROOT / "ArtSource/M85/Preproduction/MX71LocalizedWeaponEditV1/edit_manifest.json"
 
 CLASSIFICATIONS = {
     "OFFICIAL_DIRECT": "OFFICIAL-DIRECT",
@@ -509,6 +510,8 @@ def validate_source_locked_corrections() -> None:
         fail("source-locked corrections expanded review or production approval")
     if record.get("stableIds") != {"MT101": "unit.astronauts.mt101_armored_drilling_unit", "MX71": "unit.astronauts.mx71_recon_dropship"}:
         fail("source-locked corrections stable identity mapping drifted")
+    if record.get("reviewRoles") != {"MT101": "UNREVIEWED_NATIVE_CANDIDATE", "MX71": "INTERNAL_LAYOUT_ONLY_NOT_FINAL_APPEARANCE"}:
+        fail("source-locked corrections promoted internal MX layout into final appearance")
     expected_images = {
         "MT101": ("mt101_appearance.png", "c378b20e3eca87b9f36879edf9e7284ba4fccad8e6485fe73b0afbf8674f8944"),
         "MX71": ("mx71_appearance.png", "9722a108e6bc5b7ab8bc6d988de2bc9c86f107f1768159bdeb1f2f9e8f5b7a3a"),
@@ -552,10 +555,54 @@ def validate_source_locked_corrections() -> None:
         fail("source-locked corrections hid controls or limitations")
 
 
+def validate_mx71_localized_edit() -> None:
+    record = json.loads(MX71_LOCALIZED_EDIT.read_text(encoding="utf-8"))
+    authority = {
+        "date": "2026-09-13", "reviewer": "game director", "message": "+",
+        "reviewedBaseCommit": "f3a9deb",
+        "scope": "Return to the previous successful MX-71 generated airframe and correct only its four forward defensive emitters; native topology reference is not a replacement appearance.",
+    }
+    if record.get("authority") != authority:
+        fail("MX localized edit director authority or narrow scope drifted")
+    if record.get("status") != "UNREVIEWED_LOCALIZED_WEAPON_EDIT_CANDIDATE" or record.get("productionAccepted") is not False or record.get("canonImpact") != "NONE":
+        fail("MX localized edit expanded candidate or production acceptance")
+    if record.get("stableId") != "unit.astronauts.mx71_recon_dropship" or record.get("localizedEditAttempts") != 1 or record.get("tool") != "built-in image_gen" or record.get("useCase") != "precise-object-edit":
+        fail("MX localized edit hid extra attempts or changed workflow")
+    base_path = "Docs/Development/M85SuperScout/Silhouettes/FullV2/Renders/unit_astronauts_mx71_recon_dropship_rev1.png"
+    expected_base = {
+        "file": base_path, "sha256": "513bdca746a01949ed56829bc6295a03b625e16c0617d71b5b1c4f9995e52b2b",
+        "acceptedScope": "Previous generated airframe appearance only; four-emitter layout remains the authorized correction. No production or full-image weapon acceptance.",
+    }
+    if record.get("base") != expected_base or hashlib.sha256((ROOT/base_path).read_bytes()).hexdigest() != expected_base["sha256"]:
+        fail("MX localized edit replaced the successful base airframe or expanded its approval")
+    reference_path = "ArtSource/M85/Preproduction/MX71LocalizedWeaponEditV1/reference_7692_page69.png"
+    expected_inputs = [
+        {"role": "EDIT_TARGET", "file": base_path},
+        {"role": "OFFICIAL_WEAPON_LAYOUT_REFERENCE_ONLY", "file": reference_path,
+         "sha256": "e0ee470e7e7aa827dcd6bda3a6ea32624b24b4f65e3efd3485b7d466ee17040d",
+         "officialPdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4524070.pdf", "page": 69},
+    ]
+    if record.get("inputs") != expected_inputs or hashlib.sha256((ROOT/reference_path).read_bytes()).hexdigest() != expected_inputs[1]["sha256"]:
+        fail("MX localized edit target/reference lineage drifted")
+    expected_output = {"file": "mx71_weapons_only_rev1.png", "sha256": "1d89bed19d106cd3697f47796312e7e58f911ae85d94fa17ca0fc0ead6718c8f"}
+    if record.get("output") != expected_output or hashlib.sha256((MX71_LOCALIZED_EDIT.parent/expected_output["file"]).read_bytes()).hexdigest() != expected_output["sha256"]:
+        fail("MX localized edit selected bytes or output drifted")
+    if record.get("promptFile") != "edit_prompt.txt":
+        fail("MX localized edit lost exact prompt provenance")
+    prompt = (MX71_LOCALIZED_EDIT.parent/"edit_prompt.txt").read_text(encoding="utf-8")
+    for invariant in ("precise-object-edit", "EDIT TARGET", "change ONLY", "EXACTLY FOUR", "Strict invariants", "No white/orange/blue source colour"):
+        if invariant not in prompt:
+            fail("MX localized edit lost prompt invariants")
+    inspection = record.get("inspection", {})
+    if inspection.get("fullFourMountsProvenByRaster") is not False or inspection.get("requiresDirectorAppearanceReview") is not True:
+        fail("MX localized edit hid occlusion or bypassed appearance review")
+
+
 def main() -> None:
     validate_completed_alien_appearance()
     validate_completed_composition_review()
     validate_source_locked_corrections()
+    validate_mx71_localized_edit()
     for path in (
         MANIFEST, LEDGER, INSTRUCTION_INDEX, SOURCE_ANALYSIS_POLICY, COMPOSED_DESIGN_PROPOSALS, ROCK_RAIDERS_EVIDENCE, ASTRONAUTS_EVIDENCE,
         ALIENS_EVIDENCE, ALIEN_BIOMECHANICAL_POLICY,

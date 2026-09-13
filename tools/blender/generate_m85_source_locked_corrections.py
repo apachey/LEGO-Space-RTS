@@ -407,6 +407,8 @@ def main():
         bpy.ops.render.render(write_still=True)
         images[name]={"file":filename,"sha256":hashlib.sha256((output/filename).read_bytes()).hexdigest()}
     audit={"schema":1,"status":STATUS,"productionAccepted":False,"canonImpact":"NONE",
+           "reviewRoles":{"MT101":"UNREVIEWED_NATIVE_CANDIDATE",
+                          "MX71":"INTERNAL_LAYOUT_ONLY_NOT_FINAL_APPEARANCE"},
            "stableIds":{"MT101":"unit.astronauts.mt101_armored_drilling_unit",
                         "MX71":"unit.astronauts.mx71_recon_dropship"},
            "approach":"single controlled native source-informed reconstruction, not free-form image retry",

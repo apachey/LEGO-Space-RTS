@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "stableId": "unit.astronauts.mx71_recon_dropship",
+  "status": "UNREVIEWED_LOCALIZED_WEAPON_EDIT_CANDIDATE",
+  "productionAccepted": false,
+  "canonImpact": "NONE",
+  "tool": "built-in image_gen",
+  "useCase": "precise-object-edit",
+  "localizedEditAttempts": 1,
+  "authority": {
+    "date": "2026-09-13",
+    "reviewer": "game director",
+    "message": "+",
+    "reviewedBaseCommit": "f3a9deb",
+    "scope": "Return to the previous successful MX-71 generated airframe and correct only its four forward defensive emitters; native topology reference is not a replacement appearance."
+  },
+  "base": {
+    "file": "Docs/Development/M85SuperScout/Silhouettes/FullV2/Renders/unit_astronauts_mx71_recon_dropship_rev1.png",
+    "sha256": "513bdca746a01949ed56829bc6295a03b625e16c0617d71b5b1c4f9995e52b2b",
+    "acceptedScope": "Previous generated airframe appearance only; four-emitter layout remains the authorized correction. No production or full-image weapon acceptance."
+  },
+  "inputs": [
+    {
+      "role": "EDIT_TARGET",
+      "file": "Docs/Development/M85SuperScout/Silhouettes/FullV2/Renders/unit_astronauts_mx71_recon_dropship_rev1.png"
+    },
+    {
+      "role": "OFFICIAL_WEAPON_LAYOUT_REFERENCE_ONLY",
+      "file": "ArtSource/M85/Preproduction/MX71LocalizedWeaponEditV1/reference_7692_page69.png",
+      "sha256": "e0ee470e7e7aa827dcd6bda3a6ea32624b24b4f65e3efd3485b7d466ee17040d",
+      "officialPdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4524070.pdf",
+      "page": 69
+    }
+  ],
+  "promptFile": "edit_prompt.txt",
+  "output": {
+    "file": "mx71_weapons_only_rev1.png",
+    "sha256": "1d89bed19d106cd3697f47796312e7e58f911ae85d94fa17ca0fc0ead6718c8f"
+  },
+  "inspection": {
+    "airframe": "Previous silhouette, closed canopy, narrow spine, hoses, equipment tubes, twin tail booms/fins and close payload appearance retained visually; pixel identity is not claimed.",
+    "weapons": "Near inner and lower outer short emitters plus far inner emitter visible; far outer mount is occluded in the fixed original view.",
+    "fullFourMountsProvenByRaster": false,
+    "requiresDirectorAppearanceReview": true
+  },
+  "boundary": "One expressly authorized localized edit after director correction, not a third free-form aircraft redesign. Original FullV2 attempts and hashes are unchanged. MX native source/render bytes remain internal topology evidence; MT-101 is not accepted or reopened by this MX-only instruction. No complete-roster acceptance or runtime integration."
+}

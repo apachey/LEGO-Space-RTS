@@ -3,6 +3,10 @@
   "status": "CONTROLLED_SOURCE_LOCKED_APPEARANCE_REQUIRES_DIRECTOR_REVIEW",
   "productionAccepted": false,
   "canonImpact": "NONE",
+  "reviewRoles": {
+    "MT101": "UNREVIEWED_NATIVE_CANDIDATE",
+    "MX71": "INTERNAL_LAYOUT_ONLY_NOT_FINAL_APPEARANCE"
+  },
   "stableIds": {
     "MT101": "unit.astronauts.mt101_armored_drilling_unit",
     "MX71": "unit.astronauts.mx71_recon_dropship"

@@ -13,8 +13,12 @@ explicitly authorized by the director after new photos exposed rev2's incorrect
 vertical capsule. The director accepted rev3's open horizontal three-arch deck
 and overall source-derived composition for the next composite review.
 MT-101 and MX-71 retain their historical two-free-form-attempt stops;
-the recorded controlled next step now has source-informed native monochrome
-review candidates, pending director appearance acceptance.
+the recorded controlled next step has source-informed native topology checks.
+MT-101 remains unreviewed. The director corrected the MX-71 handoff: its earlier
+successful generated airframe is the appearance basis; the native render is
+internal only. The subsequent `+` authorizes a weapons-only edit of that exact
+base. One completed localized edit now exists, pending appearance acceptance,
+with far outer emitter occlusion disclosed and 47 recording guards retained.
 Source-only Worker Robot and MX-41 flight-state candidates are director-accepted
 for the next composite review;
 previous accepted candidates and immutable first-review boards remain unchanged.
@@ -58,6 +62,17 @@ stages, 317 NUnit tests and 41 recording guards, zero blocking failures. The
 existing game was successfully exported to `Builds/macOS/LEGO Space RTS.app`;
 new review candidates remain outside the game. The unchanged M9 60-mover
 `BLOCKING_LATER` diagnostic remains 2/60.
+
+The later MX-only director correction and localized edit are recorded in
+`Docs/Development/M85_T082_MX71_LOCALIZED_WEAPON_EDIT.md`. They do not promote
+technical blockouts, accept MT-101, alter historical attempts/boards or approve
+production. Six additional guard cases protect the good base and narrow scope;
+the focused validator and 47/47 recording tests pass. Raster symmetry/occlusion
+does not substitute for a future four-mount production-model check.
+This localized block passed `./tools/verify.sh` at
+`Artifacts/Verification/20260913T174729Z-fast-summary.txt`: 23/23 fast blocking
+stages, 317 NUnit tests and 47 recording guards, zero blocking or diagnostic
+failures. No new game export or candidate integration was performed.
 
 - The corpus is bound to the exact authoritative runtime roster: 35 units and
   31 infrastructure entries, with no missing, duplicated or extra stable IDs.

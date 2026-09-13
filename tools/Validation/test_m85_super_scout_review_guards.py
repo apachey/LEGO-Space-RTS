@@ -12,6 +12,30 @@ import validate_m85_super_scout as validator
 
 
 class ReviewGuardTests(unittest.TestCase):
+    def test_mx_edit_requires_narrow_director_authority(self):
+        self.assert_rejected(validator.MX71_LOCALIZED_EDIT,
+                             lambda f: f.pop("authority"), "director authority or narrow scope")
+
+    def test_mx_edit_cannot_auto_accept_generated_candidate(self):
+        self.assert_rejected(validator.MX71_LOCALIZED_EDIT,
+                             lambda f: f.update(status="DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE"), "expanded candidate or production acceptance")
+
+    def test_mx_edit_cannot_replace_successful_airframe(self):
+        self.assert_rejected(validator.MX71_LOCALIZED_EDIT,
+                             lambda f: f["base"].update(file="ArtSource/M85/Preproduction/SourceLockedCorrectionsV1Finished/mx71_appearance.png"), "successful base airframe")
+
+    def test_mx_edit_cannot_hide_extra_attempts(self):
+        self.assert_rejected(validator.MX71_LOCALIZED_EDIT,
+                             lambda f: f.update(localizedEditAttempts=2), "hid extra attempts")
+
+    def test_mx_edit_cannot_claim_four_visible_mounts(self):
+        self.assert_rejected(validator.MX71_LOCALIZED_EDIT,
+                             lambda f: f["inspection"].update(fullFourMountsProvenByRaster=True), "hid occlusion")
+
+    def test_mx_native_layout_cannot_replace_final_appearance(self):
+        self.assert_rejected(validator.SOURCE_LOCKED_CORRECTIONS,
+                             lambda f: f["reviewRoles"].update(MX71="FINAL_APPEARANCE_CANDIDATE"), "promoted internal MX layout")
+
     def test_composition_cannot_accept_production(self):
         self.assert_rejected(validator.COMPLETED_COMPOSITION_REVIEW,
                              lambda f: f.update(productionAccepted=True), "composition approval evidence or limited scope")

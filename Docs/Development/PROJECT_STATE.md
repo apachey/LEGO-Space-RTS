@@ -862,12 +862,21 @@ live; the current schema-9 copy/paste retains the complete experiment.
   Exact hashes and image-only scope are validator-guarded; incorrect Mothership
   operator anatomy/raised printed detail remain pending, not source evidence.
   See `Docs/Development/M85_T082_PENDING_COMPOSITION_REVIEW.md`.
-  MT-101 and MX-71 now have controlled native source-informed monochrome
-  candidates, following the recorded topology-controlled next step rather than
-  a third free-form generation. MT retains six contacts, permanent closed cabin,
-  independent upper gun/drill and docked rear craft; MX retains four mirrored
-  forward emitters and a close source-rover payload. These candidates require
-  director review, are not literal/production models or gameplay-scale changes.
+  MT-101 and MX-71 have controlled native source-informed monochrome checks.
+  MT retains six contacts, permanent closed cabin, independent upper gun/drill
+  and docked rear craft; it remains unreviewed. The director corrected MX-71's
+  handoff: the technical native construction is internal layout reference only,
+  not a replacement appearance. The earlier successful generated airframe is
+  the accepted appearance basis; its four-emitter correction remains pending.
+  The subsequent `+` authorizes a localized edit of only those emitters on that
+  exact image, not another free-form aircraft redesign. Historical two-attempt
+  records are preserved; no production model or gameplay-scale change is approved.
+  One such built-in localized edit now exists, unreviewed. Exact base, official
+  page, prompt, input roles, output hash, director authority and the known far
+  outer gun occlusion are retained; no four-visible-mount proof is claimed.
+  Six new regression guards prevent base-image substitution, native-layout
+  promotion, hidden retries and approval/visibility overclaims (47 guards total).
+  See `Docs/Development/M85_T082_MX71_LOCALIZED_WEAPON_EDIT.md`.
   Actual saved mesh transforms and nine negative native control fixtures pass.
   See `Docs/Development/M85_T082_SOURCE_LOCKED_CORRECTIONS.md`.
   Accepted image bytes, original boards, historical two-attempt stops and gameplay
@@ -911,6 +920,13 @@ step and must be announced when new visual evidence is actually required.
 - network replay chunk format **1**.
 
 ## Verification state
+
+The localized MX-71 weapons-only image edit and internal-layout role correction
+passed `./tools/verify.sh`: all 23 fast blocking stages, 317 NUnit tests and
+47 director-review recording guards, with zero blocking or diagnostic failures,
+at `Artifacts/Verification/20260913T174729Z-fast-summary.txt`. The new edited
+appearance remains unreviewed and outside production; no new playable export
+was produced. This fast run does not rerun or clear the preserved M9 stress gate.
 
 The controlled MT-101/MX-71 source-lock and limited Solar/Mothership approval
 block passed `./tools/verify.sh --full`: all 29 blocking stages, 317 NUnit tests

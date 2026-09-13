@@ -2,6 +2,15 @@
 
 Date: 2026-09-13. Branch: `codex/m85-t082`, not merged.
 
+Director correction after this handoff: the previously generated MX-71 airframe
+was already good; replacing its appearance with the technical native model was
+not requested. The director's `+` approves returning to that exact image and
+editing only its four forward emitters. MX-71's native geometry/renders below
+are now INTERNAL_LAYOUT_ONLY_NOT_FINAL_APPEARANCE, not final review selections.
+Their bytes and source-control evidence remain intact. MT-101 is not accepted
+by this MX-only direction. Current native `reviewRoles` supersede any broader
+appearance interpretation of the original generation-time group status.
+
 ## What changed
 
 Two completed simplified monochrome native review candidates replace neither
@@ -64,17 +73,21 @@ or another required dimension-approval gate.
 
 ![MT-101 finished overhead contact view](/Users/pavlosidash/Developer/Lego-Space-RTS/ArtSource/M85/Preproduction/SourceLockedCorrectionsV1Finished/mt101_finished_overhead.png)
 
-## 2. MX-71 Recon Dropship
+## 2. MX-71 — historical internal topology render
 
 Role remains approved air transport. The four short source-derived emitters
 are two exact mirrored pairs, not an asymmetric cannon group. The source rover
 is a close-docked visual payload, not an added roster entry or new transport
 rule; its horizontal auger is not a fifth aircraft gun.
 
-![MX-71 completed monochrome candidate](/Users/pavlosidash/Developer/Lego-Space-RTS/ArtSource/M85/Preproduction/SourceLockedCorrectionsV1Finished/mx71_appearance.png)
+![MX-71 internal topology render, not final appearance](/Users/pavlosidash/Developer/Lego-Space-RTS/ArtSource/M85/Preproduction/SourceLockedCorrectionsV1Finished/mx71_appearance.png)
 
-The far outer gun is occluded in the principal view. Its completed frontal
+The far outer gun is occluded in the principal view. Its internal frontal
 view shows both pairs without relying on an inferred camera-facing layout.
+
+The new localized edit of the successful earlier appearance is recorded in
+`Docs/Development/M85_T082_MX71_LOCALIZED_WEAPON_EDIT.md`; neither technical
+render below is a replacement for that accepted airframe basis.
 
 ![MX-71 finished front weapon grouping](/Users/pavlosidash/Developer/Lego-Space-RTS/ArtSource/M85/Preproduction/SourceLockedCorrectionsV1Finished/mx71_finished_front.png)
 
