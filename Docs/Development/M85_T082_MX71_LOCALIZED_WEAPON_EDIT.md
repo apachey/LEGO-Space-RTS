@@ -2,6 +2,13 @@
 
 Date: 2026-09-13. Branch: `codex/m85-t082`, not merged.
 
+Later director review: the `+` to commit `6a211dc` accepts the displayed edited
+MX-71 appearance for comparative review only. The separate current approval is
+`Content/Presentation/SuperScout/mx71_localized_appearance_review.json`.
+The generation-time candidate status below remains historical; inputs, prompt,
+attempt count and image bytes are not rewritten. Far-mount occlusion remains
+disclosed. MT-101/native geometry/production/T082 are not accepted by this review.
+
 ## What changed / why
 
 The director corrected the previous native-render handoff: the earlier generated

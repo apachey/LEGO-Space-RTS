@@ -12,6 +12,45 @@ import validate_m85_super_scout as validator
 
 
 class ReviewGuardTests(unittest.TestCase):
+    def test_current_comparison_cannot_accept_production(self):
+        self.assert_rejected(validator.CURRENT_COMPARISON,
+                             lambda f: f.update(productionAccepted=True), "diagnostic into acceptance")
+
+    def test_current_comparison_keeps_exact_roster(self):
+        self.assert_rejected(validator.CURRENT_COMPARISON,
+                             lambda f: f["selections"].pop(), "66-asset roster")
+
+    def test_current_comparison_keeps_accepted_mx_image(self):
+        def mutate(f):
+            next(a for a in f["selections"] if a["stableId"] == "unit.astronauts.mx71_recon_dropship")["file"] = "wrong.png"
+        self.assert_rejected(validator.CURRENT_COMPARISON, mutate, "accepted MX appearance")
+
+    def test_current_comparison_keeps_both_defense_heads(self):
+        def mutate(f):
+            next(a for a in f["selections"] if a["stableId"] == "building.ali.etx_defense_node").pop("alternate")
+        self.assert_rejected(validator.CURRENT_COMPARISON, mutate, "defense configuration")
+
+    def test_current_comparison_cannot_promote_mt_context(self):
+        def mutate(f):
+            next(a for a in f["selections"] if a["stableId"] == "unit.astronauts.mt101_armored_drilling_unit")["status"] = "DIRECTOR_ACCEPTED_APPEARANCE"
+        self.assert_rejected(validator.CURRENT_COMPARISON, mutate, "unresolved MT appearance")
+
+    def test_mx_appearance_review_requires_latest_director_evidence(self):
+        self.assert_rejected(validator.MX71_LOCALIZED_REVIEW,
+                             lambda f: f.pop("approvalEvidence"), "exact director approval")
+
+    def test_mx_appearance_review_cannot_accept_production(self):
+        self.assert_rejected(validator.MX71_LOCALIZED_REVIEW,
+                             lambda f: f.update(productionAccepted=True), "into production")
+
+    def test_mx_appearance_review_cannot_accept_mt101(self):
+        self.assert_rejected(validator.MX71_LOCALIZED_REVIEW,
+                             lambda f: f.update(stableId="unit.astronauts.mt101_armored_drilling_unit"), "another asset")
+
+    def test_mx_appearance_review_cannot_hide_occluded_mount(self):
+        self.assert_rejected(validator.MX71_LOCALIZED_REVIEW,
+                             lambda f: f.update(pending=[]), "unresolved mounts")
+
     def test_mx_edit_requires_narrow_director_authority(self):
         self.assert_rejected(validator.MX71_LOCALIZED_EDIT,
                              lambda f: f.pop("authority"), "director authority or narrow scope")

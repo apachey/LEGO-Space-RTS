@@ -17,8 +17,9 @@ the recorded controlled next step has source-informed native topology checks.
 MT-101 remains unreviewed. The director corrected the MX-71 handoff: its earlier
 successful generated airframe is the appearance basis; the native render is
 internal only. The subsequent `+` authorizes a weapons-only edit of that exact
-base. One completed localized edit now exists, pending appearance acceptance,
-with far outer emitter occlusion disclosed and 47 recording guards retained.
+base. The later `+` to `6a211dc` accepts that completed localized edit for
+comparative review, retaining far outer emitter occlusion and production HOLD.
+Its later approval is recorded separately from generation-time status.
 Source-only Worker Robot and MX-41 flight-state candidates are director-accepted
 for the next composite review;
 previous accepted candidates and immutable first-review boards remain unchanged.
@@ -38,6 +39,23 @@ six-response recording omission is corrected from the
 original director message; all 66 initial responses were supplied.
 
 ## Completed in the identity-baseline pass
+
+Latest continuation: MX-71's localized completed appearance is accepted as
+recorded in `Content/Presentation/SuperScout/mx71_localized_appearance_review.json`.
+A separate `FullV2/CurrentComparisonV1/` gallery assembles all 66 identities and
+67 existing image views, retaining both accepted defense configurations.
+It is DIAGNOSTIC, named and unscaled, not a fresh blind/game-camera acceptance
+or production promotion. MT-61 and Claw-Tank corrections remain review candidates;
+MT-101's old raster is unresolved context, never a finished-native approval gate.
+Earlier unreviewed Jet Scooter, Strike and Protector records and Mothership's
+source corrections remain open. Historical boards and image bytes are unchanged.
+See `Docs/Development/M85_T082_CURRENT_COMPARISON.md`.
+This continuation passed `./tools/verify.sh`: 23/23 fast blocking stages,
+317 NUnit tests and 56 review guards, zero blocking or diagnostic failures,
+at `Artifacts/Verification/20260913T183933Z-fast-summary.txt`. Current gallery
+regeneration and all 67 image paths pass static checks. Local HTML browser
+inspection was URL-policy-blocked; no layout/interaction PASS is claimed.
+No new playable export or model integration was performed.
 
 Latest director feedback, 2026-09-13: the three controlled completed appearances
 for ETX Servitor, Ground Pulse and Air Lance are accepted for the next

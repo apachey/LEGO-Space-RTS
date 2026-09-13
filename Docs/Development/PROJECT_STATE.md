@@ -867,16 +867,27 @@ live; the current schema-9 copy/paste retains the complete experiment.
   and docked rear craft; it remains unreviewed. The director corrected MX-71's
   handoff: the technical native construction is internal layout reference only,
   not a replacement appearance. The earlier successful generated airframe is
-  the accepted appearance basis; its four-emitter correction remains pending.
+  the accepted appearance basis; the four-emitter edit was then displayed.
   The subsequent `+` authorizes a localized edit of only those emitters on that
   exact image, not another free-form aircraft redesign. Historical two-attempt
   records are preserved; no production model or gameplay-scale change is approved.
-  One such built-in localized edit now exists, unreviewed. Exact base, official
+  One such built-in localized edit now exists. The latest director `+` to
+  `6a211dc` accepts its completed appearance for comparative review only, in
+  `Content/Presentation/SuperScout/mx71_localized_appearance_review.json`.
+  Generation-time unreviewed state is historical and not rewritten. Exact base, official
   page, prompt, input roles, output hash, director authority and the known far
   outer gun occlusion are retained; no four-visible-mount proof is claimed.
   Six new regression guards prevent base-image substitution, native-layout
   promotion, hidden retries and approval/visibility overclaims (47 guards total).
   See `Docs/Development/M85_T082_MX71_LOCALIZED_WEAPON_EDIT.md`.
+  A separate named current-comparison gallery now assembles all 66 roster IDs
+  and 67 existing views, including both accepted defense heads and the accepted
+  localized MX image, rather than resurrecting rejected variants/donor studies.
+  This is DIAGNOSTIC, not a new blind/game-camera review or complete acceptance.
+  MT-61 and Claw-Tank are the next completed priority candidates for review;
+  MT-101 still requires a finished appearance, with its old raster kept only as
+  unresolved context. Earlier unreviewed correction records are not auto-accepted.
+  See `Docs/Development/M85_T082_CURRENT_COMPARISON.md`.
   Actual saved mesh transforms and nine negative native control fixtures pass.
   See `Docs/Development/M85_T082_SOURCE_LOCKED_CORRECTIONS.md`.
   Accepted image bytes, original boards, historical two-attempt stops and gameplay
@@ -920,6 +931,16 @@ step and must be announced when new visual evidence is actually required.
 - network replay chunk format **1**.
 
 ## Verification state
+
+The later localized-MX appearance approval and named current-comparison assembly
+passed `./tools/verify.sh`: all 23 fast blocking stages, 317 NUnit tests and
+56 director-review recording guards, with zero blocking or diagnostic failures,
+at `Artifacts/Verification/20260913T183933Z-fast-summary.txt`. Selection/gallery
+byte-exact regeneration and all 67 image paths pass static checks. Browser
+inspection of local HTML was URL-policy-blocked; UI interaction is not claimed
+verified. No new playable export/model integration or complete T082 acceptance.
+The initial sandbox restore stalled and was terminated (143, not PASS); the
+identical harness completed with access to the existing .NET environment.
 
 The localized MX-71 weapons-only image edit and internal-layout role correction
 passed `./tools/verify.sh`: all 23 fast blocking stages, 317 NUnit tests and

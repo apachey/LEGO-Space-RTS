@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "stableId": "unit.astronauts.mx71_recon_dropship",
+  "status": "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW",
+  "approvalEvidence": {
+    "date": "2026-09-13",
+    "reviewer": "game director",
+    "message": "+",
+    "reviewedCommit": "6a211dc",
+    "scope": "Accept only the displayed completed MX-71 localized weapons edit for comparative review; no other asset, production model or complete T082 acceptance."
+  },
+  "file": "ArtSource/M85/Preproduction/MX71LocalizedWeaponEditV1/mx71_weapons_only_rev1.png",
+  "sha256": "1d89bed19d106cd3697f47796312e7e58f911ae85d94fa17ca0fc0ead6718c8f",
+  "productionAccepted": false,
+  "canonImpact": "NONE",
+  "pending": [
+    "Far outer emitter is occluded in the accepted camera; image does not prove all four mounts",
+    "Source-led four-mount production topology and gameplay-camera acceptance"
+  ],
+  "historicalBoundary": "Separate later review supersedes the original generation-time unreviewed status without rewriting edit inputs, prompt, attempts or historical manifests. Native MX render stays internal layout only; MT-101 is not accepted."
+}

@@ -49,6 +49,8 @@ COMPLETED_ALIEN_APPEARANCE = ROOT / "ArtSource/M85/Preproduction/AlienCompletedA
 COMPLETED_COMPOSITION_REVIEW = ROOT / "Content/Presentation/SuperScout/completed_composition_review.json"
 SOURCE_LOCKED_CORRECTIONS = ROOT / "ArtSource/M85/Preproduction/SourceLockedCorrectionsV1Finished/source_locked_audit.json"
 MX71_LOCALIZED_EDIT = ROOT / "ArtSource/M85/Preproduction/MX71LocalizedWeaponEditV1/edit_manifest.json"
+MX71_LOCALIZED_REVIEW = ROOT / "Content/Presentation/SuperScout/mx71_localized_appearance_review.json"
+CURRENT_COMPARISON = FULL_V2_OUTPUT / "CurrentComparisonV1/selection_manifest.json"
 
 CLASSIFICATIONS = {
     "OFFICIAL_DIRECT": "OFFICIAL-DIRECT",
@@ -598,11 +600,63 @@ def validate_mx71_localized_edit() -> None:
         fail("MX localized edit hid occlusion or bypassed appearance review")
 
 
+def validate_mx71_localized_review() -> None:
+    record = json.loads(MX71_LOCALIZED_REVIEW.read_text(encoding="utf-8"))
+    expected = {
+        "date": "2026-09-13", "reviewer": "game director", "message": "+",
+        "reviewedCommit": "6a211dc",
+        "scope": "Accept only the displayed completed MX-71 localized weapons edit for comparative review; no other asset, production model or complete T082 acceptance.",
+    }
+    if record.get("approvalEvidence") != expected:
+        fail("MX localized review missing exact director approval or narrow scope")
+    if record.get("status") != "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW" or record.get("productionAccepted") is not False or record.get("canonImpact") != "NONE":
+        fail("MX localized review expanded image acceptance into production")
+    if (record.get("stableId") != "unit.astronauts.mx71_recon_dropship"
+            or record.get("file") != "ArtSource/M85/Preproduction/MX71LocalizedWeaponEditV1/mx71_weapons_only_rev1.png"
+            or record.get("sha256") != "1d89bed19d106cd3697f47796312e7e58f911ae85d94fa17ca0fc0ead6718c8f"):
+        fail("MX localized review substituted image or accepted another asset")
+    if record.get("pending") != [
+            "Far outer emitter is occluded in the accepted camera; image does not prove all four mounts",
+            "Source-led four-mount production topology and gameplay-camera acceptance"]:
+        fail("MX localized review hid unresolved mounts or production gate")
+
+
+def validate_current_comparison() -> None:
+    record = json.loads(CURRENT_COMPARISON.read_text(encoding="utf-8"))
+    if (record.get("gate"), record.get("state"), record.get("productionAccepted"), record.get("canonImpact")) != (
+            "DIAGNOSTIC", "CURRENT_COMPARISON_NOT_BLIND_OR_PRODUCTION_ACCEPTANCE", False, "NONE"):
+        fail("current comparison expanded diagnostic into acceptance")
+    selections = record.get("selections", [])
+    roster = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    if len(selections) != 66 or {a.get("stableId") for a in selections} != {a["stableId"] for a in roster["assets"]}:
+        fail("current comparison lost exact 66-asset roster")
+    by_id = {a["stableId"]: a for a in selections}
+    mx = json.loads(MX71_LOCALIZED_REVIEW.read_text(encoding="utf-8"))
+    if any(by_id[mx["stableId"]].get(k) != mx[k] for k in ("file", "sha256", "status")):
+        fail("current comparison replaced accepted MX appearance")
+    if by_id["unit.aliens.etx_servitor"]["file"] != "ArtSource/M85/Preproduction/AlienCompletedAppearanceV1/servitor_appearance.png":
+        fail("current comparison resurrected rejected Servitor")
+    defense = by_id["building.ali.etx_defense_node"]
+    if (defense.get("configuration"), defense.get("alternate", {}).get("configuration")) != ("ground_pulse", "air_lance"):
+        fail("current comparison lost accepted defense configuration")
+    if by_id["unit.astronauts.mt101_armored_drilling_unit"].get("status") != "UNRESOLVED_CONTEXT_NOT_FINISHED_APPEARANCE":
+        fail("current comparison promoted unresolved MT appearance")
+    pending = sorted(["unit.astronauts.mobile_mining_platform", "unit.astronauts.mt51_claw_tank", "unit.astronauts.mt101_armored_drilling_unit"])
+    if record.get("priorityPending") != pending:
+        fail("current comparison hid priority review gaps")
+    generated = subprocess.run([sys.executable, str(ROOT / "tools/generate-m85-current-comparison.py"), "--check"],
+                               cwd=ROOT, capture_output=True, text=True)
+    if generated.returncode != 0:
+        fail("current comparison gallery or selection provenance is stale: " + generated.stderr + generated.stdout)
+
+
 def main() -> None:
     validate_completed_alien_appearance()
     validate_completed_composition_review()
     validate_source_locked_corrections()
     validate_mx71_localized_edit()
+    validate_mx71_localized_review()
+    validate_current_comparison()
     for path in (
         MANIFEST, LEDGER, INSTRUCTION_INDEX, SOURCE_ANALYSIS_POLICY, COMPOSED_DESIGN_PROPOSALS, ROCK_RAIDERS_EVIDENCE, ASTRONAUTS_EVIDENCE,
         ALIENS_EVIDENCE, ALIEN_BIOMECHANICAL_POLICY,
