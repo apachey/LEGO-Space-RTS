@@ -1,11 +1,18 @@
 {
   "schema_version": 1,
-  "status": "COMPLETED_APPEARANCE_CONCEPT_REQUIRES_DIRECTOR_REVIEW",
+  "status": "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW",
   "date": "2026-09-13",
   "authority": "Director requested completed appearance after accepting dimensions; construction blockouts are internal checks, not a new approval gate.",
   "tool": "image_gen.imagegen",
   "workflow": "Controlled native geometry targets followed by sketch-to-render appearance finishing. Not a third free-form composition revision.",
-  "director_appearance_accepted": false,
+  "director_appearance_accepted": true,
+  "approval_evidence": {
+    "date": "2026-09-13",
+    "reviewer": "game director",
+    "director_message": "+",
+    "reviewed_commit": "b05ede8",
+    "scope": "Accept the three completed appearance images for the next comparative roster review. No production model, native geometry fidelity, animation, gameplay change or complete T082 corpus acceptance."
+  },
   "production_accepted": false,
   "canon_impact": "NONE",
   "old_manifests_untouched": true,
@@ -18,6 +25,8 @@
   "assets": [
     {
       "id": "servitor",
+      "stable_id": "unit.aliens.etx_servitor",
+      "configuration": "default",
       "output": "servitor_appearance.png",
       "sha256": "86135fbca520d402cef5d94f9ff76d2f293191aebfdfc681e751a5521101db21",
       "native_target": "servitor_finished.png",
@@ -34,6 +43,8 @@
     },
     {
       "id": "ground_pulse",
+      "stable_id": "building.ali.etx_defense_node",
+      "configuration": "ground_pulse",
       "output": "ground_pulse_appearance.png",
       "sha256": "c980932a8af360892eab7eb45aa25ea6932850ba3d9ea5f4aa5a9ed1dda4372b",
       "native_target": "ground_pulse_finished.png",
@@ -50,6 +61,8 @@
     },
     {
       "id": "air_lance",
+      "stable_id": "building.ali.etx_defense_node",
+      "configuration": "air_lance",
       "output": "air_lance_appearance.png",
       "sha256": "0feae82a044f62af8c3245fca9325c29f014968ab817eafa5dce4b0d0f3419cd",
       "native_target": "air_lance_finished.png",

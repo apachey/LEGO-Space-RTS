@@ -1,14 +1,21 @@
 # T082 — completed Alien appearance concepts
 
 Date: 2026-09-13. Branch: `codex/m85-t082`; not merged.
-Status: COMPLETED_APPEARANCE_CONCEPT_REQUIRES_DIRECTOR_REVIEW.
+Status: DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW.
+
+Subsequent director response: `+` to the completed three-image handoff from
+commit `b05ede8`, accepting these selected appearances for comparative review
+and directing continuation. This does not accept shipping/native model fidelity,
+animation or the complete T082 corpus. Exact evidence and hashes are retained
+in the sibling manifest and protected by the T082 validator.
 
 ## What changed / why
 
 Three finished exterior concepts replace primitive construction boards as the
 director-facing handoff. The director already accepted dimensions and explicitly
 requested completed appearance, not another unfinished-geometry approval gate.
-AGENTS.md now records that distinction. Appearance acceptance remains open.
+AGENTS.md now records that distinction. The initial handoff requested appearance
+acceptance; the subsequent response above resolves that image-only review.
 
 Native Blender construction preserves the accepted comparison envelopes and
 identical defense foundations. A single completed raster appearance per asset

@@ -45,6 +45,7 @@ FULL_V2_REVIEW_OUTPUT = FULL_V2_OUTPUT / "Review"
 FULL_V2_REVIEW_MANIFEST = FULL_V2_REVIEW_OUTPUT / "review_manifest.json"
 FULL_V2_REVIEW_KEY = FULL_V2_REVIEW_OUTPUT / "BLIND_REVIEW_KEY.md"
 FULL_V2_REVIEW_GENERATOR = ROOT / "tools/generate-m85-full-v2-review.py"
+COMPLETED_ALIEN_APPEARANCE = ROOT / "ArtSource/M85/Preproduction/AlienCompletedAppearanceV1/completed_appearance_manifest.json"
 
 CLASSIFICATIONS = {
     "OFFICIAL_DIRECT": "OFFICIAL-DIRECT",
@@ -425,7 +426,48 @@ def validate_alien_biomechanical_policy(policy: dict, contracts: dict) -> str:
     return policy["packetNotice"]
 
 
+def validate_completed_alien_appearance() -> None:
+    """Keep the latest image approval separate from historical and production gates."""
+    record = json.loads(COMPLETED_ALIEN_APPEARANCE.read_text(encoding="utf-8"))
+    approval = {
+        "date": "2026-09-13", "reviewer": "game director",
+        "director_message": "+", "reviewed_commit": "b05ede8",
+        "scope": "Accept the three completed appearance images for the next comparative roster review. No production model, native geometry fidelity, animation, gameplay change or complete T082 corpus acceptance.",
+    }
+    if record.get("approval_evidence") != approval:
+        fail("completed Alien appearance approval evidence or scope drifted")
+    if (record.get("status") != "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW"
+            or record.get("director_appearance_accepted") is not True
+            or record.get("production_accepted") is not False
+            or record.get("canon_impact") != "NONE"
+            or record.get("old_manifests_untouched") is not True):
+        fail("completed Alien appearance expanded acceptance beyond images")
+    expected = {
+        "servitor": ("unit.aliens.etx_servitor", "default", "86135fbca520d402cef5d94f9ff76d2f293191aebfdfc681e751a5521101db21"),
+        "ground_pulse": ("building.ali.etx_defense_node", "ground_pulse", "c980932a8af360892eab7eb45aa25ea6932850ba3d9ea5f4aa5a9ed1dda4372b"),
+        "air_lance": ("building.ali.etx_defense_node", "air_lance", "0feae82a044f62af8c3245fca9325c29f014968ab817eafa5dce4b0d0f3419cd"),
+    }
+    assets = record.get("assets", [])
+    if len(assets) != 3 or {a.get("id") for a in assets} != set(expected):
+        fail("completed Alien appearance lost a reviewed configuration")
+    for asset in assets:
+        stable_id, configuration, digest = expected[asset["id"]]
+        if (asset.get("stable_id"), asset.get("configuration"), asset.get("sha256")) != (stable_id, configuration, digest):
+            fail("completed Alien appearance identity or selected image hash drifted")
+        if asset.get("output") != asset["id"] + "_appearance.png":
+            fail("completed Alien appearance selected an internal construction render")
+        image = COMPLETED_ALIEN_APPEARANCE.parent / asset["output"]
+        data = image.read_bytes()
+        if data[:8] != b"\x89PNG\r\n\x1a\n" or hashlib.sha256(data).hexdigest() != digest:
+            fail("completed Alien appearance selected image bytes drifted")
+        for field in ("prompt", "native_target", "reference_inputs", "official_reference_url", "reference_page", "dispatch_note"):
+            require_nonempty(asset, field, "completed Alien appearance")
+        if asset.get("completed_appearance_variants") != 1:
+            fail("completed Alien appearance hid an extra selected variant")
+
+
 def main() -> None:
+    validate_completed_alien_appearance()
     for path in (
         MANIFEST, LEDGER, INSTRUCTION_INDEX, SOURCE_ANALYSIS_POLICY, COMPOSED_DESIGN_PROPOSALS, ROCK_RAIDERS_EVIDENCE, ASTRONAUTS_EVIDENCE,
         ALIENS_EVIDENCE, ALIEN_BIOMECHANICAL_POLICY,

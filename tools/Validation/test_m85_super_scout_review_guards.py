@@ -12,6 +12,45 @@ import validate_m85_super_scout as validator
 
 
 class ReviewGuardTests(unittest.TestCase):
+    def test_completed_appearance_requires_director_evidence(self):
+        self.assert_rejected(validator.COMPLETED_ALIEN_APPEARANCE,
+                             lambda fixture: fixture.pop("approval_evidence"),
+                             "appearance approval evidence or scope")
+
+    def test_completed_appearance_cannot_accept_production(self):
+        self.assert_rejected(validator.COMPLETED_ALIEN_APPEARANCE,
+                             lambda fixture: fixture.update(production_accepted=True),
+                             "expanded acceptance beyond images")
+
+    def test_completed_appearance_cannot_expand_approval_scope(self):
+        def mutate(fixture):
+            fixture["approval_evidence"]["scope"] = "Accept the whole T082 corpus"
+        self.assert_rejected(validator.COMPLETED_ALIEN_APPEARANCE, mutate,
+                             "appearance approval evidence or scope")
+
+    def test_completed_appearance_must_retain_both_defense_heads(self):
+        self.assert_rejected(validator.COMPLETED_ALIEN_APPEARANCE,
+                             lambda fixture: fixture["assets"].pop(),
+                             "lost a reviewed configuration")
+
+    def test_completed_appearance_cannot_substitute_a_draft(self):
+        def mutate(fixture):
+            fixture["assets"][0]["output"] = "servitor_finished.png"
+        self.assert_rejected(validator.COMPLETED_ALIEN_APPEARANCE, mutate,
+                             "selected an internal construction render")
+
+    def test_completed_appearance_selected_hash_is_locked(self):
+        def mutate(fixture):
+            fixture["assets"][0]["sha256"] = "0" * 64
+        self.assert_rejected(validator.COMPLETED_ALIEN_APPEARANCE, mutate,
+                             "identity or selected image hash")
+
+    def test_completed_appearance_cannot_hide_new_variants(self):
+        def mutate(fixture):
+            fixture["assets"][0]["completed_appearance_variants"] = 2
+        self.assert_rejected(validator.COMPLETED_ALIEN_APPEARANCE, mutate,
+                             "hid an extra selected variant")
+
     def test_alien_visual_preview_cannot_accept_composition(self):
         def mutate(fixture):
             fixture["composedRevisionProposals"][0]["status"] = "DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE"

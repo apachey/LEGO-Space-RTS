@@ -23,12 +23,25 @@ source pages and hashes are retained; neither is approved for production.
 The larger block adds a complete docked Mothership first correction and two
 isolated official donor studies (7691 human station and 7315 solar module).
 The director approved all four composed-design proposals for generation only.
-Five first candidates now exist, including both defense-head configurations;
-all remain unreviewed and separate from the accepted corpus. The earlier
+Five historical first candidates remain separate from the immutable corpus;
+later review accepts Frontier, and the new controlled completed Alien
+appearances are accepted as recorded below. Solar and the docked Mothership
+correction still require image review. The earlier
 six-response recording omission is corrected from the
 original director message; all 66 initial responses were supplied.
 
 ## Completed in the identity-baseline pass
+
+Latest director feedback, 2026-09-13: the three controlled completed appearances
+for ETX Servitor, Ground Pulse and Air Lance are accepted for the next
+comparative review. Their selected images and `+` evidence live in
+`ArtSource/M85/Preproduction/AlienCompletedAppearanceV1/completed_appearance_manifest.json`.
+This approval does not promote the rejected earlier composed previews, change
+the immutable first-review boards or accept production models/T082 as a whole.
+Seven new negative review guards protect this distinction. The next handoff
+collects the still-unreviewed six-panel Solar Energy Array and docked Mothership
+correction, with known limitations disclosed in
+`Docs/Development/M85_T082_PENDING_COMPOSITION_REVIEW.md`.
 
 - The corpus is bound to the exact authoritative runtime roster: 35 units and
   31 infrastructure entries, with no missing, duplicated or extra stable IDs.

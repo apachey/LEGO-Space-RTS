@@ -850,10 +850,17 @@ live; the current schema-9 copy/paste retains the complete experiment.
   appearance is the requested handoff after size acceptance. Three controlled
   native-to-raster finished concepts now exist for Servitor, Ground Pulse and
   Air Lance, with exact prompts, references and hashes retained. These are
-  COMPLETED_APPEARANCE_CONCEPT_REQUIRES_DIRECTOR_REVIEW, not integrated or
-  production-accepted models; native bounds do not prove raster dimensions.
+  director-accepted for the next comparative roster review after the director's
+  `+` response to the completed three-image block. Their exact selected hashes,
+  approval evidence and image-only scope are validator-guarded. They are not
+  integrated or production-accepted models; native bounds do not prove raster
+  dimensions. Historical rejected previews remain rejected/unaccepted.
   See `Docs/Development/M85_T082_ALIEN_COMPLETED_APPEARANCE.md`; historical
   drafts remain in `Docs/Development/M85_T082_ALIEN_SHAPE_DRAFTS.md`.
+  The next composed-candidate handoff collects the six-flat-panel Solar Energy
+  Array revision and complete docked Mothership correction, still unreviewed.
+  Mothership operator anatomy is a known generated mismatch, not source evidence.
+  See `Docs/Development/M85_T082_PENDING_COMPOSITION_REVIEW.md`.
   Accepted images, original boards, MT-101/MX-71 stop gates and gameplay remain
   unchanged. T082 still requires renewed complete 24/44/72-cell acceptance.
 - The official 7301 instruction page also exposed a stale audit-reconciliation
@@ -895,6 +902,14 @@ step and must be announced when new visual evidence is actually required.
 - network replay chunk format **1**.
 
 ## Verification state
+
+The completed-Alien image-approval and next-review preparation block passed
+`./tools/verify.sh`: all 23 fast blocking stages and 317 NUnit tests, with
+29/29 director-review recording guards, at
+`Artifacts/Verification/20260913T104926Z-fast-summary.txt`. The three selected
+appearance hashes and image-only approval scope are protected without changing
+historical Full V2 review records or clearing its production HOLD. No new
+playable export or roster model integration was made for this approval block.
 
 The controlled Alien preproduction block passed `./tools/verify.sh` and
 `./tools/verify.sh --full`: 317 NUnit tests and all 29 full blocking stages pass
