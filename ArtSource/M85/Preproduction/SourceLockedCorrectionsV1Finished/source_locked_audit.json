@@ -1,0 +1,461 @@
+{
+  "schema": 1,
+  "status": "CONTROLLED_SOURCE_LOCKED_APPEARANCE_REQUIRES_DIRECTOR_REVIEW",
+  "productionAccepted": false,
+  "canonImpact": "NONE",
+  "stableIds": {
+    "MT101": "unit.astronauts.mt101_armored_drilling_unit",
+    "MX71": "unit.astronauts.mx71_recon_dropship"
+  },
+  "supplementalViews": {
+    "MT101": {
+      "file": "mt101_finished_overhead.png",
+      "sha256": "41391a14a7b6f079b459caf8db55e54eb3754d158ad938b5c0598563b315c317"
+    },
+    "MX71": {
+      "file": "mx71_finished_front.png",
+      "sha256": "bb0b317d906518488e58b9c11f3131594dcdc269b8c240d88c02eaf067bebbd0"
+    }
+  },
+  "approach": "single controlled native source-informed reconstruction, not free-form image retry",
+  "dimensions": "estimated comparison studs; not exact part geometry or approved game scale",
+  "sources": {
+    "MT101": [
+      "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517776.pdf",
+      "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517777.pdf"
+    ],
+    "MX71": [
+      "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4524070.pdf"
+    ]
+  },
+  "controls": {
+    "MT101": [
+      {
+        "name": "MT101_DockedRearSpacecraft",
+        "kind": "docked_rear_craft",
+        "parent": "MT101",
+        "anchor": [
+          0,
+          0,
+          0
+        ],
+        "radius": null,
+        "axis": null,
+        "pair": null,
+        "permanent": false
+      },
+      {
+        "name": "MT101_RearCraftCockpit",
+        "kind": "closed_cockpit",
+        "parent": "MT101_DockedRearSpacecraft",
+        "anchor": [
+          0,
+          0,
+          0
+        ],
+        "radius": null,
+        "axis": null,
+        "pair": null,
+        "permanent": false
+      },
+      {
+        "name": "MT101_PermanentChassis",
+        "kind": "main_chassis",
+        "parent": "MT101",
+        "anchor": [
+          0,
+          0,
+          0
+        ],
+        "radius": null,
+        "axis": null,
+        "pair": null,
+        "permanent": false
+      },
+      {
+        "name": "MT101_ArticulatedDrill",
+        "kind": "separate_drill",
+        "parent": "MT101_PermanentChassis",
+        "anchor": [
+          -3.5,
+          -2.0,
+          9.5
+        ],
+        "radius": null,
+        "axis": null,
+        "pair": null,
+        "permanent": false
+      },
+      {
+        "name": "MT101_PermanentCockpit",
+        "kind": "closed_cockpit",
+        "parent": "MT101_PermanentChassis",
+        "anchor": [
+          0,
+          0,
+          0
+        ],
+        "radius": null,
+        "axis": null,
+        "pair": null,
+        "permanent": true
+      },
+      {
+        "name": "MT101_UpperBallLauncher",
+        "kind": "upper_gun",
+        "parent": "MT101_PermanentChassis",
+        "anchor": [
+          0.0,
+          -0.4,
+          12.5
+        ],
+        "radius": null,
+        "axis": null,
+        "pair": null,
+        "permanent": false
+      },
+      {
+        "name": "MT101_Wheel_-1_0",
+        "kind": "main_contact_wheel",
+        "parent": "MT101_PermanentChassis",
+        "anchor": [
+          -7,
+          8,
+          4
+        ],
+        "radius": 4,
+        "axis": null,
+        "pair": null,
+        "permanent": false
+      },
+      {
+        "name": "MT101_Wheel_-1_1",
+        "kind": "main_contact_wheel",
+        "parent": "MT101_PermanentChassis",
+        "anchor": [
+          -7,
+          0,
+          4
+        ],
+        "radius": 4,
+        "axis": null,
+        "pair": null,
+        "permanent": false
+      },
+      {
+        "name": "MT101_Wheel_-1_2",
+        "kind": "main_contact_wheel",
+        "parent": "MT101_PermanentChassis",
+        "anchor": [
+          -7,
+          -8,
+          4
+        ],
+        "radius": 4,
+        "axis": null,
+        "pair": null,
+        "permanent": false
+      },
+      {
+        "name": "MT101_Wheel_1_0",
+        "kind": "main_contact_wheel",
+        "parent": "MT101_PermanentChassis",
+        "anchor": [
+          7,
+          8,
+          4
+        ],
+        "radius": 4,
+        "axis": null,
+        "pair": null,
+        "permanent": false
+      },
+      {
+        "name": "MT101_Wheel_1_1",
+        "kind": "main_contact_wheel",
+        "parent": "MT101_PermanentChassis",
+        "anchor": [
+          7,
+          0,
+          4
+        ],
+        "radius": 4,
+        "axis": null,
+        "pair": null,
+        "permanent": false
+      },
+      {
+        "name": "MT101_Wheel_1_2",
+        "kind": "main_contact_wheel",
+        "parent": "MT101_PermanentChassis",
+        "anchor": [
+          7,
+          -8,
+          4
+        ],
+        "radius": 4,
+        "axis": null,
+        "pair": null,
+        "permanent": false
+      }
+    ],
+    "MX71": [
+      {
+        "name": "MX71_Airframe",
+        "kind": "airframe",
+        "parent": "MX71",
+        "anchor": [
+          0,
+          0,
+          0
+        ],
+        "radius": null,
+        "axis": null,
+        "pair": null,
+        "permanent": false
+      },
+      {
+        "name": "MX71_ClosedForwardCockpit",
+        "kind": "closed_cockpit",
+        "parent": "MX71_Airframe",
+        "anchor": [
+          0,
+          0,
+          0
+        ],
+        "radius": null,
+        "axis": null,
+        "pair": null,
+        "permanent": false
+      },
+      {
+        "name": "MX71_InnerEmitter_-1",
+        "kind": "airframe_emitter",
+        "parent": "MX71_Airframe",
+        "anchor": [
+          -3.6,
+          10.0,
+          10.3
+        ],
+        "radius": null,
+        "axis": [
+          0,
+          1,
+          0
+        ],
+        "pair": "Inner",
+        "permanent": false
+      },
+      {
+        "name": "MX71_InnerEmitter_1",
+        "kind": "airframe_emitter",
+        "parent": "MX71_Airframe",
+        "anchor": [
+          3.6,
+          10.0,
+          10.3
+        ],
+        "radius": null,
+        "axis": [
+          0,
+          1,
+          0
+        ],
+        "pair": "Inner",
+        "permanent": false
+      },
+      {
+        "name": "MX71_LoadCradle",
+        "kind": "load_cradle",
+        "parent": "MX71_Airframe",
+        "anchor": [
+          0,
+          0,
+          0
+        ],
+        "radius": null,
+        "axis": null,
+        "pair": null,
+        "permanent": false
+      },
+      {
+        "name": "MX71_OuterEmitter_-1",
+        "kind": "airframe_emitter",
+        "parent": "MX71_Airframe",
+        "anchor": [
+          -8.6,
+          6.2,
+          7.6
+        ],
+        "radius": null,
+        "axis": [
+          0,
+          1,
+          0
+        ],
+        "pair": "Outer",
+        "permanent": false
+      },
+      {
+        "name": "MX71_OuterEmitter_1",
+        "kind": "airframe_emitter",
+        "parent": "MX71_Airframe",
+        "anchor": [
+          8.6,
+          6.2,
+          7.6
+        ],
+        "radius": null,
+        "axis": [
+          0,
+          1,
+          0
+        ],
+        "pair": "Outer",
+        "permanent": false
+      },
+      {
+        "name": "MX71_CloseDockedSourceRover",
+        "kind": "source_payload",
+        "parent": "MX71",
+        "anchor": [
+          0,
+          0,
+          0
+        ],
+        "radius": null,
+        "axis": null,
+        "pair": null,
+        "permanent": false
+      },
+      {
+        "name": "MX71_PayloadWheel_-1_0",
+        "kind": "payload_contact_wheel",
+        "parent": "MX71_CloseDockedSourceRover",
+        "anchor": [
+          -2.8,
+          5.0,
+          3.2
+        ],
+        "radius": 1.6,
+        "axis": null,
+        "pair": null,
+        "permanent": false
+      },
+      {
+        "name": "MX71_PayloadWheel_-1_1",
+        "kind": "payload_contact_wheel",
+        "parent": "MX71_CloseDockedSourceRover",
+        "anchor": [
+          -2.8,
+          0.0,
+          3.2
+        ],
+        "radius": 1.6,
+        "axis": null,
+        "pair": null,
+        "permanent": false
+      },
+      {
+        "name": "MX71_PayloadWheel_-1_2",
+        "kind": "payload_contact_wheel",
+        "parent": "MX71_CloseDockedSourceRover",
+        "anchor": [
+          -2.8,
+          -5.0,
+          3.2
+        ],
+        "radius": 1.6,
+        "axis": null,
+        "pair": null,
+        "permanent": false
+      },
+      {
+        "name": "MX71_PayloadWheel_1_0",
+        "kind": "payload_contact_wheel",
+        "parent": "MX71_CloseDockedSourceRover",
+        "anchor": [
+          2.8,
+          5.0,
+          3.2
+        ],
+        "radius": 1.6,
+        "axis": null,
+        "pair": null,
+        "permanent": false
+      },
+      {
+        "name": "MX71_PayloadWheel_1_1",
+        "kind": "payload_contact_wheel",
+        "parent": "MX71_CloseDockedSourceRover",
+        "anchor": [
+          2.8,
+          0.0,
+          3.2
+        ],
+        "radius": 1.6,
+        "axis": null,
+        "pair": null,
+        "permanent": false
+      },
+      {
+        "name": "MX71_PayloadWheel_1_2",
+        "kind": "payload_contact_wheel",
+        "parent": "MX71_CloseDockedSourceRover",
+        "anchor": [
+          2.8,
+          -5.0,
+          3.2
+        ],
+        "radius": 1.6,
+        "axis": null,
+        "pair": null,
+        "permanent": false
+      },
+      {
+        "name": "MX71_SourcePayloadCockpit",
+        "kind": "closed_cockpit",
+        "parent": "MX71_CloseDockedSourceRover",
+        "anchor": [
+          0,
+          0,
+          0
+        ],
+        "radius": null,
+        "axis": null,
+        "pair": null,
+        "permanent": false
+      }
+    ]
+  },
+  "negativeGuards": [
+    "lost_MT_wheel",
+    "lost_permanent_cabin",
+    "cabin_detached_with_ship",
+    "fused_tool_mount",
+    "asymmetric_MX_gun",
+    "missing_MX_gun",
+    "rearward_MX_gun",
+    "missing_rover",
+    "missing_cradle"
+  ],
+  "images": {
+    "MT101": {
+      "file": "mt101_appearance.png",
+      "sha256": "c378b20e3eca87b9f36879edf9e7284ba4fccad8e6485fe73b0afbf8674f8944"
+    },
+    "MX71": {
+      "file": "mx71_appearance.png",
+      "sha256": "9722a108e6bc5b7ab8bc6d988de2bc9c86f107f1768159bdeb1f2f9e8f5b7a3a"
+    }
+  },
+  "nativeSource": {
+    "file": "source_locked_corrections.blend",
+    "sha256": "33c0e673be9b10c88df99e66bf49259613dc97e50fb3238e3d4f319ba7fcd94a"
+  },
+  "limitations": [
+    "Native control checks do not prove visibility in a raster",
+    "No physical buildability, exact part count, game import, animation or production approval",
+    "Source rover is visual payload, not a new roster unit or transport rule"
+  ]
+}

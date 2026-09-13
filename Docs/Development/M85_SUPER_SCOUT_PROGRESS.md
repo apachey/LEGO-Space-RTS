@@ -12,8 +12,9 @@ for the next composite review. MB-01 Eagle Command Base has a third candidate,
 explicitly authorized by the director after new photos exposed rev2's incorrect
 vertical capsule. The director accepted rev3's open horizontal three-arch deck
 and overall source-derived composition for the next composite review.
-MT-101 and MX-71 are explicitly blocked after two image-generation
-approaches each left unresolved source topology.
+MT-101 and MX-71 retain their historical two-free-form-attempt stops;
+the recorded controlled next step now has source-informed native monochrome
+review candidates, pending director appearance acceptance.
 Source-only Worker Robot and MX-41 flight-state candidates are director-accepted
 for the next composite review;
 previous accepted candidates and immutable first-review boards remain unchanged.
@@ -25,8 +26,10 @@ isolated official donor studies (7691 human station and 7315 solar module).
 The director approved all four composed-design proposals for generation only.
 Five historical first candidates remain separate from the immutable corpus;
 later review accepts Frontier, and the new controlled completed Alien
-appearances are accepted as recorded below. Solar and the docked Mothership
-correction still require image review. The earlier
+appearances are accepted as recorded below. Solar's completed appearance and
+overall docked Mothership composition are now separately accepted; incorrect
+Mothership operators/raised printing and production topology remain pending.
+The earlier
 six-response recording omission is corrected from the
 original director message; all 66 initial responses were supplied.
 
@@ -38,10 +41,23 @@ comparative review. Their selected images and `+` evidence live in
 `ArtSource/M85/Preproduction/AlienCompletedAppearanceV1/completed_appearance_manifest.json`.
 This approval does not promote the rejected earlier composed previews, change
 the immutable first-review boards or accept production models/T082 as a whole.
-Seven new negative review guards protect this distinction. The next handoff
-collects the still-unreviewed six-panel Solar Energy Array and docked Mothership
-correction, with known limitations disclosed in
+Seven new negative review guards protect this distinction. The subsequent `+`
+to commit `ea19e42` accepts the six-panel Solar appearance and overall docked
+Mothership composition separately, retaining disclosed operator/relief defects.
+Their hashes and scope are recorded and guarded in
+`Content/Presentation/SuperScout/completed_composition_review.json`. See
 `Docs/Development/M85_T082_PENDING_COMPOSITION_REVIEW.md`.
+Twelve additional recording guards preserve that approval boundary and the
+two new controlled native MT-101/MX-71 candidates (41 review tests total).
+Saved native meshes and nine negative control fixtures pass separately; native
+source checks are not automatic raster/production acceptance. See
+`Docs/Development/M85_T082_SOURCE_LOCKED_CORRECTIONS.md`.
+This block passed `./tools/verify.sh --full` at
+`Artifacts/Verification/20260913T173046Z-full-summary.txt`: 29/29 blocking
+stages, 317 NUnit tests and 41 recording guards, zero blocking failures. The
+existing game was successfully exported to `Builds/macOS/LEGO Space RTS.app`;
+new review candidates remain outside the game. The unchanged M9 60-mover
+`BLOCKING_LATER` diagnostic remains 2/60.
 
 - The corpus is bound to the exact authoritative runtime roster: 35 units and
   31 infrastructure entries, with no missing, duplicated or extra stable IDs.

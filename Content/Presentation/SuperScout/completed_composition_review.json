@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "approvalEvidence": {
+    "date": "2026-09-13",
+    "reviewer": "game director",
+    "message": "+",
+    "reviewedCommit": "ea19e42",
+    "scope": "Only the two completed candidates displayed in that handoff; image-only Solar appearance and overall docked Mothership composition."
+  },
+  "productionAccepted": false,
+  "canonImpact": "NONE",
+  "selections": [
+    {
+      "stableId": "building.ast.solar_energy_array",
+      "status": "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW",
+      "file": "Docs/Development/M85SuperScout/Silhouettes/FullV2/Renders/building_astronauts_solar_energy_array_composed_rev2.png",
+      "sha256": "647d7cdac0e6edf5ba512a982e734d977d9e0cf273d663ffade368a6c73986d6",
+      "acceptedScope": "Six flat conventional human panels in two rows of three; completed appearance for comparative review only.",
+      "pending": ["Exact production topology, world-scale mapping and integration"]
+    },
+    {
+      "stableId": "unit.aliens.alien_mothership",
+      "status": "DIRECTOR_ACCEPTED_OVERALL_COMPOSITION_WITH_SOURCE_CORRECTIONS_PENDING",
+      "file": "Docs/Development/M85SuperScout/Silhouettes/FullV2/Renders/unit_aliens_alien_mothership_rev1.png",
+      "sha256": "95804c387d2ed74b13017466feec159552e92d7b952cb3ec4889a7dd94d6a11b",
+      "acceptedScope": "Overall complete connected docked craft composition only; remains one roster unit.",
+      "pending": ["Incorrect generated operator anatomy", "Printed details incorrectly raised as relief", "Exact joints, underside and unfolding", "Production topology, world-scale mapping and integration"]
+    }
+  ],
+  "historicalBoundary": "Original FullV2 generation states and two-attempt stops remain historical evidence. This approval does not accept incorrect operators, add training/launch rules, accept models or approve a complete roster."
+}

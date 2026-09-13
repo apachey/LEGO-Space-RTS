@@ -2,6 +2,15 @@
 
 Date: 2026-09-13. Branch: `codex/m85-t082`, not merged.
 
+Latest director response `+` to the two-image handoff from commit `ea19e42`:
+Solar's completed appearance and Mothership's overall connected docked
+composition are accepted for comparative review. The operator/relief defects
+explicitly disclosed below remain unaccepted and pending. Exact image hashes,
+approval evidence and limited scope are now recorded separately in
+`Content/Presentation/SuperScout/completed_composition_review.json`.
+The original generation-time statuses below are historical, not current approval
+states; FullV2 history and all production/gameplay gates remain untouched.
+
 ## What changed / why
 
 The director's `+` accepts the three completed Alien appearance images shown

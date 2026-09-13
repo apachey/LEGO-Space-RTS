@@ -46,6 +46,8 @@ FULL_V2_REVIEW_MANIFEST = FULL_V2_REVIEW_OUTPUT / "review_manifest.json"
 FULL_V2_REVIEW_KEY = FULL_V2_REVIEW_OUTPUT / "BLIND_REVIEW_KEY.md"
 FULL_V2_REVIEW_GENERATOR = ROOT / "tools/generate-m85-full-v2-review.py"
 COMPLETED_ALIEN_APPEARANCE = ROOT / "ArtSource/M85/Preproduction/AlienCompletedAppearanceV1/completed_appearance_manifest.json"
+COMPLETED_COMPOSITION_REVIEW = ROOT / "Content/Presentation/SuperScout/completed_composition_review.json"
+SOURCE_LOCKED_CORRECTIONS = ROOT / "ArtSource/M85/Preproduction/SourceLockedCorrectionsV1Finished/source_locked_audit.json"
 
 CLASSIFICATIONS = {
     "OFFICIAL_DIRECT": "OFFICIAL-DIRECT",
@@ -466,8 +468,94 @@ def validate_completed_alien_appearance() -> None:
             fail("completed Alien appearance hid an extra selected variant")
 
 
+def validate_completed_composition_review() -> None:
+    record = json.loads(COMPLETED_COMPOSITION_REVIEW.read_text(encoding="utf-8"))
+    evidence = {
+        "date": "2026-09-13", "reviewer": "game director", "message": "+",
+        "reviewedCommit": "ea19e42",
+        "scope": "Only the two completed candidates displayed in that handoff; image-only Solar appearance and overall docked Mothership composition.",
+    }
+    if record.get("approvalEvidence") != evidence or record.get("productionAccepted") is not False or record.get("canonImpact") != "NONE":
+        fail("completed composition approval evidence or limited scope drifted")
+    expected = {
+        "building.ast.solar_energy_array": ("DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW", "building_astronauts_solar_energy_array_composed_rev2.png", "647d7cdac0e6edf5ba512a982e734d977d9e0cf273d663ffade368a6c73986d6"),
+        "unit.aliens.alien_mothership": ("DIRECTOR_ACCEPTED_OVERALL_COMPOSITION_WITH_SOURCE_CORRECTIONS_PENDING", "unit_aliens_alien_mothership_rev1.png", "95804c387d2ed74b13017466feec159552e92d7b952cb3ec4889a7dd94d6a11b"),
+    }
+    selections = record.get("selections", [])
+    if len(selections) != 2 or {a.get("stableId") for a in selections} != set(expected):
+        fail("completed composition selection scope drifted")
+    for selected in selections:
+        status, filename, digest = expected[selected["stableId"]]
+        path = FULL_V2_OUTPUT / "Renders" / filename
+        if (selected.get("status"), selected.get("file"), selected.get("sha256")) != (status, str(path.relative_to(ROOT)), digest):
+            fail("completed composition selected status or image drifted")
+        if hashlib.sha256(path.read_bytes()).hexdigest() != digest:
+            fail("completed composition selected bytes drifted")
+        scope = ("Six flat conventional human panels in two rows of three; completed appearance for comparative review only."
+                 if selected["stableId"] == "building.ast.solar_energy_array" else
+                 "Overall complete connected docked craft composition only; remains one roster unit.")
+        if selected.get("acceptedScope") != scope:
+            fail("completed composition selected acceptance scope drifted")
+        if selected["stableId"] == "unit.aliens.alien_mothership" and not {
+                "Incorrect generated operator anatomy", "Printed details incorrectly raised as relief",
+                "Exact joints, underside and unfolding", "Production topology, world-scale mapping and integration"}.issubset(selected.get("pending", [])):
+            fail("completed Mothership composition hid unresolved source corrections")
+
+
+def validate_source_locked_corrections() -> None:
+    """Recording gate only: this does not award native fidelity or human acceptance."""
+    record = json.loads(SOURCE_LOCKED_CORRECTIONS.read_text(encoding="utf-8"))
+    if record.get("status") != "CONTROLLED_SOURCE_LOCKED_APPEARANCE_REQUIRES_DIRECTOR_REVIEW" or record.get("productionAccepted") is not False or record.get("canonImpact") != "NONE":
+        fail("source-locked corrections expanded review or production approval")
+    if record.get("stableIds") != {"MT101": "unit.astronauts.mt101_armored_drilling_unit", "MX71": "unit.astronauts.mx71_recon_dropship"}:
+        fail("source-locked corrections stable identity mapping drifted")
+    expected_images = {
+        "MT101": ("mt101_appearance.png", "c378b20e3eca87b9f36879edf9e7284ba4fccad8e6485fe73b0afbf8674f8944"),
+        "MX71": ("mx71_appearance.png", "9722a108e6bc5b7ab8bc6d988de2bc9c86f107f1768159bdeb1f2f9e8f5b7a3a"),
+    }
+    images = record.get("images", {})
+    if set(images) != set(expected_images):
+        fail("source-locked corrections lost an image")
+    for key, (filename, digest) in expected_images.items():
+        if images[key] != {"file": filename, "sha256": digest} or hashlib.sha256((SOURCE_LOCKED_CORRECTIONS.parent / filename).read_bytes()).hexdigest() != digest:
+            fail("source-locked corrections selected image drifted")
+    for key, filename, digest in (
+            ("MT101", "mt101_finished_overhead.png", "41391a14a7b6f079b459caf8db55e54eb3754d158ad938b5c0598563b315c317"),
+            ("MX71", "mx71_finished_front.png", "bb0b317d906518488e58b9c11f3131594dcdc269b8c240d88c02eaf067bebbd0")):
+        if record.get("supplementalViews", {}).get(key) != {"file": filename, "sha256": digest} or hashlib.sha256((SOURCE_LOCKED_CORRECTIONS.parent / filename).read_bytes()).hexdigest() != digest:
+            fail("source-locked corrections supplemental view drifted")
+    source = record.get("nativeSource", {})
+    if source != {"file": "source_locked_corrections.blend", "sha256": "33c0e673be9b10c88df99e66bf49259613dc97e50fb3238e3d4f319ba7fcd94a"} or hashlib.sha256((SOURCE_LOCKED_CORRECTIONS.parent / "source_locked_corrections.blend").read_bytes()).hexdigest() != source.get("sha256"):
+        fail("source-locked corrections native source drifted")
+    controls = record.get("controls", {})
+    mt, mx = controls.get("MT101", []), controls.get("MX71", [])
+    wheels = [a for a in mt if a.get("kind") == "main_contact_wheel"]
+    if len(wheels) != 6 or {tuple(a["anchor"]) for a in wheels} != {(s*7,y,4) for s in (-1,1) for y in (8,0,-8)}:
+        fail("source-locked corrections lost MT six-contact topology")
+    cabins = [a for a in mt if a.get("name") == "MT101_PermanentCockpit"]
+    if len(cabins) != 1 or cabins[0].get("kind") != "closed_cockpit" or cabins[0].get("permanent") is not True or cabins[0].get("parent") != "MT101_PermanentChassis":
+        fail("source-locked corrections lost permanent closed MT cockpit")
+    for kind in ("upper_gun", "separate_drill"):
+        nodes = [a for a in mt if a.get("kind") == kind]
+        if len(nodes) != 1 or nodes[0].get("parent") != "MT101_PermanentChassis":
+            fail("source-locked corrections fused independent MT tools")
+    guns = [a for a in mx if a.get("kind") == "airframe_emitter"]
+    if len(guns) != 4 or any(a.get("axis") != [0,1,0] for a in guns):
+        fail("source-locked corrections lost four forward MX emitters")
+    for pair,x,y,z in (("Inner",3.6,10,10.3),("Outer",8.6,6.2,7.6)):
+        paired = [a for a in guns if a.get("pair") == pair]
+        if len(paired) != 2 or {tuple(a["anchor"]) for a in paired} != {(-x,y,z),(x,y,z)}:
+            fail("source-locked corrections lost mirrored MX emitter pairs")
+    if len([a for a in mx if a.get("kind") == "source_payload"]) != 1 or len([a for a in mx if a.get("kind") == "load_cradle"]) != 1 or len([a for a in mx if a.get("kind") == "payload_contact_wheel"]) != 6:
+        fail("source-locked corrections lost close source payload")
+    if len(record.get("negativeGuards", [])) != 9 or len(record.get("limitations", [])) < 3:
+        fail("source-locked corrections hid controls or limitations")
+
+
 def main() -> None:
     validate_completed_alien_appearance()
+    validate_completed_composition_review()
+    validate_source_locked_corrections()
     for path in (
         MANIFEST, LEDGER, INSTRUCTION_INDEX, SOURCE_ANALYSIS_POLICY, COMPOSED_DESIGN_PROPOSALS, ROCK_RAIDERS_EVIDENCE, ASTRONAUTS_EVIDENCE,
         ALIENS_EVIDENCE, ALIEN_BIOMECHANICAL_POLICY,

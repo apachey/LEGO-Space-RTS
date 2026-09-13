@@ -857,12 +857,21 @@ live; the current schema-9 copy/paste retains the complete experiment.
   dimensions. Historical rejected previews remain rejected/unaccepted.
   See `Docs/Development/M85_T082_ALIEN_COMPLETED_APPEARANCE.md`; historical
   drafts remain in `Docs/Development/M85_T082_ALIEN_SHAPE_DRAFTS.md`.
-  The next composed-candidate handoff collects the six-flat-panel Solar Energy
-  Array revision and complete docked Mothership correction, still unreviewed.
-  Mothership operator anatomy is a known generated mismatch, not source evidence.
+  The director's subsequent `+` accepts the six-flat-panel Solar Energy Array
+  appearance and overall complete docked Mothership composition separately.
+  Exact hashes and image-only scope are validator-guarded; incorrect Mothership
+  operator anatomy/raised printed detail remain pending, not source evidence.
   See `Docs/Development/M85_T082_PENDING_COMPOSITION_REVIEW.md`.
-  Accepted images, original boards, MT-101/MX-71 stop gates and gameplay remain
-  unchanged. T082 still requires renewed complete 24/44/72-cell acceptance.
+  MT-101 and MX-71 now have controlled native source-informed monochrome
+  candidates, following the recorded topology-controlled next step rather than
+  a third free-form generation. MT retains six contacts, permanent closed cabin,
+  independent upper gun/drill and docked rear craft; MX retains four mirrored
+  forward emitters and a close source-rover payload. These candidates require
+  director review, are not literal/production models or gameplay-scale changes.
+  Actual saved mesh transforms and nine negative native control fixtures pass.
+  See `Docs/Development/M85_T082_SOURCE_LOCKED_CORRECTIONS.md`.
+  Accepted image bytes, original boards, historical two-attempt stops and gameplay
+  remain unchanged. T082 still requires renewed complete 24/44/72-cell acceptance.
 - The official 7301 instruction page also exposed a stale audit-reconciliation
   error: Rover is a four-wheel open platform, not the two-wheel bike described
   by the earlier identity and production drafts. The source ledger, identity,
@@ -902,6 +911,16 @@ step and must be announced when new visual evidence is actually required.
 - network replay chunk format **1**.
 
 ## Verification state
+
+The controlled MT-101/MX-71 source-lock and limited Solar/Mothership approval
+block passed `./tools/verify.sh --full`: all 29 blocking stages, 317 NUnit tests
+and 41 director-review recording guards, at
+`Artifacts/Verification/20260913T173046Z-full-summary.txt`. Saved native mesh
+audit and nine negative native control cases pass separately; selected principal
+and supplemental image hashes are guarded. The existing macOS game was exported
+and smoke-tested at `Builds/macOS/LEGO Space RTS.app`; new candidates are not
+integrated. The preserved 60-mover M9 `BLOCKING_LATER` diagnostic still fails at
+2/60, with zero blocking failures. Complete T082 visual acceptance remains open.
 
 The completed-Alien image-approval and next-review preparation block passed
 `./tools/verify.sh`: all 23 fast blocking stages and 317 NUnit tests, with

@@ -12,6 +12,59 @@ import validate_m85_super_scout as validator
 
 
 class ReviewGuardTests(unittest.TestCase):
+    def test_composition_cannot_accept_production(self):
+        self.assert_rejected(validator.COMPLETED_COMPOSITION_REVIEW,
+                             lambda f: f.update(productionAccepted=True), "composition approval evidence or limited scope")
+
+    def test_composition_requires_exact_approval_evidence(self):
+        self.assert_rejected(validator.COMPLETED_COMPOSITION_REVIEW,
+                             lambda f: f.pop("approvalEvidence"), "composition approval evidence or limited scope")
+
+    def test_composition_cannot_expand_roster_approval(self):
+        self.assert_rejected(validator.COMPLETED_COMPOSITION_REVIEW,
+                             lambda f: f["selections"].append(f["selections"][0]), "composition selection scope")
+
+    def test_composition_cannot_substitute_image(self):
+        self.assert_rejected(validator.COMPLETED_COMPOSITION_REVIEW,
+                             lambda f: f["selections"][0].update(sha256="0"*64), "composition selected status or image")
+
+    def test_mothership_cannot_hide_wrong_operator(self):
+        self.assert_rejected(validator.COMPLETED_COMPOSITION_REVIEW,
+                             lambda f: f["selections"][1].update(pending=[]), "hid unresolved source corrections")
+
+    def test_native_correction_cannot_accept_production(self):
+        self.assert_rejected(validator.SOURCE_LOCKED_CORRECTIONS,
+                             lambda f: f.update(productionAccepted=True), "expanded review or production approval")
+
+    def test_native_correction_cannot_substitute_image(self):
+        self.assert_rejected(validator.SOURCE_LOCKED_CORRECTIONS,
+                             lambda f: f["images"]["MT101"].update(sha256="0"*64), "selected image drifted")
+
+    def test_native_correction_keeps_six_mt_contacts(self):
+        def mutate(f):
+            next(a for a in f["controls"]["MT101"] if a["kind"]=="main_contact_wheel")["kind"]="missing"
+        self.assert_rejected(validator.SOURCE_LOCKED_CORRECTIONS, mutate, "MT six-contact topology")
+
+    def test_native_correction_keeps_permanent_cabin(self):
+        def mutate(f):
+            next(a for a in f["controls"]["MT101"] if a["name"]=="MT101_PermanentCockpit")["parent"]="MT101_DockedRearSpacecraft"
+        self.assert_rejected(validator.SOURCE_LOCKED_CORRECTIONS, mutate, "permanent closed MT cockpit")
+
+    def test_native_correction_keeps_independent_tools(self):
+        def mutate(f):
+            next(a for a in f["controls"]["MT101"] if a["kind"]=="separate_drill")["parent"]="MT101_UpperBallLauncher"
+        self.assert_rejected(validator.SOURCE_LOCKED_CORRECTIONS, mutate, "fused independent MT tools")
+
+    def test_native_correction_keeps_mirrored_emitters(self):
+        def mutate(f):
+            next(a for a in f["controls"]["MX71"] if a["kind"]=="airframe_emitter")["anchor"][0]+=1
+        self.assert_rejected(validator.SOURCE_LOCKED_CORRECTIONS, mutate, "mirrored MX emitter pairs")
+
+    def test_native_correction_keeps_source_payload(self):
+        def mutate(f):
+            next(a for a in f["controls"]["MX71"] if a["kind"]=="source_payload")["kind"]="missing"
+        self.assert_rejected(validator.SOURCE_LOCKED_CORRECTIONS, mutate, "close source payload")
+
     def test_completed_appearance_requires_director_evidence(self):
         self.assert_rejected(validator.COMPLETED_ALIEN_APPEARANCE,
                              lambda fixture: fixture.pop("approval_evidence"),
