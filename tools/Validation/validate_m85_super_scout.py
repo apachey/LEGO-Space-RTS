@@ -1121,10 +1121,25 @@ def main() -> None:
         stable_id, configuration, source_sets = expected_proposals[proposal["proposalId"]]
         if (proposal.get("stableId") != stable_id or proposal.get("configuration") != configuration
                 or proposal.get("sourceSets") != source_sets
-                or proposal.get("status") != "PENDING_DIRECTOR_GENERATION_APPROVAL"
-                or "approvalEvidence" not in proposal or proposal["approvalEvidence"] is not None
-                or "generatedOutput" not in proposal or proposal["generatedOutput"] is not None):
+                or proposal.get("status") != "GENERATED_VISUAL_PROPOSAL_REQUIRES_DIRECTOR_REVIEW"
+                or proposal.get("approvalEvidence") != {
+                    "directorMessage": "якщо ти кажеш про картинки — я бачу тільки одну, якщо це перед генерацією картинки, то мені потрібно побачити",
+                    "scope": "THREE_VISUAL_PREVIEWS_ONLY_NOT_COMPOSITION_OR_IMAGE_ACCEPTANCE",
+                }
+                or proposal.get("attemptNumber") != 2 or proposal.get("gameplayImpact") != "NONE"):
             fail("revised Alien anatomy lacks separate director generation approval")
+        for field in ("generatedOutput", "specificPrompt", "finding", "generationMode"):
+            require_nonempty(proposal, field, "revised Alien visual preview")
+        output = FULL_V2_OUTPUT / proposal["generatedOutput"]
+        if output.parent != FULL_V2_OUTPUT / "Renders" or not output.is_file():
+            fail("revised Alien preview output missing or outside review renders")
+        output_bytes = output.read_bytes()
+        if output_bytes[:8] != b"\x89PNG\r\n\x1a\n" or hashlib.sha256(output_bytes).hexdigest() != proposal.get("outputSha256"):
+            fail("revised Alien preview PNG or hash drifted")
+        expected_inputs = [] if configuration != "air_lance" else [
+            "Renders/building_aliens_etx_defense_node_ground_pulse_biomechanical_rev2.png"]
+        if proposal.get("generationInputImages") != expected_inputs:
+            fail("revised Alien preview lost its generation/edit lineage")
     proposal_doc = ROOT / full_v2_manifest.get("composedRevisionProposalDocument", "")
     if proposal_doc.parent != ROOT / "Docs/Development" or not proposal_doc.is_file():
         fail("revised Alien proposals lack their disclosed composition document")

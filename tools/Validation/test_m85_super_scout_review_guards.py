@@ -12,6 +12,18 @@ import validate_m85_super_scout as validator
 
 
 class ReviewGuardTests(unittest.TestCase):
+    def test_alien_visual_preview_cannot_accept_composition(self):
+        def mutate(fixture):
+            fixture["composedRevisionProposals"][0]["status"] = "DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE"
+        self.assert_rejected(validator.FULL_V2_MANIFEST, mutate,
+                             "separate director generation approval")
+
+    def test_air_lance_preview_requires_common_base_edit_lineage(self):
+        def mutate(fixture):
+            fixture["composedRevisionProposals"][2]["generationInputImages"] = []
+        self.assert_rejected(validator.FULL_V2_MANIFEST, mutate,
+                             "generation/edit lineage")
+
     def test_solar_correction_generation_cannot_accept_image(self):
         def mutate(fixture):
             fixture["composedRevisionCandidates"][0]["status"] = "DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE"

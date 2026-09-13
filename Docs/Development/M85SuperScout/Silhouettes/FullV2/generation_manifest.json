@@ -483,9 +483,19 @@
         "7646",
         "7691"
       ],
-      "status": "PENDING_DIRECTOR_GENERATION_APPROVAL",
-      "approvalEvidence": null,
-      "generatedOutput": null
+      "status": "GENERATED_VISUAL_PROPOSAL_REQUIRES_DIRECTOR_REVIEW",
+      "approvalEvidence": {
+        "directorMessage": "якщо ти кажеш про картинки — я бачу тільки одну, якщо це перед генерацією картинки, то мені потрібно побачити",
+        "scope": "THREE_VISUAL_PREVIEWS_ONLY_NOT_COMPOSITION_OR_IMAGE_ACCEPTANCE"
+      },
+      "generatedOutput": "Renders/unit_aliens_etx_servitor_biomechanical_rev2.png",
+      "outputSha256": "acf93d76e3d0d784559be6e560c551fbd03103cb788d3e3311b648420bf43948",
+      "attemptNumber": 2,
+      "generationMode": "built-in image_gen; new proposal from disclosed audited donor/adaptation brief",
+      "generationInputImages": [],
+      "specificPrompt": "Use case: stylized-concept\nAsset type: LEGO Space RTS ETX Servitor biomechanical composed revision 2, director visual proposal, not an official LEGO set.\nScene/backdrop: single centered object, white seamless studio floor/background, elevated front three-quarter view, soft light exposing gray internal structure, all object visible with margin.\nRole: SMALL UNCREWED ECONOMIC WORKER that hovers just above ground, gathers resources and builds/repairs Alien structures; not a soldier. Compact low armored pod broad at rear and tapering to a short split utility mouth, no cockpit, pilot or weapons.\nSource/assembly grammar: compact 5617 Alien Jet footprint without pilot arches, rider seat or gun pods; paired curved split-shell construction from 7646 Infiltrator reduced to two side shell valves, not legs; recessed skeletal rib/support and branching living conduit grammar inspired by official Mothership interior identity. This dedicated uncrewed worker anatomy and integrated tool are NEW ADAPTATION, not a literal official alternate set.\nBody: two attached curved armored side valves partially open only enough to reveal a protected ribbed internal core and supple branching living channels between real root connections. Closed top shell behind a small recessed central seam, no empty rider chair. A few real LEGO-like studs, plate edges and molded crescent profiles establish assembly identity, while specialized interior supports and conduit pieces read as biomechanical, not a generic current-day industrial robot.\nTool: ONE SHORT TWO-JAW UTILITY CLAMP grows functionally from the tapered hull nose as an integrated bifurcating armored interface, internally driven by protected living conduits. No separate hinged robotic arm, no hydraulic excavator boom or piston, no mechanical claw on a deck. Two opposing compact jaw plates are open slightly around empty space, visibly a grab/manipulation tool and NOT a cannon. No resource crystal embedded in body, no cargo prop in this shot.\nGround relation: small visible hover clearance and soft detached shadow; no landing feet, walking legs, wheels or thruster flames. Broad low body, no human face, no eyeballs, no teeth or insect antennae. No wet exposed flesh or brain.\nStyle: assembled LEGO-derived matte monochrome 3D shape-review render, dark neutral gray armor with slightly lighter muted gray recessed skeletal supports and living conduits for legibility. All parts grayscale, no lime, green, blue, red, transparent neon, emissive elements, glossy colored accents, text, logos, watermark or scenery.\nAvoid: humanoid robot, modern hydraulic equipment, piloted scooter, military drone, gun barrel, insect/StarCraft drone, xenomorph, random tentacles, tall antenna, pedestal, plant/hive, giant crystal, gore, weapon effects, extra objects. No new gameplay.",
+      "finding": "Low uncrewed hovering pod with paired shell valves, recessed ribs/conduits and a two-jaw nose tool. No pilot, feet or weapons. Broad interpretation of source grammar rather than a literal 5617/7646 assembly; living versus mechanical identity remains director judgement.",
+      "gameplayImpact": "NONE"
     },
     {
       "proposalId": "composition.etx_defense_node.ground_pulse.biomechanical.rev2",
@@ -495,9 +505,19 @@
         "7697",
         "7691"
       ],
-      "status": "PENDING_DIRECTOR_GENERATION_APPROVAL",
-      "approvalEvidence": null,
-      "generatedOutput": null
+      "status": "GENERATED_VISUAL_PROPOSAL_REQUIRES_DIRECTOR_REVIEW",
+      "approvalEvidence": {
+        "directorMessage": "якщо ти кажеш про картинки — я бачу тільки одну, якщо це перед генерацією картинки, то мені потрібно побачити",
+        "scope": "THREE_VISUAL_PREVIEWS_ONLY_NOT_COMPOSITION_OR_IMAGE_ACCEPTANCE"
+      },
+      "generatedOutput": "Renders/building_aliens_etx_defense_node_ground_pulse_biomechanical_rev2.png",
+      "outputSha256": "78ea0dfae1fe0b095a4c835ef69f9348ae8d2a805f6c81ec9f929a8abc648a8d",
+      "attemptNumber": 2,
+      "generationMode": "built-in image_gen; new proposal from disclosed audited donor/adaptation brief",
+      "generationInputImages": [],
+      "specificPrompt": "Use case: stylized-concept\nAsset type: LEGO Space RTS ETX Defense Node, Ground Pulse biomechanical revision 2; visual proposal for director review, not an official set build.\nScene/backdrop: one object on a white studio floor, generous white margins, elevated front three-quarter camera, soft neutral light exposing dark structure.\nSubject/role: stationary Alien anti-ground defense, a broad LOW broken-ring firing crown around a recessed biomechanical support core. Source derivation: curved crescent shell lobes and distributed outer emitter construction from Mars Mission 7697 Alien Assault; ribbed skeletal supports and branching living conduits inspired by official Mothership cutaway identity. Recombine attached donor shell pieces; do NOT park a whole fighter on a pedestal. No cockpit or crew.\nCrown: three recognizably LEGO-molded curved armored shell lobes form a wide incomplete ring, with an open front gap and a central visible core opening. Four short energy emitters are physically attached along the outer shell, pointing horizontally toward front ground targets, not one generic central long cannon. Segmented plate connections, a few exposed studs and molded edge profiles, not freehand smooth fantasy sculpture.\nCOMMON FOUNDATION (must be reusable unchanged for Air Lance): one low flattened armored central capsule over a recessed ribbed support spine; four short flared connected shell roots, front pair and rear pair, ending in broad fixed flat planted pads. Low shell roots, not jointed walking legs. No rectangular industrial deck, no turret tower or long pedestal. Crown roots attach directly above the capsule through a short integrated aiming interface.\nBiomechanical readability: protected ribs and short branching living conduits are genuinely visible within intentional gaps between shell lobes, capsule and root connections. Smooth armored exterior stays distinct from internal skeletal struts and supple conduits. The core is engineered living technology, not an exposed brain, wet skin, random tentacles, or merely flexible human hydraulic hoses. No big central crystal replacing the body. Proposed scaled anatomy and stationary roots are a new adaptation, not asserted literal LEGO source anatomy.\nStyle/materials: LEGO-derived assembled 3D review render, monochrome MATTE dark-neutral gray, subtle medium-gray internal ribs and conduits for structural legibility; no lime/green/blue/red color, emission, gloss, weapons fire or effects. Whole object visible.\nAvoid: humanoid, pilot, resource cargo, articulated creature legs, tripod, wheels, mobile tank, whole spacecraft on stand, tall Protoss tower, Zerg hive, flesh/gore, contemporary robot hydraulics, generic long gun barrel, text, labels, logo, watermark, background props. No gameplay expansion.",
+      "finding": "Four planted pads, recessed ribbed/conduit core and four outer emitters. Generated crown has TWO dominant crescents rather than the proposed three source-derived curved lobes, with broadly lateral firing axes. This topology mismatch is disclosed, not accepted or retried.",
+      "gameplayImpact": "NONE"
     },
     {
       "proposalId": "composition.etx_defense_node.air_lance.biomechanical.rev2",
@@ -507,9 +527,21 @@
         "7692",
         "7691"
       ],
-      "status": "PENDING_DIRECTOR_GENERATION_APPROVAL",
-      "approvalEvidence": null,
-      "generatedOutput": null
+      "status": "GENERATED_VISUAL_PROPOSAL_REQUIRES_DIRECTOR_REVIEW",
+      "approvalEvidence": {
+        "directorMessage": "якщо ти кажеш про картинки — я бачу тільки одну, якщо це перед генерацією картинки, то мені потрібно побачити",
+        "scope": "THREE_VISUAL_PREVIEWS_ONLY_NOT_COMPOSITION_OR_IMAGE_ACCEPTANCE"
+      },
+      "generatedOutput": "Renders/building_aliens_etx_defense_node_air_lance_biomechanical_rev2.png",
+      "outputSha256": "69c5e3b0471ad01ded03ba69d1f8db0cdda865ea47f3dc7421f7bdca9462957e",
+      "attemptNumber": 2,
+      "generationMode": "built-in image_gen; edit referencing generated Ground Pulse, not official source evidence",
+      "generationInputImages": [
+        "Renders/building_aliens_etx_defense_node_ground_pulse_biomechanical_rev2.png"
+      ],
+      "specificPrompt": "Use case: precise-object-edit\nAsset type: LEGO Space RTS ETX Defense Node Air Lance biomechanical composed revision 2, unaccepted director review concept.\nInput image 1 is the EDIT TARGET: the newly generated Ground Pulse concept. It is an interpretation, NOT official source evidence.\nChange ONLY the upper broad broken-ring weapon crown into a narrow upward-pointing Air Lance firing head. Preserve exactly the entire lower armored central capsule, exposed lower ribbed spine and branching conduits, all FOUR flared shell roots and all FOUR planted ground pads, their positions, scale, perspective, camera, white studio background, neutral shadows and matte monochrome material treatment.\nNew head: TWO long thin curved LEGO-like blade shell sections, inspired by the narrow 7692 ETX Alien Spacecraft, form a slim upright split-blade frame with a clear OPEN central slot. They attach directly to a short aiming connection above the same central spine/capsule, not to a tower. Angle the complete firing head approximately 65 degrees upward so it is unmistakably anti-air.\nWeapons: exactly THREE short energy emitter nozzles in one countable triangular cluster between the paired blades, directed upward along the head's firing axis. This is an explicit NEW ADAPTATION that relocates and reorients the original 7692 craft's REAR emitter cluster into an anti-air assembly; do NOT claim an official front triple gun or combine it with the original separate side weapon. Remove ALL four lateral Ground Pulse emitters and both broad crescent ring wings. No horizontal nozzles, no extra weapons.\nBiomechanical construction: protected ribbed supports and short supple branching conduits connect actual head roots to the existing core, matching the target's interior structural grammar. Keep visible LEGO plate/hinge connections and occasional studs on armor, dark-neutral-gray matte shells and slightly lighter recessed supports, no original source colors, no glow, no firing effects.\nConstraints: one complete fixed structure, same camera/framing with generous white margins and entire taller head visible. Lower foundation must remain the SAME DESIGN, not another independently redesigned base. No cockpit, pilot, walking limbs, wheels, generic long cannon, tall crystal/Protoss tower, StarCraft hive, wet flesh, text, label, logo or watermark. No gameplay changes, no autonomous asset acceptance.",
+      "finding": "Three upward-directed emitters between two raised narrow blade sections; lower four-pad foundation/core retains the Ground Pulse family. Perspective/proportions and surface sections are not pixel-identical, and leftover broad lower shoulder armor remains interpretation.",
+      "gameplayImpact": "NONE"
     }
   ],
   "blockedCorrections": [

@@ -828,8 +828,12 @@ live; the current schema-9 copy/paste retains the complete experiment.
   six flat human panels in two rows of three; it remains unreviewed, with its
   exact edit prompt, authority and hash retained alongside the historical image.
   Three revised Alien compositions disclose worker role, concrete shell donors,
-  recessed supports/conduits and one shared rooted defense foundation; they are
-  PENDING_DIRECTOR_GENERATION_APPROVAL, not generated or production-accepted.
+  recessed supports/conduits and one shared rooted defense foundation. The
+  director requested visual previews before deciding: three composed revision-2
+  images now exist, GENERATED_VISUAL_PROPOSAL_REQUIRES_DIRECTOR_REVIEW, not
+  composition/production-accepted. Air Lance edits Ground Pulse to share the
+  lower core/foundation. Ground Pulse's two dominant crescents do not preserve
+  the proposed three-lobe crown; that mismatch is disclosed without hidden retry.
   See `Docs/Development/M85_T082_SOLAR_AND_BIOMECHANICAL_REVISION_BLOCK.md`.
   Accepted images, original boards, MT-101/MX-71 stop gates and gameplay remain
   unchanged. T082 still requires renewed complete 24/44/72-cell acceptance.
