@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "stableId": "unit.astronauts.mt101_armored_drilling_unit",
+  "status": "UNREVIEWED_NESTED_APPEARANCE_CORRECTION",
+  "productionAccepted": false,
+  "canonImpact": "NONE",
+  "tool": "BUILT_IN_IMAGEGEN",
+  "authority": {"baseCommit": "b5c3dd4", "message": "+", "scope": "Source-led nested construction and completed appearance correction, not independent gameplay or appearance acceptance."},
+  "historicalFreeFormAttempts": 2,
+  "nativeConstructionApproaches": 1,
+  "previousControlledRasterFinishes": 1,
+  "targetedNestedCorrectionAttempts": 2,
+  "attempts": [
+    {"number": 1, "file": "mt101_nested_appearance_rev1.png", "sha256": "1353b8558916438f102e8e373cc3616885de3d54d96a1c5dfa4d28365ca3b9e2", "prompt": "edit_prompt.txt", "promptSha256": "fd70de3b113d8529bd2e820107c5c3a569376f4843d58536f3068cf089e0c084", "finding": "REJECTED_TRACKED_BIKE"},
+    {"number": 2, "file": "mt101_nested_appearance_rev2.png", "sha256": "44d1305e57ab49bd3b2e625a27abe86b57b9da6faf045fa558c292c378d363da", "prompt": "edit_prompt_rev2.txt", "promptSha256": "1a77768bc826212e20b565ebe4bc46009e502e4fe70acff3ca872b1626b5c1eb", "finding": "TWO_SEPARATE_WHEELS_VISIBLE_AWAITING_DIRECTOR_REVIEW"}
+  ],
+  "firstAttemptInputs": [
+    "ArtSource/M85/Preproduction/MT101ControlledAppearanceV1/mt101_completed_rev1.png",
+    "ArtSource/M85/Preproduction/MT101NestedAssemblyV1/rear_bay.png",
+    "ArtSource/M85/Preproduction/MT101NestedAssemblyV1/nested_separation.png",
+    "reference_7699_book1_p08.png",
+    "reference_7699_book1_p29.png"
+  ],
+  "secondAttemptInputs": ["mt101_nested_appearance_rev1.png", "reference_7699_book1_p08.png"],
+  "references": [
+    {"file": "reference_7699_book1_p08.png", "sha256": "829038dc9a6d22c677796ea81232f9fe8c9f503912bf0b9e2616858ceb96cd84", "role": "OFFICIAL_TWO_WHEEL_BIKE_GEOMETRY_NOT_COLOR"},
+    {"file": "reference_7699_book1_p29.png", "sha256": "339eb471d71a828b809323c41fa435e157ef910f57774ed5dd2a1a57d6ba0b6a", "role": "OFFICIAL_REAR_SPACECRAFT_OPEN_BAY_GEOMETRY_NOT_COLOR"}
+  ],
+  "nativeControl": {"file": "ArtSource/M85/Preproduction/MT101NestedAssemblyV1/construction_audit.json", "sha256": "726b65d8475a949e1e6abd83e41f482afdb1359154cd6f1de3a46224b4305693", "role": "ESTIMATED_NESTED_CONSTRUCTION_NOT_ACCEPTED_APPEARANCE"},
+  "inspection": {"twoSeparateBikeWheelsVisible": true, "assembledAndNestedViews": true, "sixWheelRasterTopologyProven": false, "rasterProvesStowageOrExtraction": false, "exactOfficialDimensionsProven": false},
+  "limitations": "Monochrome appearance proposal, not exact source reconstruction, continuous collision proof, LEGO buildability, gameplay-camera acceptance or production model. Far-side chassis contacts remain occluded. No third targeted correction is authorized by this batch."
+}

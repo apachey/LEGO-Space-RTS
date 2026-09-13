@@ -55,6 +55,9 @@ CLAW_ARM_CORRECTION = ROOT / "ArtSource/M85/Preproduction/ClawTankArmCorrectionV
 CLAW_APPEARANCE_REVIEW = ROOT / "Content/Presentation/SuperScout/claw_tank_appearance_review.json"
 MT101_COMPLETED_APPEARANCE = ROOT / "ArtSource/M85/Preproduction/MT101ControlledAppearanceV1/edit_manifest.json"
 MT101_NESTED_REVIEW = ROOT / "Content/Presentation/SuperScout/mt101_nested_structure_review.json"
+MT101_NESTED_APPEARANCE = ROOT / "ArtSource/M85/Preproduction/MT101NestedAppearanceV1/edit_manifest.json"
+MT101_NESTED_APPEARANCE_REVIEW = ROOT / "Content/Presentation/SuperScout/mt101_nested_appearance_review.json"
+MT101_NESTED_CONSTRUCTION = ROOT / "ArtSource/M85/Preproduction/MT101NestedAssemblyV1/construction_audit.json"
 
 CLASSIFICATIONS = {
     "OFFICIAL_DIRECT": "OFFICIAL-DIRECT",
@@ -778,6 +781,68 @@ def validate_mt101_nested_structure() -> None:
         fail("MT nested identity dropped source assembly recognition")
 
 
+def validate_mt101_nested_appearance() -> None:
+    record = json.loads(MT101_NESTED_APPEARANCE.read_text(encoding="utf-8"))
+    review = json.loads(MT101_NESTED_APPEARANCE_REVIEW.read_text(encoding="utf-8"))
+    for item in (record, review):
+        if (item.get("stableId"), item.get("status"), item.get("productionAccepted"), item.get("canonImpact")) != (
+                "unit.astronauts.mt101_armored_drilling_unit", "UNREVIEWED_NESTED_APPEARANCE_CORRECTION", False, "NONE"):
+            fail("MT nested appearance expanded unreviewed scope")
+        if item.get("authority", {}).get("baseCommit") != "b5c3dd4" or item.get("authority", {}).get("message") != "+":
+            fail("MT nested appearance lost continuation evidence")
+    if tuple(record.get(k) for k in ("historicalFreeFormAttempts", "nativeConstructionApproaches", "previousControlledRasterFinishes", "targetedNestedCorrectionAttempts")) != (2, 1, 1, 2):
+        fail("MT nested appearance hid attempt history")
+    attempts = record.get("attempts", [])
+    expected = [
+        (1, "mt101_nested_appearance_rev1.png", "1353b8558916438f102e8e373cc3616885de3d54d96a1c5dfa4d28365ca3b9e2", "edit_prompt.txt", "fd70de3b113d8529bd2e820107c5c3a569376f4843d58536f3068cf089e0c084", "REJECTED_TRACKED_BIKE"),
+        (2, "mt101_nested_appearance_rev2.png", "44d1305e57ab49bd3b2e625a27abe86b57b9da6faf045fa558c292c378d363da", "edit_prompt_rev2.txt", "1a77768bc826212e20b565ebe4bc46009e502e4fe70acff3ca872b1626b5c1eb", "TWO_SEPARATE_WHEELS_VISIBLE_AWAITING_DIRECTOR_REVIEW"),
+    ]
+    if [tuple(a.get(k) for k in ("number", "file", "sha256", "prompt", "promptSha256", "finding")) for a in attempts] != expected:
+        fail("MT nested appearance changed selected or rejected attempt")
+    for a in attempts:
+        for file_key, hash_key in (("file", "sha256"), ("prompt", "promptSha256")):
+            if hashlib.sha256((MT101_NESTED_APPEARANCE.parent / a[file_key]).read_bytes()).hexdigest() != a[hash_key]:
+                fail("MT nested appearance output/prompt bytes changed")
+    if record.get("tool") != "BUILT_IN_IMAGEGEN" or record.get("firstAttemptInputs") != [
+            "ArtSource/M85/Preproduction/MT101ControlledAppearanceV1/mt101_completed_rev1.png",
+            "ArtSource/M85/Preproduction/MT101NestedAssemblyV1/rear_bay.png",
+            "ArtSource/M85/Preproduction/MT101NestedAssemblyV1/nested_separation.png",
+            "reference_7699_book1_p08.png", "reference_7699_book1_p29.png"] or record.get("secondAttemptInputs") != ["mt101_nested_appearance_rev1.png", "reference_7699_book1_p08.png"]:
+        fail("MT nested appearance changed input ownership")
+    refs = record.get("references", [])
+    if [(a.get("file"), a.get("sha256"), a.get("role")) for a in refs] != [
+            ("reference_7699_book1_p08.png", "829038dc9a6d22c677796ea81232f9fe8c9f503912bf0b9e2616858ceb96cd84", "OFFICIAL_TWO_WHEEL_BIKE_GEOMETRY_NOT_COLOR"),
+            ("reference_7699_book1_p29.png", "339eb471d71a828b809323c41fa435e157ef910f57774ed5dd2a1a57d6ba0b6a", "OFFICIAL_REAR_SPACECRAFT_OPEN_BAY_GEOMETRY_NOT_COLOR")]:
+        fail("MT nested appearance changed official reference roles")
+    for a in refs:
+        if hashlib.sha256((MT101_NESTED_APPEARANCE.parent / a["file"]).read_bytes()).hexdigest() != a["sha256"]:
+            fail("MT nested appearance changed official reference bytes")
+    if record.get("inspection") != {"twoSeparateBikeWheelsVisible": True, "assembledAndNestedViews": True, "sixWheelRasterTopologyProven": False, "rasterProvesStowageOrExtraction": False, "exactOfficialDimensionsProven": False}:
+        fail("MT nested appearance promoted raster into construction proof")
+    if record.get("nativeControl") != {"file": str(MT101_NESTED_CONSTRUCTION.relative_to(ROOT)), "sha256": "726b65d8475a949e1e6abd83e41f482afdb1359154cd6f1de3a46224b4305693", "role": "ESTIMATED_NESTED_CONSTRUCTION_NOT_ACCEPTED_APPEARANCE"}:
+        fail("MT nested appearance promoted native into final art")
+    if (review.get("file"), review.get("sha256"), review.get("supersedes")) != (
+            str(MT101_NESTED_APPEARANCE.parent.relative_to(ROOT) / attempts[1]["file"]), attempts[1]["sha256"], "mt101_nested_structure_review.json"):
+        fail("MT nested appearance review selected rejected/history image")
+    if review.get("pending") != ["Director appearance acceptance", "Final gameplay-camera and production review", "Separate director gameplay decision for independent rear spacecraft and mini-bike operation"]:
+        fail("MT nested appearance hid pending production/gameplay gates")
+    construction = json.loads(MT101_NESTED_CONSTRUCTION.read_text(encoding="utf-8"))
+    audit = construction.get("geometryAudit", {})
+    if audit.get("sourceParents") != ["MT101", "MT101_DockedRearSpacecraft", "MT101_ContainedMiniBike"] or audit.get("extractionAxis") != [0, 0, 1]:
+        fail("MT nested construction flattened parents/extraction")
+    if (construction.get("status"), construction.get("productionAccepted"), construction.get("canonImpact"), construction.get("preservedMeshCount")) != ("INTERNAL_NESTED_ASSEMBLY_CONTROL_NOT_FINAL_APPEARANCE", False, "NONE", 596):
+        fail("MT nested construction changed retained geometry scope")
+    if (audit.get("bikeSweepSamples"), audit.get("carrierSweepSamples"), audit.get("triangleSurfaceIntersections")) != (33, 25, 0) or "not exact official dimensions" not in audit.get("limitations", ""):
+        fail("MT nested construction hid sampled-check limitations")
+    if construction.get("negativeGuards") != ["wrong_bike_parent", "oversized_bike", "lost_upward_axis"]:
+        fail("MT nested construction lost native regression guards")
+    if hashlib.sha256(MT101_NESTED_CONSTRUCTION.read_bytes()).hexdigest() != record["nativeControl"]["sha256"]:
+        fail("MT nested construction audit bytes changed")
+    for a in [construction["nativeSource"], *construction["images"].values()]:
+        if hashlib.sha256((MT101_NESTED_CONSTRUCTION.parent / a["file"]).read_bytes()).hexdigest() != a["sha256"]:
+            fail("MT nested construction native/control bytes changed")
+
+
 def validate_current_comparison() -> None:
     record = json.loads(CURRENT_COMPARISON.read_text(encoding="utf-8"))
     if (record.get("gate"), record.get("state"), record.get("productionAccepted"), record.get("canonImpact")) != (
@@ -804,9 +869,9 @@ def validate_current_comparison() -> None:
         fail("current comparison lost accepted defense configuration")
     mt = by_id["unit.astronauts.mt101_armored_drilling_unit"]
     if (mt.get("status"), mt.get("file"), mt.get("sha256")) != (
-            "REVISION_REQUIRED_INCOMPLETE_NESTED_ASSEMBLY",
-            "ArtSource/M85/Preproduction/MT101ControlledAppearanceV1/mt101_completed_rev1.png",
-            "0c1f5ed2eaea7103bc5f2c7bca3fce190d0a90f0a1ef728ba9576868e939e291"):
+            "UNREVIEWED_NESTED_APPEARANCE_CORRECTION",
+            "ArtSource/M85/Preproduction/MT101NestedAppearanceV1/mt101_nested_appearance_rev2.png",
+            "44d1305e57ab49bd3b2e625a27abe86b57b9da6faf045fa558c292c378d363da"):
         fail("current comparison promoted unresolved MT appearance")
     pending = sorted(["unit.astronauts.mobile_mining_platform", "unit.astronauts.mt101_armored_drilling_unit",
                       "unit.aliens.etx_alien_strike", "unit.martians.jet_scooter", "unit.martians.red_planet_protector"])
@@ -828,6 +893,7 @@ def main() -> None:
     validate_claw_appearance_review()
     validate_mt101_completed_appearance()
     validate_mt101_nested_structure()
+    validate_mt101_nested_appearance()
     validate_current_comparison()
     for path in (
         MANIFEST, LEDGER, INSTRUCTION_INDEX, SOURCE_ANALYSIS_POLICY, COMPOSED_DESIGN_PROPOSALS, ROCK_RAIDERS_EVIDENCE, ASTRONAUTS_EVIDENCE,

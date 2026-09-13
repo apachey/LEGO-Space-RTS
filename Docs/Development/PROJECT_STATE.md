@@ -902,7 +902,8 @@ live; the current schema-9 copy/paste retains the complete experiment.
   See `Docs/Development/M85_T082_OPEN_APPEARANCE_BATCH.md`.
   The 2026-09-14 `далі` continues the recorded controlled MT-101 construction
   into one completed monochrome raster appearance, not a third free-form design
-  retry. The current gallery selects this unreviewed image. Permanent closed
+  retry. This previous image is retained; the newer nested proposal below is
+  now selected in the gallery. Permanent closed
   cabin, separate upper launcher/side auger and docked rear craft are visible;
   four wheels are visible, two far contacts remain occluded, so six-wheel raster
   topology and source fidelity are not automatically proven. Exact input roles,
@@ -913,17 +914,18 @@ live; the current schema-9 copy/paste retains the complete experiment.
   The audit had mislabeled rear-craft construction as front cockpit; the contract
   excluded the human rear module and omitted the bike. Source/identity/model
   requirements and generated packets now preserve both human modules, permanent
-  front cabin and excluded opposing Alien scout. A separate later review marks
-  the current raster `REVISION_REQUIRED_INCOMPLETE_NESTED_ASSEMBLY`; original
-  bytes/prompts/native source and attempt counts remain unchanged. Bike fit and
-  extraction are not proven; no new generation or independent gameplay is approved.
-  Nine source/claim guards preserve the previous 69 (78 total).
-  Current correction fast verification PASS (23 stages, 317 NUnit, 78 guards):
-  `Artifacts/Verification/20260913T224456Z-fast-summary.txt`.
-  Extended checks/export PASS; full summary retains the agent-interrupted NUnit
-  FAIL (replacement 317/317 PASS) and existing BLOCKING_LATER M9 stress diagnostic:
-  `Artifacts/Verification/20260913T224751Z-full-summary.txt`.
-  See `Docs/Development/M85_T082_MT101_NESTED_SOURCE_CORRECTION.md`.
+  front cabin and excluded opposing Alien scout. The subsequent `+` continues
+  source-led native correction and finished appearance. The old solid rear deck
+  is replaced locally with an open bike bay; 596 other retained meshes stay
+  unchanged. Saved native checks pass estimated fit, 33 bike and 25 carrier
+  extraction samples with zero surface intersections; not exact source dimensions,
+  continuous collision proof or production certification. Two targeted raster
+  attempts are retained: first rejected for tracks, second shows two separate
+  bike wheels and is selected `UNREVIEWED_NESTED_APPEARANCE_CORRECTION`.
+  Historical attempts, old image bytes/prompts/native and director finding remain
+  unchanged. Eight new claim guards preserve all previous 78 (86 total).
+  No independent gameplay, appearance acceptance or production integration.
+  See `Docs/Development/M85_T082_MT101_NESTED_APPEARANCE.md`.
   Ownership, deletion intent, approval scope and selected bytes are guarded.
   Actual saved mesh transforms and nine negative native control fixtures pass.
   See `Docs/Development/M85_T082_SOURCE_LOCKED_CORRECTIONS.md`.
@@ -969,12 +971,16 @@ step and must be announced when new visual evidence is actually required.
 
 ## Verification state
 
-The Claw appearance-approval record and controlled MT-101 completed appearance
-passed `./tools/verify.sh`: all 23 fast blocking stages, 317 NUnit tests and
-69 review guards, zero blocking/diagnostic failures, at
-`Artifacts/Verification/20260913T222650Z-fast-summary.txt` (UTC run ID).
-Exact gallery regeneration and `git diff --check` pass. MT-101 is visually
-inspected but unreviewed; no raster topology proof or new playable export.
+The MT-101 nested native/finished-appearance correction passed
+`./tools/verify.sh --full`: all 29 blocking stages, 317 NUnit tests, 86 review
+guards, Golden100, replay/snapshot, byte-identical GLB and macOS export at
+`Artifacts/Verification/20260913T230854Z-full-summary.txt` (UTC run ID).
+Saved native recheck passes estimated fit and 33/25 extraction samples;
+exact gallery regeneration, packets and `git diff --check` pass. Stress60
+remains the existing BLOCKING_LATER M9 diagnostic failure (2/60), not a new gate.
+Exported `Builds/macOS/LEGO Space RTS.app` is the existing prototype, not an
+integrated MT-101 model. New appearance remains unreviewed; no raster-as-fit
+proof, production acceptance or independent module gameplay.
 
 The Claw-Tank localized arm correction passed `./tools/verify.sh`: all 23 fast
 blocking stages, 317 NUnit tests and 61 review-record guards, zero blocking or
@@ -1315,9 +1321,10 @@ blocking only when M9 must prove its stable-large-battle exit.
    production decision. Do not treat the concept silhouettes, generated `HOLD`
    packets, T070 data definitions or the non-roster T081 pipeline fixture as
    production models.
-   MT-101 source decomposition is corrected but its existing native/raster
-   controls are incomplete. Further source-led MT modeling must validate docking
-   plus nested bike fit/extraction. Independent rear-spacecraft/bike gameplay
+   MT-101 has corrected nested native controls and a finished two-view appearance
+   proposal awaiting director review. Estimated sampled fit/extraction passes,
+   not exact source geometry or production certification. Independent
+   rear-spacecraft/bike gameplay
    separately requires director scope (Phase 03 defines only ground MT-101);
    that decision is not a prerequisite for correcting the source model.
    Do not reset historical attempts or regenerate already successful assets.

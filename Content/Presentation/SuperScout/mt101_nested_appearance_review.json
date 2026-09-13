@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "stableId": "unit.astronauts.mt101_armored_drilling_unit",
+  "status": "UNREVIEWED_NESTED_APPEARANCE_CORRECTION",
+  "file": "ArtSource/M85/Preproduction/MT101NestedAppearanceV1/mt101_nested_appearance_rev2.png",
+  "sha256": "44d1305e57ab49bd3b2e625a27abe86b57b9da6faf045fa558c292c378d363da",
+  "productionAccepted": false,
+  "canonImpact": "NONE",
+  "supersedes": "mt101_nested_structure_review.json",
+  "authority": {"baseCommit": "b5c3dd4", "message": "+", "scope": "Continue the approved source-led nested correction; final appearance remains unreviewed."},
+  "finding": "Finished two-view proposal: assembled heavy chassis retains its permanent front cabin; detachable rear craft contains the same two-wheel human mini-bike shown lifted above its open central bay.",
+  "pending": ["Director appearance acceptance", "Final gameplay-camera and production review", "Separate director gameplay decision for independent rear spacecraft and mini-bike operation"],
+  "historicalBoundary": "Earlier director finding, rejected first targeted raster, all prior prompts, native files and attempt counts are retained. Selecting this proposal does not record approval."
+}

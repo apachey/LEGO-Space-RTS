@@ -1,0 +1,65 @@
+{
+  "schema": 1,
+  "status": "INTERNAL_NESTED_ASSEMBLY_CONTROL_NOT_FINAL_APPEARANCE",
+  "productionAccepted": false,
+  "canonImpact": "NONE",
+  "authority": {
+    "baseCommit": "b5c3dd4",
+    "message": "+",
+    "scope": "Correct source-led nested construction and finish its appearance without independent gameplay or free-form reconstruction."
+  },
+  "retainedBaseSha256": "33c0e673be9b10c88df99e66bf49259613dc97e50fb3238e3d4f319ba7fcd94a",
+  "preservedMeshCount": 596,
+  "geometryAudit": {
+    "sourceParents": [
+      "MT101",
+      "MT101_DockedRearSpacecraft",
+      "MT101_ContainedMiniBike"
+    ],
+    "bikeBoundsComparisonStuds": [
+      [
+        -1.4199999570846558,
+        -13.84999942779541,
+        10.699999809265137
+      ],
+      [
+        1.4199999570846558,
+        -8.350000381469727,
+        13.739999771118164
+      ]
+    ],
+    "bayInnerWidthComparisonStuds": 3.2,
+    "extractionAxis": [
+      0,
+      0,
+      1
+    ],
+    "bikeSweepSamples": 33,
+    "carrierSweepSamples": 25,
+    "triangleSurfaceIntersections": 0,
+    "limitations": "Estimated native envelope/sampled triangle-surface checks, not exact official dimensions, certified LEGO buildability, continuous collision proof or gameplay animation."
+  },
+  "negativeGuards": [
+    "wrong_bike_parent",
+    "oversized_bike",
+    "lost_upward_axis"
+  ],
+  "nativeSource": {
+    "file": "mt101_nested_assembly.blend",
+    "sha256": "d9477cf6fea0f9c92401984c55a5bbd44f95a328412f2562c95d2cc96bf2d9fe"
+  },
+  "images": {
+    "assembled": {
+      "file": "assembled.png",
+      "sha256": "7e674cc6418272229a39849305b862c44197766bada91cb25f71c7a10455608b"
+    },
+    "rear_bay": {
+      "file": "rear_bay.png",
+      "sha256": "03e76ab4e2f1e8f81a4e999eae10f93fa1f901c0c8f8a6b2e92aac6fb790ef0a"
+    },
+    "nested_separation": {
+      "file": "nested_separation.png",
+      "sha256": "8dc282549dfbdeb2df42811ba94812680c5d2d39acf9d7ad4eaaf53ae4bedd8c"
+    }
+  }
+}

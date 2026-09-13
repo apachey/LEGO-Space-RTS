@@ -12,6 +12,38 @@ import validate_m85_super_scout as validator
 
 
 class ReviewGuardTests(unittest.TestCase):
+    def test_mt_nested_appearance_cannot_auto_accept(self):
+        self.assert_rejected(validator.MT101_NESTED_APPEARANCE_REVIEW,
+                             lambda f: f.update(status="DIRECTOR_ACCEPTED_APPEARANCE"), "expanded unreviewed scope")
+
+    def test_mt_nested_appearance_cannot_hide_attempts(self):
+        self.assert_rejected(validator.MT101_NESTED_APPEARANCE,
+                             lambda f: f.update(targetedNestedCorrectionAttempts=1), "hid attempt history")
+
+    def test_mt_nested_appearance_cannot_select_tracked_bike(self):
+        self.assert_rejected(validator.MT101_NESTED_APPEARANCE_REVIEW,
+                             lambda f: f.update(file="mt101_nested_appearance_rev1.png"), "selected rejected/history image")
+
+    def test_mt_nested_appearance_cannot_prove_fit_from_raster(self):
+        self.assert_rejected(validator.MT101_NESTED_APPEARANCE,
+                             lambda f: f["inspection"].update(rasterProvesStowageOrExtraction=True), "raster into construction proof")
+
+    def test_mt_nested_appearance_cannot_promote_native(self):
+        self.assert_rejected(validator.MT101_NESTED_APPEARANCE,
+                             lambda f: f["nativeControl"].update(role="ACCEPTED_APPEARANCE"), "native into final art")
+
+    def test_mt_nested_appearance_cannot_hide_gameplay_gate(self):
+        self.assert_rejected(validator.MT101_NESTED_APPEARANCE_REVIEW,
+                             lambda f: f["pending"].pop(), "pending production/gameplay gates")
+
+    def test_mt_nested_construction_cannot_flatten_bike(self):
+        self.assert_rejected(validator.MT101_NESTED_CONSTRUCTION,
+                             lambda f: f["geometryAudit"]["sourceParents"].pop(), "flattened parents/extraction")
+
+    def test_mt_nested_construction_cannot_claim_exact_dimensions(self):
+        self.assert_rejected(validator.MT101_NESTED_CONSTRUCTION,
+                             lambda f: f["geometryAudit"].update(limitations="Exact official collision-certified reconstruction."), "sampled-check limitations")
+
     def test_mt_nested_identity_cannot_drop_rear_module(self):
         self.assert_rejected(validator.MANIFEST,
                              lambda f: next(a for a in f["assets"] if a["stableId"] == "unit.astronauts.mt101_armored_drilling_unit")["identityAnchors"].pop(),
