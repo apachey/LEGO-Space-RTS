@@ -1228,6 +1228,13 @@ Air is therefore a strategic layer rather than a replacement for the ground game
 
 # PART VII — ALIEN ECONOMY
 
+Alien economic technology is biomechanical under Phase 02A: living conduits,
+skeletal supports and armored craft-derived assemblies may serve harvesting,
+construction and energy interfaces. This identity correction does not introduce
+biomass, gestation, infection, regeneration or any new economic rule. Existing
+Ore/Energy/Crystal flows, Charge, costs, timings and prerequisites below remain
+authoritative; biological anatomy is not a reason to rebalance them.
+
 # BASELINE ECONOMY
 
 Basic Alien play functions without Crystal Charge.

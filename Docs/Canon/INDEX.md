@@ -9,6 +9,9 @@ Normal implementation agents may READ these files but may not modify them withou
 - `00_CANON_SET_REGISTRY.md` — Phase 00, approved official-source registry baseline.
 - `01_GAME_BIBLE_FOUNDATION.md` — Phase 01, Game Bible Foundation.
 - `02_FACTION_BIBLE.md` — Phase 02, Faction Bible & Asymmetry.
+- `02A_ALIEN_BIOMECHANICAL_SOURCE_RECONCILIATION.md` — authoritative coherent
+  Alien biomechanical identity/source rewrite, director-approved 2026-09-13;
+  not a gameplay or balance amendment.
 - `03_UNIT_BUILDING_ROSTER.md` — Phase 03, Unit & Building Roster + Canon Set Mapping.
 - `04_ECONOMY_TECHNOLOGY_PROGRESSION.md` — Phase 04, Economy, Technology & Progression.
 - `05_WORLD_MAP_BIBLE.md` — Phase 05, World & Map Bible.
@@ -34,5 +37,10 @@ Normal implementation agents may READ these files but may not modify them withou
 When Phase 09 and Phase 09A conflict only on engine-host-specific implementation details, **Phase 09A prevails**. Within the movement-implementation and prototype-gate scope explicitly amended by Phase 09B, **Phase 09B prevails**. Within full-roster visual/audio content production and the M8-to-M9 milestone transition, **Phase 09C prevails**. All other engine-independent SimCore, determinism, data, pathfinding, networking-protocol, performance-gate, and gameplay architecture from Phase 09 remain authoritative unless an amendment explicitly says otherwise.
 
 ## Agent rule
+
+For Alien biological/technological identity and its derived presentation,
+Phase 02A prevails over the former absolute non-biological requirements in
+Phases 01–08. It does not lift Phase 08's visual-authority suspension or approve
+generated assets. Gameplay, balance and technical architecture are unchanged.
 
 Do not infer missing canonical values from this index. Read the directly relevant canonical source before implementing a gameplay or major technical system. If two authoritative sources appear to conflict outside an explicit amendment, stop and escalate rather than silently choosing one.

@@ -24,6 +24,7 @@ MARTIANS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/martians_source_evid
 ROCK_RAIDERS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/rock_raiders_production_contracts.json"
 ASTRONAUTS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/astronauts_production_contracts.json"
 ALIENS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/aliens_production_contracts.json"
+ALIEN_BIOMECHANICAL_POLICY = ROOT / "Content/Presentation/SuperScout/alien_biomechanical_policy.json"
 MARTIANS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/martians_production_contracts.json"
 CONFUSION = ROOT / "Content/Presentation/SuperScout/confusion_register.json"
 SILHOUETTES = ROOT / "Content/Presentation/SuperScout/silhouette_concepts.json"
@@ -59,8 +60,8 @@ FACTION_RULES = {
         "Do not blend the two source lineages into generic white sci-fi or add military forms unsupported by the mapped expedition function.",
     ),
     "Aliens": (
-        "Black and bright lime with dark mechanics and disciplined translucent-neon-green energy or crystal elements.",
-        "Do not use insect bodies, biological tissue, nests, tentacles or generic black-neon towers. Construction must remain craft-derived and mechanical.",
+        "Black and bright lime armored biomechanical craft with skeletal supports, living conduits and disciplined translucent-neon-green energy or crystal elements.",
+        "Do not substitute generic insects, hives, unrelated tentacles, contemporary human robots or black-neon towers for source-grounded biomechanical craft (Phase 02A).",
     ),
     "Martians": (
         "Blue and sand-red with translucent-neon-green accents, open platforms and visibly articulated mechanics.",
@@ -230,6 +231,13 @@ def packet_text(
     review_code: str,
 ) -> str:
     palette, forbidden = FACTION_RULES[asset["faction"]]
+    biological_evidence = ""
+    if asset["faction"] == "Aliens":
+        policy = json.loads(ALIEN_BIOMECHANICAL_POLICY.read_text(encoding="utf-8"))
+        biological_evidence = policy["packetNotice"] + "\n\n" + "\n".join(
+            f"- [{source['id']}]({source['url']}) — {source['evidenceKind']}: {source['finding']}"
+            for source in policy["sources"]
+        ) + "\n\n" + "\n".join(f"- {rule}" for rule in policy["presentationRules"])
     if contract is None:
         packet_state = "IDENTITY_BASELINE — HOLD FOR MULTI-ANGLE EVIDENCE"
         confidence = "verified canonical identity; construction confidence remains bounded by the source verification shown below."
@@ -339,7 +347,7 @@ Open question: {open_question}
 |---|---|---|---|---|
 {chr(10).join(source_rows)}
 
-{evidence_block}
+{evidence_block}{chr(10) + chr(10) + biological_evidence if biological_evidence else ''}
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 

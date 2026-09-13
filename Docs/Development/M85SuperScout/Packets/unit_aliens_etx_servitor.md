@@ -84,38 +84,50 @@ Open question: The faction-internal construction, motion, socket and material dr
   - The manual proves docked subcraft but not the game's launch/recovery timing, unfolding sequence, reinforcement function or Charge-support state; all require a single-unit carrier contract.
   - Training eligible Alien units inside the Mothership is a game-director proposal. The exact roster, cost, build time, capacity interaction and whether production requires an unfolded state remain unresolved gameplay decisions and are not locked by T082.
 
+Alien identity: armored biomechanical craft with skeletal supports, living conduits and bio-organic systems (Phase 02A). Technology does not prohibit biology. Exterior set construction and official promo/interior evidence must be combined; literal labels, anatomical inference and new adaptations must be distinguished. No swarm gameplay, generic hive substitution or automatic asset acceptance.
+
+- [brickmaster_2007_mothership_cutaway](https://archive.org/details/brickmaster-issue17/page/n5/mode/1up) — OFFICIAL_PROMO_VISUAL_INFERENCE: Pale bone-like supports and branching channels inside the armored Mothership; skeletal/vascular interpretation is visual inference, not a literal blood-vessel label.
+- [lego_club_2008_infiltrator_cutaway](https://archive.org/details/LEGOClubMagazineUS-JulyAugust2008-Miniland/page/n19/mode/1up) — OFFICIAL_PROMO_LITERAL_LABEL: Bio-Organic antigravity propulsion drive explicitly establishes biological technology.
+
+- Accepted exterior source assemblies and silhouettes remain intact; do not cover craft in invented organs.
+- Every biological or manufactured assembly needs a purpose, parent, load path and source/adaptation classification.
+- Living conduits may flex during physical hull articulation; any internal contraction is a reviewed adaptation, never gameplay authority.
+- Construction remains arrive, anchor, unfold, connect, energize; no gestation or spawning mechanic.
+- Armored exterior, skeletal support, living conduit and crystal interfaces stay distinct; no generic wet skin or realistic gore.
+- Explain gameplay role and donor/adaptation method before showing any new concept; generated images are not source evidence.
+
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 
 **Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
 
 ## C. Recognition contract
 
-**Silhouette thesis:** A tiny black-lime hover worker wrapped around one crystal-handling manipulator, not a humanoid robot.
+**Silhouette thesis:** A tiny armored black-lime biomechanical hover worker with one integrated utility clamp, skeletal support and living conduits; not contemporary human robotics or a self-mining crystal.
 
 Non-removable identity anchors:
 
-- low curved hover shell
-- single crystal cradle
-- folding utility manipulator
+- low armored biomechanical hover shell
+- external cargo cradle around an internal rib/conduit assembly
+- single integrated folding utility clamp
 
 - Rejected V1 blind-review code: `S49`. Historical failed boards: [24-cell](../Silhouettes/blind_24_cells.svg), [44-cell](../Silhouettes/blind_44_cells.svg), [72-cell](../Silhouettes/blind_72_cells.svg). The game director recognized 0/66 at 24 cells; this primitive concept is not an approved model or accepted evidence.
-- Palette and material hierarchy: Black and bright lime with dark mechanics and disciplined translucent-neon-green energy or crystal elements.
-- Forbidden genericization: Do not use insect bodies, biological tissue, nests, tentacles or generic black-neon towers. Construction must remain craft-derived and mechanical.
+- Palette and material hierarchy: Black and bright lime armored biomechanical craft with skeletal supports, living conduits and disciplined translucent-neon-green energy or crystal elements.
+- Forbidden genericization: Do not substitute generic insects, hives, unrelated tentacles, contemporary human robots or black-neon towers for source-grounded biomechanical craft (Phase 02A).
 - Nearest-confusion baseline:
 
 - `unit.astronauts.expedition_crew` — Both are tiny mobile economy/build units. Mitigations: Expedition Crew is upright and bipedal; ETX Servitor is a low hover shell. / Expedition Crew carries tools externally; Servitor wraps around a crystal cradle. / Expedition Crew uses human helmet/backpack masses; Servitor uses a folding single manipulator and no humanoid body.
-- `unit.martians.worker_robot` — Both are small mechanical nonhuman workers. Mitigations: Servitor hovers inside one low curved shell; Worker Robot walks on two long articulated legs. / Servitor encloses its core in black-lime structure; Worker Robot leaves the seated Martian visible between two broad feet. / Servitor uses one dominant folding manipulator; Worker Robot's adapted tool must remain subordinate to its bipedal source silhouette.
+- `unit.martians.worker_robot` — Both are small nonhuman workers, but Alien biomechanical technology must not read as ordinary Martian robotics. Mitigations: Servitor hovers inside one low armored biomechanical shell; Worker Robot walks on two long articulated legs. / Servitor encloses skeletal supports and living conduits in black-lime structure; Worker Robot leaves the seated Martian visible between two broad feet. / Servitor uses one hull-integrated utility clamp; Worker Robot's adapted tool must remain subordinate to its bipedal source silhouette.
 
 ## D. Construction contract
 
 - Contract state: `CANON_DERIVED_ADAPTATION`. This is an internally checked draft, not game-director approval.
 - Semantic part map:
-  - Low curved hover shell — keeps the worker spacecraft-derived and non-humanoid — CANON_DERIVED_ADAPTATION.
-  - Central crystal cradle — receives Ore/Crystals and exposes the economy function — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.
-  - Single folding utility manipulator — harvests, builds and repairs through visible mechanical contact — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.
-- Structural load path: A shallow crescent frame carries the hover mechanism and central cradle; one articulated arm routes work load into the frame without creating legs.
-- Repeated modules / connection grammar: Hover shell, crystal cradle, folding clamp/tool and rear energy feed derive from 5617, 7646 and 7691 mechanical grammar.
-- Source-faithful versus adapted boundary: No official dedicated Alien worker exists. Exact donors must be disclosed before modeling; no humanoid robot, insect or floating crystal with unexplained parts.
+  - Low armored hover shell — keeps the worker spacecraft-derived and non-humanoid — CANON_DERIVED_ADAPTATION.
+  - Internal skeletal support and living conduit assembly — inherits official cutaway family grammar; exact worker anatomy is new adaptation — CANON_DERIVED_ADAPTATION.
+  - External cargo cradle and one integrated folding utility clamp — receives material, harvests, builds and repairs through visible contact; worker body is not the resource — CANON_DERIVED_ADAPTATION.
+- Structural load path: Armored crescent shell encloses a supporting rib/core assembly; a hull-integrated clamp transfers work load into that support, with connected living conduits and external cargo path. Exact geometry remains review-required.
+- Repeated modules / connection grammar: 5617 shell and 7646 articulated/conduit grammar plus official Mothership/Infiltrator promo interiors inform one biomechanical utility body; a contemporary human robotic deck/arm is not the target.
+- Source-faithful versus adapted boundary: No official dedicated Alien worker exists. Clamp, cargo path and exact internal anatomy are disclosed adaptations, not SOURCE_VERIFIED organs. Revised composition requires proposal approval and image review; no creature legs or floating self-mining crystal.
 
 ## E. Material and texture contract
 
@@ -125,7 +137,7 @@ Non-removable identity anchors:
   - single folding manipulator
 - Accepted master-material roles: `Body`, `Accent`, `Tool`, `Glass`, `Signal`, `Neutral`.
 - Reusable texture requirements:
-  - `ali_black_hull_surface` — Restrained molded black-shell roughness variation across craft-derived hulls without inventing biological skin or panel structure. Channels: Tangent-space normal and linear roughness; black body color remains parametric. Resolution: 2048x2048; texel density: 256 px/m at Close; tiling: Shared model-space 4 m repeat across connected hull modules.; LOD fallback: Half strength at Combat; master roughness only at Strategic. Provenance/state: Project-authored procedural source informed by verified Mars Mission Alien hulls; human review required. `SPECIFIED_NOT_AUTHORED`.
+  - `ali_black_hull_surface` — Restrained molded armored-shell roughness; distinguish exterior armor from source-grounded living interior systems, without inventing wet skin or panel structure (Phase 02A). Channels: Tangent-space normal and linear roughness; black body color remains parametric. Resolution: 2048x2048; texel density: 256 px/m at Close; tiling: Shared model-space 4 m repeat across connected hull modules.; LOD fallback: Half strength at Combat; master roughness only at Strategic. Provenance/state: Project-authored procedural source informed by verified Mars Mission Alien hulls; human review required. `SPECIFIED_NOT_AUTHORED`.
   - `ali_lime_conduit_surface` — Controlled variation on lime conduits, energy rails and translucent housings while preserving their physical path. Channels: Linear roughness and restrained emissive mask; geometry defines every conduit. Resolution: 1024x1024; texel density: 512 px/m on localized conduit UVs; tiling: Short trim regions aligned to conduit direction; no phase reset at joints.; LOD fallback: Collapse to one bounded lime Signal strip at Strategic. Provenance/state: Project-authored procedural/trim source; human review required. `SPECIFIED_NOT_AUTHORED`.
   - `ali_crystal_containment_mask` — Facet-localized Charge intensity and containment contact masks without baked glow or fake crystal depth. Channels: Linear roughness, transmission control and separate emission mask. Resolution: 1024x1024; texel density: Object-local crystal atlas; not world-density bound.; tiling: Non-tiling per approved crystal form.; LOD fallback: One faceted Glass mass and bounded emission at Strategic. Provenance/state: Project-authored procedural crystal source; human review required. `SPECIFIED_NOT_AUTHORED`.
   - `ali_bay_state_signal_atlas` — Launch, docking, transformation, Charge and configuration state indicators on mechanical interfaces. Channels: sRGB color/alpha with separate linear emission mask. Resolution: 512x512; texel density: Screen-space and trim atlas; not world-density bound.; tiling: Non-tiling stable interface IDs.; LOD fallback: One directional Signal block per active interface at Strategic. Provenance/state: Project-authored vector/procedural source; human review required. `SPECIFIED_NOT_AUTHORED`.
@@ -160,7 +172,7 @@ Non-removable identity anchors:
 - Verified fact: stable identity, source evidence and the source-supported assemblies cited above.
 - Canon-derived interpretation: gameplay function, adaptation boundary, contact behavior and presentation drivers are explicitly labeled in the contract.
 - Remaining source/design decisions:
-  - A composed-design proposal must name the exact 5617/7646/7691 donor modules and rejected worker layouts before director approval.
+  - Historical mechanical composition was rejected. Revised biomechanical donor/clamp/cargo anatomy and motion need a disclosed proposal and director review; Phase 02A does not approve a new image.
 - Cross-roster silhouette and game-director review remain open; this contract does not authorize production modeling.
 
 ## I. Build handoff

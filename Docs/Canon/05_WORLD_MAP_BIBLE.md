@@ -186,7 +186,8 @@ It is strategically valuable to every faction.
 
 Mars Mission Alien operations are particularly concentrated here.
 
-The Crystal Verge is not Alien biological territory.
+The Crystal Verge is not biological hive territory. Alien biomechanical craft
+do not make the surrounding landscape living faction tissue (Phase 02A).
 
 It is a resource geography around which Alien technological presence became especially strong.
 
@@ -495,6 +496,10 @@ Aliens are **not**:
 - a hive species;
 - biological swarm organisms;
 - inherently evil invaders.
+
+This is a societal/gameplay distinction, not a prohibition on biology: their
+technological fleet uses biomechanical craft with source-grounded living systems
+(Phase 02A). No hive-mind or planetary infection is inferred from the cutaways.
 
 Some Alien operations are aggressively expansionist.
 
@@ -5699,7 +5704,7 @@ The following decisions are now authoritative.
 
 8. Martians are an established distributed settlement civilization whose Aero Tube technology developed as civic/industrial logistics.
 
-9. Mars Mission Aliens are a technological, crystal-oriented, fleet-linked civilization rather than a biological hive or mystical crystal cult.
+9. Mars Mission Aliens are a technological, crystal-oriented, fleet-linked civilization using biomechanical craft (Phase 02A), not a biological hive or mystical crystal cult.
 
 10. Rock Raiders are trans-system industrial specialists rather than a sovereign military empire.
 

@@ -46,6 +46,18 @@ Open question: The faction-internal construction, motion, socket and material dr
 - Remaining evidence gaps:
   - The source establishes two lateral emitters but does not independently establish their gameplay firing relationship; authoritative weapon behavior remains unchanged by this visual audit.
 
+Alien identity: armored biomechanical craft with skeletal supports, living conduits and bio-organic systems (Phase 02A). Technology does not prohibit biology. Exterior set construction and official promo/interior evidence must be combined; literal labels, anatomical inference and new adaptations must be distinguished. No swarm gameplay, generic hive substitution or automatic asset acceptance.
+
+- [brickmaster_2007_mothership_cutaway](https://archive.org/details/brickmaster-issue17/page/n5/mode/1up) — OFFICIAL_PROMO_VISUAL_INFERENCE: Pale bone-like supports and branching channels inside the armored Mothership; skeletal/vascular interpretation is visual inference, not a literal blood-vessel label.
+- [lego_club_2008_infiltrator_cutaway](https://archive.org/details/LEGOClubMagazineUS-JulyAugust2008-Miniland/page/n19/mode/1up) — OFFICIAL_PROMO_LITERAL_LABEL: Bio-Organic antigravity propulsion drive explicitly establishes biological technology.
+
+- Accepted exterior source assemblies and silhouettes remain intact; do not cover craft in invented organs.
+- Every biological or manufactured assembly needs a purpose, parent, load path and source/adaptation classification.
+- Living conduits may flex during physical hull articulation; any internal contraction is a reviewed adaptation, never gameplay authority.
+- Construction remains arrive, anchor, unfold, connect, energize; no gestation or spawning mechanic.
+- Armored exterior, skeletal support, living conduit and crystal interfaces stay distinct; no generic wet skin or realistic gore.
+- Explain gameplay role and donor/adaptation method before showing any new concept; generated images are not source evidence.
+
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 
 **Source-decomposition rule:** A source set is a container of models, figures, equipment and detachable modules, not an automatic one-to-one unit mapping. Any composed design must disclose its exact donor components, adaptation and rejected alternatives before director approval.
@@ -62,8 +74,8 @@ Non-removable identity anchors:
 - two short lateral bulb emitters
 
 - Rejected V1 blind-review code: `S28`. Historical failed boards: [24-cell](../Silhouettes/blind_24_cells.svg), [44-cell](../Silhouettes/blind_44_cells.svg), [72-cell](../Silhouettes/blind_72_cells.svg). The game director recognized 0/66 at 24 cells; this primitive concept is not an approved model or accepted evidence.
-- Palette and material hierarchy: Black and bright lime with dark mechanics and disciplined translucent-neon-green energy or crystal elements.
-- Forbidden genericization: Do not use insect bodies, biological tissue, nests, tentacles or generic black-neon towers. Construction must remain craft-derived and mechanical.
+- Palette and material hierarchy: Black and bright lime armored biomechanical craft with skeletal supports, living conduits and disciplined translucent-neon-green energy or crystal elements.
+- Forbidden genericization: Do not substitute generic insects, hives, unrelated tentacles, contemporary human robots or black-neon towers for source-grounded biomechanical craft (Phase 02A).
 - Nearest-confusion baseline:
 
 - `unit.aliens.razor_skimmer` — Both are small swept black-lime attack craft. Mitigations: Alien Jet has a visible airborne swept-plate profile; Razor Skimmer stays almost flat against the ground. / Alien Jet raises two bright conduit arches over an open pilot; Razor Skimmer projects two long forward razor prongs. / Alien Jet centers on its pilot; Razor Skimmer centers on an exposed lime energy core.
@@ -89,7 +101,7 @@ Non-removable identity anchors:
   - paired short lateral bulb emitters
 - Accepted master-material roles: `Body`, `Accent`, `Tool`, `Glass`, `Signal`, `Neutral`.
 - Reusable texture requirements:
-  - `ali_black_hull_surface` — Restrained molded black-shell roughness variation across craft-derived hulls without inventing biological skin or panel structure. Channels: Tangent-space normal and linear roughness; black body color remains parametric. Resolution: 2048x2048; texel density: 256 px/m at Close; tiling: Shared model-space 4 m repeat across connected hull modules.; LOD fallback: Half strength at Combat; master roughness only at Strategic. Provenance/state: Project-authored procedural source informed by verified Mars Mission Alien hulls; human review required. `SPECIFIED_NOT_AUTHORED`.
+  - `ali_black_hull_surface` — Restrained molded armored-shell roughness; distinguish exterior armor from source-grounded living interior systems, without inventing wet skin or panel structure (Phase 02A). Channels: Tangent-space normal and linear roughness; black body color remains parametric. Resolution: 2048x2048; texel density: 256 px/m at Close; tiling: Shared model-space 4 m repeat across connected hull modules.; LOD fallback: Half strength at Combat; master roughness only at Strategic. Provenance/state: Project-authored procedural source informed by verified Mars Mission Alien hulls; human review required. `SPECIFIED_NOT_AUTHORED`.
   - `ali_lime_conduit_surface` — Controlled variation on lime conduits, energy rails and translucent housings while preserving their physical path. Channels: Linear roughness and restrained emissive mask; geometry defines every conduit. Resolution: 1024x1024; texel density: 512 px/m on localized conduit UVs; tiling: Short trim regions aligned to conduit direction; no phase reset at joints.; LOD fallback: Collapse to one bounded lime Signal strip at Strategic. Provenance/state: Project-authored procedural/trim source; human review required. `SPECIFIED_NOT_AUTHORED`.
   - `ali_bay_state_signal_atlas` — Launch, docking, transformation, Charge and configuration state indicators on mechanical interfaces. Channels: sRGB color/alpha with separate linear emission mask. Resolution: 512x512; texel density: Screen-space and trim atlas; not world-density bound.; tiling: Non-tiling stable interface IDs.; LOD fallback: One directional Signal block per active interface at Strategic. Provenance/state: Project-authored vector/procedural source; human review required. `SPECIFIED_NOT_AUTHORED`.
 - Bespoke texture requirements: none required in this faction draft.

@@ -12,6 +12,28 @@ import validate_m85_super_scout as validator
 
 
 class ReviewGuardTests(unittest.TestCase):
+    def test_biomechanical_canon_cannot_authorize_gameplay(self):
+        self.assert_rejected(validator.ALIEN_BIOMECHANICAL_POLICY,
+                             lambda fixture: fixture.update(gameplayImpact="SWARM_PRODUCTION"),
+                             "gameplay or acceptance boundary")
+
+    def test_biomechanical_canon_cannot_accept_images(self):
+        self.assert_rejected(validator.ALIEN_BIOMECHANICAL_POLICY,
+                             lambda fixture: fixture.update(assetAcceptance="ACCEPTED"),
+                             "gameplay or acceptance boundary")
+
+    def test_anatomical_inference_cannot_become_literal_source_fact(self):
+        def mutate(fixture):
+            fixture["sources"][0]["evidenceKind"] = "OFFICIAL_PROMO_LITERAL_LABEL"
+        self.assert_rejected(validator.ALIEN_BIOMECHANICAL_POLICY, mutate,
+                             "provenance or inference distinction")
+
+    def test_current_alien_contract_cannot_restore_biology_ban(self):
+        def mutate(fixture):
+            fixture["sharedMaterialPlan"]["globalRules"].append("Aliens are never biological")
+        self.assert_rejected(validator.ALIENS_CONTRACTS, mutate,
+                             "absolute biology ban")
+
     def assert_rejected(self, fixture_path, mutate, expected_reason):
         original_read = Path.read_text
         fixture = json.loads(original_read(fixture_path, encoding="utf-8"))

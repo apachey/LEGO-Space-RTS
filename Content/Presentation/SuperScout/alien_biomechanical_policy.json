@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "canon": "Docs/Canon/02A_ALIEN_BIOMECHANICAL_SOURCE_RECONCILIATION.md",
+  "identity": "SOURCE_GROUNDED_BIOMECHANICAL_FLEET_TECHNOLOGY",
+  "approval": "Director 2026-09-13: все так, але не точково — канон треба переписати в звʼязку не відповідністю",
+  "gameplayImpact": "NONE",
+  "assetAcceptance": "UNCHANGED_REVIEW_REQUIRED",
+  "packetNotice": "Alien identity: armored biomechanical craft with skeletal supports, living conduits and bio-organic systems (Phase 02A). Technology does not prohibit biology. Exterior set construction and official promo/interior evidence must be combined; literal labels, anatomical inference and new adaptations must be distinguished. No swarm gameplay, generic hive substitution or automatic asset acceptance.",
+  "sources": [
+    {"id": "brickmaster_2007_mothership_cutaway", "url": "https://archive.org/details/brickmaster-issue17/page/n5/mode/1up", "evidenceKind": "OFFICIAL_PROMO_VISUAL_INFERENCE", "finding": "Pale bone-like supports and branching channels inside the armored Mothership; skeletal/vascular interpretation is visual inference, not a literal blood-vessel label."},
+    {"id": "lego_club_2008_infiltrator_cutaway", "url": "https://archive.org/details/LEGOClubMagazineUS-JulyAugust2008-Miniland/page/n19/mode/1up", "evidenceKind": "OFFICIAL_PROMO_LITERAL_LABEL", "finding": "Bio-Organic antigravity propulsion drive explicitly establishes biological technology."}
+  ],
+  "presentationRules": [
+    "Accepted exterior source assemblies and silhouettes remain intact; do not cover craft in invented organs.",
+    "Every biological or manufactured assembly needs a purpose, parent, load path and source/adaptation classification.",
+    "Living conduits may flex during physical hull articulation; any internal contraction is a reviewed adaptation, never gameplay authority.",
+    "Construction remains arrive, anchor, unfold, connect, energize; no gestation or spawning mechanic.",
+    "Armored exterior, skeletal support, living conduit and crystal interfaces stay distinct; no generic wet skin or realistic gore.",
+    "Explain gameplay role and donor/adaptation method before showing any new concept; generated images are not source evidence."
+  ]
+}

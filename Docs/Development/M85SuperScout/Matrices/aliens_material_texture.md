@@ -4,16 +4,18 @@ The accepted M7 role-authored material family remains authoritative. These are p
 
 ## Shared rules
 
-- Black mechanical hulls and bright lime conduits define the faction; purple, organic tissue, nests and insect anatomy are forbidden.
-- Every curved shell, hinge, docking bay, containment claw and energy path must have a mechanical parent and function.
+- Black/lime armored biomechanical craft combine skeletal supports, living conduits and bio-organic systems under Phase 02A; no purple recoloring, generic nests or unrelated insect anatomy.
+- Every shell, hinge, docking bay, containment claw, living conduit and energy path must have an identified parent, connection, load path and function; biological technology is not human robotics or magic.
 - Translucent lime is not automatically emissive; emission marks active Charge, weapon, scan, docking or construction state only.
 - Silhouette, transformation seams, open channels, planted contacts and crystal forms remain geometry; textures may not fake them.
+- Official cutaways complement exterior instructions; biological labels, visual inference and new anatomy must be distinguished. Preserve accepted exterior designs, gameplay and review gates.
+- Living conduit flex and restrained internal pressure motion are reviewed presentation adaptations; construction still unfolds and connects, destruction is LEGO assembly failure without gore.
 
 ## Reusable texture families
 
 | ID | Purpose | Channels | Resolution | Texel density | Tiling | LOD fallback | Provenance | State |
 |---|---|---|---|---|---|---|---|---|
-| `ali_black_hull_surface` | Restrained molded black-shell roughness variation across craft-derived hulls without inventing biological skin or panel structure. | Tangent-space normal and linear roughness; black body color remains parametric. | 2048x2048 | 256 px/m at Close | Shared model-space 4 m repeat across connected hull modules. | Half strength at Combat; master roughness only at Strategic. | Project-authored procedural source informed by verified Mars Mission Alien hulls; human review required. | `SPECIFIED_NOT_AUTHORED` |
+| `ali_black_hull_surface` | Restrained molded armored-shell roughness; distinguish exterior armor from source-grounded living interior systems, without inventing wet skin or panel structure (Phase 02A). | Tangent-space normal and linear roughness; black body color remains parametric. | 2048x2048 | 256 px/m at Close | Shared model-space 4 m repeat across connected hull modules. | Half strength at Combat; master roughness only at Strategic. | Project-authored procedural source informed by verified Mars Mission Alien hulls; human review required. | `SPECIFIED_NOT_AUTHORED` |
 | `ali_lime_conduit_surface` | Controlled variation on lime conduits, energy rails and translucent housings while preserving their physical path. | Linear roughness and restrained emissive mask; geometry defines every conduit. | 1024x1024 | 512 px/m on localized conduit UVs | Short trim regions aligned to conduit direction; no phase reset at joints. | Collapse to one bounded lime Signal strip at Strategic. | Project-authored procedural/trim source; human review required. | `SPECIFIED_NOT_AUTHORED` |
 | `ali_crystal_containment_mask` | Facet-localized Charge intensity and containment contact masks without baked glow or fake crystal depth. | Linear roughness, transmission control and separate emission mask. | 1024x1024 | Object-local crystal atlas; not world-density bound. | Non-tiling per approved crystal form. | One faceted Glass mass and bounded emission at Strategic. | Project-authored procedural crystal source; human review required. | `SPECIFIED_NOT_AUTHORED` |
 | `ali_bay_state_signal_atlas` | Launch, docking, transformation, Charge and configuration state indicators on mechanical interfaces. | sRGB color/alpha with separate linear emission mask. | 512x512 | Screen-space and trim atlas; not world-density bound. | Non-tiling stable interface IDs. | One directional Signal block per active interface at Strategic. | Project-authored vector/procedural source; human review required. | `SPECIFIED_NOT_AUTHORED` |

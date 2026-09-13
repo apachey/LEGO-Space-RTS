@@ -66,7 +66,7 @@ Non-removable identity anchors:
 - Forbidden genericization: Do not make the asset Alien-lite, a smooth energy object or a joke contraption. Pumps, tubes, legs, clamps and platforms carry identity.
 - Nearest-confusion baseline:
 
-- `unit.aliens.etx_servitor` — Both are small mechanical nonhuman workers. Mitigations: Servitor hovers inside one low curved shell; Worker Robot walks on two long articulated legs. / Servitor encloses its core in black-lime structure; Worker Robot leaves the seated Martian visible between two broad feet. / Servitor uses one dominant folding manipulator; Worker Robot's adapted tool must remain subordinate to its bipedal source silhouette.
+- `unit.aliens.etx_servitor` — Both are small nonhuman workers, but Alien biomechanical technology must not read as ordinary Martian robotics. Mitigations: Servitor hovers inside one low armored biomechanical shell; Worker Robot walks on two long articulated legs. / Servitor encloses skeletal supports and living conduits in black-lime structure; Worker Robot leaves the seated Martian visible between two broad feet. / Servitor uses one hull-integrated utility clamp; Worker Robot's adapted tool must remain subordinate to its bipedal source silhouette.
 - `unit.rock_raiders.crew` — At far scale both reduce to a tiny upright worker with two planted contacts. Mitigations: Raider Crew keeps a full minifigure torso above short legs; Worker Robot suspends a shallow rider wedge between two long mechanical legs. / Raider Crew carries one large tool outside the body; Worker Robot's small adapted tool remains subordinate to the biped frame. / Raider Crew's negative space is between arms and tool; Worker Robot must retain a tall open gap between its legs.
 
 ## D. Construction contract

@@ -1605,7 +1605,10 @@ Structures may resemble:
 - Mothership-derived bays;
 - crystal containment devices.
 
-Generic organic hives, tentacles, insect nests, gothic monoliths, and arbitrary alien towers are forbidden.
+Craft-derived infrastructure combines armored hulls with skeletal supports,
+living conduits and bio-organic systems, subject to source/adaptation review
+(Phase 02A). Generic organic hives, unrelated tentacles, insect nests, gothic
+monoliths and arbitrary alien towers are not substitutes for that technology.
 
 ---
 
@@ -1737,7 +1740,8 @@ Successful Alien harassment:
 
 ### Army Philosophy
 
-Alien armies are technologically sharp rather than numerous biological swarms.
+Alien armies use sharp, high-output biomechanical technology; their strategic
+identity is energy tempo, not cheap biological swarm production.
 
 ### Engagement Style
 
@@ -1899,7 +1903,7 @@ The established project registry and Phase 01 identify black/lime construction, 
 - swept;
 - curved;
 - forward-pointing;
-- claw-like without becoming biological;
+- claw-like and biomechanical where supported by official evidence;
 - strong central energy/crystal components.
 
 ### Proportions
@@ -1913,6 +1917,11 @@ Machines often appear to wrap around:
 ### Architecture
 
 Buildings resemble docked or unfolded spacecraft.
+
+Armored exteriors can enclose skeletal supports and living technology. New
+working/production structures inherit that compound language; contemporary
+human robotic hardware is not an adequate Alien identity. Phase 02A governs
+source claims, anatomy and adaptation review across every asset.
 
 ### Mechanical Animation
 
@@ -1936,7 +1945,8 @@ Higher Charge operation produces brighter but disciplined lime illumination.
 - directional lime glow;
 - controlled distortion.
 
-No biological slime, spores, or insect effects.
+Living internal motion may express source-grounded biomechanical function.
+No slime/spore weapons, insect-swarm effects or realistic gore are introduced.
 
 ### Construction
 
@@ -1954,13 +1964,17 @@ Crystal resonance diagrams, angular charge meters, transformation-state icons, s
 
 ## 19. Audio Identity
 
-**Machines:** smooth alien motors, magnetic movement, synthetic turbines.
+**Craft:** smooth alien propulsion, magnetic movement and resonant systems;
+bio-organic drives may receive a restrained organic undertone as a reviewed
+presentation adaptation, not an unverified literal source sound.
 
-**Transformation:** layered servo folding and heavy locking snaps.
+**Transformation:** connected hull folding, locking snaps and conduit flex;
+biomechanical systems remain physically connected through the transition.
 
 **Crystal systems:** resonant tonal hum rising in pitch as Charge increases.
 
-**Weapons:** concentrated energy pulses and harmonic discharges rather than organic roars.
+**Weapons:** concentrated energy pulses and harmonic discharges. Biomechanical
+identity does not replace approved weapons with creature roars or biological attacks.
 
 **Interface:** short crystalline confirmation tones, energetic pulses, clear warning resonance when Charge is low or a Core is attacked.
 
@@ -3523,7 +3537,8 @@ Failed commitments leave expensive forces and infrastructure vulnerable during r
 Everything must look derived from black/lime Mars Mission Alien spacecraft and crystal technology.
 
 **NEVER DO THIS**  
-Use biological swarm, insect-hive, or generic Zerg language.
+Substitute biological swarm, insect-hive or generic Zerg designs for the
+source-grounded armored/skeletal/living craft technology defined by Phase 02A.
 
 ---
 
@@ -3703,7 +3718,7 @@ The following decisions are now authoritative for all later phases.
 
 28. Alien aggression emerges from resource commitment, mobility, and transformation rather than artificially cheap swarm units.
 
-29. Aliens remain a technological machine civilization, not a biological swarm faction.
+29. Aliens are a technological fleet civilization with biomechanical craft, not a biological swarm gameplay faction (Phase 02A).
 
 30. **The Aero Tube Network is the Martian primary macro mechanic.**
 

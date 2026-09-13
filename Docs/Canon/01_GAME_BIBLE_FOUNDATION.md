@@ -834,7 +834,9 @@ Alien organization feels:
 - compact;
 - aggressive when opportunity appears.
 
-They are a technological civilization, not a biological swarm.
+They are a technological fleet civilization using biomechanical craft: biology
+and technology coexist. They are not a biological swarm gameplay faction.
+Phase 02A defines the source-grounded identity and adaptation boundaries.
 
 ## Technological Philosophy
 
@@ -2411,7 +2413,9 @@ Such content must extrapolate from:
 - transformation;
 - known craft construction.
 
-Generic biological swarm architecture is not an acceptable substitute.
+Craft-derived biomechanical architecture is required; generic biological swarm
+architecture is not an acceptable substitute. Living internal systems do not
+authorize hive mechanics or unrelated creature designs (Phase 02A).
 
 ## Life on Mars Martians
 
@@ -2797,7 +2801,7 @@ The following decisions are now locked project canon.
 40. Small, promotional, accessory, character-only, duplicate, and bundle releases may receive meaningful representation through appropriate gameplay, visual, environmental, UI, or campaign systems.
 41. Life on Mars-derived Astronaut content must receive strategically meaningful representation and cannot be reduced to cosmetics.
 42. Mars Mission Aliens may require original economy, infrastructure, worker, or production designs because the official range provides less mundane RTS infrastructure.
-43. Any invented Alien material must remain visibly derived from Mars Mission Alien design language and cannot become generic biological alien architecture.
+43. Any invented Alien material must remain visibly derived from Mars Mission Alien biomechanical craft language (Phase 02A), not generic hive architecture or contemporary human robotics.
 
 ---
 

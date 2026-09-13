@@ -2474,7 +2474,12 @@ Mission Systems are never portrayed as their replacement.
 
 ## Visual thesis
 
-# COMPACT BLACK/LIME SPACECRAFT TECHNOLOGY THAT CAN RECONFIGURE INTO INFRASTRUCTURE OR ATTACK STATES.
+# COMPACT BLACK/LIME BIOMECHANICAL SPACECRAFT TECHNOLOGY WITH SOURCE-SPECIFIC CONFIGURATIONS.
+
+Phase 02A corrects this document's former absolute biology bans. Armored hulls,
+skeletal interiors, living conduits and bio-organic drives belong to Alien
+technology. This reconciliation does not lift the visual-authority suspension;
+unrelated style/material conclusions below remain historical research.
 
 Mars Mission catalog records the ETX Alien Mothership, Alien Strike, Infiltrator and Alien Jet as distinct official craft families. ([bricklink.com](https://www.bricklink.com/catalogList.asp?catID=592&utm_source=chatgpt.com))
 
@@ -2482,7 +2487,7 @@ Mars Mission catalog records the ETX Alien Mothership, Alien Strike, Infiltrator
 
 - black dominant hull;
 - lime structural/accent geometry;
-- dark mechanical internals;
+- dark structural internals with source-grounded skeletal/living systems;
 - source-specific transparent/energy parts.
 
 ## Shape
@@ -4371,7 +4376,7 @@ Forbidden:
 - realistic tanks/APCs;
 - contemporary aircraft;
 - generic Alien towers;
-- organic Aliens;
+- generic organic hive/creature substitutions for Alien biomechanical craft;
 - generic Martian mechs;
 - smoothing away LEGO logic;
 - studs everywhere;
@@ -4487,7 +4492,7 @@ Unreleased 7728 and 7729 remain outside the released-canon denominator.
 | Razor Skimmer | CA — mixed-set alien craft | low forward-pointing curved hull | black/lime | low hover/bank | upper tile | outer panel | low razor shape / harassment craft | generic hover tank |
 | ETX Alien Strike | OA — 7693 | continuous curved airborne craft with twin crescent lobes and lime tail blades | black/lime | flight banking, panel articulation and emitter aim only | top/wing tile | exposed hinges and outer panel damage | unmistakable crescent airframe / structure assault | generic artillery or invented legs |
 | ETX Alien Infiltrator | OA — 7646 | compact craft → walker | black/lime | 2.0s reconfigure | top shell tile | leg/hull sections | folding walker / heavy ETX | insectoid creature |
-| Alien Mothership | OA — 7691 | huge segmented multi-craft hull | black/lime | relay, subcraft/hull motion | multiple sparse hull plates | 3-beat sectional failure | vast radial hull / unmistakable Huge air | bio-mothership |
+| Alien Mothership | OA — 7691 | huge segmented multi-craft hull | black/lime | relay, subcraft/hull motion | multiple sparse hull plates | 3-beat sectional failure | vast radial hull / unmistakable Huge air | generic hive-organism replacing the source biomechanical carrier |
 | ETX Command Core | NEW — Mothership/craft | landed command hull with folded fins | black/lime | landing/unfolding | upper hull tile | section separation | landed craft / compact HQ | temple |
 | Resonance Core | NEW — crystal/ETX | mechanical ring around committed Crystals | black/lime/crystal | ring synchronization/Surge | outer base plate | broken ring/flicker | Crystal rings / energy node | magic shrine |
 | ETX Fabricator | NEW — Mothership bays | open craft-production shell | black/lime | hull opens, unit unfolds | upper panel | bay separation | curved open bay / production | factory |
@@ -4691,7 +4696,7 @@ The following decisions are now authoritative.
 
 46. Neither Astronaut branch is visually superior or obsolete.
 
-47. Mars Mission Aliens remain black/lime technological craft and are never biological.
+47. Mars Mission Aliens use black/lime biomechanical craft: armored, skeletal and living systems coexist (Phase 02A); generic hive/swarm substitutions remain prohibited.
 
 48. Life on Mars Martians remain heterogeneous source-faithful mechanical technology centered on articulation, Aero Tubes and purpose-built machinery.
 
@@ -4852,7 +4857,7 @@ They do not reopen the visual architecture by default.
 
 # BOTH ASTRONAUT ENGINEERING TRADITIONS REMAIN VISUALLY DISTINCT AND EQUALLY LEGITIMATE.
 
-# MARS MISSION ALIENS REMAIN TECHNOLOGICAL RATHER THAN BIOLOGICAL.
+# MARS MISSION ALIENS ARE TECHNOLOGICAL AND BIOMECHANICAL, NOT A COPIED SWARM FACTION (PHASE 02A).
 
 # LIFE ON MARS MARTIANS REMAIN MECHANICAL AND DISTINCT FROM ALIENS.
 

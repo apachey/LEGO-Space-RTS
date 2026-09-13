@@ -853,9 +853,16 @@ Therefore most Alien NEW GAME CONTENT is economic and architectural rather than 
 
 **COUNTERPLAY:** Conventional worker harassment.
 
-**VISUAL READ:** Small black/lime mechanical ETX frame wrapped around a central tool/energy assembly.
+**VISUAL READ:** Small black/lime armored ETX hover shell with internal skeletal
+supports, living conduits and one integrated tool/energy assembly; not an
+ordinary human robot or a self-mining crystal.
 
-**SOURCE-FIDELITY NOTES:** The game requires an independent Alien economy but no official set supplies an obvious dedicated worker. The design is explicitly spacecraft-derived and mechanical, never biological.
+**SOURCE-FIDELITY NOTES:** The game requires an independent Alien economy but no
+official set supplies an obvious dedicated worker. The design is spacecraft-derived
+and biomechanical under Phase 02A. Official craft exteriors and magazine
+cutaways supply family grammar, not a verified ready-made worker. Exact new
+clamp, internal anatomy and connections remain disclosed adaptations requiring
+director review; gameplay role and hover locomotion are unchanged.
 
 ---
 
@@ -2678,7 +2685,7 @@ One—Resonance Core—was already established as new content in Phase 02 and is
 | Rock Raiders | Crusher Barrier | Defense | Early anti-ground fortification | No complete official static defense | Loader Dozer, Chain Dozer, HQ | Must look like industrial barricading equipment | Essential |
 | Rock Raiders | Cutter Mast | Defense | Anti-air | No official static AA answer | Chrome Crusher tools/radar, HQ machinery | Mining cutter on crane-like structure; no missile turret | Essential |
 | Astronauts | Modular Sentinel Defense | Defense | Ground/air static defense | Command Base does not supply complete competitive defense | 7690 modules, Mission Fighter tech | Swappable mission module, not generic turret family | Essential |
-| Aliens | ETX Servitor | Worker | Independent economy/construction | No dedicated Alien worker source | Small alien craft, ETX frames, containment clamps | Mechanical black/lime drone; never biological | Essential |
+| Aliens | ETX Servitor | Worker | Independent economy/construction | No dedicated Alien worker source | Small alien craft, ETX frames, containment clamps, official promo interiors | Armored black/lime biomechanical hover worker; Phase 02A | Essential |
 | Aliens | ETX Command Core | HQ | Command/expansion | No Alien base HQ source | Mothership/ETX hulls | Landed unfolding spacecraft architecture | Essential |
 | Aliens | Resonance Core | Macro infrastructure | Crystal Charge | Phase 02 Charge needs physical infrastructure | Crystal containment, ETX energy | Visible mechanical crystal apparatus | Essential; inherited Phase 02 |
 | Aliens | ETX Fabricator | Production | Light-unit production | No official planetary factory | Mothership subcraft bays | Dock/unfold assembly cradle | Essential |
@@ -3128,6 +3135,12 @@ No:
 - biological swarm architecture;
 - generic black-and-neon sci-fi towers.
 
+These reject unrelated creature/hive substitutions, not biological technology.
+Every Alien craft-derived worker and structure inherits Phase 02A's armored
+shell, skeletal support and living-system identity. Do not infer organs absent
+from the exterior or replace accepted silhouettes to expose them. New mounts,
+anatomy, cargo paths and defense recombinations require donor/adaptation review.
+
 ---
 
 ## MARTIANS
@@ -3546,7 +3559,7 @@ remain principally the responsibility of later Combat & Balance work.
 
 **PASS**
 
-### Aliens remain technological rather than biological
+### Aliens remain source-grounded biomechanical technology, not swarm substitutes
 
 **PASS**
 

@@ -1,8 +1,10 @@
 # T082 — composed review and Alien biomechanical source conflict
 
-Status: director feedback recorded; affected Alien redesigns HOLD for explicit
-canon amendment. This note does not change canon, gameplay or image acceptance
-inside the historical generation manifest.
+Status: historical research/conflict record, resolved by explicit director
+authorization on 2026-09-13. Phase 02A and the reconciled canonical documents
+now define the biomechanical identity. The proposal/STOP wording below records
+the pre-approval investigation, not a current canon blocker. Image acceptance
+and gameplay remain unchanged; revised concepts still require review.
 
 ## Director review of b75a0a9
 

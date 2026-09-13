@@ -1,6 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "T082",
+  "historicalScopeNotice": "Original approved generation proposal retained as provenance for rev1 images, not current design authority. Director review rejected the ordinary-robot Servitor and requested defense hybridization. Phase 02A and alien_biomechanical_policy.json supersede its non-biological wording; revised compositions still need approval and image review.",
   "status": "DIRECTOR_APPROVED_CONCEPT_GENERATION_ONLY",
   "approvalEvidence": {
     "directorMessage": "+",

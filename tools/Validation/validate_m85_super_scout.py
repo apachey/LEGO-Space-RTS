@@ -27,6 +27,7 @@ MARTIANS_EVIDENCE = ROOT / "Content/Presentation/SuperScout/martians_source_evid
 ROCK_RAIDERS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/rock_raiders_production_contracts.json"
 ASTRONAUTS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/astronauts_production_contracts.json"
 ALIENS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/aliens_production_contracts.json"
+ALIEN_BIOMECHANICAL_POLICY = ROOT / "Content/Presentation/SuperScout/alien_biomechanical_policy.json"
 MARTIANS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/martians_production_contracts.json"
 CONFUSION = ROOT / "Content/Presentation/SuperScout/confusion_register.json"
 SILHOUETTE_CONCEPTS = ROOT / "Content/Presentation/SuperScout/silhouette_concepts.json"
@@ -387,10 +388,47 @@ def validate_production_contracts(
     return len(records), provisional
 
 
+def validate_alien_biomechanical_policy(policy: dict, contracts: dict) -> str:
+    if (policy.get("schemaVersion") != 1
+            or policy.get("identity") != "SOURCE_GROUNDED_BIOMECHANICAL_FLEET_TECHNOLOGY"
+            or policy.get("gameplayImpact") != "NONE"
+            or policy.get("assetAcceptance") != "UNCHANGED_REVIEW_REQUIRED"):
+        fail("Alien biomechanical policy changed identity, gameplay or acceptance boundary")
+    canon = "Docs/Canon/02A_ALIEN_BIOMECHANICAL_SOURCE_RECONCILIATION.md"
+    if policy.get("canon") != canon or not (ROOT / canon).is_file():
+        fail("Alien biomechanical policy lacks canonical authority")
+    expected = {
+        "brickmaster_2007_mothership_cutaway": (
+            "https://archive.org/details/brickmaster-issue17/page/n5/mode/1up",
+            "OFFICIAL_PROMO_VISUAL_INFERENCE"),
+        "lego_club_2008_infiltrator_cutaway": (
+            "https://archive.org/details/LEGOClubMagazineUS-JulyAugust2008-Miniland/page/n19/mode/1up",
+            "OFFICIAL_PROMO_LITERAL_LABEL"),
+    }
+    sources = policy.get("sources", [])
+    if len(sources) != 2 or {
+        source.get("id"): (source.get("url"), source.get("evidenceKind"))
+        for source in sources
+    } != expected:
+        fail("Alien biomechanical evidence lost provenance or inference distinction")
+    for source in sources:
+        require_nonempty(source, "finding", "Alien biomechanical evidence")
+    require_nonempty(policy, "presentationRules", "Alien biomechanical policy")
+    require_nonempty(policy, "packetNotice", "Alien biomechanical policy")
+    current_contract = json.dumps(contracts).lower()
+    if "biomechanical" not in current_contract or any(
+        phrase in current_contract for phrase in (
+            "never biological", "non-biological", "organic tissue, nests and insect anatomy are forbidden",
+        )
+    ):
+        fail("Alien current contracts reverted to an absolute biology ban")
+    return policy["packetNotice"]
+
+
 def main() -> None:
     for path in (
         MANIFEST, LEDGER, INSTRUCTION_INDEX, SOURCE_ANALYSIS_POLICY, COMPOSED_DESIGN_PROPOSALS, ROCK_RAIDERS_EVIDENCE, ASTRONAUTS_EVIDENCE,
-        ALIENS_EVIDENCE,
+        ALIENS_EVIDENCE, ALIEN_BIOMECHANICAL_POLICY,
         MARTIANS_EVIDENCE,
         ROCK_RAIDERS_CONTRACTS, ASTRONAUTS_CONTRACTS, ALIENS_CONTRACTS, MARTIANS_CONTRACTS,
         CONFUSION, SILHOUETTE_CONCEPTS, BLIND_REVIEW_RESULTS, CONTENT, GENERATOR, SILHOUETTE_GENERATOR,
@@ -414,6 +452,9 @@ def main() -> None:
     rock_raiders_contracts = json.loads(ROCK_RAIDERS_CONTRACTS.read_text(encoding="utf-8"))
     astronauts_contracts = json.loads(ASTRONAUTS_CONTRACTS.read_text(encoding="utf-8"))
     aliens_contracts = json.loads(ALIENS_CONTRACTS.read_text(encoding="utf-8"))
+    biomechanical_notice = validate_alien_biomechanical_policy(
+        json.loads(ALIEN_BIOMECHANICAL_POLICY.read_text(encoding="utf-8")), aliens_contracts
+    )
     martians_contracts = json.loads(MARTIANS_CONTRACTS.read_text(encoding="utf-8"))
     confusion = json.loads(CONFUSION.read_text(encoding="utf-8"))
     silhouette_concepts = json.loads(SILHOUETTE_CONCEPTS.read_text(encoding="utf-8"))
@@ -1137,6 +1178,11 @@ def main() -> None:
     for asset in assets:
         packet_path = packet_dir / (asset["stableId"].replace(".", "_") + ".md")
         packet = packet_path.read_text(encoding="utf-8")
+        if asset["faction"] == "Aliens":
+            if biomechanical_notice not in packet:
+                fail(f"{packet_path.name} lacks the Alien biomechanical production guard")
+            if "biological tissue, nests, tentacles" in packet:
+                fail(f"{packet_path.name} retains the obsolete absolute biology ban")
         expected_evidence_ids = set(asset["sourceSets"]) & evidence_ids_by_faction.get(asset["faction"], set())
         if packet.count("### Source audit [") != len(expected_evidence_ids):
             fail(f"{packet_path.name} has cross-faction or missing source-evidence blocks")

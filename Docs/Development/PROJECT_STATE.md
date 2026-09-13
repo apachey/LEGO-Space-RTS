@@ -814,10 +814,15 @@ live; the current schema-9 copy/paste retains the complete experiment.
   including separate Ground Pulse / Air Lance heads. Later director review
   accepts Frontier for the next composite review, requests a two-by-three human
   solar array, rejects the ordinary-robot Servitor and requests further
-  hybridization of both defense heads. Official LEGO magazine cutaways expose
-  a conflict with active Phase 02/03's absolute non-biological Alien requirements.
-  Alien redesigns are HOLD for a bounded biomechanical canon amendment; details
-  and review provenance are in
+  hybridization of both defense heads. Official LEGO magazine cutaways
+  exposed the incorrect technological/non-biological distinction. The director
+  explicitly authorized a coherent canon rewrite, now recorded in Phase 02A
+  and reconciled across foundation, faction, roster, economy, world and suspended visual
+  documents. All Alien production packets inherit biomechanical source evidence
+  and presentation rules; no balance/gameplay or image acceptance changed.
+  The canon-conflict HOLD is resolved; revised Servitor/defense compositions
+  still require disclosed proposals and director review. Details are in
+  `Docs/Development/M85_T082_ALIEN_CANON_REWRITE.md`; original research is in
   `Docs/Development/M85_T082_COMPOSED_REVIEW_AND_BIOMECHANICAL_CONFLICT.md`.
   Accepted images, original boards, MT-101/MX-71 stop gates and gameplay remain
   unchanged. T082 still requires renewed complete 24/44/72-cell acceptance.
