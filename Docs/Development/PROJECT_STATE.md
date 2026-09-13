@@ -811,8 +811,14 @@ live; the current schema-9 copy/paste retains the complete experiment.
   donor/connection/adaptation proposals for Solar Energy Array, Frontier
   Extraction Station, ETX Servitor and ETX Defense Node are director-approved
   for concept generation only. Five first composed candidates now exist,
-  including separate Ground Pulse / Air Lance heads. All five remain unreviewed;
-  solar-panel relief and differing defense cradles are explicitly flagged.
+  including separate Ground Pulse / Air Lance heads. Later director review
+  accepts Frontier for the next composite review, requests a two-by-three human
+  solar array, rejects the ordinary-robot Servitor and requests further
+  hybridization of both defense heads. Official LEGO magazine cutaways expose
+  a conflict with active Phase 02/03's absolute non-biological Alien requirements.
+  Alien redesigns are HOLD for a bounded biomechanical canon amendment; details
+  and review provenance are in
+  `Docs/Development/M85_T082_COMPOSED_REVIEW_AND_BIOMECHANICAL_CONFLICT.md`.
   Accepted images, original boards, MT-101/MX-71 stop gates and gameplay remain
   unchanged. T082 still requires renewed complete 24/44/72-cell acceptance.
 - The official 7301 instruction page also exposed a stale audit-reconciliation
