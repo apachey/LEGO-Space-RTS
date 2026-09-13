@@ -1,7 +1,12 @@
 {
   "schemaVersion": 1,
   "task": "T082",
-  "status": "PROPOSED_DESIGNS_REQUIRE_DIRECTOR_APPROVAL",
+  "status": "DIRECTOR_APPROVED_CONCEPT_GENERATION_ONLY",
+  "approvalEvidence": {
+    "directorMessage": "+",
+    "respondsTo": "Approval request for the four proposals in commit 0949140",
+    "scope": "Generate the four proposed compositions, including both ETX Defense Node configurations. No generated image, donor study, Mothership revision, production contract or gameplay change is accepted by this approval."
+  },
   "authority": "Preproduction proposals only; no canon, gameplay or production-contract change. Generated donor studies are interpretation, never construction evidence.",
   "proposals": [
     {
@@ -14,7 +19,7 @@
       "whatIsNewOrChanged": "Promote and repeat the official panel subassembly into a fixed ground array; panel orientation, paired hinge rails, central cross-bracing and control-block layout are new adaptation. No new Energy behavior or deploy command.",
       "rejectedAlternatives": "Keeping the whole closed habitat module reads as a shed. Flat rectangular satellite panels lose the 7315 identity. A tall dish reinforces V54's wrong satellite/alien read.",
       "visibleGameplayConsequence": "A low wide symmetric pair of curved solar wings, not a vehicle or antenna. The center remains open and human service hardware is subordinate; daylight panel tilt is presentation only.",
-      "directorDecision": "PENDING: approve the paired curved-panel arrangement before generating the final building concept."
+      "directorDecision": "APPROVED_FOR_GENERATION_ONLY: paired curved-panel arrangement; director replied + to the four-proposal approval request. Generated result still requires review."
     },
     {
       "targetStableId": "building.ast.frontier_extraction_station",
@@ -26,7 +31,7 @@
       "whatIsNewOrChanged": "The receiving mouth/box, fixed mast foot, internal transfer routing and replacement of the four-tube launcher are new adaptation. Mast loses its separate wheeled chassis; no extra buildable vehicle is introduced.",
       "rejectedAlternatives": "Copying the launcher unchanged makes a defense station, not an economic receiver. A Rock Raiders conveyor steals another faction's identity. A sealed white factory removes the source's human pneumatic grammar.",
       "visibleGameplayConsequence": "Operator over a clearly open receiving bay, one articulated handling mast and a separately visible bellows pump. Incoming material has an obvious ground-level destination; pump/mast motions show processing without controlling gameplay.",
-      "directorDecision": "PENDING: approve replacing the launch tubes with a low receiver and a fixed source-inspired handling mast."
+      "directorDecision": "APPROVED_FOR_GENERATION_ONLY: replace launch tubes with a low receiver and fixed source-inspired handling mast; director replied + to the four-proposal approval request. Generated result still requires review."
     },
     {
       "targetStableId": "unit.aliens.etx_servitor",
@@ -38,7 +43,7 @@
       "whatIsNewOrChanged": "Uncrewed sealed mechanical core, utility arm/clamp, split-shell mounts and their tiny relative proportions are new. Remove 5617's guns, operator seat and tall arches. Hover lift remains source-clad presentation, not an invented physics system.",
       "rejectedAlternatives": "Pilot seated under tall arches reads as Alien Jet. A levitating giant crystal reads as self-mining magic. A four-leg insect loses the canonical spacecraft-derived ground-hover worker.",
       "visibleGameplayConsequence": "Small low asymmetric work machine with one obvious clamp and no weapon tips. During work the clamp reaches toward external material while the shell opens; the worker itself is not the resource. Silhouette stays below Alien Jet's tall arches.",
-      "directorDecision": "PENDING: approve the low uncrewed shell with one forward articulated clamp before any concept generation."
+      "directorDecision": "APPROVED_FOR_GENERATION_ONLY: low uncrewed shell with one forward articulated clamp; director replied + to the four-proposal approval request. Generated result still requires review."
     },
     {
       "targetStableId": "building.ali.etx_defense_node",
@@ -50,7 +55,7 @@
       "whatIsNewOrChanged": "Common ground cradle/contact pads, target-facing aiming hinge and readable variant attachment are new adaptation. Mounted weapons use existing authoritative behavior; no flying/walking mode or additional transform mechanic.",
       "rejectedAlternatives": "One ambiguous floating platform repeats V35's locomotion confusion. Conventional barrel turret erases ETX source identity. Copying the whole flying donor without fixed contact structure does not read as a building.",
       "visibleGameplayConsequence": "Ground Pulse is low, broad and forward-facing; Air Lance is narrow and raised toward the sky. Both have unmistakable planted supports and the same grounded base, so neither reads as a roaming craft or insect.",
-      "directorDecision": "PENDING: approve the common low fixed cradle and these two source-distinct heads before generating concepts."
+      "directorDecision": "APPROVED_FOR_GENERATION_ONLY: common low fixed cradle and the two source-distinct heads; director replied + to the four-proposal approval request. Generated results still require review."
     }
   ]
 }

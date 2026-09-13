@@ -22,8 +22,10 @@ first correction candidates for the next composite review. Exact prompts,
 source pages and hashes are retained; neither is approved for production.
 The larger block adds a complete docked Mothership first correction and two
 isolated official donor studies (7691 human station and 7315 solar module).
-Four composed-design proposals await director approval before final concept
-generation. The earlier six-response recording omission is corrected from the
+The director approved all four composed-design proposals for generation only.
+Five first candidates now exist, including both defense-head configurations;
+all remain unreviewed and separate from the accepted corpus. The earlier
+six-response recording omission is corrected from the
 original director message; all 66 initial responses were supplied.
 
 ## Completed in the identity-baseline pass
@@ -329,11 +331,25 @@ study's generated hinges/relief are not source evidence. Exact prompts, source
 pages and hashes are retained in `sourceStudies` in the FullV2 manifest.
 
 `Content/Presentation/SuperScout/composed_design_proposals.json` contains four
-pending proposals for Solar Energy Array, Frontier Extraction Station, ETX
+generation-only approved proposals for Solar Energy Array, Frontier Extraction Station, ETX
 Servitor and ETX Defense Node. Every proposal names its canonical function,
 method, official donors, exact components, load path, new work, rejected
-alternatives and visible game consequence. No proposed composition is generated
-or promoted to a production contract before director approval.
+alternatives and visible game consequence. The director's `+` authorizes only
+concept generation, not image acceptance, production contracts or gameplay.
+Five separate `UNREVIEWED_COMPOSED_DESIGN_CANDIDATE` first attempts now retain
+exact prompts, official donor pages, image hashes and approved adaptations in
+`composedDesignCandidates` in the FullV2 manifest. Solar Energy Array uses
+paired 7315 panels; Frontier uses 7691 with a fixed 7648-inspired handler;
+Servitor uses 5617/7691/7646 utility grammar; Ground Pulse and Air Lance use
+7697 and 7692 heads on a proposed shared low planted cradle.
+
+Visual inspection flags unwanted solar-panel circuit relief, an over-dressed
+Frontier operator tower, the Servitor's seat-like rear frame, occluded Ground
+Pulse rear contacts and differing defense-cradle geometry. Air Lance's emitters
+also point more horizontally than its raised blades. Generated construction is
+interpretation, not proof of official topology. Neither donor studies nor the
+Mothership candidate gained acceptance; MT-101 / MX-71 remain stopped. Accepted
+images, immutable boards, production contracts and gameplay are unchanged.
 
 V55 Mission Fighter and V56 Rover now have first correction candidates generated
 directly from official completed 7695 page 13 and 7301 page 1. Mission Fighter
@@ -392,6 +408,20 @@ approving the source-derived silhouette method for full-roster expansion. No
 packet is approved for T083/T085 production yet.
 
 ## Verification state
+
+The five generation-only approved composed candidates passed
+`./tools/verify.sh --full` with 317/317 NUnit tests, 12/12 director-review guard
+tests and zero blocking failures at
+`Artifacts/Verification/20260912T231500Z-full-summary.txt`. The focused
+`python3 tools/Validation/validate_m85_super_scout.py`,
+`python3 tools/Validation/test_m85_super_scout_review_guards.py` and
+`git diff --check` also passed. Four new negative guards reject missing approval
+evidence, expanded production approval, silently accepted candidates and changed
+donor sets; the prior eight guards remain passing. Deterministic repeat,
+replay/snapshot, content/GLB regeneration, headless gates and macOS export all
+passed. The retained Stress60 M9 diagnostic remains non-blocking for T082.
+No visible Godot session was launched. The exported app remains the existing
+playable implementation; these concepts are not integrated game models.
 
 The larger Mothership/donor/proposal block passed `./tools/verify.sh --full`
 with 317/317 NUnit tests, eight director-review recording guard tests and zero

@@ -809,7 +809,10 @@ live; the current schema-9 copy/paste retains the complete experiment.
   and 7315's curved solar module. Donor studies are not final building concepts;
   generated operator anatomy/relief remain interpretation. Four explicit
   donor/connection/adaptation proposals for Solar Energy Array, Frontier
-  Extraction Station, ETX Servitor and ETX Defense Node await director approval.
+  Extraction Station, ETX Servitor and ETX Defense Node are director-approved
+  for concept generation only. Five first composed candidates now exist,
+  including separate Ground Pulse / Air Lance heads. All five remain unreviewed;
+  solar-panel relief and differing defense cradles are explicitly flagged.
   Accepted images, original boards, MT-101/MX-71 stop gates and gameplay remain
   unchanged. T082 still requires renewed complete 24/44/72-cell acceptance.
 - The official 7301 instruction page also exposed a stale audit-reconciliation

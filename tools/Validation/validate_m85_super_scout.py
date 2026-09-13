@@ -246,8 +246,15 @@ def validate_source_analysis_policy(policy: dict) -> str:
     if len(proposal_fields) != 10 or len(proposal_fields) != len(set(proposal_fields)):
         fail("composed-design proposal contract is incomplete")
     proposed_designs = json.loads(COMPOSED_DESIGN_PROPOSALS.read_text(encoding="utf-8"))
-    if proposed_designs.get("schemaVersion") != 1 or proposed_designs.get("task") != "T082" or proposed_designs.get("status") != "PROPOSED_DESIGNS_REQUIRE_DIRECTOR_APPROVAL":
-        fail("composed designs must remain pending director approval")
+    if proposed_designs.get("schemaVersion") != 1 or proposed_designs.get("task") != "T082" or proposed_designs.get("status") != "DIRECTOR_APPROVED_CONCEPT_GENERATION_ONLY":
+        fail("composed designs must retain generation-only director approval")
+    approval = proposed_designs.get("approvalEvidence", {})
+    if approval != {
+        "directorMessage": "+",
+        "respondsTo": "Approval request for the four proposals in commit 0949140",
+        "scope": "Generate the four proposed compositions, including both ETX Defense Node configurations. No generated image, donor study, Mothership revision, production contract or gameplay change is accepted by this approval.",
+    }:
+        fail("composed-design approval evidence or generation-only scope drifted")
     proposals = proposed_designs.get("proposals", [])
     expected_proposals = {
         "building.ast.solar_energy_array",
@@ -262,7 +269,7 @@ def validate_source_analysis_policy(policy: dict) -> str:
             require_nonempty(record, field, f"composed proposal {record.get('targetStableId')}")
         if record.get("selectedMethod") not in {method["id"] for method in policy["candidateConstructionMethods"]}:
             fail("a composed proposal uses an unexplained construction method")
-        if not record["directorDecision"].startswith("PENDING:"):
+        if not record["directorDecision"].startswith("APPROVED_FOR_GENERATION_ONLY:"):
             fail("a composed proposal was silently accepted")
     game_titles = [game.get("title") for game in policy.get("gameReferencePool", [])]
     if game_titles != ["LEGO Rock Raiders", "CrystAlien Conflict", "LEGO Battles (Nintendo DS)"]:
@@ -995,6 +1002,39 @@ def main() -> None:
         output_bytes = output.read_bytes()
         if output_bytes[:8] != b"\x89PNG\r\n\x1a\n" or hashlib.sha256(output_bytes).hexdigest() != record.get("outputSha256"):
             fail(f"donor study PNG or hash drifted for {record.get('studyId')}")
+
+    composed_candidates = full_v2_manifest.get("composedDesignCandidates", [])
+    expected_composed_candidates = {
+        "composition.solar_energy_array.rev1": ("building.ast.solar_energy_array", "paired_solar_wings", {"7315"}),
+        "composition.frontier_extraction_station.rev1": ("building.ast.frontier_extraction_station", "fixed_receiver_and_mast", {"7691", "7648"}),
+        "composition.etx_servitor.rev1": ("unit.aliens.etx_servitor", "low_uncrewed_utility_clamp", {"5617", "7691", "7646"}),
+        "composition.etx_defense_node.ground_pulse.rev1": ("building.ali.etx_defense_node", "ground_pulse", {"7697"}),
+        "composition.etx_defense_node.air_lance.rev1": ("building.ali.etx_defense_node", "air_lance", {"7692"}),
+    }
+    if len(composed_candidates) != 5 or {record.get("candidateId") for record in composed_candidates} != set(expected_composed_candidates):
+        fail("the five generation-approved composition candidates drifted")
+    for record in composed_candidates:
+        stable_id, configuration, source_sets = expected_composed_candidates[record["candidateId"]]
+        if record.get("stableId") != stable_id or record.get("proposalTargetStableId") != stable_id or record.get("configuration") != configuration:
+            fail("a composed candidate lost its approved target/configuration")
+        if record.get("status") != "UNREVIEWED_COMPOSED_DESIGN_CANDIDATE" or record.get("attemptNumber") != 1:
+            fail("a composed candidate was silently accepted or its attempt provenance drifted")
+        for field in ("finding", "specificPrompt", "generationMode", "approvedAdaptation"):
+            require_nonempty(record, field, f"composed candidate {record['candidateId']}")
+        references = record.get("sourceReferences", [])
+        if len(references) != len(source_sets) or {reference.get("setId") for reference in references} != source_sets:
+            fail("a composed candidate changed its approved donor set")
+        for reference in references:
+            if reference.get("pdfUrl") not in instruction_by_id[reference["setId"]]["pdfUrls"]:
+                fail("a composed candidate has an unverified official PDF lineage")
+            if not reference.get("pages") or not all(isinstance(page, int) and page > 0 for page in reference["pages"]):
+                fail("a composed candidate has invalid reference pages")
+        output = FULL_V2_OUTPUT / record.get("output", "")
+        if output.parent != FULL_V2_OUTPUT / "Renders" or not output.is_file():
+            fail(f"missing or invalid composed output for {record['candidateId']}")
+        output_bytes = output.read_bytes()
+        if output_bytes[:8] != b"\x89PNG\r\n\x1a\n" or hashlib.sha256(output_bytes).hexdigest() != record.get("outputSha256"):
+            fail(f"composed candidate PNG or hash drifted for {record['candidateId']}")
 
     blocked_corrections = full_v2_manifest.get("blockedCorrections", [])
     if len(blocked_corrections) != 2:

@@ -71,6 +71,29 @@ class ReviewGuardTests(unittest.TestCase):
             fixture["proposals"][0]["directorDecision"] = "APPROVED"
         self.assert_rejected(validator.COMPOSED_DESIGN_PROPOSALS, mutate, "composed proposal was silently accepted")
 
+    def test_composed_generation_requires_director_evidence(self):
+        self.assert_rejected(validator.COMPOSED_DESIGN_PROPOSALS,
+                             lambda fixture: fixture.pop("approvalEvidence"),
+                             "approval evidence or generation-only scope")
+
+    def test_composed_generation_approval_cannot_expand_to_production(self):
+        def mutate(fixture):
+            fixture["approvalEvidence"]["scope"] = "All generated images and production contracts approved."
+        self.assert_rejected(validator.COMPOSED_DESIGN_PROPOSALS, mutate,
+                             "approval evidence or generation-only scope")
+
+    def test_composed_candidate_requires_separate_image_acceptance(self):
+        def mutate(fixture):
+            fixture["composedDesignCandidates"][0]["status"] = "DIRECTOR_ACCEPTED_CORRECTION_CANDIDATE"
+        self.assert_rejected(validator.FULL_V2_MANIFEST, mutate,
+                             "composed candidate was silently accepted")
+
+    def test_composed_candidate_donor_set_is_protected(self):
+        def mutate(fixture):
+            fixture["composedDesignCandidates"][0]["sourceReferences"][0]["setId"] = "7691"
+        self.assert_rejected(validator.FULL_V2_MANIFEST, mutate,
+                             "composed candidate changed its approved donor set")
+
 
 if __name__ == "__main__":
     unittest.main()

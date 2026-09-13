@@ -304,6 +304,144 @@
       "generationMode": "built-in image_gen; generation with official instruction references"
     }
   ],
+  "composedDesignCandidates": [
+    {
+      "candidateId": "composition.solar_energy_array.rev1",
+      "stableId": "building.ast.solar_energy_array",
+      "proposalTargetStableId": "building.ast.solar_energy_array",
+      "configuration": "paired_solar_wings",
+      "status": "UNREVIEWED_COMPOSED_DESIGN_CANDIDATE",
+      "attemptNumber": 1,
+      "approvedAdaptation": "Mirror two 7315 curved solar skins onto a new low shared hinge beam and ground pads; no cockpit or mobile chassis.",
+      "finding": "Paired curved honeycomb wings, low shared stud beam and planted pads read as the proposed solar array. Generated panel-border circuits have unwanted relief rather than flat printing; hinge structure and molded subdivisions remain interpretation, not official evidence.",
+      "specificPrompt": "Use case: stylized-concept. Asset: director-approved LEGO-derived RTS preproduction concept, NOT evidence of an official build. Generate ONE complete assembled subject in an elevated front three-quarter studio render, white seamless floor and background, soft neutral shadow, entire subject visible with margins. All components uniformly matte black and neutral dark gray, absolutely no color, glow, effects, labels, logo, text or watermark. Use real recognizable LEGO plates, molded shapes, studs and structurally connected hinges, not smooth generic sci-fi sculpture. Only the approved adaptation below; no extra objects or decorative greebles.\nInput image 1 is an OFFICIAL donor reference: borrow only the central long curved thin honeycomb canopy and low rectangular module construction, not the cockpit, robot or whole vehicle. Approved composition: TWO copies of this curved honeycomb panel are mounted as wide mirrored solar wings spreading left and right away from one LOW shared central structural beam. Each wing retains the source's long shallow half-cylinder curvature and technological edge printing; attach its inner lower edge to a clearly visible hinge rail on the central beam. Tilt the two curved skins outward, leaving the low center OPEN and visibly accessible, rather than wrapping them around a closed habitat. Low ground pads and simple cross-bracing support the beam; one small human control block stands between the hinge rails. Honeycomb is FLAT subtle gray printing, never raised armor or a thick mesh. This is a fixed ground energy structure: no wheels, cockpit, antenna, tower, dish, tall pedestal, closed greenhouse or complete spaceship. New crossbeam, hinge rails and paired orientation are authorized adaptations; source canopy proportion must remain recognizable.",
+      "sourceReferences": [
+        {
+          "setId": "7315",
+          "pdfUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130810.pdf",
+          "pages": [
+            17
+          ]
+        }
+      ],
+      "output": "Renders/building_astronauts_solar_energy_array_composed_rev1.png",
+      "outputSha256": "431e82540c91eb489e93061b1b375a26c8c2b047b29f3ed7b2246641dd438fd0",
+      "generationMode": "built-in image_gen; official donor references and director-approved composition"
+    },
+    {
+      "candidateId": "composition.frontier_extraction_station.rev1",
+      "stableId": "building.ast.frontier_extraction_station",
+      "proposalTargetStableId": "building.ast.frontier_extraction_station",
+      "configuration": "fixed_receiver_and_mast",
+      "status": "UNREVIEWED_COMPOSED_DESIGN_CANDIDATE",
+      "attemptNumber": 1,
+      "approvedAdaptation": "Remove the 7691 human station's four launcher tubes; add a low open receiver and fixed 7648-inspired handling mast while retaining the hose-linked pump.",
+      "finding": "Human operator tower, low open receiver, fixed handling clamp and hose-connected three-lobed pump are visible; all four donor launcher tubes are removed. Operator tower is taller and more densely dressed than the approved sparse source grammar; hose-to-receiver connections require controlled modeling review.",
+      "specificPrompt": "Use case: stylized-concept. Asset: director-approved LEGO-derived RTS preproduction concept, NOT evidence of an official build. Generate ONE complete assembled subject in an elevated front three-quarter studio render, white seamless floor and background, soft neutral shadow, entire subject visible with margins. All components uniformly matte black and neutral dark gray, absolutely no color, glow, effects, labels, logo, text or watermark. Use real recognizable LEGO plates, molded shapes, studs and structurally connected hinges, not smooth generic sci-fi sculpture. Only the approved adaptation below; no extra objects or decorative greebles.\nInput images are official DONOR references, not edit targets. Image 1 supplies human 7691 narrow ground rail, open upper operator platform, flexible small loops, thick corrugated transfer hose and separate squat three-lobed bellows pump. Image 2 supplies 7648's paired slender hinged tool-mast construction, NOT its wheels or rover. Approved composition: compact fixed economic receiving/handling station. Keep the 7691 skeletal operator column on a narrow studded rail, with ONE seated standard human astronaut above the handling area. REMOVE all four launch tubes and their gun-head mount completely. Put a LOW OPEN ground-level rectangular receiving mouth/box directly on the rail in front of the column; thick transfer hose connects this box to the separate pump. Beside the open receiver, a short articulated 7648-derived paired-link handling mast stands on one braced FIXED foot, carrying one small utility gripper reaching over the mouth, not a cannon or drill barrel. Pump keeps the fluted angular base and exactly THREE broad rounded stacked bellows lobes. New receiver box, fixed mast foot and gripper are approved adaptation. Keep distinct pump, open receiving bay and operator load paths readable. No wheels, extra vehicle, conveyor, tall factory, launcher tubes, guns, alien figures, giant dish or sealed generic refinery.",
+      "sourceReferences": [
+        {
+          "setId": "7691",
+          "pdfUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4516029.pdf",
+          "pages": [
+            26
+          ]
+        },
+        {
+          "setId": "7648",
+          "pdfUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4525546.pdf",
+          "pages": [
+            28
+          ]
+        }
+      ],
+      "output": "Renders/building_astronauts_frontier_extraction_station_composed_rev1.png",
+      "outputSha256": "04b0cc5f9b072dcafa87b6194109388030cfbb805751bc230571b754e980d166",
+      "generationMode": "built-in image_gen; official donor references and director-approved composition"
+    },
+    {
+      "candidateId": "composition.etx_servitor.rev1",
+      "stableId": "unit.aliens.etx_servitor",
+      "proposalTargetStableId": "unit.aliens.etx_servitor",
+      "configuration": "low_uncrewed_utility_clamp",
+      "status": "UNREVIEWED_COMPOSED_DESIGN_CANDIDATE",
+      "attemptNumber": 1,
+      "approvedAdaptation": "Compose a tiny uncrewed 5617 utility deck with 7691 machinery core and 7646 hinge/conduit grammar; exactly one utility clamp, no weapons or crystal.",
+      "finding": "Low uncrewed utility deck, two shallow split wedges, compact central mechanism, short conduit and one forward two-jaw clamp are visible without crystal, pilot, legs or weapons. Rear triangular frame can resemble an empty seat, and exact tiny scale and clamp offset cannot be proven by this isolated image.",
+      "specificPrompt": "Use case: stylized-concept. Asset: director-approved LEGO-derived RTS preproduction concept, NOT evidence of an official build. Generate ONE complete assembled subject in an elevated front three-quarter studio render, white seamless floor and background, soft neutral shadow, entire subject visible with margins. All components uniformly matte black and neutral dark gray, absolutely no color, glow, effects, labels, logo, text or watermark. Use real recognizable LEGO plates, molded shapes, studs and structurally connected hinges, not smooth generic sci-fi sculpture. Only the approved adaptation below; no extra objects or decorative greebles.\nInput images are official DONORS ONLY: image 1 supplies 5617's tiny swept studded lower deck, image 2 supplies only a SHORT exposed mechanical rail/core segment from 7691, image 3 supplies hinged split-hull and short flexible-conduit construction grammar from 7646. Do not copy any complete craft. Approved composition: a TINY low uncrewed alien ground-hover WORKER, about minifigure-width, with a short wide swept plate deck and directly mounted compact mechanical core. Remove the pilot, cockpit, guns and all tall lime arches. The core carries exactly ONE short articulated utility arm projecting forward and slightly to one side, ending in a compact visibly two-jawed mechanical CLAMP. Two low split-shell wedge panels open a little around the arm hinge, supported on the central rail; one short flexible conduit visibly joins core to arm. All joints have connected bracket/hinge parents. Neutral gray only even for the conduit. Hover deck floats just a very small distance above the white floor with a soft shadow: no planted feet, insect legs, wheels or ground base. No crystal carried or incorporated, no face, organic body, pilot, glowing orb, gun/emitter tips, tentacles or tall crown. New arm/clamp and uncrewed split-shell core are authorized; emphasize a compact LEGO work machine rather than a miniature fighter.",
+      "sourceReferences": [
+        {
+          "setId": "5617",
+          "pdfUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4525566.pdf",
+          "pages": [
+            1
+          ]
+        },
+        {
+          "setId": "7691",
+          "pdfUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4516029.pdf",
+          "pages": [
+            49
+          ]
+        },
+        {
+          "setId": "7646",
+          "pdfUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4534848.pdf",
+          "pages": [
+            50
+          ]
+        }
+      ],
+      "output": "Renders/unit_aliens_etx_servitor_composed_rev1.png",
+      "outputSha256": "658756f675a62158193b6df46994b7df45b9b9763f594d1a712776529851ce48",
+      "generationMode": "built-in image_gen; official donor references and director-approved composition"
+    },
+    {
+      "candidateId": "composition.etx_defense_node.ground_pulse.rev1",
+      "stableId": "building.ali.etx_defense_node",
+      "proposalTargetStableId": "building.ali.etx_defense_node",
+      "configuration": "ground_pulse",
+      "status": "UNREVIEWED_COMPOSED_DESIGN_CANDIDATE",
+      "attemptNumber": 1,
+      "approvedAdaptation": "Mount the 7697 flat crescent/emitter grammar on a new low immobile cradle shared in design intent with Air Lance.",
+      "finding": "Broad flat crescent head on a low planted beam with ground pads reads as the Ground Pulse proposal, not a flying vehicle. Rear contacts are partly occluded, emitter/molded-part details remain interpretation and the generated cradle is not geometrically identical to the Air Lance candidate.",
+      "specificPrompt": "Use case: stylized-concept. Asset: director-approved LEGO-derived RTS preproduction concept, NOT evidence of an official build. Generate ONE complete assembled subject in an elevated front three-quarter studio render, white seamless floor and background, soft neutral shadow, entire subject visible with margins. All components uniformly matte black and neutral dark gray, absolutely no color, glow, effects, labels, logo, text or watermark. Use real recognizable LEGO plates, molded shapes, studs and structurally connected hinges, not smooth generic sci-fi sculpture. Only the approved adaptation below; no extra objects or decorative greebles.\nInput image 1 is the official 7697 flat small alien crescent craft DONOR. Approved Ground Pulse defense composition: retain its TWO broad flat crescent plate wings and source paired emitter arrangement around a connected center spine. REMOVE pilot seat/operator and long overhead curved hoses; do not make biological appendages. Mount the opened flat craft spine on a COMMON LOW fixed cradle: a short rectangular studded central beam on FOUR broad flat rectangular ground contact pads, two per side, directly joined by short bracing links. These pads are motionless building foundations, not articulated walking legs. ONE visible aiming hinge just above the central beam holds the broad emitter frame close to ground height, aiming horizontally forward. Outer crescent plates connect and brace around the center, not freely floating or becoming feet. Overall low and wide, with clear fixed load path all the way to floor. Source spacecraft-derived armor stays thin and studded. New low cradle, fixed contact pads and aiming hinge are approved adaptation. No generic turret tower, tripod, wheels, hovering/flying hull, cockpit, alien minifigure, extra gun barrels, crystal, tall vertical fins or insect creature.",
+      "sourceReferences": [
+        {
+          "setId": "7697",
+          "pdfUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4515381.pdf",
+          "pages": [
+            15
+          ]
+        }
+      ],
+      "output": "Renders/building_aliens_etx_defense_node_ground_pulse_composed_rev1.png",
+      "outputSha256": "4121cde27a7e4606c6c7b88a6505b9d14ec4d7fabf0c22f9627937d0ae160f58",
+      "generationMode": "built-in image_gen; official donor references and director-approved composition"
+    },
+    {
+      "candidateId": "composition.etx_defense_node.air_lance.rev1",
+      "stableId": "building.ali.etx_defense_node",
+      "proposalTargetStableId": "building.ali.etx_defense_node",
+      "configuration": "air_lance",
+      "status": "UNREVIEWED_COMPOSED_DESIGN_CANDIDATE",
+      "attemptNumber": 1,
+      "approvedAdaptation": "Mount the 7692 raised narrow split-blade/three-emitter grammar on a new low immobile cradle shared in design intent with Ground Pulse.",
+      "finding": "Raised narrow split-blade head, central slot, three forward emitters and low planted four-pad cradle read as the Air Lance proposal. Emitters point more horizontally than the blade angle suggests; the generated cradle differs from Ground Pulse and must be unified if the direction is accepted.",
+      "specificPrompt": "Use case: stylized-concept. Asset: director-approved LEGO-derived RTS preproduction concept, NOT evidence of an official build. Generate ONE complete assembled subject in an elevated front three-quarter studio render, white seamless floor and background, soft neutral shadow, entire subject visible with margins. All components uniformly matte black and neutral dark gray, absolutely no color, glow, effects, labels, logo, text or watermark. Use real recognizable LEGO plates, molded shapes, studs and structurally connected hinges, not smooth generic sci-fi sculpture. Only the approved adaptation below; no extra objects or decorative greebles.\nInput image 1 is the official 7692 narrow twin-blade alien craft DONOR. Approved Air Lance defense composition: its TWO long thin curved blade panels rise as a narrow upward-aiming frame with an OPEN central slot and recognizable three-emitter group. Remove pilot/operator and cockpit seat. Keep only short flexible source-style conduits near the hinge, no long arches over a rider. Mount the opened craft central spine on a COMMON LOW fixed cradle: a short rectangular studded central beam on FOUR broad flat rectangular ground contact pads, two per side, directly joined by short bracing links. Pads are motionless building foundations, not articulated walking legs. ONE visible aiming hinge just above the beam carries the narrow source twin-blade head angled roughly 65 degrees up toward sky. All blades and emitters physically attach to that hinge assembly; no generic long cannon barrel. Overall narrow and raised, clear contrast to a broad horizontal Ground Pulse head but exactly the described same compact grounded base. New common cradle, fixed pads and aiming hinge are approved adaptation. No tower, tripod, wheels, floating parts, pilot, creature, xenomorph, crystal or extra paired crescent wings.",
+      "sourceReferences": [
+        {
+          "setId": "7692",
+          "pdfUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4524070.pdf",
+          "pages": [
+            23
+          ]
+        }
+      ],
+      "output": "Renders/building_aliens_etx_defense_node_air_lance_composed_rev1.png",
+      "outputSha256": "2843b2ff39309e505c8eb04963ce95939b49f4779f312d8e9a34983fec17a0ec",
+      "generationMode": "built-in image_gen; official donor references and director-approved composition"
+    }
+  ],
   "blockedCorrections": [
     {
       "stableId": "unit.astronauts.mt101_armored_drilling_unit",
