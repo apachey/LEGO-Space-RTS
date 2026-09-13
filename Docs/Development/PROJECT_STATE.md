@@ -835,6 +835,19 @@ live; the current schema-9 copy/paste retains the complete experiment.
   lower core/foundation. Ground Pulse's two dominant crescents do not preserve
   the proposed three-lobe crown; that mismatch is disclosed without hidden retry.
   See `Docs/Development/M85_T082_SOLAR_AND_BIOMECHANICAL_REVISION_BLOCK.md`.
+  Later director feedback rejects all three previews' excessive detail and the
+  oversized worker. A controlled shared-scale volume sheet then receives
+  size-only acceptance: Servitor body 6×8 studs (6×10 with clamp), 8 plates
+  high; both defense base extents 12×12 studs, Ground Pulse 15 plates high and
+  Air Lance 26. Shape, anatomy, image and production acceptance remain open.
+  No gameplay footprint/world-scale change or third free-form generation is
+  authorized. Exact scope is in `Docs/Development/M85_T082_ALIEN_SCALE_REVIEW.md`.
+  Controlled source-informed native 3D drafts now preserve those accepted
+  dimensions, retain all three Ground Pulse crescents and use exactly matching
+  lower defense geometry. One editable preproduction source and two common-scale
+  three-quarter/overhead boards are ready for exterior/complexity review, not
+  renewed size approval or production acceptance. See
+  `Docs/Development/M85_T082_ALIEN_SHAPE_DRAFTS.md`.
   Accepted images, original boards, MT-101/MX-71 stop gates and gameplay remain
   unchanged. T082 still requires renewed complete 24/44/72-cell acceptance.
 - The official 7301 instruction page also exposed a stale audit-reconciliation
@@ -876,6 +889,16 @@ step and must be announced when new visual evidence is actually required.
 - network replay chunk format **1**.
 
 ## Verification state
+
+The controlled Alien preproduction block passed `./tools/verify.sh` and
+`./tools/verify.sh --full`: 317 NUnit tests and all 29 full blocking stages pass
+at `Artifacts/Verification/20260913T101442Z-full-summary.txt`. Five native
+geometry regression scenarios and a saved-.blend audit pass; the existing 22
+director review guards remain intact. Deterministic repeat/replay/snapshot and
+regeneration checks pass; the existing game was freshly exported and verified
+at `Builds/macOS/LEGO Space RTS.app`. No draft is production-accepted or
+integrated. The preserved 60-mover M9 BLOCKING_LATER diagnostic still fails
+at 2/60 completion and does not block T082 review.
 
 The latest priority correction wave, including the director-accepted Tunnel
 Transport and Rapid Rider, the second-attempt MB-01 Eagle Command Base and the

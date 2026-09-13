@@ -1,0 +1,45 @@
+{
+  "Servitor": {
+    "bounds_studs": [
+      6.000000052154064,
+      10.00000024214387,
+      3.199999948265031
+    ],
+    "mesh_modules": 15,
+    "triangles": 468,
+    "status": "PREPRODUCTION_SHAPE_DRAFT_DIMENSIONS_ONLY_ACCEPTED"
+  },
+  "GroundPulse": {
+    "bounds_studs": [
+      12.000000104308128,
+      12.000000104308128,
+      6.000000052154064
+    ],
+    "mesh_modules": 32,
+    "triangles": 1184,
+    "status": "PREPRODUCTION_SHAPE_DRAFT_DIMENSIONS_ONLY_ACCEPTED"
+  },
+  "AirLance": {
+    "bounds_studs": [
+      12.000000104308128,
+      12.000000104308128,
+      10.400000028312206
+    ],
+    "mesh_modules": 25,
+    "triangles": 732,
+    "status": "PREPRODUCTION_SHAPE_DRAFT_DIMENSIONS_ONLY_ACCEPTED"
+  },
+  "shared_foundation_sha256": "abf9bc787847838b001639cf0ab8fb4bc419b3eaf5e8a8f229534a82db60636b",
+  "checks": {
+    "accepted_envelopes": "PASS",
+    "worker_body_tool_separation": "PASS",
+    "identical_defense_foundations": "PASS",
+    "three_ground_lobes": "PASS",
+    "ground_horizontal_air_upward_axes": "PASS"
+  },
+  "blend_sha256": "820d509d4e1c9b20f9d0fa48cd692f749fddc103c2cc294345f0b0e92c87628f",
+  "images": {
+    "alien_shape_drafts_top.png": "b67fd2731ea45cf5009ba2e83c10642c662bf821a75a0315c8b668fa91ad488c",
+    "alien_shape_drafts_three_quarter.png": "e82587a59c686663c61744a8ee5450ec93b2ca22746c5fd766706227259b7358"
+  }
+}

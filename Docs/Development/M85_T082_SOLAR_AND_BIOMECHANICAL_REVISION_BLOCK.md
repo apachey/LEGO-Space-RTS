@@ -4,6 +4,11 @@ Date: 2026-09-13. Branch: `codex/m85-t082`; not merged.
 Authority: Phase 02A governs Alien identity. This is production preproduction,
 not a further canon rewrite or permission to change gameplay.
 
+Subsequent review rejects the three previews' excessive detail and oversized
+worker. A separate controlled volume sheet receives DIMENSIONS-ONLY director
+acceptance; see `M85_T082_ALIEN_SCALE_REVIEW.md`. Historical previews and their
+manifest acceptance states below remain unchanged; no third free-form retry.
+
 ## Delivered solar correction — image review still required
 
 Director request: “нехай воно буде більше схоже на типові людські сонячні

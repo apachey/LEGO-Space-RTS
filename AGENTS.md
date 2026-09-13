@@ -618,6 +618,25 @@ State where the work exists and whether it has been merged.
 The user is the game director and primary playtester, not the implementation
 technician.
 
+### Work cadence and acknowledgements
+
+Director-approved 2026-09-13: work in coherent, substantial batches. Do not end
+a turn merely to acknowledge an approval, restate what was understood, record
+a routine decision, or ask the director to confirm the same decision again.
+Record routine feedback silently in the relevant project notes and continue
+the next already-authorized step. Short replies such as `+`, `далі` and an
+approval of size normally mean continue the approved work, not deliver another
+confirmation-only handoff. Preserve all canon, scope and stop-rule boundaries;
+approval of one property is not approval of unreviewed properties.
+
+Hand off when there is a substantive result for review, a completed bounded
+task, or a genuine blocker/new decision. Necessary progress updates should
+contain actual progress or useful findings, not repeated promises about cadence.
+Do not repeat this communication preference in later messages as reassurance.
+Do not routinely announce that Godot was not launched or that automation is
+headless/crash-safe. Mention engine launch behavior only when visible capture
+requires advance notice, behavior changes, or a relevant failure needs attention.
+
 ### Language
 
 Communicate with the user in Ukrainian unless the user switches language.
