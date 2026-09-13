@@ -888,6 +888,13 @@ live; the current schema-9 copy/paste retains the complete experiment.
   MT-101 still requires a finished appearance, with its old raster kept only as
   unresolved context. Earlier unreviewed correction records are not auto-accepted.
   See `Docs/Development/M85_T082_CURRENT_COMPARISON.md`.
+  The director then rejected Claw rev1's extra right claw and clarified the
+  picture-relative layout: one left claw, one right gun arm. The previous
+  prompt incorrectly converted the excluded Alien craft into a claw.
+  One localized second correction in `ArtSource/M85/Preproduction/ClawTankArmCorrectionV2/`
+  restores the left gripper and removes the extra right branch. The gallery
+  selects this unreviewed candidate; no image/production acceptance or further
+  retry is inferred. Ownership, deletion intent and selected bytes are guarded.
   Actual saved mesh transforms and nine negative native control fixtures pass.
   See `Docs/Development/M85_T082_SOURCE_LOCKED_CORRECTIONS.md`.
   Accepted image bytes, original boards, historical two-attempt stops and gameplay
@@ -931,6 +938,13 @@ step and must be announced when new visual evidence is actually required.
 - network replay chunk format **1**.
 
 ## Verification state
+
+The Claw-Tank localized arm correction passed `./tools/verify.sh`: all 23 fast
+blocking stages, 317 NUnit tests and 61 review-record guards, zero blocking or
+diagnostic failures, at `Artifacts/Verification/20260913T185521Z-fast-summary.txt`.
+The new image is visually inspected, not director-accepted; automated guards
+protect source/prompt hashes, arm-role requirements and current-gallery selection,
+not image topology. No new playable export or runtime/model integration.
 
 The later localized-MX appearance approval and named current-comparison assembly
 passed `./tools/verify.sh`: all 23 fast blocking stages, 317 NUnit tests and

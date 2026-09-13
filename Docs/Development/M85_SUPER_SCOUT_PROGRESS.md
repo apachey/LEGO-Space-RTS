@@ -40,6 +40,21 @@ original director message; all 66 initial responses were supplied.
 
 ## Completed in the identity-baseline pass
 
+Latest director correction: Claw-Tank must have one claw on viewer-left and
+one gun arm on viewer-right, no right claw. The earlier correction mistakenly
+replaced the excluded Alien spacecraft with a claw; rev1 is rejected for that
+composition, not accepted by omission. One localized second correction now
+replaces left barrel tips with one two-jaw gripper and deletes the extra right
+pincer/branch while retaining the right gun. Exact authority, prompt, source
+page and hashes are in `ArtSource/M85/Preproduction/ClawTankArmCorrectionV2/`.
+The current gallery selects this unreviewed candidate. Appearance acceptance
+remains pending; no third retry or production integration is authorized.
+Five new negative guards preserve ownership, delete-versus-replace intent,
+attempt count, unreviewed status and current selection.
+Verification: `./tools/verify.sh` PASS 23/23 fast blocking stages, 317 NUnit
+tests and 61 review guards, zero blocking/diagnostic failures; summary
+`Artifacts/Verification/20260913T185521Z-fast-summary.txt`.
+
 Latest continuation: MX-71's localized completed appearance is accepted as
 recorded in `Content/Presentation/SuperScout/mx71_localized_appearance_review.json`.
 A separate `FullV2/CurrentComparisonV1/` gallery assembles all 66 identities and

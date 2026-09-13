@@ -12,6 +12,30 @@ import validate_m85_super_scout as validator
 
 
 class ReviewGuardTests(unittest.TestCase):
+    def test_claw_correction_cannot_reverse_arm_ownership(self):
+        self.assert_rejected(validator.CLAW_ARM_CORRECTION,
+                             lambda f: f["requiredArmLayout"].update(left="GUN", right="CLAW"),
+                             "left-claw/right-gun ownership")
+
+    def test_claw_correction_cannot_replace_removed_craft_with_tool(self):
+        self.assert_rejected(validator.CLAW_ARM_CORRECTION,
+                             lambda f: f["requiredArmLayout"].update(extraAlienDerivedAppendage="REPLACE_WITH_CLAW"),
+                             "left-claw/right-gun ownership")
+
+    def test_claw_correction_cannot_infer_appearance_acceptance(self):
+        self.assert_rejected(validator.CLAW_ARM_CORRECTION,
+                             lambda f: f.update(status="DIRECTOR_ACCEPTED"),
+                             "expanded appearance")
+
+    def test_claw_correction_cannot_hide_third_attempt(self):
+        self.assert_rejected(validator.CLAW_ARM_CORRECTION,
+                             lambda f: f.update(correctionAttemptsTotal=3), "hid attempts")
+
+    def test_current_comparison_cannot_restore_extra_claw(self):
+        def mutate(f):
+            next(a for a in f["selections"] if a["stableId"] == "unit.astronauts.mt51_claw_tank")["file"] = "old.png"
+        self.assert_rejected(validator.CURRENT_COMPARISON, mutate, "rejected Claw arm composition")
+
     def test_current_comparison_cannot_accept_production(self):
         self.assert_rejected(validator.CURRENT_COMPARISON,
                              lambda f: f.update(productionAccepted=True), "diagnostic into acceptance")

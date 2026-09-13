@@ -1,0 +1,59 @@
+{
+  "schema": 1,
+  "stableId": "unit.astronauts.mt51_claw_tank",
+  "status": "UNREVIEWED_LOCALIZED_ARM_CORRECTION_CANDIDATE",
+  "productionAccepted": false,
+  "canonImpact": "NONE",
+  "tool": "built-in image_gen",
+  "useCase": "precise-object-edit",
+  "correctionAttemptsTotal": 2,
+  "localizedEditAttempts": 1,
+  "authority": {
+    "date": "2026-09-13",
+    "reviewer": "game director",
+    "reviewedBaseCommit": "0ef66f7",
+    "message": "Ні, я ж кажу\nКлешня повинна бути одна, ліва (якщо дивитись на картинку), справ повинна бути рука з пушкою, клешні не повинно бути там"
+  },
+  "requiredArmLayout": {
+    "coordinateFrame": "VIEWER_IMAGE",
+    "left": "ONE_TWO_JAW_CLAW",
+    "right": "ONE_TWIN_BARREL_GUN_ARM_NO_CLAW",
+    "lateralArmCount": 2,
+    "clawCount": 1,
+    "extraAlienDerivedAppendage": "DELETE_NOT_REPLACE"
+  },
+  "base": {
+    "file": "Docs/Development/M85SuperScout/Silhouettes/FullV2/Renders/unit_astronauts_mt51_claw_tank_rev1.png",
+    "sha256": "b408585ba6d0269bb6176cd26755c86198801677f951273f3614c928db9427d3",
+    "state": "DIRECTOR_REJECTED_ARM_COMPOSITION"
+  },
+  "inputs": [
+    {
+      "role": "EDIT_TARGET",
+      "file": "Docs/Development/M85SuperScout/Silhouettes/FullV2/Renders/unit_astronauts_mt51_claw_tank_rev1.png",
+      "sha256": "b408585ba6d0269bb6176cd26755c86198801677f951273f3614c928db9427d3"
+    },
+    {
+      "role": "OFFICIAL_ARM_OWNERSHIP_AND_LEFT_CLAW_REFERENCE_ONLY",
+      "file": "ArtSource/M85/Preproduction/ClawTankArmCorrectionV2/reference_7697_page66.png",
+      "sha256": "df71baa87de6def2ac12544370a712c5f1ebcd0cca38f347831bf92911cbf2ec",
+      "officialPdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4515381.pdf",
+      "page": 66
+    }
+  ],
+  "promptFile": "edit_prompt.txt",
+  "promptSha256": "6c3bf87c6a0b85050ac11f0e8b36e57fd7c4ae6078890e2ceee5cb8b07498b97",
+  "output": {
+    "file": "claw_tank_arms_rev2.png",
+    "sha256": "5daea3689075e0ee6b116717bc39c58ff3e7ccf894daa17ef21fe01ec8e73c59"
+  },
+  "rootCause": "The first correction prompt replaced a spacecraft-reading assembly with a claw rather than removing the separate Alien craft. It also retained the incorrect left gun. The latest director clarification fixes viewer-relative ownership: left claw, right gun, no extra appendage. Historical prompts and image bytes remain unchanged.",
+  "prevention": "A mixed set's separate opposing model is excluded as a whole object, never converted into a tool. Prompts must declare viewer-relative arm roles, object counts, and DELETE versus REPLACE operations before editing.",
+  "inspection": {
+    "visualFinding": "One open two-jaw claw on viewer-left; retained twin-barrel gun arm on viewer-right; extra right pincer and its branch removed. Closed cockpit, tracks, turntable, upright launcher and shoulder attachments visually retained.",
+    "pixelIdentityClaimed": false,
+    "requiresDirectorAppearanceReview": true,
+    "automatedPixelTopologyProven": false
+  },
+  "boundary": "Image-only second correction after explicit director feedback. No other asset approval, production integration, gameplay change or complete T082 acceptance. A further attempt requires new director authority."
+}

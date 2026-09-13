@@ -51,6 +51,7 @@ SOURCE_LOCKED_CORRECTIONS = ROOT / "ArtSource/M85/Preproduction/SourceLockedCorr
 MX71_LOCALIZED_EDIT = ROOT / "ArtSource/M85/Preproduction/MX71LocalizedWeaponEditV1/edit_manifest.json"
 MX71_LOCALIZED_REVIEW = ROOT / "Content/Presentation/SuperScout/mx71_localized_appearance_review.json"
 CURRENT_COMPARISON = FULL_V2_OUTPUT / "CurrentComparisonV1/selection_manifest.json"
+CLAW_ARM_CORRECTION = ROOT / "ArtSource/M85/Preproduction/ClawTankArmCorrectionV2/edit_manifest.json"
 
 CLASSIFICATIONS = {
     "OFFICIAL_DIRECT": "OFFICIAL-DIRECT",
@@ -621,6 +622,52 @@ def validate_mx71_localized_review() -> None:
         fail("MX localized review hid unresolved mounts or production gate")
 
 
+def validate_claw_arm_correction() -> None:
+    record = json.loads(CLAW_ARM_CORRECTION.read_text(encoding="utf-8"))
+    authority = {
+        "date": "2026-09-13", "reviewer": "game director", "reviewedBaseCommit": "0ef66f7",
+        "message": "Ні, я ж кажу\nКлешня повинна бути одна, ліва (якщо дивитись на картинку), справ повинна бути рука з пушкою, клешні не повинно бути там",
+    }
+    layout = {"coordinateFrame": "VIEWER_IMAGE", "left": "ONE_TWO_JAW_CLAW",
+              "right": "ONE_TWIN_BARREL_GUN_ARM_NO_CLAW", "lateralArmCount": 2,
+              "clawCount": 1, "extraAlienDerivedAppendage": "DELETE_NOT_REPLACE"}
+    if record.get("authority") != authority or record.get("requiredArmLayout") != layout:
+        fail("Claw correction lost director authority or left-claw/right-gun ownership")
+    if (record.get("stableId"), record.get("status"), record.get("productionAccepted"), record.get("canonImpact")) != (
+            "unit.astronauts.mt51_claw_tank", "UNREVIEWED_LOCALIZED_ARM_CORRECTION_CANDIDATE", False, "NONE"):
+        fail("Claw correction expanded appearance or production acceptance")
+    if (record.get("correctionAttemptsTotal"), record.get("localizedEditAttempts"), record.get("tool"), record.get("useCase")) != (
+            2, 1, "built-in image_gen", "precise-object-edit"):
+        fail("Claw correction hid attempts or changed workflow")
+    base = "Docs/Development/M85SuperScout/Silhouettes/FullV2/Renders/unit_astronauts_mt51_claw_tank_rev1.png"
+    if record.get("base") != {"file": base, "sha256": "b408585ba6d0269bb6176cd26755c86198801677f951273f3614c928db9427d3",
+                              "state": "DIRECTOR_REJECTED_ARM_COMPOSITION"}:
+        fail("Claw correction changed rejected-base lineage")
+    expected_inputs = [
+        {"role": "EDIT_TARGET", "file": base, "sha256": record["base"]["sha256"]},
+        {"role": "OFFICIAL_ARM_OWNERSHIP_AND_LEFT_CLAW_REFERENCE_ONLY",
+         "file": "ArtSource/M85/Preproduction/ClawTankArmCorrectionV2/reference_7697_page66.png",
+         "sha256": "df71baa87de6def2ac12544370a712c5f1ebcd0cca38f347831bf92911cbf2ec",
+         "officialPdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4515381.pdf", "page": 66},
+    ]
+    if record.get("inputs") != expected_inputs:
+        fail("Claw correction changed reference roles")
+    for source in expected_inputs:
+        if hashlib.sha256((ROOT / source["file"]).read_bytes()).hexdigest() != source["sha256"]:
+            fail("Claw correction source bytes changed")
+    expected_output = {"file": "claw_tank_arms_rev2.png",
+                       "sha256": "5daea3689075e0ee6b116717bc39c58ff3e7ccf894daa17ef21fe01ec8e73c59"}
+    if record.get("output") != expected_output or hashlib.sha256((CLAW_ARM_CORRECTION.parent / expected_output["file"]).read_bytes()).hexdigest() != expected_output["sha256"]:
+        fail("Claw correction selected image changed")
+    if record.get("promptFile") != "edit_prompt.txt" or record.get("promptSha256") != "6c3bf87c6a0b85050ac11f0e8b36e57fd7c4ae6078890e2ceee5cb8b07498b97":
+        fail("Claw correction lost exact prompt provenance")
+    if hashlib.sha256((CLAW_ARM_CORRECTION.parent / "edit_prompt.txt").read_bytes()).hexdigest() != record["promptSha256"]:
+        fail("Claw correction prompt changed")
+    inspection = record.get("inspection", {})
+    if inspection.get("requiresDirectorAppearanceReview") is not True or inspection.get("automatedPixelTopologyProven") is not False or inspection.get("pixelIdentityClaimed") is not False:
+        fail("Claw correction bypassed appearance review or overclaimed pixel proof")
+
+
 def validate_current_comparison() -> None:
     record = json.loads(CURRENT_COMPARISON.read_text(encoding="utf-8"))
     if (record.get("gate"), record.get("state"), record.get("productionAccepted"), record.get("canonImpact")) != (
@@ -631,6 +678,12 @@ def validate_current_comparison() -> None:
     if len(selections) != 66 or {a.get("stableId") for a in selections} != {a["stableId"] for a in roster["assets"]}:
         fail("current comparison lost exact 66-asset roster")
     by_id = {a["stableId"]: a for a in selections}
+    claw = by_id["unit.astronauts.mt51_claw_tank"]
+    if (claw.get("file"), claw.get("sha256"), claw.get("status")) != (
+            "ArtSource/M85/Preproduction/ClawTankArmCorrectionV2/claw_tank_arms_rev2.png",
+            "5daea3689075e0ee6b116717bc39c58ff3e7ccf894daa17ef21fe01ec8e73c59",
+            "UNREVIEWED_LOCALIZED_ARM_CORRECTION_CANDIDATE"):
+        fail("current comparison resurrected rejected Claw arm composition")
     mx = json.loads(MX71_LOCALIZED_REVIEW.read_text(encoding="utf-8"))
     if any(by_id[mx["stableId"]].get(k) != mx[k] for k in ("file", "sha256", "status")):
         fail("current comparison replaced accepted MX appearance")
@@ -656,6 +709,7 @@ def main() -> None:
     validate_source_locked_corrections()
     validate_mx71_localized_edit()
     validate_mx71_localized_review()
+    validate_claw_arm_correction()
     validate_current_comparison()
     for path in (
         MANIFEST, LEDGER, INSTRUCTION_INDEX, SOURCE_ANALYSIS_POLICY, COMPOSED_DESIGN_PROPOSALS, ROCK_RAIDERS_EVIDENCE, ASTRONAUTS_EVIDENCE,

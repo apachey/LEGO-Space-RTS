@@ -16,7 +16,8 @@ A separate named current gallery now assembles all 66 exact roster IDs and
 states only in this new selection layer. Both Ground Pulse and Air Lance are
 views of one Defense Node, not a 67th roster asset. Official donor studies,
 colored rejected Alien Jet and internal MX native render are not selected.
-No new image was generated, edited or substituted during this continuation.
+The initial assembly generated no new art. The later director correction of
+Claw-Tank now selects its second localized arm-composition candidate below.
 
 Gallery: `Docs/Development/M85SuperScout/Silhouettes/FullV2/CurrentComparisonV1/index.html`.
 Its selection manifest records every image's exact hash, origin and current
@@ -42,12 +43,26 @@ The image is still `UNREVIEWED_CORRECTION_CANDIDATE`.
 
 Canon Phase 03 §10: tracked frontline combat vehicle against light/medium
 targets, protecting specialist vehicles. Its upper body can keep aiming while
-the tracks travel another way. This candidate separates the source set's Alien
-ambush spacecraft from the human tank and retains the rotating cockpit and
-articulated tool arms. Generated barrel proportions and claw posing remain
-interpretation. It is still `UNREVIEWED_CORRECTION_CANDIDATE`.
+the tracks travel another way. The director rejected rev1's arm composition:
+the previous prompt had converted the source set's separate Alien spacecraft
+into a right-side claw instead of deleting it. It also left a gun on the left.
+The latest explicit clarification requires viewer-left = one claw,
+viewer-right = gun arm, without a right claw or third lateral appendage.
+One built-in localized edit replaces the left barrel tips with a simple
+two-jaw gripper and deletes the extra right pincer and its branch, retaining
+the right twin-barrel gun, cockpit, tracks and T-pose. This is correction
+attempt 2; no further retry is authorized. It remains
+`UNREVIEWED_LOCALIZED_ARM_CORRECTION_CANDIDATE`, not director-accepted art.
 
-![Claw-Tank candidate](/Users/pavlosidash/Developer/Lego-Space-RTS/Docs/Development/M85SuperScout/Silhouettes/FullV2/Renders/unit_astronauts_mt51_claw_tank_rev1.png)
+![Claw-Tank corrected candidate](/Users/pavlosidash/Developer/Lego-Space-RTS/ArtSource/M85/Preproduction/ClawTankArmCorrectionV2/claw_tank_arms_rev2.png)
+
+Exact prompt, source-page copy, hashes, director wording and visual inspection:
+`ArtSource/M85/Preproduction/ClawTankArmCorrectionV2/`.
+The official page 66 distinguishes one left gripper, one right gun arm and a
+separate opposing craft. Future mixed-set edits must specify ownership and
+object counts and distinguish deleting an excluded model from replacing a tool.
+Record guards protect these requirements and selected bytes; they do not
+automatically prove image topology or pixel-exact preservation.
 
 ## Remaining scope / manual judgement
 
@@ -66,14 +81,24 @@ Martian archival gaps also remain disclosed. T082/T083 remain HOLD.
 
 ## Files / verification / regression / build
 
-Files: separate MX image-review record, gallery generator + generated HTML/
+Files: Claw image/prompt/reference/edit record, separate MX image-review record,
+gallery generator + generated HTML/
 selection manifest, validator/review guards and current development notes.
 No gameplay/runtime/Canon/import/binary formats changed; no dependency added.
-Nine new negative guards cover latest approval evidence, production/other-asset
+The initial nine new negative guards cover latest approval evidence, production/other-asset
 overclaims, occlusion, exact gallery roster, selected MX, alternate defense head
-and unresolved MT context. All previous 47 cases remain.
+and unresolved MT context. All previous 47 cases remain. Five later Claw guards
+also reject reversed arm roles, converting excluded craft into tools, inferred
+acceptance, hidden extra retries and selecting the old extra-claw image.
 
-Focused recording suite: `python3 tools/Validation/test_m85_super_scout_review_guards.py`
+Claw correction focused checks: `python3 tools/Validation/test_m85_super_scout_review_guards.py`
+PASS 61/61; `python3 tools/Validation/validate_m85_super_scout.py` and
+`python3 tools/generate-m85-current-comparison.py --check`: PASS.
+`git diff --check`: PASS. `./tools/verify.sh`: PASS all 23 fast blocking stages,
+317 NUnit tests and 61 review guards, zero blocking or diagnostic failures.
+Summary: `Artifacts/Verification/20260913T185521Z-fast-summary.txt`.
+
+Earlier gallery assembly recording suite: `python3 tools/Validation/test_m85_super_scout_review_guards.py`
 PASS 56/56. `python3 tools/Validation/validate_m85_super_scout.py` and
 `python3 tools/generate-m85-current-comparison.py --check`: PASS.
 Static HTML parsing resolved all 67 image links to existing files (missing=0).

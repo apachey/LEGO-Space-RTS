@@ -68,6 +68,13 @@ def selections() -> list[dict]:
     mx = read(ROOT / "Content/Presentation/SuperScout/mx71_localized_appearance_review.json")
     selected[mx["stableId"]] = {k: mx[k] for k in ("stableId", "file", "sha256", "status")}
     selected[mx["stableId"]]["origin"] = "mx71_localized_appearance_review.json"
+    claw_dir = ROOT / "ArtSource/M85/Preproduction/ClawTankArmCorrectionV2"
+    claw = read(claw_dir / "edit_manifest.json")
+    selected[claw["stableId"]] = {
+        "stableId": claw["stableId"], "file": str((claw_dir / claw["output"]["file"]).relative_to(ROOT)),
+        "sha256": claw["output"]["sha256"], "status": claw["status"],
+        "origin": "ClawTankArmCorrectionV2/edit_manifest.json",
+    }
     # Native MT is not promoted to a finished appearance. Keep old raster as
     # explicitly unresolved context; never ask the director to approve a blockout.
     selected["unit.astronauts.mt101_armored_drilling_unit"]["status"] = "UNRESOLVED_CONTEXT_NOT_FINISHED_APPEARANCE"
