@@ -29,27 +29,37 @@ Open question: The faction-internal construction, motion, socket and material dr
 
 | Source | Primary evidence | Inventory / archival check | Confidence | Intended use |
 |---|---|---|---|---|
-| 7699 — MT-101 Armored Drilling Unit | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7699)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517776.pdf)<br>[official PDF 2](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517777.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7699-1) | PRIMARY_VERIFIED | six-wheel heavy drilling chassis |
+| 7699 — MT-101 Armored Drilling Unit | [LEGO instructions](https://www.lego.com/en-us/service/building-instructions/7699)<br>[official PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517776.pdf)<br>[official PDF 2](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517777.pdf) | [inventory](https://www.bricklink.com/catalogItemInv.asp?S=7699-1) | PRIMARY_VERIFIED | six-wheel heavy drilling chassis with permanent front cabin, directly docked rear spacecraft and its contained two-wheel mini-bike |
 
 ### Source audit [Astronauts:7699]
 
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517776.pdf), [official instruction PDF 2](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517777.pdf)
 - Construction map:
-  - Evidence pages book 1, 3-14: Small human wheeled support craft and alien scout; supporting module evidence.
-  - Evidence pages book 1, 15-29: White/orange forward mission cockpit and equipment cylinders.
+  - Evidence pages book 1, 3-14: Human two-wheel mini-bike (completed on p8) and separately built opposing Alien scout; distinguish contained human vehicle from excluded opponent.
+  - Evidence pages book 1, 15-29: Detachable rear spacecraft with its own orange canopy, paired equipment cylinders and fins, completed on p29; this is not the permanent front cabin of the heavy chassis.
   - Evidence pages book 1, 30-47; book 2, 2-17: Long open suspended chassis, side rails and rear service bay.
   - Evidence pages book 2, 18-27: Six separately mounted huge orange wheels and completed heavy running gear.
   - Evidence pages book 2, 28-34: Forward shell and detachable support/tool components attach to the chassis.
-  - Evidence pages book 2, 35-43: Elevated rotating drill carriage, long drill tool and explicit rotation/tool play evidence.
+  - Evidence pages book 2, 35-43: Permanent front cabin and independent upper launcher/drill; p43 explicitly separates the rear spacecraft from MT-101 and the mini-bike from the spacecraft.
 - View/mechanism coverage: front=VERIFIED book 2 p24-43; rear=VERIFIED book 2 p27-43; leftRight=VERIFIED both books; top=VERIFIED book 2 p2-43; threeQuarter=VERIFIED covers and book 2 p35-43; undersideInterior=VERIFIED book 1 p30-47 and book 2 p2-27; mechanism=VERIFIED book 2 p35-43 rotating drill carriage and movable rear module
 - Verified findings:
   - MT-101 is a long open heavy chassis suspended between six individually mounted oversized orange wheels.
-  - The steep armored cockpit is a permanent part of the main vehicle at the front; the separate small support flyer does not replace or remove it.
+  - The steep armored cockpit is a permanent part of the main vehicle at the front; detaching the rear spacecraft does not remove it.
+  - The rear spacecraft is an integrated detachable human module of MT-101, not an excluded unrelated support flyer.
+  - The human two-wheel mini-bike is contained inside the rear spacecraft and separates from it; book 2 p43 shows MT-101 -> rear spacecraft -> mini-bike.
   - The raised drilling carriage remains exposed above the central/rear frame, while a separate smaller gun/tool assembly retains its own mount.
   - The long drill rotates independently and may not be merged with the secondary gun/tool into one conventional tank cannon.
+- Source assembly scope: `OFFICIAL_MODEL_STRUCTURE_ONLY_NOT_RUNTIME_ROSTER`
+  - MT101 — parent: none (root); ROOT_HEAVY_CHASSIS_WITH_PERMANENT_FRONT_CABIN; evidence: book 2, 35 and 43
+  - RearSpacecraft — parent: MT101; DIRECTLY_DOCKED_DETACHABLE_MODULE; evidence: book 1, 15-29; book 2, 43
+  - MiniBike — parent: RearSpacecraft; CONTAINED_EXTRACTABLE_TWO_WHEEL_VEHICLE; evidence: book 1, 8; book 2, 43
+- Excluded opponent: Separately built Alien scout, book 1, 9-14; never substitute it for a human module.
+- Source/gameplay boundary: Independent spacecraft/bike commands, roles, costs and entity ownership are not specified by current MT-101 canon; do not infer them from toy separability.
 - Remaining evidence gaps:
   - The spring-projectile play action is not the game's contact-drill behavior; final drill reach, impact pose and chassis suspension response require a production animation plan.
+  - Source-backed mini-bike stowage and extraction clearances still need production construction validation; current images/native controls do not prove the complete nested assembly.
+  - Independent rear-spacecraft and mini-bike gameplay remains a director canon decision, not an automatic extra roster assignment.
 
 Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-quarter image is never sufficient.
 
@@ -57,7 +67,7 @@ Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-qu
 
 ## C. Recognition contract
 
-**Silhouette thesis:** A long six-wheel armored drill carrier with a permanent steep forward cockpit and separate raised drill and secondary gun/tool mechanisms.
+**Silhouette thesis:** A long six-wheel armored drill carrier with a permanent steep forward cockpit, separate drill and secondary gun/tool, and directly docked rear spacecraft containing a two-wheel mini-bike.
 
 Non-removable identity anchors:
 
@@ -65,6 +75,7 @@ Non-removable identity anchors:
 - permanent steep forward cockpit
 - raised drill separate from secondary gun/tool
 - long white-orange equipment deck
+- directly docked rear spacecraft with separate cockpit and visible docking seam
 
 - Rejected V1 blind-review code: `S10`. Historical failed boards: [24-cell](../Silhouettes/blind_24_cells.svg), [44-cell](../Silhouettes/blind_44_cells.svg), [72-cell](../Silhouettes/blind_72_cells.svg). The game director recognized 0/66 at 24 cells; this primitive concept is not an approved model or accepted evidence.
 - Palette and material hierarchy: Field Systems retain rugged white/light-gray/medium-blue construction; Mission Systems retain clean white/orange/black construction. Shared identity comes from insignia and interfaces, not shape averaging.
@@ -80,19 +91,23 @@ Non-removable identity anchors:
 - Contract state: `SOURCE_VERIFIED`. This is an internally checked draft, not game-director approval.
 - Semantic part map:
   - Six independently mounted orange wheels — carry the huge suspended chassis — SOURCE_VERIFIED.
-  - Permanent steep armored forward cockpit — remains part of the main vehicle rather than detaching with the small support flyer — SOURCE_VERIFIED.
+  - Permanent steep armored forward cockpit — remains on the main chassis when the rear spacecraft detaches — SOURCE_VERIFIED.
   - Elevated rotating drill carriage — delivers the anti-heavy contact tool through an exposed machine path — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.
   - Separate secondary gun/tool mount — stays visually and mechanically distinct from the drill — SOURCE_VERIFIED.
-- Structural load path: Six wheel mounts support a long open chassis; the permanent forward cockpit braces the nose while the raised drill carriage transfers thrust into the central rails and rear equipment balances it.
-- Repeated modules / connection grammar: Six wheel modules, permanent forward cockpit, long chassis, independent drill carriage, separate secondary gun/tool and rear service equipment; the small support flyer is excluded.
-- Source-faithful versus adapted boundary: Source projectile play does not define combat; the long drill establishes physical contact and cannot open authored terrain routes. The secondary gun/tool may not be merged into the drill merely to simplify the silhouette.
+  - Rear spacecraft — directly docked detachable module belonging to MT-101, with its own cockpit, paired equipment cylinders and fins — SOURCE_VERIFIED book 1 p29 / book 2 p43.
+  - Two-wheel mini-bike — contained and extractable inside the rear spacecraft, not loose cargo on the main chassis or an omitted supporting build — SOURCE_VERIFIED book 1 p8 / book 2 p43.
+- Structural load path: Six wheel mounts support a long open chassis; the permanent forward cockpit braces the nose while the raised drill carriage transfers thrust into the central rails. The directly docked rear spacecraft carries its own contained mini-bike and equipment cylinders.
+- Repeated modules / connection grammar: Six wheel modules, permanent front cabin, long chassis, independent drill carriage and separate secondary gun/tool; MT101 -> RearSpacecraft -> MiniBike. Rear spacecraft is directly docked; two-wheel mini-bike is contained inside it. Exclude only the opposing Alien scout, not either human module.
+- Source-faithful versus adapted boundary: Preserve the complete source assembly and distinguish the permanent front cabin from the rear spacecraft cockpit. Toy detachability does not approve independent spacecraft/bike gameplay, commands, costs or extra roster entities; those remain a director canon decision. Source projectile play does not define combat; the contact drill cannot open authored terrain routes or fuse with the secondary gun/tool.
 
 ## E. Material and texture contract
 
 - Geometry must carry:
   - six huge wheels
-  - low armored cockpit
+  - permanent steep front cabin
   - elevated long drill carriage
+  - directly docked rear spacecraft with separate cockpit
+  - two-wheel mini-bike stowed inside rear spacecraft with credible extraction clearance
 - Accepted master-material roles: `Body`, `Accent`, `Tool`, `Rubber`, `Glass`, `Signal`, `Lamp`, `Neutral`.
 - Reusable texture requirements:
   - `ast_mission_shell_surface` — Very subtle clean-shell roughness variation for white-orange Mission Systems hulls without weathering them into Raider machinery. Channels: Tangent-space normal and linear roughness; no photographic albedo or baked highlights. Resolution: 2048x2048; texel density: 256 px/m at Close; tiling: Shared model-space 4 m repeat with continuous phase across large shells.; LOD fallback: Normal removed at Strategic; clean master-material blocks remain. Provenance/state: Project-authored procedural source informed by verified Mission Systems panels; human review required. `SPECIFIED_NOT_AUTHORED`.
@@ -131,6 +146,8 @@ Non-removable identity anchors:
 - Canon-derived interpretation: gameplay function, adaptation boundary, contact behavior and presentation drivers are explicitly labeled in the contract.
 - Remaining source/design decisions:
   - Final contact reach and suspension compression require production blockout.
+  - Source-led rear spacecraft docking and contained mini-bike stowage/extraction clearances require validation before a complete-model claim; existing images and native construction are incomplete controls.
+  - Independent rear-spacecraft and mini-bike operation, roles and entity/cost rules require director-approved gameplay canon; no deploy/extract command is implemented or authorized by this source correction.
 - Cross-roster silhouette and game-director review remain open; this contract does not authorize production modeling.
 
 ## I. Build handoff

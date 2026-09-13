@@ -75,11 +75,15 @@ Alien Strike, Jet Scooter and Red Planet Protector. Source resemblance and
 tool/body composition need human judgement, not another size/blockout gate.
 This batch cannot approve the 66-entry gallery, MT-101, configurations or production.
 
-Continuation 2026-09-14: MT-101 now selects its first controlled completed
-native-to-raster appearance, still unreviewed. Native construction remains
-internal control; the old unresolved FullV2 raster is no longer selected.
-See `Docs/Development/M85_T082_MT101_CONTROLLED_APPEARANCE.md` for the exact
-prompt, source references and visible-wheel limitation. Earlier unreviewed Jet Scooter,
+Continuation 2026-09-14: the director identifies incomplete MT-101 source
+decomposition. Current selection retains the controlled raster bytes only as
+`REVISION_REQUIRED_INCOMPLETE_NESTED_ASSEMBLY`, not a complete appearance proposal.
+The directly docked rear spacecraft contains a two-wheel mini-bike; existing
+native/raster controls do not establish its stowage/extraction. Source records
+and model requirements are corrected without another generation or gameplay change.
+See `Docs/Development/M85_T082_MT101_NESTED_SOURCE_CORRECTION.md`.
+The original prompt and wheel occlusion remain documented in
+`Docs/Development/M85_T082_MT101_CONTROLLED_APPEARANCE.md`. Earlier unreviewed Jet Scooter,
 Strike and Protector records remain unreviewed; no historical user finding is
 silently reclassified. Mothership's operators/raised printing and the two
 Martian archival gaps also remain disclosed. T082/T083 remain HOLD.

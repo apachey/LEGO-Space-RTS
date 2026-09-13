@@ -2,6 +2,13 @@
 
 Date: 2026-09-14. Branch: `codex/m85-t082`, not merged. Canon impact: NONE.
 
+Later director correction: this image is incomplete, not a complete MT-101
+proposal. The rear spacecraft must contain a two-wheel mini-bike; neither
+the native control nor this raster establishes it. Current selection is now
+`REVISION_REQUIRED_INCOMPLETE_NESTED_ASSEMBLY`, via a separate later review.
+The generation-time manifest/prompt/hash below remain historical and unchanged.
+See `Docs/Development/M85_T082_MT101_NESTED_SOURCE_CORRECTION.md`.
+
 ## What changed / why
 
 The director's `далі` continues the recorded controlled native MT-101 next step
@@ -18,7 +25,8 @@ cockpit, parallel equipment tubes and fins.
 
 ![MT-101 completed candidate](/Users/pavlosidash/Developer/Lego-Space-RTS/ArtSource/M85/Preproduction/MT101ControlledAppearanceV1/mt101_completed_rev1.png)
 
-Status: `UNREVIEWED_CONTROLLED_COMPLETED_APPEARANCE`. No production acceptance.
+Generation-time status: `UNREVIEWED_CONTROLLED_COMPLETED_APPEARANCE`; superseded
+for current review by the incomplete-nested-assembly status above. No production acceptance.
 The current comparison uses this exact image, not the rejected old FullV2
 raster or the internal native blockout. Claw's separate appearance acceptance
 is recorded; Crystal Reaper, Strike, Jet Scooter and Protector remain open.

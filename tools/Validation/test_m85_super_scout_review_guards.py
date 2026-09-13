@@ -12,6 +12,50 @@ import validate_m85_super_scout as validator
 
 
 class ReviewGuardTests(unittest.TestCase):
+    def test_mt_nested_identity_cannot_drop_rear_module(self):
+        self.assert_rejected(validator.MANIFEST,
+                             lambda f: next(a for a in f["assets"] if a["stableId"] == "unit.astronauts.mt101_armored_drilling_unit")["identityAnchors"].pop(),
+                             "source assembly recognition")
+
+    def test_mt_nested_source_cannot_omit_bike(self):
+        self.assert_rejected(validator.ASTRONAUTS_EVIDENCE,
+                             lambda f: next(a for a in f["sources"] if a["setId"] == "7699")["sourceAssembly"]["components"].pop(),
+                             "complete parent/connection/page evidence")
+
+    def test_mt_nested_source_cannot_put_bike_on_main_chassis(self):
+        self.assert_rejected(validator.ASTRONAUTS_EVIDENCE,
+                             lambda f: next(a for a in f["sources"] if a["setId"] == "7699")["sourceAssembly"]["components"][2].update(parent="MT101"),
+                             "complete parent/connection/page evidence")
+
+    def test_mt_nested_source_cannot_replace_evidence_pages(self):
+        self.assert_rejected(validator.ASTRONAUTS_EVIDENCE,
+                             lambda f: next(a for a in f["sources"] if a["setId"] == "7699")["sourceAssembly"]["components"][1].update(evidencePages="cover only"),
+                             "complete parent/connection/page evidence")
+
+    def test_mt_nested_contract_cannot_restore_support_flyer_exclusion(self):
+        self.assert_rejected(validator.ASTRONAUTS_CONTRACTS,
+                             lambda f: next(a for a in f["assets"] if a["stableId"] == "unit.astronauts.mt101_armored_drilling_unit")["construction"].update(modules="Six wheel modules; the small support flyer is excluded."),
+                             "excluded or flattened a human module")
+
+    def test_mt_nested_contract_cannot_omit_bike(self):
+        self.assert_rejected(validator.ASTRONAUTS_CONTRACTS,
+                             lambda f: next(a for a in f["assets"] if a["stableId"] == "unit.astronauts.mt101_armored_drilling_unit")["semanticParts"].pop(),
+                             "omitted rear spacecraft or contained mini-bike")
+
+    def test_mt_nested_contract_cannot_invent_independent_gameplay(self):
+        self.assert_rejected(validator.ASTRONAUTS_CONTRACTS,
+                             lambda f: next(a for a in f["assets"] if a["stableId"] == "unit.astronauts.mt101_armored_drilling_unit")["construction"].update(adaptationBoundary="Deploy two new controlled units for free."),
+                             "invented independent gameplay")
+
+    def test_mt_nested_review_cannot_auto_accept(self):
+        self.assert_rejected(validator.MT101_NESTED_REVIEW,
+                             lambda f: f.update(status="DIRECTOR_ACCEPTED_APPEARANCE"),
+                             "expanded acceptance or hid incomplete assembly")
+
+    def test_mt_nested_review_cannot_hide_gameplay_decision(self):
+        self.assert_rejected(validator.MT101_NESTED_REVIEW,
+                             lambda f: f["pending"].pop(), "unresolved model/gameplay gates")
+
     def test_mt_completed_appearance_cannot_auto_accept(self):
         self.assert_rejected(validator.MT101_COMPLETED_APPEARANCE,
                              lambda f: f.update(status="DIRECTOR_ACCEPTED"), "expanded acceptance")

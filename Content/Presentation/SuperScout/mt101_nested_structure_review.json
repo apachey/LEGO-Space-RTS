@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "stableId": "unit.astronauts.mt101_armored_drilling_unit",
+  "status": "REVISION_REQUIRED_INCOMPLETE_NESTED_ASSEMBLY",
+  "file": "ArtSource/M85/Preproduction/MT101ControlledAppearanceV1/mt101_completed_rev1.png",
+  "sha256": "0c1f5ed2eaea7103bc5f2c7bca3fce190d0a90f0a1ef728ba9576868e939e291",
+  "productionAccepted": false,
+  "canonImpact": "NONE",
+  "directorEvidence": {
+    "date": "2026-09-14",
+    "reviewedCommit": "1f86f2a",
+    "message": "взагалі то виже робив мт-101, і тут проблема ще в тому, що позаду мт-101 — зореліт, який як частина його, тобто це ще один 2-в-1. Але навіть складніше: в зореліті є міні-байк",
+    "continuation": "так",
+    "scope": "Correct source decomposition and model requirements; do not infer independent spacecraft/bike gameplay, image acceptance or another generation attempt."
+  },
+  "sourceStructure": ["MT101", "RearSpacecraft", "MiniBike"],
+  "rootCause": "The source audit mislabeled book 1 p15-29 rear-spacecraft construction as forward cockpit. Production modules explicitly excluded the human support flyer and omitted its contained mini-bike. Later native/raster prompts restored a rear spacecraft but never corrected the nested source requirements; generic consistency/count guards missed the omission.",
+  "imageFinding": "The reviewed image contains a rear spacecraft but neither depicts nor establishes a stowed extractable mini-bike. Native controls and old raster remain incomplete source controls, not complete-model proof.",
+  "pending": ["Source-led complete nested assembly and mini-bike fit/extraction evidence", "Director appearance acceptance and final gameplay-camera review", "Director gameplay decision for independent rear spacecraft and mini-bike roles/commands/ownership"],
+  "historicalBoundary": "No image bytes, previous prompts, native source, generation-time manifests or attempt counts are rewritten; previous MT-101 versions remain available. This review corrects current selection claims, not historical records."
+}

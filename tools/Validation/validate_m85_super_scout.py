@@ -54,6 +54,7 @@ CURRENT_COMPARISON = FULL_V2_OUTPUT / "CurrentComparisonV1/selection_manifest.js
 CLAW_ARM_CORRECTION = ROOT / "ArtSource/M85/Preproduction/ClawTankArmCorrectionV2/edit_manifest.json"
 CLAW_APPEARANCE_REVIEW = ROOT / "Content/Presentation/SuperScout/claw_tank_appearance_review.json"
 MT101_COMPLETED_APPEARANCE = ROOT / "ArtSource/M85/Preproduction/MT101ControlledAppearanceV1/edit_manifest.json"
+MT101_NESTED_REVIEW = ROOT / "Content/Presentation/SuperScout/mt101_nested_structure_review.json"
 
 CLASSIFICATIONS = {
     "OFFICIAL_DIRECT": "OFFICIAL-DIRECT",
@@ -225,8 +226,10 @@ def validate_source_analysis_policy(policy: dict) -> str:
     if policy.get("status") != "ACTIVE_SOURCE_ANALYSIS_POLICY":
         fail("source-analysis policy must remain active")
     required_order = policy.get("requiredAnalysisOrder", [])
-    if len(required_order) != 6 or len(required_order) != len(set(required_order)):
-        fail("source-analysis policy needs six distinct ordered safeguards")
+    if len(required_order) != 7 or len(required_order) != len(set(required_order)):
+        fail("source-analysis policy needs seven distinct ordered safeguards")
+    if required_order[2] != "Trace contained vehicles recursively through their actual source parents; a detachable carrier can itself contain an extractable vehicle. Do not flatten nested modules into loose cargo or omit them as support builds.":
+        fail("source-analysis policy lost the nested-vehicle safeguard")
     expected_source_states = {
         "releasedOfficialSetOrSubassembly",
         "officialPromotionalModelOrMaterial",
@@ -296,6 +299,7 @@ def validate_source_analysis_policy(policy: dict) -> str:
         "RR_4930_COMPLETE_SET",
         "LOM_7302_TOPOLOGY_CORRECTION",
         "MM_7691_SINGLE_UNIT_DECOMPOSITION",
+        "MM_7699_NESTED_VEHICLES",
         "CAC_TRAINING_CAMP_RECOMPOSITION",
     ]:
         fail("source-analysis policy case-study set drifted")
@@ -723,6 +727,57 @@ def validate_mt101_completed_appearance() -> None:
         fail("MT completed appearance hid occlusion or overclaimed pixel proof")
 
 
+def validate_mt101_nested_structure() -> None:
+    review = json.loads(MT101_NESTED_REVIEW.read_text(encoding="utf-8"))
+    if (review.get("stableId"), review.get("status"), review.get("productionAccepted"), review.get("canonImpact")) != (
+            "unit.astronauts.mt101_armored_drilling_unit", "REVISION_REQUIRED_INCOMPLETE_NESTED_ASSEMBLY", False, "NONE"):
+        fail("MT nested review expanded acceptance or hid incomplete assembly")
+    if (review.get("file"), review.get("sha256"), review.get("sourceStructure")) != (
+            "ArtSource/M85/Preproduction/MT101ControlledAppearanceV1/mt101_completed_rev1.png",
+            "0c1f5ed2eaea7103bc5f2c7bca3fce190d0a90f0a1ef728ba9576868e939e291",
+            ["MT101", "RearSpacecraft", "MiniBike"]):
+        fail("MT nested review changed reviewed image or source structure")
+    evidence = review.get("directorEvidence", {})
+    if evidence != {
+        "date": "2026-09-14", "reviewedCommit": "1f86f2a",
+        "message": "взагалі то виже робив мт-101, і тут проблема ще в тому, що позаду мт-101 — зореліт, який як частина його, тобто це ще один 2-в-1. Але навіть складніше: в зореліті є міні-байк",
+        "continuation": "так",
+        "scope": "Correct source decomposition and model requirements; do not infer independent spacecraft/bike gameplay, image acceptance or another generation attempt.",
+    }:
+        fail("MT nested review lost director evidence or source-only scope")
+    if review.get("pending") != [
+            "Source-led complete nested assembly and mini-bike fit/extraction evidence",
+            "Director appearance acceptance and final gameplay-camera review",
+            "Director gameplay decision for independent rear spacecraft and mini-bike roles/commands/ownership"]:
+        fail("MT nested review hid unresolved model/gameplay gates")
+    source = next(a for a in json.loads(ASTRONAUTS_EVIDENCE.read_text(encoding="utf-8"))["sources"] if a["setId"] == "7699")
+    assembly = source.get("sourceAssembly", {})
+    if assembly.get("scope") != "OFFICIAL_MODEL_STRUCTURE_ONLY_NOT_RUNTIME_ROSTER":
+        fail("MT nested source promoted toy separability into gameplay")
+    if assembly.get("components") != [
+            {"id": "MT101", "parent": None, "connection": "ROOT_HEAVY_CHASSIS_WITH_PERMANENT_FRONT_CABIN", "evidencePages": "book 2, 35 and 43"},
+            {"id": "RearSpacecraft", "parent": "MT101", "connection": "DIRECTLY_DOCKED_DETACHABLE_MODULE", "evidencePages": "book 1, 15-29; book 2, 43"},
+            {"id": "MiniBike", "parent": "RearSpacecraft", "connection": "CONTAINED_EXTRACTABLE_TWO_WHEEL_VEHICLE", "evidencePages": "book 1, 8; book 2, 43"}]:
+        fail("MT nested source lost complete parent/connection/page evidence")
+    if not assembly.get("excludedOpponent", "").startswith("Separately built Alien scout") or not assembly.get("gameplayBoundary", "").startswith("Independent spacecraft/bike commands, roles, costs and entity ownership are not specified"):
+        fail("MT nested source lost opponent ownership or gameplay boundary")
+    contract = next(a for a in json.loads(ASTRONAUTS_CONTRACTS.read_text(encoding="utf-8"))["assets"] if a["stableId"] == review["stableId"])
+    semantic = contract.get("semanticParts", [])
+    if not any(s.startswith("Rear spacecraft — directly docked detachable module belonging to MT-101") for s in semantic) or not any(s.startswith("Two-wheel mini-bike — contained and extractable inside the rear spacecraft") for s in semantic):
+        fail("MT nested contract omitted rear spacecraft or contained mini-bike")
+    modules = contract.get("construction", {}).get("modules", "")
+    if "MT101 -> RearSpacecraft -> MiniBike" not in modules or "small support flyer is excluded" in modules:
+        fail("MT nested contract excluded or flattened a human module")
+    if "Toy detachability does not approve independent spacecraft/bike gameplay" not in contract.get("construction", {}).get("adaptationBoundary", ""):
+        fail("MT nested contract invented independent gameplay")
+    geometry = contract.get("materials", {}).get("geometryMustCarry", [])
+    if "two-wheel mini-bike stowed inside rear spacecraft with credible extraction clearance" not in geometry:
+        fail("MT nested contract dropped mini-bike construction obligation")
+    identity = next(a for a in json.loads(MANIFEST.read_text(encoding="utf-8"))["assets"] if a["stableId"] == review["stableId"])
+    if "directly docked rear spacecraft with separate cockpit and visible docking seam" not in identity.get("identityAnchors", []) or "containing a two-wheel mini-bike" not in identity.get("silhouetteThesis", ""):
+        fail("MT nested identity dropped source assembly recognition")
+
+
 def validate_current_comparison() -> None:
     record = json.loads(CURRENT_COMPARISON.read_text(encoding="utf-8"))
     if (record.get("gate"), record.get("state"), record.get("productionAccepted"), record.get("canonImpact")) != (
@@ -749,7 +804,7 @@ def validate_current_comparison() -> None:
         fail("current comparison lost accepted defense configuration")
     mt = by_id["unit.astronauts.mt101_armored_drilling_unit"]
     if (mt.get("status"), mt.get("file"), mt.get("sha256")) != (
-            "UNREVIEWED_CONTROLLED_COMPLETED_APPEARANCE",
+            "REVISION_REQUIRED_INCOMPLETE_NESTED_ASSEMBLY",
             "ArtSource/M85/Preproduction/MT101ControlledAppearanceV1/mt101_completed_rev1.png",
             "0c1f5ed2eaea7103bc5f2c7bca3fce190d0a90f0a1ef728ba9576868e939e291"):
         fail("current comparison promoted unresolved MT appearance")
@@ -772,6 +827,7 @@ def main() -> None:
     validate_claw_arm_correction()
     validate_claw_appearance_review()
     validate_mt101_completed_appearance()
+    validate_mt101_nested_structure()
     validate_current_comparison()
     for path in (
         MANIFEST, LEDGER, INSTRUCTION_INDEX, SOURCE_ANALYSIS_POLICY, COMPOSED_DESIGN_PROPOSALS, ROCK_RAIDERS_EVIDENCE, ASTRONAUTS_EVIDENCE,

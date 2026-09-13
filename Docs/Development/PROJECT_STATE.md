@@ -908,6 +908,22 @@ live; the current schema-9 copy/paste retains the complete experiment.
   topology and source fidelity are not automatically proven. Exact input roles,
   prompt, output hashes and attempt counts are guarded (69 cases total).
   See `Docs/Development/M85_T082_MT101_CONTROLLED_APPEARANCE.md`.
+  The director's later finding and `так` correct the missing nested source
+  assembly: MT101 -> directly docked RearSpacecraft -> contained two-wheel MiniBike.
+  The audit had mislabeled rear-craft construction as front cockpit; the contract
+  excluded the human rear module and omitted the bike. Source/identity/model
+  requirements and generated packets now preserve both human modules, permanent
+  front cabin and excluded opposing Alien scout. A separate later review marks
+  the current raster `REVISION_REQUIRED_INCOMPLETE_NESTED_ASSEMBLY`; original
+  bytes/prompts/native source and attempt counts remain unchanged. Bike fit and
+  extraction are not proven; no new generation or independent gameplay is approved.
+  Nine source/claim guards preserve the previous 69 (78 total).
+  Current correction fast verification PASS (23 stages, 317 NUnit, 78 guards):
+  `Artifacts/Verification/20260913T224456Z-fast-summary.txt`.
+  Extended checks/export PASS; full summary retains the agent-interrupted NUnit
+  FAIL (replacement 317/317 PASS) and existing BLOCKING_LATER M9 stress diagnostic:
+  `Artifacts/Verification/20260913T224751Z-full-summary.txt`.
+  See `Docs/Development/M85_T082_MT101_NESTED_SOURCE_CORRECTION.md`.
   Ownership, deletion intent, approval scope and selected bytes are guarded.
   Actual saved mesh transforms and nine negative native control fixtures pass.
   See `Docs/Development/M85_T082_SOURCE_LOCKED_CORRECTIONS.md`.
@@ -1299,6 +1315,12 @@ blocking only when M9 must prove its stable-large-battle exit.
    production decision. Do not treat the concept silhouettes, generated `HOLD`
    packets, T070 data definitions or the non-roster T081 pipeline fixture as
    production models.
+   MT-101 source decomposition is corrected but its existing native/raster
+   controls are incomplete. Further source-led MT modeling must validate docking
+   plus nested bike fit/extraction. Independent rear-spacecraft/bike gameplay
+   separately requires director scope (Phase 03 defines only ground MT-101);
+   that decision is not a prerequisite for correcting the source model.
+   Do not reset historical attempts or regenerate already successful assets.
 2. Execute the remaining Phase 09C M8.5 T082–T092 work before final M9 Skirmish
    Alpha acceptance.
 3. Use the separate M7 Look/HUD/Palette labs only to investigate a rejected aspect;

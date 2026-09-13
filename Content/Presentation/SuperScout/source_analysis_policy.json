@@ -7,6 +7,7 @@
   "requiredAnalysisOrder": [
     "Audit the complete set inventory and every separately built model before assigning the set to an RTS asset.",
     "Map detachable subassemblies, repeated modules, minifigures, equipment, resources and opposing-faction builds separately.",
+    "Trace contained vehicles recursively through their actual source parents; a detachable carrier can itself contain an extractable vehicle. Do not flatten nested modules into loose cargo or omit them as support builds.",
     "Name the physical role, parent connection and contact behavior of every identity-bearing assembly before describing silhouette or locomotion.",
     "Cross-check the construction sequence against the completed model and at least one final/product view before making a topology or appendage-count claim.",
     "Record source fact, canon-derived adaptation, game-derived proposal and unresolved interpretation as different states.",
@@ -113,6 +114,15 @@
       "productionConsequence": "Record every module, but preserve the production Mothership as one selectable unit whose integrated sections open and unfold around internal bays. Its contained craft may inform carried or future trainable units; they do not automatically become separate pieces of the Mothership entity or independent roster assignments.",
       "evidenceUrls": [
         "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4516029.pdf"
+      ]
+    },
+    {
+      "caseId": "MM_7699_NESTED_VEHICLES",
+      "finding": "MT-101 has a permanent front cabin and a directly docked detachable rear spacecraft; a human two-wheel mini-bike is contained inside that spacecraft. Book 1 p8/p29 establishes the two human builds and book 2 p43 explicitly shows their nested separation.",
+      "productionConsequence": "Record MT101 -> RearSpacecraft -> MiniBike before concept generation. Exclude only the opposing Alien scout, not the human rear module. Preserve both docking and credible internal stowage; source separability does not itself approve gameplay roles, commands or extra roster entities.",
+      "evidenceUrls": [
+        "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517776.pdf",
+        "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517777.pdf"
       ]
     },
     {

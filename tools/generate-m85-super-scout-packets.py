@@ -110,13 +110,26 @@ def source_evidence_block(
         )
         findings = "\n".join(f"  - {finding}" for finding in record["findings"])
         gaps = "\n".join(f"  - {gap}" for gap in record["openGaps"])
+        assembly = record.get("sourceAssembly")
+        assembly_text = ""
+        if assembly:
+            components = "\n".join(
+                f"  - {part['id']} — parent: {part['parent'] or 'none (root)'}; "
+                f"{part['connection']}; evidence: {part['evidencePages']}"
+                for part in assembly["components"]
+            )
+            assembly_text = (
+                f"\n- Source assembly scope: `{assembly['scope']}`\n{components}\n"
+                f"- Excluded opponent: {assembly['excludedOpponent']}\n"
+                f"- Source/gameplay boundary: {assembly['gameplayBoundary']}"
+            )
         blocks.append(
             f"### Source audit [{faction}:{set_id}]\n\n"
             f"- Evidence state: `{record['evidenceState']}`\n"
             f"- Evidence links: {evidence_link_text}\n"
             f"- Construction map:\n{ranges}\n"
             f"- View/mechanism coverage: {coverage}\n"
-            f"- Verified findings:\n{findings}\n"
+            f"- Verified findings:\n{findings}{assembly_text}\n"
             f"- Remaining evidence gaps:\n{gaps}"
         )
     if not blocks:

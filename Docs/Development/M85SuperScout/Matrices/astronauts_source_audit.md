@@ -326,17 +326,27 @@ This generated review records what the available official instructions or labele
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517776.pdf), [official instruction PDF 2](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517777.pdf)
 - Construction map:
-  - Evidence pages book 1, 3-14: Small human wheeled support craft and alien scout; supporting module evidence.
-  - Evidence pages book 1, 15-29: White/orange forward mission cockpit and equipment cylinders.
+  - Evidence pages book 1, 3-14: Human two-wheel mini-bike (completed on p8) and separately built opposing Alien scout; distinguish contained human vehicle from excluded opponent.
+  - Evidence pages book 1, 15-29: Detachable rear spacecraft with its own orange canopy, paired equipment cylinders and fins, completed on p29; this is not the permanent front cabin of the heavy chassis.
   - Evidence pages book 1, 30-47; book 2, 2-17: Long open suspended chassis, side rails and rear service bay.
   - Evidence pages book 2, 18-27: Six separately mounted huge orange wheels and completed heavy running gear.
   - Evidence pages book 2, 28-34: Forward shell and detachable support/tool components attach to the chassis.
-  - Evidence pages book 2, 35-43: Elevated rotating drill carriage, long drill tool and explicit rotation/tool play evidence.
+  - Evidence pages book 2, 35-43: Permanent front cabin and independent upper launcher/drill; p43 explicitly separates the rear spacecraft from MT-101 and the mini-bike from the spacecraft.
 - View/mechanism coverage: front=VERIFIED book 2 p24-43; rear=VERIFIED book 2 p27-43; leftRight=VERIFIED both books; top=VERIFIED book 2 p2-43; threeQuarter=VERIFIED covers and book 2 p35-43; undersideInterior=VERIFIED book 1 p30-47 and book 2 p2-27; mechanism=VERIFIED book 2 p35-43 rotating drill carriage and movable rear module
 - Verified findings:
   - MT-101 is a long open heavy chassis suspended between six individually mounted oversized orange wheels.
-  - The steep armored cockpit is a permanent part of the main vehicle at the front; the separate small support flyer does not replace or remove it.
+  - The steep armored cockpit is a permanent part of the main vehicle at the front; detaching the rear spacecraft does not remove it.
+  - The rear spacecraft is an integrated detachable human module of MT-101, not an excluded unrelated support flyer.
+  - The human two-wheel mini-bike is contained inside the rear spacecraft and separates from it; book 2 p43 shows MT-101 -> rear spacecraft -> mini-bike.
   - The raised drilling carriage remains exposed above the central/rear frame, while a separate smaller gun/tool assembly retains its own mount.
   - The long drill rotates independently and may not be merged with the secondary gun/tool into one conventional tank cannon.
+- Source assembly scope: `OFFICIAL_MODEL_STRUCTURE_ONLY_NOT_RUNTIME_ROSTER`
+  - MT101 — parent: none (root); ROOT_HEAVY_CHASSIS_WITH_PERMANENT_FRONT_CABIN; evidence: book 2, 35 and 43
+  - RearSpacecraft — parent: MT101; DIRECTLY_DOCKED_DETACHABLE_MODULE; evidence: book 1, 15-29; book 2, 43
+  - MiniBike — parent: RearSpacecraft; CONTAINED_EXTRACTABLE_TWO_WHEEL_VEHICLE; evidence: book 1, 8; book 2, 43
+- Excluded opponent: Separately built Alien scout, book 1, 9-14; never substitute it for a human module.
+- Source/gameplay boundary: Independent spacecraft/bike commands, roles, costs and entity ownership are not specified by current MT-101 canon; do not infer them from toy separability.
 - Remaining evidence gaps:
   - The spring-projectile play action is not the game's contact-drill behavior; final drill reach, impact pose and chassis suspension response require a production animation plan.
+  - Source-backed mini-bike stowage and extraction clearances still need production construction validation; current images/native controls do not prove the complete nested assembly.
+  - Independent rear-spacecraft and mini-bike gameplay remains a director canon decision, not an automatic extra roster assignment.

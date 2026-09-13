@@ -14,8 +14,10 @@ vertical capsule. The director accepted rev3's open horizontal three-arch deck
 and overall source-derived composition for the next composite review.
 MT-101 and MX-71 retain their historical two-free-form-attempt stops;
 the recorded controlled next step has source-informed native topology checks.
-MT-101 now has a first controlled native-to-raster completed appearance, still
-unreviewed; the native construction is internal control, not final art.
+The director's later finding exposes incomplete MT-101 source decomposition:
+its directly docked rear spacecraft contains a two-wheel mini-bike. Source and
+model records are corrected; current image is revision-required, not complete.
+The native construction remains internal incomplete control, not final art.
 The director corrected the MX-71 handoff: its earlier
 successful generated airframe is the appearance basis; the native render is
 internal only. The subsequent `+` authorizes a weapons-only edit of that exact
@@ -41,6 +43,22 @@ six-response recording omission is corrected from the
 original director message; all 66 initial responses were supplied.
 
 ## Completed in the identity-baseline pass
+
+Latest MT correction: the director's source finding and subsequent `так` correct
+the missing nested assembly, not independent gameplay or another image attempt.
+Source evidence had mislabeled rear-spacecraft construction as front cockpit;
+the contract excluded that human module and omitted the bike. Evidence/identity/
+construction requirements now preserve MT101 -> RearSpacecraft -> MiniBike,
+permanent front cabin and excluded opposing Alien scout. Current gallery retains
+the latest image bytes with `REVISION_REQUIRED_INCOMPLETE_NESTED_ASSEMBLY` via a
+separate later review. Prior images, prompts/native source and attempt stops
+are unchanged. Nine negative guards preserve the previous 69 (78 total).
+Current correction fast verification PASS (23 stages, 317 NUnit, 78 guards):
+`Artifacts/Verification/20260913T224456Z-fast-summary.txt`.
+Full summary `Artifacts/Verification/20260913T224751Z-full-summary.txt` retains
+the agent-interrupted NUnit FAIL; replacement stage PASS 317/317 and all other
+blocking stages/export PASS. Existing M9 60-mover diagnostic remains BLOCKING_LATER.
+See `Docs/Development/M85_T082_MT101_NESTED_SOURCE_CORRECTION.md`.
 
 Latest continuation: the director's `+` to `038fc8a` accepts only the displayed
 Claw-Tank localized second correction for comparative appearance review.

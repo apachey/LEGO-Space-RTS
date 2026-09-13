@@ -73,14 +73,10 @@ def selections() -> list[dict]:
     claw = read(ROOT / "Content/Presentation/SuperScout/claw_tank_appearance_review.json")
     selected[claw["stableId"]] = {k: claw[k] for k in ("stableId", "file", "sha256", "status")}
     selected[claw["stableId"]]["origin"] = "claw_tank_appearance_review.json"
-    # Finished controlled raster, never the native layout or old rejected image.
-    mt_dir = ROOT / "ArtSource/M85/Preproduction/MT101ControlledAppearanceV1"
-    mt = read(mt_dir / "edit_manifest.json")
-    selected[mt["stableId"]] = {
-        "stableId": mt["stableId"], "file": str((mt_dir / mt["output"]["file"]).relative_to(ROOT)),
-        "sha256": mt["output"]["sha256"], "status": mt["status"],
-        "origin": "MT101ControlledAppearanceV1/edit_manifest.json",
-    }
+    # Later nested-structure review supersedes generation-time candidate claims.
+    mt = read(ROOT / "Content/Presentation/SuperScout/mt101_nested_structure_review.json")
+    selected[mt["stableId"]] = {k: mt[k] for k in ("stableId", "file", "sha256", "status")}
+    selected[mt["stableId"]]["origin"] = "mt101_nested_structure_review.json"
     assets = roster["assets"]
     if len(assets) != 66 or len(selected) != 66 or set(selected) != {a["stableId"] for a in assets}:
         raise ValueError("current comparison requires the exact 66-asset roster")
@@ -122,7 +118,7 @@ body{margin:0;background:#eceef1;color:#17202b;font:16px system-ui}header{paddin
 article{background:white;border:1px solid #c9ced6;border-radius:10px;padding:16px}h2{font-size:19px;margin:0}article p{font-size:12px;color:#495461;overflow-wrap:anywhere}img{display:block;width:100%;height:auto}button{padding:10px 16px;border-radius:6px;border:1px solid #748293;background:white;font:inherit;cursor:pointer}body.pending article:not([data-pending]){display:none}a{color:inherit}
 </style><header><h1>T082 — актуальний порівняльний набір</h1>
 <p>66 позицій реєстру, 67 зображень із двома головами однієї оборонної споруди. Тут використано вже збережені виправлення, а не повторні генерації. Натисни на зображення для повного розміру.</p>
-<p>Це огляд із назвами, не сліпий тест і не перевірка масштабу в грі. Старі базові картинки залишені лише як контекст, не як автоматично погоджений вигляд. MT-101 тепер має завершений контрольований вигляд для перегляду, а не технічну геометрію; його ще не погоджено. У Mothership досі не погоджені оператори та рельєф замість друку.</p>
+<p>Це огляд із назвами, не сліпий тест і не перевірка масштабу в грі. Старі базові картинки залишені лише як контекст, не як автоматично погоджений вигляд. MT-101 потребує виправлення вкладеної конструкції: задній зореліт містить мінібайк, якого поточна картинка не підтверджує; це не повний погоджений вигляд. У Mothership досі не погоджені оператори та рельєф замість друку.</p>
 <button id="filter" type="button" aria-pressed="false">Лише відкриті пріоритетні юніти</button></header><main>''' + "".join(cards) + '''</main><script>
 document.getElementById('filter').addEventListener('click',function(){const pending=document.body.classList.toggle('pending');this.setAttribute('aria-pressed',String(pending));this.textContent=pending?'Показати всі 66 позицій':'Лише відкриті пріоритетні юніти';});
 </script></html>'''
