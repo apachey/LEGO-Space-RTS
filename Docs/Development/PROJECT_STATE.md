@@ -934,21 +934,25 @@ live; the current schema-9 copy/paste retains the complete experiment.
   curved RHINO shells, steep narrow cabin, broad barrel wheels and spiky drill
   with two star cutters had been lost. A new completed monochrome proposal in
   `ArtSource/M85/Preproduction/MT101SourceRebuildV1/` begins from five official
-  source images. Rev2–rev4 use the preceding source-rebuild raster only as a
+  source images. Rev2–rev5 use the preceding source-rebuild raster only as a
   localized edit canvas under explicit official controls; rejected pre-rebuild
-  native/generated shapes are excluded. Four source-led generations are
-  retained: three document rejected launcher,
-  spacecraft and drill substitutions; rev4 passes recorded resemblance
-  self-review and is selected
-  `UNREVIEWED_SOURCE_REBUILT_APPEARANCE`; director acceptance remains required.
-  Its Bionicle Zamor sphere launcher, rear wedge canopy, side tubes, two rear
-  fins and drill cup/collar are now independently checked. Four chassis wheels
-  and one low rear wing plate are visible; hidden contacts, the occluded second
-  low wing and contained bike fit are
-  not proven by the raster. Book 2 p42 shows rear bike insertion with shells
-  open; the preserved old native upward sampled path is not official mechanism
-  evidence. Prior image/native bytes, generation-time records and counts remain
-  untouched. Fifteen added guards preserve all earlier 86 (101 total).
+  native/generated shapes are excluded. Five source-led generations are
+  retained. Rev4 corrected the rear spacecraft and drill cup/collar but was
+  rejected after base commit `d447a2c`: its tiny C-shaped detail had been
+  incorrectly self-reviewed as a valid compact launcher, while the official
+  weapon's full prominent horizontal silhouette was absent. Rev5 uses Book 2
+  page 35 and the assembled cover as direct controls and restores the complete
+  crossbow-like Bionicle Zamor launcher above the permanent cabin, separate from
+  the drill. The director accepted Rev5 for comparative appearance review with
+  `так, це воно, готово`; it is selected
+  `DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW`. This is not production,
+  gameplay or exact-geometry acceptance. Four chassis wheels and one low rear
+  wing plate are visible; hidden contacts, the occluded second low wing and
+  contained bike fit are not proven by the raster. Book 2 p42 shows rear bike
+  insertion with shells open; the preserved old native upward sampled path is
+  not official mechanism evidence. Prior image/native bytes, generation-time
+  records and counts remain untouched. Nineteen added guards preserve all earlier
+  86 (105 total).
   No canon, independent gameplay or production-model integration.
   See `Docs/Development/M85_T082_MT101_SOURCE_REBUILD_RESEARCH.md`.
   Ownership, deletion intent, approval scope and selected bytes are guarded.
@@ -996,16 +1000,16 @@ step and must be announced when new visual evidence is actually required.
 
 ## Verification state
 
-The MT-101 nested native/finished-appearance correction passed
-`./tools/verify.sh --full`: all 29 blocking stages, 317 NUnit tests, 86 review
+The MT-101 launcher-corrected Rev5 acceptance record passed
+`./tools/verify.sh --full`: all 29 blocking stages, 317 NUnit tests, 105 review
 guards, Golden100, replay/snapshot, byte-identical GLB and macOS export at
-`Artifacts/Verification/20260913T230854Z-full-summary.txt` (UTC run ID).
-Saved native recheck passes estimated fit and 33/25 extraction samples;
-exact gallery regeneration, packets and `git diff --check` pass. Stress60
+`Artifacts/Verification/20260919T145045Z-full-summary.txt` (UTC run ID).
+Exact gallery and packet regeneration plus `git diff --check` pass. Stress60
 remains the existing BLOCKING_LATER M9 diagnostic failure (2/60), not a new gate.
 Exported `Builds/macOS/LEGO Space RTS.app` is the existing prototype, not an
-integrated MT-101 model. New appearance remains unreviewed; no raster-as-fit
-proof, production acceptance or independent module gameplay.
+integrated MT-101 model. Rev5 is now director-accepted for comparative
+appearance review only; there is still no raster-as-fit proof, production
+acceptance or independent module gameplay.
 
 The Claw-Tank localized arm correction passed `./tools/verify.sh`: all 23 fast
 blocking stages, 317 NUnit tests and 61 review-record guards, zero blocking or
@@ -1346,9 +1350,11 @@ blocking only when M9 must prove its stable-large-battle exit.
    production decision. Do not treat the concept silhouettes, generated `HOLD`
    packets, T070 data definitions or the non-roster T081 pipeline fixture as
    production models.
-   MT-101 has corrected nested native controls and a finished two-view appearance
-   proposal awaiting director review. Estimated sampled fit/extraction passes,
-   not exact source geometry or production certification. Independent
+   MT-101 has corrected nested native controls and a finished source-rebuilt
+   Rev5 appearance accepted for comparative review. Estimated sampled
+   fit/extraction passes are not exact source geometry or production
+   certification, and hidden wheel contacts, the occluded second low wing and
+   contained bike fit remain unproven. Independent
    rear-spacecraft/bike gameplay
    separately requires director scope (Phase 03 defines only ground MT-101);
    that decision is not a prerequisite for correcting the source model.

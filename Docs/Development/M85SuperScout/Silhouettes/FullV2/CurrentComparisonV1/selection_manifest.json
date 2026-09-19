@@ -10,7 +10,6 @@
   "priorityPending": [
     "unit.aliens.etx_alien_strike",
     "unit.astronauts.mobile_mining_platform",
-    "unit.astronauts.mt101_armored_drilling_unit",
     "unit.martians.jet_scooter",
     "unit.martians.red_planet_protector"
   ],
@@ -303,14 +302,14 @@
     },
     {
       "stableId": "unit.astronauts.mt101_armored_drilling_unit",
-      "file": "ArtSource/M85/Preproduction/MT101SourceRebuildV1/mt101_source_rebuild_rev4.png",
-      "sha256": "aecb0822dbc854e319786ab115c30e6355a38ef7f955ed9ff987e27106d8675d",
-      "status": "UNREVIEWED_SOURCE_REBUILT_APPEARANCE",
+      "file": "ArtSource/M85/Preproduction/MT101SourceRebuildV1/mt101_source_rebuild_rev5.png",
+      "sha256": "4e6583ce4eb2ae7941967a23a2692358a42abbfc191b831a99c1dac2c1d1752c",
+      "status": "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW",
       "origin": "mt101_source_rebuild_review.json",
       "code": "C27",
       "name": "MT-101 Armored Drilling Unit",
       "faction": "Astronauts",
-      "priorityPending": true
+      "priorityPending": false
     },
     {
       "stableId": "unit.astronauts.mt201_ultra_drill_walker",

@@ -108,7 +108,7 @@ Open question: The faction-internal construction, motion, socket and material dr
   - Two large curved studded white side shells close above the central chassis and the docked rear module.
   - The rear spacecraft is an integrated detachable human module of MT-101, not an excluded unrelated support flyer.
   - The human two-wheel mini-bike enters the rear spacecraft from behind while the shells are open; book 2 p43 establishes hierarchy, not a literal upward extraction axis.
-  - The drilling carriage stays exposed on a slender articulated boom above the forward cabin/frame; its black spiky tip, two star cutters and rear cup/collar remain distinct from the compact Bionicle Zamor sphere launcher.
+  - The drilling carriage stays exposed on a slender articulated boom above the forward cabin/frame; its black spiky tip, two star cutters and rear cup/collar remain distinct from the prominent horizontal Bionicle Zamor sphere launcher above the cabin, whose open oval rear frame and forked front jaws are major silhouette features.
   - The drill and launcher may not be merged into one conventional tank cannon.
 - Source assembly scope: `OFFICIAL_MODEL_STRUCTURE_ONLY_NOT_RUNTIME_ROSTER`
   - MT101 — parent: none (root); ROOT_HEAVY_CHASSIS_WITH_PERMANENT_FRONT_CABIN; evidence: book 2, 35 and 43

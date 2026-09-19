@@ -49,7 +49,7 @@ Open question: The faction-internal construction, motion, socket and material dr
   - Two large curved studded white side shells close above the central chassis and the docked rear module.
   - The rear spacecraft is an integrated detachable human module of MT-101, not an excluded unrelated support flyer.
   - The human two-wheel mini-bike enters the rear spacecraft from behind while the shells are open; book 2 p43 establishes hierarchy, not a literal upward extraction axis.
-  - The drilling carriage stays exposed on a slender articulated boom above the forward cabin/frame; its black spiky tip, two star cutters and rear cup/collar remain distinct from the compact Bionicle Zamor sphere launcher.
+  - The drilling carriage stays exposed on a slender articulated boom above the forward cabin/frame; its black spiky tip, two star cutters and rear cup/collar remain distinct from the prominent horizontal Bionicle Zamor sphere launcher above the cabin, whose open oval rear frame and forked front jaws are major silhouette features.
   - The drill and launcher may not be merged into one conventional tank cannon.
 - Source assembly scope: `OFFICIAL_MODEL_STRUCTURE_ONLY_NOT_RUNTIME_ROSTER`
   - MT101 — parent: none (root); ROOT_HEAVY_CHASSIS_WITH_PERMANENT_FRONT_CABIN; evidence: book 2, 35 and 43
@@ -68,7 +68,7 @@ Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-qu
 
 ## C. Recognition contract
 
-**Silhouette thesis:** A long six-wheel armored drill carrier with a permanent steep forward cockpit, curved central shells, exposed articulated drill and compact Zamor launcher, plus a directly docked rear spacecraft containing a two-wheel mini-bike.
+**Silhouette thesis:** A long six-wheel armored drill carrier with a permanent steep forward cockpit, curved central shells, exposed articulated drill and prominent horizontal Zamor launcher above the cabin, plus a directly docked rear spacecraft containing a two-wheel mini-bike.
 
 Non-removable identity anchors:
 
@@ -76,7 +76,7 @@ Non-removable identity anchors:
 - permanent steep forward cockpit
 - paired curved studded central shells
 - exposed spiky drill with two star cutters and rear cup collar
-- compact Bionicle Zamor sphere launcher separate from drill
+- prominent black horizontal Bionicle Zamor sphere launcher above cabin with open oval rear frame and forked front jaws, separate from drill
 - directly docked rear spacecraft with wedge cockpit and visible docking seam
 
 - Rejected V1 blind-review code: `S10`. Historical failed boards: [24-cell](../Silhouettes/blind_24_cells.svg), [44-cell](../Silhouettes/blind_44_cells.svg), [72-cell](../Silhouettes/blind_72_cells.svg). The game director recognized 0/66 at 24 cells; this primitive concept is not an approved model or accepted evidence.
@@ -84,9 +84,9 @@ Non-removable identity anchors:
 - Forbidden genericization: Do not blend the two source lineages into generic white sci-fi or add military forms unsupported by the mapped expedition function.
 - Nearest-confusion baseline:
 
-- `unit.astronauts.mobile_mining_platform` — Both are large white-orange ground mining machines. Mitigations: Mining Platform exposes its material path and detachable processing module; MT-101 closes paired curved shells over an open suspension chassis. / Mining Platform uses a broad harvesting head; MT-101 carries an exposed spiky two-disc drill on a slender forward boom. / Mining Platform reads as an equipment platform with cargo space; MT-101 reads as a long six-wheel breach chassis with a compact separate Zamor launcher.
+- `unit.astronauts.mobile_mining_platform` — Both are large white-orange ground mining machines. Mitigations: Mining Platform exposes its material path and detachable processing module; MT-101 closes paired curved shells over an open suspension chassis. / Mining Platform uses a broad harvesting head; MT-101 carries an exposed spiky two-disc drill on a slender forward boom. / Mining Platform reads as an equipment platform with cargo space; MT-101 reads as a long six-wheel breach chassis with a prominent separate crossbow-shaped Zamor launcher above its cabin.
 - `unit.astronauts.mt201_ultra_drill_walker` — Both are advanced heavy Mission drilling machines. Mitigations: MT-101 remains a long six-wheel vehicle; MT-201 deploys four stabilizer legs. / MT-101's drill projects from an exposed slender boom above its forward cabin; MT-201's drill is a towering central installation. / MT-101 preserves a mobile horizontal profile; MT-201 changes to a huge vertical siege silhouette.
-- `unit.rock_raiders.chrome_crusher` — Both are large wheeled heavy drill assault machines. Mitigations: Chrome Crusher has four giant wheels; MT-101 has six broad suspended barrel wheels. / Chrome Crusher exposes teal industrial work machinery; MT-101 closes paired white-orange curved shells over an open black chassis. / Chrome Crusher's drill shares the silhouette with a raised work light and cargo gear; MT-101 exposes a spiky two-disc drill on a separate slender boom beside a compact Zamor launcher.
+- `unit.rock_raiders.chrome_crusher` — Both are large wheeled heavy drill assault machines. Mitigations: Chrome Crusher has four giant wheels; MT-101 has six broad suspended barrel wheels. / Chrome Crusher exposes teal industrial work machinery; MT-101 closes paired white-orange curved shells over an open black chassis. / Chrome Crusher's drill shares the silhouette with a raised work light and cargo gear; MT-101 separates its spiky two-disc drill from a prominent horizontal Zamor launcher above the cabin.
 
 ## D. Construction contract
 
@@ -96,11 +96,11 @@ Non-removable identity anchors:
   - Permanent steep armored forward cockpit — remains on the main chassis when the rear spacecraft detaches — SOURCE_VERIFIED.
   - Paired curved studded central shells — close above the open chassis and nested rear module — SOURCE_VERIFIED.
   - Exposed rotating drill carriage — slender articulated boom carries a spiky bit, two star cutters and rear cup/collar above the forward cabin/frame — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.
-  - Compact Bionicle Zamor sphere launcher — stays visually and mechanically distinct from the drill — SOURCE_VERIFIED.
+  - Prominent horizontal Bionicle Zamor sphere launcher — open oval rear frame, dense central mechanism and forked front jaws sit above the cabin, visibly separate from the drill — SOURCE_VERIFIED.
   - Rear spacecraft — directly docked detachable module belonging to MT-101, with wedge cockpit, paired equipment cylinders, low wings and two high fins — SOURCE_VERIFIED book 1 p29 / book 2 p42-43.
   - Two-wheel mini-bike — contained and rear-loaded into the rear spacecraft, not loose cargo on the main chassis or an omitted supporting build — SOURCE_VERIFIED book 1 p8 / book 2 p42-43.
 - Structural load path: Six wheel mounts support a long open chassis; the permanent forward cockpit braces the nose while the raised drill carriage transfers thrust into the central rails. The directly docked rear spacecraft carries its own contained mini-bike and equipment cylinders.
-- Repeated modules / connection grammar: Six wheel modules, permanent front cabin, long chassis, independent drill carriage and separate compact Bionicle Zamor sphere launcher; MT101 -> RearSpacecraft -> MiniBike. Rear spacecraft is directly docked; two-wheel mini-bike is contained inside it. Exclude only the opposing Alien scout, not either human module.
+- Repeated modules / connection grammar: Six wheel modules, permanent front cabin, long chassis, independent drill carriage and separate prominent horizontal Bionicle Zamor sphere launcher above the cabin; MT101 -> RearSpacecraft -> MiniBike. Rear spacecraft is directly docked; two-wheel mini-bike is contained inside it. Exclude only the opposing Alien scout, not either human module.
 - Source-faithful versus adapted boundary: Preserve the complete source assembly and distinguish the permanent front cabin from the rear spacecraft cockpit. Toy detachability does not approve independent spacecraft/bike gameplay, commands, costs or extra roster entities; those remain a director canon decision. Source projectile play does not define combat; the contact drill cannot open authored terrain routes or fuse with the Zamor launcher.
 
 ## E. Material and texture contract
@@ -110,7 +110,7 @@ Non-removable identity anchors:
   - permanent steep front cabin
   - paired curved studded central shells
   - exposed spiky drill with two star cutters and rear cup collar
-  - compact Bionicle Zamor sphere launcher separate from drill
+  - prominent horizontal Bionicle Zamor sphere launcher above cabin with open oval rear frame and forked front jaws, separate from drill
   - directly docked rear spacecraft with wedge cockpit, side tubes, low wings and two high fins
   - two-wheel mini-bike stowed inside rear spacecraft with credible rear-loading clearance
 - Accepted master-material roles: `Body`, `Accent`, `Tool`, `Rubber`, `Glass`, `Signal`, `Lamp`, `Neutral`.

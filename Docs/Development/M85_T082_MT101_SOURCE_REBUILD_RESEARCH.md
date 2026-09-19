@@ -8,12 +8,14 @@ became an inappropriate constraint on successive corrections. A valid internal
 fit check of that shape could not make it resemble the official set.
 
 The new proposal restarts from the official instruction cover, with construction
-pages controlling specific components. Four recorded source-led generations
-restore the main composition and correct three independently caught component
-substitutions well enough for director appearance review. This is an
-explicit self-assessment, not acceptance, exact LEGO reconstruction or a model
-ready for gameplay integration. The previous proposal is director-rejected;
-historical generation records and native artifacts are retained.
+pages controlling specific components. Five recorded source-led generations
+restore the main composition. The first four remain rejected evidence; Rev5
+restores the full prominent horizontal Bionicle Zamor launcher above the cabin
+under direct page-35 and cover control. The director accepted Rev5 for
+comparative appearance review with `так, це воно, готово` after base commit
+`d447a2c`. This does not certify exact LEGO reconstruction, production geometry,
+gameplay integration or independent module operation. The previous proposal and
+rejected source-rebuild revisions remain preserved with their original records.
 
 ## Scope and evidence strength
 
@@ -59,7 +61,7 @@ source photographs but remains visual judgement.
 | Chassis | Solid vehicle slab dominated the body | Dark open beams and external articulated wheel links |
 | Drilling tool | Familiar continuous helical auger | Black spiky tip and two separated pale star cutters |
 | Tool support | Generic machinery/crane interpretation | Slender dark Technic-style boom and restrained hose |
-| Weapon ownership | Correct labels did not guarantee recognizable geometry | Distinct upper sphere launcher, separate from drill |
+| Weapon ownership | Correct labels and a tiny C-shaped detail did not guarantee recognizable geometry | Prominent horizontal crossbow-like Zamor launcher above the cabin, separate from drill |
 | Rear module | Large exposed deck/craft broke main mass distribution | Tubular sides and adjustable black fins attached behind shells |
 
 These are appearance checks, not automated geometric assertions. One raster can
@@ -71,11 +73,16 @@ far-side wheel; the other two contacts remain occluded.
 ## Drill and body observations that changed the interpretation
 
 The primary source shows a black tapered toothed tip, two separated flower-like
-cutting discs, a ribbed spacer and a rear shaft/collar. The distinct upper
-launcher and slender articulated boom must stay separate. The white central
-shells are curved, studded and hinged, not flat deck armor. Broad molded wheels,
-external black links, ribbed struts and two upright dish headlights complete the
-recognition cluster.[^book2]
+cutting discs, a ribbed spacer and a rear shaft/collar. Book 2 page 35 and the
+assembled cover also show that the weapon above the permanent cabin is not a
+compact claw or incidental sphere: it is a major horizontal crossbow-like
+Bionicle Zamor launcher, with an open elongated rear frame, paired rails, dense
+central mechanism and forked front jaws around the ball channel. Its scale,
+placement and silhouette must be checked independently from the drill. The
+launcher and slender articulated drill boom must stay separate. The white
+central shells are curved, studded and hinged, not flat deck armor. Broad molded
+wheels, external black links, ribbed struts and two upright dish headlights
+complete the recognition cluster.[^book2]
 
 Calling the tool an “auger” in previous appearance notes encouraged the generator
 to substitute a standard spiral screw. That substitution seems mechanically
@@ -115,31 +122,41 @@ absence of an external oversized bike is not evidence that a correct miniature
 bike exists inside the raster. Its required nesting remains established by the
 source and the existing ownership contract, not by this view.
 
-## Self-review and selection
+## Review and selection
 
 The new image was checked first against the promotional cover for overall
 identity, then against the permanent cabin/body construction, drill construction
 and complete assembled nesting page. The independent assembled photo was used
 to check whether the cover's dramatic pose had misled the body interpretation.
 Finally, the image was reviewed without relying on its filename or labels: its
-cabin, shields, wheel barrels and drill now carry recognition on their own.
+cabin, shields, wheel barrels, drill and full above-cabin launcher now carry
+recognition on their own.
 
 The first reconstruction restored the body but enlarged the launcher into a
 ring and obscured the rear spacecraft. Rev2 improved the tail but mutated the
-launcher into a fin. Rev3 restored the compact Bionicle Zamor launcher with its
-sphere, while independent review still found a cylindrical rear cockpit and the
-drill's missing rear cup/collar. Rev4 corrects those last two areas without
-changing the retained source-recognizable body. All four outputs and prompts are recorded, including
-the three rejection findings. The director's permission for unlimited image
-retries does not override gameplay or architecture stop rules or permit
-self-acceptance.
+launcher into a fin. Rev3 added only a small pseudo-launcher, while independent
+review also found a cylindrical rear cockpit and the drill's missing rear
+cup/collar. Rev4 corrected the cockpit and drill areas, but retained only the
+tiny C-shaped pseudo-launcher. The recorded self-review incorrectly passed it:
+the presence of a sphere-like detail was mistaken for the complete weapon even
+though the official launcher's scale, horizontal bounding shape and placement
+above the cabin were absent. The director caught that failure and rejected Rev4.
+
+Rev5 uses the official Book 2 page-35 construction view and the assembled cover
+as explicit launcher controls. It restores the substantial black horizontal
+crossbow-like assembly while retaining the source-recognizable body, drill and
+rear spacecraft. All five outputs and prompts are recorded, including the four
+rejection findings. After base commit `d447a2c`, the director accepted Rev5 for
+comparative appearance review with `так, це воно, готово`. The permission for
+unlimited image retries and this appearance acceptance do not override gameplay
+or architecture stop rules or authorize production integration.
 
 The final selected artifact is
-`ArtSource/M85/Preproduction/MT101SourceRebuildV1/mt101_source_rebuild_rev4.png`.
+`ArtSource/M85/Preproduction/MT101SourceRebuildV1/mt101_source_rebuild_rev5.png`.
 The complete prompt sequence is saved alongside it; built-in imagegen
 was used. The generation manifest records five official reference roles and
 their hashes, plus the complete per-attempt edit chain. Rev1 used the five
-official references directly. Rev2–rev4 used the preceding source-rebuild
+official references directly. Rev2–rev5 used the preceding source-rebuild
 raster as a localized edit canvas together with the relevant official controls.
 The rejected pre-rebuild generic rover generations and native blockouts never
 served as appearance inputs; the rejected source-rebuild revisions remain
@@ -152,8 +169,10 @@ merely because it has already been audited. Construction validity, source
 resemblance, director acceptance and gameplay-camera readability are separate
 claims. File-level validation now preserves rejection evidence, every
 per-attempt input and hash, official control ownership, history and honest
-occlusion limits; it cannot judge visual
-quality itself.
+occlusion limits; it cannot judge visual quality itself. Future launcher review
+must compare the complete weapon's scale, horizontal bounding silhouette and
+above-cabin placement against page 35 and the cover. A small ball, claw or
+correctly named part is not sufficient evidence that the launcher is present.
 
 The old native sampled upward extraction result remains historical. It is not
 silently rewritten or promoted into evidence of the official rear-loading
@@ -162,9 +181,10 @@ modules will require a separately scoped step after appearance review.
 
 No canon, unit roles, costs, runtime models or simulation systems changed. T082
 still requires renewed complete corpus/game-camera acceptance before the next
-production gate. This new source-led image is a finished appearance proposal
-ready for human resemblance judgement, not a claim that the entire milestone
-has passed.
+production gate. Rev5 is director-accepted for comparative appearance review,
+not as proof of hidden wheel contacts, the occluded second low wing, contained
+bike fit, exact geometry, production readiness, independent module gameplay or
+completion of the entire milestone.
 
 ## Source audit notes
 

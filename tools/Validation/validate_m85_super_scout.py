@@ -778,14 +778,14 @@ def validate_mt101_nested_structure() -> None:
     geometry = contract.get("materials", {}).get("geometryMustCarry", [])
     required_geometry = {"six broad barrel wheels", "paired curved studded central shells",
                          "exposed spiky drill with two star cutters and rear cup collar",
-                         "compact Bionicle Zamor sphere launcher separate from drill",
+                         "prominent horizontal Bionicle Zamor sphere launcher above cabin with open oval rear frame and forked front jaws, separate from drill",
                          "two-wheel mini-bike stowed inside rear spacecraft with credible rear-loading clearance"}
     if not required_geometry.issubset(geometry):
         fail("MT nested contract dropped mini-bike construction obligation")
     identity = next(a for a in json.loads(MANIFEST.read_text(encoding="utf-8"))["assets"] if a["stableId"] == review["stableId"])
     required_anchors = {"six broad suspended barrel wheels", "paired curved studded central shells",
                         "exposed spiky drill with two star cutters and rear cup collar",
-                        "compact Bionicle Zamor sphere launcher separate from drill",
+                        "prominent black horizontal Bionicle Zamor sphere launcher above cabin with open oval rear frame and forked front jaws, separate from drill",
                         "directly docked rear spacecraft with wedge cockpit and visible docking seam"}
     if not required_anchors.issubset(identity.get("identityAnchors", [])) or "containing a two-wheel mini-bike" not in identity.get("silhouetteThesis", ""):
         fail("MT nested identity dropped source assembly recognition")
@@ -862,19 +862,27 @@ def validate_mt101_source_rebuild() -> None:
     review = json.loads(MT101_SOURCE_REBUILD_REVIEW.read_text(encoding="utf-8"))
     for item in (record, review):
         if (item.get("stableId"), item.get("status"), item.get("productionAccepted"), item.get("canonImpact")) != (
-                "unit.astronauts.mt101_armored_drilling_unit", "UNREVIEWED_SOURCE_REBUILT_APPEARANCE", False, "NONE"):
-            fail("MT source rebuild expanded appearance into acceptance")
+                "unit.astronauts.mt101_armored_drilling_unit", "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW", False, "NONE"):
+            fail("MT source rebuild expanded appearance acceptance beyond comparative review")
         if item.get("authority", {}).get("baseCommit") != "54861b8":
             fail("MT source rebuild lost director authority")
     if record.get("authority", {}).get("message") != "Допускаю нескінченну генерацію, поки не буде настільки добре і зрозуміло, що ти зможеш сміливо показати мені":
         fail("MT source rebuild lost unlimited image retry authority")
-    if record.get("history") != {"freeFormAttempts": 2, "nativeConstructionApproaches": 1, "controlledRasterFinishes": 1, "targetedNestedCorrections": 2, "sourceRebuildGenerations": 4}:
+    approval = {
+        "baseCommit": "d447a2c",
+        "message": "так, це воно, готово",
+        "scope": "Rev5 MT-101 completed appearance only; comparative review acceptance, not production integration, gameplay, or exact geometry.",
+    }
+    if record.get("approvalEvidence") != approval or review.get("approvalEvidence") != approval:
+        fail("MT source rebuild lost exact director approval evidence or comparative-only scope")
+    if record.get("history") != {"freeFormAttempts": 2, "nativeConstructionApproaches": 1, "controlledRasterFinishes": 1, "targetedNestedCorrections": 2, "sourceRebuildGenerations": 5}:
         fail("MT source rebuild reset previous attempts")
     expected_attempts = [
         {"number": 1, "file": "mt101_source_rebuild_rev1.png", "sha256": "d94a5982311ff95d5b92b4c355d04107e617bf2288c66810cd37b5e7fadd91f2", "prompt": "prompt_rev1.txt", "promptSha256": "49e315fe2ec6e0af02c8a8eb73ed35d9317e713e3fb7d91f2b4b448d4bd60f45", "finding": "REJECTED_OVERSIZED_RING_LAUNCHER_AND_UNREADABLE_REAR_SPACECRAFT"},
         {"number": 2, "file": "mt101_source_rebuild_rev2.png", "sha256": "b563d10f32a9a94dc41b9e4df96ada4f7a53adf7d1fcfd3a519bc22c8cf49d43", "prompt": "prompt_rev2.txt", "promptSha256": "8223529dbba04bcdd89da14a5d02e49c4e1dfaae731660bb4c5c18b24b32542c", "finding": "REJECTED_ZAMOR_LAUNCHER_MUTATED_TO_TAIL_FIN"},
         {"number": 3, "file": "mt101_source_rebuild_rev3.png", "sha256": "37d10ec4cbc354726cdcbd35b31d2e59e8b6b542198a8d6ddd615d4f2ee1bd6e", "prompt": "prompt_rev3.txt", "promptSha256": "1a2d7a7f70bfc20f788ab0aeaca37a1f32a76d6ab5d85f6304c9bfdf4c5a0655", "finding": "REJECTED_REAR_COCKPIT_CYLINDRICAL_AND_DRILL_COLLAR_MISSING"},
-        {"number": 4, "file": "mt101_source_rebuild_rev4.png", "sha256": "aecb0822dbc854e319786ab115c30e6355a38ef7f955ed9ff987e27106d8675d", "prompt": "prompt_rev4.txt", "promptSha256": "c2022190b12d6daa744f88d52b39bd03d26e9b601d65ec3adbd3ffc8948a08c5", "finding": "SOURCE_RECOGNITION_SELF_REVIEW_PASSED_NOT_DIRECTOR_ACCEPTED"}]
+        {"number": 4, "file": "mt101_source_rebuild_rev4.png", "sha256": "aecb0822dbc854e319786ab115c30e6355a38ef7f955ed9ff987e27106d8675d", "prompt": "prompt_rev4.txt", "promptSha256": "c2022190b12d6daa744f88d52b39bd03d26e9b601d65ec3adbd3ffc8948a08c5", "finding": "REJECTED_MISSING_FULL_ZAMOR_LAUNCHER"},
+        {"number": 5, "file": "mt101_source_rebuild_rev5.png", "sha256": "4e6583ce4eb2ae7941967a23a2692358a42abbfc191b831a99c1dac2c1d1752c", "prompt": "prompt_rev5.txt", "promptSha256": "b25d818aa3036b43880c0625c4c2399da3d22b14d716d9e219981078eb5a9280", "finding": "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW"}]
     attempts = record.get("attempts", [])
     attempt_core = [
         {key: attempt.get(key) for key in ("number", "file", "sha256", "prompt", "promptSha256", "finding")}
@@ -924,6 +932,11 @@ def validate_mt101_source_rebuild() -> None:
             ("ArtSource/M85/Preproduction/MT101SourceRebuildV1/reference_book2_p39.png", "5797f581de8a6cdfa7b6a9e35706e58afeea911c51401a2dbf99fc3a6a9dbe0d", "OFFICIAL_DRILL_CONTROL"),
             ("ArtSource/M85/Preproduction/MT101SourceRebuildV1/reference_book2_p42.png", "a24ab407fe0a923ed528a9b12e3d20119b0237c986c60ba17c02be2462084cda", "OFFICIAL_ASSEMBLED_NESTING_CONTROL"),
         ],
+        [
+            ("ArtSource/M85/Preproduction/MT101SourceRebuildV1/mt101_source_rebuild_rev4.png", "aecb0822dbc854e319786ab115c30e6355a38ef7f955ed9ff987e27106d8675d", "PREVIOUS_SOURCE_REBUILD_EDIT_CANVAS_REJECTED_FOR_MISSING_FULL_ZAMOR_LAUNCHER"),
+            ("ArtSource/M85/Preproduction/MT101SourceRebuildV1/reference_book2_p35.png", "9c6ac3ec875ba64c717d78becf0825df41f65c640f32b213555910bd76333f54", "OFFICIAL_LAUNCHER_CONSTRUCTION_SCALE_AND_PLACEMENT_CONTROL"),
+            ("ArtSource/M85/Preproduction/MT101ControlledAppearanceV1/reference_7699_book2_cover.png", "cbb37fddf08f16da2300178cfe97ecf72d91c9caff56be04fb3186c81f69fcdd", "OFFICIAL_ASSEMBLED_LAUNCHER_SILHOUETTE_CONTROL"),
+        ],
     ]
     actual_input_chains = [
         [tuple(item.get(key) for key in ("file", "sha256", "role")) for item in attempt.get("inputs", [])]
@@ -935,27 +948,32 @@ def validate_mt101_source_rebuild() -> None:
         for item in chain.get("inputs", []):
             if hashlib.sha256((ROOT / item["file"]).read_bytes()).hexdigest() != item["sha256"]:
                 fail("MT source rebuild per-attempt input bytes changed")
-    if record.get("inputPolicy") != "Rev1 uses five official references. Rev2-rev4 use the previous source-rebuild raster only as an edit canvas plus official correction controls. Rejected pre-rebuild generated and native shapes are excluded.":
+    if record.get("inputPolicy") != "Rev1 uses five official references. Rev2-rev5 use the previous source-rebuild raster only as an edit canvas plus official correction controls. Rejected pre-rebuild generated and native shapes are excluded.":
         fail("MT source rebuild obscured edit-canvas provenance")
-    if record.get("inspection") != {"closedSteepCabin": True, "curvedStuddedShells": True, "broadBarrelWheels": True, "twoStarDrillCutters": True, "rearDrillCupCollar": True, "separateZamorSphereLauncher": True, "rearCraftAttached": True, "rearCraftWedgeCanopy": True, "twoFarRearFins": True, "visibleLowWingPlates": 1, "secondLowWingOccluded": True, "twoLowWingRasterTopologyProven": False, "visibleChassisWheels": 4, "sixWheelRasterTopologyProven": False, "bikeStowageProvenByRaster": False, "exactSourceGeometryProven": False, "gameplayCameraAccepted": False}:
+    if record.get("inspection") != {"closedSteepCabin": True, "curvedStuddedShells": True, "broadBarrelWheels": True, "twoStarDrillCutters": True, "rearDrillCupCollar": True, "fullCrossbowZamorLauncherVisible": True, "launcherAboveCabin": True, "launcherSeparateFromDrill": True, "launcherScaleSourceControlled": True, "rearCraftAttached": True, "rearCraftWedgeCanopy": True, "twoFarRearFins": True, "visibleLowWingPlates": 1, "secondLowWingOccluded": True, "twoLowWingRasterTopologyProven": False, "visibleChassisWheels": 4, "sixWheelRasterTopologyProven": False, "bikeStowageProvenByRaster": False, "exactSourceGeometryProven": False, "gameplayCameraAccepted": False}:
         fail("MT source rebuild promoted visual judgement into geometry proof")
     if (review.get("file"), review.get("sha256"), review.get("supersedes")) != (
             str(MT101_SOURCE_REBUILD.parent.relative_to(ROOT) / expected_attempts[-1]["file"]), expected_attempts[-1]["sha256"], "mt101_nested_appearance_review.json"):
         fail("MT source rebuild selected rejected or wrong image")
-    if review.get("pending") != ["Director appearance acceptance", "Final gameplay-camera and production review", "Separate director gameplay decision for independent rear spacecraft and mini-bike operation"]:
-        fail("MT source rebuild hid director or gameplay gates")
-    if "One low outer wing plate is visible" not in review.get("finding", "") or "occluded plate" not in review.get("finding", ""):
-        fail("MT source rebuild overstated hidden low-wing proof")
+    if review.get("pending") != ["Final gameplay-camera and production review", "Separate director gameplay decision for independent rear spacecraft and mini-bike operation"]:
+        fail("MT source rebuild hid production or gameplay gates")
+    finding = review.get("finding", "")
+    if ("full" not in finding.lower() or "Zamor" not in finding or "above" not in finding.lower()
+            or "One low outer wing plate is visible" not in finding or "occluded plate" not in finding):
+        fail("MT source rebuild lost full launcher finding or overstated hidden low-wing proof")
+    historical_boundary = review.get("historicalBoundary", "").lower()
+    if "rev4" not in historical_boundary or not any(term in historical_boundary for term in ("missing", "lacks")):
+        fail("MT source rebuild hid rejected Rev4 launcher failure")
     if "not evidence of the official rear-insertion mechanism" not in record.get("nativeBoundary", ""):
         fail("MT source rebuild promoted historical native path into source truth")
     contracts = json.loads(ASTRONAUTS_CONTRACTS.read_text(encoding="utf-8"))
     mt_contract = next(item for item in contracts["assets"] if item["stableId"] == "unit.astronauts.mt101_armored_drilling_unit")
     modules = mt_contract.get("construction", {}).get("modules", "")
     boundary = mt_contract.get("construction", {}).get("adaptationBoundary", "")
-    if "separate compact Bionicle Zamor sphere launcher" not in modules or "fuse with the Zamor launcher" not in boundary or "secondary gun/tool" in modules + boundary:
+    if "separate prominent horizontal Bionicle Zamor sphere launcher above the cabin" not in modules or "fuse with the Zamor launcher" not in boundary or "secondary gun/tool" in modules + boundary or "compact Bionicle Zamor" in modules + boundary:
         fail("MT source rebuild lost exact Zamor launcher terminology")
     research = record.get("research", {})
-    if research != {"file": "Docs/Development/M85_T082_MT101_SOURCE_REBUILD_RESEARCH.md", "sha256": "bfd05a086cc2d5f1a3cb779730ef050e00f7640c35ca5fe6ec74e8686f631ff6"} or hashlib.sha256((ROOT / research.get("file", "missing")).read_bytes()).hexdigest() != research.get("sha256"):
+    if research != {"file": "Docs/Development/M85_T082_MT101_SOURCE_REBUILD_RESEARCH.md", "sha256": "689d6dc2f05ca184adde5a74fedb004ba6b737d000e2d739e125baa4958094b2"} or hashlib.sha256((ROOT / research.get("file", "missing")).read_bytes()).hexdigest() != research.get("sha256"):
         fail("MT source rebuild lost research artifact")
 
 
@@ -985,12 +1003,12 @@ def validate_current_comparison() -> None:
         fail("current comparison lost accepted defense configuration")
     mt = by_id["unit.astronauts.mt101_armored_drilling_unit"]
     if (mt.get("status"), mt.get("file"), mt.get("sha256")) != (
-            "UNREVIEWED_SOURCE_REBUILT_APPEARANCE",
-            "ArtSource/M85/Preproduction/MT101SourceRebuildV1/mt101_source_rebuild_rev4.png",
-            "aecb0822dbc854e319786ab115c30e6355a38ef7f955ed9ff987e27106d8675d"):
-        fail("current comparison promoted unresolved MT appearance")
-    pending = sorted(["unit.astronauts.mobile_mining_platform", "unit.astronauts.mt101_armored_drilling_unit",
-                      "unit.aliens.etx_alien_strike", "unit.martians.jet_scooter", "unit.martians.red_planet_protector"])
+            "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW",
+            "ArtSource/M85/Preproduction/MT101SourceRebuildV1/mt101_source_rebuild_rev5.png",
+            "4e6583ce4eb2ae7941967a23a2692358a42abbfc191b831a99c1dac2c1d1752c"):
+        fail("current comparison replaced accepted MT appearance")
+    pending = sorted(["unit.astronauts.mobile_mining_platform", "unit.aliens.etx_alien_strike",
+                      "unit.martians.jet_scooter", "unit.martians.red_planet_protector"])
     if record.get("priorityPending") != pending:
         fail("current comparison hid priority review gaps")
     generated = subprocess.run([sys.executable, str(ROOT / "tools/generate-m85-current-comparison.py"), "--check"],

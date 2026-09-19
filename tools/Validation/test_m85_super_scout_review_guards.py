@@ -12,13 +12,17 @@ import validate_m85_super_scout as validator
 
 
 class ReviewGuardTests(unittest.TestCase):
-    def test_mt_source_rebuild_cannot_self_accept(self):
+    def test_mt_source_rebuild_cannot_expand_comparative_acceptance_to_production(self):
         self.assert_rejected(validator.MT101_SOURCE_REBUILD_REVIEW,
-                             lambda f: f.update(status="DIRECTOR_ACCEPTED_APPEARANCE"), "appearance into acceptance")
+                             lambda f: f.update(status="PRODUCTION_ACCEPTED"), "beyond comparative review")
 
     def test_mt_source_rebuild_cannot_promote_production(self):
         self.assert_rejected(validator.MT101_SOURCE_REBUILD,
-                             lambda f: f.update(productionAccepted=True), "appearance into acceptance")
+                             lambda f: f.update(productionAccepted=True), "beyond comparative review")
+
+    def test_mt_source_rebuild_requires_exact_director_approval(self):
+        self.assert_rejected(validator.MT101_SOURCE_REBUILD_REVIEW,
+                             lambda f: f.pop("approvalEvidence"), "exact director approval evidence")
 
     def test_mt_source_rebuild_cannot_hide_whole_rejection(self):
         self.assert_rejected(validator.MT101_NESTED_APPEARANCE_REVIEW,
@@ -47,8 +51,18 @@ class ReviewGuardTests(unittest.TestCase):
     def test_mt_source_rebuild_cannot_revert_zamor_to_generic_tool(self):
         def mutate(record):
             mt = next(item for item in record["assets"] if item["stableId"] == "unit.astronauts.mt101_armored_drilling_unit")
-            mt["construction"]["modules"] = mt["construction"]["modules"].replace("separate compact Bionicle Zamor sphere launcher", "separate secondary gun/tool")
+            mt["construction"]["modules"] = mt["construction"]["modules"].replace("separate prominent horizontal Bionicle Zamor sphere launcher above the cabin", "separate secondary gun/tool")
         self.assert_rejected(validator.ASTRONAUTS_CONTRACTS, mutate, "exact Zamor launcher terminology")
+
+    def test_mt_source_rebuild_cannot_hide_full_zamor_launcher(self):
+        self.assert_rejected(validator.MT101_SOURCE_REBUILD,
+                             lambda f: f["inspection"].update(fullCrossbowZamorLauncherVisible=False),
+                             "judgement into geometry proof")
+
+    def test_mt_source_rebuild_cannot_fuse_launcher_with_drill(self):
+        self.assert_rejected(validator.MT101_SOURCE_REBUILD,
+                             lambda f: f["inspection"].update(launcherSeparateFromDrill=False),
+                             "judgement into geometry proof")
 
     def test_mt_source_rebuild_cannot_claim_hidden_bike_fit(self):
         self.assert_rejected(validator.MT101_SOURCE_REBUILD,
@@ -62,13 +76,18 @@ class ReviewGuardTests(unittest.TestCase):
         self.assert_rejected(validator.MT101_SOURCE_REBUILD_REVIEW,
                              lambda f: f.update(file="ArtSource/M85/Preproduction/MT101NestedAppearanceV1/mt101_nested_appearance_rev2.png"), "rejected or wrong image")
 
+    def test_mt_source_rebuild_cannot_restore_rev4_without_full_launcher(self):
+        self.assert_rejected(validator.MT101_SOURCE_REBUILD_REVIEW,
+                             lambda f: f.update(file="ArtSource/M85/Preproduction/MT101SourceRebuildV1/mt101_source_rebuild_rev4.png"),
+                             "rejected or wrong image")
+
     def test_mt_source_rebuild_cannot_invent_extraction_truth(self):
         self.assert_rejected(validator.MT101_SOURCE_REBUILD,
                              lambda f: f.update(nativeBoundary="The upward sampled path proves the official mechanism."), "native path into source truth")
 
     def test_mt_source_rebuild_cannot_hide_gameplay_gate(self):
         self.assert_rejected(validator.MT101_SOURCE_REBUILD_REVIEW,
-                             lambda f: f["pending"].pop(), "director or gameplay gates")
+                             lambda f: f["pending"].pop(), "production or gameplay gates")
 
     def test_mt_source_rebuild_cannot_change_research_silently(self):
         self.assert_rejected(validator.MT101_SOURCE_REBUILD,
@@ -226,10 +245,10 @@ class ReviewGuardTests(unittest.TestCase):
             next(a for a in f["selections"] if a["stableId"] == "building.ali.etx_defense_node").pop("alternate")
         self.assert_rejected(validator.CURRENT_COMPARISON, mutate, "defense configuration")
 
-    def test_current_comparison_cannot_promote_mt_context(self):
+    def test_current_comparison_keeps_accepted_mt_image(self):
         def mutate(f):
-            next(a for a in f["selections"] if a["stableId"] == "unit.astronauts.mt101_armored_drilling_unit")["status"] = "DIRECTOR_ACCEPTED_APPEARANCE"
-        self.assert_rejected(validator.CURRENT_COMPARISON, mutate, "unresolved MT appearance")
+            next(a for a in f["selections"] if a["stableId"] == "unit.astronauts.mt101_armored_drilling_unit")["file"] = "old.png"
+        self.assert_rejected(validator.CURRENT_COMPARISON, mutate, "accepted MT appearance")
 
     def test_mx_appearance_review_requires_latest_director_evidence(self):
         self.assert_rejected(validator.MX71_LOCALIZED_REVIEW,
