@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "stableId": "unit.astronauts.mt101_armored_drilling_unit",
+  "status": "UNREVIEWED_SOURCE_REBUILT_APPEARANCE",
+  "file": "ArtSource/M85/Preproduction/MT101SourceRebuildV1/mt101_source_rebuild_rev4.png",
+  "sha256": "aecb0822dbc854e319786ab115c30e6355a38ef7f955ed9ff987e27106d8675d",
+  "productionAccepted": false,
+  "canonImpact": "NONE",
+  "supersedes": "mt101_nested_appearance_review.json",
+  "authority": {"baseCommit": "54861b8", "scope": "Continue the director-requested deep source research and appearance regeneration; self-review is not director acceptance."},
+  "finding": "The official cover replaces the rejected generic rover as the overall anchor. Rev4 preserves the steep cabin, shells, broad wheels and open chassis; it also restores the separate Bionicle Zamor sphere launcher, rear drill cup/collar and the docked spacecraft's wedge canopy, side tubes and two rear fins. One low outer wing plate is visible; the source requires its far-side pair, but this raster does not prove that occluded plate.",
+  "pending": ["Director appearance acceptance", "Final gameplay-camera and production review", "Separate director gameplay decision for independent rear spacecraft and mini-bike operation"],
+  "historicalBoundary": "All earlier images, native files, generation-time records and attempt counts remain retained. The previous nested appearance is explicitly director-rejected."
+}

@@ -104,7 +104,7 @@ Non-removable identity anchors:
 - Forbidden genericization: Do not blend the two source lineages into generic white sci-fi or add military forms unsupported by the mapped expedition function.
 - Nearest-confusion baseline:
 
-- `unit.astronauts.mt101_armored_drilling_unit` — Both are large white-orange ground mining machines. Mitigations: Mining Platform exposes its material path and detachable processing module; MT-101 encloses the tool in an armored assault nose. / Mining Platform uses a broad harvesting head; MT-101 uses one central heavy drill. / Mining Platform reads as an equipment platform with cargo space; MT-101 reads as a long six-wheel breach chassis.
+- `unit.astronauts.mt101_armored_drilling_unit` — Both are large white-orange ground mining machines. Mitigations: Mining Platform exposes its material path and detachable processing module; MT-101 closes paired curved shells over an open suspension chassis. / Mining Platform uses a broad harvesting head; MT-101 carries an exposed spiky two-disc drill on a slender forward boom. / Mining Platform reads as an equipment platform with cargo space; MT-101 reads as a long six-wheel breach chassis with a compact separate Zamor launcher.
 
 ## D. Construction contract
 

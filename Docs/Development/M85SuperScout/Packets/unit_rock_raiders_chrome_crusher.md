@@ -68,7 +68,7 @@ Non-removable identity anchors:
 - Nearest-confusion baseline:
 
 - `unit.rock_raiders.granite_grinder` — Both are major teal drill machines. Mitigations: Granite Grinder has two legs; Chrome Crusher has four huge wheels. / Granite Grinder is tall and narrow; Chrome Crusher is long and low. / Granite Grinder balances one boom; Chrome Crusher combines drill, work light and cargo machinery along a heavy chassis.
-- `unit.astronauts.mt101_armored_drilling_unit` — Both are large wheeled heavy drill assault machines. Mitigations: Chrome Crusher has four giant wheels; MT-101 has six suspended wheels. / Chrome Crusher exposes teal industrial work machinery; MT-101 uses a clean white-orange armored mission deck. / Chrome Crusher's drill shares the silhouette with a raised work light and cargo gear; MT-101's drill forms a central armored nose.
+- `unit.astronauts.mt101_armored_drilling_unit` — Both are large wheeled heavy drill assault machines. Mitigations: Chrome Crusher has four giant wheels; MT-101 has six broad suspended barrel wheels. / Chrome Crusher exposes teal industrial work machinery; MT-101 closes paired white-orange curved shells over an open black chassis. / Chrome Crusher's drill shares the silhouette with a raised work light and cargo gear; MT-101 exposes a spiky two-disc drill on a separate slender boom beside a compact Zamor launcher.
 
 ## D. Construction contract
 

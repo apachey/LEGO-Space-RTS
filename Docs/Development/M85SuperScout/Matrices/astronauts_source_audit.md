@@ -334,16 +334,17 @@ This generated review records what the available official instructions or labele
   - Evidence pages book 2, 35-43: Permanent front cabin and independent upper launcher/drill; p43 explicitly separates the rear spacecraft from MT-101 and the mini-bike from the spacecraft.
 - View/mechanism coverage: front=VERIFIED book 2 p24-43; rear=VERIFIED book 2 p27-43; leftRight=VERIFIED both books; top=VERIFIED book 2 p2-43; threeQuarter=VERIFIED covers and book 2 p35-43; undersideInterior=VERIFIED book 1 p30-47 and book 2 p2-27; mechanism=VERIFIED book 2 p35-43 rotating drill carriage and movable rear module
 - Verified findings:
-  - MT-101 is a long open heavy chassis suspended between six individually mounted oversized orange wheels.
+  - MT-101 is a long open heavy chassis suspended between six individually mounted broad hard-plastic orange barrel wheels.
   - The steep armored cockpit is a permanent part of the main vehicle at the front; detaching the rear spacecraft does not remove it.
+  - Two large curved studded white side shells close above the central chassis and the docked rear module.
   - The rear spacecraft is an integrated detachable human module of MT-101, not an excluded unrelated support flyer.
-  - The human two-wheel mini-bike is contained inside the rear spacecraft and separates from it; book 2 p43 shows MT-101 -> rear spacecraft -> mini-bike.
-  - The raised drilling carriage remains exposed above the central/rear frame, while a separate smaller gun/tool assembly retains its own mount.
-  - The long drill rotates independently and may not be merged with the secondary gun/tool into one conventional tank cannon.
+  - The human two-wheel mini-bike enters the rear spacecraft from behind while the shells are open; book 2 p43 establishes hierarchy, not a literal upward extraction axis.
+  - The drilling carriage stays exposed on a slender articulated boom above the forward cabin/frame; its black spiky tip, two star cutters and rear cup/collar remain distinct from the compact Bionicle Zamor sphere launcher.
+  - The drill and launcher may not be merged into one conventional tank cannon.
 - Source assembly scope: `OFFICIAL_MODEL_STRUCTURE_ONLY_NOT_RUNTIME_ROSTER`
   - MT101 — parent: none (root); ROOT_HEAVY_CHASSIS_WITH_PERMANENT_FRONT_CABIN; evidence: book 2, 35 and 43
-  - RearSpacecraft — parent: MT101; DIRECTLY_DOCKED_DETACHABLE_MODULE; evidence: book 1, 15-29; book 2, 43
-  - MiniBike — parent: RearSpacecraft; CONTAINED_EXTRACTABLE_TWO_WHEEL_VEHICLE; evidence: book 1, 8; book 2, 43
+  - RearSpacecraft — parent: MT101; DIRECTLY_DOCKED_DETACHABLE_MODULE_BELOW_CURVED_SHELLS; evidence: book 1, 15-29; book 2, 42-43
+  - MiniBike — parent: RearSpacecraft; REAR_LOADED_CONTAINED_TWO_WHEEL_VEHICLE; evidence: book 1, 8; book 2, 42-43
 - Excluded opponent: Separately built Alien scout, book 1, 9-14; never substitute it for a human module.
 - Source/gameplay boundary: Independent spacecraft/bike commands, roles, costs and entity ownership are not specified by current MT-101 canon; do not infer them from toy separability.
 - Remaining evidence gaps:

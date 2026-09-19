@@ -902,9 +902,10 @@ live; the current schema-9 copy/paste retains the complete experiment.
   See `Docs/Development/M85_T082_OPEN_APPEARANCE_BATCH.md`.
   The 2026-09-14 `далі` continues the recorded controlled MT-101 construction
   into one completed monochrome raster appearance, not a third free-form design
-  retry. This previous image is retained; the newer nested proposal below is
+  retry. This previous image is retained; the later source rebuild below is
   now selected in the gallery. Permanent closed
-  cabin, separate upper launcher/side auger and docked rear craft are visible;
+  cabin, separate upper launcher, incorrect screw-like drill approximation and
+  docked rear craft are visible;
   four wheels are visible, two far contacts remain occluded, so six-wheel raster
   topology and source fidelity are not automatically proven. Exact input roles,
   prompt, output hashes and attempt counts are guarded (69 cases total).
@@ -921,11 +922,35 @@ live; the current schema-9 copy/paste retains the complete experiment.
   extraction samples with zero surface intersections; not exact source dimensions,
   continuous collision proof or production certification. Two targeted raster
   attempts are retained: first rejected for tracks, second shows two separate
-  bike wheels and is selected `UNREVIEWED_NESTED_APPEARANCE_CORRECTION`.
+  bike wheels. The director subsequently rejected that entire appearance as
+  unlike MT-101; it is now historical `DIRECTOR_REJECTED_SOURCE_FIDELITY`.
   Historical attempts, old image bytes/prompts/native and director finding remain
   unchanged. Eight new claim guards preserve all previous 78 (86 total).
   No independent gameplay, appearance acceptance or production integration.
   See `Docs/Development/M85_T082_MT101_NESTED_APPEARANCE.md`.
+  The director authorized deep source research and unlimited image retries,
+  not new gameplay or self-acceptance. Official cover/construction pages and an
+  independent assembled-set photo exposed the wrong retained generic rover:
+  curved RHINO shells, steep narrow cabin, broad barrel wheels and spiky drill
+  with two star cutters had been lost. A new completed monochrome proposal in
+  `ArtSource/M85/Preproduction/MT101SourceRebuildV1/` begins from five official
+  source images. Rev2–rev4 use the preceding source-rebuild raster only as a
+  localized edit canvas under explicit official controls; rejected pre-rebuild
+  native/generated shapes are excluded. Four source-led generations are
+  retained: three document rejected launcher,
+  spacecraft and drill substitutions; rev4 passes recorded resemblance
+  self-review and is selected
+  `UNREVIEWED_SOURCE_REBUILT_APPEARANCE`; director acceptance remains required.
+  Its Bionicle Zamor sphere launcher, rear wedge canopy, side tubes, two rear
+  fins and drill cup/collar are now independently checked. Four chassis wheels
+  and one low rear wing plate are visible; hidden contacts, the occluded second
+  low wing and contained bike fit are
+  not proven by the raster. Book 2 p42 shows rear bike insertion with shells
+  open; the preserved old native upward sampled path is not official mechanism
+  evidence. Prior image/native bytes, generation-time records and counts remain
+  untouched. Fifteen added guards preserve all earlier 86 (101 total).
+  No canon, independent gameplay or production-model integration.
+  See `Docs/Development/M85_T082_MT101_SOURCE_REBUILD_RESEARCH.md`.
   Ownership, deletion intent, approval scope and selected bytes are guarded.
   Actual saved mesh transforms and nine negative native control fixtures pass.
   See `Docs/Development/M85_T082_SOURCE_LOCKED_CORRECTIONS.md`.

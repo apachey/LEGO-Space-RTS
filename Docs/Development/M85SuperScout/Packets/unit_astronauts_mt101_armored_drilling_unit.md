@@ -44,16 +44,17 @@ Open question: The faction-internal construction, motion, socket and material dr
   - Evidence pages book 2, 35-43: Permanent front cabin and independent upper launcher/drill; p43 explicitly separates the rear spacecraft from MT-101 and the mini-bike from the spacecraft.
 - View/mechanism coverage: front=VERIFIED book 2 p24-43; rear=VERIFIED book 2 p27-43; leftRight=VERIFIED both books; top=VERIFIED book 2 p2-43; threeQuarter=VERIFIED covers and book 2 p35-43; undersideInterior=VERIFIED book 1 p30-47 and book 2 p2-27; mechanism=VERIFIED book 2 p35-43 rotating drill carriage and movable rear module
 - Verified findings:
-  - MT-101 is a long open heavy chassis suspended between six individually mounted oversized orange wheels.
+  - MT-101 is a long open heavy chassis suspended between six individually mounted broad hard-plastic orange barrel wheels.
   - The steep armored cockpit is a permanent part of the main vehicle at the front; detaching the rear spacecraft does not remove it.
+  - Two large curved studded white side shells close above the central chassis and the docked rear module.
   - The rear spacecraft is an integrated detachable human module of MT-101, not an excluded unrelated support flyer.
-  - The human two-wheel mini-bike is contained inside the rear spacecraft and separates from it; book 2 p43 shows MT-101 -> rear spacecraft -> mini-bike.
-  - The raised drilling carriage remains exposed above the central/rear frame, while a separate smaller gun/tool assembly retains its own mount.
-  - The long drill rotates independently and may not be merged with the secondary gun/tool into one conventional tank cannon.
+  - The human two-wheel mini-bike enters the rear spacecraft from behind while the shells are open; book 2 p43 establishes hierarchy, not a literal upward extraction axis.
+  - The drilling carriage stays exposed on a slender articulated boom above the forward cabin/frame; its black spiky tip, two star cutters and rear cup/collar remain distinct from the compact Bionicle Zamor sphere launcher.
+  - The drill and launcher may not be merged into one conventional tank cannon.
 - Source assembly scope: `OFFICIAL_MODEL_STRUCTURE_ONLY_NOT_RUNTIME_ROSTER`
   - MT101 — parent: none (root); ROOT_HEAVY_CHASSIS_WITH_PERMANENT_FRONT_CABIN; evidence: book 2, 35 and 43
-  - RearSpacecraft — parent: MT101; DIRECTLY_DOCKED_DETACHABLE_MODULE; evidence: book 1, 15-29; book 2, 43
-  - MiniBike — parent: RearSpacecraft; CONTAINED_EXTRACTABLE_TWO_WHEEL_VEHICLE; evidence: book 1, 8; book 2, 43
+  - RearSpacecraft — parent: MT101; DIRECTLY_DOCKED_DETACHABLE_MODULE_BELOW_CURVED_SHELLS; evidence: book 1, 15-29; book 2, 42-43
+  - MiniBike — parent: RearSpacecraft; REAR_LOADED_CONTAINED_TWO_WHEEL_VEHICLE; evidence: book 1, 8; book 2, 42-43
 - Excluded opponent: Separately built Alien scout, book 1, 9-14; never substitute it for a human module.
 - Source/gameplay boundary: Independent spacecraft/bike commands, roles, costs and entity ownership are not specified by current MT-101 canon; do not infer them from toy separability.
 - Remaining evidence gaps:
@@ -67,47 +68,51 @@ Any `PARTIAL` or `MISSING` view remains an explicit gap. One flattering three-qu
 
 ## C. Recognition contract
 
-**Silhouette thesis:** A long six-wheel armored drill carrier with a permanent steep forward cockpit, separate drill and secondary gun/tool, and directly docked rear spacecraft containing a two-wheel mini-bike.
+**Silhouette thesis:** A long six-wheel armored drill carrier with a permanent steep forward cockpit, curved central shells, exposed articulated drill and compact Zamor launcher, plus a directly docked rear spacecraft containing a two-wheel mini-bike.
 
 Non-removable identity anchors:
 
-- six large suspended wheels
+- six broad suspended barrel wheels
 - permanent steep forward cockpit
-- raised drill separate from secondary gun/tool
-- long white-orange equipment deck
-- directly docked rear spacecraft with separate cockpit and visible docking seam
+- paired curved studded central shells
+- exposed spiky drill with two star cutters and rear cup collar
+- compact Bionicle Zamor sphere launcher separate from drill
+- directly docked rear spacecraft with wedge cockpit and visible docking seam
 
 - Rejected V1 blind-review code: `S10`. Historical failed boards: [24-cell](../Silhouettes/blind_24_cells.svg), [44-cell](../Silhouettes/blind_44_cells.svg), [72-cell](../Silhouettes/blind_72_cells.svg). The game director recognized 0/66 at 24 cells; this primitive concept is not an approved model or accepted evidence.
 - Palette and material hierarchy: Field Systems retain rugged white/light-gray/medium-blue construction; Mission Systems retain clean white/orange/black construction. Shared identity comes from insignia and interfaces, not shape averaging.
 - Forbidden genericization: Do not blend the two source lineages into generic white sci-fi or add military forms unsupported by the mapped expedition function.
 - Nearest-confusion baseline:
 
-- `unit.astronauts.mobile_mining_platform` — Both are large white-orange ground mining machines. Mitigations: Mining Platform exposes its material path and detachable processing module; MT-101 encloses the tool in an armored assault nose. / Mining Platform uses a broad harvesting head; MT-101 uses one central heavy drill. / Mining Platform reads as an equipment platform with cargo space; MT-101 reads as a long six-wheel breach chassis.
-- `unit.astronauts.mt201_ultra_drill_walker` — Both are advanced heavy Mission drilling machines. Mitigations: MT-101 remains a long six-wheel vehicle; MT-201 deploys four stabilizer legs. / MT-101's drill is a forward nose; MT-201's drill is a towering central installation. / MT-101 preserves a mobile horizontal profile; MT-201 changes to a huge vertical siege silhouette.
-- `unit.rock_raiders.chrome_crusher` — Both are large wheeled heavy drill assault machines. Mitigations: Chrome Crusher has four giant wheels; MT-101 has six suspended wheels. / Chrome Crusher exposes teal industrial work machinery; MT-101 uses a clean white-orange armored mission deck. / Chrome Crusher's drill shares the silhouette with a raised work light and cargo gear; MT-101's drill forms a central armored nose.
+- `unit.astronauts.mobile_mining_platform` — Both are large white-orange ground mining machines. Mitigations: Mining Platform exposes its material path and detachable processing module; MT-101 closes paired curved shells over an open suspension chassis. / Mining Platform uses a broad harvesting head; MT-101 carries an exposed spiky two-disc drill on a slender forward boom. / Mining Platform reads as an equipment platform with cargo space; MT-101 reads as a long six-wheel breach chassis with a compact separate Zamor launcher.
+- `unit.astronauts.mt201_ultra_drill_walker` — Both are advanced heavy Mission drilling machines. Mitigations: MT-101 remains a long six-wheel vehicle; MT-201 deploys four stabilizer legs. / MT-101's drill projects from an exposed slender boom above its forward cabin; MT-201's drill is a towering central installation. / MT-101 preserves a mobile horizontal profile; MT-201 changes to a huge vertical siege silhouette.
+- `unit.rock_raiders.chrome_crusher` — Both are large wheeled heavy drill assault machines. Mitigations: Chrome Crusher has four giant wheels; MT-101 has six broad suspended barrel wheels. / Chrome Crusher exposes teal industrial work machinery; MT-101 closes paired white-orange curved shells over an open black chassis. / Chrome Crusher's drill shares the silhouette with a raised work light and cargo gear; MT-101 exposes a spiky two-disc drill on a separate slender boom beside a compact Zamor launcher.
 
 ## D. Construction contract
 
 - Contract state: `SOURCE_VERIFIED`. This is an internally checked draft, not game-director approval.
 - Semantic part map:
-  - Six independently mounted orange wheels — carry the huge suspended chassis — SOURCE_VERIFIED.
+  - Six independently mounted broad orange barrel wheels — carry the huge suspended chassis — SOURCE_VERIFIED.
   - Permanent steep armored forward cockpit — remains on the main chassis when the rear spacecraft detaches — SOURCE_VERIFIED.
-  - Elevated rotating drill carriage — delivers the anti-heavy contact tool through an exposed machine path — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.
-  - Separate secondary gun/tool mount — stays visually and mechanically distinct from the drill — SOURCE_VERIFIED.
-  - Rear spacecraft — directly docked detachable module belonging to MT-101, with its own cockpit, paired equipment cylinders and fins — SOURCE_VERIFIED book 1 p29 / book 2 p43.
-  - Two-wheel mini-bike — contained and extractable inside the rear spacecraft, not loose cargo on the main chassis or an omitted supporting build — SOURCE_VERIFIED book 1 p8 / book 2 p43.
+  - Paired curved studded central shells — close above the open chassis and nested rear module — SOURCE_VERIFIED.
+  - Exposed rotating drill carriage — slender articulated boom carries a spiky bit, two star cutters and rear cup/collar above the forward cabin/frame — SOURCE_VERIFIED/CANON_DERIVED_ADAPTATION.
+  - Compact Bionicle Zamor sphere launcher — stays visually and mechanically distinct from the drill — SOURCE_VERIFIED.
+  - Rear spacecraft — directly docked detachable module belonging to MT-101, with wedge cockpit, paired equipment cylinders, low wings and two high fins — SOURCE_VERIFIED book 1 p29 / book 2 p42-43.
+  - Two-wheel mini-bike — contained and rear-loaded into the rear spacecraft, not loose cargo on the main chassis or an omitted supporting build — SOURCE_VERIFIED book 1 p8 / book 2 p42-43.
 - Structural load path: Six wheel mounts support a long open chassis; the permanent forward cockpit braces the nose while the raised drill carriage transfers thrust into the central rails. The directly docked rear spacecraft carries its own contained mini-bike and equipment cylinders.
-- Repeated modules / connection grammar: Six wheel modules, permanent front cabin, long chassis, independent drill carriage and separate secondary gun/tool; MT101 -> RearSpacecraft -> MiniBike. Rear spacecraft is directly docked; two-wheel mini-bike is contained inside it. Exclude only the opposing Alien scout, not either human module.
-- Source-faithful versus adapted boundary: Preserve the complete source assembly and distinguish the permanent front cabin from the rear spacecraft cockpit. Toy detachability does not approve independent spacecraft/bike gameplay, commands, costs or extra roster entities; those remain a director canon decision. Source projectile play does not define combat; the contact drill cannot open authored terrain routes or fuse with the secondary gun/tool.
+- Repeated modules / connection grammar: Six wheel modules, permanent front cabin, long chassis, independent drill carriage and separate compact Bionicle Zamor sphere launcher; MT101 -> RearSpacecraft -> MiniBike. Rear spacecraft is directly docked; two-wheel mini-bike is contained inside it. Exclude only the opposing Alien scout, not either human module.
+- Source-faithful versus adapted boundary: Preserve the complete source assembly and distinguish the permanent front cabin from the rear spacecraft cockpit. Toy detachability does not approve independent spacecraft/bike gameplay, commands, costs or extra roster entities; those remain a director canon decision. Source projectile play does not define combat; the contact drill cannot open authored terrain routes or fuse with the Zamor launcher.
 
 ## E. Material and texture contract
 
 - Geometry must carry:
-  - six huge wheels
+  - six broad barrel wheels
   - permanent steep front cabin
-  - elevated long drill carriage
-  - directly docked rear spacecraft with separate cockpit
-  - two-wheel mini-bike stowed inside rear spacecraft with credible extraction clearance
+  - paired curved studded central shells
+  - exposed spiky drill with two star cutters and rear cup collar
+  - compact Bionicle Zamor sphere launcher separate from drill
+  - directly docked rear spacecraft with wedge cockpit, side tubes, low wings and two high fins
+  - two-wheel mini-bike stowed inside rear spacecraft with credible rear-loading clearance
 - Accepted master-material roles: `Body`, `Accent`, `Tool`, `Rubber`, `Glass`, `Signal`, `Lamp`, `Neutral`.
 - Reusable texture requirements:
   - `ast_mission_shell_surface` — Very subtle clean-shell roughness variation for white-orange Mission Systems hulls without weathering them into Raider machinery. Channels: Tangent-space normal and linear roughness; no photographic albedo or baked highlights. Resolution: 2048x2048; texel density: 256 px/m at Close; tiling: Shared model-space 4 m repeat with continuous phase across large shells.; LOD fallback: Normal removed at Strategic; clean master-material blocks remain. Provenance/state: Project-authored procedural source informed by verified Mission Systems panels; human review required. `SPECIFIED_NOT_AUTHORED`.

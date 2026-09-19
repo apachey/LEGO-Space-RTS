@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "stableId": "unit.astronauts.mt101_armored_drilling_unit",
+  "status": "UNREVIEWED_SOURCE_REBUILT_APPEARANCE",
+  "productionAccepted": false,
+  "canonImpact": "NONE",
+  "tool": "BUILT_IN_IMAGEGEN",
+  "authority": {"baseCommit": "54861b8", "message": "Допускаю нескінченну генерацію, поки не буде настільки добре і зрозуміло, що ти зможеш сміливо показати мені", "scope": "Source-led MT-101 image retries and self-review only; no gameplay, architecture or director acceptance."},
+  "history": {"freeFormAttempts": 2, "nativeConstructionApproaches": 1, "controlledRasterFinishes": 1, "targetedNestedCorrections": 2, "sourceRebuildGenerations": 4},
+  "attempts": [
+    {"number": 1, "file": "mt101_source_rebuild_rev1.png", "sha256": "d94a5982311ff95d5b92b4c355d04107e617bf2288c66810cd37b5e7fadd91f2", "prompt": "prompt_rev1.txt", "promptSha256": "49e315fe2ec6e0af02c8a8eb73ed35d9317e713e3fb7d91f2b4b448d4bd60f45", "finding": "REJECTED_OVERSIZED_RING_LAUNCHER_AND_UNREADABLE_REAR_SPACECRAFT", "inputs": [
+      {"file": "ArtSource/M85/Preproduction/MT101ControlledAppearanceV1/reference_7699_book2_cover.png", "sha256": "cbb37fddf08f16da2300178cfe97ecf72d91c9caff56be04fb3186c81f69fcdd", "role": "AUTHORITATIVE_OFFICIAL_OVERALL_ANCHOR"},
+      {"file": "ArtSource/M85/Preproduction/MT101SourceRebuildV1/reference_book2_p35.png", "sha256": "9c6ac3ec875ba64c717d78becf0825df41f65c640f32b213555910bd76333f54", "role": "OFFICIAL_MAIN_CHASSIS_SUPPORT"},
+      {"file": "ArtSource/M85/Preproduction/MT101SourceRebuildV1/reference_book2_p42.png", "sha256": "a24ab407fe0a923ed528a9b12e3d20119b0237c986c60ba17c02be2462084cda", "role": "OFFICIAL_ASSEMBLED_NESTING_SUPPORT"},
+      {"file": "ArtSource/M85/Preproduction/MT101SourceRebuildV1/reference_book2_p39.png", "sha256": "5797f581de8a6cdfa7b6a9e35706e58afeea911c51401a2dbf99fc3a6a9dbe0d", "role": "OFFICIAL_DRILL_SUPPORT"},
+      {"file": "ArtSource/M85/Preproduction/MT101SourceRebuildV1/reference_book1_p29.png", "sha256": "d91649064f9dc2ab0d2daabe3db9a7eb5e7977f1a4541a5eddaacbd7b0960905", "role": "OFFICIAL_REAR_SPACECRAFT_SUPPORT"}
+    ]},
+    {"number": 2, "file": "mt101_source_rebuild_rev2.png", "sha256": "b563d10f32a9a94dc41b9e4df96ada4f7a53adf7d1fcfd3a519bc22c8cf49d43", "prompt": "prompt_rev2.txt", "promptSha256": "8223529dbba04bcdd89da14a5d02e49c4e1dfaae731660bb4c5c18b24b32542c", "finding": "REJECTED_ZAMOR_LAUNCHER_MUTATED_TO_TAIL_FIN", "inputs": [
+      {"file": "ArtSource/M85/Preproduction/MT101SourceRebuildV1/mt101_source_rebuild_rev1.png", "sha256": "d94a5982311ff95d5b92b4c355d04107e617bf2288c66810cd37b5e7fadd91f2", "role": "PREVIOUS_SOURCE_REBUILD_EDIT_CANVAS_REJECTED_FOR_LAUNCHER_AND_REAR_CRAFT"},
+      {"file": "ArtSource/M85/Preproduction/MT101ControlledAppearanceV1/reference_7699_book2_cover.png", "sha256": "cbb37fddf08f16da2300178cfe97ecf72d91c9caff56be04fb3186c81f69fcdd", "role": "OFFICIAL_LAUNCHER_AND_OVERALL_CONTROL"},
+      {"file": "ArtSource/M85/Preproduction/MT101SourceRebuildV1/reference_book1_p29.png", "sha256": "d91649064f9dc2ab0d2daabe3db9a7eb5e7977f1a4541a5eddaacbd7b0960905", "role": "OFFICIAL_REAR_SPACECRAFT_CONTROL"},
+      {"file": "ArtSource/M85/Preproduction/MT101SourceRebuildV1/reference_book2_p42.png", "sha256": "a24ab407fe0a923ed528a9b12e3d20119b0237c986c60ba17c02be2462084cda", "role": "OFFICIAL_ASSEMBLED_NESTING_CONTROL"}
+    ]},
+    {"number": 3, "file": "mt101_source_rebuild_rev3.png", "sha256": "37d10ec4cbc354726cdcbd35b31d2e59e8b6b542198a8d6ddd615d4f2ee1bd6e", "prompt": "prompt_rev3.txt", "promptSha256": "1a2d7a7f70bfc20f788ab0aeaca37a1f32a76d6ab5d85f6304c9bfdf4c5a0655", "finding": "REJECTED_REAR_COCKPIT_CYLINDRICAL_AND_DRILL_COLLAR_MISSING", "inputs": [
+      {"file": "ArtSource/M85/Preproduction/MT101SourceRebuildV1/mt101_source_rebuild_rev2.png", "sha256": "b563d10f32a9a94dc41b9e4df96ada4f7a53adf7d1fcfd3a519bc22c8cf49d43", "role": "PREVIOUS_SOURCE_REBUILD_EDIT_CANVAS_REJECTED_FOR_LAUNCHER"},
+      {"file": "ArtSource/M85/Preproduction/MT101ControlledAppearanceV1/reference_7699_book2_cover.png", "sha256": "cbb37fddf08f16da2300178cfe97ecf72d91c9caff56be04fb3186c81f69fcdd", "role": "OFFICIAL_ASSEMBLED_LAUNCHER_CONTROL"},
+      {"file": "ArtSource/M85/Preproduction/MT101SourceRebuildV1/reference_book2_p35.png", "sha256": "9c6ac3ec875ba64c717d78becf0825df41f65c640f32b213555910bd76333f54", "role": "OFFICIAL_TOP_FRONT_ASSEMBLY_CONTROL"},
+      {"file": "ArtSource/M85/Preproduction/MT101SourceRebuildV1/reference_book2_p42.png", "sha256": "a24ab407fe0a923ed528a9b12e3d20119b0237c986c60ba17c02be2462084cda", "role": "OFFICIAL_REAR_FIN_SEPARATION_CONTROL"}
+    ]},
+    {"number": 4, "file": "mt101_source_rebuild_rev4.png", "sha256": "aecb0822dbc854e319786ab115c30e6355a38ef7f955ed9ff987e27106d8675d", "prompt": "prompt_rev4.txt", "promptSha256": "c2022190b12d6daa744f88d52b39bd03d26e9b601d65ec3adbd3ffc8948a08c5", "finding": "SOURCE_RECOGNITION_SELF_REVIEW_PASSED_NOT_DIRECTOR_ACCEPTED", "inputs": [
+      {"file": "ArtSource/M85/Preproduction/MT101SourceRebuildV1/mt101_source_rebuild_rev3.png", "sha256": "37d10ec4cbc354726cdcbd35b31d2e59e8b6b542198a8d6ddd615d4f2ee1bd6e", "role": "PREVIOUS_SOURCE_REBUILD_EDIT_CANVAS_REJECTED_FOR_REAR_COCKPIT_AND_DRILL_COLLAR"},
+      {"file": "ArtSource/M85/Preproduction/MT101SourceRebuildV1/reference_book1_p29.png", "sha256": "d91649064f9dc2ab0d2daabe3db9a7eb5e7977f1a4541a5eddaacbd7b0960905", "role": "OFFICIAL_REAR_SPACECRAFT_CONTROL"},
+      {"file": "ArtSource/M85/Preproduction/MT101SourceRebuildV1/reference_book2_p39.png", "sha256": "5797f581de8a6cdfa7b6a9e35706e58afeea911c51401a2dbf99fc3a6a9dbe0d", "role": "OFFICIAL_DRILL_CONTROL"},
+      {"file": "ArtSource/M85/Preproduction/MT101SourceRebuildV1/reference_book2_p42.png", "sha256": "a24ab407fe0a923ed528a9b12e3d20119b0237c986c60ba17c02be2462084cda", "role": "OFFICIAL_ASSEMBLED_NESTING_CONTROL"}
+    ]}
+  ],
+  "officialReferences": [
+    {"file": "ArtSource/M85/Preproduction/MT101ControlledAppearanceV1/reference_7699_book2_cover.png", "sha256": "cbb37fddf08f16da2300178cfe97ecf72d91c9caff56be04fb3186c81f69fcdd", "role": "OFFICIAL_COVER_OVERALL_APPEARANCE_ANCHOR"},
+    {"file": "ArtSource/M85/Preproduction/MT101SourceRebuildV1/reference_book2_p35.png", "sha256": "9c6ac3ec875ba64c717d78becf0825df41f65c640f32b213555910bd76333f54", "role": "OFFICIAL_MAIN_CHASSIS_AND_PERMANENT_CABIN"},
+    {"file": "ArtSource/M85/Preproduction/MT101SourceRebuildV1/reference_book2_p42.png", "sha256": "a24ab407fe0a923ed528a9b12e3d20119b0237c986c60ba17c02be2462084cda", "role": "OFFICIAL_ASSEMBLED_NESTING_AND_REAR_BIKE_INSERTION"},
+    {"file": "ArtSource/M85/Preproduction/MT101SourceRebuildV1/reference_book2_p39.png", "sha256": "5797f581de8a6cdfa7b6a9e35706e58afeea911c51401a2dbf99fc3a6a9dbe0d", "role": "OFFICIAL_SPIKY_DRILL_WITH_TWO_STAR_CUTTERS"},
+    {"file": "ArtSource/M85/Preproduction/MT101SourceRebuildV1/reference_book1_p29.png", "sha256": "d91649064f9dc2ab0d2daabe3db9a7eb5e7977f1a4541a5eddaacbd7b0960905", "role": "OFFICIAL_REAR_SPACECRAFT_SHAPE_ONLY"}
+  ],
+  "inputPolicy": "Rev1 uses five official references. Rev2-rev4 use the previous source-rebuild raster only as an edit canvas plus official correction controls. Rejected pre-rebuild generated and native shapes are excluded.",
+  "inspection": {"closedSteepCabin": true, "curvedStuddedShells": true, "broadBarrelWheels": true, "twoStarDrillCutters": true, "rearDrillCupCollar": true, "separateZamorSphereLauncher": true, "rearCraftAttached": true, "rearCraftWedgeCanopy": true, "twoFarRearFins": true, "visibleLowWingPlates": 1, "secondLowWingOccluded": true, "twoLowWingRasterTopologyProven": false, "visibleChassisWheels": 4, "sixWheelRasterTopologyProven": false, "bikeStowageProvenByRaster": false, "exactSourceGeometryProven": false, "gameplayCameraAccepted": false},
+  "research": {"file": "Docs/Development/M85_T082_MT101_SOURCE_REBUILD_RESEARCH.md", "sha256": "bfd05a086cc2d5f1a3cb779730ef050e00f7640c35ca5fe6ec74e8686f631ff6"},
+  "nativeBoundary": "Historical native controls remain untouched; their upward sampled extraction path is not evidence of the official rear-insertion mechanism. The rejected native shape is not an appearance input.",
+  "limitations": "Finished source-led image proposal only. Hidden far-side contacts, the source-required but occluded second low wing, contained mini-bike and actual mechanical fit are not proven by this single raster. Source resemblance is self-assessed, not director acceptance or production certification."
+}

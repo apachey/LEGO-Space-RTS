@@ -12,6 +12,68 @@ import validate_m85_super_scout as validator
 
 
 class ReviewGuardTests(unittest.TestCase):
+    def test_mt_source_rebuild_cannot_self_accept(self):
+        self.assert_rejected(validator.MT101_SOURCE_REBUILD_REVIEW,
+                             lambda f: f.update(status="DIRECTOR_ACCEPTED_APPEARANCE"), "appearance into acceptance")
+
+    def test_mt_source_rebuild_cannot_promote_production(self):
+        self.assert_rejected(validator.MT101_SOURCE_REBUILD,
+                             lambda f: f.update(productionAccepted=True), "appearance into acceptance")
+
+    def test_mt_source_rebuild_cannot_hide_whole_rejection(self):
+        self.assert_rejected(validator.MT101_NESTED_APPEARANCE_REVIEW,
+                             lambda f: f.pop("rejectionEvidence"), "whole-appearance rejection evidence")
+
+    def test_mt_source_rebuild_cannot_reset_history(self):
+        self.assert_rejected(validator.MT101_SOURCE_REBUILD,
+                             lambda f: f["history"].update(targetedNestedCorrections=0), "reset previous attempts")
+
+    def test_mt_source_rebuild_cannot_hide_image_retry_authority(self):
+        self.assert_rejected(validator.MT101_SOURCE_REBUILD,
+                             lambda f: f["authority"].pop("message"), "unlimited image retry authority")
+
+    def test_mt_source_rebuild_cannot_preserve_wrong_rover_anchor(self):
+        self.assert_rejected(validator.MT101_SOURCE_REBUILD,
+                             lambda f: f["officialReferences"][0].update(file="ArtSource/M85/Preproduction/MT101ControlledAppearanceV1/mt101_completed_rev1.png"), "official reference anchors")
+
+    def test_mt_source_rebuild_cannot_hide_edit_canvas_chain(self):
+        self.assert_rejected(validator.MT101_SOURCE_REBUILD,
+                             lambda f: f["attempts"][1]["inputs"].pop(0), "per-attempt input chain")
+
+    def test_mt_source_rebuild_cannot_claim_occluded_low_wing(self):
+        self.assert_rejected(validator.MT101_SOURCE_REBUILD,
+                             lambda f: f["inspection"].update(twoLowWingRasterTopologyProven=True), "judgement into geometry proof")
+
+    def test_mt_source_rebuild_cannot_revert_zamor_to_generic_tool(self):
+        def mutate(record):
+            mt = next(item for item in record["assets"] if item["stableId"] == "unit.astronauts.mt101_armored_drilling_unit")
+            mt["construction"]["modules"] = mt["construction"]["modules"].replace("separate compact Bionicle Zamor sphere launcher", "separate secondary gun/tool")
+        self.assert_rejected(validator.ASTRONAUTS_CONTRACTS, mutate, "exact Zamor launcher terminology")
+
+    def test_mt_source_rebuild_cannot_claim_hidden_bike_fit(self):
+        self.assert_rejected(validator.MT101_SOURCE_REBUILD,
+                             lambda f: f["inspection"].update(bikeStowageProvenByRaster=True), "judgement into geometry proof")
+
+    def test_mt_source_rebuild_cannot_claim_hidden_six_wheels(self):
+        self.assert_rejected(validator.MT101_SOURCE_REBUILD,
+                             lambda f: f["inspection"].update(sixWheelRasterTopologyProven=True), "judgement into geometry proof")
+
+    def test_mt_source_rebuild_cannot_restore_rejected_image(self):
+        self.assert_rejected(validator.MT101_SOURCE_REBUILD_REVIEW,
+                             lambda f: f.update(file="ArtSource/M85/Preproduction/MT101NestedAppearanceV1/mt101_nested_appearance_rev2.png"), "rejected or wrong image")
+
+    def test_mt_source_rebuild_cannot_invent_extraction_truth(self):
+        self.assert_rejected(validator.MT101_SOURCE_REBUILD,
+                             lambda f: f.update(nativeBoundary="The upward sampled path proves the official mechanism."), "native path into source truth")
+
+    def test_mt_source_rebuild_cannot_hide_gameplay_gate(self):
+        self.assert_rejected(validator.MT101_SOURCE_REBUILD_REVIEW,
+                             lambda f: f["pending"].pop(), "director or gameplay gates")
+
+    def test_mt_source_rebuild_cannot_change_research_silently(self):
+        self.assert_rejected(validator.MT101_SOURCE_REBUILD,
+                             lambda f: f["research"].update(sha256="0" * 64), "research artifact")
+
     def test_mt_nested_appearance_cannot_auto_accept(self):
         self.assert_rejected(validator.MT101_NESTED_APPEARANCE_REVIEW,
                              lambda f: f.update(status="DIRECTOR_ACCEPTED_APPEARANCE"), "expanded unreviewed scope")
