@@ -9,7 +9,6 @@
   "canonImpact": "NONE",
   "priorityPending": [
     "unit.aliens.etx_alien_strike",
-    "unit.astronauts.mobile_mining_platform",
     "unit.martians.jet_scooter",
     "unit.martians.red_planet_protector"
   ],
@@ -269,14 +268,14 @@
     },
     {
       "stableId": "unit.astronauts.mobile_mining_platform",
-      "file": "Docs/Development/M85SuperScout/Silhouettes/FullV2/Renders/unit_astronauts_mobile_mining_platform_rev1.png",
-      "sha256": "f8c01de76ad3bc646cec17fdc73a42e4d9ffe4fa68e4e819e1698e810a6e537b",
-      "status": "UNREVIEWED_CORRECTION_CANDIDATE",
-      "origin": "FullV2/generation_manifest.json:revisionCandidates",
+      "file": "ArtSource/M85/Preproduction/MobileMiningPlatformSourceRebuildV1/mobile_mining_platform_source_rebuild_rev2.png",
+      "sha256": "9011581e8d388e4f04b8a044d4a39f23f695ae2899252b66684e48b9e2311f1d",
+      "status": "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW",
+      "origin": "mobile_mining_platform_source_rebuild_review.json",
       "code": "C24",
       "name": "Mobile Mining Platform",
       "faction": "Astronauts",
-      "priorityPending": true
+      "priorityPending": false
     },
     {
       "stableId": "unit.astronauts.mx71_recon_dropship",

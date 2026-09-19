@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "stableId": "unit.astronauts.mobile_mining_platform",
+  "configuration": "CRYSTAL_REAPER",
+  "status": "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW",
+  "file": "ArtSource/M85/Preproduction/MobileMiningPlatformSourceRebuildV1/mobile_mining_platform_source_rebuild_rev2.png",
+  "sha256": "9011581e8d388e4f04b8a044d4a39f23f695ae2899252b66684e48b9e2311f1d",
+  "productionAccepted": false,
+  "canonImpact": "NONE",
+  "authority": {
+    "baseCommit": "6ffb6df",
+    "messages": ["далі", "погналі"],
+    "scope": "Continue the next open T082 completed appearance using the already approved size system; no gameplay, architecture, canon or production approval."
+  },
+  "approvalEvidence": {
+    "baseCommit": "6ffb6df",
+    "message": "+",
+    "scope": "Rev2 Crystal Reaper completed appearance only; comparative review acceptance, not production integration, exact geometry, alternate configuration approval or gameplay change."
+  },
+  "finding": "Rev2 preserves the broad low 7645-derived tracked platform, two enormous front harvesting wheels, two separately readable clamp manipulators and one compact spacecraft/processing craft seated directly on a visible central docking interface. It removes Rev1's gun-like upper hardware and reduces detail density while retaining the official-set-scale construction language.",
+  "pending": [
+    "Final gameplay-camera and production review",
+    "Ore Drill configuration appearance",
+    "Service-controlled Mission Refit appearance and exact production topology"
+  ],
+  "historicalBoundary": "The earlier FullV2 rev1 and source-rebuild Rev1 remain historical rejected/unreviewed evidence. This approval selects only source-rebuild Rev2 for comparative appearance review and does not rewrite source audits, approve hidden mechanical fit or accept alternate configurations."
+}

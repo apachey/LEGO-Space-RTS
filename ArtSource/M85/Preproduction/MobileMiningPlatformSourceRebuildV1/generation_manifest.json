@@ -1,0 +1,113 @@
+{
+  "schema": 1,
+  "stableId": "unit.astronauts.mobile_mining_platform",
+  "configuration": "CRYSTAL_REAPER",
+  "status": "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW",
+  "productionAccepted": false,
+  "canonImpact": "NONE",
+  "tool": "BUILT_IN_IMAGEGEN",
+  "authority": {
+    "baseCommit": "6ffb6df",
+    "messages": ["далі", "погналі"],
+    "scope": "Continue the next open T082 completed appearance using the already approved size system; no gameplay, architecture, canon or production approval."
+  },
+  "approvalEvidence": {
+    "baseCommit": "6ffb6df",
+    "message": "+",
+    "scope": "Rev2 Crystal Reaper completed appearance only; comparative review acceptance, not production integration, exact geometry, alternate configuration approval or gameplay change."
+  },
+  "attempts": [
+    {
+      "number": 1,
+      "file": "mobile_mining_platform_source_rebuild_rev1.png",
+      "sha256": "6dab85fb10a8d6e5f8c2e36e93744865541599abdee90e4d781e7dc6905adbd7",
+      "prompt": "prompt_rev1.txt",
+      "promptSha256": "bb431924c1ee3db8305d7ea8884c27abc3c9a33fe50c0ade3239e5e9e288ca10",
+      "finding": "SELF_REJECTED_GUN_LIKE_UPPER_HARDWARE_AND_SECOND_MANIPULATOR_NOT_READABLE",
+      "inputs": [
+        {
+          "file": "reference_book2_p45.png",
+          "sha256": "70edb1b9ecfa99ef1b7447383c5296ef10c176110734005f200862788e5cf7e4",
+          "role": "OFFICIAL_COMPLETE_DOCKED_CRYSTAL_REAPER_STRUCTURE"
+        },
+        {
+          "file": "reference_book1_p50.png",
+          "sha256": "b6f33c3b51a308e9d62c983dfdd4e8b3f28a7e768cb792ed37aa600409d5d0b4",
+          "role": "OFFICIAL_DETACHABLE_CRAFT_AND_TWO_MANIPULATORS"
+        },
+        {
+          "file": "reference_book2_p65.png",
+          "sha256": "9e6337f135c52d88c9da52aa702a63935784a39bff8966824fad705d1be9ca95",
+          "role": "OFFICIAL_CRAFT_DETACHMENT_RELATIONSHIP"
+        },
+        {
+          "file": "ArtSource/M85/Preproduction/MT101SourceRebuildV1/mt101_source_rebuild_rev5.png",
+          "sha256": "4e6583ce4eb2ae7941967a23a2692358a42abbfc191b831a99c1dac2c1d1752c",
+          "role": "DIRECTOR_ACCEPTED_GRAYSCALE_RENDERING_STYLE_ONLY"
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "file": "mobile_mining_platform_source_rebuild_rev2.png",
+      "sha256": "9011581e8d388e4f04b8a044d4a39f23f695ae2899252b66684e48b9e2311f1d",
+      "prompt": "prompt_rev2.txt",
+      "promptSha256": "c4599b4c1a387805fab0da4038b788d67ab5c4ba3db74796db07f763677c3bdd",
+      "finding": "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW",
+      "inputs": [
+        {
+          "file": "mobile_mining_platform_source_rebuild_rev1.png",
+          "sha256": "6dab85fb10a8d6e5f8c2e36e93744865541599abdee90e4d781e7dc6905adbd7",
+          "role": "PREVIOUS_SOURCE_REBUILD_EDIT_CANVAS_SELF_REJECTED_FOR_GUN_LIKE_HARDWARE_AND_ARM_READABILITY"
+        },
+        {
+          "file": "reference_book1_p50.png",
+          "sha256": "b6f33c3b51a308e9d62c983dfdd4e8b3f28a7e768cb792ed37aa600409d5d0b4",
+          "role": "OFFICIAL_TWO_MANIPULATOR_CONSTRUCTION_CONTROL"
+        },
+        {
+          "file": "reference_book2_p45.png",
+          "sha256": "70edb1b9ecfa99ef1b7447383c5296ef10c176110734005f200862788e5cf7e4",
+          "role": "OFFICIAL_COMPLETE_DOCKED_STRUCTURE_AND_DETAIL_DENSITY_CONTROL"
+        }
+      ]
+    }
+  ],
+  "officialReferences": [
+    {
+      "file": "reference_book2_p45.png",
+      "sha256": "70edb1b9ecfa99ef1b7447383c5296ef10c176110734005f200862788e5cf7e4",
+      "sourcePdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4549395.pdf",
+      "sourcePdfSha256": "335a6f1a74eb8d0ffc45008fd3405970f1de59397429e22ecde8db7731cec06c",
+      "role": "OFFICIAL_COMPLETE_DOCKED_CRYSTAL_REAPER_STRUCTURE"
+    },
+    {
+      "file": "reference_book1_p50.png",
+      "sha256": "b6f33c3b51a308e9d62c983dfdd4e8b3f28a7e768cb792ed37aa600409d5d0b4",
+      "sourcePdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4534846.pdf",
+      "sourcePdfSha256": "1b8452dfec80a9be23d2bc2e78bbb8194dbb085789fb1d25aad8cf8c8fda3c4b",
+      "role": "OFFICIAL_DETACHABLE_CRAFT_AND_TWO_MANIPULATORS"
+    },
+    {
+      "file": "reference_book2_p65.png",
+      "sha256": "9e6337f135c52d88c9da52aa702a63935784a39bff8966824fad705d1be9ca95",
+      "sourcePdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4549395.pdf",
+      "sourcePdfSha256": "335a6f1a74eb8d0ffc45008fd3405970f1de59397429e22ecde8db7731cec06c",
+      "role": "OFFICIAL_CRAFT_DETACHMENT_RELATIONSHIP"
+    }
+  ],
+  "inspection": {
+    "twoSeparatedTrackRuns": true,
+    "twoGiantFrontHarvestingWheels": true,
+    "twoVisibleIndependentClampManipulators": true,
+    "directlyDockedDetachableCraft": true,
+    "dockingSeamVisible": true,
+    "minifigureScaleVisible": true,
+    "trailerAbsent": true,
+    "gunLikeAttachmentsAbsent": true,
+    "sourceSetDetailDensityImproved": true,
+    "exactSourceGeometryProven": false,
+    "gameplayCameraAccepted": false
+  },
+  "limitations": "Completed appearance proposal for director review only. The raster communicates the source-required topology and detachable relationship but does not prove hidden mechanical fit, exact brick inventory, gameplay-camera readability, production topology or the still-open Ore Drill and Mission Refit configurations."
+}

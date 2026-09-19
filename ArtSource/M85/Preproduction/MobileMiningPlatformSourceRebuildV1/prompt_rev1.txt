@@ -1,0 +1,23 @@
+Create a finished source-controlled concept render for the LEGO Space RTS unit "Mobile Mining Platform - Crystal Reaper configuration".
+
+REFERENCE ROLES
+- Reference 1 (official 7645 instruction page 45): PRIMARY STRUCTURE. Reproduce its recognizable complete docked Crystal Reaper topology and proportions.
+- Reference 2 (official 7645 instruction page 50): DETACHABLE CRAFT. Use its compact pointed cockpit craft, canopy, side plates, twin tail fins, and two articulated clamp arms.
+- Reference 3 (official 7645 instruction page 65): MECHANICAL RELATIONSHIP. It proves that the cockpit craft lifts away intact from the tracked platform; show it docked, not flying, but make the separation seam obvious.
+- Reference 4 (accepted MT-101 concept): RENDERING STYLE ONLY. Match its grayscale LEGO studio photography, restrained official-set detail density, neutral background, and readable minifigure scale. Do not copy its six wheels, drill, launcher, or long armored hull.
+
+SUBJECT AND NON-NEGOTIABLE TOPOLOGY
+One single connected Crystal Reaper vehicle in a clean three-quarter front-left view.
+- Broad, low, open mining chassis with exactly two long separated continuous track runs, one on each side. Preserve open deck space between them; no solid modern-tank hull.
+- Exactly two enormous exposed circular harvesting saw wheels side by side at the very front between the track noses. Both circles fully readable. They are harvesting cutters, not wheels, drills, gears, or four smaller discs.
+- Exactly two separate articulated manipulator arms, one on each front side of the docked craft, both fully visible and clearly independent from the saw wheels. Each ends in a simple blocky clamp hand. Do not fuse the arms into the cutters.
+- One compact 7645-derived spacecraft/processing craft seated directly on the central deck above and immediately behind the saws. It has a pointed white mission nose, one large curved transparent canopy, broad side plates, compact rear shell, and two small tail fins. A minifigure is visible under the canopy for scale.
+- Show a clear horizontal docking seam / circular seat beneath the craft so it visibly could lift off intact, but there is no gap, drawbar, cable tow, trailer, rear wagon, or second loose craft.
+- Keep a visible simple material route from the saw area toward the center deck using only a few hoses and open cargo pockets. This is an economic mining machine, not a battle tank.
+- Use only plausible standard LEGO-like bricks and Technic-scale joints. Target the part density and chunky simplicity of an official 2008 LEGO set, around the apparent scale of the source model. Avoid hyper-detail, tiny greebles, realistic industrial tank engineering, or a model larger than the official set.
+
+VISUAL TREATMENT
+Monochrome grayscale/black-and-white presentation matching reference 4: white body pieces, black tracks and joints, mid-gray tools, pale transparent canopy, tonal separation where the original orange accents would be. No bright color.
+Neutral pale gray seamless studio background, soft grounded shadow, crisp product-photography lighting. Center the whole vehicle with comfortable margins. No text, labels, arrows, diagrams, borders, logos, loose parts, extra vehicles, alien elements, weapons, antennas posing as guns, people outside the vehicle, terrain, or scenery.
+
+Before finalizing, self-check the count and relationship: 2 tracks; 2 front saw wheels; 2 visible manipulator arms; 1 directly docked detachable craft; 0 trailers.

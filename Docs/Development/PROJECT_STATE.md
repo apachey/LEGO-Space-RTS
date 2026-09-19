@@ -1358,6 +1358,13 @@ blocking only when M9 must prove its stable-large-battle exit.
    rear-spacecraft/bike gameplay
    separately requires director scope (Phase 03 defines only ground MT-101);
    that decision is not a prerequisite for correcting the source model.
+   Mobile Mining Platform Crystal Reaper source-rebuild Rev2 is also accepted
+   for comparative appearance review: the selected raster preserves two track
+   runs, two enormous front harvesting wheels, two separate clamp manipulators
+   and one directly docked detachable craft. Ore Drill, Mission Refit, exact
+   production topology and gameplay-camera review remain open. The next
+   priority appearance is ETX Alien Strike, followed by Jet Scooter and Red
+   Planet Protector.
    Do not reset historical attempts or regenerate already successful assets.
 2. Execute the remaining Phase 09C M8.5 T082–T092 work before final M9 Skirmish
    Alpha acceptance.

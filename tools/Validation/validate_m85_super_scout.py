@@ -60,6 +60,8 @@ MT101_NESTED_APPEARANCE_REVIEW = ROOT / "Content/Presentation/SuperScout/mt101_n
 MT101_SOURCE_REBUILD = ROOT / "ArtSource/M85/Preproduction/MT101SourceRebuildV1/generation_manifest.json"
 MT101_SOURCE_REBUILD_REVIEW = ROOT / "Content/Presentation/SuperScout/mt101_source_rebuild_review.json"
 MT101_NESTED_CONSTRUCTION = ROOT / "ArtSource/M85/Preproduction/MT101NestedAssemblyV1/construction_audit.json"
+MMP_SOURCE_REBUILD = ROOT / "ArtSource/M85/Preproduction/MobileMiningPlatformSourceRebuildV1/generation_manifest.json"
+MMP_SOURCE_REBUILD_REVIEW = ROOT / "Content/Presentation/SuperScout/mobile_mining_platform_source_rebuild_review.json"
 
 CLASSIFICATIONS = {
     "OFFICIAL_DIRECT": "OFFICIAL-DIRECT",
@@ -977,6 +979,75 @@ def validate_mt101_source_rebuild() -> None:
         fail("MT source rebuild lost research artifact")
 
 
+def validate_mmp_source_rebuild() -> None:
+    record = json.loads(MMP_SOURCE_REBUILD.read_text(encoding="utf-8"))
+    review = json.loads(MMP_SOURCE_REBUILD_REVIEW.read_text(encoding="utf-8"))
+    identity = ("unit.astronauts.mobile_mining_platform", "CRYSTAL_REAPER",
+                "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW", False, "NONE")
+    for item in (record, review):
+        if tuple(item.get(key) for key in ("stableId", "configuration", "status", "productionAccepted", "canonImpact")) != identity:
+            fail("MMP source rebuild expanded comparative appearance acceptance")
+    authority = {
+        "baseCommit": "6ffb6df",
+        "messages": ["далі", "погналі"],
+        "scope": "Continue the next open T082 completed appearance using the already approved size system; no gameplay, architecture, canon or production approval.",
+    }
+    approval = {
+        "baseCommit": "6ffb6df",
+        "message": "+",
+        "scope": "Rev2 Crystal Reaper completed appearance only; comparative review acceptance, not production integration, exact geometry, alternate configuration approval or gameplay change.",
+    }
+    if record.get("authority") != authority or review.get("authority") != authority:
+        fail("MMP source rebuild lost continuation authority or scope")
+    if record.get("approvalEvidence") != approval or review.get("approvalEvidence") != approval:
+        fail("MMP source rebuild lost exact director approval evidence")
+    expected_attempts = [
+        (1, "mobile_mining_platform_source_rebuild_rev1.png", "6dab85fb10a8d6e5f8c2e36e93744865541599abdee90e4d781e7dc6905adbd7", "prompt_rev1.txt", "bb431924c1ee3db8305d7ea8884c27abc3c9a33fe50c0ade3239e5e9e288ca10", "SELF_REJECTED_GUN_LIKE_UPPER_HARDWARE_AND_SECOND_MANIPULATOR_NOT_READABLE"),
+        (2, "mobile_mining_platform_source_rebuild_rev2.png", "9011581e8d388e4f04b8a044d4a39f23f695ae2899252b66684e48b9e2311f1d", "prompt_rev2.txt", "c4599b4c1a387805fab0da4038b788d67ab5c4ba3db74796db07f763677c3bdd", "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW"),
+    ]
+    attempts = record.get("attempts", [])
+    if record.get("tool") != "BUILT_IN_IMAGEGEN" or [tuple(a.get(k) for k in ("number", "file", "sha256", "prompt", "promptSha256", "finding")) for a in attempts] != expected_attempts:
+        fail("MMP source rebuild lost attempt provenance")
+    for attempt in attempts:
+        for file_key, hash_key in (("file", "sha256"), ("prompt", "promptSha256")):
+            path = MMP_SOURCE_REBUILD.parent / attempt[file_key]
+            if hashlib.sha256(path.read_bytes()).hexdigest() != attempt[hash_key]:
+                fail("MMP source rebuild image or prompt bytes changed")
+        for item in attempt.get("inputs", []):
+            path = ROOT / item["file"] if item["file"].startswith("ArtSource/") else MMP_SOURCE_REBUILD.parent / item["file"]
+            if hashlib.sha256(path.read_bytes()).hexdigest() != item["sha256"]:
+                fail("MMP source rebuild input chain changed")
+    refs = record.get("officialReferences", [])
+    expected_refs = [
+        ("reference_book2_p45.png", "70edb1b9ecfa99ef1b7447383c5296ef10c176110734005f200862788e5cf7e4", "OFFICIAL_COMPLETE_DOCKED_CRYSTAL_REAPER_STRUCTURE"),
+        ("reference_book1_p50.png", "b6f33c3b51a308e9d62c983dfdd4e8b3f28a7e768cb792ed37aa600409d5d0b4", "OFFICIAL_DETACHABLE_CRAFT_AND_TWO_MANIPULATORS"),
+        ("reference_book2_p65.png", "9e6337f135c52d88c9da52aa702a63935784a39bff8966824fad705d1be9ca95", "OFFICIAL_CRAFT_DETACHMENT_RELATIONSHIP"),
+    ]
+    if [tuple(item.get(key) for key in ("file", "sha256", "role")) for item in refs] != expected_refs:
+        fail("MMP source rebuild replaced official reference anchors")
+    for item in refs:
+        if hashlib.sha256((MMP_SOURCE_REBUILD.parent / item["file"]).read_bytes()).hexdigest() != item["sha256"]:
+            fail("MMP source rebuild official reference bytes changed")
+    expected_inspection = {
+        "twoSeparatedTrackRuns": True, "twoGiantFrontHarvestingWheels": True,
+        "twoVisibleIndependentClampManipulators": True, "directlyDockedDetachableCraft": True,
+        "dockingSeamVisible": True, "minifigureScaleVisible": True, "trailerAbsent": True,
+        "gunLikeAttachmentsAbsent": True, "sourceSetDetailDensityImproved": True,
+        "exactSourceGeometryProven": False, "gameplayCameraAccepted": False,
+    }
+    if record.get("inspection") != expected_inspection:
+        fail("MMP source rebuild promoted visual judgement into geometry proof")
+    if (review.get("file"), review.get("sha256")) != (
+            "ArtSource/M85/Preproduction/MobileMiningPlatformSourceRebuildV1/mobile_mining_platform_source_rebuild_rev2.png",
+            expected_attempts[1][2]):
+        fail("MMP source rebuild review selected the wrong image")
+    if review.get("pending") != ["Final gameplay-camera and production review", "Ore Drill configuration appearance", "Service-controlled Mission Refit appearance and exact production topology"]:
+        fail("MMP source rebuild hid alternate-configuration or production gates")
+    boundary = review.get("historicalBoundary", "")
+    if "FullV2 rev1" not in boundary or "source-rebuild Rev1" not in boundary or "does not" not in boundary:
+        fail("MMP source rebuild hid rejected historical candidates")
+
+
 def validate_current_comparison() -> None:
     record = json.loads(CURRENT_COMPARISON.read_text(encoding="utf-8"))
     if (record.get("gate"), record.get("state"), record.get("productionAccepted"), record.get("canonImpact")) != (
@@ -1007,7 +1078,13 @@ def validate_current_comparison() -> None:
             "ArtSource/M85/Preproduction/MT101SourceRebuildV1/mt101_source_rebuild_rev5.png",
             "4e6583ce4eb2ae7941967a23a2692358a42abbfc191b831a99c1dac2c1d1752c"):
         fail("current comparison replaced accepted MT appearance")
-    pending = sorted(["unit.astronauts.mobile_mining_platform", "unit.aliens.etx_alien_strike",
+    mining = by_id["unit.astronauts.mobile_mining_platform"]
+    if (mining.get("status"), mining.get("file"), mining.get("sha256")) != (
+            "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW",
+            "ArtSource/M85/Preproduction/MobileMiningPlatformSourceRebuildV1/mobile_mining_platform_source_rebuild_rev2.png",
+            "9011581e8d388e4f04b8a044d4a39f23f695ae2899252b66684e48b9e2311f1d"):
+        fail("current comparison replaced accepted MMP appearance")
+    pending = sorted(["unit.aliens.etx_alien_strike",
                       "unit.martians.jet_scooter", "unit.martians.red_planet_protector"])
     if record.get("priorityPending") != pending:
         fail("current comparison hid priority review gaps")
@@ -1029,6 +1106,7 @@ def main() -> None:
     validate_mt101_nested_structure()
     validate_mt101_nested_appearance()
     validate_mt101_source_rebuild()
+    validate_mmp_source_rebuild()
     validate_current_comparison()
     for path in (
         MANIFEST, LEDGER, INSTRUCTION_INDEX, SOURCE_ANALYSIS_POLICY, COMPOSED_DESIGN_PROPOSALS, ROCK_RAIDERS_EVIDENCE, ASTRONAUTS_EVIDENCE,

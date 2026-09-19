@@ -1,0 +1,16 @@
+Use case: precise-object-edit.
+
+TARGET: Reference 1 is the current grayscale Crystal Reaper concept. Preserve its successful global composition exactly: camera, framing, pale studio background, two long separated tracks, exactly two giant front harvesting saw wheels, open central deck, visible minifigure canopy, and the directly seated detachable spacecraft with circular docking seam.
+
+SOURCE CONTROLS:
+- Reference 2 shows the exact simple pair of articulated clamp arms on the 7645 cockpit craft.
+- Reference 3 shows the official complete docked Crystal Reaper and its restrained 2008 LEGO-set complexity.
+
+Make only these controlled corrections:
+1. REMOVE every gun-like or turret-like cylindrical assembly from the rear and side of the upper craft, including the raised rear-left barrel cluster and the long right-side barrel/beam. Do not replace them with weapons.
+2. Restore EXACTLY TWO clearly readable articulated manipulator arms, matching the simple chunky construction in reference 2. One attaches to the left-front side of the spacecraft and one to the right-front side. Both arms must be simultaneously visible, independent from the saws, about equal length, built from two or three broad jointed segments, angled slightly outward/forward, and each must terminate in an obvious small two-jaw blocky clamp hand. No cylindrical muzzle, drill, lamp, spear, or barrel at either end.
+3. Simplify visible construction density by roughly 30 percent: fewer tiny studs, holes, hoses, track-surface microdetails, and hidden mechanical layers; use larger clean plates, chunky Technic beams, and simple official-2008-set assemblies. Keep the model unmistakably brick-built, not smooth sci-fi concept art.
+4. Keep the detachable craft compact. Its rear shell and two fins must remain subordinate to the broad tracked platform, not become a large armored tank turret.
+5. Preserve monochrome grayscale, tonal separation, product-photography light, and no text/logos/arrows/loose parts.
+
+Hard final count check: 2 tracks, 2 giant front saw wheels, 2 visible clamp manipulator arms, 1 docked spacecraft, 0 trailers, 0 guns.

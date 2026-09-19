@@ -12,6 +12,31 @@ import validate_m85_super_scout as validator
 
 
 class ReviewGuardTests(unittest.TestCase):
+    def test_mmp_source_rebuild_cannot_expand_to_production(self):
+        self.assert_rejected(validator.MMP_SOURCE_REBUILD_REVIEW,
+                             lambda fixture: fixture.update(productionAccepted=True),
+                             "expanded comparative appearance acceptance")
+
+    def test_mmp_source_rebuild_requires_exact_director_approval(self):
+        self.assert_rejected(validator.MMP_SOURCE_REBUILD_REVIEW,
+                             lambda fixture: fixture.pop("approvalEvidence"),
+                             "exact director approval evidence")
+
+    def test_mmp_source_rebuild_cannot_restore_first_attempt(self):
+        self.assert_rejected(validator.MMP_SOURCE_REBUILD_REVIEW,
+                             lambda fixture: fixture.update(file="ArtSource/M85/Preproduction/MobileMiningPlatformSourceRebuildV1/mobile_mining_platform_source_rebuild_rev1.png"),
+                             "selected the wrong image")
+
+    def test_mmp_source_rebuild_cannot_claim_exact_geometry(self):
+        self.assert_rejected(validator.MMP_SOURCE_REBUILD,
+                             lambda fixture: fixture["inspection"].update(exactSourceGeometryProven=True),
+                             "judgement into geometry proof")
+
+    def test_mmp_source_rebuild_cannot_hide_open_configurations(self):
+        self.assert_rejected(validator.MMP_SOURCE_REBUILD_REVIEW,
+                             lambda fixture: fixture["pending"].pop(),
+                             "alternate-configuration or production gates")
+
     def test_mt_source_rebuild_cannot_expand_comparative_acceptance_to_production(self):
         self.assert_rejected(validator.MT101_SOURCE_REBUILD_REVIEW,
                              lambda f: f.update(status="PRODUCTION_ACCEPTED"), "beyond comparative review")

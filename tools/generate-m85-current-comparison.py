@@ -14,7 +14,6 @@ ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / "Docs/Development/M85SuperScout/Silhouettes/FullV2"
 OUTPUT = BASE / "CurrentComparisonV1"
 PENDING_UNITS = {
-    "unit.astronauts.mobile_mining_platform",
     "unit.aliens.etx_alien_strike",
     "unit.martians.jet_scooter",
     "unit.martians.red_planet_protector",
@@ -76,6 +75,9 @@ def selections() -> list[dict]:
     mt = read(ROOT / "Content/Presentation/SuperScout/mt101_source_rebuild_review.json")
     selected[mt["stableId"]] = {k: mt[k] for k in ("stableId", "file", "sha256", "status")}
     selected[mt["stableId"]]["origin"] = "mt101_source_rebuild_review.json"
+    mining = read(ROOT / "Content/Presentation/SuperScout/mobile_mining_platform_source_rebuild_review.json")
+    selected[mining["stableId"]] = {k: mining[k] for k in ("stableId", "file", "sha256", "status")}
+    selected[mining["stableId"]]["origin"] = "mobile_mining_platform_source_rebuild_review.json"
     assets = roster["assets"]
     if len(assets) != 66 or len(selected) != 66 or set(selected) != {a["stableId"] for a in assets}:
         raise ValueError("current comparison requires the exact 66-asset roster")

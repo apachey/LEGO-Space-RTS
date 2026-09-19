@@ -1,6 +1,7 @@
-# T082 — open completed-appearance batch after Claw acceptance
+# T082 — open completed-appearance batch after Claw, MT-101 and Crystal Reaper acceptance
 
-Date: 2026-09-13. Branch: `codex/m85-t082`, not merged. Canon impact: NONE.
+Opened 2026-09-13; updated 2026-09-20. Branch: `codex/m85-t082`, not merged.
+Canon impact: NONE.
 
 ## What changed / why
 
@@ -10,28 +11,30 @@ authority are recorded in `Content/Presentation/SuperScout/claw_tank_appearance_
 Its generation-time unreviewed manifest is historical, not rewritten.
 No extra retry or approval of MT-61/other assets is inferred.
 
-The current gallery now marks that Claw image accepted and removes it from
-priority-pending. The priority filter expands to four remaining completed
-correction candidates below plus MT-101. This initial assembly changed review
+The current gallery marks the Claw, MT-101 and source-rebuilt Crystal Reaper
+images accepted and removes them from priority-pending. The priority filter now
+contains the three remaining completed correction candidates below. This changes review
 priority, not the roster or gameplay. All 66 identities and 67 views remain;
-none of these four images was regenerated.
+Crystal Reaper alone was rebuilt from its official 7645 source pages in this
+continuation.
 
 ## Completed appearances for review
 
-These are the exact existing current-gallery images, not primitive blockouts,
-fresh variants or claims of production approval. Review source resemblance and
-visible tool/body composition; dimensions do not need reapproval.
+These are completed current-gallery appearances, not primitive blockouts or
+claims of production approval. Review source resemblance and visible tool/body
+composition; dimensions do not need reapproval.
 
 ### 1. Mobile Mining Platform — Crystal Reaper configuration
 
-Specialized remote resource extraction. The displayed 7645-derived state has
-two harvesting cutters, two manipulators and a directly docked upper craft,
-not a trailer. Canon combines 7645/7648/the human 7693 miner in one configurable
-family; Ore Drill appearance and Service-controlled Mission Refit remain open.
+Specialized remote resource extraction. Source-rebuild Rev2 is explicitly
+accepted for comparative appearance review. It has two harvesting cutters, two
+separate manipulators and a directly docked upper craft, not a trailer. Canon
+combines 7645/7648/the human 7693 miner in one configurable family; Ore Drill
+appearance and Service-controlled Mission Refit remain open.
 
-![Crystal Reaper](/Users/pavlosidash/Developer/Lego-Space-RTS/Docs/Development/M85SuperScout/Silhouettes/FullV2/Renders/unit_astronauts_mobile_mining_platform_rev1.png)
+![Crystal Reaper](/Users/pavlosidash/Developer/Lego-Space-RTS/ArtSource/M85/Preproduction/MobileMiningPlatformSourceRebuildV1/mobile_mining_platform_source_rebuild_rev2.png)
 
-SHA256: `f8c01de76ad3bc646cec17fdc73a42e4d9ffe4fa68e4e819e1698e810a6e537b`.
+SHA256: `9011581e8d388e4f04b8a044d4a39f23f695ae2899252b66684e48b9e2311f1d`.
 
 ### 2. ETX Alien Strike
 
@@ -68,17 +71,17 @@ SHA256: `4dd1481384b55dd77848fce313b0cdb9936c7e27ab34e951d662d57503553be9`.
 
 ## Scope / risks / next step
 
-All four remain `UNREVIEWED_CORRECTION_CANDIDATE` in the current selection.
-No approval is inferred from older ambiguous responses or the Claw-only `+`.
-An explicit response to this four-image block may resolve their image-only
-acceptance, not MT-101, Mothership source corrections, production topology,
-alternate configurations, archival gaps or the full T082 gate.
+Crystal Reaper Rev2 is `DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW`.
+Alien Strike, Jet Scooter and Red Planet Protector remain
+`UNREVIEWED_CORRECTION_CANDIDATE`. The Crystal Reaper `+` does not accept its
+Ore Drill or Mission Refit configurations, production topology, gameplay,
+Mothership source corrections, archival gaps or the full T082 gate.
 
-Continuation 2026-09-14: MT-101 now has its first controlled native-to-raster
-completed appearance, separately documented in
-`Docs/Development/M85_T082_MT101_CONTROLLED_APPEARANCE.md`. It remains unreviewed;
-the technical construction is internal control, not a finished visual handoff.
-No third free-form reconstruction or approval of these four images is inferred.
+Continuation 2026-09-19: MT-101 source-rebuild Rev5 is accepted for comparative
+appearance review; its exact scope is recorded separately and does not approve
+production or independent nested-module gameplay. Continuation 2026-09-20:
+Crystal Reaper source-rebuild Rev2 is accepted under the same comparative-only
+boundary. No approval of the three remaining images is inferred.
 
 ## Files / automated verification / regression / build
 

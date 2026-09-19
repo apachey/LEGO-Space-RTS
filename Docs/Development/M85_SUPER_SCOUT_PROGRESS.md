@@ -65,8 +65,12 @@ Claw-Tank localized second correction for comparative appearance review.
 Exact authority/image hash are in `Content/Presentation/SuperScout/claw_tank_appearance_review.json`.
 Historical generation status and both correction attempts remain unchanged.
 The current gallery marks Claw accepted and excludes it from pending priority.
-The next coherent handoff assembles the four existing completed open corrections:
-Crystal Reaper, Alien Strike, Jet Scooter and Protector, with gameplay roles.
+The later Crystal Reaper source rebuild replaces the overly tank-like candidate
+with a source-controlled low tracked 7645 composition: two harvesting wheels,
+two distinct clamp manipulators and one directly docked detachable craft. The
+director's `+` accepts Rev2 for comparative appearance review only. Ore Drill,
+Mission Refit, production topology and gameplay remain open. Alien Strike, Jet
+Scooter and Protector remain the three priority appearance candidates.
 The 2026-09-14 continuation then finishes MT-101 from the recorded native
 construction with one built-in raster pass, not a third free-form reconstruction.
 The gallery selects this unreviewed completed appearance; four main wheels are
@@ -102,7 +106,7 @@ recorded in `Content/Presentation/SuperScout/mx71_localized_appearance_review.js
 A separate `FullV2/CurrentComparisonV1/` gallery assembles all 66 identities and
 67 existing image views, retaining both accepted defense configurations.
 It is DIAGNOSTIC, named and unscaled, not a fresh blind/game-camera acceptance
-or production promotion. MT-61 remains a review candidate; Claw is now accepted;
+or production promotion. MT-61 Rev2 and Claw are now accepted for comparative review;
 MT-101's old unresolved raster is historical; the current selection now uses
 the completed controlled appearance above, never a finished-native approval gate.
 Earlier unreviewed Jet Scooter, Strike and Protector records and Mothership's
