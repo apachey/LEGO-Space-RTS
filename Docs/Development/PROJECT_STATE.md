@@ -744,12 +744,15 @@ live; the current schema-9 copy/paste retains the complete experiment.
   Alien Strike and Red Planet Protector. The conflict is now resolved by
   explicit game-director canon correction: ETX Alien Strike is exclusively
   airborne with no siege/deployment state. Second-wave candidates make the
-  Strike a continuous crescent aircraft, restore Protector's asymmetric source
-  cannons and make Jet Scooter lower and sleeker. Director review then rejected
-  the Protector rev2 because the narrow weapon edit preserved the wrong bulky
-  humanoid body. Rev3 rebuilds the whole 7313 topology as a broad wedge craft
-  on a tiny waist and two thin legs, with no arms and two unequal top-mounted
-  cannon booms. The candidates remain separate from the
+  Strike a continuous crescent aircraft, attempt Protector's asymmetric source
+  weapons and make Jet Scooter lower and sleeker. Director review rejected
+  Protector rev2 because the narrow weapon edit preserved the wrong bulky
+  humanoid body. Rev3 also remained wrong: its source description had removed
+  Centauri, obscured the closed wedge cockpit and misread two lower side lances
+  as a duplicated pair of large upper dish weapons. The corrected official
+  final-form audit now selects accepted source-rebuild Rev1: closed piloted
+  wedge craft, one long left dish cannon, one short right emitter, paired hip
+  fan pods and thin side lances over a slim twin-leg base. The candidates remain separate from the
   immutable first-review boards until the wider correction pass is ready.
   Director-supplied multi-angle references then corrected three more source
   reads: Mono Jet is a compact asymmetric drum/nozzle/operator assembly rather
@@ -1330,6 +1333,13 @@ The latest Stress60 run remained the expected diagnostic failure with phase
 completion **4/60, 5/60 and 2/60**. The exported macOS debug build is:
 `Builds/macOS/LEGO Space RTS.app`.
 
+The completed Red Planet Protector source correction and priority-appearance
+batch passed `./tools/verify.sh --full` with zero blocking failures at
+`Artifacts/Verification/20260920T160956Z-full-summary.txt`: 317 NUnit tests,
+132 T082 review guards, packet/gallery regeneration, deterministic checks,
+byte-identical Blender regeneration and macOS export all passed. The preserved
+60-mover M9 case remains the one expected `BLOCKING_LATER` diagnostic failure.
+
 ## Deferred M9 large-battle gate
 
 The legal stress60 fixture still exposes mid-route corridor traffic/yield
@@ -1370,9 +1380,12 @@ blocking only when M9 must prove its stable-large-battle exit.
    exclusively airborne central body. Exact hidden hinge fit, internal anatomy,
    gameplay-camera readability, flight-height presentation and production
    integration remain open. Intermediate instruction steps are historical
-   connection evidence only, not final-form references. The next priority
-   appearance is Red Planet Protector; Jet Scooter source-rebuild Rev1 is now
-   explicitly accepted for comparative appearance review.
+   connection evidence only, not final-form references. The priority appearance
+   batch is complete: Jet Scooter source-rebuild Rev1 and
+   source-corrected Red Planet Protector Rev1 are explicitly accepted for
+   comparative appearance review. The next T082 visual step is the renewed
+   complete comparison and 24/44/72-cell blind-review gate, not regeneration of
+   these accepted assets.
    Do not reset historical attempts or regenerate already successful assets.
 2. Execute the remaining Phase 09C M8.5 T082–T092 work before final M9 Skirmish
    Alpha acceptance.

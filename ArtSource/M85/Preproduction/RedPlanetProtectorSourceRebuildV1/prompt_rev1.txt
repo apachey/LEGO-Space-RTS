@@ -1,0 +1,26 @@
+Create a brand-new, finished neutral grayscale LEGO-compatible studio concept render of the Life on Mars 7313 Red Planet Protector in its COMPLETE ASSEMBLED WALKER MODE. This is a source-faithful reconstruction for an RTS unit appearance review, not an edit or modernization. Use the completed-front, completed-three-quarter and official-final-page references as the exact structural authority for the completed walker; use the Centauri reference only for the exact pilot identity; use the accepted Jet Scooter only for the restrained monochrome studio-render language and early-2000s official-set detail density.
+
+Composition:
+- Full body, centered, front three-quarter view from slightly above, all feet visible, clean soft-white seamless background, soft studio shadow.
+- It must read immediately as “a small wide wedge spacecraft docked on a slim two-legged base,” not as a humanoid robot.
+- Preserve the light, slightly awkward 2001 LEGO set proportions and roughly 189-piece visual complexity. Large simple brick-built masses, visible studs and recognizable LEGO connections. No hyper-detailed fan MOC, no tiny greeble overload.
+
+Non-negotiable upper craft:
+- A LOW, BROAD, FLAT, triangular/wedge-shaped removable spacecraft is the entire upper body.
+- Long tapered CLOSED transparent-smoke canopy down the center-front. The canopy is unmistakably closed.
+- Exactly one correct Centauri is seated inside and visibly readable through the canopy: broad dark-turquoise Martian head with blue mask/trunk print, dark-turquoise arms, blue mechanical torso and angular blue legs. Not a human, not a helmeted astronaut, not a green Mars Mission alien, not a generic robot.
+- Viewer-left of the image: exactly ONE long near-horizontal upper cannon ending in ONE large vertical black circular dish/ring with a small orange central emitter. The dish and barrel are rigidly attached to the upper craft.
+- Viewer-right of the image: exactly ONE much SHORTER, SMALLER cylindrical emitter with a small orange core mounted close to the front/side edge of the wedge craft on a pale wedge bracket. It is not a long cannon and has no large dish.
+- Keep the asymmetric white/light-gray wedge plates, blue/gray body blocks and visible hoses behind the cockpit, translated into the project's neutral graphite/gray grayscale presentation.
+
+Non-negotiable lower body:
+- A small visible central docking/waist block beneath the spacecraft.
+- A broad horizontal hip crossbar with TWO square outer fan/engine pods, one on each side, with the round fan discs visibly readable.
+- From EACH outer fan pod hangs or projects exactly ONE separate long thin rod/lance ending in a small compact emitter tip. These are side-mounted rods, not upper cannons, not arms, and not claws.
+- Exactly TWO tall, narrow, simple legs. Thin shins with one circular grille motif each. Low, long, flat wedge feet with no toes, no claws and no giant armored boots.
+- The upper spacecraft must overhang the narrow lower base.
+
+Strict negatives:
+open canopy, empty cockpit, hidden pilot, wrong alien, human pilot, helmet, generic robot pilot, humanoid robot head, face-like torso, spherical torso, bulky chest, arms, hands, claws, symmetrical twin cannons, second large dish, two long upper cannons, mirrored weapon sides, swapped weapons, floating or detached cannon, missing fan pods, fan pods used as shoulders, side rods turned into arms, extra weapons, extra legs, bulky thighs, giant feet, toe blocks, Bionicle styling, modern military mech, excessive greebling, colored final render, scenery, text, logos, instruction-page border, alternate flight configuration, partially assembled instruction step, combination model.
+
+Self-check before finalizing: closed canopy with visible Centauri; one and only one large dish on viewer-left; one clearly smaller short emitter on viewer-right; two distinct hip fan pods; two separate thin side rods with small tips; two slim legs and flat feet; broad flat wedge craft; official-set-level simplicity.

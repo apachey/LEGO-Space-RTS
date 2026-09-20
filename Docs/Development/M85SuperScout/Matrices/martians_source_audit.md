@@ -106,14 +106,15 @@ This generated review records what the available official instructions or labele
 - Evidence state: `OFFICIAL_PDF_VISUALLY_AUDITED`
 - Evidence links: [official instruction PDF 1](https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4160158.pdf)
 - Construction map:
-  - Evidence pages 2-14: Low blue/gray wedge craft with open operator area, hoses and two long removable emitter/tool arms.
-  - Evidence pages 15-23: Separate broad twin-foot biped lower body; the complete upper craft docks onto it to form the tall Protector.
+  - Evidence pages 2-14: Low broad blue/gray wedge craft with a closed tapered canopy over Centauri, visible hoses, one long left dish cannon and one much shorter right emitter.
+  - Evidence pages 15-23: Separate slim twin-foot lower chassis with a central dock, paired outer fan pods and one thin orange-tipped side lance on each pod; the complete wedge craft docks above it.
   - Evidence pages 24-28: Two independent low ground support/emitter devices are built and shown beside the complete Protector; they are not part of its body.
-  - Evidence pages 29-33: Final source photography and explicit hand-separated reconfiguration from biped into a low craft with the leg and central body modules relocated.
-- View/mechanism coverage: front=VERIFIED p28-33; rear=PARTIAL p28-33; leftRight=VERIFIED p2-33; top=VERIFIED p2-33; threeQuarter=VERIFIED p1 and p28-33; undersideInterior=VERIFIED p2-28 staged modules; mechanism=VERIFIED p30-33 biped-to-craft reconfiguration; continuous motion and planted control action remain missing
+  - Evidence pages 29-33: Page 29 shows the complete assembled walker. Pages 30-33 explicitly hand-separate and relocate the upper craft, fan pods and lower-body modules into a low flight configuration; those steps are mechanism evidence, not final walker-appearance authority.
+- View/mechanism coverage: front=VERIFIED p29 and completed-product photography; rear=PARTIAL p29-33; leftRight=VERIFIED p2-33; top=VERIFIED p2-33; threeQuarter=VERIFIED p1, p29 and completed-product photography; undersideInterior=VERIFIED p2-28 staged modules; mechanism=VERIFIED p30-33 hand-separated biped-to-craft reconfiguration; continuous connected motion and planted control action remain missing
 - Verified findings:
-  - The source Protector is a modular tall biped assembled from a low wedge craft, a broad two-foot lower body and two long detachable emitter arms.
-  - Its upper craft keeps a broad triangular nose and visible hoses; the separate leg blocks and side arms remain readable even after final assembly.
+  - The completed Protector is a modular tall biped whose entire upper body is a low broad removable wedge craft with a closed smoke canopy and visible Centauri, not an empty spherical robot torso.
+  - Its upper weapons are not mirrored: viewer-left carries one long cannon ending in a large black dish with an orange center, while viewer-right carries one much shorter small emitter close to the wedge edge.
+  - The lower crossbar carries two separate fan pods and two long thin orange-tipped side lances above slim legs and flat wedge feet; these parts are not duplicate top cannons or humanoid arms.
   - The alternate low craft is made by hand-separating and relocating major modules, so the source proves both silhouettes but not a continuous in-game planted transformation.
 - Remaining evidence gaps:
   - The canonical Martian palette, anti-heavy control action and credible continuous mobile-to-planted transition require an explicit adaptation contract; the source's blue/gray paint and hand-separated rebuild do not decide them.

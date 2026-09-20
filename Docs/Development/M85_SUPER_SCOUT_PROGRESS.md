@@ -115,9 +115,9 @@ It is DIAGNOSTIC, named and unscaled, not a fresh blind/game-camera acceptance
 or production promotion. MT-61 Rev2 and Claw are now accepted for comparative review;
 MT-101's old unresolved raster is historical; the current selection now uses
 the completed controlled appearance above, never a finished-native approval gate.
-The gallery now selects accepted Alien Strike Rev6 and the explicitly selected
-Jet Scooter source-rebuild Rev1; Protector remains unreviewed, and Mothership's
-source corrections remain open. Historical
+The gallery now selects accepted Alien Strike Rev6, the explicitly selected
+Jet Scooter source-rebuild Rev1 and the accepted source-corrected Red Planet
+Protector Rev1; Mothership's source corrections remain open. Historical
 boards and rejected image bytes are unchanged.
 See `Docs/Development/M85_T082_CURRENT_COMPARISON.md`.
 This continuation passed `./tools/verify.sh`: 23/23 fast blocking stages,
@@ -257,16 +257,20 @@ failures. No new game export or candidate integration was performed.
   as generic support structures or even as the wrong faction. Responses V51-V56
   were present in the original message but omitted by the recording pass; they
   are now restored verbatim without changing the revision-required result.
-  Three first-wave correction
-  candidates are preserved. A second correction wave now makes Jet Scooter
-  lower and sleeker, restores Red Planet Protector's source-accurate asymmetric
-  cannon booms, and rebuilds ETX Alien Strike as one continuous flying crescent
-  craft. The Protector rev2 remained wrong because that local weapon edit kept
-  a bulky humanoid body. Rev3 therefore rebuilds the complete 7313 silhouette:
-  broad wedge craft, tiny waist, two thin legs, no arms and unequal top-mounted
-  cannon booms. The game director explicitly corrected canon: 7693 has no
+  Three first-wave correction candidates are preserved. A second correction
+  wave made Jet Scooter lower and sleeker, attempted Red Planet Protector's
+  asymmetry and rebuilt ETX Alien Strike as one continuous flying crescent
+  craft. Protector rev2 remained wrong because that local weapon edit kept a
+  bulky humanoid body; rev3 also remained wrong because the source description
+  still invented two large upper dish weapons, removed Centauri and obscured
+  the closed wedge cockpit and lower fan-pod lances. A later official-final-form
+  audit corrected the 7313 evidence and source contract. Accepted source-rebuild
+  Rev1 now shows the closed piloted wedge craft, one long left dish cannon, one
+  short right emitter, paired hip fan pods, thin side lances and slim twin-leg
+  base. The game director explicitly corrected canon: 7693 has no
   ground, walking or siege-deployment state. The three new renders remain review
-  candidates and do not silently replace the hash-locked first-review boards.
+  candidates and do not silently replace the hash-locked first-review boards;
+  the separate current gallery now selects the accepted source rebuilds.
 - A later source-decomposition correction wave now adds two unreviewed
   candidates. The 7645 Crystal Reaper state restores two huge front harvesting
   wheels, two distinct manipulators and a detachable upper spacecraft/processing

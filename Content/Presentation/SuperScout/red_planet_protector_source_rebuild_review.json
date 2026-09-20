@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "stableId": "unit.martians.red_planet_protector",
+  "status": "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW",
+  "file": "ArtSource/M85/Preproduction/RedPlanetProtectorSourceRebuildV1/red_planet_protector_source_rebuild_rev1.png",
+  "sha256": "61f06f7896461ec71986e3e679adf1448af347ef5f37eaa33d8280fd8aa601f1",
+  "productionAccepted": false,
+  "canonImpact": "NONE",
+  "authority": {
+    "baseCommit": "77d3d6a",
+    "messages": ["далі"],
+    "scope": "Accept the displayed completed Red Planet Protector source rebuild and continue the approved T082 work; correct the 7313 source description without changing gameplay, production status or Canon."
+  },
+  "approvalEvidence": {
+    "baseCommit": "77d3d6a",
+    "message": "далі",
+    "selectedAttempt": 1,
+    "scope": "The displayed Rev1 Red Planet Protector is accepted for comparative appearance review only; this does not approve production integration, exact piece topology, source colors, gameplay-camera readability or the connected Protector Stance transformation."
+  },
+  "finding": "Rev1 restores the completed 7313 read as a low broad removable wedge craft docked above a slim twin-legged base. Centauri is visible through the closed tapered canopy; the upper weapons are deliberately unequal, with one long viewer-left dish cannon and one short viewer-right emitter; two lower fan pods and their separate thin side lances remain visible without becoming arms or duplicate cannons.",
+  "pending": [
+    "Final gameplay-camera and production review",
+    "Exact production piece topology and hidden connection legality",
+    "Source-color and material translation",
+    "Continuous connected Mobile-to-Protector-Stance mechanism and Guard Sweep presentation"
+  ],
+  "historicalBoundary": "FullV2 Rev3 remains rejected historical evidence: its empty opaque cockpit, spherical humanoid torso and duplicated large upper dishes came from an incorrect source description. This approval selects only source-rebuild Rev1 for comparative appearance review and does not approve exact LEGO construction, production integration, gameplay behavior or the source toy's hand-rebuilt flight conversion as an in-game mechanism."
+}

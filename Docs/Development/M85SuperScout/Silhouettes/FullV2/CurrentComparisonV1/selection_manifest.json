@@ -7,9 +7,7 @@
   "views": 67,
   "productionAccepted": false,
   "canonImpact": "NONE",
-  "priorityPending": [
-    "unit.martians.red_planet_protector"
-  ],
+  "priorityPending": [],
   "selections": [
     {
       "stableId": "unit.rock_raiders.crew",
@@ -628,14 +626,14 @@
     },
     {
       "stableId": "unit.martians.red_planet_protector",
-      "file": "Docs/Development/M85SuperScout/Silhouettes/FullV2/Renders/unit_martians_red_planet_protector_rev3.png",
-      "sha256": "4dd1481384b55dd77848fce313b0cdb9936c7e27ab34e951d662d57503553be9",
-      "status": "UNREVIEWED_CORRECTION_CANDIDATE",
-      "origin": "FullV2/generation_manifest.json:revisionCandidates",
+      "file": "ArtSource/M85/Preproduction/RedPlanetProtectorSourceRebuildV1/red_planet_protector_source_rebuild_rev1.png",
+      "sha256": "61f06f7896461ec71986e3e679adf1448af347ef5f37eaa33d8280fd8aa601f1",
+      "status": "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW",
+      "origin": "red_planet_protector_source_rebuild_review.json",
       "code": "C56",
       "name": "Red Planet Protector",
       "faction": "Martians",
-      "priorityPending": true
+      "priorityPending": false
     },
     {
       "stableId": "unit.martians.excavation_searcher",

@@ -14,9 +14,7 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / "Docs/Development/M85SuperScout/Silhouettes/FullV2"
 OUTPUT = BASE / "CurrentComparisonV1"
-PENDING_UNITS = {
-    "unit.martians.red_planet_protector",
-}
+PENDING_UNITS: set[str] = set()
 
 
 def read(path: Path) -> dict:
@@ -83,6 +81,9 @@ def selections() -> list[dict]:
     jet = read(ROOT / "Content/Presentation/SuperScout/jet_scooter_source_rebuild_review.json")
     selected[jet["stableId"]] = {k: jet[k] for k in ("stableId", "file", "sha256", "status")}
     selected[jet["stableId"]]["origin"] = "jet_scooter_source_rebuild_review.json"
+    protector = read(ROOT / "Content/Presentation/SuperScout/red_planet_protector_source_rebuild_review.json")
+    selected[protector["stableId"]] = {k: protector[k] for k in ("stableId", "file", "sha256", "status")}
+    selected[protector["stableId"]]["origin"] = "red_planet_protector_source_rebuild_review.json"
     assets = roster["assets"]
     if len(assets) != 66 or len(selected) != 66 or set(selected) != {a["stableId"] for a in assets}:
         raise ValueError("current comparison requires the exact 66-asset roster")
@@ -124,7 +125,7 @@ body{margin:0;background:#eceef1;color:#17202b;font:16px system-ui}header{paddin
 article{background:white;border:1px solid #c9ced6;border-radius:10px;padding:16px}h2{font-size:19px;margin:0}article p{font-size:12px;color:#495461;overflow-wrap:anywhere}img{display:block;width:100%;height:auto}button{padding:10px 16px;border-radius:6px;border:1px solid #748293;background:white;font:inherit;cursor:pointer}body.pending article:not([data-pending]){display:none}a{color:inherit}
 </style><header><h1>T082 — актуальний порівняльний набір</h1>
 <p>66 позицій реєстру, 67 зображень із двома головами однієї оборонної споруди. Тут використано вже збережені виправлення, а не повторні генерації. Натисни на зображення для повного розміру.</p>
-<p>Це огляд із назвами, не сліпий тест і не перевірка масштабу в грі. Старі базові картинки залишені лише як контекст, не як автоматично погоджений вигляд. Виправлений MT-101 погоджений для цього порівняльного огляду: зореліт приєднаний позаду, мінібайк прихований усередині, а повний Zamor launcher стоїть окремо над кабіною. ETX Alien Strike також погоджений у завершеній виключно польотній формі: чотири чорні чверть-кільцеві секції складають дві площинні шарнірні дуги навколо центрального корпусу. Jet Scooter тепер використовує явно вибрану директором першу source-rebuild генерацію: відкритий марсіанин, дві довгі бічні труби та пара передніх сопел. Картинки не доводять точність конструкції чи роботу в грі. У Mothership досі не погоджені оператори та рельєф замість друку.</p>
+<p>Це огляд із назвами, не сліпий тест і не перевірка масштабу в грі. Старі базові картинки залишені лише як контекст, не як автоматично погоджений вигляд. Виправлений MT-101 погоджений для цього порівняльного огляду: зореліт приєднаний позаду, мінібайк прихований усередині, а повний Zamor launcher стоїть окремо над кабіною. ETX Alien Strike також погоджений у завершеній виключно польотній формі: чотири чорні чверть-кільцеві секції складають дві площинні шарнірні дуги навколо центрального корпусу. Jet Scooter використовує явно вибрану директором першу source-rebuild генерацію. Red Planet Protector тепер відновлює завершений 7313: закрита кабіна з Centauri, одна велика ліва dish-гармата, короткий правий емітер, два вентиляторні модулі й окремі тонкі бічні штанги. Картинки не доводять точність конструкції чи роботу в грі. У Mothership досі не погоджені оператори та рельєф замість друку.</p>
 <button id="filter" type="button" aria-pressed="false">Лише відкриті пріоритетні юніти</button></header><main>''' + "".join(cards) + '''</main><script>
 document.getElementById('filter').addEventListener('click',function(){const pending=document.body.classList.toggle('pending');this.setAttribute('aria-pressed',String(pending));this.textContent=pending?'Показати всі 66 позицій':'Лише відкриті пріоритетні юніти';});
 </script></html>'''

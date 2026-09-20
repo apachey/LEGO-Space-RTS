@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "stableId": "unit.martians.red_planet_protector",
+  "status": "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW",
+  "productionAccepted": false,
+  "canonImpact": "NONE",
+  "tool": "BUILT_IN_IMAGEGEN",
+  "authority": {
+    "baseCommit": "77d3d6a",
+    "messages": ["далі"],
+    "scope": "Accept the displayed completed Red Planet Protector source rebuild and continue the approved T082 work; correct the 7313 source description without changing gameplay, production status or Canon."
+  },
+  "approvalEvidence": {
+    "baseCommit": "77d3d6a",
+    "message": "далі",
+    "selectedAttempt": 1,
+    "scope": "The displayed Rev1 Red Planet Protector is accepted for comparative appearance review only; this does not approve production integration, exact piece topology, source colors, gameplay-camera readability or the connected Protector Stance transformation."
+  },
+  "attempts": [
+    {
+      "number": 1,
+      "file": "red_planet_protector_source_rebuild_rev1.png",
+      "sha256": "61f06f7896461ec71986e3e679adf1448af347ef5f37eaa33d8280fd8aa601f1",
+      "prompt": "prompt_rev1.txt",
+      "promptSha256": "e4e73e2f0fb3bac894e65ed3124f4f2ffb864ae864db83b85e57b9907715fa74",
+      "finding": "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW",
+      "inputs": [
+        {
+          "file": "reference_7313_completed_front.jpg",
+          "sha256": "2d1cf2c680d59f9bd63a86d35d7955d7c94d7d578cedb12a2b66b8fcc85cca66",
+          "role": "COMPLETE_ASSEMBLED_FRONT_STRUCTURAL_AUTHORITY"
+        },
+        {
+          "file": "reference_7313_completed_three_quarter.jpg",
+          "sha256": "5286881a99f333c12c8fa93c8966e74c896f17ba986c6aae5d9272b48a1a3d6e",
+          "role": "COMPLETE_ASSEMBLED_THREE_QUARTER_STRUCTURAL_AUTHORITY"
+        },
+        {
+          "file": "reference_7313_official_final_page29.png",
+          "sha256": "dc39744e53f27b51a14554aa010b8a92ef52ae13532611a146f42bcef7672b69",
+          "role": "OFFICIAL_FINAL_ASSEMBLED_WALKER_PAGE"
+        },
+        {
+          "file": "reference_centauri_lom008.jpg",
+          "sha256": "ed9c0a61ea37c667799d04be9454d10f7e0efbd42465554b963599422cd016f6",
+          "role": "CORRECT_CENTAURI_PILOT_IDENTITY"
+        },
+        {
+          "file": "ArtSource/M85/Preproduction/JetScooterSourceRebuildV1/jet_scooter_source_rebuild_rev1.png",
+          "sha256": "fa0cc1244b9884ae6accab5ed330f3b7b1c0c1fc5e6ec5c446b4f21428936c2a",
+          "role": "DIRECTOR_ACCEPTED_GRAYSCALE_PRESENTATION_STYLE_ONLY"
+        }
+      ]
+    }
+  ],
+  "officialReferences": [
+    {
+      "url": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4160158.pdf",
+      "sha256": "e5a0f3b97a57b747049314bd220a804419e5fa14bce75fa6eaa15fdbdd347b6b",
+      "role": "OFFICIAL_INSTRUCTION_SOURCE_PAGE_29_COMPLETE_WALKER_AND_PAGES_30_TO_33_MANUAL_REBUILD"
+    },
+    {
+      "url": "https://cdn.rebrickable.com/media/thumbs/sets/7313-1/76633.jpg/1000x800p.jpg",
+      "role": "COMPLETE_ASSEMBLED_FRONT_APPEARANCE"
+    }
+  ],
+  "inspection": {
+    "completeAssembledWalkerUsedAsAppearanceAuthority": true,
+    "intermediateInstructionStepsUsedAsFinalAppearanceBasis": false,
+    "lowBroadWedgeCraftUpperBody": true,
+    "closedTaperedTransparentCanopy": true,
+    "oneVisibleCorrectCentauri": true,
+    "oneLargeViewerLeftDishCannon": true,
+    "oneShortViewerRightEmitter": true,
+    "secondLargeDishAbsent": true,
+    "twoHipFanPods": true,
+    "twoSeparateThinSideLances": true,
+    "twoSlimLegsAndFlatWedgeFeet": true,
+    "humanoidArmsAbsent": true,
+    "sphericalRobotTorsoAbsent": true,
+    "officialSetDetailDensity": true,
+    "exactPieceTopologyProven": false,
+    "continuousProtectorStanceTransformationProven": false,
+    "gameplayCameraAccepted": false
+  },
+  "limitations": "Rev1 is the director-selected grayscale appearance for comparative review. It replaces the structurally wrong historical FullV2 Rev3 in the current gallery and corrects the development source description to the completed 7313 walker: closed wedge cockpit with Centauri, one long left dish cannon, one short right emitter, paired hip fan pods and two thin side lances. The raster does not prove exact inventory, legal hidden connections, source colors, production topology, gameplay-camera readability or a continuous connected Protector Stance transformation."
+}

@@ -93,6 +93,49 @@ class ReviewGuardTests(unittest.TestCase):
         self.assert_rejected(validator.CURRENT_COMPARISON, mutate,
                              "explicitly selected Jet Scooter image")
 
+    def test_red_planet_protector_source_rebuild_cannot_expand_to_production(self):
+        self.assert_rejected(validator.RED_PLANET_PROTECTOR_SOURCE_REBUILD_REVIEW,
+                             lambda fixture: fixture.update(productionAccepted=True),
+                             "expanded comparative appearance acceptance")
+
+    def test_red_planet_protector_source_rebuild_requires_exact_approval(self):
+        self.assert_rejected(validator.RED_PLANET_PROTECTOR_SOURCE_REBUILD_REVIEW,
+                             lambda fixture: fixture.pop("approvalEvidence"),
+                             "exact director approval evidence")
+
+    def test_red_planet_protector_source_rebuild_cannot_select_historical_rev3(self):
+        self.assert_rejected(validator.RED_PLANET_PROTECTOR_SOURCE_REBUILD_REVIEW,
+                             lambda fixture: fixture.update(file="Docs/Development/M85SuperScout/Silhouettes/FullV2/Renders/unit_martians_red_planet_protector_rev3.png"),
+                             "selected a rejected historical image")
+
+    def test_red_planet_protector_source_rebuild_preserves_asymmetric_weapons(self):
+        self.assert_rejected(validator.RED_PLANET_PROTECTOR_SOURCE_REBUILD,
+                             lambda fixture: fixture["inspection"].update(secondLargeDishAbsent=False),
+                             "topology proof or lost 7313 identity anchors")
+
+    def test_red_planet_protector_source_audit_cannot_restore_open_cockpit(self):
+        def mutate(fixture):
+            source = next(item for item in fixture["sources"] if item["setId"] == "7313")
+            source["constructionRanges"][0]["evidence"] = "Open operator area with two long emitter arms."
+        self.assert_rejected(validator.MARTIANS_EVIDENCE, mutate,
+                             "corrected 7313 source decomposition")
+
+    def test_red_planet_protector_contract_cannot_restore_twin_top_booms(self):
+        def mutate(fixture):
+            contract = next(item for item in fixture["assets"]
+                            if item["stableId"] == "unit.martians.red_planet_protector")
+            contract["semanticParts"][1] = "Two unequal top-mounted emitter booms."
+        self.assert_rejected(validator.MARTIANS_CONTRACTS, mutate,
+                             "corrected production contract")
+
+    def test_current_comparison_cannot_replace_accepted_red_planet_protector(self):
+        def mutate(fixture):
+            protector = next(item for item in fixture["selections"]
+                             if item["stableId"] == "unit.martians.red_planet_protector")
+            protector["file"] = "Docs/Development/M85SuperScout/Silhouettes/FullV2/Renders/unit_martians_red_planet_protector_rev3.png"
+        self.assert_rejected(validator.CURRENT_COMPARISON, mutate,
+                             "accepted Red Planet Protector appearance")
+
     def test_mmp_source_rebuild_cannot_expand_to_production(self):
         self.assert_rejected(validator.MMP_SOURCE_REBUILD_REVIEW,
                              lambda fixture: fixture.update(productionAccepted=True),

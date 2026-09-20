@@ -66,6 +66,8 @@ ETX_SOURCE_REBUILD = ROOT / "ArtSource/M85/Preproduction/ETXAlienStrikeSourceReb
 ETX_SOURCE_REBUILD_REVIEW = ROOT / "Content/Presentation/SuperScout/etx_alien_strike_source_rebuild_review.json"
 JET_SCOOTER_SOURCE_REBUILD = ROOT / "ArtSource/M85/Preproduction/JetScooterSourceRebuildV1/generation_manifest.json"
 JET_SCOOTER_SOURCE_REBUILD_REVIEW = ROOT / "Content/Presentation/SuperScout/jet_scooter_source_rebuild_review.json"
+RED_PLANET_PROTECTOR_SOURCE_REBUILD = ROOT / "ArtSource/M85/Preproduction/RedPlanetProtectorSourceRebuildV1/generation_manifest.json"
+RED_PLANET_PROTECTOR_SOURCE_REBUILD_REVIEW = ROOT / "Content/Presentation/SuperScout/red_planet_protector_source_rebuild_review.json"
 
 CLASSIFICATIONS = {
     "OFFICIAL_DIRECT": "OFFICIAL-DIRECT",
@@ -1223,6 +1225,119 @@ def validate_jet_scooter_source_rebuild() -> None:
         fail("Jet Scooter source rebuild lost the explicit Rev1/Rev2 selection boundary")
 
 
+def validate_red_planet_protector_source_rebuild() -> None:
+    record = json.loads(RED_PLANET_PROTECTOR_SOURCE_REBUILD.read_text(encoding="utf-8"))
+    review = json.loads(RED_PLANET_PROTECTOR_SOURCE_REBUILD_REVIEW.read_text(encoding="utf-8"))
+    identity = ("unit.martians.red_planet_protector",
+                "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW", False, "NONE")
+    for item in (record, review):
+        if tuple(item.get(key) for key in ("stableId", "status", "productionAccepted", "canonImpact")) != identity:
+            fail("Red Planet Protector source rebuild expanded comparative appearance acceptance")
+    authority = {
+        "baseCommit": "77d3d6a",
+        "messages": ["далі"],
+        "scope": "Accept the displayed completed Red Planet Protector source rebuild and continue the approved T082 work; correct the 7313 source description without changing gameplay, production status or Canon.",
+    }
+    approval = {
+        "baseCommit": "77d3d6a",
+        "message": "далі",
+        "selectedAttempt": 1,
+        "scope": "The displayed Rev1 Red Planet Protector is accepted for comparative appearance review only; this does not approve production integration, exact piece topology, source colors, gameplay-camera readability or the connected Protector Stance transformation.",
+    }
+    if record.get("authority") != authority or review.get("authority") != authority:
+        fail("Red Planet Protector source rebuild lost exact continuation authority")
+    if record.get("approvalEvidence") != approval or review.get("approvalEvidence") != approval:
+        fail("Red Planet Protector source rebuild lost exact director approval evidence")
+    attempts = record.get("attempts", [])
+    expected_attempt = (1, "red_planet_protector_source_rebuild_rev1.png",
+                        "61f06f7896461ec71986e3e679adf1448af347ef5f37eaa33d8280fd8aa601f1",
+                        "prompt_rev1.txt",
+                        "e4e73e2f0fb3bac894e65ed3124f4f2ffb864ae864db83b85e57b9907715fa74",
+                        "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW")
+    actual_attempts = [tuple(item.get(key) for key in
+                             ("number", "file", "sha256", "prompt", "promptSha256", "finding"))
+                       for item in attempts]
+    if record.get("tool") != "BUILT_IN_IMAGEGEN" or actual_attempts != [expected_attempt]:
+        fail("Red Planet Protector source rebuild lost single-attempt provenance")
+    for attempt in attempts:
+        for file_key, hash_key in (("file", "sha256"), ("prompt", "promptSha256")):
+            path = RED_PLANET_PROTECTOR_SOURCE_REBUILD.parent / attempt[file_key]
+            if hashlib.sha256(path.read_bytes()).hexdigest() != attempt[hash_key]:
+                fail("Red Planet Protector source rebuild image or prompt bytes changed")
+        expected_inputs = {
+            "reference_7313_completed_front.jpg": "2d1cf2c680d59f9bd63a86d35d7955d7c94d7d578cedb12a2b66b8fcc85cca66",
+            "reference_7313_completed_three_quarter.jpg": "5286881a99f333c12c8fa93c8966e74c896f17ba986c6aae5d9272b48a1a3d6e",
+            "reference_7313_official_final_page29.png": "dc39744e53f27b51a14554aa010b8a92ef52ae13532611a146f42bcef7672b69",
+            "reference_centauri_lom008.jpg": "ed9c0a61ea37c667799d04be9454d10f7e0efbd42465554b963599422cd016f6",
+        }
+        local_inputs = {item["file"]: item["sha256"] for item in attempt.get("inputs", [])
+                        if not item["file"].startswith("ArtSource/")}
+        if local_inputs != expected_inputs:
+            fail("Red Planet Protector source rebuild replaced completed 7313 references")
+        for file_name, expected_hash in expected_inputs.items():
+            path = RED_PLANET_PROTECTOR_SOURCE_REBUILD.parent / file_name
+            if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != expected_hash:
+                fail("Red Planet Protector source rebuild reference bytes changed")
+    expected_inspection = {
+        "completeAssembledWalkerUsedAsAppearanceAuthority": True,
+        "intermediateInstructionStepsUsedAsFinalAppearanceBasis": False,
+        "lowBroadWedgeCraftUpperBody": True,
+        "closedTaperedTransparentCanopy": True,
+        "oneVisibleCorrectCentauri": True,
+        "oneLargeViewerLeftDishCannon": True,
+        "oneShortViewerRightEmitter": True,
+        "secondLargeDishAbsent": True,
+        "twoHipFanPods": True,
+        "twoSeparateThinSideLances": True,
+        "twoSlimLegsAndFlatWedgeFeet": True,
+        "humanoidArmsAbsent": True,
+        "sphericalRobotTorsoAbsent": True,
+        "officialSetDetailDensity": True,
+        "exactPieceTopologyProven": False,
+        "continuousProtectorStanceTransformationProven": False,
+        "gameplayCameraAccepted": False,
+    }
+    if record.get("inspection") != expected_inspection:
+        fail("Red Planet Protector source rebuild promoted visual acceptance into topology proof or lost 7313 identity anchors")
+    if (review.get("file"), review.get("sha256")) != (
+            "ArtSource/M85/Preproduction/RedPlanetProtectorSourceRebuildV1/red_planet_protector_source_rebuild_rev1.png",
+            expected_attempt[2]):
+        fail("Red Planet Protector source rebuild review selected a rejected historical image")
+    if review.get("pending") != [
+            "Final gameplay-camera and production review",
+            "Exact production piece topology and hidden connection legality",
+            "Source-color and material translation",
+            "Continuous connected Mobile-to-Protector-Stance mechanism and Guard Sweep presentation"]:
+        fail("Red Planet Protector source rebuild hid production or transformation gates")
+    boundary = review.get("historicalBoundary", "")
+    if "FullV2 Rev3 remains rejected historical evidence" not in boundary or "selects only source-rebuild Rev1" not in boundary:
+        fail("Red Planet Protector source rebuild lost the Rev3 rejection boundary")
+
+    evidence = json.loads(MARTIANS_EVIDENCE.read_text(encoding="utf-8"))
+    source = next(item for item in evidence["sources"] if item["setId"] == "7313")
+    source_text = json.dumps(source, ensure_ascii=False)
+    required_source_terms = ("closed tapered canopy", "one long left dish cannon",
+                             "one much shorter right emitter", "two separate fan pods",
+                             "not duplicate top cannons or humanoid arms")
+    if any(term not in source_text for term in required_source_terms) or "open operator area" in source_text:
+        fail("Red Planet Protector corrected 7313 source decomposition drifted")
+    roster = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    identity_record = next(item for item in roster["assets"] if item["stableId"] == "unit.martians.red_planet_protector")
+    if identity_record.get("identityAnchors") != [
+            "closed broad wedge cockpit with visible Centauri",
+            "one large left dish cannon and one short right emitter",
+            "paired hip fan pods and thin lances over a slim twin-foot base"]:
+        fail("Red Planet Protector corrected recognition anchors drifted")
+    contracts = json.loads(MARTIANS_CONTRACTS.read_text(encoding="utf-8"))
+    contract = next(item for item in contracts["assets"] if item["stableId"] == "unit.martians.red_planet_protector")
+    contract_text = json.dumps(contract, ensure_ascii=False)
+    if ("Closed broad wedge craft with visible Centauri" not in contract_text
+            or "one long left dish cannon and one short right emitter" not in contract_text
+            or "Twin hip fan pods, separate thin side lances" not in contract_text
+            or "two unequal top-mounted" in contract_text.lower()):
+        fail("Red Planet Protector corrected production contract drifted")
+
+
 def validate_current_comparison() -> None:
     record = json.loads(CURRENT_COMPARISON.read_text(encoding="utf-8"))
     if (record.get("gate"), record.get("state"), record.get("productionAccepted"), record.get("canonImpact")) != (
@@ -1271,7 +1386,13 @@ def validate_current_comparison() -> None:
             "ArtSource/M85/Preproduction/JetScooterSourceRebuildV1/jet_scooter_source_rebuild_rev1.png",
             "fa0cc1244b9884ae6accab5ed330f3b7b1c0c1fc5e6ec5c446b4f21428936c2a"):
         fail("current comparison replaced the explicitly selected Jet Scooter image")
-    pending = ["unit.martians.red_planet_protector"]
+    protector = by_id["unit.martians.red_planet_protector"]
+    if (protector.get("status"), protector.get("file"), protector.get("sha256")) != (
+            "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW",
+            "ArtSource/M85/Preproduction/RedPlanetProtectorSourceRebuildV1/red_planet_protector_source_rebuild_rev1.png",
+            "61f06f7896461ec71986e3e679adf1448af347ef5f37eaa33d8280fd8aa601f1"):
+        fail("current comparison replaced the accepted Red Planet Protector appearance")
+    pending = []
     if record.get("priorityPending") != pending:
         fail("current comparison hid priority review gaps")
     generated = subprocess.run([sys.executable, str(ROOT / "tools/generate-m85-current-comparison.py"), "--check"],
@@ -1295,6 +1416,7 @@ def main() -> None:
     validate_mmp_source_rebuild()
     validate_etx_source_rebuild()
     validate_jet_scooter_source_rebuild()
+    validate_red_planet_protector_source_rebuild()
     validate_current_comparison()
     for path in (
         MANIFEST, LEDGER, INSTRUCTION_INDEX, SOURCE_ANALYSIS_POLICY, COMPOSED_DESIGN_PROPOSALS, ROCK_RAIDERS_EVIDENCE, ASTRONAUTS_EVIDENCE,
