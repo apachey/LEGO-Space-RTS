@@ -1,0 +1,89 @@
+{
+  "schema": 1,
+  "stableId": "unit.martians.jet_scooter",
+  "status": "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW",
+  "productionAccepted": false,
+  "canonImpact": "NONE",
+  "tool": "BUILT_IN_IMAGEGEN",
+  "authority": {
+    "baseCommit": "06d786c",
+    "messages": ["далі"],
+    "scope": "Continue the next open T082 completed appearance after accepted ETX Alien Strike; rebuild Jet Scooter from the completed 7303 form without changing gameplay, scale canon or production status."
+  },
+  "approvalEvidence": {
+    "baseCommit": "06d786c",
+    "message": "оцей я маю ан увазі, якщо що",
+    "selectedAttempt": 1,
+    "selectedAttachmentPixelSha256": "95bdc5e8c0a734d55b2a288e6d3c958aa596021a9b1f0f314a6045e7caf4a64b",
+    "scope": "The explicitly attached Jet Scooter image, pixel-identical to Rev1, is accepted for comparative appearance review only; this does not approve production integration, gameplay, exact piece topology, source colors or hover presentation."
+  },
+  "attempts": [
+    {
+      "number": 1,
+      "file": "jet_scooter_source_rebuild_rev1.png",
+      "sha256": "fa0cc1244b9884ae6accab5ed330f3b7b1c0c1fc5e6ec5c446b4f21428936c2a",
+      "prompt": "prompt_rev1.txt",
+      "promptSha256": "cc945732628bf097201b0a66a4eee350cdddbb4ca868e9aa6c98eea9b33c3bf1",
+      "finding": "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW",
+      "inputs": [
+        {
+          "url": "https://cdn.rebrickable.com/media/thumbs/sets/7303-1/76628.jpg/1000x800p.jpg",
+          "role": "PRIMARY_COMPLETE_ASSEMBLED_PRODUCT_PHOTO"
+        },
+        {
+          "file": "Docs/Development/M85SuperScout/Silhouettes/FullV2/Renders/unit_martians_jet_scooter_rev2.png",
+          "sha256": "96cf56cadc8083d6eb074ce530de994d4f4feebbd6a602250f24fd1820e9a788",
+          "role": "REJECTED_ANTI_REFERENCE_FOR_PROPORTION_AND_COMPLEXITY_PRESENTATION_STYLE_ONLY"
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "file": "jet_scooter_source_rebuild_rev2.png",
+      "sha256": "5403c2e55858dcd939adf78ced1c3dad77b33f5e7924bd500239f06ea2b30fc7",
+      "prompt": "prompt_rev2.txt",
+      "promptSha256": "162c798738375c4b893e24e0ac2912fb50f9bead8bcd32ea5c39600e12c6d22f",
+      "finding": "DIRECTOR_NOT_SELECTED_AFTER_EXPLICIT_IMAGE_CONFIRMATION",
+      "inputs": [
+        {
+          "file": "jet_scooter_source_rebuild_rev1.png",
+          "sha256": "fa0cc1244b9884ae6accab5ed330f3b7b1c0c1fc5e6ec5c446b4f21428936c2a",
+          "role": "EDIT_TARGET_WITH_CORRECT_IDENTITY_BUT_OVERSIZED_BODY_AND_EXCESS_DETAIL"
+        },
+        {
+          "url": "https://cdn.rebrickable.com/media/thumbs/sets/7303-1/76628.jpg/1000x800p.jpg",
+          "role": "PRIMARY_COMPLETE_ASSEMBLED_PRODUCT_PHOTO"
+        }
+      ]
+    }
+  ],
+  "sourceReferences": [
+    {
+      "url": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130291.pdf",
+      "role": "OFFICIAL_INSTRUCTION_SOURCE_WITH_COMPLETED_SEVEN_STEP_BUILD_ON_PAGE_1"
+    },
+    {
+      "url": "https://cdn.rebrickable.com/media/thumbs/sets/7303-1/76628.jpg/1000x800p.jpg",
+      "role": "COMPLETE_ASSEMBLED_PRODUCT_PHOTO_FOR_FINAL_APPEARANCE_AND_SCALE"
+    }
+  ],
+  "inspection": {
+    "oneSmallOpenGroundHoverScooter": true,
+    "oneExposedMartianRider": true,
+    "compactMinifigureScaleRead": true,
+    "thinLowCentralDeck": true,
+    "twoParallelExposedSideTubes": true,
+    "twoShortForwardConeNozzles": true,
+    "simpleOpenHandleAndBackrest": true,
+    "smallRoundedRearEquipment": true,
+    "canopyAbsent": true,
+    "wheelsAbsent": true,
+    "wingsAbsent": true,
+    "extraWeaponsAbsent": true,
+    "denseModernGreeblingAbsent": true,
+    "exactPieceCountProven": false,
+    "exactPieceTopologyProven": false,
+    "gameplayCameraAccepted": false
+  },
+  "limitations": "Rev1 is the director-selected grayscale appearance for comparative review. It preserves the open one-rider 7303 read, paired side tubes and paired forward cones. Rev2 remains a historical unselected simplification. The selected raster does not prove exact inventory, connection legality, precise source colors, attack-socket placement, hover presentation, gameplay-camera readability or production topology."
+}

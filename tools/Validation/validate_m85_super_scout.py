@@ -64,6 +64,8 @@ MMP_SOURCE_REBUILD = ROOT / "ArtSource/M85/Preproduction/MobileMiningPlatformSou
 MMP_SOURCE_REBUILD_REVIEW = ROOT / "Content/Presentation/SuperScout/mobile_mining_platform_source_rebuild_review.json"
 ETX_SOURCE_REBUILD = ROOT / "ArtSource/M85/Preproduction/ETXAlienStrikeSourceRebuildV1/generation_manifest.json"
 ETX_SOURCE_REBUILD_REVIEW = ROOT / "Content/Presentation/SuperScout/etx_alien_strike_source_rebuild_review.json"
+JET_SCOOTER_SOURCE_REBUILD = ROOT / "ArtSource/M85/Preproduction/JetScooterSourceRebuildV1/generation_manifest.json"
+JET_SCOOTER_SOURCE_REBUILD_REVIEW = ROOT / "Content/Presentation/SuperScout/jet_scooter_source_rebuild_review.json"
 
 CLASSIFICATIONS = {
     "OFFICIAL_DIRECT": "OFFICIAL-DIRECT",
@@ -1142,6 +1144,85 @@ def validate_etx_source_rebuild() -> None:
         fail("ETX Alien Strike source rebuild lost historical and canon boundaries")
 
 
+def validate_jet_scooter_source_rebuild() -> None:
+    record = json.loads(JET_SCOOTER_SOURCE_REBUILD.read_text(encoding="utf-8"))
+    review = json.loads(JET_SCOOTER_SOURCE_REBUILD_REVIEW.read_text(encoding="utf-8"))
+    identity = ("unit.martians.jet_scooter",
+                "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW", False, "NONE")
+    for item in (record, review):
+        if tuple(item.get(key) for key in ("stableId", "status", "productionAccepted", "canonImpact")) != identity:
+            fail("Jet Scooter source rebuild expanded comparative appearance acceptance")
+    authority = {
+        "baseCommit": "06d786c",
+        "messages": ["далі"],
+        "scope": "Continue the next open T082 completed appearance after accepted ETX Alien Strike; rebuild Jet Scooter from the completed 7303 form without changing gameplay, scale canon or production status.",
+    }
+    approval = {
+        "baseCommit": "06d786c",
+        "message": "оцей я маю ан увазі, якщо що",
+        "selectedAttempt": 1,
+        "selectedAttachmentPixelSha256": "95bdc5e8c0a734d55b2a288e6d3c958aa596021a9b1f0f314a6045e7caf4a64b",
+        "scope": "The explicitly attached Jet Scooter image, pixel-identical to Rev1, is accepted for comparative appearance review only; this does not approve production integration, gameplay, exact piece topology, source colors or hover presentation.",
+    }
+    if record.get("authority") != authority or review.get("authority") != authority:
+        fail("Jet Scooter source rebuild lost exact continuation authority")
+    if record.get("approvalEvidence") != approval or review.get("approvalEvidence") != approval:
+        fail("Jet Scooter source rebuild lost exact director image selection")
+    expected_attempts = [
+        (1, "jet_scooter_source_rebuild_rev1.png", "fa0cc1244b9884ae6accab5ed330f3b7b1c0c1fc5e6ec5c446b4f21428936c2a", "prompt_rev1.txt", "cc945732628bf097201b0a66a4eee350cdddbb4ca868e9aa6c98eea9b33c3bf1", "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW"),
+        (2, "jet_scooter_source_rebuild_rev2.png", "5403c2e55858dcd939adf78ced1c3dad77b33f5e7924bd500239f06ea2b30fc7", "prompt_rev2.txt", "162c798738375c4b893e24e0ac2912fb50f9bead8bcd32ea5c39600e12c6d22f", "DIRECTOR_NOT_SELECTED_AFTER_EXPLICIT_IMAGE_CONFIRMATION"),
+    ]
+    attempts = record.get("attempts", [])
+    actual_attempts = [tuple(item.get(key) for key in
+                             ("number", "file", "sha256", "prompt", "promptSha256", "finding"))
+                       for item in attempts]
+    if record.get("tool") != "BUILT_IN_IMAGEGEN" or actual_attempts != expected_attempts:
+        fail("Jet Scooter source rebuild lost two-attempt provenance or selected the wrong attempt")
+    for attempt in attempts:
+        for file_key, hash_key in (("file", "sha256"), ("prompt", "promptSha256")):
+            path = JET_SCOOTER_SOURCE_REBUILD.parent / attempt[file_key]
+            if hashlib.sha256(path.read_bytes()).hexdigest() != attempt[hash_key]:
+                fail("Jet Scooter source rebuild image or prompt bytes changed")
+    expected_sources = [
+        ("https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130291.pdf", "OFFICIAL_INSTRUCTION_SOURCE_WITH_COMPLETED_SEVEN_STEP_BUILD_ON_PAGE_1"),
+        ("https://cdn.rebrickable.com/media/thumbs/sets/7303-1/76628.jpg/1000x800p.jpg", "COMPLETE_ASSEMBLED_PRODUCT_PHOTO_FOR_FINAL_APPEARANCE_AND_SCALE"),
+    ]
+    if [tuple(item.get(key) for key in ("url", "role")) for item in record.get("sourceReferences", [])] != expected_sources:
+        fail("Jet Scooter source rebuild replaced completed 7303 source anchors")
+    expected_inspection = {
+        "oneSmallOpenGroundHoverScooter": True,
+        "oneExposedMartianRider": True,
+        "compactMinifigureScaleRead": True,
+        "thinLowCentralDeck": True,
+        "twoParallelExposedSideTubes": True,
+        "twoShortForwardConeNozzles": True,
+        "simpleOpenHandleAndBackrest": True,
+        "smallRoundedRearEquipment": True,
+        "canopyAbsent": True,
+        "wheelsAbsent": True,
+        "wingsAbsent": True,
+        "extraWeaponsAbsent": True,
+        "denseModernGreeblingAbsent": True,
+        "exactPieceCountProven": False,
+        "exactPieceTopologyProven": False,
+        "gameplayCameraAccepted": False,
+    }
+    if record.get("inspection") != expected_inspection:
+        fail("Jet Scooter source rebuild promoted visual acceptance into topology proof or lost identity anchors")
+    if (review.get("file"), review.get("sha256")) != (
+            "ArtSource/M85/Preproduction/JetScooterSourceRebuildV1/jet_scooter_source_rebuild_rev1.png",
+            expected_attempts[0][2]):
+        fail("Jet Scooter source rebuild review selected the unapproved second image")
+    if review.get("pending") != [
+            "Final gameplay-camera and production review",
+            "Exact production piece topology and connection legality",
+            "Source-color translation, attack socket and hover presentation"]:
+        fail("Jet Scooter source rebuild hid production or presentation gates")
+    boundary = review.get("historicalBoundary", "")
+    if "Rev2 remains a historical unselected simplification" not in boundary or "selects only Rev1" not in boundary or "does not" not in boundary:
+        fail("Jet Scooter source rebuild lost the explicit Rev1/Rev2 selection boundary")
+
+
 def validate_current_comparison() -> None:
     record = json.loads(CURRENT_COMPARISON.read_text(encoding="utf-8"))
     if (record.get("gate"), record.get("state"), record.get("productionAccepted"), record.get("canonImpact")) != (
@@ -1184,7 +1265,13 @@ def validate_current_comparison() -> None:
             "ArtSource/M85/Preproduction/ETXAlienStrikeSourceRebuildV1/etx_alien_strike_source_rebuild_rev6.png",
             "0eaeb78c30af354da2ca24c21822138a76cf18022ba68e9118d432ab171bed4b"):
         fail("current comparison replaced accepted ETX Alien Strike appearance")
-    pending = sorted(["unit.martians.jet_scooter", "unit.martians.red_planet_protector"])
+    jet = by_id["unit.martians.jet_scooter"]
+    if (jet.get("status"), jet.get("file"), jet.get("sha256")) != (
+            "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW",
+            "ArtSource/M85/Preproduction/JetScooterSourceRebuildV1/jet_scooter_source_rebuild_rev1.png",
+            "fa0cc1244b9884ae6accab5ed330f3b7b1c0c1fc5e6ec5c446b4f21428936c2a"):
+        fail("current comparison replaced the explicitly selected Jet Scooter image")
+    pending = ["unit.martians.red_planet_protector"]
     if record.get("priorityPending") != pending:
         fail("current comparison hid priority review gaps")
     generated = subprocess.run([sys.executable, str(ROOT / "tools/generate-m85-current-comparison.py"), "--check"],
@@ -1207,6 +1294,7 @@ def main() -> None:
     validate_mt101_source_rebuild()
     validate_mmp_source_rebuild()
     validate_etx_source_rebuild()
+    validate_jet_scooter_source_rebuild()
     validate_current_comparison()
     for path in (
         MANIFEST, LEDGER, INSTRUCTION_INDEX, SOURCE_ANALYSIS_POLICY, COMPOSED_DESIGN_PROPOSALS, ROCK_RAIDERS_EVIDENCE, ASTRONAUTS_EVIDENCE,

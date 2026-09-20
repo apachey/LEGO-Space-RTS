@@ -11,11 +11,11 @@ authority are recorded in `Content/Presentation/SuperScout/claw_tank_appearance_
 Its generation-time unreviewed manifest is historical, not rewritten.
 No extra retry or approval of MT-61/other assets is inferred.
 
-The current gallery marks the Claw, MT-101, source-rebuilt Crystal Reaper and
-source-rebuilt ETX Alien Strike images accepted and removes them from
-priority-pending. The priority filter now contains only Jet Scooter and Red
-Planet Protector. This changes review priority, not the roster or gameplay. All
-66 identities and 67 views remain.
+The current gallery marks the Claw, MT-101, source-rebuilt Crystal Reaper,
+source-rebuilt ETX Alien Strike and explicitly selected Jet Scooter images
+accepted and removes them from priority-pending. The priority filter now
+contains only Red Planet Protector. This changes review priority, not the roster
+or gameplay. All 66 identities and 67 views remain.
 
 ## Completed appearances for review
 
@@ -55,13 +55,15 @@ SHA256: `0eaeb78c30af354da2ca24c21822138a76cf18022ba68e9118d432ab171bed4b`.
 ### 3. Jet Scooter
 
 Tiny fast Martian ground-hover attacker for anti-light harassment and rapid
-reinforcement. 7303's open rider, narrow sled and side tubes, with the requested
-lower/sleeker body. Aero Tube eligibility is already gameplay canon, not a new
-capability inferred from this image.
+reinforcement. Source-rebuild Rev1 is explicitly accepted for comparative
+appearance review after the director attached that exact image. It preserves
+7303's open rider, narrow sled, paired long side tubes and two forward nozzles.
+The later Rev2 simplification is not selected. Aero Tube eligibility is already
+gameplay canon, not a new capability inferred from this image.
 
-![Jet Scooter](/Users/pavlosidash/Developer/Lego-Space-RTS/Docs/Development/M85SuperScout/Silhouettes/FullV2/Renders/unit_martians_jet_scooter_rev2.png)
+![Jet Scooter](/Users/pavlosidash/Developer/Lego-Space-RTS/ArtSource/M85/Preproduction/JetScooterSourceRebuildV1/jet_scooter_source_rebuild_rev1.png)
 
-SHA256: `96cf56cadc8083d6eb074ce530de994d4f4feebbd6a602250f24fd1820e9a788`.
+SHA256: `fa0cc1244b9884ae6accab5ed330f3b7b1c0c1fc5e6ec5c446b4f21428936c2a`.
 
 ### 4. Red Planet Protector
 
@@ -76,10 +78,10 @@ SHA256: `4dd1481384b55dd77848fce313b0cdb9936c7e27ab34e951d662d57503553be9`.
 
 ## Scope / risks / next step
 
-Crystal Reaper Rev2 and ETX Alien Strike Rev6 are
-`DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW`. Jet Scooter and Red
-Planet Protector remain `UNREVIEWED_CORRECTION_CANDIDATE`. Neither approval
-accepts production topology, gameplay, Mothership source corrections, archival
+Crystal Reaper Rev2, ETX Alien Strike Rev6 and Jet Scooter source-rebuild Rev1
+are `DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW`. Red Planet Protector
+is the only remaining priority appearance candidate. These approvals do not
+accept production topology, gameplay, Mothership source corrections, archival
 gaps or the full T082 gate.
 
 Continuation 2026-09-19: MT-101 source-rebuild Rev5 is accepted for comparative
@@ -88,21 +90,24 @@ production or independent nested-module gameplay. Continuation 2026-09-20:
 Crystal Reaper source-rebuild Rev2 is accepted under the same comparative-only
 boundary. ETX Alien Strike source-rebuild Rev6 is now accepted under that same
 boundary; no ground/siege state, internal anatomy, exact topology, flight-height
-presentation or production integration is inferred. Jet Scooter is next,
-followed by Red Planet Protector.
+presentation or production integration is inferred. The director then selects
+Jet Scooter source-rebuild Rev1 by attaching that exact image; Rev2 remains
+historical and unselected. Red Planet Protector is next.
 
 ## Files / automated verification / regression / build
 
-The ETX acceptance adds its immutable six-attempt source record, selected Rev6
-review record, current-gallery replacement and exact source/authority guards.
-The guards lock the accepted bytes, completed official cover and PDF lineage,
-reject Revs1–5, prohibit a ground/siege state and prevent intermediate
-instruction steps from becoming final-appearance authority.
-Focused validator, 119/119 review guards, byte-exact gallery regeneration and
+The ETX and Jet Scooter acceptances add their immutable source records,
+selected-review records, current-gallery replacements and exact
+source/authority guards. The guards lock the accepted bytes, completed official
+reference lineage, reject unselected attempts, prohibit an ETX ground/siege
+state and prevent intermediate instruction steps from becoming
+final-appearance authority.
+Focused validator, 125/125 review guards, byte-exact gallery regeneration and
 `git diff --check`: PASS. `./tools/verify.sh --full`: PASS every
-`BLOCKING_NOW` stage, including 317 NUnit tests, the 119 review guards,
+`BLOCKING_NOW` stage, including 317 NUnit tests, the 125 review guards,
 byte-identical Blender regeneration and macOS export; the preserved 60-mover
 M9 stress case remains the expected `BLOCKING_LATER` diagnostic failure.
-Summary: `Artifacts/Verification/20260920T060359Z-full-summary.txt`.
-The debug build was refreshed at `Builds/macOS/LEGO Space RTS.app`; ETX itself
-is not integrated into runtime presentation. No dependency or Canon change.
+Summary: `Artifacts/Verification/20260920T105517Z-full-summary.txt`.
+The debug build was refreshed at `Builds/macOS/LEGO Space RTS.app`; neither
+source-rebuilt vehicle is integrated into runtime presentation. No dependency
+or Canon change.

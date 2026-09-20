@@ -74,8 +74,9 @@ Alien Strike source rebuild replaces the wrong D-shaped wing paddles with four
 quarter-annulus shells in two planar articulated chains around the compact 7693
 airframe. The director's `+` accepts Rev6 for comparative appearance review
 only. Intermediate instruction steps remain historical construction evidence,
-not final-form authority. Jet Scooter and Protector are the two remaining
-priority appearance candidates.
+not final-form authority. Jet Scooter source-rebuild Rev1 is explicitly
+selected by the director; Protector is the one remaining priority appearance
+candidate.
 The 2026-09-14 continuation then finishes MT-101 from the recorded native
 construction with one built-in raster pass, not a third free-form reconstruction.
 The gallery selects this unreviewed completed appearance; four main wheels are
@@ -114,8 +115,9 @@ It is DIAGNOSTIC, named and unscaled, not a fresh blind/game-camera acceptance
 or production promotion. MT-61 Rev2 and Claw are now accepted for comparative review;
 MT-101's old unresolved raster is historical; the current selection now uses
 the completed controlled appearance above, never a finished-native approval gate.
-The gallery now selects accepted Alien Strike Rev6; Jet Scooter and Protector
-remain unreviewed, and Mothership's source corrections remain open. Historical
+The gallery now selects accepted Alien Strike Rev6 and the explicitly selected
+Jet Scooter source-rebuild Rev1; Protector remains unreviewed, and Mothership's
+source corrections remain open. Historical
 boards and rejected image bytes are unchanged.
 See `Docs/Development/M85_T082_CURRENT_COMPARISON.md`.
 This continuation passed `./tools/verify.sh`: 23/23 fast blocking stages,

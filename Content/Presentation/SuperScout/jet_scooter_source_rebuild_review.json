@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "stableId": "unit.martians.jet_scooter",
+  "status": "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW",
+  "file": "ArtSource/M85/Preproduction/JetScooterSourceRebuildV1/jet_scooter_source_rebuild_rev1.png",
+  "sha256": "fa0cc1244b9884ae6accab5ed330f3b7b1c0c1fc5e6ec5c446b4f21428936c2a",
+  "productionAccepted": false,
+  "canonImpact": "NONE",
+  "authority": {
+    "baseCommit": "06d786c",
+    "messages": ["далі"],
+    "scope": "Continue the next open T082 completed appearance after accepted ETX Alien Strike; rebuild Jet Scooter from the completed 7303 form without changing gameplay, scale canon or production status."
+  },
+  "approvalEvidence": {
+    "baseCommit": "06d786c",
+    "message": "оцей я маю ан увазі, якщо що",
+    "selectedAttempt": 1,
+    "selectedAttachmentPixelSha256": "95bdc5e8c0a734d55b2a288e6d3c958aa596021a9b1f0f314a6045e7caf4a64b",
+    "scope": "The explicitly attached Jet Scooter image, pixel-identical to Rev1, is accepted for comparative appearance review only; this does not approve production integration, gameplay, exact piece topology, source colors or hover presentation."
+  },
+  "finding": "The selected Rev1 reads clearly as the compact open 7303 Jet Scooter: one exposed Martian rider on a narrow low sled, two long parallel side tubes and two short forward nozzles. Its slightly fuller construction and visible controls are the director-selected appearance rather than the later simplified Rev2.",
+  "pending": [
+    "Final gameplay-camera and production review",
+    "Exact production piece topology and connection legality",
+    "Source-color translation, attack socket and hover presentation"
+  ],
+  "historicalBoundary": "Source-rebuild Rev2 remains a historical unselected simplification. This approval selects only Rev1 for comparative appearance review and does not rewrite source evidence, approve exact LEGO construction, production integration, gameplay behavior or final color/material treatment."
+}

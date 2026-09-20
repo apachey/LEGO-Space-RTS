@@ -1,0 +1,16 @@
+Use case: precise-object-edit
+Asset type: LEGO Space RTS T082 completed appearance proposal
+Edit target: the newest monochrome Jet Scooter render.
+Authoritative reference: the colored completed LEGO 7303 product photo immediately preceding it.
+Primary request: Correct only scale, proportions and piece density so the edit matches the tiny completed 7303 instead of a larger custom speeder.
+Required changes:
+- shorten the whole craft by about 25–30 percent while keeping the rider at the same minifigure scale;
+- reduce the body to one thin base plate plus a very shallow central deck, not a deep brick-built hull;
+- remove the large rear cylindrical pods and all redundant circular ports, greebles and stacked blocks;
+- keep exactly two clean, long, parallel light-grey side tubes close to the deck; each should read as one simple dominant rail/tube, not as a chain of engine modules;
+- make the forward control/handle assembly much smaller and simpler, matching the few-piece grey handle shape of the official photo;
+- retain exactly two short translucent cone nozzles at the front, but make them slightly smaller and closer together;
+- retain exactly one exposed Martian rider, the simple black backrest/roll bar, one small rounded rear mass and one low round control puck;
+- the result must look plausibly buildable from roughly 20–24 LEGO elements, with official 2001 micro-set simplicity and authentic stud scale.
+Invariants: preserve the neutral white background, three-quarter slightly elevated camera, matte charcoal monochrome review style, full-object framing, and clear translucent-value separation.
+Avoid: no extra cylinders, no extra side holes, no extra weapons, no canopy, wheels, wings, broad hull, dense greebling, modern sci-fi surfaces, text, logo, watermark or display stand.

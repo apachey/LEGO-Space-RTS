@@ -8,7 +8,6 @@
   "productionAccepted": false,
   "canonImpact": "NONE",
   "priorityPending": [
-    "unit.martians.jet_scooter",
     "unit.martians.red_planet_protector"
   ],
   "selections": [
@@ -585,14 +584,14 @@
     },
     {
       "stableId": "unit.martians.jet_scooter",
-      "file": "Docs/Development/M85SuperScout/Silhouettes/FullV2/Renders/unit_martians_jet_scooter_rev2.png",
-      "sha256": "96cf56cadc8083d6eb074ce530de994d4f4feebbd6a602250f24fd1820e9a788",
-      "status": "UNREVIEWED_CORRECTION_CANDIDATE",
-      "origin": "FullV2/generation_manifest.json:revisionCandidates",
+      "file": "ArtSource/M85/Preproduction/JetScooterSourceRebuildV1/jet_scooter_source_rebuild_rev1.png",
+      "sha256": "fa0cc1244b9884ae6accab5ed330f3b7b1c0c1fc5e6ec5c446b4f21428936c2a",
+      "status": "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW",
+      "origin": "jet_scooter_source_rebuild_review.json",
       "code": "C52",
       "name": "Jet Scooter",
       "faction": "Martians",
-      "priorityPending": true
+      "priorityPending": false
     },
     {
       "stableId": "unit.martians.aero_skiff",

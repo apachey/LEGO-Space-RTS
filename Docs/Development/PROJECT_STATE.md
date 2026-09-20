@@ -898,8 +898,9 @@ live; the current schema-9 copy/paste retains the complete experiment.
   recorded in `Content/Presentation/SuperScout/claw_tank_appearance_review.json`.
   The gallery now marks it accepted; production/further retries are not approved.
   The later director approvals select Crystal Reaper Rev2 and ETX Alien Strike
-  Rev6 for comparative appearance review. Jet Scooter and Protector remain the
-  two open priority candidates.
+  Rev6 for comparative appearance review. The director then explicitly selects
+  Jet Scooter source-rebuild Rev1 for comparative appearance review; Rev2 stays
+  historical and unselected. Protector is the one open priority candidate.
   See `Docs/Development/M85_T082_OPEN_APPEARANCE_BATCH.md`.
   The 2026-09-14 `далі` continues the recorded controlled MT-101 construction
   into one completed monochrome raster appearance, not a third free-form design
@@ -1370,7 +1371,8 @@ blocking only when M9 must prove its stable-large-battle exit.
    gameplay-camera readability, flight-height presentation and production
    integration remain open. Intermediate instruction steps are historical
    connection evidence only, not final-form references. The next priority
-   appearance is Jet Scooter, followed by Red Planet Protector.
+   appearance is Red Planet Protector; Jet Scooter source-rebuild Rev1 is now
+   explicitly accepted for comparative appearance review.
    Do not reset historical attempts or regenerate already successful assets.
 2. Execute the remaining Phase 09C M8.5 T082–T092 work before final M9 Skirmish
    Alpha acceptance.

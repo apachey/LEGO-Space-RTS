@@ -68,11 +68,12 @@ automatically prove image topology or pixel-exact preservation.
 
 ## Remaining scope / manual judgement
 
-Claw, MT-101, Crystal Reaper and ETX Alien Strike appearances are now accepted
-for comparative review; do not ask for their approval again. The current open
-batch is recorded in `Docs/Development/M85_T082_OPEN_APPEARANCE_BATCH.md`.
-Jet Scooter is next, followed by Red Planet Protector. Source resemblance and
-tool/body composition need human judgement, not another size/blockout gate.
+Claw, MT-101, Crystal Reaper, ETX Alien Strike and the explicitly selected Jet
+Scooter Rev1 appearances are now accepted for comparative review; do not ask
+for their approval again. The current open batch is recorded in
+`Docs/Development/M85_T082_OPEN_APPEARANCE_BATCH.md`. Red Planet Protector is
+the only remaining priority appearance. Source resemblance and tool/body
+composition need human judgement, not another size/blockout gate.
 These approvals cannot accept the 66-entry gallery, alternate configurations or production.
 
 Continuation 2026-09-14: the director identifies incomplete MT-101 source
@@ -83,9 +84,10 @@ native/raster controls do not establish its stowage/extraction. Source records
 and model requirements are corrected without another generation or gameplay change.
 See `Docs/Development/M85_T082_MT101_NESTED_SOURCE_CORRECTION.md`.
 The original prompt and wheel occlusion remain documented in
-`Docs/Development/M85_T082_MT101_CONTROLLED_APPEARANCE.md`. Jet Scooter and
-Protector remain unreviewed; no historical user finding is silently
-reclassified. Mothership's operators/raised printing and the two
+`Docs/Development/M85_T082_MT101_CONTROLLED_APPEARANCE.md`. Jet Scooter's later
+source-rebuild Rev1 is now explicitly accepted; Protector remains unreviewed.
+No historical user finding is silently reclassified. Mothership's
+operators/raised printing and the two
 Martian archival gaps also remain disclosed. T082/T083 remain HOLD.
 
 ## Files / verification / regression / build

@@ -60,6 +60,39 @@ class ReviewGuardTests(unittest.TestCase):
         self.assert_rejected(validator.CURRENT_COMPARISON, mutate,
                              "replaced accepted ETX Alien Strike appearance")
 
+    def test_jet_scooter_source_rebuild_cannot_expand_to_production(self):
+        self.assert_rejected(validator.JET_SCOOTER_SOURCE_REBUILD_REVIEW,
+                             lambda fixture: fixture.update(productionAccepted=True),
+                             "expanded comparative appearance acceptance")
+
+    def test_jet_scooter_source_rebuild_requires_exact_image_selection(self):
+        self.assert_rejected(validator.JET_SCOOTER_SOURCE_REBUILD_REVIEW,
+                             lambda fixture: fixture["approvalEvidence"].update(selectedAttempt=2),
+                             "exact director image selection")
+
+    def test_jet_scooter_source_rebuild_cannot_select_rev2(self):
+        self.assert_rejected(validator.JET_SCOOTER_SOURCE_REBUILD_REVIEW,
+                             lambda fixture: fixture.update(file="ArtSource/M85/Preproduction/JetScooterSourceRebuildV1/jet_scooter_source_rebuild_rev2.png"),
+                             "selected the unapproved second image")
+
+    def test_jet_scooter_source_rebuild_preserves_two_attempt_history(self):
+        self.assert_rejected(validator.JET_SCOOTER_SOURCE_REBUILD,
+                             lambda fixture: fixture["attempts"].pop(),
+                             "two-attempt provenance or selected the wrong attempt")
+
+    def test_jet_scooter_source_rebuild_cannot_claim_exact_topology(self):
+        self.assert_rejected(validator.JET_SCOOTER_SOURCE_REBUILD,
+                             lambda fixture: fixture["inspection"].update(exactPieceTopologyProven=True),
+                             "topology proof or lost identity anchors")
+
+    def test_current_comparison_cannot_replace_accepted_jet_scooter(self):
+        def mutate(fixture):
+            jet = next(item for item in fixture["selections"]
+                       if item["stableId"] == "unit.martians.jet_scooter")
+            jet["file"] = "ArtSource/M85/Preproduction/JetScooterSourceRebuildV1/jet_scooter_source_rebuild_rev2.png"
+        self.assert_rejected(validator.CURRENT_COMPARISON, mutate,
+                             "explicitly selected Jet Scooter image")
+
     def test_mmp_source_rebuild_cannot_expand_to_production(self):
         self.assert_rejected(validator.MMP_SOURCE_REBUILD_REVIEW,
                              lambda fixture: fixture.update(productionAccepted=True),

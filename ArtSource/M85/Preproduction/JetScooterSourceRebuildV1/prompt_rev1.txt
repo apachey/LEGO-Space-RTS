@@ -1,0 +1,16 @@
+Use case: stylized-concept
+Asset type: LEGO Space RTS T082 completed appearance proposal for comparative review
+Primary request: Create a finished, source-faithful grayscale studio render of the LEGO Life on Mars 7303 Jet Scooter. This is a reconstruction of the completed official set, not a redesign and not a primitive blockout.
+Input images: The small colored completed 7303 product photo is the authoritative reference for geometry, object count, proportions, rider scale and LEGO detail density. The existing monochrome render is a rejected anti-reference: retain only its clean white-background grayscale review presentation; do not copy its excessive length, bulky machinery, added pieces or generic speeder treatment.
+Subject and exact composition:
+- one extremely small, low, open Martian hover scooter at true minifigure scale, visibly buildable from roughly two dozen LEGO elements;
+- one thin narrow central deck, compact rather than elongated;
+- exactly two long exposed light-grey side tubes running parallel and close to the deck; these are the dominant horizontal silhouette;
+- at the forward end, exactly two short translucent-orange cone nozzles on simple clips, translated into distinct translucent pale-grey values in the monochrome render;
+- exactly one exposed Martian rider, upright behind a very simple handle/control column, with the characteristic small Life on Mars alien body and elongated head silhouette; no helmet and no second rider;
+- one small rounded rear equipment mass and one low round control/printed-disc puck, matching the completed set without inventing extra systems;
+- thin base plate, low center of gravity, compact front overhang, clean slightly tapered/sleek read.
+Style/medium: high-quality realistic LEGO product render, restrained matte charcoal/black monochrome with subtle material-value separation, same neutral comparative-review language as the accepted project renders.
+Composition/framing: isolated on white, three-quarter view from slightly above, entire scooter visible, enough side view to read both parallel tubes and enough front view to read the paired cone nozzles.
+Scale/detail constraint: official 2001 micro-set complexity and scale; rider should make the craft look tiny. Use large simple LEGO masses and authentic stud scale. Do not upscale it into a motorcycle, ship, or full-size vehicle.
+Avoid: no canopy, no wheels, no wings, no broad hull, no giant side engine pods, no long forward gun barrels, no extra weapons, no extra nozzles, no extra rider, no oversized rear tank, no dense greebling, no modern sci-fi detailing, no tubes beyond the one paired side-tube motif, no text, no logo, no watermark, no colored background, no display stand.
