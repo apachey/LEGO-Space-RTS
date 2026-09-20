@@ -1,0 +1,216 @@
+{
+  "schema": 1,
+  "stableId": "unit.aliens.etx_alien_strike",
+  "status": "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW",
+  "productionAccepted": false,
+  "canonImpact": "NONE",
+  "tool": "BUILT_IN_IMAGEGEN",
+  "authority": {
+    "baseCommit": "4207671",
+    "messages": ["погналі", "+"],
+    "scope": "Continue the next open T082 completed appearance from the accepted Crystal Reaper baseline; preserve the corrected exclusively-airborne 7693 identity without approving production topology or deferred flight presentation."
+  },
+  "approvalEvidence": {
+    "baseCommit": "4207671",
+    "message": "+",
+    "scope": "Rev6 ETX Alien Strike completed appearance only; comparative review acceptance, not production integration, gameplay, exact brick topology, internal anatomy or flight-height presentation."
+  },
+  "attempts": [
+    {
+      "number": 1,
+      "file": "etx_alien_strike_source_rebuild_rev1.png",
+      "sha256": "7b58ccba4976546ab622fc3c18fd9dc348d88c2069a120f5cb3544126028fba5",
+      "prompt": "prompt_rev1.txt",
+      "promptSha256": "32a22891366717f4d11810a8d22468e9ef61e7c3010cc3f978b4072154a5edb0",
+      "finding": "SELF_REJECTED_INCORRECT_HELMETED_HUMANOID_OPERATOR",
+      "inputs": [
+        {
+          "file": "reference_7693_cover.png",
+          "sha256": "357a72c03bcc7e9df723b6a305ab02a469edd066e5077d82a4d14338e7519325",
+          "role": "OFFICIAL_RECOGNITION_COLOR_AND_AIRBORNE_ARTICULATION"
+        },
+        {
+          "file": "reference_7693_page35.png",
+          "sha256": "79c57264385180125cc14a38939ad7f1ac904b0866246cecaa4a18d1fda4d946",
+          "role": "HISTORICAL_INTERMEDIATE_CONSTRUCTION_STEP_NOT_FINAL_APPEARANCE_REFERENCE"
+        },
+        {
+          "file": "ArtSource/M85/Preproduction/MobileMiningPlatformSourceRebuildV1/mobile_mining_platform_source_rebuild_rev2.png",
+          "sha256": "9011581e8d388e4f04b8a044d4a39f23f695ae2899252b66684e48b9e2311f1d",
+          "role": "DIRECTOR_ACCEPTED_GRAYSCALE_RENDERING_STYLE_ONLY"
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "file": "etx_alien_strike_source_rebuild_rev2.png",
+      "sha256": "15ef2e2df35e42cce3fd3fc38519c1147f158e63f231ee5a949b81542aeae70d",
+      "prompt": "prompt_rev2.txt",
+      "promptSha256": "3c0f4599ef4cdedd2dedd377a236f6352e57019b5f8f738151290c3c291d20b4",
+      "finding": "DIRECTOR_REJECTED_INCORRECT_TWO_CONTINUOUS_CRESCENT_WINGS",
+      "inputs": [
+        {
+          "file": "etx_alien_strike_source_rebuild_rev1.png",
+          "sha256": "7b58ccba4976546ab622fc3c18fd9dc348d88c2069a120f5cb3544126028fba5",
+          "role": "SUCCESSFUL_AIRFRAME_EDIT_CANVAS_WITH_REJECTED_OPERATOR"
+        },
+        {
+          "file": "reference_7693_cover.png",
+          "sha256": "357a72c03bcc7e9df723b6a305ab02a469edd066e5077d82a4d14338e7519325",
+          "role": "OFFICIAL_OPERATOR_SCALE_AND_EXPOSED_CHANNEL_CONTROL"
+        },
+        {
+          "file": "reference_7693_page35.png",
+          "sha256": "79c57264385180125cc14a38939ad7f1ac904b0866246cecaa4a18d1fda4d946",
+          "role": "HISTORICAL_INTERMEDIATE_CONSTRUCTION_STEP_NOT_FINAL_APPEARANCE_REFERENCE"
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "file": "etx_alien_strike_source_rebuild_rev3.png",
+      "sha256": "a7e3e2ed6b52d1938145eccfad3dfc12e1d4c9d9293e3ca03a0b73a4efed12a2",
+      "prompt": "prompt_rev3.txt",
+      "promptSha256": "443c8c8afb48b8f9ab57fcc49dcb9668bc148fba54c6880240be3c600fa73240",
+      "finding": "SELF_REJECTED_OUTER_PANELS_NOT_MATCHING_THE_SHARED_58846_MOLD",
+      "inputs": [
+        {
+          "file": "etx_alien_strike_source_rebuild_rev2.png",
+          "sha256": "15ef2e2df35e42cce3fd3fc38519c1147f158e63f231ee5a949b81542aeae70d",
+          "role": "EDIT_TARGET_WITH_ACCEPTABLE_BODY_AND_INCORRECT_TWO_PANEL_WING_READ"
+        },
+        {
+          "file": "reference_7693_page31.png",
+          "sha256": "c6989390ffd4070d56b781c6b575dfe9f7093f6f4a8a97b52febcf6b035e1b7f",
+          "role": "HISTORICAL_INTERMEDIATE_CONSTRUCTION_STEP_NOT_FINAL_APPEARANCE_REFERENCE"
+        },
+        {
+          "file": "reference_7693_page34.png",
+          "sha256": "4760bfa6eed642e8c4e523989a4238227bba9690aa3542e464b0998ae766d1fb",
+          "role": "HISTORICAL_INTERMEDIATE_CONSTRUCTION_STEP_NOT_FINAL_APPEARANCE_REFERENCE"
+        },
+        {
+          "file": "reference_7693_page35.png",
+          "sha256": "79c57264385180125cc14a38939ad7f1ac904b0866246cecaa4a18d1fda4d946",
+          "role": "HISTORICAL_INTERMEDIATE_CONSTRUCTION_STEP_NOT_FINAL_APPEARANCE_REFERENCE"
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "file": "etx_alien_strike_source_rebuild_rev4.png",
+      "sha256": "840491abf8e0fa5474abc9a9d765dd1bcb0fe3f3b702e0d4f8b23829c6a83173",
+      "prompt": "prompt_rev4.txt",
+      "promptSha256": "f2d1d75d913162f7116d9930b061d6378f7773f853b6af3ab6b87aee1a7e41c2",
+      "finding": "DIRECTOR_REJECTED_INCORRECT_SOLID_D_SHAPED_WING_PANELS_AND_POSE",
+      "inputs": [
+        {
+          "file": "etx_alien_strike_source_rebuild_rev3.png",
+          "sha256": "a7e3e2ed6b52d1938145eccfad3dfc12e1d4c9d9293e3ca03a0b73a4efed12a2",
+          "role": "SUCCESSFUL_FOUR_SECTION_WING_EDIT_CANVAS_WITH_WRONG_OUTER_PANEL_PROFILE"
+        },
+        {
+          "file": "reference_7693_page34.png",
+          "sha256": "4760bfa6eed642e8c4e523989a4238227bba9690aa3542e464b0998ae766d1fb",
+          "role": "HISTORICAL_INTERMEDIATE_CONSTRUCTION_STEP_NOT_FINAL_APPEARANCE_REFERENCE"
+        },
+        {
+          "file": "reference_7693_page35.png",
+          "sha256": "79c57264385180125cc14a38939ad7f1ac904b0866246cecaa4a18d1fda4d946",
+          "role": "HISTORICAL_INTERMEDIATE_CONSTRUCTION_STEP_NOT_FINAL_APPEARANCE_REFERENCE"
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "file": "etx_alien_strike_source_rebuild_rev5.png",
+      "sha256": "df4c98768b66ccc304a335349bccd9b36f6bfe426f13781e6f8078e8e5ee1e5e",
+      "prompt": "prompt_rev5.txt",
+      "promptSha256": "840c7452405a7ea70b103634aa186dea23c2a3de90dd70a92f7e83d70ce5e409",
+      "finding": "SELF_REJECTED_INCORRECT_INDEPENDENT_VERTICAL_WING_PANEL_TILT",
+      "inputs": [
+        {
+          "file": "reference_7693_cover.png",
+          "sha256": "357a72c03bcc7e9df723b6a305ab02a469edd066e5077d82a4d14338e7519325",
+          "role": "PRIMARY_OFFICIAL_COMPLETE_ATTACK_FLIGHT_SILHOUETTE"
+        },
+        {
+          "url": "https://cdn.rebrickable.com/media/thumbs/sets/7693-1/107260.jpg/1000x800p.jpg",
+          "role": "SECONDARY_COMPLETE_ASSEMBLED_PRODUCT_PHOTO_FOR_QUARTER_RING_SHELL_GEOMETRY"
+        },
+        {
+          "file": "etx_alien_strike_source_rebuild_rev4.png",
+          "sha256": "840491abf8e0fa5474abc9a9d765dd1bcb0fe3f3b702e0d4f8b23829c6a83173",
+          "role": "REJECTED_ANTI_REFERENCE_FOR_D_SHAPED_PANELS"
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "file": "etx_alien_strike_source_rebuild_rev6.png",
+      "sha256": "0eaeb78c30af354da2ca24c21822138a76cf18022ba68e9118d432ab171bed4b",
+      "prompt": "prompt_rev6.txt",
+      "promptSha256": "dd0bf43fdddf169cb2431d3b4344b33121402983b10fc7cd23b4a61e088f6a73",
+      "finding": "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW",
+      "inputs": [
+        {
+          "file": "etx_alien_strike_source_rebuild_rev5.png",
+          "sha256": "df4c98768b66ccc304a335349bccd9b36f6bfe426f13781e6f8078e8e5ee1e5e",
+          "role": "EDIT_TARGET_WITH_CORRECT_QUARTER_RING_PROFILE_AND_INCORRECT_VERTICAL_ARTICULATION"
+        },
+        {
+          "file": "reference_7693_cover.png",
+          "sha256": "357a72c03bcc7e9df723b6a305ab02a469edd066e5077d82a4d14338e7519325",
+          "role": "PRIMARY_OFFICIAL_COMPLETE_ATTACK_FLIGHT_SILHOUETTE"
+        }
+      ]
+    }
+  ],
+  "officialReferences": [
+    {
+      "file": "reference_7693_cover.png",
+      "sha256": "357a72c03bcc7e9df723b6a305ab02a469edd066e5077d82a4d14338e7519325",
+      "sourcePdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4523183.pdf",
+      "sourcePdfSha256": "0faf9ebb3927f8a7ade575e72b3b027b4bd246527f67bd285ead69b38bb93439",
+      "role": "OFFICIAL_RECOGNITION_COLOR_AND_AIRBORNE_ARTICULATION"
+    }
+  ],
+  "supportingResearch": [
+    {
+      "url": "https://brickset.com/inventories/7693-1",
+      "finding": "Set 7693 contains two part-58844/58845 small Mars Mission aliens rather than helmeted human minifigures."
+    },
+    {
+      "url": "https://www.bricklink.com/catalogItemInv.asp?M=mm001&bt=0&sortAsc=A&sortBy=0&viewType=P",
+      "finding": "The mm001 alien consists of a translucent-green combined torso/head with chest hole and a separate rounded leg element."
+    },
+    {
+      "url": "https://www.bricklink.com/v2/catalog/catalogitem.page?P=58846&idColor=89",
+      "finding": "The four dominant 7693 wing panels use the same 58846 round-corner 10x10 shell mold rather than separate inner crescents and generic outer wedges."
+    },
+    {
+      "url": "https://cdn.rebrickable.com/media/thumbs/sets/7693-1/107260.jpg/1000x800p.jpg",
+      "finding": "A complete assembled product photo confirms that every dominant black panel is a thick quarter-annulus shell with a deep inner cutout and that all four panels share one disc plane."
+    }
+  ],
+  "inspection": {
+    "oneContinuousAirborneCraft": true,
+    "fourDominantIdentical58846QuarterCirclePanels": true,
+    "twoArticulatedTwoPanelWingChains": true,
+    "singleCommonWingPlane": true,
+    "quarterAnnulusNegativeSpaceVisible": true,
+    "intermediateInstructionPagesUsedAsFinalAppearanceBasis": false,
+    "twoOuterHingePodsVisible": true,
+    "centralKeelAndForwardEmitter": true,
+    "exposedOperatorChannel": true,
+    "smallNoHelmetAlienWithChestHole": true,
+    "layeredRearTailBlades": true,
+    "outerCornerModulesRemainAttached": true,
+    "legsOrPlantedBracesAbsent": true,
+    "groundOrSiegeModeAbsent": true,
+    "officialSetDetailDensity": true,
+    "exactPieceTopologyProven": false,
+    "gameplayCameraAccepted": false
+  },
+  "limitations": "Completed appearance proposal for director review only. Final appearance and pose are controlled by the finished box art and complete assembled-product photography; intermediate instruction steps are retained only as historical attempt evidence and are not valid final-appearance references. The raster restores the source-recognition anchors and exclusively-airborne read but does not prove exact brick inventory, hidden hinge fit, authoritative flight altitude, gameplay-camera readability or production topology."
+}

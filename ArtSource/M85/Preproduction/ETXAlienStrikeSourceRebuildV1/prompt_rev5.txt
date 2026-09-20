@@ -1,0 +1,24 @@
+Create a new monochrome grayscale LEGO-style product render of the COMPLETE, FULLY ASSEMBLED 2007 LEGO Mars Mission set 7693 ETX Alien Strike alien aircraft, isolated in flight against a soft neutral light-gray studio background. This is a faithful source reconstruction, not a redesign, not a MOC, and not a generic alien ship.
+
+REFERENCE ROLES:
+- The official colorful box-art image is the PRIMARY final-form and pose reference. Match its complete airborne attack/flight configuration, silhouette, proportions, wing sweep, central body, alien pilot, twin lime-tube geometry (rendered gray), nose weapon, tail fins, and overall visual identity.
+- The colorful clean photo of the fully assembled set is a SECONDARY geometry reference. It proves the exact finished construction and the geometry of the four black shell panels, especially their deep inner cutouts and sloped outer rims. It shows the folded configuration, but DO NOT copy that folded ring pose.
+- The previous grayscale generated image is a REJECTED anti-reference. Do not preserve its incorrect wing design or pose.
+
+NON-NEGOTIABLE BLACK WING GEOMETRY:
+1. There are exactly FOUR large black shell panels total, grouped as TWO articulated two-panel wings, one wing on each side of the compact central aircraft.
+2. Every large panel must visibly be the official 58846-type 90-degree QUARTER-ANNULUS / thick L-shaped ring segment: a curved outer quarter-circle, a deep square/rectangular inner cutout creating obvious negative space, a broad smooth sloped outer rim, and a narrower studded inner shelf. Each must read as a quarter of a thick ring, never as a solid semicircle, D-shaped paddle, half-disc, solid fan, generic crescent, triangular wing, or flat plate.
+3. Each side is: inner quarter-ring shell -> tiny compact swivel/hinge block at the square corner -> outer quarter-ring shell. The square corners join end-to-end. The two curved shells on each side continue one another into one long, nearly continuous scythe-shaped half-arc. Keep the hinge gap small. Do NOT make four detached wings or dumbbell-like paddles.
+4. Pose the two completed scythe arcs exactly like the official box art's airborne configuration: a dramatic broken-spiral / elongated S silhouette around the central craft. One articulated black arc sweeps upward-left and slightly behind the body; the opposite arc sweeps downward-right and slightly toward the viewer. They occupy different 3D planes because the aircraft is banking. Do NOT arrange them as a flat mirrored bat wing, a horizontal pair, crab arms, legs, landing gear, or a closed/folded saucer ring.
+5. The four black quarter-ring shells must dominate the overall span and remain visibly connected to the compact central craft. Their smooth curved outer rims, inner negative spaces, modest exposed studs, and round alien-glyph discs must be readable at first glance. The outer shell on each arc should visually continue the curvature of the inner shell rather than turn back inward.
+
+CENTRAL AIRCRAFT:
+- Faithfully match the official finished 7693 central body: compact angular black/dark-gray keel, pointed front weapon emitting no beam, open organic alien cockpit with the correct tiny classic translucent/biomechanical Mars Mission alien pilot (not a human, not a modern robot), two long curved side tubes ending in pointed tips along the nose, compact circular central hinge/engine area, and three long narrow tail blades at the rear.
+- The central body must be much smaller than the combined black articulated arcs, as in the box art.
+- Moderate detail density matching a real official mid-2000s LEGO set. Large recognizable LEGO elements, clean connections, visible studs only where appropriate. No hyper-detailed MOC greebling, no exposed mechanical clutter, no extra appendages, no extra claws.
+
+COMPOSITION:
+- Full aircraft completely inside frame, no cropping.
+- Three-quarter top view, same directional read as box art: pointed nose toward lower-left/front, tail toward upper-right/back, banking so the upper-left and lower-right scythe arcs are both legible.
+- One object only, no rover, no astronaut, no terrain, no text, no logo, no labels, no colored accents.
+- Pure grayscale/monochrome output, crisp high-resolution studio render, realistic LEGO plastic, clear silhouette and readable geometry.

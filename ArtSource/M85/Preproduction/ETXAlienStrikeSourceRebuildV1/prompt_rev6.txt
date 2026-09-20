@@ -1,0 +1,20 @@
+Edit the first image into a stricter source-faithful grayscale reconstruction of the COMPLETE LEGO Mars Mission 7693 ETX Alien Strike. The second image is the official final box-art reference and must control the finished airborne silhouette.
+
+KEEP from the first image:
+- the monochrome studio-render presentation;
+- the compact central aircraft, correct alien pilot, nose tubes, front weapon, tail blades;
+- exactly four large black 58846-type shells;
+- each shell's correct quarter-annulus / L-shaped ring-section geometry, with deep square inner cutout, curved smooth sloped outer rim, narrower studded inner shelf, and alien-glyph discs;
+- the two long two-segment scythe arcs and small end-to-end hinge blocks.
+
+MAKE THIS CRITICAL MECHANICAL CORRECTION:
+All four large black shell panels and both wing chains must lie in ONE SINGLE THIN COMMON PLANE, like four movable sectors of one flat disc. The hinge axes are perpendicular to that plane, so the shells swivel only within the plane. There is NO wing flapping, no one wing lifted above the other, no vertical dihedral, no layered planes, and no panels tilted independently up or down. The entire common disc plane may be banked together with the aircraft toward the camera, exactly as the complete craft banks in the box art; any apparent height difference must come only from perspective and the whole-aircraft bank.
+
+FINAL ATTACK/FLIGHT CONFIGURATION:
+- Do not close the shells into a ring.
+- Arrange the two planar articulated chains in the official box-art open configuration: two long complementary scythe-shaped half-arcs producing the recognizable stretched broken-ring / S silhouette around the center.
+- On each side, inner quarter shell -> tiny hinge at square corner -> outer quarter shell. Their curves continue smoothly end-to-end with a small joint, not a large gap.
+- The black arcs dominate the overall span and remain visibly attached to the central body.
+- Match the official box art's proportions and clockwise/counterclockwise sweep. Avoid a mirrored flat bat-wing pair, crab arms, four separate paddles, legs, landing gear, D-shaped half-discs, solid fans, or generic crescents.
+
+Do not change unrelated features and do not add anything. One complete aircraft only, full object in frame, three-quarter top view, nose lower-left/front and tail upper-right/back, neutral light-gray background, pure grayscale, official mid-2000s LEGO detail density, no text, no logos, no scenery.

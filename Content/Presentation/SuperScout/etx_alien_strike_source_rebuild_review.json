@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "stableId": "unit.aliens.etx_alien_strike",
+  "status": "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW",
+  "file": "ArtSource/M85/Preproduction/ETXAlienStrikeSourceRebuildV1/etx_alien_strike_source_rebuild_rev6.png",
+  "sha256": "0eaeb78c30af354da2ca24c21822138a76cf18022ba68e9118d432ab171bed4b",
+  "productionAccepted": false,
+  "canonImpact": "NONE",
+  "authority": {
+    "baseCommit": "4207671",
+    "messages": ["погналі", "+"],
+    "scope": "Continue the next open T082 completed appearance from the accepted Crystal Reaper baseline; preserve the corrected exclusively-airborne 7693 identity without approving production topology or deferred flight presentation."
+  },
+  "approvalEvidence": {
+    "baseCommit": "4207671",
+    "message": "+",
+    "scope": "Rev6 ETX Alien Strike completed appearance only; comparative review acceptance, not production integration, gameplay, exact brick topology, internal anatomy or flight-height presentation."
+  },
+  "finding": "Rev6 restores the finished 7693 airborne read: one compact central keel with the exposed small Alien operator, paired nose rails, forward emitter and layered tail blades, surrounded by two articulated black wing chains. Each chain uses two thick quarter-annulus shells joined end-to-end, so all four large panels read as sectors of one thin disc plane opened into the recognizable broken-ring flight silhouette rather than solid D-shaped paddles, legs or a siege cradle.",
+  "pending": [
+    "Final gameplay-camera and production review",
+    "Exact production brick topology and hidden hinge fit",
+    "Internal biomechanical anatomy and allowable presentation-only articulation",
+    "Low/high flight presentation"
+  ],
+  "historicalBoundary": "FullV2 Rev2 and source-rebuild Revs1-5 remain historical rejected or superseded evidence. Intermediate instruction steps may document part connection history only and are not valid final-appearance references. This approval selects only source-rebuild Rev6 for comparative appearance review and does not approve a ground mode, siege state, internal anatomy, gameplay change or production asset."
+}

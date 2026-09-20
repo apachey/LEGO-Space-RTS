@@ -1,0 +1,9 @@
+Use case: precise-object-edit.
+
+Image 1 is the edit target. Preserve absolutely everything except the shapes of the two OUTERMOST wing panels: keep the camera, crop, central craft, operator, nose rails, emitter, tail, two inner curved panels, both black hinge pods, hover pose, lighting, background, and monochrome finish unchanged.
+
+Images 2-3 are official construction evidence. Correct the two outermost panels so the wing system uses EXACTLY FOUR INSTANCES OF THE SAME LEGO 58846 black round-corner 10x10 shell mold. All four large panels must share the same dimensions, thickness, stud pattern, 90-degree quarter-circle footprint, broad convex curved outer edge, 33-degree sloped shell edge, axle-hole/facet-cutout construction, and molded LEGO appearance. The outer pair must NOT be generic triangular plates, trapezoids, arrowheads, or straight rectangles. They are identical copies of the two successful inner quarter-circle shell pieces, merely rotated around the outer hinge pods.
+
+Keep the articulated chain on each side clear: central keel -> one 58846 quarter-circle shell -> small rectangular hinge pod with round pivot underneath -> second identical 58846 quarter-circle shell. Pose the outer shells rotated outward in a near-mirrored airborne formation like the official completed model, so the four identical quarters suggest a broken articulated disc/ring without touching the floor.
+
+Hard invariant count: 1 craft, 4 identical large black quarter-circle shell panels, 2 small hinge pods, 0 generic triangular wing plates, 0 legs, 0 feet, 0 landing gear, 0 ground mode. No other visual change. No text or diagrams.

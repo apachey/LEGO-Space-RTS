@@ -1,0 +1,17 @@
+Use case: precise-object-edit.
+Asset type: finished LEGO game-preproduction comparison render.
+
+Image 1 is the edit target. Keep its camera, framing, hovering pose, studio background, lighting, central black/gray keel, forward spiral emitter, two long nose rails, correct small no-helmet Mars Mission alien with circular chest opening, and layered rear tail assembly unchanged.
+
+Images 2-4 are official 7693 instruction evidence and are authoritative for the wing construction. Replace ONLY the incorrect wings of Image 1 with the exact source topology visible in Images 2-4.
+
+CRITICAL WING STRUCTURE:
+- There are EXACTLY FOUR large black wing/shell panels total, arranged as two articulated two-panel wing chains, one chain on each side of the central body.
+- Each side begins with ONE enormous thick quarter-circle / rounded-corner 10x10 shell panel hinged directly beside the central keel. These two inner panels are broad solid plate-built quarters of a ring, not thin boomerangs, ribs, feathers, or smooth horns.
+- At the outer end of each inner quarter-circle is ONE clearly visible small rectangular black hinge pod with a round turntable underneath.
+- Beyond each hinge pod attaches ONE separate enormous flat swept triangular/sector shell panel, matching the official outer panel built and attached in Images 3-4. These outer panels are almost as visually important as the inner rounded panels; they must not shrink into little boxes or disappear.
+- Final count: 2 huge rounded inner quarter-circle panels + 2 huge separate outer triangular/sector panels = 4 dominant black wing plates. The seams and hinge pods between inner and outer panels must be obvious.
+
+Pose the two articulated chains in a readable, nearly mirrored airborne configuration based on official Image 4: the inner rounded panels wrap around the central craft while the outer triangular panels fan outward at their endpoints, producing an interrupted, jointed near-ring / broad articulated disc silhouette. Do NOT merge each side into one continuous crescent. Do NOT make smooth organic wings. Do NOT make bird, bat, insect, feather, blade, or skeletal wings. Do NOT add legs, feet, landing pads, claws, ground contact, or siege stance. The small round turntables under the hinge pods are mechanical pivots, never feet.
+
+Preserve official 2007 LEGO detail density: large recognizable studs, simple plates, visible Technic hinge joints, and clean molded panels. Maintain monochrome/grayscale tonal treatment with source colors distinguishable by value. Exactly one complete hovering craft, no extra objects, text, labels, diagrams, or scenery.

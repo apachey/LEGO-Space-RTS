@@ -8,7 +8,6 @@
   "productionAccepted": false,
   "canonImpact": "NONE",
   "priorityPending": [
-    "unit.aliens.etx_alien_strike",
     "unit.martians.jet_scooter",
     "unit.martians.red_planet_protector"
   ],
@@ -456,14 +455,14 @@
     },
     {
       "stableId": "unit.aliens.etx_alien_strike",
-      "file": "Docs/Development/M85SuperScout/Silhouettes/FullV2/Renders/unit_aliens_etx_alien_strike_rev2.png",
-      "sha256": "60e3ccabf7f765062723746b287cd180a0e7a1fbac99b6de3071d0202535b686",
-      "status": "UNREVIEWED_CORRECTION_CANDIDATE",
-      "origin": "FullV2/generation_manifest.json:revisionCandidates",
+      "file": "ArtSource/M85/Preproduction/ETXAlienStrikeSourceRebuildV1/etx_alien_strike_source_rebuild_rev6.png",
+      "sha256": "0eaeb78c30af354da2ca24c21822138a76cf18022ba68e9118d432ab171bed4b",
+      "status": "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW",
+      "origin": "etx_alien_strike_source_rebuild_review.json",
       "code": "C41",
       "name": "ETX Alien Strike",
       "faction": "Aliens",
-      "priorityPending": true
+      "priorityPending": false
     },
     {
       "stableId": "unit.aliens.etx_alien_infiltrator",

@@ -69,8 +69,13 @@ The later Crystal Reaper source rebuild replaces the overly tank-like candidate
 with a source-controlled low tracked 7645 composition: two harvesting wheels,
 two distinct clamp manipulators and one directly docked detachable craft. The
 director's `+` accepts Rev2 for comparative appearance review only. Ore Drill,
-Mission Refit, production topology and gameplay remain open. Alien Strike, Jet
-Scooter and Protector remain the three priority appearance candidates.
+Mission Refit, production topology and gameplay remain open. The later ETX
+Alien Strike source rebuild replaces the wrong D-shaped wing paddles with four
+quarter-annulus shells in two planar articulated chains around the compact 7693
+airframe. The director's `+` accepts Rev6 for comparative appearance review
+only. Intermediate instruction steps remain historical construction evidence,
+not final-form authority. Jet Scooter and Protector are the two remaining
+priority appearance candidates.
 The 2026-09-14 continuation then finishes MT-101 from the recorded native
 construction with one built-in raster pass, not a third free-form reconstruction.
 The gallery selects this unreviewed completed appearance; four main wheels are
@@ -109,8 +114,9 @@ It is DIAGNOSTIC, named and unscaled, not a fresh blind/game-camera acceptance
 or production promotion. MT-61 Rev2 and Claw are now accepted for comparative review;
 MT-101's old unresolved raster is historical; the current selection now uses
 the completed controlled appearance above, never a finished-native approval gate.
-Earlier unreviewed Jet Scooter, Strike and Protector records and Mothership's
-source corrections remain open. Historical boards and image bytes are unchanged.
+The gallery now selects accepted Alien Strike Rev6; Jet Scooter and Protector
+remain unreviewed, and Mothership's source corrections remain open. Historical
+boards and rejected image bytes are unchanged.
 See `Docs/Development/M85_T082_CURRENT_COMPARISON.md`.
 This continuation passed `./tools/verify.sh`: 23/23 fast blocking stages,
 317 NUnit tests and 56 review guards, zero blocking or diagnostic failures,

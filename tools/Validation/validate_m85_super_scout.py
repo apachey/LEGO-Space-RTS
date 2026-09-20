@@ -62,6 +62,8 @@ MT101_SOURCE_REBUILD_REVIEW = ROOT / "Content/Presentation/SuperScout/mt101_sour
 MT101_NESTED_CONSTRUCTION = ROOT / "ArtSource/M85/Preproduction/MT101NestedAssemblyV1/construction_audit.json"
 MMP_SOURCE_REBUILD = ROOT / "ArtSource/M85/Preproduction/MobileMiningPlatformSourceRebuildV1/generation_manifest.json"
 MMP_SOURCE_REBUILD_REVIEW = ROOT / "Content/Presentation/SuperScout/mobile_mining_platform_source_rebuild_review.json"
+ETX_SOURCE_REBUILD = ROOT / "ArtSource/M85/Preproduction/ETXAlienStrikeSourceRebuildV1/generation_manifest.json"
+ETX_SOURCE_REBUILD_REVIEW = ROOT / "Content/Presentation/SuperScout/etx_alien_strike_source_rebuild_review.json"
 
 CLASSIFICATIONS = {
     "OFFICIAL_DIRECT": "OFFICIAL-DIRECT",
@@ -1048,6 +1050,98 @@ def validate_mmp_source_rebuild() -> None:
         fail("MMP source rebuild hid rejected historical candidates")
 
 
+def validate_etx_source_rebuild() -> None:
+    record = json.loads(ETX_SOURCE_REBUILD.read_text(encoding="utf-8"))
+    review = json.loads(ETX_SOURCE_REBUILD_REVIEW.read_text(encoding="utf-8"))
+    identity = ("unit.aliens.etx_alien_strike",
+                "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW", False, "NONE")
+    for item in (record, review):
+        if tuple(item.get(key) for key in ("stableId", "status", "productionAccepted", "canonImpact")) != identity:
+            fail("ETX Alien Strike source rebuild expanded comparative appearance acceptance")
+    authority = {
+        "baseCommit": "4207671",
+        "messages": ["погналі", "+"],
+        "scope": "Continue the next open T082 completed appearance from the accepted Crystal Reaper baseline; preserve the corrected exclusively-airborne 7693 identity without approving production topology or deferred flight presentation.",
+    }
+    if record.get("authority") != authority or review.get("authority") != authority:
+        fail("ETX Alien Strike source rebuild lost exact continuation authority")
+    approval = {
+        "baseCommit": "4207671",
+        "message": "+",
+        "scope": "Rev6 ETX Alien Strike completed appearance only; comparative review acceptance, not production integration, gameplay, exact brick topology, internal anatomy or flight-height presentation.",
+    }
+    if record.get("approvalEvidence") != approval or review.get("approvalEvidence") != approval:
+        fail("ETX Alien Strike source rebuild lost exact director approval evidence")
+    expected_attempts = [
+        (1, "etx_alien_strike_source_rebuild_rev1.png", "7b58ccba4976546ab622fc3c18fd9dc348d88c2069a120f5cb3544126028fba5", "prompt_rev1.txt", "32a22891366717f4d11810a8d22468e9ef61e7c3010cc3f978b4072154a5edb0", "SELF_REJECTED_INCORRECT_HELMETED_HUMANOID_OPERATOR"),
+        (2, "etx_alien_strike_source_rebuild_rev2.png", "15ef2e2df35e42cce3fd3fc38519c1147f158e63f231ee5a949b81542aeae70d", "prompt_rev2.txt", "3c0f4599ef4cdedd2dedd377a236f6352e57019b5f8f738151290c3c291d20b4", "DIRECTOR_REJECTED_INCORRECT_TWO_CONTINUOUS_CRESCENT_WINGS"),
+        (3, "etx_alien_strike_source_rebuild_rev3.png", "a7e3e2ed6b52d1938145eccfad3dfc12e1d4c9d9293e3ca03a0b73a4efed12a2", "prompt_rev3.txt", "443c8c8afb48b8f9ab57fcc49dcb9668bc148fba54c6880240be3c600fa73240", "SELF_REJECTED_OUTER_PANELS_NOT_MATCHING_THE_SHARED_58846_MOLD"),
+        (4, "etx_alien_strike_source_rebuild_rev4.png", "840491abf8e0fa5474abc9a9d765dd1bcb0fe3f3b702e0d4f8b23829c6a83173", "prompt_rev4.txt", "f2d1d75d913162f7116d9930b061d6378f7773f853b6af3ab6b87aee1a7e41c2", "DIRECTOR_REJECTED_INCORRECT_SOLID_D_SHAPED_WING_PANELS_AND_POSE"),
+        (5, "etx_alien_strike_source_rebuild_rev5.png", "df4c98768b66ccc304a335349bccd9b36f6bfe426f13781e6f8078e8e5ee1e5e", "prompt_rev5.txt", "840c7452405a7ea70b103634aa186dea23c2a3de90dd70a92f7e83d70ce5e409", "SELF_REJECTED_INCORRECT_INDEPENDENT_VERTICAL_WING_PANEL_TILT"),
+        (6, "etx_alien_strike_source_rebuild_rev6.png", "0eaeb78c30af354da2ca24c21822138a76cf18022ba68e9118d432ab171bed4b", "prompt_rev6.txt", "dd0bf43fdddf169cb2431d3b4344b33121402983b10fc7cd23b4a61e088f6a73", "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW"),
+    ]
+    attempts = record.get("attempts", [])
+    actual_attempts = [tuple(item.get(key) for key in
+                             ("number", "file", "sha256", "prompt", "promptSha256", "finding"))
+                       for item in attempts]
+    if record.get("tool") != "BUILT_IN_IMAGEGEN" or actual_attempts != expected_attempts:
+        fail("ETX Alien Strike source rebuild lost attempt provenance")
+    for attempt in attempts:
+        for file_key, hash_key in (("file", "sha256"), ("prompt", "promptSha256")):
+            path = ETX_SOURCE_REBUILD.parent / attempt[file_key]
+            if hashlib.sha256(path.read_bytes()).hexdigest() != attempt[hash_key]:
+                fail("ETX Alien Strike source rebuild image or prompt bytes changed")
+        for source in attempt.get("inputs", []):
+            if "file" not in source:
+                continue
+            path = ROOT / source["file"] if source["file"].startswith("ArtSource/") else ETX_SOURCE_REBUILD.parent / source["file"]
+            if hashlib.sha256(path.read_bytes()).hexdigest() != source["sha256"]:
+                fail("ETX Alien Strike source rebuild input chain changed")
+    expected_reference = ("reference_7693_cover.png",
+                          "357a72c03bcc7e9df723b6a305ab02a469edd066e5077d82a4d14338e7519325",
+                          "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4523183.pdf",
+                          "0faf9ebb3927f8a7ade575e72b3b027b4bd246527f67bd285ead69b38bb93439",
+                          "OFFICIAL_RECOGNITION_COLOR_AND_AIRBORNE_ARTICULATION")
+    refs = record.get("officialReferences", [])
+    if [tuple(item.get(key) for key in ("file", "sha256", "sourcePdf", "sourcePdfSha256", "role")) for item in refs] != [expected_reference]:
+        fail("ETX Alien Strike source rebuild replaced the completed official appearance anchor")
+    if hashlib.sha256((ETX_SOURCE_REBUILD.parent / expected_reference[0]).read_bytes()).hexdigest() != expected_reference[1]:
+        fail("ETX Alien Strike source rebuild changed official cover bytes")
+    intermediate_roles = [source.get("role") for attempt in attempts for source in attempt.get("inputs", [])
+                          if source.get("file", "").startswith("reference_7693_page")]
+    if not intermediate_roles or set(intermediate_roles) != {"HISTORICAL_INTERMEDIATE_CONSTRUCTION_STEP_NOT_FINAL_APPEARANCE_REFERENCE"}:
+        fail("ETX Alien Strike source rebuild promoted intermediate instructions into final appearance evidence")
+    assembled_photo = [source for source in attempts[4].get("inputs", []) if source.get("url")]
+    if assembled_photo != [{
+            "url": "https://cdn.rebrickable.com/media/thumbs/sets/7693-1/107260.jpg/1000x800p.jpg",
+            "role": "SECONDARY_COMPLETE_ASSEMBLED_PRODUCT_PHOTO_FOR_QUARTER_RING_SHELL_GEOMETRY",
+    }]:
+        fail("ETX Alien Strike source rebuild lost the complete assembled-product reference")
+    inspection = record.get("inspection", {})
+    required_true = ("oneContinuousAirborneCraft", "fourDominantIdentical58846QuarterCirclePanels",
+                     "twoArticulatedTwoPanelWingChains", "singleCommonWingPlane",
+                     "quarterAnnulusNegativeSpaceVisible", "centralKeelAndForwardEmitter",
+                     "smallNoHelmetAlienWithChestHole", "layeredRearTailBlades",
+                     "legsOrPlantedBracesAbsent", "groundOrSiegeModeAbsent",
+                     "officialSetDetailDensity")
+    if any(inspection.get(key) is not True for key in required_true):
+        fail("ETX Alien Strike source rebuild lost accepted visible identity anchors")
+    if inspection.get("intermediateInstructionPagesUsedAsFinalAppearanceBasis") is not False or inspection.get("exactPieceTopologyProven") is not False or inspection.get("gameplayCameraAccepted") is not False:
+        fail("ETX Alien Strike source rebuild promoted visual review into source or production proof")
+    if (review.get("file"), review.get("sha256")) != (
+            "ArtSource/M85/Preproduction/ETXAlienStrikeSourceRebuildV1/etx_alien_strike_source_rebuild_rev6.png",
+            expected_attempts[5][2]):
+        fail("ETX Alien Strike source rebuild review selected a rejected image")
+    if review.get("pending") != ["Final gameplay-camera and production review",
+                                  "Exact production brick topology and hidden hinge fit",
+                                  "Internal biomechanical anatomy and allowable presentation-only articulation",
+                                  "Low/high flight presentation"]:
+        fail("ETX Alien Strike source rebuild hid production or presentation gates")
+    boundary = review.get("historicalBoundary", "")
+    if "Intermediate instruction steps" not in boundary or "not valid final-appearance references" not in boundary or "does not approve a ground mode" not in boundary:
+        fail("ETX Alien Strike source rebuild lost historical and canon boundaries")
+
+
 def validate_current_comparison() -> None:
     record = json.loads(CURRENT_COMPARISON.read_text(encoding="utf-8"))
     if (record.get("gate"), record.get("state"), record.get("productionAccepted"), record.get("canonImpact")) != (
@@ -1084,8 +1178,13 @@ def validate_current_comparison() -> None:
             "ArtSource/M85/Preproduction/MobileMiningPlatformSourceRebuildV1/mobile_mining_platform_source_rebuild_rev2.png",
             "9011581e8d388e4f04b8a044d4a39f23f695ae2899252b66684e48b9e2311f1d"):
         fail("current comparison replaced accepted MMP appearance")
-    pending = sorted(["unit.aliens.etx_alien_strike",
-                      "unit.martians.jet_scooter", "unit.martians.red_planet_protector"])
+    strike = by_id["unit.aliens.etx_alien_strike"]
+    if (strike.get("status"), strike.get("file"), strike.get("sha256")) != (
+            "DIRECTOR_ACCEPTED_APPEARANCE_FOR_COMPARATIVE_REVIEW",
+            "ArtSource/M85/Preproduction/ETXAlienStrikeSourceRebuildV1/etx_alien_strike_source_rebuild_rev6.png",
+            "0eaeb78c30af354da2ca24c21822138a76cf18022ba68e9118d432ab171bed4b"):
+        fail("current comparison replaced accepted ETX Alien Strike appearance")
+    pending = sorted(["unit.martians.jet_scooter", "unit.martians.red_planet_protector"])
     if record.get("priorityPending") != pending:
         fail("current comparison hid priority review gaps")
     generated = subprocess.run([sys.executable, str(ROOT / "tools/generate-m85-current-comparison.py"), "--check"],
@@ -1107,6 +1206,7 @@ def main() -> None:
     validate_mt101_nested_appearance()
     validate_mt101_source_rebuild()
     validate_mmp_source_rebuild()
+    validate_etx_source_rebuild()
     validate_current_comparison()
     for path in (
         MANIFEST, LEDGER, INSTRUCTION_INDEX, SOURCE_ANALYSIS_POLICY, COMPOSED_DESIGN_PROPOSALS, ROCK_RAIDERS_EVIDENCE, ASTRONAUTS_EVIDENCE,

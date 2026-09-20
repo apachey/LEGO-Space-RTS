@@ -1,0 +1,13 @@
+Use case: precise-object-edit.
+
+Make a tightly controlled correction of the first reference image. Preserve its successful camera, broad symmetrical airborne crescent composition, central keel, two huge hinged black crescent lobes, attached outer control pods, forward spiral emitter, LEGO scale, grayscale studio lighting, background, and overall hull construction. Do not redesign or add anything.
+
+Correct only these source-fidelity details:
+
+1. Replace the incorrect helmeted skeleton pilot with the exact visual type of the 2007 Mars Mission mm001 small alien from set 7693: a tiny translucent-green two-piece molded creature, NOT a normal minifigure, NOT a robot, and with NO helmet or separate human-shaped head. It has one fused torso-and-head piece with a low angular organic face, a clearly visible circular hole through the center of its chest, thin curved integrated arms ending in small claw-like hands, and one separate rounded translucent-green leg/base piece. Keep it seated low in the exposed central operator channel between the two long translucent-lime rails. It must be small and subordinate to the craft, matching official 7693 scale.
+
+2. Make the rear tail unmistakably match the official 7693 layered lime assembly: three long translucent blade/fin layers aligned rearward from the central keel, with one broad central blade and two slimmer flanking blades. They are tail blades, not insect wings. Remove any extra tiny side wings that obscure this three-layer tail read.
+
+3. Preserve the official low black/gray body and exposed red/lime forward facet relationship. Keep the craft hovering with a separated soft shadow. Do not add legs, feet, landing gear, claws, walkers, a canopy, extra crew, extra weapons, or any second craft.
+
+The final image remains one finished monochrome/grayscale LEGO product render. Use distinct gray transparency values so the translucent alien, lime rails, lime emitter, and three lime tail blades are readable even without color. No text, labels, collage, or diagrams.

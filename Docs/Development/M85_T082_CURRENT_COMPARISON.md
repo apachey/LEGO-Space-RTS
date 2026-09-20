@@ -25,19 +25,19 @@ review availability. It is a named, unscaled DIAGNOSTIC assembly, not a blind
 test, real Godot camera capture, accepted complete corpus or production gate.
 Original first-review and FullV2 boards/manifests/image bytes remain unchanged.
 
-## Next completed priority candidates
+## Accepted correction records retained in the current gallery
 
 ### MT-61-derived Mobile Mining Platform — resource extraction
 
 Canon Phase 03 §8 combines 7645, 7648 and the human 7693 vehicle into one
-configurable economic family. This candidate studies the Crystal Reaper state:
-two harvesting cutters, two manipulators and directly docked upper spacecraft/
-processing module, not an unsupported towing trailer. It does not add a new
-roster unit or approve a toy removal mechanism as gameplay. Ore Drill state,
-service-controlled Mission Refit and final production topology remain obligations.
-The image is still `UNREVIEWED_CORRECTION_CANDIDATE`.
+configurable economic family. Source-rebuild Rev2 is accepted for comparative
+appearance review as the Crystal Reaper state: two harvesting cutters, two
+manipulators and a directly docked upper spacecraft/processing module, not an
+unsupported towing trailer. It does not add a new roster unit or approve a toy
+removal mechanism as gameplay. Ore Drill state, service-controlled Mission
+Refit and final production topology remain obligations.
 
-![MT-61 candidate](/Users/pavlosidash/Developer/Lego-Space-RTS/Docs/Development/M85SuperScout/Silhouettes/FullV2/Renders/unit_astronauts_mobile_mining_platform_rev1.png)
+![MT-61 Crystal Reaper accepted appearance](/Users/pavlosidash/Developer/Lego-Space-RTS/ArtSource/M85/Preproduction/MobileMiningPlatformSourceRebuildV1/mobile_mining_platform_source_rebuild_rev2.png)
 
 ### MT-51 Claw-Tank — frontline cover
 
@@ -68,12 +68,12 @@ automatically prove image topology or pixel-exact preservation.
 
 ## Remaining scope / manual judgement
 
-Claw's appearance is now accepted; do not ask for its approval again.
-The next completed four-image batch is recorded in
-`Docs/Development/M85_T082_OPEN_APPEARANCE_BATCH.md`: Crystal Reaper,
-Alien Strike, Jet Scooter and Red Planet Protector. Source resemblance and
+Claw, MT-101, Crystal Reaper and ETX Alien Strike appearances are now accepted
+for comparative review; do not ask for their approval again. The current open
+batch is recorded in `Docs/Development/M85_T082_OPEN_APPEARANCE_BATCH.md`.
+Jet Scooter is next, followed by Red Planet Protector. Source resemblance and
 tool/body composition need human judgement, not another size/blockout gate.
-This batch cannot approve the 66-entry gallery, MT-101, configurations or production.
+These approvals cannot accept the 66-entry gallery, alternate configurations or production.
 
 Continuation 2026-09-14: the director identifies incomplete MT-101 source
 decomposition. Current selection retains the controlled raster bytes only as
@@ -83,9 +83,9 @@ native/raster controls do not establish its stowage/extraction. Source records
 and model requirements are corrected without another generation or gameplay change.
 See `Docs/Development/M85_T082_MT101_NESTED_SOURCE_CORRECTION.md`.
 The original prompt and wheel occlusion remain documented in
-`Docs/Development/M85_T082_MT101_CONTROLLED_APPEARANCE.md`. Earlier unreviewed Jet Scooter,
-Strike and Protector records remain unreviewed; no historical user finding is
-silently reclassified. Mothership's operators/raised printing and the two
+`Docs/Development/M85_T082_MT101_CONTROLLED_APPEARANCE.md`. Jet Scooter and
+Protector remain unreviewed; no historical user finding is silently
+reclassified. Mothership's operators/raised printing and the two
 Martian archival gaps also remain disclosed. T082/T083 remain HOLD.
 
 ## Files / verification / regression / build

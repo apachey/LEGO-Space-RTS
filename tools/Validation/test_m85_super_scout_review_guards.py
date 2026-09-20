@@ -12,6 +12,54 @@ import validate_m85_super_scout as validator
 
 
 class ReviewGuardTests(unittest.TestCase):
+    def test_etx_source_rebuild_cannot_expand_to_production(self):
+        self.assert_rejected(validator.ETX_SOURCE_REBUILD_REVIEW,
+                             lambda fixture: fixture.update(productionAccepted=True),
+                             "expanded comparative appearance acceptance")
+
+    def test_etx_source_rebuild_requires_exact_director_approval(self):
+        self.assert_rejected(validator.ETX_SOURCE_REBUILD_REVIEW,
+                             lambda fixture: fixture.pop("approvalEvidence"),
+                             "exact director approval evidence")
+
+    def test_etx_source_rebuild_requires_exact_continuation_authority(self):
+        self.assert_rejected(validator.ETX_SOURCE_REBUILD_REVIEW,
+                             lambda fixture: fixture["authority"].pop("messages"),
+                             "exact continuation authority")
+
+    def test_etx_source_rebuild_cannot_restore_rejected_rev5(self):
+        self.assert_rejected(validator.ETX_SOURCE_REBUILD_REVIEW,
+                             lambda fixture: fixture.update(file="ArtSource/M85/Preproduction/ETXAlienStrikeSourceRebuildV1/etx_alien_strike_source_rebuild_rev5.png"),
+                             "selected a rejected image")
+
+    def test_etx_source_rebuild_cannot_claim_exact_topology(self):
+        self.assert_rejected(validator.ETX_SOURCE_REBUILD,
+                             lambda fixture: fixture["inspection"].update(exactPieceTopologyProven=True),
+                             "visual review into source or production proof")
+
+    def test_etx_source_rebuild_cannot_restore_ground_mode(self):
+        self.assert_rejected(validator.ETX_SOURCE_REBUILD,
+                             lambda fixture: fixture["inspection"].update(groundOrSiegeModeAbsent=False),
+                             "lost accepted visible identity anchors")
+
+    def test_etx_source_rebuild_cannot_promote_instruction_step_to_final_reference(self):
+        self.assert_rejected(validator.ETX_SOURCE_REBUILD,
+                             lambda fixture: fixture["officialReferences"].append(fixture["attempts"][2]["inputs"][1]),
+                             "completed official appearance anchor")
+
+    def test_etx_source_rebuild_protects_official_pdf_provenance(self):
+        self.assert_rejected(validator.ETX_SOURCE_REBUILD,
+                             lambda fixture: fixture["officialReferences"][0].update(sourcePdfSha256="0" * 64),
+                             "completed official appearance anchor")
+
+    def test_current_comparison_cannot_replace_accepted_etx(self):
+        def mutate(fixture):
+            strike = next(item for item in fixture["selections"]
+                          if item["stableId"] == "unit.aliens.etx_alien_strike")
+            strike["file"] = "Docs/Development/M85SuperScout/Silhouettes/FullV2/Renders/unit_aliens_etx_alien_strike_rev2.png"
+        self.assert_rejected(validator.CURRENT_COMPARISON, mutate,
+                             "replaced accepted ETX Alien Strike appearance")
+
     def test_mmp_source_rebuild_cannot_expand_to_production(self):
         self.assert_rejected(validator.MMP_SOURCE_REBUILD_REVIEW,
                              lambda fixture: fixture.update(productionAccepted=True),

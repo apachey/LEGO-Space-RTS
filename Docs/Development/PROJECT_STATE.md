@@ -897,8 +897,9 @@ live; the current schema-9 copy/paste retains the complete experiment.
   `038fc8a` accepts only that Claw appearance for comparative review, separately
   recorded in `Content/Presentation/SuperScout/claw_tank_appearance_review.json`.
   The gallery now marks it accepted; production/further retries are not approved.
-  The next completed four-image handoff is Crystal Reaper, Alien Strike,
-  Jet Scooter and Protector, all still open review candidates.
+  The later director approvals select Crystal Reaper Rev2 and ETX Alien Strike
+  Rev6 for comparative appearance review. Jet Scooter and Protector remain the
+  two open priority candidates.
   See `Docs/Development/M85_T082_OPEN_APPEARANCE_BATCH.md`.
   The 2026-09-14 `далі` continues the recorded controlled MT-101 construction
   into one completed monochrome raster appearance, not a third free-form design
@@ -1362,9 +1363,14 @@ blocking only when M9 must prove its stable-large-battle exit.
    for comparative appearance review: the selected raster preserves two track
    runs, two enormous front harvesting wheels, two separate clamp manipulators
    and one directly docked detachable craft. Ore Drill, Mission Refit, exact
-   production topology and gameplay-camera review remain open. The next
-   priority appearance is ETX Alien Strike, followed by Jet Scooter and Red
-   Planet Protector.
+   production topology and gameplay-camera review remain open. ETX Alien Strike
+   source-rebuild Rev6 is accepted for comparative appearance review with four
+   quarter-annulus black shells forming two planar articulated arcs around its
+   exclusively airborne central body. Exact hidden hinge fit, internal anatomy,
+   gameplay-camera readability, flight-height presentation and production
+   integration remain open. Intermediate instruction steps are historical
+   connection evidence only, not final-form references. The next priority
+   appearance is Jet Scooter, followed by Red Planet Protector.
    Do not reset historical attempts or regenerate already successful assets.
 2. Execute the remaining Phase 09C M8.5 T082–T092 work before final M9 Skirmish
    Alpha acceptance.
