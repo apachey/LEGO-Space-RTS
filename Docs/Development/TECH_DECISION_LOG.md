@@ -1541,6 +1541,23 @@ simulation, public format, dependency or canon. All packets remain `HOLD`.
 This changes the T082 review protocol only. It changes no gameplay, simulation,
 public format, dependency, architecture or canon. T082 remains `HOLD`.
 
+## 2026-09-22 — Advance current blind review diagnostically without inventing scores
+
+- After seeing both 24-cell pages, the director said “йдемо далі, наче все
+  зрозуміло”. Record that verbatim as a qualitative go-ahead, not as 66 raw
+  identifications or a formal 66/66 recognition pass.
+- This supersedes the 2026-09-21 requirement for complete per-code answers
+  *before displaying the next diagnostic width*. Both 44-cell pages may now be
+  shown in the same R-code order, while 72 remains withheld pending feedback.
+- The original final-acceptance safeguard remains: uncertainty, collision or
+  wrong identity requires revision and a new blind version; explicit
+  complete-corpus game-director evidence and acceptance are still required
+  before T082 passes or any roster packet becomes production-ready.
+- Keep the answer key withheld throughout this diagnostic blind review.
+
+This changes review cadence, not gameplay, simulation, dependency, architecture
+or canon. T082 remains `HOLD`.
+
 ## 2026-09-12 — Correct ETX Alien Strike to an exclusively airborne unit
 
 - The game director rejected the unsupported 7693 siege/deployment reading.

@@ -7,9 +7,10 @@ blind review at 0/66 and is rejected. A four-asset source-derived Pilot V2 is
 game-director accepted at 4/4, approving that materially different method for
 a second full-roster corpus. The current 66 selections are now assembled into
 a separate reproducible renewed blind-review package with fresh R-codes and
-grayscale 24/44/72 boards. Only both 24-cell pages are active; their complete
-raw result must be recorded before 44/72 can be shown. The complete-roster
-review therefore remains open. Current
+grayscale 24/44/72 boards. The director gave a qualitative 24-cell go-ahead
+without per-code identifications; both 44-cell pages are now active for
+diagnostic review, not a scored 66/66 pass. The complete-roster review remains
+open. Current
 correction candidates now also cover the MT-61-derived Mobile Mining Platform
 and MT-51 Claw-Tank. Tunnel Transport and Rapid Rider are individually accepted
 for the next composite review. MB-01 Eagle Command Base has a third candidate,
@@ -526,10 +527,11 @@ redistributed.
 
 1. Retain the two explicit Martian archival gaps unless usable evidence appears,
    and escalate any gap that prevents a safe production decision.
-2. Run both prepared `CurrentBlindReviewV1` 24-cell pages as one 66-entry blind
-   pass and record the raw `R01`–`R66` identifications. Any wrong, uncertain or
-   indistinguishable result stops the sequence for revision and a fresh blind
-   version; only a clean renewed 24-cell pass unlocks 44/72.
+2. Review both `CurrentBlindReviewV1` 44-cell pages as one 66-entry diagnostic
+   pass, recording any uncertainty or confusion by `R` code. The director's
+   24-cell go-ahead was general, not a scored recognition pass. A problematic
+   silhouette still requires revision and a fresh blind version before final
+   acceptance; 72 cells remain withheld pending the 44-cell result.
 3. Revise every wrong, uncertain or indistinguishable asset and extend the
    44-pair register wherever the accepted review exposes a new neighbor.
 4. Resolve or escalate every consequential unknown, then request the final
@@ -545,8 +547,8 @@ deliberately deferred.
 The game director also passed the four-asset Pilot V2 blind review at 4/4,
 approving the source-derived silhouette method for full-roster expansion. No
 packet is approved for T083/T085 production yet. `CurrentBlindReviewV1` is now
-`HOLD_FOR_GAME_DIRECTOR_24_CELL_REVIEW`: 66 primary identities, two active
-24-cell pages, prepared but withheld 44/72 pages, and one preserved Defense Node
+`HOLD_FOR_GAME_DIRECTOR_44_CELL_REVIEW`: 66 primary identities, two active
+44-cell pages, prepared but withheld 72-cell pages, and one preserved Defense Node
 alternate excluded from the roster pass. See
 `Docs/Development/M85_T082_CURRENT_BLIND_REVIEW_V1.md`.
 

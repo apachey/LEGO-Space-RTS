@@ -1,6 +1,6 @@
 # T082 — renewed current blind review V1
 
-Prepared: 2026-09-21. Handoff: 2026-09-22. Branch: `codex/m85-t082`, not merged.
+Prepared: 2026-09-21. 44-cell continuation: 2026-09-22. Branch: `codex/m85-t082`, not merged.
 Canon impact: NONE.
 
 ## Purpose
@@ -25,22 +25,24 @@ from this blind pass.
 
 ## Active review sequence
 
-1. Review both 24-cell pages together: page 1 contains `R01`–`R33`; page 2
-   contains `R34`–`R66`.
-2. Record the director's raw identification for every code. `Не знаю`, an
-   uncertain guess and a collision with another model are valid findings and
-   must not be converted into a pass.
-3. Any wrong, uncertain or indistinguishable result stops the sequence at 24
-   cells. Revise those appearances and issue a new version with fresh blind
-   codes before repeating the complete 24-cell pass.
-4. Only a clean renewed 24-cell result unlocks the already prepared 44-cell
-   pages; a clean 44-cell result then unlocks 72 cells.
-5. The answer key, names, factions, roles, selected paths and current statuses
-   remain withheld until the corresponding blind answers are recorded.
+1. The director saw both 24-cell pages (`R01`–`R33`, then `R34`–`R66`) and said
+   verbatim: “йдемо далі, наче все зрозуміло”. This is a qualitative go-ahead,
+   **not** 66 recorded identifications or a scored recognition pass.
+2. Show both 44-cell pages together, retaining the same R-code order. Record
+   any uncertain, unknown, wrong-looking or confusable silhouettes in the
+   director's words; do not infer unspoken answers.
+3. A clearly problematic asset returns to revision with new blind codes before
+   formal acceptance. A further qualitative go-ahead may open the diagnostic
+   72-cell view, but does not retroactively score 24 or 44 cells.
+4. A full-roster production/readability claim still requires explicit
+   game-director evidence and acceptance. The answer key, names, factions,
+   roles, selected paths and current statuses remain withheld during the blind
+   review.
 
-Current state: `HOLD_FOR_GAME_DIRECTOR_24_CELL_REVIEW` (`BLOCKING_NOW`). The two
-24-cell pages are the only active review surfaces. The prepared 44/72 pages are
-intentionally not part of this handoff yet.
+Current state: `HOLD_FOR_GAME_DIRECTOR_44_CELL_REVIEW` (`BLOCKING_NOW`). Both
+44-cell pages are active; 72 remains prepared but withheld. The recorded 24-cell
+feedback permits this diagnostic progression only. No production image/model
+was accepted by that general comment.
 
 ## Reproducible artifacts
 
@@ -48,7 +50,7 @@ intentionally not part of this handoff yet.
 - Review directory:
   `Docs/Development/M85SuperScout/Silhouettes/FullV2/CurrentBlindReviewV1/`
 - Public review manifest: `review_manifest.json`
-- Active pages: `blind_24_cells_page_1.png`, `blind_24_cells_page_2.png`
+- Active pages: `blind_44_cells_page_1.png`, `blind_44_cells_page_2.png`
 - Withheld mapping: `WITHHELD_ANSWER_KEY.md`
 
 The manifest locks the source-selection hash, board seed `85084`, R-code range,
@@ -86,22 +88,35 @@ The preceding sandboxed run failed during .NET restore and was stopped with
 exit 143; it is not counted as PASS. The completed full rerun above supersedes
 that interrupted verification attempt.
 
+44-cell continuation verification on 2026-09-23:
+
+- `python3 -B tools/generate-m85-current-blind-review.py --check`: PASS; all
+  six board bytes and the withheld key remain reproducible and unchanged.
+- `python3 -B tools/Validation/validate_m85_super_scout.py`: PASS.
+- `python3 -B tools/Validation/test_m85_super_scout_review_guards.py`: PASS,
+  137/137 cases, including refusal to treat qualitative feedback as scored.
+- `./tools/verify.sh`: PASS with zero blocking or diagnostic failures at
+  `Artifacts/Verification/20260922T210607Z-fast-summary.txt`; 317/317 NUnit
+  tests and the T082 review guards passed. An earlier sandboxed attempt stalled
+  at .NET restore and was terminated; it is not counted as PASS.
+- `git diff --check`: PASS.
+
 ## Completion report
 
 - What changed: six complete current-selection boards are prepared; the two
-  24-cell pages are ready for director review.
+  44-cell pages are now active after the director's general 24-cell go-ahead.
 - Why: later accepted corrections must be reviewed together at comparable
   sizes without altering the previous review's source images or results.
 - Files changed: new board generator and artifacts; review-status record;
   validator and four guard cases; development handoff and project-state notes.
 - Automated verification: exact executed commands and final results are above.
-- Regression coverage: 132 existing review guards plus four new cases covering
-  automatic acceptance, production overclaim, stale selection and lost alternate
-  accounting; all 136 pass.
+- Regression coverage: the original 136 guards covered automatic acceptance,
+  production overclaim, stale selection and lost alternate accounting. A further
+  guard now protects the unscored nature of the 24-cell feedback.
 - Build: export and smoke succeeded at `Builds/macOS/LEGO Space RTS.app`.
   The review images remain preproduction artifacts, outside the playable models.
-- Manual review requested: identify each code on the two 24-cell pages; record
-  uncertain guesses, unknowns and confusing silhouettes in the director's words.
+- Manual review requested: inspect both 44-cell pages as one set and flag
+  uncertain, unknown or confusing silhouettes by R-code.
 - Risks / unresolved issues: these are footprint-relative reference boards, not
   actual game-camera captures. Complete T082 acceptance and the source/production
   obligations listed above remain open. Existing Stress60 is `BLOCKING_LATER` M9.
