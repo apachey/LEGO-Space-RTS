@@ -1412,7 +1412,7 @@ def validate_current_blind_review() -> None:
         "T082",
         "CURRENT_SELECTED_FULL_ROSTER_RENEWED_V1",
         "BLOCKING_NOW",
-        "HOLD_FOR_GAME_DIRECTOR_44_CELL_REVIEW",
+        "HOLD_FOR_GAME_DIRECTOR_72_CELL_REVIEW",
         False,
         "NONE",
     )
@@ -1431,7 +1431,7 @@ def validate_current_blind_review() -> None:
         record.get("boardSeed") != 85084
         or record.get("codePrefix") != "R"
         or record.get("cameraWidthsCells") != [24, 44, 72]
-        or record.get("nextReviewWidthCells") != 44
+        or record.get("nextReviewWidthCells") != 72
         or record.get("pagesPerWidth") != 2
     ):
         fail("renewed current blind review order, codes or scale sequence drifted")
@@ -1883,8 +1883,8 @@ def main() -> None:
 
     if blind_review_results.get("schemaVersion") != 1 or blind_review_results.get("task") != "T082":
         fail("blind-review result schema/task mismatch")
-    if blind_review_results.get("status") != "CURRENT_BLIND_REVIEW_V1_AWAITING_GAME_DIRECTOR_44_CELL":
-        fail("blind-review result must preserve the renewed 44-cell director-review gate")
+    if blind_review_results.get("status") != "CURRENT_BLIND_REVIEW_V1_AWAITING_GAME_DIRECTOR_72_CELL":
+        fail("blind-review result must preserve the renewed 72-cell director-review gate")
     attempts = blind_review_results.get("attempts", [])
     if len(attempts) != 3:
         fail("expected the V1 failure, Pilot V2 pass and Full V2 24-cell review")
@@ -1941,14 +1941,14 @@ def main() -> None:
         fail("Full V2 active review state must remain revision-required")
     active_renewed = blind_review_results.get("activeRenewedReview", {})
     expected_renewed_pages = [
-        "Docs/Development/M85SuperScout/Silhouettes/FullV2/CurrentBlindReviewV1/blind_44_cells_page_1.png",
-        "Docs/Development/M85SuperScout/Silhouettes/FullV2/CurrentBlindReviewV1/blind_44_cells_page_2.png",
+        "Docs/Development/M85SuperScout/Silhouettes/FullV2/CurrentBlindReviewV1/blind_72_cells_page_1.png",
+        "Docs/Development/M85SuperScout/Silhouettes/FullV2/CurrentBlindReviewV1/blind_72_cells_page_2.png",
     ]
     if (
         active_renewed.get("id") != "T082_CURRENT_SELECTED_RENEWED_V1"
-        or active_renewed.get("state") != "AWAITING_GAME_DIRECTOR_44_CELL_REVIEW"
+        or active_renewed.get("state") != "AWAITING_GAME_DIRECTOR_72_CELL_REVIEW"
         or active_renewed.get("preparedCameraWidthsCells") != [24, 44, 72]
-        or active_renewed.get("activeCameraWidthCells") != 44
+        or active_renewed.get("activeCameraWidthCells") != 72
         or active_renewed.get("artifactPages") != expected_renewed_pages
         or active_renewed.get("withheldAnswerKey")
         != "Docs/Development/M85SuperScout/Silhouettes/FullV2/CurrentBlindReviewV1/WITHHELD_ANSWER_KEY.md"
@@ -1959,9 +1959,14 @@ def main() -> None:
             "classification": "QUALITATIVE_GO_AHEAD_NOT_PER_CODE_SCORED",
             "formalRecognitionPass": False,
         }
+        or active_renewed.get("director44CellFeedback") != {
+            "verbatim": "все гуд",
+            "classification": "QUALITATIVE_GO_AHEAD_NOT_PER_CODE_SCORED",
+            "formalRecognitionPass": False,
+        }
         or "key withheld" not in active_renewed.get("rule", "")
     ):
-        fail("renewed current review must preserve unscored 24-cell feedback and await 44-cell director evidence")
+        fail("renewed current review must preserve unscored 24/44-cell feedback and await 72-cell director evidence")
 
     if pilot_v2_manifest.get("schemaVersion") != 1 or pilot_v2_manifest.get("task") != "T082":
         fail("Pilot V2 generation manifest schema/task mismatch")

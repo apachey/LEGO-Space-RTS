@@ -3,7 +3,7 @@
   "task": "T082",
   "corpus": "CURRENT_SELECTED_FULL_ROSTER_RENEWED_V1",
   "gateClassification": "BLOCKING_NOW",
-  "state": "HOLD_FOR_GAME_DIRECTOR_44_CELL_REVIEW",
+  "state": "HOLD_FOR_GAME_DIRECTOR_72_CELL_REVIEW",
   "productionAccepted": false,
   "canonImpact": "NONE",
   "boardSeed": 85084,
@@ -13,7 +13,7 @@
     44,
     72
   ],
-  "nextReviewWidthCells": 44,
+  "nextReviewWidthCells": 72,
   "pagesPerWidth": 2,
   "assets": 66,
   "selectedViews": 67,

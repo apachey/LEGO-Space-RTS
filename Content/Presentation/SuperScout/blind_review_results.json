@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "T082",
-  "status": "CURRENT_BLIND_REVIEW_V1_AWAITING_GAME_DIRECTOR_44_CELL",
+  "status": "CURRENT_BLIND_REVIEW_V1_AWAITING_GAME_DIRECTOR_72_CELL",
   "attempts": [
     {
       "id": "T082_BLIND_V1_ICON_PRIMITIVES",
@@ -110,12 +110,12 @@
   },
   "activeRenewedReview": {
     "id": "T082_CURRENT_SELECTED_RENEWED_V1",
-    "state": "AWAITING_GAME_DIRECTOR_44_CELL_REVIEW",
+    "state": "AWAITING_GAME_DIRECTOR_72_CELL_REVIEW",
     "preparedCameraWidthsCells": [24, 44, 72],
-    "activeCameraWidthCells": 44,
+    "activeCameraWidthCells": 72,
     "artifactPages": [
-      "Docs/Development/M85SuperScout/Silhouettes/FullV2/CurrentBlindReviewV1/blind_44_cells_page_1.png",
-      "Docs/Development/M85SuperScout/Silhouettes/FullV2/CurrentBlindReviewV1/blind_44_cells_page_2.png"
+      "Docs/Development/M85SuperScout/Silhouettes/FullV2/CurrentBlindReviewV1/blind_72_cells_page_1.png",
+      "Docs/Development/M85SuperScout/Silhouettes/FullV2/CurrentBlindReviewV1/blind_72_cells_page_2.png"
     ],
     "withheldAnswerKey": "Docs/Development/M85SuperScout/Silhouettes/FullV2/CurrentBlindReviewV1/WITHHELD_ANSWER_KEY.md",
     "codes": "R01-R66",
@@ -125,6 +125,11 @@
       "classification": "QUALITATIVE_GO_AHEAD_NOT_PER_CODE_SCORED",
       "formalRecognitionPass": false
     },
-    "rule": "The director's general 24-cell go-ahead opens a diagnostic 44-cell review, not a scored 66/66 pass. Keep the key withheld; record any 44-cell uncertainty or confusion without claiming production acceptance."
+    "director44CellFeedback": {
+      "verbatim": "все гуд",
+      "classification": "QUALITATIVE_GO_AHEAD_NOT_PER_CODE_SCORED",
+      "formalRecognitionPass": false
+    },
+    "rule": "The director's general 24- and 44-cell go-aheads open a diagnostic 72-cell review, not a scored 66/66 pass. Keep the key withheld; record any 72-cell uncertainty or confusion without claiming production acceptance."
   }
 }

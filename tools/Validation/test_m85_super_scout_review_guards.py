@@ -679,7 +679,7 @@ class ReviewGuardTests(unittest.TestCase):
         self.assert_rejected(
             validator.BLIND_REVIEW_RESULTS,
             mutate,
-            "renewed current review must preserve unscored 24-cell feedback and await 44-cell director evidence",
+            "renewed current review must preserve unscored 24/44-cell feedback and await 72-cell director evidence",
         )
 
     def test_renewed_blind_review_cannot_turn_qualitative_feedback_into_scored_pass(self):
@@ -688,7 +688,16 @@ class ReviewGuardTests(unittest.TestCase):
         self.assert_rejected(
             validator.BLIND_REVIEW_RESULTS,
             mutate,
-            "renewed current review must preserve unscored 24-cell feedback and await 44-cell director evidence",
+            "renewed current review must preserve unscored 24/44-cell feedback and await 72-cell director evidence",
+        )
+
+    def test_renewed_blind_review_cannot_turn_44_cell_feedback_into_scored_pass(self):
+        def mutate(fixture):
+            fixture["activeRenewedReview"]["director44CellFeedback"]["formalRecognitionPass"] = True
+        self.assert_rejected(
+            validator.BLIND_REVIEW_RESULTS,
+            mutate,
+            "renewed current review must preserve unscored 24/44-cell feedback and await 72-cell director evidence",
         )
 
     def test_renewed_blind_review_cannot_claim_production_acceptance(self):

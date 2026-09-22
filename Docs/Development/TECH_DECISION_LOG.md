@@ -1558,6 +1558,20 @@ public format, dependency, architecture or canon. T082 remains `HOLD`.
 This changes review cadence, not gameplay, simulation, dependency, architecture
 or canon. T082 remains `HOLD`.
 
+## 2026-09-23 — Open the 72-cell diagnostic view after qualitative 44-cell feedback
+
+- After both 44-cell pages, the director said “все гуд”. Preserve this exact
+  general assessment without inventing per-code identifications or a formal
+  66/66 pass.
+- Show both prepared 72-cell pages in the same R-code order. The 24/44/72
+  board bytes, answer key and source selection remain unchanged. Keep the key
+  withheld while the blind view is active.
+- T082 remains `HOLD`; a general approval of a review scale does not approve
+  production models or bypass the full-roster recognition and evidence gate.
+
+This changes review progress only, not gameplay, simulation, dependency,
+architecture or canon.
+
 ## 2026-09-12 — Correct ETX Alien Strike to an exclusively airborne unit
 
 - The game director rejected the unsupported 7693 siege/deployment reading.
