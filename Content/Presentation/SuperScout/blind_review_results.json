@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "T082",
-  "status": "FULL_V2_24_CELL_REVISION_REQUIRED",
+  "status": "CURRENT_BLIND_REVIEW_V1_AWAITING_GAME_DIRECTOR_24_CELL",
   "attempts": [
     {
       "id": "T082_BLIND_V1_ICON_PRIMITIVES",
@@ -107,5 +107,19 @@
     ],
     "answerKey": "Docs/Development/M85SuperScout/Silhouettes/FullV2/Review/BLIND_REVIEW_KEY.md",
     "rule": "Revise the failed and ambiguous 24-cell silhouettes before continuing to the 44- and 72-cell review."
+  },
+  "activeRenewedReview": {
+    "id": "T082_CURRENT_SELECTED_RENEWED_V1",
+    "state": "AWAITING_GAME_DIRECTOR_24_CELL_REVIEW",
+    "preparedCameraWidthsCells": [24, 44, 72],
+    "activeCameraWidthCells": 24,
+    "artifactPages": [
+      "Docs/Development/M85SuperScout/Silhouettes/FullV2/CurrentBlindReviewV1/blind_24_cells_page_1.png",
+      "Docs/Development/M85SuperScout/Silhouettes/FullV2/CurrentBlindReviewV1/blind_24_cells_page_2.png"
+    ],
+    "withheldAnswerKey": "Docs/Development/M85SuperScout/Silhouettes/FullV2/CurrentBlindReviewV1/WITHHELD_ANSWER_KEY.md",
+    "codes": "R01-R66",
+    "reviewedCodes": [],
+    "rule": "Record every 24-cell identification, uncertainty or unknown before opening the key. Any wrong, uncertain or indistinguishable result keeps 44/72 review blocked and requires a revised version with new codes."
   }
 }

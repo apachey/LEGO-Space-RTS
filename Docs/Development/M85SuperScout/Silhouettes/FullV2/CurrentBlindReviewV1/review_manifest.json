@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "task": "T082",
+  "corpus": "CURRENT_SELECTED_FULL_ROSTER_RENEWED_V1",
+  "gateClassification": "BLOCKING_NOW",
+  "state": "HOLD_FOR_GAME_DIRECTOR_24_CELL_REVIEW",
+  "productionAccepted": false,
+  "canonImpact": "NONE",
+  "boardSeed": 85084,
+  "codePrefix": "R",
+  "cameraWidthsCells": [
+    24,
+    44,
+    72
+  ],
+  "nextReviewWidthCells": 24,
+  "pagesPerWidth": 2,
+  "assets": 66,
+  "selectedViews": 67,
+  "reviewedPrimaryViews": 66,
+  "alternateViewsExcluded": 1,
+  "grayscale": true,
+  "sourceSelectionManifestSha256": "99bfeebf99a0b299ea5a47ba1a1ba9f4fc6e0d63ddb6f2a88a928bfa2e85b77e",
+  "files": [
+    {
+      "file": "WITHHELD_ANSWER_KEY.md",
+      "sha256": "618377e1a641437070c0e11e1b7b6dc6a0cffd5bfafc332b92d0662ca3257a4d"
+    },
+    {
+      "file": "blind_24_cells_page_1.png",
+      "sha256": "fcdb921a6063cf715ddbd48934cd916347a37b0ae0a8950c269aad8b8764e046"
+    },
+    {
+      "file": "blind_24_cells_page_2.png",
+      "sha256": "488e0be58c7a799539099a7a54f0afed177cf33c51c8b08b0b70bce5baaf55d2"
+    },
+    {
+      "file": "blind_44_cells_page_1.png",
+      "sha256": "241cde071e8b9c72b753e379cf37dae332d7d38183e850026dd119fa41bef8a0"
+    },
+    {
+      "file": "blind_44_cells_page_2.png",
+      "sha256": "8cd2b9b4a86a755d236f8c7cb4f784e424d1f8119d6f0b79c336249f4509283d"
+    },
+    {
+      "file": "blind_72_cells_page_1.png",
+      "sha256": "25774ad105409d362d30785197b2fabdfddce12c2a6fe260bab3266ec12eb611"
+    },
+    {
+      "file": "blind_72_cells_page_2.png",
+      "sha256": "e106eba581a1e56cdd899c648e940133ea88519794cba9257f834acdc4525a75"
+    }
+  ]
+}

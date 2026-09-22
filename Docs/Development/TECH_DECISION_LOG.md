@@ -1521,6 +1521,26 @@ simulation statistics, public formats, architecture or dependencies.
 This is preproduction implementation detail only. It changes no gameplay,
 simulation, public format, dependency or canon. All packets remain `HOLD`.
 
+## 2026-09-21 — Separate the renewed current blind review from historical boards
+
+- Historical V/S-code boards remain immutable records of the exact images and
+  outcomes previously reviewed. They are not overwritten when a later
+  appearance becomes the current selection.
+- `CurrentBlindReviewV1` reads the exact hash-locked 66-entry current-selection
+  manifest, verifies each selected image and produces a new `R01`–`R66` order.
+  It removes colour cues and preserves one scale/order contract across two
+  pages each at 24, 44 and 72 camera cells.
+- The two 24-cell pages are reviewed together first. A wrong, uncertain or
+  indistinguishable result stops the sequence for revision and a fresh blind
+  version; 44 and then 72 cells unlock only after the preceding width passes.
+- One primary view is reviewed per roster identity. ETX Defense Node's second
+  stored configuration remains a preserved alternate and is not counted as a
+  67th asset. Identity-bearing answer-key data stays withheld until blind
+  responses are recorded.
+
+This changes the T082 review protocol only. It changes no gameplay, simulation,
+public format, dependency, architecture or canon. T082 remains `HOLD`.
+
 ## 2026-09-12 — Correct ETX Alien Strike to an exclusively airborne unit
 
 - The game director rejected the unsupported 7693 siege/deployment reading.

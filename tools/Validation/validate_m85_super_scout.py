@@ -51,6 +51,10 @@ SOURCE_LOCKED_CORRECTIONS = ROOT / "ArtSource/M85/Preproduction/SourceLockedCorr
 MX71_LOCALIZED_EDIT = ROOT / "ArtSource/M85/Preproduction/MX71LocalizedWeaponEditV1/edit_manifest.json"
 MX71_LOCALIZED_REVIEW = ROOT / "Content/Presentation/SuperScout/mx71_localized_appearance_review.json"
 CURRENT_COMPARISON = FULL_V2_OUTPUT / "CurrentComparisonV1/selection_manifest.json"
+CURRENT_BLIND_REVIEW_OUTPUT = FULL_V2_OUTPUT / "CurrentBlindReviewV1"
+CURRENT_BLIND_REVIEW_MANIFEST = CURRENT_BLIND_REVIEW_OUTPUT / "review_manifest.json"
+CURRENT_BLIND_REVIEW_KEY = CURRENT_BLIND_REVIEW_OUTPUT / "WITHHELD_ANSWER_KEY.md"
+CURRENT_BLIND_REVIEW_GENERATOR = ROOT / "tools/generate-m85-current-blind-review.py"
 CLAW_ARM_CORRECTION = ROOT / "ArtSource/M85/Preproduction/ClawTankArmCorrectionV2/edit_manifest.json"
 CLAW_APPEARANCE_REVIEW = ROOT / "Content/Presentation/SuperScout/claw_tank_appearance_review.json"
 MT101_COMPLETED_APPEARANCE = ROOT / "ArtSource/M85/Preproduction/MT101ControlledAppearanceV1/edit_manifest.json"
@@ -1401,6 +1405,97 @@ def validate_current_comparison() -> None:
         fail("current comparison gallery or selection provenance is stale: " + generated.stderr + generated.stdout)
 
 
+def validate_current_blind_review() -> None:
+    record = json.loads(CURRENT_BLIND_REVIEW_MANIFEST.read_text(encoding="utf-8"))
+    expected_identity = (
+        1,
+        "T082",
+        "CURRENT_SELECTED_FULL_ROSTER_RENEWED_V1",
+        "BLOCKING_NOW",
+        "HOLD_FOR_GAME_DIRECTOR_24_CELL_REVIEW",
+        False,
+        "NONE",
+    )
+    actual_identity = (
+        record.get("schemaVersion"),
+        record.get("task"),
+        record.get("corpus"),
+        record.get("gateClassification"),
+        record.get("state"),
+        record.get("productionAccepted"),
+        record.get("canonImpact"),
+    )
+    if actual_identity != expected_identity:
+        fail("renewed current blind review expanded its HOLD into acceptance")
+    if (
+        record.get("boardSeed") != 85084
+        or record.get("codePrefix") != "R"
+        or record.get("cameraWidthsCells") != [24, 44, 72]
+        or record.get("nextReviewWidthCells") != 24
+        or record.get("pagesPerWidth") != 2
+    ):
+        fail("renewed current blind review order, codes or scale sequence drifted")
+    if (
+        record.get("assets") != 66
+        or record.get("selectedViews") != 67
+        or record.get("reviewedPrimaryViews") != 66
+        or record.get("alternateViewsExcluded") != 1
+        or record.get("grayscale") is not True
+    ):
+        fail("renewed current blind review lost its 66-primary/one-alternate grayscale boundary")
+    if record.get("sourceSelectionManifestSha256") != hashlib.sha256(CURRENT_COMPARISON.read_bytes()).hexdigest():
+        fail("renewed current blind review no longer matches the current selected corpus")
+
+    board_names = {
+        f"blind_{camera}_cells_page_{page}.png"
+        for camera in (24, 44, 72)
+        for page in (1, 2)
+    }
+    expected_names = board_names | {CURRENT_BLIND_REVIEW_KEY.name}
+    files = record.get("files", [])
+    if len(files) != len(expected_names) or {item.get("file") for item in files} != expected_names:
+        fail("renewed current blind review must hash-lock six boards and one withheld key")
+    for item in files:
+        path = CURRENT_BLIND_REVIEW_OUTPUT / item["file"]
+        if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != item.get("sha256"):
+            fail(f"renewed current blind-review artifact hash drifted for {item['file']}")
+        if item["file"] in board_names:
+            png = path.read_bytes()
+            if png[:8] != b"\x89PNG\r\n\x1a\n" or (
+                int.from_bytes(png[16:20], "big"), int.from_bytes(png[20:24], "big")
+            ) != (3320, 2695):
+                fail(f"renewed current blind-review board is not the expected PNG: {item['file']}")
+
+    roster = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    ordered = list(roster["assets"])
+    random.Random(85084).shuffle(ordered)
+    old_order = list(roster["assets"])
+    random.Random(85083).shuffle(old_order)
+    if [asset["stableId"] for asset in ordered] == [asset["stableId"] for asset in old_order]:
+        fail("renewed current blind review reused the disclosed historical order")
+    key_text = CURRENT_BLIND_REVIEW_KEY.read_text(encoding="utf-8")
+    for index, asset in enumerate(ordered, 1):
+        code = f"R{index:02d}"
+        if (
+            key_text.count(f"`{code}`") != 1
+            or asset["stableId"] not in key_text
+            or asset["displayName"] not in key_text
+        ):
+            fail(f"renewed current blind-review key does not map {code} exactly")
+    public_manifest = CURRENT_BLIND_REVIEW_MANIFEST.read_text(encoding="utf-8")
+    if any(asset["stableId"] in public_manifest or asset["displayName"] in public_manifest for asset in roster["assets"]):
+        fail("renewed current blind-review public manifest leaks asset identity")
+
+    generated = subprocess.run(
+        [sys.executable, str(CURRENT_BLIND_REVIEW_GENERATOR), "--check"],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+    if generated.returncode != 0:
+        fail("renewed current blind-review artifacts are stale: " + generated.stderr + generated.stdout)
+
+
 def main() -> None:
     validate_completed_alien_appearance()
     validate_completed_composition_review()
@@ -1418,6 +1513,7 @@ def main() -> None:
     validate_jet_scooter_source_rebuild()
     validate_red_planet_protector_source_rebuild()
     validate_current_comparison()
+    validate_current_blind_review()
     for path in (
         MANIFEST, LEDGER, INSTRUCTION_INDEX, SOURCE_ANALYSIS_POLICY, COMPOSED_DESIGN_PROPOSALS, ROCK_RAIDERS_EVIDENCE, ASTRONAUTS_EVIDENCE,
         ALIENS_EVIDENCE, ALIEN_BIOMECHANICAL_POLICY,
@@ -1427,6 +1523,7 @@ def main() -> None:
         PILOT_V2_MANIFEST, PILOT_V2_OUTPUT / "blind_pilot_v2.svg", PILOT_V2_BLIND_PNG,
         PILOT_V2_OUTPUT / "PILOT_V2_KEY.md",
         FULL_V2_REVIEW_MANIFEST, FULL_V2_REVIEW_KEY, FULL_V2_REVIEW_GENERATOR,
+        CURRENT_BLIND_REVIEW_MANIFEST, CURRENT_BLIND_REVIEW_KEY, CURRENT_BLIND_REVIEW_GENERATOR,
         FULL_V2_OUTPUT / "ReferenceGuides/mt101_six_wheel_topology.svg",
         FULL_V2_OUTPUT / "ReferenceGuides/mt201_four_leg_topology.svg",
     ):
@@ -1786,8 +1883,8 @@ def main() -> None:
 
     if blind_review_results.get("schemaVersion") != 1 or blind_review_results.get("task") != "T082":
         fail("blind-review result schema/task mismatch")
-    if blind_review_results.get("status") != "FULL_V2_24_CELL_REVISION_REQUIRED":
-        fail("blind-review result must preserve the Full V2 24-cell revision gate")
+    if blind_review_results.get("status") != "CURRENT_BLIND_REVIEW_V1_AWAITING_GAME_DIRECTOR_24_CELL":
+        fail("blind-review result must preserve the renewed 24-cell director-review gate")
     attempts = blind_review_results.get("attempts", [])
     if len(attempts) != 3:
         fail("expected the V1 failure, Pilot V2 pass and Full V2 24-cell review")
@@ -1842,6 +1939,24 @@ def main() -> None:
         or active_full_v2.get("state") != "REVISION_REQUIRED_AFTER_GAME_DIRECTOR_24_CELL_REVIEW"
     ):
         fail("Full V2 active review state must remain revision-required")
+    active_renewed = blind_review_results.get("activeRenewedReview", {})
+    expected_renewed_pages = [
+        "Docs/Development/M85SuperScout/Silhouettes/FullV2/CurrentBlindReviewV1/blind_24_cells_page_1.png",
+        "Docs/Development/M85SuperScout/Silhouettes/FullV2/CurrentBlindReviewV1/blind_24_cells_page_2.png",
+    ]
+    if (
+        active_renewed.get("id") != "T082_CURRENT_SELECTED_RENEWED_V1"
+        or active_renewed.get("state") != "AWAITING_GAME_DIRECTOR_24_CELL_REVIEW"
+        or active_renewed.get("preparedCameraWidthsCells") != [24, 44, 72]
+        or active_renewed.get("activeCameraWidthCells") != 24
+        or active_renewed.get("artifactPages") != expected_renewed_pages
+        or active_renewed.get("withheldAnswerKey")
+        != "Docs/Development/M85SuperScout/Silhouettes/FullV2/CurrentBlindReviewV1/WITHHELD_ANSWER_KEY.md"
+        or active_renewed.get("codes") != "R01-R66"
+        or active_renewed.get("reviewedCodes") != []
+        or "before opening the key" not in active_renewed.get("rule", "")
+    ):
+        fail("renewed current review must remain awaiting complete 24-cell director evidence")
 
     if pilot_v2_manifest.get("schemaVersion") != 1 or pilot_v2_manifest.get("task") != "T082":
         fail("Pilot V2 generation manifest schema/task mismatch")

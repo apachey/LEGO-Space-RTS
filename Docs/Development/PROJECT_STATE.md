@@ -69,7 +69,10 @@ motion/socket and material/texture-needs drafts. The first complete primitive
 24/44/72-cell concept-silhouette corpus was rejected after the game director
 recognized 0/66 assets at 24 cells. The materially different source-derived
 Pilot V2 then passed game-director blind review at 4/4, approving that method
-for a new 66-asset pass. The complete-corpus 24/44/72 review gate remains open.
+for a new 66-asset pass. A separate renewed package now reconstructs the exact
+current 66 selections behind fresh R-codes on grayscale 24/44/72 boards. Both
+24-cell pages are ready for the first complete pass; 44/72 remain withheld
+until that result is recorded. The complete-corpus review gate remains open.
 A post-T069
 quality revision makes outline/halo independent from
 the style post-pass, hardens profile paste, bounds VFX event memory and avoids
@@ -977,11 +980,14 @@ live; the current schema-9 copy/paste retains the complete experiment.
   generated packets.
 - T082 remains `BLOCKING_NOW` for T083/T085. All faction source-page audits,
   all 66 production-contract drafts are complete; the first silhouette approach
-  failed 0/66, Pilot V2 passed 4/4 and the new full corpus currently contains a
-  hashed 66/66 review-ready corpus with six complete blind boards. The 24/44/72
-  game-director review, any resulting revisions and explicit corpus acceptance
-  remain required. Current detail is tracked in
-  `Docs/Development/M85_SUPER_SCOUT_PROGRESS.md`.
+  failed 0/66 and Pilot V2 passed 4/4. `CurrentBlindReviewV1` now provides a
+  separately hashed 66/66 current-selection corpus with six complete grayscale
+  boards and fresh `R01`–`R66` codes. The two 24-cell pages are the active gate;
+  44/72 are prepared but withheld until a clean 24-cell result. Any wrong,
+  uncertain or indistinguishable result requires revision and a fresh blind
+  version. Explicit complete-corpus acceptance remains required. Current detail
+  is tracked in `Docs/Development/M85_SUPER_SCOUT_PROGRESS.md` and
+  `Docs/Development/M85_T082_CURRENT_BLIND_REVIEW_V1.md`.
 
 Routine Godot verification is now non-intrusive on macOS: every gameplay smoke
 runs headlessly with an explicit automated-smoke flag, records its real
@@ -1340,6 +1346,15 @@ batch passed `./tools/verify.sh --full` with zero blocking failures at
 byte-identical Blender regeneration and macOS export all passed. The preserved
 60-mover M9 case remains the one expected `BLOCKING_LATER` diagnostic failure.
 
+The separate `CurrentBlindReviewV1` package then passed exact six-board
+regeneration, the T082 integrity validator, 136/136 review guards and the full
+repository suite with zero blocking failures at
+`Artifacts/Verification/20260920T213037Z-full-summary.txt`. All 317 NUnit tests,
+deterministic/replay/snapshot checks, headless/network presentation gates,
+byte-identical content/GLB regeneration and a fresh macOS export passed. The
+preserved 60-mover M9 case remains the one expected `BLOCKING_LATER` diagnostic
+failure and does not block the active two-page 24-cell T082 review.
+
 ## Deferred M9 large-battle gate
 
 The legal stress60 fixture still exposes mid-route corridor traffic/yield
@@ -1353,11 +1368,13 @@ blocking only when M9 must prove its stable-large-battle exit.
 
 ## Next approved action
 
-1. Continue T082 by expanding the game-director-approved source-derived Pilot V2
-   method into a new complete 66-asset corpus. Then run both 24-cell pages and
-   the 44- and 72-cell pages as a blind review. Revise every wrong, uncertain or
-   indistinguishable S-code and expand the 44-pair confusion register wherever
-   the review exposes a new neighbor. Retain the two explicit Martian archival
+1. Continue T082 by running both prepared `CurrentBlindReviewV1` 24-cell pages
+   as one blind review and recording every raw `R01`–`R66` identification.
+   Revise every wrong, uncertain or indistinguishable result and issue a fresh
+   blind version before continuing. Only a clean renewed 24-cell result unlocks
+   the prepared 44-cell pages, and only a clean 44-cell result unlocks 72 cells.
+   Expand the 44-pair confusion register wherever the review exposes a new
+   neighbor. Retain the two explicit Martian archival
    gaps unless usable evidence appears, and escalate any gap that blocks a safe
    production decision. Do not treat the concept silhouettes, generated `HOLD`
    packets, T070 data definitions or the non-roster T081 pipeline fixture as
@@ -1383,9 +1400,9 @@ blocking only when M9 must prove its stable-large-battle exit.
    connection evidence only, not final-form references. The priority appearance
    batch is complete: Jet Scooter source-rebuild Rev1 and
    source-corrected Red Planet Protector Rev1 are explicitly accepted for
-   comparative appearance review. The next T082 visual step is the renewed
-   complete comparison and 24/44/72-cell blind-review gate, not regeneration of
-   these accepted assets.
+   comparative appearance review. The renewed current comparison is complete;
+   the next T082 visual step is its two-page 24-cell blind gate, not regeneration
+   of these accepted assets or early exposure of the 44/72 boards.
    Do not reset historical attempts or regenerate already successful assets.
 2. Execute the remaining Phase 09C M8.5 T082–T092 work before final M9 Skirmish
    Alpha acceptance.

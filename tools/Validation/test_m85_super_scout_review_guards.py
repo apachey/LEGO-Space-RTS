@@ -673,6 +673,36 @@ class ReviewGuardTests(unittest.TestCase):
         self.assert_rejected(validator.FULL_V2_MANIFEST, mutate,
                              "composed candidate changed its approved donor set")
 
+    def test_renewed_blind_review_cannot_auto_accept_without_director_evidence(self):
+        def mutate(fixture):
+            fixture["activeRenewedReview"]["state"] = "PASSED"
+        self.assert_rejected(
+            validator.BLIND_REVIEW_RESULTS,
+            mutate,
+            "renewed current review must remain awaiting complete 24-cell director evidence",
+        )
+
+    def test_renewed_blind_review_cannot_claim_production_acceptance(self):
+        self.assert_rejected(
+            validator.CURRENT_BLIND_REVIEW_MANIFEST,
+            lambda fixture: fixture.update(productionAccepted=True),
+            "expanded its HOLD into acceptance",
+        )
+
+    def test_renewed_blind_review_must_match_current_selection(self):
+        self.assert_rejected(
+            validator.CURRENT_BLIND_REVIEW_MANIFEST,
+            lambda fixture: fixture.update(sourceSelectionManifestSha256="0" * 64),
+            "no longer matches the current selected corpus",
+        )
+
+    def test_renewed_blind_review_cannot_hide_alternate_configuration(self):
+        self.assert_rejected(
+            validator.CURRENT_BLIND_REVIEW_MANIFEST,
+            lambda fixture: fixture.update(alternateViewsExcluded=0),
+            "lost its 66-primary/one-alternate grayscale boundary",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

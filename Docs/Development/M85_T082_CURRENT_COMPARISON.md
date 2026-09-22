@@ -1,6 +1,6 @@
 # T082 — current comparison and next priority candidates
 
-Date: 2026-09-13. Branch: `codex/m85-t082`, not merged. Canon impact: NONE.
+Date: 2026-09-21. Branch: `codex/m85-t082`, not merged. Canon impact: NONE.
 
 ## What changed / why
 
@@ -24,6 +24,24 @@ Its selection manifest records every image's exact hash, origin and current
 review availability. It is a named, unscaled DIAGNOSTIC assembly, not a blind
 test, real Godot camera capture, accepted complete corpus or production gate.
 Original first-review and FullV2 boards/manifests/image bytes remain unchanged.
+
+## Renewed blind-review package
+
+`FullV2/CurrentBlindReviewV1/` now turns the exact current selection into a new
+complete blind-review package without modifying any historical board. It uses
+fresh randomized `R01`–`R66` codes, grayscale presentation and one stable order
+across the two 24-, 44- and 72-cell pages. All six boards are prepared and
+hash-locked, but only both 24-cell pages are active. Their 66 raw
+identifications must be recorded before any 44/72 page is shown. Any wrong,
+uncertain or indistinguishable result requires revision and a fresh blind
+version rather than continuing at another size.
+
+The package reviews one primary view per roster identity. ETX Defense Node's
+alternate Air Lance configuration remains preserved in the current gallery but
+is excluded from this pass; it is not a separate roster item. The answer key
+and all identity-bearing metadata remain withheld during review. Protocol and
+scope are recorded in
+`Docs/Development/M85_T082_CURRENT_BLIND_REVIEW_V1.md`.
 
 ## Accepted correction records retained in the current gallery
 
@@ -74,7 +92,8 @@ accepted for comparative review; do not ask for their approval again. The
 completed priority batch is recorded in
 `Docs/Development/M85_T082_OPEN_APPEARANCE_BATCH.md`. The priority filter is
 empty; the next review is the renewed complete comparison/blind-review gate,
-not another size or primitive-blockout gate.
+not another size or primitive-blockout gate. The renewed package is now ready
+at 24 cells; 44/72 remain locked behind the complete 24-cell result.
 These approvals cannot accept the 66-entry gallery, alternate configurations or production.
 
 Continuation 2026-09-14: the director identifies incomplete MT-101 source
@@ -93,6 +112,14 @@ operators/raised printing and the two
 Martian archival gaps also remain disclosed. T082/T083 remain HOLD.
 
 ## Files / verification / regression / build
+
+Renewed blind-review package: six reproducible grayscale boards, a withheld
+answer key, public manifest, generator, validator support and four new negative
+guards. Focused regeneration/validation and all 136 review guards pass.
+`./tools/verify.sh --full` passed every blocking stage, 317/317 NUnit tests and
+a fresh macOS export at
+`Artifacts/Verification/20260920T213037Z-full-summary.txt`. The expected
+Stress60 `BLOCKING_LATER` M9 diagnostic remains non-blocking for T082.
 
 Latest Claw approval/MT finishing continuation: new separate approval record,
 MT completed raster/prompt/reference copies/provenance and eight added guards

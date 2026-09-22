@@ -5,7 +5,11 @@ source-page audits and all 66 faction-internal production-contract drafts are
 complete. The first complete primitive-silhouette corpus failed game-director
 blind review at 0/66 and is rejected. A four-asset source-derived Pilot V2 is
 game-director accepted at 4/4, approving that materially different method for
-a second full-roster corpus. The complete-roster review remains open. Current
+a second full-roster corpus. The current 66 selections are now assembled into
+a separate reproducible renewed blind-review package with fresh R-codes and
+grayscale 24/44/72 boards. Only both 24-cell pages are active; their complete
+raw result must be recorded before 44/72 can be shown. The complete-roster
+review therefore remains open. Current
 correction candidates now also cover the MT-61-derived Mobile Mining Platform
 and MT-51 Claw-Tank. Tunnel Transport and Rapid Rider are individually accepted
 for the next composite review. MB-01 Eagle Command Base has a third candidate,
@@ -522,11 +526,10 @@ redistributed.
 
 1. Retain the two explicit Martian archival gaps unless usable evidence appears,
    and escalate any gap that prevents a safe production decision.
-2. Revise the failed and ambiguous 24-cell silhouettes using the resolved
-   exclusively-airborne ETX Alien Strike contract, resolve MT-101 through a
-   controlled source-trace blockout, resolve the supplied V51-V56 findings,
-   then rerun the 24-cell
-   blind review before continuing to 44/72.
+2. Run both prepared `CurrentBlindReviewV1` 24-cell pages as one 66-entry blind
+   pass and record the raw `R01`–`R66` identifications. Any wrong, uncertain or
+   indistinguishable result stops the sequence for revision and a fresh blind
+   version; only a clean renewed 24-cell pass unlocks 44/72.
 3. Revise every wrong, uncertain or indistinguishable asset and extend the
    44-pair register wherever the accepted review exposes a new neighbor.
 4. Resolve or escalate every consequential unknown, then request the final
@@ -541,9 +544,22 @@ Strike with no deploy/reconfigure mode; low-versus-high flight presentation is
 deliberately deferred.
 The game director also passed the four-asset Pilot V2 blind review at 4/4,
 approving the source-derived silhouette method for full-roster expansion. No
-packet is approved for T083/T085 production yet.
+packet is approved for T083/T085 production yet. `CurrentBlindReviewV1` is now
+`HOLD_FOR_GAME_DIRECTOR_24_CELL_REVIEW`: 66 primary identities, two active
+24-cell pages, prepared but withheld 44/72 pages, and one preserved Defense Node
+alternate excluded from the roster pass. See
+`Docs/Development/M85_T082_CURRENT_BLIND_REVIEW_V1.md`.
 
 ## Verification state
+
+The renewed current blind-review package passed exact six-board regeneration,
+the focused T082 validator, 136/136 director-review guards and
+`git diff --check`. `./tools/verify.sh --full` then passed every blocking stage
+with 317/317 NUnit tests, deterministic/replay/snapshot checks, T082 integrity,
+headless/network presentation gates, byte-identical content/GLB regeneration
+and a fresh macOS export. Summary:
+`Artifacts/Verification/20260920T213037Z-full-summary.txt`. The retained
+Stress60 M9 diagnostic remains the one non-blocking diagnostic failure.
 
 The five generation-only approved composed candidates passed
 `./tools/verify.sh --full` with 317/317 NUnit tests, 12/12 director-review guard
