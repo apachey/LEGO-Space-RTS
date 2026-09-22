@@ -8,9 +8,9 @@ game-director accepted at 4/4, approving that materially different method for
 a second full-roster corpus. The current 66 selections are now assembled into
 a separate reproducible renewed blind-review package with fresh R-codes and
 grayscale 24/44/72 boards. The director gave a qualitative 24-cell go-ahead
-without per-code identifications, then said “все гуд” at 44 cells. Both
-72-cell pages are now active for diagnostic review, not a scored 66/66 pass.
-The complete-roster review remains open. Current correction candidates now also
+without per-code identifications, then said “все гуд” at both 44 and 72 cells.
+The three-scale diagnostic review is complete, not a scored 66/66 pass. The
+complete-roster review remains open. Current correction candidates now also
 cover the MT-61-derived Mobile Mining Platform
 and MT-51 Claw-Tank. Tunnel Transport and Rapid Rider are individually accepted
 for the next composite review. MB-01 Eagle Command Base has a third candidate,
@@ -361,7 +361,7 @@ failures. No new game export or candidate integration was performed.
   verifies one huge open-channel circular Mothership whose integrated sections
   can open around visible internal craft bays; its subcraft do not split the
   Mothership into multiple selectable entities. 7693 verifies hinged crescent
-  modules but not the game's final planted siege endpoints.
+  modules within one exclusively airborne craft; it has no planted siege state.
 - The Martian pass audited all eight available mapped sources across eight
   official books. Sets 1195 and 3750 remain explicit archival gaps, matching
   the source ledger rather than receiving guessed construction.
@@ -417,8 +417,9 @@ failures. No new game export or candidate integration was performed.
   Every design remains a black/lime mechanical construction derived from craft,
   bays, crescents, frames and explicit energy hardware; generic organic tissue,
   insects, nests, tentacles and interchangeable black-neon towers are excluded.
-- The Infiltrator and Strike retain explicit deployed contact points and
-  transformation pivots. Razor Skimmer and ETX Servitor retain disclosed donor
+- The Infiltrator retains deployed contact points and transformation pivots;
+  Alien Strike remains exclusively airborne with articulated panels. Razor
+  Skimmer and ETX Servitor retain disclosed donor
   decisions rather than receiving an averaged or invented final hull. The
   Mothership remains one selectable carrier whose integrated sections and bays
   unfold; possible internal unit production stays an unresolved gameplay
@@ -527,11 +528,10 @@ redistributed.
 
 1. Retain the two explicit Martian archival gaps unless usable evidence appears,
    and escalate any gap that prevents a safe production decision.
-2. Review both `CurrentBlindReviewV1` 72-cell pages as one 66-entry diagnostic
-   pass, recording any uncertainty or confusion by `R` code. The director's
-   24- and 44-cell go-aheads were general, not scored recognition passes. A
-   problematic silhouette still requires revision and a fresh blind version
-   before final acceptance.
+2. Use the completed `CurrentBlindReviewV1` three-scale diagnostic and its
+   exit audit as feedback, without inventing R-code identifications or
+   production approval. Resolve or bound its named source/construction gaps;
+   prepare actual gameplay-camera readability evidence before final acceptance.
 3. Revise every wrong, uncertain or indistinguishable asset and extend the
    44-pair register wherever the accepted review exposes a new neighbor.
 4. Resolve or escalate every consequential unknown, then request the final
@@ -547,21 +547,25 @@ deliberately deferred.
 The game director also passed the four-asset Pilot V2 blind review at 4/4,
 approving the source-derived silhouette method for full-roster expansion. No
 packet is approved for T083/T085 production yet. `CurrentBlindReviewV1` is now
-`HOLD_FOR_GAME_DIRECTOR_72_CELL_REVIEW`: 66 primary identities, two active
-72-cell pages and one preserved Defense Node alternate excluded from the roster
-pass. See
-`Docs/Development/M85_T082_CURRENT_BLIND_REVIEW_V1.md`.
+`HOLD_AFTER_THREE_SCALE_DIAGNOSTIC_REVIEW`: 66 primary identities, all three
+widths viewed qualitatively, and one preserved Defense Node alternate excluded
+from the roster pass. The complete-corpus exit remains open. See
+`Docs/Development/M85_T082_THREE_SCALE_DIAGNOSTIC_EXIT_AUDIT.md`.
 
 ## Verification state
 
 The renewed current blind-review package passed exact six-board regeneration,
-the focused T082 validator, 136/136 director-review guards and
-`git diff --check`. `./tools/verify.sh --full` then passed every blocking stage
+the focused T082 validator and `git diff --check`. Its initial
+`./tools/verify.sh --full` passed every blocking stage
 with 317/317 NUnit tests, deterministic/replay/snapshot checks, T082 integrity,
 headless/network presentation gates, byte-identical content/GLB regeneration
 and a fresh macOS export. Summary:
 `Artifacts/Verification/20260920T213037Z-full-summary.txt`. The retained
 Stress60 M9 diagnostic remains the one non-blocking diagnostic failure.
+The later three-scale exit-audit run of `./tools/verify.sh` passed 139/139
+director-review guards, 317/317 NUnit tests and every fast blocking stage with
+zero diagnostic failures at
+`Artifacts/Verification/20260922T213432Z-fast-summary.txt`.
 
 The five generation-only approved composed candidates passed
 `./tools/verify.sh --full` with 317/317 NUnit tests, 12/12 director-review guard

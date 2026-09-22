@@ -72,9 +72,11 @@ Pilot V2 then passed game-director blind review at 4/4, approving that method
 for a new 66-asset pass. A separate renewed package now reconstructs the exact
 current 66 selections behind fresh R-codes on grayscale 24/44/72 boards. Both
 24-cell pages received a general game-director go-ahead (“йдемо далі, наче все
-зрозуміло”), then the 44-cell pages received “все гуд”. Neither statement
-contains per-code scoring. Both 72-cell pages are now active for diagnostic
-review. This does not close the complete-corpus review gate.
+зрозуміло”), then both the 44- and 72-cell pages received “все гуд”. All three
+scales have positive general feedback without per-code scoring. The diagnostic
+sequence is complete, but its exit audit identifies remaining source,
+construction and gameplay-camera obligations before the complete-corpus gate
+can close.
 A post-T069
 quality revision makes outline/halo independent from
 the style post-pass, hardens profile paste, bounds VFX event memory and avoids
@@ -986,13 +988,12 @@ live; the current schema-9 copy/paste retains the complete experiment.
   separately hashed 66/66 current-selection corpus with six complete grayscale
   boards and fresh `R01`–`R66` codes. The director's general 24-cell go-ahead
   is recorded without inventing 66 identifications or calling it a recognition
-  pass. The director also said “все гуд” at 44 cells without per-code scoring.
-  The two 72-cell pages are active for diagnostic review. Any wrong, uncertain
-  or indistinguishable result requires revision and a fresh blind version before
-  final acceptance. Explicit complete-corpus
-  acceptance remains required. Current detail
+  pass. The director also said “все гуд” at both 44 and 72 cells without
+  per-code scoring. The three-scale diagnostic is complete but T082 remains
+  `HOLD`: source/construction unknowns, actual gameplay-camera readability and
+  explicit complete-corpus acceptance remain open. Current detail
   is tracked in `Docs/Development/M85_SUPER_SCOUT_PROGRESS.md` and
-  `Docs/Development/M85_T082_CURRENT_BLIND_REVIEW_V1.md`.
+  `Docs/Development/M85_T082_THREE_SCALE_DIAGNOSTIC_EXIT_AUDIT.md`.
 
 Routine Godot verification is now non-intrusive on macOS: every gameplay smoke
 runs headlessly with an explicit automated-smoke flag, records its real
@@ -1373,16 +1374,14 @@ blocking only when M9 must prove its stable-large-battle exit.
 
 ## Next approved action
 
-1. Continue T082 by reviewing both `CurrentBlindReviewV1` 72-cell pages as
-   one diagnostic set. Record the director's actual uncertain, unknown or
-   confusable R-codes without inferring unspoken identifications. Revise every
-   problematic silhouette and issue a fresh blind version before final
-   acceptance. The general 24- and 44-cell go-aheads allow this diagnostic
-   progression but are not scored passes.
-   Expand the 44-pair confusion register wherever the review exposes a new
-   neighbor. Retain the two explicit Martian archival
-   gaps unless usable evidence appears, and escalate any gap that blocks a safe
-   production decision. Do not treat the concept silhouettes, generated `HOLD`
+1. Continue T082 from the completed three-scale diagnostic exit audit. Preserve
+   all three verbatim director comments without inventing R-code answers or
+   re-running positive sheets for another general acknowledgement. Resolve or
+   bound the named source/construction gaps, prepare actual gameplay-camera
+   readability evidence, and request one substantive complete-corpus decision
+   only after those obligations are ready. Retain the two explicit Martian
+   archival gaps unless usable evidence appears, and escalate any gap that
+   blocks a safe production decision. Do not treat the concept silhouettes, generated `HOLD`
    packets, T070 data definitions or the non-roster T081 pipeline fixture as
    production models.
    MT-101 has corrected nested native controls and a finished source-rebuilt
@@ -1407,8 +1406,8 @@ blocking only when M9 must prove its stable-large-battle exit.
    batch is complete: Jet Scooter source-rebuild Rev1 and
    source-corrected Red Planet Protector Rev1 are explicitly accepted for
    comparative appearance review. The renewed current comparison is complete;
-   the next T082 visual step is its two-page 72-cell diagnostic blind view, not
-   regeneration of these accepted assets.
+   the next T082 visual step is source/construction reconciliation and real
+   camera proof, not regeneration of already accepted comparative appearances.
    Do not reset historical attempts or regenerate already successful assets.
 2. Execute the remaining Phase 09C M8.5 T082–T092 work before final M9 Skirmish
    Alpha acceptance.

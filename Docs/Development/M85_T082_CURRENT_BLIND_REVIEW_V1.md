@@ -1,6 +1,7 @@
 # T082 — renewed current blind review V1
 
-Prepared: 2026-09-21. 72-cell continuation: 2026-09-23. Branch: `codex/m85-t082`, not merged.
+Prepared: 2026-09-21. Three-scale diagnostic completed: 2026-09-23.
+Branch: `codex/m85-t082`, not merged.
 Canon impact: NONE.
 
 ## Purpose
@@ -31,19 +32,18 @@ from this blind pass.
 2. The director saw both 44-cell pages and said verbatim: “все гуд”. This is
    another qualitative go-ahead, not 66 recorded identifications or a scored
    recognition pass.
-3. Show both 72-cell pages together, retaining the same R-code order. Record
-   any uncertain, unknown, wrong-looking or confusable silhouettes in the
-   director's words; do not infer unspoken answers. A clearly problematic
-   asset returns to revision with new blind codes before formal acceptance.
+3. The director saw both 72-cell pages and said verbatim: “все гуд”. This is a
+   positive overall assessment, not 66 recorded identifications or a scored
+   recognition pass. No R-code-specific problem was reported in this pass.
 4. A full-roster production/readability claim still requires explicit
    game-director evidence and acceptance. The answer key, names, factions,
    roles, selected paths and current statuses remain withheld during the blind
    review.
 
-Current state: `HOLD_FOR_GAME_DIRECTOR_72_CELL_REVIEW` (`BLOCKING_NOW`). Both
-72-cell pages are active. The recorded 24- and 44-cell feedback permits this
-diagnostic progression only. No production image/model was accepted by those
-general comments.
+Current state: `HOLD_AFTER_THREE_SCALE_DIAGNOSTIC_REVIEW` (`BLOCKING_NOW`). All
+three widths received general positive feedback; the exit audit records what
+remains before T082 can pass. No production image/model was accepted by these
+comments. See `Docs/Development/M85_T082_THREE_SCALE_DIAGNOSTIC_EXIT_AUDIT.md`.
 
 ## Reproducible artifacts
 
@@ -51,7 +51,7 @@ general comments.
 - Review directory:
   `Docs/Development/M85SuperScout/Silhouettes/FullV2/CurrentBlindReviewV1/`
 - Public review manifest: `review_manifest.json`
-- Active pages: `blind_72_cells_page_1.png`, `blind_72_cells_page_2.png`
+- Last reviewed pages: `blind_72_cells_page_1.png`, `blind_72_cells_page_2.png`
 - Withheld mapping: `WITHHELD_ANSWER_KEY.md`
 
 The manifest locks the source-selection hash, board seed `85084`, R-code range,
@@ -112,22 +112,32 @@ that interrupted verification attempt.
   tests and 138/138 T082 review guards passed.
 - `git diff --check`: PASS.
 
+Three-scale diagnostic exit audit on 2026-09-23:
+
+- `python3 -B tools/generate-m85-current-blind-review.py --check`: PASS; the
+  six board bytes, source selection and withheld key are unchanged.
+- `python3 -B tools/Validation/validate_m85_super_scout.py`: PASS.
+- `./tools/verify.sh`: PASS with zero blocking or diagnostic failures at
+  `Artifacts/Verification/20260922T213432Z-fast-summary.txt`; 317/317 NUnit
+  tests and 139/139 T082 review guards passed.
+- `git diff --check`: PASS.
+
 ## Completion report
 
-- What changed: six complete current-selection boards are prepared; the two
-  72-cell pages are now active after general 24- and 44-cell go-aheads.
+- What changed: all six current-selection boards were reviewed qualitatively
+  across three widths, and the remaining T082 obligations are now explicit.
 - Why: later accepted corrections must be reviewed together at comparable
   sizes without altering the previous review's source images or results.
 - Files changed in this continuation: review-status/manifest state, generator
-  gate, validator and one guard case; development handoff and project-state notes.
+  gate, validator and one guard case; exit audit and project-state notes.
 - Automated verification: exact executed commands and final results are above.
-- Regression coverage: 138 guards now protect the original corpus and prevent
-  either qualitative 24- or 44-cell feedback from becoming a scored pass.
+- Regression coverage: 139 guards protect the original corpus and prevent
+  qualitative 24-, 44- or 72-cell feedback from becoming a scored pass.
 - Build: the existing export at `Builds/macOS/LEGO Space RTS.app` was not
   regenerated for this review-status change.
   The review images remain preproduction artifacts, outside the playable models.
-- Manual review requested: inspect both 72-cell pages as one set and flag
-  uncertain, unknown or confusing silhouettes by R-code.
+- Manual review requested: none for the already completed diagnostic sheets.
+  A later substantive corpus decision remains pending after the exit work.
 - Risks / unresolved issues: these are footprint-relative reference boards, not
   actual game-camera captures. Complete T082 acceptance and the source/production
   obligations listed above remain open. Existing Stress60 is `BLOCKING_LATER` M9.

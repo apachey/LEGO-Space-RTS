@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "T082",
-  "status": "CURRENT_BLIND_REVIEW_V1_AWAITING_GAME_DIRECTOR_72_CELL",
+  "status": "CURRENT_BLIND_REVIEW_V1_THREE_SCALE_DIAGNOSTIC_COMPLETE_HOLD",
   "attempts": [
     {
       "id": "T082_BLIND_V1_ICON_PRIMITIVES",
@@ -110,9 +110,10 @@
   },
   "activeRenewedReview": {
     "id": "T082_CURRENT_SELECTED_RENEWED_V1",
-    "state": "AWAITING_GAME_DIRECTOR_72_CELL_REVIEW",
+    "state": "THREE_SCALE_DIAGNOSTIC_COMPLETE_UNSCORED",
     "preparedCameraWidthsCells": [24, 44, 72],
-    "activeCameraWidthCells": 72,
+    "completedCameraWidthsCells": [24, 44, 72],
+    "lastCameraWidthCells": 72,
     "artifactPages": [
       "Docs/Development/M85SuperScout/Silhouettes/FullV2/CurrentBlindReviewV1/blind_72_cells_page_1.png",
       "Docs/Development/M85SuperScout/Silhouettes/FullV2/CurrentBlindReviewV1/blind_72_cells_page_2.png"
@@ -130,6 +131,11 @@
       "classification": "QUALITATIVE_GO_AHEAD_NOT_PER_CODE_SCORED",
       "formalRecognitionPass": false
     },
-    "rule": "The director's general 24- and 44-cell go-aheads open a diagnostic 72-cell review, not a scored 66/66 pass. Keep the key withheld; record any 72-cell uncertainty or confusion without claiming production acceptance."
+    "director72CellFeedback": {
+      "verbatim": "все гуд",
+      "classification": "QUALITATIVE_POSITIVE_NOT_PER_CODE_SCORED",
+      "formalRecognitionPass": false
+    },
+    "rule": "All three diagnostic camera widths were viewed and received qualitative positive feedback, not a scored 66/66 identification or T082 acceptance. Keep the key withheld; use the corpus exit audit to resolve remaining obligations and retain production HOLD."
   }
 }

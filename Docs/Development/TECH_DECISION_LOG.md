@@ -1572,6 +1572,21 @@ or canon. T082 remains `HOLD`.
 This changes review progress only, not gameplay, simulation, dependency,
 architecture or canon.
 
+## 2026-09-23 — Close the three-scale diagnostic, not the T082 gate
+
+- The director responded “все гуд” after both 72-cell pages. Preserve the
+  response verbatim as positive qualitative feedback. No R-code-specific
+  identifications were supplied at any width, so no 66/66 score is inferred.
+- The R-code order, six board images, selection hashes and withheld answer key
+  remain unchanged. The diagnostic scale sequence is complete; T082 and all
+  production packets remain `HOLD`.
+- The exit audit records the remaining source/construction decisions, bounded
+  Martian archival gaps, and actual gameplay-camera proof required before one
+  final corpus-acceptance decision. It does not make gameplay or canon choices.
+
+This is review-state bookkeeping and evidence audit only. Gameplay, simulation,
+dependencies, architecture and canon are unchanged.
+
 ## 2026-09-12 — Correct ETX Alien Strike to an exclusively airborne unit
 
 - The game director rejected the unsupported 7693 siege/deployment reading.

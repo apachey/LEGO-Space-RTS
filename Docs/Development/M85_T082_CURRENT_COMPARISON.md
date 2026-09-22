@@ -33,9 +33,9 @@ fresh randomized `R01`–`R66` codes, grayscale presentation and one stable orde
 across the two 24-, 44- and 72-cell pages. All six boards are prepared and
 hash-locked. The director's general “йдемо далі, наче все зрозуміло” after the
 24-cell view is recorded verbatim as an unscored qualitative go-ahead. The
-director then described the 44-cell view as “все гуд”; that also remains
-unscored. Both 72-cell pages are now active for diagnostic review. Neither
-comment counts as 66/66 recognition or production acceptance. Any identified
+director then described both the 44- and 72-cell views as “все гуд”. All three
+responses remain unscored. The diagnostic scale sequence is complete; these
+comments do not count as 66/66 identification or production acceptance. Any identified
 wrong, uncertain or indistinguishable result requires revision and a fresh
 blind version before final acceptance.
 
@@ -96,8 +96,9 @@ completed priority batch is recorded in
 `Docs/Development/M85_T082_OPEN_APPEARANCE_BATCH.md`. The priority filter is
 empty; the next review is the renewed complete comparison/blind-review gate,
 not another size or primitive-blockout gate. The renewed package is now ready
-at 72 cells for diagnostic review. The 24- and 44-cell feedback was general
-rather than per-code scored and does not complete the T082 gate.
+at all three scales. The feedback was general rather than per-code scored and
+does not complete the T082 gate. Remaining work is recorded in
+`Docs/Development/M85_T082_THREE_SCALE_DIAGNOSTIC_EXIT_AUDIT.md`.
 These approvals cannot accept the 66-entry gallery, alternate configurations or production.
 
 Continuation 2026-09-14: the director identifies incomplete MT-101 source
