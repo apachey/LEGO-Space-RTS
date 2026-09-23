@@ -1399,8 +1399,10 @@ blocking only when M9 must prove its stable-large-battle exit.
    Mobile Mining Platform Crystal Reaper source-rebuild Rev2 is also accepted
    for comparative appearance review: the selected raster preserves two track
    runs, two enormous front harvesting wheels, two separate clamp manipulators
-   and one directly docked detachable craft. Ore Drill, Mission Refit, exact
-   production topology and gameplay-camera review remain open. ETX Alien Strike
+   and one directly docked detachable craft. A completed Ore Drill appearance
+   candidate changes only that image's front harvesting head; it is unreviewed
+   and does not alter the selected comparison. Mission Refit, exact production
+   topology and gameplay-camera review remain open. ETX Alien Strike
    source-rebuild Rev6 is accepted for comparative appearance review with four
    quarter-annulus black shells forming two planar articulated arcs around its
    exclusively airborne central body. Exact hidden hinge fit, internal anatomy,

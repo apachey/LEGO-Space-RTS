@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "stableId": "unit.astronauts.mobile_mining_platform",
+  "configuration": "ORE_DRILL",
+  "status": "UNREVIEWED_COMPLETED_APPEARANCE_CANDIDATE",
+  "productionAccepted": false,
+  "selectedComparisonChanged": false,
+  "canonImpact": "NONE",
+  "tool": "BUILT_IN_IMAGEGEN",
+  "attempts": [
+    {
+      "number": 1,
+      "file": "mobile_mining_platform_ore_drill_rev1.png",
+      "sha256": "1f0822e7e6114452d32926e6e0177d0761fc60807afad4bd30b2651bf5c2b5d9",
+      "prompt": "prompt_rev1.txt",
+      "promptSha256": "17a0ba01f9724a4c43e4cfe7adfba82eb05ab96587cd7225c9e88e211e379020",
+      "inputs": [
+        {
+          "file": "ArtSource/M85/Preproduction/MobileMiningPlatformSourceRebuildV1/mobile_mining_platform_source_rebuild_rev2.png",
+          "sha256": "9011581e8d388e4f04b8a044d4a39f23f695ae2899252b66684e48b9e2311f1d",
+          "role": "DIRECTOR_ACCEPTED_CRYSTAL_REAPER_EDIT_TARGET; retain all parts except front harvesting head"
+        },
+        {
+          "file": "reference_7648_p28.png",
+          "sha256": "84356fe27433f3ebbf9ba87621fec9b60bf772725dfe703dab134bba9cabd7a5",
+          "sourcePdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4525546.pdf",
+          "sourcePdfSha256": "31f19234a860155251ee9954305d6a9c195f59d6d70637d042b69514b85a39bf",
+          "role": "OFFICIAL_COMPLETED_7648_DRILL_AND_ARTICULATED_SUPPORT_REFERENCE_ONLY"
+        },
+        {
+          "file": "reference_7693_p16.png",
+          "sha256": "d687ee17b4578752619f790a9b50818b3f744a876ba1c56f7d9d6aa32b125a2b",
+          "sourcePdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4523183.pdf",
+          "sourcePdfSha256": "0faf9ebb3927f8a7ade575e72b3b027b4bd246527f67bd285ead69b38bb93439",
+          "role": "OFFICIAL_COMPLETED_7693_HUMAN_MINING_VEHICLE_AND_SIDE_DRILL_REFERENCE_ONLY"
+        }
+      ]
+    }
+  ],
+  "inspection": {
+    "sameTrackedBaseAndUpperCraftAsAcceptedCrystalReaper": true,
+    "oneForwardSpiralDrillReplacesTwinHarvestingWheels": true,
+    "twoIndependentClampManipulatorsVisible": true,
+    "separateDrillVehicleAbsent": true,
+    "exactSourcePartsOrHiddenRefitFitProven": false,
+    "gameplayCameraAccepted": false
+  },
+  "limitations": "Visual proposal only. The shared tracked chassis and detachable upper craft follow the director-accepted Crystal Reaper appearance; the single broad Ore Drill head adapts the 7648/7693 source drills. Neither source set depicts this exact composite, its concealed mechanical attachment, Mission Refit animation or gameplay-camera read. No gameplay, canon or production decision is inferred."
+}
