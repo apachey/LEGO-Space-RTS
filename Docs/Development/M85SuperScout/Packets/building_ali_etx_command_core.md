@@ -42,11 +42,13 @@ Open question: The faction-internal construction, motion, socket and material dr
   - Evidence pages 50-56: Two mirrored narrow seated weapon craft are built as independent modules for the carrier.
   - Evidence pages 57-63: A long lime-conduit front/central craft is assembled independently and docked into the carrier's open machinery channel.
   - Evidence pages 64-67: Two disc-like alien jetpack modules are built separately, accept individual aliens and dock at the carrier's outer wing/arm ends.
+  - Evidence pages 68: Completed assembled Mothership shows the central/front craft, both seated side craft and both outer jetpack modules docked simultaneously; all pilot locations are exposed rather than inside a sealed crew cabin.
 - View/mechanism coverage: front=VERIFIED p43-49; rear=VERIFIED p44-49; leftRight=VERIFIED p28-49; top=VERIFIED p28-49; threeQuarter=VERIFIED cover and p43-50; undersideInterior=VERIFIED p28-48 staged circular frame; interior remains open rather than enclosed; mechanism=VERIFIED p50-67 detachable subcraft and capture/weapon pods; carrier launch cycle remains partial
 - Verified findings:
   - The Mothership is one huge flattened circular black carrier interrupted by a visible central machinery channel rather than a sealed saucer.
   - Several long black and translucent-lime tail blades extend from one side, preventing a rotationally symmetric disc silhouette.
   - Its separately assembled front craft, two seated side craft and two jetpack modules are contained/docked parts of the flagship presentation: they establish how the single Mothership can open, unfold and expose internal craft bays rather than defining separate Mothership entities.
+  - Pages 63 and 68 show an exposed Alien in the central/front craft; page 68 shows one exposed Alien in each side seat, while pages 67-68 show that each outer disc-like jetpack accepts its own figure. These are source crew placements, not a five-unit gameplay capacity or a production queue.
 - Remaining evidence gaps:
   - The manual proves docked subcraft but not the game's launch/recovery timing, unfolding sequence, reinforcement function or Charge-support state; all require a single-unit carrier contract.
   - Training eligible Alien units inside the Mothership is a game-director proposal. The exact roster, cost, build time, capacity interaction and whether production requires an unfolded state remain unresolved gameplay decisions and are not locked by T082.

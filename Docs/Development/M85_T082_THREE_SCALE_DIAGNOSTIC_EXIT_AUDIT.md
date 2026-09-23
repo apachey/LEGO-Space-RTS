@@ -49,12 +49,12 @@ the T082 exit conditions. Paths under `FullV2/` here are relative to
 
 ## Remaining T082 obligations
 
-1. Resolve or explicitly bound source-specific choices before final packet
-   acceptance: the Mothership's internal module/crew arrangement, the
-   Razor Skimmer and ETX Servitor donor/adaptation boundaries, the MX-71's
-   far-outer-emitter occlusion in the selected image, the MT-101 nested
-   craft/bike fit, and the Mobile Mining Platform's Ore Drill/refit
-   configuration. Positive appearance feedback does not prove these mechanisms.
+1. Keep source facts separate from later design and production choices.
+   Razor Skimmer and ETX Servitor donor sets are documented, but the exact
+   retained modules remain design approvals; MT-101's hidden craft/bike fit,
+   Mobile Mining Platform refit contacts, and the MX-71's occluded far mount
+   require production geometry, not another generated illustration. The
+   optional Ore Drill candidate is not source evidence or an approval gate.
 2. Preserve the 1195/3750 Martian archival gaps as unknowns. The existing
    7317-derived safe boundaries allow comparative review, but no unsupported
    coupler, sled, lift or hidden connection may be treated as source fact.
@@ -87,7 +87,17 @@ No replacement appearance or additional generation is needed for that
 topology question. Production geometry must show all four attachments from a
 suitable view; gameplay weapon behavior is unchanged.
 
+Mothership source reconciliation: the completed 7691 page 68 confirms the
+central/front craft, two seated side craft and two outer jetpack modules docked
+together. Pages 63 and 67-68 locate their exposed Alien positions. These
+source placements are now explicit in the packet; they do not establish a
+five-unit gameplay capacity, autonomous subcraft, production, or launch timing.
+Those gameplay decisions remain outside this source closure.
+
 Next work should address the concrete source/construction gaps and prepare a
 real camera/readability proof, then present one substantive complete-corpus
 decision to the director. Do not rerun an already positive diagnostic scale
 merely to seek another generic acknowledgement.
+Official completed-set references and approved decisions are the evidence;
+generated concepts are optional illustrations and are not prerequisites to
+reconcile a source packet or request the required corpus review.

@@ -1419,8 +1419,12 @@ blocking only when M9 must prove its stable-large-battle exit.
    `ArtSource/M85/DirectorReferences/director_visual_reference_manifest.json`.
    The MX-71's four forward airframe emitters are now source-locked as two
    mirrored pairs; only the far outer mount is hidden by the accepted
-   three-quarter comparison image. Do not reset historical attempts or
-   regenerate already successful assets.
+   three-quarter comparison image. The Mothership's five docked source-module
+   positions and their exposed crew locations are verified by the finished
+   7691 assembly; they do not define gameplay capacity or production.
+   Completed-set references and approved decisions are authoritative for T082;
+   generated concepts remain optional, never an extra acceptance gate. Do not
+   reset historical attempts or regenerate already successful assets.
 2. Execute the remaining Phase 09C M8.5 T082–T092 work before final M9 Skirmish
    Alpha acceptance.
 3. Use the separate M7 Look/HUD/Palette labs only to investigate a rejected aspect;
