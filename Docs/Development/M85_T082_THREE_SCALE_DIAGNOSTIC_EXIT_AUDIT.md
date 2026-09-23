@@ -1,6 +1,6 @@
 # T082 — three-scale diagnostic exit audit
 
-Date: 2026-09-23. Branch: `codex/m85-t082`, not merged. Gate: `BLOCKING_NOW`.
+Date: 2026-09-23. Branch: `codex/m85-t082`, not merged. Gate: `PASSED`.
 Canon impact: director-approved gate-sequencing clarification in Phase 09C.
 The blind answer key remains withheld.
 
@@ -23,7 +23,7 @@ That is not the same as a scored 66/66 identification: `reviewedCodes` remains
 empty, and no model name was supplied for an R-code. The historical 0/66 first
 draft and the 4/4 source-derived pilot retain their own separate outcomes.
 
-## Corpus readiness, without promotion
+## Corpus evidence and approval boundary
 
 - The current-selection manifest contains exactly 66 roster identities:
   10 appearances accepted for comparative review, 11 accepted correction
@@ -31,7 +31,8 @@ draft and the 4/4 source-derived pilot retain their own separate outcomes.
   pending, and 44 historical-base context selections. These statuses describe
   availability in the *comparison*, not 66 production approvals.
 - All 66 evidence/semantic-construction/motion/material packets exist and
-  remain `HOLD`. The cross-roster confusion register has 44 pairs. Source
+  are accepted as the T082 reference foundation, not as final asset designs.
+  The cross-roster confusion register has 44 pairs. Source
   validation covers 39 source families: 35 with located official PDFs and four
   archival cases. Martian 1195 and 3750 remain the two disclosed construction
   gaps; their unverified details are not production geometry.
@@ -43,12 +44,12 @@ Evidence anchors: `Content/Presentation/SuperScout/blind_review_results.json`
 preserves the three verbatim comments; `FullV2/CurrentComparisonV1/selection_manifest.json`
 contains the 66 current selections and status counts;
 `FullV2/CurrentBlindReviewV1/review_manifest.json` locks the six board hashes;
-`Docs/Development/M85SuperScout/PACKET_INDEX.md` indexes the 66 held packets;
+`Docs/Development/M85SuperScout/PACKET_INDEX.md` indexes the 66 research packets;
 `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md` defines
 the T082 exit conditions. Paths under `FullV2/` here are relative to
 `Docs/Development/M85SuperScout/Silhouettes/`.
 
-## Remaining T082 obligations
+## Disposition at T082 exit
 
 1. Keep source facts separate from later design and production choices.
    Razor Skimmer and ETX Servitor donor sets are documented, but the exact
@@ -59,9 +60,9 @@ the T082 exit conditions. Paths under `FullV2/` here are relative to
 2. Preserve the 1195/3750 Martian archival gaps as unknowns. The existing
    7317-derived safe boundaries allow comparative review, but no unsupported
    coupler, sled, lift or hidden connection may be treated as source fact.
-3. Obtain explicit final acceptance of the evidence-backed complete corpus
-   before T082 is marked passed or T083/T085 packets leave `HOLD`. The three
-   qualitative comments must never be converted into per-code answers.
+3. The director explicitly accepted the evidence-backed complete corpus as
+   the research foundation for T083/T085. The three earlier qualitative
+   comments must never be converted into per-code answers.
 
 Deferred production gate: actual in-engine gameplay-camera and model-LOD
 readability must be demonstrated at T084/T086, once those models exist. The
@@ -120,18 +121,17 @@ design. If a T083/T085 design cannot preserve its required identity without
 one of these unknowns, that asset must remain on HOLD and return to the
 director with the specific choice.
 
-## One complete-corpus decision, not 66 production approvals
+## Director acceptance, not 66 production approvals
 
-The director has seen the unchanged 66-source-selection corpus at 24, 44 and
-72 cells and gave general positive feedback at each scale. No per-code score
-was supplied, so the record may never say `66/66 identified`. The remaining
-T082 decision is whether that reviewed full set is recognizable enough without
-labels to serve as the 66-asset research foundation for T083/T085, with the
-bounded unknowns above. An affirmative answer accepts *reference intelligence*
-only; it does not accept 66 design packages, generated images, production
-models, real-camera results or new gameplay. A negative answer should name
-the identities that remain unrecognizable or source-misleading so only those
-are revised. Until an explicit answer, T082 and every packet remain `HOLD`.
+After the director reviewed the 66-source-selection corpus at 24, 44 and
+72 cells and received the bounded-risk summary above, the explicit question
+was whether the full unlabeled set could serve as the recognizable 66-asset
+research foundation for T083/T085. The director answered “так” on 2026-09-23.
+T082 therefore passes as *reference intelligence*. No per-code score was
+supplied, so the record must not say `66/66 identified`. This does not accept
+66 visual design packages, generated images, production models, real-camera
+results or new gameplay. The exact decision and limits are recorded in
+`Content/Presentation/SuperScout/blind_review_results.json`.
 
 Do not rerun an already positive diagnostic scale merely to seek another
 generic acknowledgement.

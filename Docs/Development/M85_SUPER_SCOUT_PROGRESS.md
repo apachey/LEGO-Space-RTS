@@ -182,8 +182,9 @@ failures. No new game export or candidate integration was performed.
 - Every asset has a one-sentence silhouette thesis and three non-removable
   identity anchors. These are canon-derived research constraints, not approved
   final designs.
-- All 66 A–I packet files exist and visibly remain `HOLD`; incomplete evidence
-  cannot be mistaken for T082 or game-director acceptance.
+- All 66 A–I packet files were generated as `HOLD` drafts before the final
+  director decision. They now record acceptance of the T082 research foundation
+  while keeping asset-specific designs and production models unapproved.
 - A generated identity/source matrix lets later audits compare the complete
   roster without copying data between documents.
 - The confusion register covers 44 internal and cross-faction hypotheses. The
@@ -532,7 +533,7 @@ No source image is copied into the repository. URLs and rights notes are
 recorded for reference-only research; third-party or LEGO imagery is not
 redistributed.
 
-## Remaining before T082 can pass
+## T082 exit and deferred work
 
 1. Retain the two explicit Martian archival gaps unless usable evidence appears,
    and escalate any gap that prevents a safe production decision.
@@ -542,9 +543,9 @@ redistributed.
    by phase and kept visible in the exit audit.
 3. Revise every wrong, uncertain or indistinguishable asset and extend the
    44-pair register wherever the accepted review exposes a new neighbor.
-4. Request one explicit complete-corpus reference-foundation decision. A
-   negative response must identify the remaining misleading silhouettes or
-   source interpretations before targeted revision.
+4. The director explicitly accepted the reviewed 66-asset research foundation
+   on 2026-09-23 without a per-code identification score. T082 is complete;
+   T083/T085 asset-specific design approvals are still pending.
 
 Actual gameplay-camera and model-LOD proof is deferred to T084/T086, once the
 production models exist; it is not a T082 exit obligation.
@@ -557,14 +558,19 @@ The game director also corrected 7693 to an exclusively airborne ETX Alien
 Strike with no deploy/reconfigure mode; low-versus-high flight presentation is
 deliberately deferred.
 The game director also passed the four-asset Pilot V2 blind review at 4/4,
-approving the source-derived silhouette method for full-roster expansion. No
-packet is approved for T083/T085 production yet. `CurrentBlindReviewV1` is now
-`HOLD_AFTER_THREE_SCALE_DIAGNOSTIC_REVIEW`: 66 primary identities, all three
-widths viewed qualitatively, and one preserved Defense Node alternate excluded
-from the roster pass. The complete-corpus exit remains open. See
+approving the source-derived silhouette method for full-roster expansion. The
+renewed 66-asset research foundation was accepted by the director on
+2026-09-23. The six diagnostic boards remain unscored historical evidence;
+one preserved Defense Node alternate is excluded from the roster pass. No
+asset-specific T083/T085 design or T084/T086 production model is approved by
+this decision. See
 `Docs/Development/M85_T082_THREE_SCALE_DIAGNOSTIC_EXIT_AUDIT.md`.
 
 ## Verification state
+
+T082 exit passed `./tools/verify.sh --full` on 2026-09-23 with zero blocking
+failures (`Artifacts/Verification/20260923T110029Z-full-summary.txt`). The
+preserved 60-mover M9 stress diagnostic still fails as `BLOCKING_LATER`.
 
 The renewed current blind-review package passed exact six-board regeneration,
 the focused T082 validator and `git diff --check`. Its initial

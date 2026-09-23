@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "task": "T082",
   "faction": "RockRaiders",
-  "status": "FACTION_CONTRACT_DRAFT_COMPLETE_HOLD_FOR_ROSTER_REVIEW",
+  "status": "T082_REFERENCE_ACCEPTED_ASSET_DESIGN_PENDING",
   "authority": [
     "Docs/Canon/02_FACTION_BIBLE.md#part-iii-rock-raiders",
     "Docs/Canon/03_UNIT_BUILDING_ROSTER.md#part-ii-rock-raiders-roster",

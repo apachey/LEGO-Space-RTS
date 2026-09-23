@@ -60,7 +60,8 @@ existing Look Lab and HUD Lab directions at a wide 84-cell opening plus exact
 24/44/72-cell checks. The game director accepted M7 Final with outline on as the
 production visual direction. The T081 production asset pipeline is complete,
 fully verified and game-director accepted. T082 Super Scout reference
-intelligence is now in progress: its exact 66-asset identity/source baseline and
+intelligence is game-director accepted as the 66-asset research foundation for
+T083/T085: its exact identity/source baseline and
 all four faction source-page audits are complete. Forty-three faction-scoped
 source records are visually audited across 48 official books plus one archival
 instruction scan; only Martian sources 1195 and 3750 remain evidence gaps. All
@@ -74,10 +75,13 @@ current 66 selections behind fresh R-codes on grayscale 24/44/72 boards. Both
 24-cell pages received a general game-director go-ahead (“йдемо далі, наче все
 зрозуміло”), then both the 44- and 72-cell pages received “все гуд”. All three
 scales have positive general feedback without per-code scoring. The diagnostic
-sequence is complete. The source/construction gaps are now classified and
-bounded by later-phase ownership; explicit complete-corpus reference acceptance
-is the remaining T082 gate. By director-approved sequencing correction, actual
-gameplay-camera and model-LOD review is a T084/T086 production-model gate.
+sequence is complete. The source/construction gaps are classified and bounded
+by later-phase ownership. On 2026-09-23 the director explicitly accepted the
+reviewed complete corpus as a recognizable, unlabeled reference foundation;
+the six diagnostic boards have no per-code 66/66 score. T083 unit design is
+next and has not begun. Asset-specific design and production models remain
+unapproved. By director-approved sequencing correction, actual gameplay-camera
+and model-LOD review is a T084/T086 production-model gate.
 A post-T069
 quality revision makes outline/halo independent from
 the style post-pass, hardens profile paste, bounds VFX event memory and avoids
@@ -983,16 +987,17 @@ live; the current schema-9 copy/paste retains the complete experiment.
   authoritative runtime roster, checks counts, IDs, classifications, source
   coverage and the three-to-seven silhouette-anchor contract, and rejects stale
   generated packets.
-- T082 remains `BLOCKING_NOW` for T083/T085. All faction source-page audits,
+- T082 reference foundation is `PASSED` for T083/T085. All faction source-page audits,
   all 66 production-contract drafts are complete; the first silhouette approach
   failed 0/66 and Pilot V2 passed 4/4. `CurrentBlindReviewV1` now provides a
   separately hashed 66/66 current-selection corpus with six complete grayscale
   boards and fresh `R01`–`R66` codes. The director's general 24-cell go-ahead
   is recorded without inventing 66 identifications or calling it a recognition
   pass. The director also said “все гуд” at both 44 and 72 cells without
-  per-code scoring. The three-scale diagnostic is complete but T082 remains
-  `HOLD`: source/construction unknowns are bounded in the exit audit, but
-  explicit complete-corpus reference acceptance remains open. Actual
+  per-code scoring. The three-scale diagnostic is complete and the director
+  explicitly accepted the reviewed 66-asset research foundation on 2026-09-23;
+  this is not a 66/66 identification score or asset-specific design approval.
+  Source/construction unknowns remain bounded in the exit audit. Actual
   gameplay-camera and model-LOD review now belongs to
   T084/T086, after the production models exist. Current detail
   is tracked in `Docs/Development/M85_SUPER_SCOUT_PROGRESS.md` and
@@ -1000,7 +1005,10 @@ live; the current schema-9 copy/paste retains the complete experiment.
   director's newly supplied Alien Jet image is recorded as an approved visual
   reference without changing the selected Jet; the latest local Mothership
   image is retained as a positive visual reference without more raster
-  refinement or production acceptance.
+  refinement or production acceptance. T082 exit verification passed every
+  blocking full-suite stage at
+  `Artifacts/Verification/20260923T110029Z-full-summary.txt`; the retained
+  60-mover M9 diagnostic failed as `BLOCKING_LATER` and does not block T082.
 
 Routine Godot verification is now non-intrusive on macOS: every gameplay smoke
 runs headlessly with an explicit automated-smoke flag, records its real
@@ -1381,56 +1389,18 @@ blocking only when M9 must prove its stable-large-battle exit.
 
 ## Next approved action
 
-1. Continue T082 from the completed three-scale diagnostic exit audit. Preserve
-   all three verbatim director comments without inventing R-code answers or
-   re-running positive sheets for another general acknowledgement. The named
-   source/construction gaps are classified in the exit audit; request one
-   substantive complete-corpus reference-foundation decision, without
-   inventing a 66/66 identification score. Actual
-   gameplay-camera and model-LOD review belongs to T084/T086. Retain the two
-   explicit Martian archival gaps unless usable evidence appears, and escalate
-   any gap that blocks a safe production decision. Do not treat the concept
-   silhouettes, generated `HOLD`
-   packets, T070 data definitions or the non-roster T081 pipeline fixture as
-   production models.
-   MT-101 has corrected nested native controls and a finished source-rebuilt
-   Rev5 appearance accepted for comparative review. Estimated sampled
-   fit/extraction passes are not exact source geometry or production
-   certification, and hidden wheel contacts, the occluded second low wing and
-   contained bike fit remain unproven. Independent
-   rear-spacecraft/bike gameplay
-   separately requires director scope (Phase 03 defines only ground MT-101);
-   that decision is not a prerequisite for correcting the source model.
-   Mobile Mining Platform Crystal Reaper source-rebuild Rev2 is also accepted
-   for comparative appearance review: the selected raster preserves two track
-   runs, two enormous front harvesting wheels, two separate clamp manipulators
-   and one directly docked detachable craft. A completed Ore Drill appearance
-   candidate changes only that image's front harvesting head; it is unreviewed
-   and does not alter the selected comparison. Mission Refit, exact production
-   topology and gameplay-camera review remain open. ETX Alien Strike
-   source-rebuild Rev6 is accepted for comparative appearance review with four
-   quarter-annulus black shells forming two planar articulated arcs around its
-   exclusively airborne central body. Exact hidden hinge fit, internal anatomy,
-   gameplay-camera readability, flight-height presentation and production
-   integration remain open. Intermediate instruction steps are historical
-   connection evidence only, not final-form references. The priority appearance
-   batch is complete: Jet Scooter source-rebuild Rev1 and
-   source-corrected Red Planet Protector Rev1 are explicitly accepted for
-   comparative appearance review. The renewed current comparison is complete;
-   the next T082 visual step is the complete-corpus decision, not regeneration
-   or micro-correction of already liked comparative appearances. The Alien Jet
-   reference and latest Mothership
-   appearance are preserved with exact hashes in
-   `ArtSource/M85/DirectorReferences/director_visual_reference_manifest.json`.
-   The MX-71's four forward airframe emitters are now source-locked as two
-   mirrored pairs; only the far outer mount is hidden by the accepted
-   three-quarter comparison image. The Mothership's five docked source-module
-   positions and their exposed crew locations are verified by the finished
-   7691 assembly; they do not define gameplay capacity or production.
-   Completed-set references and approved decisions are authoritative for T082;
-   generated concepts remain optional, never an extra acceptance gate. Do not
-   reset historical attempts or regenerate already successful assets.
-2. Execute the remaining Phase 09C M8.5 T082–T092 work before final M9 Skirmish
+1. Start T083 as a separate task from the unmerged T082 branch
+   `codex/m85-t082`, not the older `main` baseline. Build the 35 unit visual
+   design packages from the accepted 66-asset source/reference foundation and
+   its bounded unknowns. T082 acceptance is not approval of final designs or
+   production models. Preserve the director-selected comparative references,
+   including Alien Jet and Mothership, and source corrections such as MT-101's
+   nested craft/bike and MX-71's four emitters. Do not infer new gameplay from
+   source-model modules. Retain Martian 1195/3750 archival gaps until usable
+   evidence appears. Actual gameplay-camera and model-LOD review belongs to
+   T084/T086 after production geometry exists. Do not begin T083 in the T082
+   closing task.
+2. Execute the remaining Phase 09C M8.5 T083–T092 work before final M9 Skirmish
    Alpha acceptance.
 3. Use the separate M7 Look/HUD/Palette labs only to investigate a rejected aspect;
    they remain exploratory tools and do not independently record visual canon.

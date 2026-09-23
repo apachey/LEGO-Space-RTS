@@ -341,8 +341,8 @@ def validate_production_contracts(
         fail(f"{label} production-contract schema/task mismatch")
     if contracts.get("faction") != faction:
         fail(f"{label} production-contract faction mismatch")
-    if contracts.get("status") != "FACTION_CONTRACT_DRAFT_COMPLETE_HOLD_FOR_ROSTER_REVIEW":
-        fail(f"{label} production contracts must retain the roster-review HOLD")
+    if contracts.get("status") != "T082_REFERENCE_ACCEPTED_ASSET_DESIGN_PENDING":
+        fail(f"{label} contracts must distinguish accepted research from pending asset design")
 
     shared = contracts.get("sharedMaterialPlan", {})
     if set(shared.get("masterMaterialRoles", [])) != MATERIAL_ROLES:
@@ -1601,8 +1601,8 @@ def main() -> None:
     packet_notice = validate_source_analysis_policy(source_analysis_policy)
     if manifest.get("schemaVersion") != 1 or manifest.get("task") != "T082":
         fail("identity baseline schema/task mismatch")
-    if manifest.get("corpusStatus") != "IN_PROGRESS_IDENTITY_BASELINE":
-        fail("identity baseline must not imply completed T082 acceptance")
+    if manifest.get("corpusStatus") != "T082_REFERENCE_FOUNDATION_ACCEPTED":
+        fail("identity baseline must record the game-director-approved T082 exit")
     if manifest.get("cameraWidthsCells") != [24, 44, 72]:
         fail("canonical Super Scout camera widths drifted")
 
@@ -1929,8 +1929,20 @@ def main() -> None:
 
     if blind_review_results.get("schemaVersion") != 1 or blind_review_results.get("task") != "T082":
         fail("blind-review result schema/task mismatch")
-    if blind_review_results.get("status") != "CURRENT_BLIND_REVIEW_V1_THREE_SCALE_DIAGNOSTIC_COMPLETE_HOLD":
-        fail("blind-review result must preserve the completed diagnostic HOLD gate")
+    if blind_review_results.get("status") != "T082_REFERENCE_FOUNDATION_ACCEPTED":
+        fail("blind-review result must record final T082 reference acceptance")
+    if blind_review_results.get("finalCorpusAcceptance") != {
+        "date": "2026-09-23",
+        "reviewer": "GAME_DIRECTOR",
+        "directorMessage": "так",
+        "questionScope": "Approve the reviewed 66-asset set as a recognizable, unlabeled T082 reference foundation for T083/T085, with explicitly bounded unknowns; not final visual designs, production models or new gameplay.",
+        "result": "ACCEPTED_FOR_T083_T085_DESIGN",
+        "perCodeIdentificationScore": None,
+        "designPackagesAccepted": False,
+        "productionAccepted": False,
+        "sourceGapDisposition": "Docs/Development/M85_T082_THREE_SCALE_DIAGNOSTIC_EXIT_AUDIT.md",
+    }:
+        fail("T082 acceptance evidence, unscored boundary or later-design HOLD drifted")
     attempts = blind_review_results.get("attempts", [])
     if len(attempts) != 3:
         fail("expected the V1 failure, Pilot V2 pass and Full V2 24-cell review")
@@ -2397,8 +2409,12 @@ def main() -> None:
         for section in REQUIRED_PACKET_SECTIONS:
             if packet.count(section) != 1:
                 fail(f"{path.name} missing or duplicates {section}")
-        if "**State:** `HOLD`" not in packet or "**Approving reviewer:** game director, not yet requested" not in packet:
-            fail(f"{path.name} could be mistaken for an accepted T082 packet")
+        if (
+            "**State:** `T082_REFERENCE_FOUNDATION_ACCEPTED_DESIGN_PENDING`" not in packet
+            or "**Approving reviewer:** game director accepted the complete T082 reference corpus on 2026-09-23" not in packet
+            or "**This is not a design approval or production-model authorization.**" not in packet
+        ):
+            fail(f"{path.name} conflates T082 reference acceptance with asset design approval")
         if packet_notice not in packet:
             fail(f"{path.name} is missing the source-decomposition policy notice")
     contracted_packets = sum("- Contract state: `" in path.read_text(encoding="utf-8") for path in packet_paths)
@@ -2440,7 +2456,7 @@ def main() -> None:
         f"martiansAudited={martians_audited} martiansArchivalAudits={martians_archival_audits} martiansGaps={martians_gaps} "
         f"contracts={contract_count} provisionalContracts={provisional_contracts} "
         f"packets=66 confusionPairs={len(pairs)} blindV1=FAIL_0_OF_66 pilotV2=PASS_4_OF_4 "
-        f"fullV2=REVISION_REQUIRED_AFTER_24_CELL_REVIEW boards=6 state=HOLD"
+        f"fullV2=REVISION_REQUIRED_AFTER_24_CELL_REVIEW boards=6 state=T082_REFERENCE_ACCEPTED"
     )
 
 

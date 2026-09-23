@@ -28,6 +28,7 @@ ALIEN_BIOMECHANICAL_POLICY = ROOT / "Content/Presentation/SuperScout/alien_biome
 MARTIANS_CONTRACTS = ROOT / "Content/Presentation/SuperScout/martians_production_contracts.json"
 CONFUSION = ROOT / "Content/Presentation/SuperScout/confusion_register.json"
 SILHOUETTES = ROOT / "Content/Presentation/SuperScout/silhouette_concepts.json"
+BLIND_REVIEW_RESULTS = ROOT / "Content/Presentation/SuperScout/blind_review_results.json"
 OUTPUT = ROOT / "Docs/Development/M85SuperScout/Packets"
 INDEX = ROOT / "Docs/Development/M85SuperScout/PACKET_INDEX.md"
 MATRIX = ROOT / "Docs/Development/M85SuperScout/Matrices/identity_source_matrix.csv"
@@ -262,7 +263,7 @@ def packet_text(
             "5. Apply the game-director-approved source-derived method from the 4/4 Pilot V2 result, then run a new complete 24/44/72-cell blind review."
         )
     else:
-        packet_state = "FACTION_CONTRACT_DRAFT — HOLD FOR SILHOUETTE/ROSTER/DIRECTOR REVIEW"
+        packet_state = "T082 REFERENCE FOUNDATION ACCEPTED — T083/T085 DESIGN PENDING"
         confidence = (
             "verified canonical identity and faction-internal construction/motion/material draft; "
             "source-bounded decisions remain explicit below."
@@ -270,9 +271,9 @@ def packet_text(
         build_handoff = (
             "1. Retain the audited evidence and every explicit adaptation boundary.\n"
             "2. Greybox hero masses, openings and structural load path from the semantic map.\n"
-            "3. Validate named pivots, contacts and sockets in the real gameplay camera.\n"
+            "3. Record named pivots, contacts and sockets; real gameplay-camera validation belongs to T084/T086 after production models exist.\n"
             "4. Author only the specified reusable textures after human material review.\n"
-            "5. Apply the game-director-approved source-derived method from the 4/4 Pilot V2 result, then run a new complete 24/44/72-cell blind review."
+            "5. Use the accepted T082 reference foundation to prepare the T083/T085 visual design package. Do not repeat the completed three-scale review without a specific identity defect."
         )
     source_rows = []
     for set_id in asset["sourceSets"]:
@@ -296,8 +297,8 @@ def packet_text(
     if contract is not None:
         open_question = (
             "The faction-internal construction, motion, socket and material draft is recorded below. "
-            "Its unresolved decisions and the complete-roster silhouette/director gates must be cleared "
-            "before this packet can leave HOLD."
+            "Its unresolved asset-specific choices belong to T083/T085 design review; "
+            "T082 corpus acceptance does not approve a final visual design or model."
         )
     elif any((asset["faction"], set_id) in evidence for set_id in asset["sourceSets"]):
         open_question = (
@@ -405,9 +406,9 @@ Non-removable identity anchors:
 
 {build_handoff}
 
-**State:** `HOLD`
+**State:** `T082_REFERENCE_FOUNDATION_ACCEPTED_DESIGN_PENDING`
 
-**Approving reviewer:** game director, not yet requested for this packet.
+**Approving reviewer:** game director accepted the complete T082 reference corpus on 2026-09-23; asset-specific design and production remain unapproved.
 """
 
 
@@ -415,14 +416,14 @@ def index_text(assets: list[dict], contract_ids: set[str]) -> str:
     rows = []
     for asset in assets:
         rel = f"Packets/{slug(asset['stableId'])}"
-        state = "FACTION_CONTRACT_DRAFT / HOLD" if asset["stableId"] in contract_ids else "IDENTITY_BASELINE / HOLD"
+        state = "T082 REFERENCE ACCEPTED / DESIGN PENDING"
         rows.append(
             f"| [{asset['displayName']}]({rel}) | `{asset['stableId']}` | {asset['faction']} | "
             f"{asset['kind']} | {asset['footprint']} | {state} |"
         )
     return f"""# M8.5 T082 — Super Scout packet index
 
-This generated index covers every canonical buildable unit and infrastructure entry. Identity, sources, semantic construction, mechanisms and texture needs exist. The first cross-roster primitive-silhouette draft failed game-director blind review at 0/66 and is rejected. The source-derived Pilot V2 then passed 4/4, approving that method for a new complete corpus. Every packet deliberately remains `HOLD` until the complete 24/44/72-cell review passes.
+This generated index covers every canonical buildable unit and infrastructure entry. Identity, sources, semantic construction, mechanisms and texture needs exist. The first primitive-silhouette draft failed 0/66, and the source-derived Pilot V2 passed 4/4. The director reviewed the renewed 66-asset corpus at 24/44/72 cells and explicitly accepted it as the T082 reference foundation on 2026-09-23 without a per-code score. Asset-specific T083/T085 visual designs and T084/T086 production models remain unapproved.
 
 | Asset | Stable ID | Faction | Kind | Footprint | State |
 |---|---|---|---|---|---|
@@ -443,7 +444,7 @@ def matrix_text(assets: list[dict], contract_ids: set[str]) -> str:
             asset["role"], asset["footprint"], asset["sourceClassification"],
             ";".join(asset["sourceSets"]), asset["silhouetteThesis"],
             ";".join(asset["identityAnchors"]),
-            "FACTION_CONTRACT_DRAFT_HOLD" if asset["stableId"] in contract_ids else "IDENTITY_BASELINE_HOLD",
+            "T082_REFERENCE_FOUNDATION_ACCEPTED_DESIGN_PENDING",
         ])
     return output.getvalue()
 
@@ -593,6 +594,12 @@ The accepted M7 role-authored material family remains authoritative. These are p
 
 def expected_files() -> dict[Path, str]:
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    review = json.loads(BLIND_REVIEW_RESULTS.read_text(encoding="utf-8"))
+    if (
+        review.get("status") != "T082_REFERENCE_FOUNDATION_ACCEPTED"
+        or review.get("finalCorpusAcceptance", {}).get("result") != "ACCEPTED_FOR_T083_T085_DESIGN"
+    ):
+        raise ValueError("T082 reference foundation must have explicit director acceptance")
     ledger = json.loads(LEDGER.read_text(encoding="utf-8"))
     instruction_index = json.loads(INSTRUCTION_INDEX.read_text(encoding="utf-8"))
     source_analysis_policy = json.loads(SOURCE_ANALYSIS_POLICY.read_text(encoding="utf-8"))
@@ -644,6 +651,8 @@ def expected_files() -> dict[Path, str]:
         for document in contract_documents
         for contract in document["assets"]
     }
+    if set(production_contracts) != set(assets):
+        raise ValueError("accepted T082 corpus requires one contract for every roster asset")
     texture_specs = {
         spec["id"]: spec
         for document in contract_documents
@@ -732,14 +741,14 @@ def main() -> None:
             for failure in failures:
                 print(f"- {failure}", file=sys.stderr)
             raise SystemExit(1)
-        print("M8.5 SUPER SCOUT PACKETS: PASS packets=66 matrices=19 contracts=66 state=HOLD")
+        print("M8.5 SUPER SCOUT PACKETS: PASS packets=66 matrices=19 contracts=66 state=REFERENCE_ACCEPTED")
         return
 
     OUTPUT.mkdir(parents=True, exist_ok=True)
     for path, content in expected.items():
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(content, encoding="utf-8")
-    print("M8.5 SUPER SCOUT PACKETS: GENERATED packets=66 matrices=19 contracts=66 state=HOLD")
+    print("M8.5 SUPER SCOUT PACKETS: GENERATED packets=66 matrices=19 contracts=66 state=REFERENCE_ACCEPTED")
 
 
 if __name__ == "__main__":

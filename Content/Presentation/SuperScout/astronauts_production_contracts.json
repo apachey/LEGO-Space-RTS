@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "task": "T082",
   "faction": "Astronauts",
-  "status": "FACTION_CONTRACT_DRAFT_COMPLETE_HOLD_FOR_ROSTER_REVIEW",
+  "status": "T082_REFERENCE_ACCEPTED_ASSET_DESIGN_PENDING",
   "authority": ["Docs/Canon/02_FACTION_BIBLE.md#part-iv-astronauts", "Docs/Canon/03_UNIT_BUILDING_ROSTER.md#part-iii-astronaut-roster", "Docs/Canon/04_ECONOMY_TECHNOLOGY_PROGRESSION.md", "Docs/Canon/06_COMBAT_DAMAGE_BALANCE.md", "Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md#5-super-scout-reference-intelligence-gate", "Content/Presentation/SuperScout/astronauts_source_evidence.json"],
   "confidenceStates": ["SOURCE_VERIFIED", "CANON_DERIVED_ADAPTATION", "SOURCE_BOUNDED_PROVISIONAL"],
   "sharedMaterialPlan": {

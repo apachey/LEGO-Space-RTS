@@ -2,7 +2,7 @@
 
 **Stable ID:** `unit.astronauts.t3_trike`
 
-**Packet state:** `FACTION_CONTRACT_DRAFT — HOLD FOR SILHOUETTE/ROSTER/DIRECTOR REVIEW`
+**Packet state:** `T082 REFERENCE FOUNDATION ACCEPTED — T083/T085 DESIGN PENDING`
 
 **This is not a design approval or production-model authorization.**
 
@@ -23,7 +23,7 @@ Authoritative references:
 - `Docs/Canon/09C_FULL_CONTENT_AND_PRESENTATION_PRODUCTION_AMENDMENT.md`
 - `Content/PrototypeEntities.json`
 
-Open question: The faction-internal construction, motion, socket and material draft is recorded below. Its unresolved decisions and the complete-roster silhouette/director gates must be cleared before this packet can leave HOLD.
+Open question: The faction-internal construction, motion, socket and material draft is recorded below. Its unresolved asset-specific choices belong to T083/T085 design review; T082 corpus acceptance does not approve a final visual design or model.
 
 ## B. Reference board
 
@@ -147,10 +147,10 @@ Non-removable identity anchors:
 
 1. Retain the audited evidence and every explicit adaptation boundary.
 2. Greybox hero masses, openings and structural load path from the semantic map.
-3. Validate named pivots, contacts and sockets in the real gameplay camera.
+3. Record named pivots, contacts and sockets; real gameplay-camera validation belongs to T084/T086 after production models exist.
 4. Author only the specified reusable textures after human material review.
-5. Apply the game-director-approved source-derived method from the 4/4 Pilot V2 result, then run a new complete 24/44/72-cell blind review.
+5. Use the accepted T082 reference foundation to prepare the T083/T085 visual design package. Do not repeat the completed three-scale review without a specific identity defect.
 
-**State:** `HOLD`
+**State:** `T082_REFERENCE_FOUNDATION_ACCEPTED_DESIGN_PENDING`
 
-**Approving reviewer:** game director, not yet requested for this packet.
+**Approving reviewer:** game director accepted the complete T082 reference corpus on 2026-09-23; asset-specific design and production remain unapproved.

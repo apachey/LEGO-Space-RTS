@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "T082",
-  "status": "CURRENT_BLIND_REVIEW_V1_THREE_SCALE_DIAGNOSTIC_COMPLETE_HOLD",
+  "status": "T082_REFERENCE_FOUNDATION_ACCEPTED",
   "attempts": [
     {
       "id": "T082_BLIND_V1_ICON_PRIMITIVES",
@@ -136,6 +136,17 @@
       "classification": "QUALITATIVE_POSITIVE_NOT_PER_CODE_SCORED",
       "formalRecognitionPass": false
     },
-    "rule": "All three diagnostic camera widths were viewed and received qualitative positive feedback, not a scored 66/66 identification or T082 acceptance. Keep the key withheld; use the corpus exit audit to resolve remaining obligations and retain production HOLD."
+    "rule": "All three diagnostic camera widths were viewed and received qualitative positive feedback, not a scored 66/66 identification. Keep the key withheld; the later complete-corpus acceptance is recorded separately and does not approve production."
+  },
+  "finalCorpusAcceptance": {
+    "date": "2026-09-23",
+    "reviewer": "GAME_DIRECTOR",
+    "directorMessage": "так",
+    "questionScope": "Approve the reviewed 66-asset set as a recognizable, unlabeled T082 reference foundation for T083/T085, with explicitly bounded unknowns; not final visual designs, production models or new gameplay.",
+    "result": "ACCEPTED_FOR_T083_T085_DESIGN",
+    "perCodeIdentificationScore": null,
+    "designPackagesAccepted": false,
+    "productionAccepted": false,
+    "sourceGapDisposition": "Docs/Development/M85_T082_THREE_SCALE_DIAGNOSTIC_EXIT_AUDIT.md"
   }
 }
