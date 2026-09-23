@@ -993,7 +993,11 @@ live; the current schema-9 copy/paste retains the complete experiment.
   `HOLD`: source/construction unknowns, actual gameplay-camera readability and
   explicit complete-corpus acceptance remain open. Current detail
   is tracked in `Docs/Development/M85_SUPER_SCOUT_PROGRESS.md` and
-  `Docs/Development/M85_T082_THREE_SCALE_DIAGNOSTIC_EXIT_AUDIT.md`.
+  `Docs/Development/M85_T082_THREE_SCALE_DIAGNOSTIC_EXIT_AUDIT.md`. The
+  director's newly supplied Alien Jet image is recorded as an approved visual
+  reference without changing the selected Jet; the latest local Mothership
+  image is retained as a positive visual reference without more raster
+  refinement or production acceptance.
 
 Routine Godot verification is now non-intrusive on macOS: every gameplay smoke
 runs headlessly with an explicit automated-smoke flag, records its real
@@ -1407,7 +1411,10 @@ blocking only when M9 must prove its stable-large-battle exit.
    source-corrected Red Planet Protector Rev1 are explicitly accepted for
    comparative appearance review. The renewed current comparison is complete;
    the next T082 visual step is source/construction reconciliation and real
-   camera proof, not regeneration of already accepted comparative appearances.
+   camera proof, not regeneration or micro-correction of already liked
+   comparative appearances. The Alien Jet reference and latest Mothership
+   appearance are preserved with exact hashes in
+   `ArtSource/M85/DirectorReferences/director_visual_reference_manifest.json`.
    Do not reset historical attempts or regenerate already successful assets.
 2. Execute the remaining Phase 09C M8.5 T082–T092 work before final M9 Skirmish
    Alpha acceptance.

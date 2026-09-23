@@ -69,6 +69,15 @@ Gameplay extensions suggested by toy subcraft (for example independent
 MT-101 spacecraft/bike use or Mothership internal unit production) are separate
 canon decisions, not implicit T082 outcomes.
 
+2026-09-23 director continuation: the newly supplied 5617 photo is accepted
+as an Alien Jet reference only; the Jet's selected comparative image is not
+edited. The latest local Mothership raster receives positive appearance
+feedback and no further microscopic image correction is requested. See the
+exact-image manifest at
+`ArtSource/M85/DirectorReferences/director_visual_reference_manifest.json`.
+These references guide later construction, but do not erase the source and
+real-camera obligations above.
+
 Next work should address the concrete source/construction gaps and prepare a
 real camera/readability proof, then present one substantive complete-corpus
 decision to the director. Do not rerun an already positive diagnostic scale

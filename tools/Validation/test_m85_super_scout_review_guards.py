@@ -12,6 +12,20 @@ import validate_m85_super_scout as validator
 
 
 class ReviewGuardTests(unittest.TestCase):
+    def test_alien_jet_reference_cannot_become_production_acceptance(self):
+        def mutate(fixture):
+            fixture["records"][0]["productionAccepted"] = True
+        self.assert_rejected(validator.DIRECTOR_VISUAL_REFERENCES, mutate,
+                             "director visual reference expanded or changed its exact approval scope")
+
+    def test_alien_jet_reference_cannot_replace_selected_appearance(self):
+        def mutate(fixture):
+            jet = next(item for item in fixture["selections"]
+                       if item["stableId"] == "unit.aliens.alien_jet")
+            jet["file"] = "ArtSource/M85/DirectorReferences/AlienJet/alien_jet_approved_reference.png"
+        self.assert_rejected(validator.CURRENT_COMPARISON, mutate,
+                             "director reference silently replaced the Alien Jet selection")
+
     def test_etx_source_rebuild_cannot_expand_to_production(self):
         self.assert_rejected(validator.ETX_SOURCE_REBUILD_REVIEW,
                              lambda fixture: fixture.update(productionAccepted=True),

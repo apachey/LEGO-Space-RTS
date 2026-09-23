@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "task": "T082",
+  "date": "2026-09-23",
+  "records": [
+    {
+      "stableId": "unit.aliens.alien_jet",
+      "role": "DIRECTOR_APPROVED_VISUAL_SOURCE_REFERENCE",
+      "file": "ArtSource/M85/DirectorReferences/AlienJet/alien_jet_approved_reference.png",
+      "sha256": "6e4f76023dda7ad7cc72716bced242aa580bf6d35198268491aa58716f975892",
+      "provenance": "Image supplied directly by the game director; the official 5617 instructions remain the construction source.",
+      "directorMessage": "для alien jet — ніхуя не роби, просто зафіксуй це як рефернс який я окнув",
+      "scope": "Reference accepted. No edit, regeneration, current-comparison selection change, production-model acceptance or T082 corpus acceptance.",
+      "productionAccepted": false
+    },
+    {
+      "stableId": "unit.aliens.alien_mothership",
+      "role": "DIRECTOR_POSITIVE_PREPRODUCTION_APPEARANCE_REFERENCE",
+      "file": "ArtSource/M85/Preproduction/AlienMothershipLocalCorrectionV1/alien_mothership_local_rev2.png",
+      "sha256": "b7bdca104310c2c85e8def39e96c3e5e5804f8417b35af7359e43959fe693195",
+      "provenance": "Second local built-in image edit of the previously accepted overall Mothership composition; generated imagery is not source or construction proof.",
+      "directorMessage": "мазершіп виглядає охуєнно",
+      "scope": "Positive visual reference; stop raster micro-corrections. Existing comparative selection and remaining source/construction/real-camera obligations are unchanged.",
+      "productionAccepted": false
+    }
+  ]
+}

@@ -72,6 +72,7 @@ JET_SCOOTER_SOURCE_REBUILD = ROOT / "ArtSource/M85/Preproduction/JetScooterSourc
 JET_SCOOTER_SOURCE_REBUILD_REVIEW = ROOT / "Content/Presentation/SuperScout/jet_scooter_source_rebuild_review.json"
 RED_PLANET_PROTECTOR_SOURCE_REBUILD = ROOT / "ArtSource/M85/Preproduction/RedPlanetProtectorSourceRebuildV1/generation_manifest.json"
 RED_PLANET_PROTECTOR_SOURCE_REBUILD_REVIEW = ROOT / "Content/Presentation/SuperScout/red_planet_protector_source_rebuild_review.json"
+DIRECTOR_VISUAL_REFERENCES = ROOT / "ArtSource/M85/DirectorReferences/director_visual_reference_manifest.json"
 
 CLASSIFICATIONS = {
     "OFFICIAL_DIRECT": "OFFICIAL-DIRECT",
@@ -1405,6 +1406,49 @@ def validate_current_comparison() -> None:
         fail("current comparison gallery or selection provenance is stale: " + generated.stderr + generated.stdout)
 
 
+def validate_director_visual_references() -> None:
+    record = json.loads(DIRECTOR_VISUAL_REFERENCES.read_text(encoding="utf-8"))
+    if (record.get("schemaVersion"), record.get("task"), record.get("date")) != (1, "T082", "2026-09-23"):
+        fail("director visual references lost their recording identity")
+    expected = {
+        "unit.aliens.alien_jet": (
+            "DIRECTOR_APPROVED_VISUAL_SOURCE_REFERENCE",
+            "ArtSource/M85/DirectorReferences/AlienJet/alien_jet_approved_reference.png",
+            "6e4f76023dda7ad7cc72716bced242aa580bf6d35198268491aa58716f975892",
+            "для alien jet — ніхуя не роби, просто зафіксуй це як рефернс який я окнув",
+        ),
+        "unit.aliens.alien_mothership": (
+            "DIRECTOR_POSITIVE_PREPRODUCTION_APPEARANCE_REFERENCE",
+            "ArtSource/M85/Preproduction/AlienMothershipLocalCorrectionV1/alien_mothership_local_rev2.png",
+            "b7bdca104310c2c85e8def39e96c3e5e5804f8417b35af7359e43959fe693195",
+            "мазершіп виглядає охуєнно",
+        ),
+    }
+    references = record.get("records", [])
+    if len(references) != 2 or {item.get("stableId") for item in references} != set(expected):
+        fail("director visual references changed their exact two-asset scope")
+    for item in references:
+        role, file, sha256, message = expected[item["stableId"]]
+        if (item.get("role"), item.get("file"), item.get("sha256"),
+                item.get("directorMessage"), item.get("productionAccepted")) != (
+                role, file, sha256, message, False):
+            fail("director visual reference expanded or changed its exact approval scope")
+        image_path = ROOT / file
+        if not image_path.is_file() or hashlib.sha256(image_path.read_bytes()).hexdigest() != sha256:
+            fail("director visual reference image bytes changed")
+    selections = json.loads(CURRENT_COMPARISON.read_text(encoding="utf-8"))["selections"]
+    by_id = {item["stableId"]: item for item in selections}
+    if (by_id["unit.aliens.alien_jet"]["file"], by_id["unit.aliens.alien_jet"]["sha256"]) != (
+            "Docs/Development/M85SuperScout/Silhouettes/FullV2/Renders/unit_aliens_alien_jet_rev1.png",
+            "380df77ddea28878da8db5533a901d3264570ff18c4f6e3c09f433e8c95580a0"):
+        fail("director reference silently replaced the Alien Jet selection")
+    if (by_id["unit.aliens.alien_mothership"]["file"],
+            by_id["unit.aliens.alien_mothership"]["sha256"]) != (
+            "Docs/Development/M85SuperScout/Silhouettes/FullV2/Renders/unit_aliens_alien_mothership_rev1.png",
+            "95804c387d2ed74b13017466feec159552e92d7b952cb3ec4889a7dd94d6a11b"):
+        fail("director reference silently replaced the Mothership selection")
+
+
 def validate_current_blind_review() -> None:
     record = json.loads(CURRENT_BLIND_REVIEW_MANIFEST.read_text(encoding="utf-8"))
     expected_identity = (
@@ -1513,6 +1557,7 @@ def main() -> None:
     validate_jet_scooter_source_rebuild()
     validate_red_planet_protector_source_rebuild()
     validate_current_comparison()
+    validate_director_visual_references()
     validate_current_blind_review()
     for path in (
         MANIFEST, LEDGER, INSTRUCTION_INDEX, SOURCE_ANALYSIS_POLICY, COMPOSED_DESIGN_PROPOSALS, ROCK_RAIDERS_EVIDENCE, ASTRONAUTS_EVIDENCE,
@@ -1524,6 +1569,7 @@ def main() -> None:
         PILOT_V2_OUTPUT / "PILOT_V2_KEY.md",
         FULL_V2_REVIEW_MANIFEST, FULL_V2_REVIEW_KEY, FULL_V2_REVIEW_GENERATOR,
         CURRENT_BLIND_REVIEW_MANIFEST, CURRENT_BLIND_REVIEW_KEY, CURRENT_BLIND_REVIEW_GENERATOR,
+        DIRECTOR_VISUAL_REFERENCES,
         FULL_V2_OUTPUT / "ReferenceGuides/mt101_six_wheel_topology.svg",
         FULL_V2_OUTPUT / "ReferenceGuides/mt201_four_leg_topology.svg",
     ):

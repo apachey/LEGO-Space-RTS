@@ -43,6 +43,14 @@ later review accepts Frontier, and the new controlled completed Alien
 appearances are accepted as recorded below. Solar's completed appearance and
 overall docked Mothership composition are now separately accepted; incorrect
 Mothership operators/raised printing and production topology remain pending.
+Director continuation on 2026-09-23: the supplied color 5617 photo is an
+approved **Alien Jet reference**, not an instruction to edit the already
+selected monochrome Jet candidate. The director also likes the latest local
+Mothership appearance and explicitly stops further raster-level precision
+passes. Both exact images and the scope boundary are preserved in
+`ArtSource/M85/DirectorReferences/director_visual_reference_manifest.json`.
+Neither comment certifies LEGO-piece topology, gameplay-camera readability or
+production models; the comparative 66-selection manifest remains unchanged.
 The earlier
 six-response recording omission is corrected from the
 original director message; all 66 initial responses were supplied.
