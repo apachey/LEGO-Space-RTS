@@ -8,15 +8,47 @@ source "${SCRIPT_DIR}/lib/common.sh"
 ROOT="$(repo_root)"
 setup_dotnet_environment
 
-MODE="fast"
-if [[ "${1:-}" == "--full" ]]; then MODE="full"; shift
-elif [[ "${1:-}" == "--m9-acceptance" ]]; then MODE="m9-acceptance"; shift
-fi
-if (( $# > 0 )); then printf 'Usage: %s [--full|--m9-acceptance]\n' "$0" >&2; exit 2; fi
+usage() {
+  printf 'Usage: %s [--targeted SCOPE|--integration|--full|--milestone|--m9-acceptance] [--list-stages]\n' "$0"
+  printf 'Scopes: core (default), workflow, design-package, network, assets, references, material, style, palette, look, hud, visual\n'
+}
+MODE="targeted"
+SCOPE="core"
+LIST_STAGES=0
+PROFILE_SET=0
+while (( $# > 0 )); do
+  case "$1" in
+    --list-stages) LIST_STAGES=1; shift; continue ;;
+    --help|-h) usage; exit 0 ;;
+    --targeted|--integration|--full|--milestone|--m9-acceptance)
+      if (( PROFILE_SET )); then usage >&2; exit 2; fi
+      PROFILE_SET=1
+      case "$1" in
+        --targeted)
+          if (( $# < 2 )); then usage >&2; exit 2; fi
+          SCOPE="$2"; shift
+          case "${SCOPE}" in
+            core|workflow|design-package|network|assets|references|material|style|palette|look|hud|visual) ;;
+            *) usage >&2; exit 2 ;;
+          esac ;;
+        --integration) MODE="integration" ;;
+        --full|--milestone) MODE="full" ;;
+        --m9-acceptance) MODE="m9-acceptance" ;;
+      esac ;;
+    *) usage >&2; exit 2 ;;
+  esac
+  shift
+done
+
+is_full() { [[ "${MODE}" == "full" || "${MODE}" == "m9-acceptance" ]]; }
+includes() {
+  is_full || [[ "${MODE}" == "integration" || "${SCOPE}" == "$1" ]]
+}
+explores() { is_full || [[ "${MODE}" == "targeted" && "${SCOPE}" == "$1" ]]; }
 
 ARTIFACT_DIR="${ROOT}/Artifacts/Verification"
-mkdir -p "${ARTIFACT_DIR}"
-RUN_ID="$(date -u '+%Y%m%dT%H%M%SZ')-${MODE}"
+if (( ! LIST_STAGES )); then mkdir -p "${ARTIFACT_DIR}"; fi
+RUN_ID="$(date -u '+%Y%m%dT%H%M%SZ')-${MODE}-${SCOPE}"
 SUMMARY_FILE="${ARTIFACT_DIR}/${RUN_ID}-summary.txt"
 STAGE_LABELS=()
 STAGE_RESULTS=()
@@ -29,6 +61,7 @@ record_stage() {
 }
 
 run_stage() {
+  if (( LIST_STAGES )); then printf "%s | %s\n" "$2" "$1"; return 0; fi
   local label="$1"
   local slug="$2"
   shift 2
@@ -52,6 +85,7 @@ run_stage() {
 }
 
 run_diagnostic_stage() {
+  if (( LIST_STAGES )); then printf "%s | DIAGNOSTIC: %s\n" "$2" "$1"; return 0; fi
   local label="$1"
   local slug="$2"
   shift 2
@@ -379,6 +413,7 @@ godot_m7_acceptance_smoke() {
     "m7-final 44 on" \
     "hybrid 44 off" \
     "hybrid 44 on"; do
+    if [[ "${1:-all}" == "production" && "${fixture}" != "default 84 on" ]]; then continue; fi
     read -r look zoom outline <<< "${fixture}"
     log_file="$(mktemp "${TMPDIR:-/tmp}/lego-space-rts-m7-acceptance-smoke.XXXXXX")"
     if [[ "${look}" == "default" ]]; then
@@ -444,31 +479,65 @@ regenerate_m85_pipeline_reference() {
   printf 'T081 Blender source regenerates the tracked GLB byte-identically.\n'
 }
 
-run_stage "[BLOCKING_NOW] Static/source validation" "static" python3 "${ROOT}/tools/Validation/validate_phase10.py"
-run_stage "[BLOCKING_NOW] .NET restore" "restore" dotnet restore "${ROOT}/LEGO.SpaceRTS.Phase10.sln" --disable-build-servers
-run_stage "[BLOCKING_NOW] .NET solution build (warnings as errors)" "build" dotnet build "${ROOT}/LEGO.SpaceRTS.Phase10.sln" -c Release --no-restore --disable-build-servers -m:1
-run_stage "[BLOCKING_NOW] Godot C# Debug host build" "godot-build" dotnet build "${ROOT}/GodotClient/LEGO.SpaceRTS.Godot.csproj" -c Debug --no-restore --disable-build-servers -m:1
-run_stage "[BLOCKING_NOW] NUnit deterministic/snapshot/replay/stress suite" "tests" dotnet test "${ROOT}/SimCore.Tests/SimCore.Tests.csproj" -c Release --no-build --no-restore --disable-build-servers --verbosity minimal
-run_stage "[BLOCKING_NOW] Representative 24-mover Movement Architecture v2 acceptance" "m2-movement" dotnet test "${ROOT}/SimCore.Tests/SimCore.Tests.csproj" -c Release --no-build --no-restore --disable-build-servers --verbosity minimal --filter "FullyQualifiedName~M2MovementAcceptanceTests"
-run_stage "[BLOCKING_NOW] Content compilation and tracked-binary validation" "content" compile_and_compare_content
-run_stage "[BLOCKING_NOW] HeadlessSim compiled-content smoke" "headless" dotnet "$(headless_dll)" --scenario first --compiled-dir "${ROOT}/GodotClient/Compiled" --ticks 1200 --hash-every 200
-run_stage "[BLOCKING_NOW] Godot C# PrototypeRTS headless smoke" "godot" godot_smoke
-run_stage "[BLOCKING_NOW T081] Blender/GLB asset-pipeline contract" "m85-asset-static" python3 "${ROOT}/tools/Validation/validate_m85_asset_pipeline.py"
-run_stage "[BLOCKING_NOW T082] Super Scout identity-baseline integrity" "m85-super-scout" python3 "${ROOT}/tools/Validation/validate_m85_super_scout.py"
-run_stage "[BLOCKING_NOW T082] Super Scout director-review recording guards" "m85-review-guards" python3 "${ROOT}/tools/Validation/test_m85_super_scout_review_guards.py"
-run_stage "[BLOCKING_NOW T081] Godot imported asset round trip" "m85-asset-godot" godot_m85_asset_pipeline_smoke
-run_stage "[BLOCKING_NOW T058] Godot ENet dedicated host with two clients" "m6-transport" godot_m6_transport_smoke
-run_stage "[BLOCKING_NOW T059] Godot server command authority over ENet" "m6-command" godot_m6_command_smoke
-run_stage "[BLOCKING_NOW T060/T061] Godot 10 Hz delta snapshots without hidden data" "m6-snapshot" godot_m6_snapshot_smoke
-run_stage "[BLOCKING_NOW T062] Godot reconnect restore over ENet" "m6-reconnect" godot_m6_reconnect_smoke
-run_stage "[BLOCKING_NOW T063] Godot authoritative server-log replay" "m6-replay" godot_m6_replay_smoke
-run_stage "[BLOCKING_NOW M7 VISUAL EXPLORATION] Controlled Godot Style Lab" "m7-style" godot_m7_style_smoke
-run_stage "[BLOCKING_NOW M7 VISUAL EXPLORATION] Six-page Palette Ratio Lab" "m7-palette" godot_m7_palette_smoke
-run_stage "[BLOCKING_NOW M7 VISUAL EXPLORATION] Realtime gameplay-scale Look Lab" "m7-look" godot_m7_look_smoke
-run_stage "[BLOCKING_NOW T068/T069] Responsive HUD and fog-correct minimap lab" "m7-hud" godot_m7_hud_smoke
-run_stage "[BLOCKING_NOW M7 VISUAL ACCEPTANCE CANDIDATE] Four-faction production-direction proof" "m7-acceptance" godot_m7_acceptance_smoke
+verify_shell_syntax() {
+  bash -n "${ROOT}/tools/verify.sh"
+}
 
-if [[ "${MODE}" != "fast" ]]; then
+run_stage "[BLOCKING_NOW] Static/source validation" "static" python3 "${ROOT}/tools/Validation/validate_phase10.py"
+if explores workflow; then
+  run_stage "[BLOCKING_NOW] Verification shell syntax" "shell-syntax" verify_shell_syntax
+  run_stage "[BLOCKING_NOW] Verification profile routing" "profile-routing" python3 "${ROOT}/tools/Validation/test_verify_profiles.py"
+fi
+
+# Document/design/reference work has no engine or .NET prerequisite.
+if [[ "${MODE}" != "targeted" || ! "${SCOPE}" =~ ^(workflow|design-package|references)$ ]]; then
+  run_stage "[BLOCKING_NOW] .NET restore" "restore" dotnet restore "${ROOT}/LEGO.SpaceRTS.Phase10.sln" --disable-build-servers
+  run_stage "[BLOCKING_NOW] .NET solution build (warnings as errors)" "build" dotnet build "${ROOT}/LEGO.SpaceRTS.Phase10.sln" -c Release --no-restore --disable-build-servers -m:1
+  run_stage "[BLOCKING_NOW] Godot C# Debug host build" "godot-build" dotnet build "${ROOT}/GodotClient/LEGO.SpaceRTS.Godot.csproj" -c Debug --no-restore --disable-build-servers -m:1
+fi
+if includes core; then
+  run_stage "[BLOCKING_NOW] NUnit deterministic/snapshot/replay/stress suite" "tests" dotnet test "${ROOT}/SimCore.Tests/SimCore.Tests.csproj" -c Release --no-build --no-restore --disable-build-servers --verbosity minimal
+  run_stage "[BLOCKING_NOW] Content compilation and tracked-binary validation" "content" compile_and_compare_content
+  run_stage "[BLOCKING_NOW] HeadlessSim compiled-content smoke" "headless" dotnet "$(headless_dll)" --scenario first --compiled-dir "${ROOT}/GodotClient/Compiled" --ticks 1200 --hash-every 200
+  run_stage "[BLOCKING_NOW] Godot C# PrototypeRTS headless smoke" "godot" godot_smoke
+fi
+if includes assets; then
+  run_stage "[BLOCKING_NOW T081] Blender/GLB asset-pipeline contract" "m85-asset-static" python3 "${ROOT}/tools/Validation/validate_m85_asset_pipeline.py"
+  run_stage "[BLOCKING_NOW T081] Godot imported asset round trip" "m85-asset-godot" godot_m85_asset_pipeline_smoke
+fi
+if includes references || explores design-package; then
+  run_stage "[BLOCKING_NOW T082] Super Scout identity-baseline integrity" "m85-super-scout" python3 "${ROOT}/tools/Validation/validate_m85_super_scout.py"
+  run_stage "[BLOCKING_NOW T082] Super Scout director-review recording guards" "m85-review-guards" python3 "${ROOT}/tools/Validation/test_m85_super_scout_review_guards.py"
+fi
+if includes network; then
+  run_stage "[BLOCKING_NOW T058] Godot ENet dedicated host with two clients" "m6-transport" godot_m6_transport_smoke
+  run_stage "[BLOCKING_NOW T059] Godot server command authority over ENet" "m6-command" godot_m6_command_smoke
+  run_stage "[BLOCKING_NOW T060/T061] Godot 10 Hz delta snapshots without hidden data" "m6-snapshot" godot_m6_snapshot_smoke
+  run_stage "[BLOCKING_NOW T062] Godot reconnect restore over ENet" "m6-reconnect" godot_m6_reconnect_smoke
+  run_stage "[BLOCKING_NOW T063] Godot authoritative server-log replay" "m6-replay" godot_m6_replay_smoke
+fi
+if explores material; then
+  run_stage "[BLOCKING_NOW T064] Godot material masters" "m7-material" godot_m7_material_smoke
+fi
+if explores style; then
+  run_stage "[BLOCKING_NOW M7 VISUAL EXPLORATION] Controlled Godot Style Lab" "m7-style" godot_m7_style_smoke
+fi
+if explores palette; then
+  run_stage "[BLOCKING_NOW M7 VISUAL EXPLORATION] Six-page Palette Ratio Lab" "m7-palette" godot_m7_palette_smoke
+fi
+if explores look; then
+  run_stage "[BLOCKING_NOW M7 VISUAL EXPLORATION] Realtime gameplay-scale Look Lab" "m7-look" godot_m7_look_smoke
+fi
+if includes hud; then
+  run_stage "[BLOCKING_NOW T068/T069] Responsive HUD and fog-correct minimap lab" "m7-hud" godot_m7_hud_smoke
+fi
+if [[ "${MODE}" == "integration" ]]; then
+  run_stage "[BLOCKING_NOW M7 PRODUCTION] Accepted default visual direction" "m7-production" godot_m7_acceptance_smoke production
+elif explores visual; then
+  run_stage "[BLOCKING_NOW M7 VISUAL ACCEPTANCE CANDIDATE] Four-faction production-direction proof" "m7-acceptance" godot_m7_acceptance_smoke
+fi
+
+if is_full; then
   run_stage "[BLOCKING_NOW] 100-repeat deterministic golden run" "golden100" dotnet "$(headless_dll)" --scenario golden --ticks 3200 --repeat 100
   run_stage "[BLOCKING_NOW] Replay record/final-hash verification" "replay" verify_replay_hash
   run_stage "[BLOCKING_NOW] Snapshot restore/continuation verification" "snapshot" verify_snapshot_continuation
@@ -482,8 +551,10 @@ if [[ "${MODE}" != "fast" ]]; then
   run_stage "[BLOCKING_NOW] macOS debug export smoke" "macos-export" "${ROOT}/tools/build-mac.sh" --verify
 fi
 
+if (( LIST_STAGES )); then exit 0; fi
+
 {
-  printf 'LEGO Space RTS verification summary (%s)\n' "${MODE}"
+  printf 'LEGO Space RTS verification summary (%s / %s)\n' "${MODE}" "${SCOPE}"
   printf 'Run: %s\n' "${RUN_ID}"
   for ((i=0; i<${#STAGE_LABELS[@]}; i++)); do printf '%-18s %s\n' "${STAGE_RESULTS[$i]}" "${STAGE_LABELS[$i]}"; done
   printf 'Blocking failures: %d\n' "${FAILURES}"

@@ -1,153 +1,49 @@
-# LEGO Space RTS — DETERMINISTIC RTS PROTOTYPE
+# LEGO Space RTS
 
-**Phase:** 10 — M7 Visual Vertical Slice
+A deterministic C# RTS with a Godot 4.7.1-stable .NET presentation host.
+For the accepted baseline, current milestone and next approved task, read
+[PROJECT_STATE](Docs/Development/PROJECT_STATE.md).
 
-**Engine amendment:** Godot **4.7.1-stable .NET**, C#
+## Architecture
 
-**Primary platform:** Windows 11 x86-64
+- `SimCore/`: engine-independent gameplay at fixed 20 Hz, fixed-point numerics,
+  deterministic commands, project-owned navigation, snapshots and replay.
+- `GodotClient/`: Forward+ rendering, input, camera, UI, audio and effects;
+  dedicated-server networking uses project-owned packets over Godot ENet.
+- `Content/` and `tools/ContentCompiler/`: source JSON and validated deterministic
+  runtime binaries under `GodotClient/Compiled/`.
+- `SimCore.Tests/` and `HeadlessSim/`: NUnit regression coverage and deterministic
+  command-line scenarios/benchmarks.
+- `Docs/Canon/`: approved design; `Docs/Development/`: workflow and implementation.
 
-**Status:** M0–M6 implemented, verified and game-director accepted; M7 is next
+## Run, build and test
 
-This repository replaces only the Unity-specific host from the original Phase 10 package. The authoritative gameplay simulation remains the engine-independent `SimCore` library. Godot owns presentation, input, camera, debug visualization and UI; it does not own gameplay truth.
+Requires the pinned Godot .NET host, .NET 8 or a compatible SDK, and Git.
+Windows 11 x86-64 is the primary platform; macOS debug builds support playtests.
+From the repository root on macOS:
 
+```bash
+./tools/doctor.sh                         # check installed prerequisites
+./tools/run-game.sh                       # user-launched game
+./tools/build-mac.sh                      # Builds/macOS/LEGO Space RTS.app
+./tools/verify.sh                         # targeted core checks
+./tools/verify.sh --targeted workflow      # documentation/harness maintenance
+./tools/verify.sh --integration           # cross-system regression checks
+./tools/verify.sh --full                  # milestone/acceptance checks + export
+```
 
-## v0.4 hands-on M2 patch
+Portable .NET entrypoints:
 
-The first macOS playtest exposed presentation and movement issues that static validation could not reveal. v0.4 adds visible selection/marquee feedback, control-group labels, numbered Shift-queue markers, legal formation-slot resolution, cost-preserving path smoothing, improved reservation yielding and immediate collision avoidance. See `Docs/M2_USABILITY_MOVEMENT_PATCH_v0.4.md`.
-
-## Locked technical spine preserved
-
-- authoritative simulation: pure C# `SimCore`, no Godot/Unity dependency;
-- fixed simulation: **20 Hz / 50 ms**;
-- numerics: `Fix32` Q16.16, `FixVec2`, `Angle16`;
-- entity model: deterministic custom component stores with monotonic `EntityId`;
-- commands: deterministic tick/player/sequence ordering, 16-order per-entity queue;
-- state hashing: stable FNV-1a-based authoritative hashing;
-- snapshots/replay: explicit versioned binary formats;
-- map: 160×160 build cells, 320×320 navigation raster;
-- navigation: custom deterministic HPA-style clusters (**10 nav cells**) + local A*;
-- five footprint/clearance families; deterministic local avoidance and **12-tick** reservations with heavy priority;
-- CPU-authoritative fog/LoS;
-- authored dynamic Excavatable topology;
-- 60-mover stress scenario and deterministic golden-run foundation;
-- multiplayer remains a custom command/snapshot protocol over the Godot ENet
-  carrier; M6 command authority, snapshots, fog privacy, reconnect and replay
-  are implemented and verified.
-
-## Godot-specific replacement decisions
-
-- renderer: **Godot Forward+**;
-- normal runtime UI: Godot `Control` nodes in C#;
-- input abstraction: Godot `InputMap`;
-- world overlays/debug: `MeshInstance3D`, `MultiMeshInstance3D`, `ImmediateMesh`;
-- camera: `Camera3D`, preserving Phase 07 perspective/FOV/pitch/yaw/zoom constraints;
-- Godot physics: presentation-only/non-authoritative;
-- network carrier: Godot ENet/raw packet APIs with a two-client dedicated host and three project-owned logical channels;
-- T059 command validation and T060 snapshot replication remain separate from the carrier.
-
-## Repository layout
-
-- `SimCore/` — authoritative engine-independent simulation.
-- `SimCore.Tests/` — pure NUnit deterministic tests.
-- `HeadlessSim/` — pure .NET deterministic CLI/benchmark runner.
-- `GodotClient/` — native Godot 4.7.1 .NET project and M2 presentation/input host.
-- `Content/` — human-editable source content/map JSON.
-- `GodotClient/Compiled/` — deterministic compiled runtime content consumed by the Godot host.
-- `tools/ContentCompiler/` — source JSON → validated binary compiler.
-- `tools/Validation/` — source-level invariant validator.
-- `Tests/Golden/` — trusted golden-manifest location.
-- `Docs/` — architecture, bootstrap, tests, gates and engine-amendment record.
-
-## Prerequisites
-
-1. Godot **4.7.1-stable .NET** x86-64.
-2. .NET **8 SDK or later compatible SDK**; CI is pinned to .NET 8.x for this package.
-3. Windows 11 x86-64 for the primary playable prototype target.
-4. Git; Git LFS only when future large binary source art/audio enters the repository.
-
-## First local build
-
-From repository root:
-
-```powershell
+```bash
 dotnet restore LEGO.SpaceRTS.Phase10.sln
-dotnet build LEGO.SpaceRTS.Phase10.sln -c Debug
-dotnet test SimCore.Tests/SimCore.Tests.csproj -c Debug
-dotnet run --project tools/ContentCompiler/ContentCompiler.csproj -- Content/PrototypeEntities.json Content/Maps/DEV_FirstControllableRTS.map.json GodotClient/Compiled
-```
-
-Then open `GodotClient/project.godot` in the **4.7.1-stable .NET** editor and run the project. `Bootstrap.tscn` transitions into `PrototypeRTS.tscn`.
-
-The repository contains pre-generated M2 binaries for loader/bootstrap convenience. The artifact environment could not execute the C# compiler, so these binaries are not treated as certified output: regenerate them with `ContentCompiler` before acceptance. Source JSON remains authoritative.
-
-## Godot headless smoke
-
-With the pinned Godot .NET executable:
-
-```powershell
-Godot_v4.7.1-stable_mono_win64.exe --headless --path GodotClient -- --smoke
-```
-
-Expected process result after the technical scene advances:
-
-```text
-PHASE10 GODOT HEADLESS SMOKE: PASS ...
-```
-
-This smoke confirms the Godot host can instantiate and advance the simulation; it does not replace pure deterministic regression/benchmark tests.
-
-## M6 dedicated networking
-
-Run the transport-only dedicated host locally with:
-
-```bash
-Godot --headless --path GodotClient -- --dedicated-server --network-bind 127.0.0.1 --network-port 24567
-```
-
-The automated two-client ENet loopback gates are part of `./tools/verify.sh`.
-They cover transport, server command authority, 10-Hz fog-safe snapshots,
-reconnect and authoritative post-match replay without giving Godot RPC gameplay
-authority.
-
-## Headless deterministic runner
-
-```powershell
+dotnet build LEGO.SpaceRTS.Phase10.sln -c Release
+dotnet test SimCore.Tests/SimCore.Tests.csproj -c Release
 dotnet run --project HeadlessSim -- --scenario first --ticks 1200 --hash-every 200
-dotnet run --project HeadlessSim -- --scenario golden --ticks 3200 --repeat 100 --hash-every 400
-dotnet run --project HeadlessSim -- --scenario stress60 --ticks 3000 --benchmark --path-benchmark --enforce-performance-gates
 ```
 
-Snapshot/replay capabilities include `--snapshot-in`, `--snapshot-out`, `--replay`, `--record-replay`, `--golden-manifest-in`, `--golden-manifest-out`, and `--dump-state`.
-
-## M2 controls
-
-- LMB: select; drag: marquee.
-- Shift: additive selection / queued Move.
-- Ctrl-click: visible same-type selection foundation.
-- Alt: subtract selection / camera tilt modifier.
-- RMB or `M`: Move.
-- `S`: Stop.
-- `H`: Hold Position.
-- `Ctrl+0–9`: assign group; `Shift+0–9`: add; `Alt+0–9`: remove; `0–9`: recall; double-tap centers camera.
-- Arrow keys / middle-drag: camera pan.
-- `,` / `.`: 90° camera rotation.
-- Wheel: zoom; Alt+wheel: tilt.
-- `Home`: camera reset.
-- `F9`: engineering-only OPEN EXCAVATABLE FEATURE command.
-
-## Verification status
-
-The accepted M6 stack passed the pinned Godot/.NET full verification: build,
-278 NUnit tests, 24-mover acceptance, all T058–T063 ENet smokes, 100-run
-determinism, replay/snapshot continuation, content regeneration and macOS
-export. The preserved 60-mover scenario remains a visible
-`BLOCKING_LATER — M9 large-battle acceptance` diagnostic.
-
-Run:
-
-```bash
-./tools/verify.sh --full
-```
-
-The current executable state and next task are recorded in
-`Docs/Development/PROJECT_STATE.md`.
+For editor use, open `GodotClient/project.godot` in the pinned .NET editor.
+Automation must remain headless; renderer captures are explicitly announced.
+Verification logs live in `Artifacts/Verification/`; captures in
+`Artifacts/Screenshots/`; build outputs are local and ignored by Git.
+See [AGENT_WORKFLOW](Docs/Development/AGENT_WORKFLOW.md) for profile selection,
+system-specific checks, gate classifications and review/merge boundaries.
