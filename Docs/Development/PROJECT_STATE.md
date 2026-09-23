@@ -1415,7 +1415,10 @@ blocking only when M9 must prove its stable-large-battle exit.
    comparative appearances. The Alien Jet reference and latest Mothership
    appearance are preserved with exact hashes in
    `ArtSource/M85/DirectorReferences/director_visual_reference_manifest.json`.
-   Do not reset historical attempts or regenerate already successful assets.
+   The MX-71's four forward airframe emitters are now source-locked as two
+   mirrored pairs; only the far outer mount is hidden by the accepted
+   three-quarter comparison image. Do not reset historical attempts or
+   regenerate already successful assets.
 2. Execute the remaining Phase 09C M8.5 T082–T092 work before final M9 Skirmish
    Alpha acceptance.
 3. Use the separate M7 Look/HUD/Palette labs only to investigate a rejected aspect;

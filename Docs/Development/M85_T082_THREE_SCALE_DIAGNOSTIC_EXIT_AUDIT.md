@@ -52,9 +52,9 @@ the T082 exit conditions. Paths under `FullV2/` here are relative to
 1. Resolve or explicitly bound source-specific choices before final packet
    acceptance: the Mothership's internal module/crew arrangement, the
    Razor Skimmer and ETX Servitor donor/adaptation boundaries, the MX-71's
-   forward-emitter topology/occlusion, the MT-101 nested craft/bike fit, and
-   the Mobile Mining Platform's Ore Drill/refit configuration. Prior positive
-   appearance feedback does not prove these mechanisms.
+   far-outer-emitter occlusion in the selected image, the MT-101 nested
+   craft/bike fit, and the Mobile Mining Platform's Ore Drill/refit
+   configuration. Positive appearance feedback does not prove these mechanisms.
 2. Preserve the 1195/3750 Martian archival gaps as unknowns. The existing
    7317-derived safe boundaries allow comparative review, but no unsupported
    coupler, sled, lift or hidden connection may be treated as source fact.
@@ -77,6 +77,15 @@ exact-image manifest at
 `ArtSource/M85/DirectorReferences/director_visual_reference_manifest.json`.
 These references guide later construction, but do not erase the source and
 real-camera obligations above.
+
+MX-71 source reconciliation: the completed 7692 page 69 and existing internal
+four-mount control establish two mirrored short forward-emitter pairs: inner
+nose and lower outer airframe mounts. This is now in the source and construction
+contracts. The selected three-quarter raster still hides the far outer mount;
+the raster is not evidence of its absence or of production-ready attachment.
+No replacement appearance or additional generation is needed for that
+topology question. Production geometry must show all four attachments from a
+suitable view; gameplay weapon behavior is unchanged.
 
 Next work should address the concrete source/construction gaps and prepare a
 real camera/readability proof, then present one substantive complete-corpus

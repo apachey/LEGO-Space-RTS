@@ -82,6 +82,7 @@ Open question: The faction-internal construction, motion, socket and material dr
   - MX-71 is a long narrow lifting aircraft organized around an open underside cargo cradle.
   - The six-wheel rover remains visibly independent below the fuselage and defines the transport function at a glance.
   - Tall landing pads and long side/tail booms preserve payload clearance rather than reading as decorative aircraft fins.
+  - The completed page-69 aircraft has four short cyan forward emitters in two mirrored pairs: an inner pair beside the nose and a lower, wider-spaced outer pair. The rear engines, orange side cylinders and payload tool are not additional guns.
 - Remaining evidence gaps:
   - The production transport must support several canonical payload types while retaining the source's visible external-carry identity and clear loading contacts.
 

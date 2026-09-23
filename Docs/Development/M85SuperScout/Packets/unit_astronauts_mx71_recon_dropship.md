@@ -47,6 +47,7 @@ Open question: The faction-internal construction, motion, socket and material dr
   - MX-71 is a long narrow lifting aircraft organized around an open underside cargo cradle.
   - The six-wheel rover remains visibly independent below the fuselage and defines the transport function at a glance.
   - Tall landing pads and long side/tail booms preserve payload clearance rather than reading as decorative aircraft fins.
+  - The completed page-69 aircraft has four short cyan forward emitters in two mirrored pairs: an inner pair beside the nose and a lower, wider-spaced outer pair. The rear engines, orange side cylinders and payload tool are not additional guns.
 - Remaining evidence gaps:
   - The production transport must support several canonical payload types while retaining the source's visible external-carry identity and clear loading contacts.
 
@@ -78,9 +79,10 @@ Non-removable identity anchors:
   - Long high-wing fuselage — provides payload clearance and flight direction — SOURCE_VERIFIED.
   - Open underslung cargo cradle — exposes the carried vehicle as the primary transport read — SOURCE_VERIFIED.
   - Tall landing pads and side equipment cylinders — keep the load clear during docking — SOURCE_VERIFIED.
+  - Four short forward emitters — two mirrored inner nose mounts and two mirrored lower outer mounts on the airframe, never on the carried payload — SOURCE_VERIFIED.
 - Structural load path: The long keel and high wing transfer payload weight around, not through, the open cradle; landing pads terminate below the cargo datum.
-- Repeated modules / connection grammar: Fuselage/wing, landing-pad pair, lift cradle and independent payload use explicit docking contacts.
-- Source-faithful versus adapted boundary: Several canonical payloads may replace the source rover, but none may be hidden inside an opaque fuselage.
+- Repeated modules / connection grammar: Fuselage/wing, landing-pad pair, lift cradle, independent payload and two distinct mirrored emitter pairs use explicit attachment contacts.
+- Source-faithful versus adapted boundary: Several canonical payloads may replace the source rover, but none may be hidden inside an opaque fuselage. The four airframe emitter mounts stay separate from rear engines, orange side cylinders and any payload tool.
 
 ## E. Material and texture contract
 
@@ -88,6 +90,7 @@ Non-removable identity anchors:
   - high wing and long fuselage
   - open cargo cradle
   - visible carried payload gap
+  - four short airframe emitters in two mirrored pairs
 - Accepted master-material roles: `Body`, `Accent`, `Tool`, `Rubber`, `Glass`, `Signal`, `Lamp`, `Neutral`.
 - Reusable texture requirements:
   - `ast_mission_shell_surface` — Very subtle clean-shell roughness variation for white-orange Mission Systems hulls without weathering them into Raider machinery. Channels: Tangent-space normal and linear roughness; no photographic albedo or baked highlights. Resolution: 2048x2048; texel density: 256 px/m at Close; tiling: Shared model-space 4 m repeat with continuous phase across large shells.; LOD fallback: Normal removed at Strategic; clean master-material blocks remain. Provenance/state: Project-authored procedural source informed by verified Mission Systems panels; human review required. `SPECIFIED_NOT_AUTHORED`.
