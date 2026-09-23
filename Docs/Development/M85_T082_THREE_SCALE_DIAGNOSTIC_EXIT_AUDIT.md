@@ -1,7 +1,8 @@
 # T082 — three-scale diagnostic exit audit
 
 Date: 2026-09-23. Branch: `codex/m85-t082`, not merged. Gate: `BLOCKING_NOW`.
-Canon impact: NONE. The blind answer key remains withheld.
+Canon impact: director-approved gate-sequencing clarification in Phase 09C.
+The blind answer key remains withheld.
 
 ## What the director actually reviewed
 
@@ -58,12 +59,14 @@ the T082 exit conditions. Paths under `FullV2/` here are relative to
 2. Preserve the 1195/3750 Martian archival gaps as unknowns. The existing
    7317-derived safe boundaries allow comparative review, but no unsupported
    coupler, sled, lift or hidden connection may be treated as source fact.
-3. Demonstrate readability in the actual gameplay camera and intended LODs
-   when a suitable presentation fixture exists. The current sheet generator
-   cannot satisfy this requirement by renaming its camera-width labels.
-4. Obtain explicit final acceptance of the evidence-backed complete corpus
+3. Obtain explicit final acceptance of the evidence-backed complete corpus
    before T082 is marked passed or T083/T085 packets leave `HOLD`. The three
    qualitative comments must never be converted into per-code answers.
+
+Deferred production gate: actual in-engine gameplay-camera and model-LOD
+readability must be demonstrated at T084/T086, once those models exist. The
+current sheet generator cannot provide that proof by renaming camera-width
+labels, but this is not a T082 exit obligation.
 
 Gameplay extensions suggested by toy subcraft (for example independent
 MT-101 spacecraft/bike use or Mothership internal unit production) are separate
@@ -75,8 +78,8 @@ edited. The latest local Mothership raster receives positive appearance
 feedback and no further microscopic image correction is requested. See the
 exact-image manifest at
 `ArtSource/M85/DirectorReferences/director_visual_reference_manifest.json`.
-These references guide later construction, but do not erase the source and
-real-camera obligations above.
+These references guide later construction, but do not erase the remaining
+source and production-model obligations above.
 
 MX-71 source reconciliation: the completed 7692 page 69 and existing internal
 four-mount control establish two mirrored short forward-emitter pairs: inner
@@ -94,10 +97,10 @@ source placements are now explicit in the packet; they do not establish a
 five-unit gameplay capacity, autonomous subcraft, production, or launch timing.
 Those gameplay decisions remain outside this source closure.
 
-Next work should address the concrete source/construction gaps and prepare a
-real camera/readability proof, then present one substantive complete-corpus
-decision to the director. Do not rerun an already positive diagnostic scale
-merely to seek another generic acknowledgement.
+Next work should classify the concrete source/construction gaps, then present
+one substantive complete-corpus decision to the director. Do not rerun an
+already positive diagnostic scale merely to seek another generic
+acknowledgement.
 Official completed-set references and approved decisions are the evidence;
 generated concepts are optional illustrations and are not prerequisites to
 reconcile a source packet or request the required corpus review.

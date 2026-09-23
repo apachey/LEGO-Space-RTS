@@ -100,9 +100,9 @@ presentation later.
 | T081 | Production standard and asset pipeline lock | M7 acceptance, T074 | reviewed scale/pivot/socket/LOD/source/import rules and representative round trip |
 | T082 | Super Scout full-roster reference intelligence | T081 | 66 evidence-backed asset packets plus approved roster silhouette, semantic-construction, animation and texture-needs matrices |
 | T083 | Complete 35-unit visual design packages | T082 | 35 game-director-approved source/silhouette/construction/state/material sheets |
-| T084 | Complete 35-unit production models | T083 | 35 recognizable integrated LEGO-derived models with approved textures/materials, team read and required LODs |
+| T084 | Complete 35-unit production models | T083 | 35 recognizable integrated LEGO-derived models with approved textures/materials, team read, required LODs and actual gameplay-camera readability review |
 | T085 | Complete 31-infrastructure visual design packages | T082 | 31 game-director-approved source/silhouette/construction/state/material sheets |
-| T086 | Complete 31-infrastructure production models | T085 | 31 recognizable integrated LEGO-derived models with approved textures/materials, construction, operational and damage presentation |
+| T086 | Complete 31-infrastructure production models | T085 | 31 recognizable integrated LEGO-derived models with approved textures/materials, construction, operational and damage presentation plus actual gameplay-camera readability review |
 | T087 | Full-roster rigging and animation pass | T084, T086, T065 | every applicable authored state binds to simulation-driven presentation |
 | T088 | World, resource, VFX and destruction content pass | T084, T086, T066, T067 | complete required resources, combat/faction effects, damage and destruction profiles with reduced-VFX fallbacks |
 | T089 | Complete icon, card and portrait system | T073, T084, T086 | no unresolved player-facing icon/portrait reference across units, buildings, commands, research, resources, roles, statuses or minimap |
@@ -197,6 +197,13 @@ T082 passes only when the game director can identify the complete representative
 silhouette set without text prompts, the animation intent is buildable from the
 packets, and all consequential unknowns are either resolved or explicitly
 escalated. Research volume alone is not acceptance.
+
+The T082 near/standard/far silhouette boards are footprint-relative
+preproduction evidence, not captures of production models. Actual in-engine
+gameplay-camera and model-LOD readability review belongs to T084 for units and
+T086 for infrastructure, after the relevant models exist; it is not a
+prerequisite for T082, T083 or T085. This sequencing does not waive the final
+production-model review or the M8.5 acceptance requirement.
 
 Unresolved choices are presented to the game director as concise visual or
 mechanical questions with evidence and consequences. They are never filled by

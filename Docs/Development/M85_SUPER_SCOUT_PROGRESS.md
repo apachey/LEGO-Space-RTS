@@ -538,12 +538,14 @@ redistributed.
    and escalate any gap that prevents a safe production decision.
 2. Use the completed `CurrentBlindReviewV1` three-scale diagnostic and its
    exit audit as feedback, without inventing R-code identifications or
-   production approval. Resolve or bound its named source/construction gaps;
-   prepare actual gameplay-camera readability evidence before final acceptance.
+   production approval. Resolve or bound its named source/construction gaps.
 3. Revise every wrong, uncertain or indistinguishable asset and extend the
    44-pair register wherever the accepted review exposes a new neighbor.
 4. Resolve or escalate every consequential unknown, then request the final
    complete-corpus review.
+
+Actual gameplay-camera and model-LOD proof is deferred to T084/T086, once the
+production models exist; it is not a T082 exit obligation.
 
 ## Current decision state
 

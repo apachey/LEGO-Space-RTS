@@ -250,7 +250,7 @@ Each packet uses the following fixed structure.
 
 - concise modeling order from primary masses to final readable detail;
 - topology/rig risk list;
-- first greybox acceptance shots;
+- optional internal greybox checks (not a director acceptance gate);
 - questions that must be answered before production modeling;
 - explicit PASS/HOLD state and approving reviewer.
 
@@ -258,7 +258,8 @@ Each packet uses the following fixed structure.
 
 The 66 packets are accompanied by:
 
-1. full-roster silhouette sheets at 24-, 44- and 72-cell camera framing;
+1. full-roster footprint-relative silhouette sheets at 24-, 44- and 72-cell
+   camera framing (not captures of production models);
 2. faction construction-language boards;
 3. footprint and relative-scale lineup;
 4. palette/material area-ratio matrix;
@@ -307,13 +308,17 @@ It passes only when:
 - a blind silhouette review identifies the representative complete-roster set
   without names, labels, role icons or selection rings;
 - nearest-neighbor confusion audits have explicit differentiation decisions;
-- gameplay-camera reviews prove that identity survives intended LODs;
+- footprint-relative 24/44/72-cell silhouette review tests the intended
+  scale and identity;
 - all high-cost contradictions are resolved by canon or escalated to the game
   director before modeling;
 - no generic AI-looking form or unexplained decorative assembly survives the
   review corpus;
 - the game director explicitly accepts the research corpus as the foundation
   for T083/T085 design production.
+
+Actual in-engine gameplay-camera and model-LOD review occurs at T084/T086,
+after the production models exist; it is not part of T082 acceptance.
 
 Useful discoveries are not permission to invent new gameplay, units, buildings,
 faction mechanics or balance. Any discovery that conflicts with canon is
