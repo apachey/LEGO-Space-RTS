@@ -97,10 +97,44 @@ source placements are now explicit in the packet; they do not establish a
 five-unit gameplay capacity, autonomous subcraft, production, or launch timing.
 Those gameplay decisions remain outside this source closure.
 
-Next work should classify the concrete source/construction gaps, then present
-one substantive complete-corpus decision to the director. Do not rerun an
-already positive diagnostic scale merely to seek another generic
-acknowledgement.
+## Source and construction gap disposition
+
+The four faction source-evidence ledgers contain 45 faction-scoped records
+across 39 distinct source families. Their `openGaps` remain explicit; the
+following disposition prevents a later-phase question from masquerading as
+missing T082 evidence or a source fact. It does not approve any unbuilt design.
+
+| Boundary | Concrete cases | Disposition |
+|---|---|---|
+| Archival evidence | Martian 1195 and 3750 have no verified construction pages. | Keep their unknown connectors, lift and coupler geometry out of source-backed claims. The verified 7317 assembly bounds comparative Martian tube/skiff language; source-specific 1195/3750 geometry requires new evidence or an explicitly approved T083/T085 adaptation before modeling. |
+| Incomplete exact exterior views | Astronaut 5619/7301/7695, Martian 7300, and Rock Raiders 1277/4910/4920/4930/4950/4970 have missing rear, underside, opposite-side or variant details recorded in their source ledgers. | Existing source/canon anchors establish identity, not the hidden surfaces. T083/T085 design packages must either find the missing view or label the chosen treatment as adaptation; T084/T086 may not claim unseen detail is official. |
+| Composite construction choices | Razor Skimmer/ETX Servitor donor retention, the Mobile Mining Platform module/refit boundary, MB-01 versus other Astronaut facilities, the 7317-derived Martian facility split, and the Mission Fighter/T3-Trike families. | Official component facts and gameplay roles are documented; the exact selection, connection and rejection of alternatives belongs in T083/T085 visual design packages. None is silently chosen by a generated image. |
+| Physical fit and motion | MT-101 spacecraft/bike nesting, Mining Platform refit contacts, MX-71's occluded far emitter, ETX Alien Strike hinge/flight presentation, Mothership unfolding and all continuous toy-to-game motions. | Source-backed hierarchy and required visible beats are recorded. Exact clearance, pivot geometry, animation and real-camera/LOD proof require built models at T084/T086 and subsequent rigging at T087. The MX-71 has four source-locked emitters even where one is hidden in a comparison image. |
+| Gameplay beyond source | Independently controllable MT-101 subcraft or Mothership internal production, and source play actions that differ from canonical weapons/transport. | No new entity, capacity, command, cost, timing or weapon rule is inferred. These proposals stay outside T082 and need separate canon approval if ever pursued. |
+
+The 66 packets, source ledgers and confusion register therefore provide a
+bounded reference foundation for the *next design phase*, not final visual
+solutions. The two archival holes and exact composite/module choices remain
+visible risks; they do not authorize invention or block unrelated roster
+design. If a T083/T085 design cannot preserve its required identity without
+one of these unknowns, that asset must remain on HOLD and return to the
+director with the specific choice.
+
+## One complete-corpus decision, not 66 production approvals
+
+The director has seen the unchanged 66-source-selection corpus at 24, 44 and
+72 cells and gave general positive feedback at each scale. No per-code score
+was supplied, so the record may never say `66/66 identified`. The remaining
+T082 decision is whether that reviewed full set is recognizable enough without
+labels to serve as the 66-asset research foundation for T083/T085, with the
+bounded unknowns above. An affirmative answer accepts *reference intelligence*
+only; it does not accept 66 design packages, generated images, production
+models, real-camera results or new gameplay. A negative answer should name
+the identities that remain unrecognizable or source-misleading so only those
+are revised. Until an explicit answer, T082 and every packet remain `HOLD`.
+
+Do not rerun an already positive diagnostic scale merely to seek another
+generic acknowledgement.
 Official completed-set references and approved decisions are the evidence;
 generated concepts are optional illustrations and are not prerequisites to
 reconcile a source packet or request the required corpus review.

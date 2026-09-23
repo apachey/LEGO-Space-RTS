@@ -74,9 +74,9 @@ current 66 selections behind fresh R-codes on grayscale 24/44/72 boards. Both
 24-cell pages received a general game-director go-ahead (“йдемо далі, наче все
 зрозуміло”), then both the 44- and 72-cell pages received “все гуд”. All three
 scales have positive general feedback without per-code scoring. The diagnostic
-sequence is complete, but its exit audit identifies remaining source and
-construction classification plus explicit complete-corpus acceptance before
-the T082 gate can close. By director-approved sequencing correction, actual
+sequence is complete. The source/construction gaps are now classified and
+bounded by later-phase ownership; explicit complete-corpus reference acceptance
+is the remaining T082 gate. By director-approved sequencing correction, actual
 gameplay-camera and model-LOD review is a T084/T086 production-model gate.
 A post-T069
 quality revision makes outline/halo independent from
@@ -991,8 +991,9 @@ live; the current schema-9 copy/paste retains the complete experiment.
   is recorded without inventing 66 identifications or calling it a recognition
   pass. The director also said “все гуд” at both 44 and 72 cells without
   per-code scoring. The three-scale diagnostic is complete but T082 remains
-  `HOLD`: source/construction unknowns and explicit complete-corpus acceptance
-  remain open. Actual gameplay-camera and model-LOD review now belongs to
+  `HOLD`: source/construction unknowns are bounded in the exit audit, but
+  explicit complete-corpus reference acceptance remains open. Actual
+  gameplay-camera and model-LOD review now belongs to
   T084/T086, after the production models exist. Current detail
   is tracked in `Docs/Development/M85_SUPER_SCOUT_PROGRESS.md` and
   `Docs/Development/M85_T082_THREE_SCALE_DIAGNOSTIC_EXIT_AUDIT.md`. The
@@ -1382,9 +1383,10 @@ blocking only when M9 must prove its stable-large-battle exit.
 
 1. Continue T082 from the completed three-scale diagnostic exit audit. Preserve
    all three verbatim director comments without inventing R-code answers or
-   re-running positive sheets for another general acknowledgement. Resolve or
-   bound the named source/construction gaps, and request one substantive
-   complete-corpus decision after those obligations are ready. Actual
+   re-running positive sheets for another general acknowledgement. The named
+   source/construction gaps are classified in the exit audit; request one
+   substantive complete-corpus reference-foundation decision, without
+   inventing a 66/66 identification score. Actual
    gameplay-camera and model-LOD review belongs to T084/T086. Retain the two
    explicit Martian archival gaps unless usable evidence appears, and escalate
    any gap that blocks a safe production decision. Do not treat the concept
@@ -1415,9 +1417,9 @@ blocking only when M9 must prove its stable-large-battle exit.
    batch is complete: Jet Scooter source-rebuild Rev1 and
    source-corrected Red Planet Protector Rev1 are explicitly accepted for
    comparative appearance review. The renewed current comparison is complete;
-   the next T082 visual step is source/construction reconciliation and a
-   complete-corpus decision, not regeneration or micro-correction of already
-   liked comparative appearances. The Alien Jet reference and latest Mothership
+   the next T082 visual step is the complete-corpus decision, not regeneration
+   or micro-correction of already liked comparative appearances. The Alien Jet
+   reference and latest Mothership
    appearance are preserved with exact hashes in
    `ArtSource/M85/DirectorReferences/director_visual_reference_manifest.json`.
    The MX-71's four forward airframe emitters are now source-locked as two

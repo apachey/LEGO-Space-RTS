@@ -538,11 +538,13 @@ redistributed.
    and escalate any gap that prevents a safe production decision.
 2. Use the completed `CurrentBlindReviewV1` three-scale diagnostic and its
    exit audit as feedback, without inventing R-code identifications or
-   production approval. Resolve or bound its named source/construction gaps.
+   production approval. The named source/construction gaps are now classified
+   by phase and kept visible in the exit audit.
 3. Revise every wrong, uncertain or indistinguishable asset and extend the
    44-pair register wherever the accepted review exposes a new neighbor.
-4. Resolve or escalate every consequential unknown, then request the final
-   complete-corpus review.
+4. Request one explicit complete-corpus reference-foundation decision. A
+   negative response must identify the remaining misleading silhouettes or
+   source interpretations before targeted revision.
 
 Actual gameplay-camera and model-LOD proof is deferred to T084/T086, once the
 production models exist; it is not a T082 exit obligation.
