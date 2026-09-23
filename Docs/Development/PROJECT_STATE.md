@@ -6,11 +6,10 @@ Historical snapshots linked below are not current instructions.
 
 ## Accepted baseline
 
-- Director-accepted development base: `633542a` on `codex/m85-t082`, closing
-  the T082 reference foundation on 2026-09-23.
-- Last verified upstream `origin/main`: `a6187e8`; the accepted T082 base is
-  75 commits ahead and is not yet merged there. Do not start from older main
-  and infer that accepted T081/T082 work is missing or must be repeated.
+- Current accepted workflow base: `e414f659` on `origin/codex/m85-t082`,
+  merging cleanup PR #15 over director-accepted T082 `633542a`.
+- Local `codex/m85-t083` is fast-forwarded to that merge; its uncommitted
+  design work is preserved above it. Older `origin/main` is not this task's base.
 - Core remains Godot 4.7.1-stable .NET/C#, engine-independent deterministic
   SimCore, fixed 20 Hz and project-owned navigation. No architecture change.
 
@@ -48,20 +47,35 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 
 ## Work in progress
 
-- T083 design work exists separately on `codex/m85-t083` as uncommitted
-  proposals. It is not part of the accepted baseline or this cleanup.
-- That local work includes eight Rock Raiders proposals; none has T083 design
-  acceptance. The remaining 27 packages are queued. Do not overwrite, import
-  or promote those proposals during maintenance.
-- Workflow cleanup is isolated on `codex/workflow-cleanup` from `633542a`:
-  documentation compression and verification routing only. No gameplay, assets,
-  visual direction or canonical decisions change.
-- T084 production modeling has not started from these proposals.
+- T083 on `codex/m85-t083`: eight Rock Raiders proposals, accepted Expedition
+  Crew, and the corrected Rover source-locked package, uncommitted. Expedition
+  Crew and Rover are director-accepted; the eight Rock Raiders proposals await
+  design review.
+- Source/construction/state/material sheets and the local visual review are at
+  [Batch 01 review](M85UnitDesign/Batch01RockRaiders/review.html) and
+  [Expedition Crew review](M85UnitDesign/Batch02Astronauts/review.html).
+- Rover's `SOURCE_LOCKED` Production Design Target is the completed LEGO 7301
+  shown at step 7 on page 1 of official instruction PDF 4156314. Its corrected
+  review/spec separate that source target, official evidence, a restrained
+  accepted survey pulse and a clearly non-authoritative schematic; rear/hidden
+  evidence gaps remain disclosed. Conflicting T082 prose and contracts remain
+  unchanged.
+- Three appearance proposals cover Loader Dozer Cutter, Rapid Rider with four
+  Crew and Tunnel Transport carrying Chrome Crusher. The carrier's upper-hanger
+  projection ambiguity remains disclosed; the raster does not prove load geometry.
+- The remaining 25 packages (11 Astronauts, 6 Aliens, 8 Martians) are queued,
+  not authored. T084 modeling has not started; no production model is approved.
+- Workflow cleanup is merged and synchronized locally. This synchronization
+  preserves all prior T083 content; it does not continue design or infer approval.
 
 ## Blockers and deferred gates
 
 - `BLOCKING_NOW`: each T083 asset needs explicit director design acceptance
   before its T084 model proceeds; research acceptance is not design acceptance.
+  Updated T083 workflow requires source evidence, a separately identified
+  Production Design Target, and a Design Spec before a new design acceptance.
+  Rover's amended package passed the target gate and received explicit director
+  acceptance; T084 is authorized for this unit only.
 - `BLOCKING_LATER`: actual gameplay-camera/model-LOD review belongs to
   T084/T086 after production geometry exists; final animation belongs to T087.
 - Martian sources 1195/3750 retain bounded archival evidence gaps. Do not invent
@@ -77,15 +91,13 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 
 ## Next approved action
 
-After cleanup review/merge, open one bounded T083 unit design-package task from
-the accepted integrated base, using the template in
-[M85UnitDesign/README.md](M85UnitDesign/README.md). Reconcile the separate local
-T083 work without discarding it; this cleanup does not continue its proposals.
-Use accepted T082 packets and exact director-selected references, including
-Alien Jet/Mothership, MT-101 nested craft/bike and MX-71 four emitters.
-Do not infer gameplay from LEGO source modules or reopen accepted references.
-Use package-specific checks and the targeted design-package profile; no game
-export, M6 networking or M7 exploration stack is required for design-only work.
+Proceed with Rover's authorized T084 production when separately started; review
+remaining pending T083 proposals only after each meets the Production Design
+Target acceptance gate. Proceed to another unit's T084 production only after
+that unit's explicit design acceptance. Do
+not infer gameplay from LEGO source modules or reopen accepted references.
+Design-only packages use the targeted design-package profile; no game export,
+M6 networking or M7 exploration stack is required.
 
 ## Detailed records and historical evidence
 

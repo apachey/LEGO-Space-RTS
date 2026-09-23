@@ -1,0 +1,285 @@
+{
+  "task": "T083",
+  "target": 35,
+  "authoredProposals": 10,
+  "directorAccepted": 2,
+  "productionModels": 0,
+  "assets": [
+    {
+      "stableId": "unit.rock_raiders.crew",
+      "file": "Batch01RockRaiders/crew.md",
+      "status": "DESIGN_PROPOSAL_FOR_DIRECTOR_REVIEW",
+      "directorAccepted": false,
+      "productionAuthorized": false,
+      "productionDesignTarget": {
+        "state": "MIGRATION_REQUIRED",
+        "note": "Existing unaccepted package; classify and validate its director-facing target when reopened."
+      }
+    },
+    {
+      "stableId": "unit.rock_raiders.hover_scout",
+      "file": "Batch01RockRaiders/hover_scout.md",
+      "status": "DESIGN_PROPOSAL_FOR_DIRECTOR_REVIEW",
+      "directorAccepted": false,
+      "productionAuthorized": false,
+      "productionDesignTarget": {
+        "state": "MIGRATION_REQUIRED",
+        "note": "Existing unaccepted package; classify and validate its director-facing target when reopened."
+      }
+    },
+    {
+      "stableId": "unit.rock_raiders.drill_craft",
+      "file": "Batch01RockRaiders/drill_craft.md",
+      "status": "DESIGN_PROPOSAL_FOR_DIRECTOR_REVIEW",
+      "directorAccepted": false,
+      "productionAuthorized": false,
+      "productionDesignTarget": {
+        "state": "MIGRATION_REQUIRED",
+        "note": "Existing unaccepted package; classify and validate its director-facing target when reopened."
+      }
+    },
+    {
+      "stableId": "unit.rock_raiders.rapid_rider",
+      "file": "Batch01RockRaiders/rapid_rider.md",
+      "status": "DESIGN_PROPOSAL_FOR_DIRECTOR_REVIEW",
+      "directorAccepted": false,
+      "productionAuthorized": false,
+      "productionDesignTarget": {
+        "state": "MIGRATION_REQUIRED",
+        "note": "Existing unaccepted package; classify and validate its director-facing target when reopened."
+      }
+    },
+    {
+      "stableId": "unit.rock_raiders.loader_dozer",
+      "file": "Batch01RockRaiders/loader_dozer.md",
+      "status": "DESIGN_PROPOSAL_FOR_DIRECTOR_REVIEW",
+      "directorAccepted": false,
+      "productionAuthorized": false,
+      "productionDesignTarget": {
+        "state": "MIGRATION_REQUIRED",
+        "note": "Existing unaccepted package; classify and validate its director-facing target when reopened."
+      }
+    },
+    {
+      "stableId": "unit.rock_raiders.granite_grinder",
+      "file": "Batch01RockRaiders/granite_grinder.md",
+      "status": "DESIGN_PROPOSAL_FOR_DIRECTOR_REVIEW",
+      "directorAccepted": false,
+      "productionAuthorized": false,
+      "productionDesignTarget": {
+        "state": "MIGRATION_REQUIRED",
+        "note": "Existing unaccepted package; classify and validate its director-facing target when reopened."
+      }
+    },
+    {
+      "stableId": "unit.rock_raiders.chrome_crusher",
+      "file": "Batch01RockRaiders/chrome_crusher.md",
+      "status": "DESIGN_PROPOSAL_FOR_DIRECTOR_REVIEW",
+      "directorAccepted": false,
+      "productionAuthorized": false,
+      "productionDesignTarget": {
+        "state": "MIGRATION_REQUIRED",
+        "note": "Existing unaccepted package; classify and validate its director-facing target when reopened."
+      }
+    },
+    {
+      "stableId": "unit.rock_raiders.tunnel_transport",
+      "file": "Batch01RockRaiders/tunnel_transport.md",
+      "status": "DESIGN_PROPOSAL_FOR_DIRECTOR_REVIEW",
+      "directorAccepted": false,
+      "productionAuthorized": false,
+      "productionDesignTarget": {
+        "state": "MIGRATION_REQUIRED",
+        "note": "Existing unaccepted package; classify and validate its director-facing target when reopened."
+      }
+    },
+    {
+      "stableId": "unit.astronauts.expedition_crew",
+      "file": "Batch02Astronauts/expedition_crew.md",
+      "review": "Batch02Astronauts/review.html",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "acceptanceGate": "LEGACY_ACCEPTED_PRE_GATE",
+      "productionDesignTarget": {
+        "state": "LEGACY_ACCEPTED_TARGET_NOT_REVALIDATED",
+        "note": "Accepted before the target gate; preserve accepted decision without automatic invalidation."
+      }
+    },
+    {
+      "stableId": "unit.astronauts.rover",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-24",
+      "acceptanceNote": "Director accepted the official LEGO 7301 SOURCE_LOCKED target after the antenna/mast wording was corrected to follow the source image without interpreting its terminal shape.",
+      "file": "Batch02Astronauts/rover.md",
+      "review": "Batch02Astronauts/rover_review.html",
+      "productionDesignTarget": {
+        "state": "DIRECTOR_ACCEPTED",
+        "mode": "SOURCE_LOCKED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch02Astronauts/rover_review.html",
+        "reviewReady": true,
+        "appearanceSummary": "Official LEGO 7301 page 1 completed Rover: very small compact open vehicle, four dominant white half-dome wheels, light chassis, seated astronaut, black front boom and short black dish mast; no large blue equipment box."
+      },
+      "sourceEvidence": {
+        "manifest": "Batch02Astronauts/rover_source_evidence.json"
+      },
+      "designSpec": "Batch02Astronauts/rover_design_spec.md",
+      "gameAdaptations": [
+        "Restrained temporary survey pulse at the source front boom tip; presentation effect only."
+      ]
+    },
+    {
+      "stableId": "unit.astronauts.t3_trike",
+      "status": "QUEUED_NOT_AUTHORED",
+      "directorAccepted": false,
+      "productionAuthorized": false
+    },
+    {
+      "stableId": "unit.astronauts.mono_jet",
+      "status": "QUEUED_NOT_AUTHORED",
+      "directorAccepted": false,
+      "productionAuthorized": false
+    },
+    {
+      "stableId": "unit.astronauts.solar_explorer",
+      "status": "QUEUED_NOT_AUTHORED",
+      "directorAccepted": false,
+      "productionAuthorized": false
+    },
+    {
+      "stableId": "unit.astronauts.mission_fighter",
+      "status": "QUEUED_NOT_AUTHORED",
+      "directorAccepted": false,
+      "productionAuthorized": false
+    },
+    {
+      "stableId": "unit.astronauts.mx41_switch_fighter",
+      "status": "QUEUED_NOT_AUTHORED",
+      "directorAccepted": false,
+      "productionAuthorized": false
+    },
+    {
+      "stableId": "unit.astronauts.mobile_mining_platform",
+      "status": "QUEUED_NOT_AUTHORED",
+      "directorAccepted": false,
+      "productionAuthorized": false
+    },
+    {
+      "stableId": "unit.astronauts.mx71_recon_dropship",
+      "status": "QUEUED_NOT_AUTHORED",
+      "directorAccepted": false,
+      "productionAuthorized": false
+    },
+    {
+      "stableId": "unit.astronauts.mt51_claw_tank",
+      "status": "QUEUED_NOT_AUTHORED",
+      "directorAccepted": false,
+      "productionAuthorized": false
+    },
+    {
+      "stableId": "unit.astronauts.mt101_armored_drilling_unit",
+      "status": "QUEUED_NOT_AUTHORED",
+      "directorAccepted": false,
+      "productionAuthorized": false
+    },
+    {
+      "stableId": "unit.astronauts.mt201_ultra_drill_walker",
+      "status": "QUEUED_NOT_AUTHORED",
+      "directorAccepted": false,
+      "productionAuthorized": false
+    },
+    {
+      "stableId": "unit.astronauts.mx81_operations_aircraft",
+      "status": "QUEUED_NOT_AUTHORED",
+      "directorAccepted": false,
+      "productionAuthorized": false
+    },
+    {
+      "stableId": "unit.aliens.etx_servitor",
+      "status": "QUEUED_NOT_AUTHORED",
+      "directorAccepted": false,
+      "productionAuthorized": false
+    },
+    {
+      "stableId": "unit.aliens.alien_jet",
+      "status": "QUEUED_NOT_AUTHORED",
+      "directorAccepted": false,
+      "productionAuthorized": false
+    },
+    {
+      "stableId": "unit.aliens.razor_skimmer",
+      "status": "QUEUED_NOT_AUTHORED",
+      "directorAccepted": false,
+      "productionAuthorized": false
+    },
+    {
+      "stableId": "unit.aliens.etx_alien_strike",
+      "status": "QUEUED_NOT_AUTHORED",
+      "directorAccepted": false,
+      "productionAuthorized": false
+    },
+    {
+      "stableId": "unit.aliens.etx_alien_infiltrator",
+      "status": "QUEUED_NOT_AUTHORED",
+      "directorAccepted": false,
+      "productionAuthorized": false
+    },
+    {
+      "stableId": "unit.aliens.alien_mothership",
+      "status": "QUEUED_NOT_AUTHORED",
+      "directorAccepted": false,
+      "productionAuthorized": false
+    },
+    {
+      "stableId": "unit.martians.worker_robot",
+      "status": "QUEUED_NOT_AUTHORED",
+      "directorAccepted": false,
+      "productionAuthorized": false
+    },
+    {
+      "stableId": "unit.martians.double_hover",
+      "status": "QUEUED_NOT_AUTHORED",
+      "directorAccepted": false,
+      "productionAuthorized": false
+    },
+    {
+      "stableId": "unit.martians.jet_scooter",
+      "status": "QUEUED_NOT_AUTHORED",
+      "directorAccepted": false,
+      "productionAuthorized": false
+    },
+    {
+      "stableId": "unit.martians.aero_skiff",
+      "status": "QUEUED_NOT_AUTHORED",
+      "directorAccepted": false,
+      "productionAuthorized": false
+    },
+    {
+      "stableId": "unit.martians.red_planet_cruiser",
+      "status": "QUEUED_NOT_AUTHORED",
+      "directorAccepted": false,
+      "productionAuthorized": false
+    },
+    {
+      "stableId": "unit.martians.recon_mech_rp",
+      "status": "QUEUED_NOT_AUTHORED",
+      "directorAccepted": false,
+      "productionAuthorized": false
+    },
+    {
+      "stableId": "unit.martians.red_planet_protector",
+      "status": "QUEUED_NOT_AUTHORED",
+      "directorAccepted": false,
+      "productionAuthorized": false
+    },
+    {
+      "stableId": "unit.martians.excavation_searcher",
+      "status": "QUEUED_NOT_AUTHORED",
+      "directorAccepted": false,
+      "productionAuthorized": false
+    }
+  ]
+}

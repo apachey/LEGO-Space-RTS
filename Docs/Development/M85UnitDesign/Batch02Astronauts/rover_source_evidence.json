@@ -1,0 +1,29 @@
+{
+  "stableId": "unit.astronauts.rover",
+  "sourceSet": "LEGO 7301 Rover",
+  "sourceAuthority": "Official LEGO source imagery; direct appearance basis",
+  "sourcePage": "https://www.lego.com/en-us/service/building-instructions/7301",
+  "sourceArtifact": {
+    "type": "Official LEGO instruction PDF",
+    "url": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4156314.pdf",
+    "bookletLabel": "7301 / 7309",
+    "page": 1,
+    "targetRegion": "Completed Rover view at instruction step 7",
+    "sha256": "ad8d3840e3a05b9095dd36e04400793a603c1a771f8a3d6291b7afb0d423b43b",
+    "provenance": "Accepted T082 source evidence record; full official source is not copied or modified in T083."
+  },
+  "directorConfirmedSourceRead": [
+    "Very small and compact open-top/open-seat Rover",
+    "Four dominant white spherical / half-dome wheels",
+    "Very small light chassis and exposed seated astronaut",
+    "Characteristic black front bar/boom",
+    "Short black mast with dish",
+    "No large blue equipment box"
+  ],
+  "knownLimits": [
+    "No clean orthogonal rear view",
+    "Underside construction is partial",
+    "No moving radar mechanism is demonstrated"
+  ],
+  "conflictingAcceptedT082Prose": "T082 prose described a long scanner/tool boom, tall antenna and blue equipment box. The T083 target follows direct official imagery and the director-confirmed correction; accepted T082 files remain unchanged."
+}

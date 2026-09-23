@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>T083 design review — Astronaut Rover</title>
+<style>
+:root{color-scheme:dark}body{margin:0;background:#101923;color:#edf3f4;font:16px/1.55 system-ui,sans-serif}main{max-width:1180px;margin:auto;padding:34px 22px}h1{font-size:clamp(34px,6vw,64px);line-height:1.05;margin:12px 0}h2{line-height:1.2}a{color:#8bd9e2}.status{font-family:monospace;letter-spacing:1.5px;color:#ffd477;font-weight:700}.panel{background:#1b2935;border:1px solid #2c414e;border-radius:10px;padding:20px;margin:18px 0}.target{border:2px solid #74c5bb;background:#172c32}.tag{font:700 12px/1.4 ui-monospace,monospace;letter-spacing:1.3px;color:#8de2d3}.pdf{display:block;width:100%;height:min(78vh,900px);min-height:560px;background:#fff;border:0;border-radius:8px;margin:14px 0}.muted{color:#becbd0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}.callout{background:#203b40;border-left:4px solid #75c1be;padding:16px 20px;margin:24px 0}li{margin:.4em 0}@media print{body{background:white;color:#14242a}.panel{background:white;color:#14242a;border-color:#bbb}.pdf{height:700px}}
+</style>
+<main>
+<p class="status">T083 · DESIGN ACCEPTED · T084 AUTHORIZED</p>
+<h1>Astronaut Rover</h1>
+<p class="muted">Stable ID: <code>unit.astronauts.rover</code>. The source-locked production target is director-accepted; T084 is authorized.</p>
+
+<section class="panel target">
+ <p class="tag">AUTHORITATIVE PRODUCTION DESIGN TARGET · SOURCE_LOCKED</p>
+ <h2>LEGO 7301 official instruction booklet — page 1, completed Rover views</h2>
+ <p>This exact official LEGO PDF and its completed-model views on page 1 are the visual target T084 must realize. Preserve the very small open vehicle, four dominant white half-dome wheels, light exposed chassis, seated astronaut, black front boom, and short vertical black antenna/mast. Its terminal shape follows the official image; this review does not interpret it as a dish or add geometry. The source imagery defines appearance; the written Design Spec below defines only the bounded game presentation delta.</p>
+ <iframe class="pdf" src="https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4156314.pdf#page=1&view=FitH" title="Official LEGO 7301 instruction booklet, page 1 — Production Design Target"></iframe>
+ <p><a href="https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4156314.pdf">Open the official LEGO 7301/7309 instruction PDF</a> · <a href="https://www.lego.com/en-us/service/building-instructions/7301">LEGO 7301 source page</a>. If the embedded viewer is unavailable, open the PDF and inspect page 1, especially the completed Rover view at instruction step 7.</p>
+</section>
+
+<section class="panel">
+ <p class="tag">OFFICIAL SOURCE EVIDENCE</p>
+ <p>Set 7301, official LEGO instruction PDF 4156314, page 1. The same complete original PDF is linked above. It is unmodified and its accepted T082 SHA-256 is recorded in the source manifest. T082 packet prose has a conflicting older read of the boom, mast, wheels and rear equipment; this T083 review follows the official imagery and the director-confirmed read without rewriting the accepted T082 packet.</p>
+</section>
+
+<section class="grid">
+ <article class="panel"><p class="tag">VISIBLE GAME ADAPTATION</p><h2>Survey feedback only</h2><p>No visible body, color, proportion or equipment change is proposed. During the existing survey presentation, a restrained temporary scan pulse may appear at the source boom tip. It communicates the roster's existing passive-survey function; it does not add geometry, a weapon or new gameplay.</p></article>
+ <article class="panel"><p class="tag">PRODUCTION DESIGN SPEC</p><h2>Preserve the source build</h2><ul><li>Keep the Rover tiny, compact and open-top/open-seat.</li><li>Four dominant white spherical / half-dome wheels; very small light chassis.</li><li>Exposed seated astronaut; characteristic black front bar/boom.</li><li>Short vertical black antenna/mast; terminal shape follows the source image without a separate geometry interpretation.</li><li>No large blue equipment box or other inferred mass.</li></ul><p>Only the restrained scan pulse above may depart from the static source image. Wheel travel animation and terrain contact implement the existing movement contract.</p><p><a href="rover_design_spec.md">Open the complete Design Spec</a></p></article>
+ <article class="panel"><p class="tag">EXPLANATORY MATERIAL ONLY</p><h2>Schematic</h2><p><strong>NON-AUTHORITATIVE FOR APPEARANCE — technical explanation only.</strong> The drawing labels a few relationships and is not a visual target, source image or production blueprint.</p><a href="rover_schematic.svg">Open the explanatory schematic</a></article>
+</section>
+
+<section class="panel"><p class="tag">SOURCE LIMITS</p><p>The official instructions do not establish a clean orthogonal rear view, underside detail or a moving radar mechanism. Do not infer hidden geometry from those gaps. Resolve production clearances and camera/LOD readability in T084 without changing the accepted target.</p></section>
+<div class="callout"><strong>Director decision:</strong> the official LEGO 7301 page 1 completed-model imagery is accepted as the exact T084 appearance target, with no visible geometry/material deviations and only the restrained boom-tip survey pulse as the game adaptation. The antenna/mast terminal follows the official image without a separate geometry interpretation.</div>
+<p><a href="rover.md">Package summary and decision ledger</a> · <a href="../../M85SuperScout/Packets/unit_astronauts_rover.md">Accepted T082 research packet (read-only)</a></p>
+</main></html>

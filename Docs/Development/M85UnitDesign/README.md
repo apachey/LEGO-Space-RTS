@@ -1,3 +1,41 @@
+# T083 — unit visual design packages
+
+## Appearance authority and acceptance gate
+
+Every package separates four authorities: **Source Evidence** records what the
+official LEGO object looks like; the **Production Design Target** is the
+director-facing visual target T084 must realize; the **Design Spec** gives
+written production guidance; and optional **Technical / Explanatory
+Schematics** explain mechanics only and must be labelled **NON-AUTHORITATIVE
+FOR APPEARANCE**. A schematic is never a Production Design Target.
+
+Each package declares one Production Design Target mode:
+
+- `SOURCE_LOCKED`: official source imagery is the target when preserving the
+  LEGO model closely; list only explicit game-adaptation deltas. Do not invent
+  geometry to satisfy an art-generation step.
+- `ADAPTED`: include a review-ready visual showing the approved adaptation.
+- `ORIGINAL_EXTENDED`: include a proper concept/design target for new or
+  substantially extrapolated content.
+- `MULTI_VIEW_BLOCKOUT`: include enough coordinated views or a blockout to
+  communicate transformations, unusual geometry or mechanical relationships.
+
+The method may vary; the target must let the director understand the intended
+finished in-game appearance. A unit is not eligible for new design acceptance
+without verified source evidence, a Design Spec, an identified target mode and
+artifact, and sufficient appearance information. Registry metadata is enforced
+by `tools/validate-m85-t083-rover-package.py` and the targeted `design-package`
+profile. Missing legacy target data is recorded as `MIGRATION_REQUIRED`; it is
+not fabricated. Previously accepted Expedition Crew remains accepted as a
+pre-gate decision and is not retroactively invalidated. On T084, the approved
+Production Design Target, source evidence and Design Spec are authoritative.
+
+Every technical/explanatory schematic must visibly state: **NON-AUTHORITATIVE
+FOR APPEARANCE — technical explanation only**. It cannot be the review page's
+primary appearance image or satisfy the target gate.
+
+---
+
 # Unit design packages — bounded-task template
 
 Use this template for one T083 unit package. Current status belongs in
@@ -25,8 +63,11 @@ when integrating with its README, retain its content and append this template.
   production geometry or gameplay-camera capture for a design-only package.
 - **Review artifact:** one linked self-contained review with source comparison,
   construction/function, motion/state, material/texture plan, unknowns and
-  explicit proposed-versus-accepted labels. Do not infer gameplay from source
-  modules. Modeling/LOD/camera evidence belongs to the production gates.
+  explicit proposed-versus-accepted labels. It must prominently show/link the
+  Production Design Target separately from source evidence; schematics are
+  optional and explicitly non-authoritative for appearance. Do not infer
+  gameplay from source modules. Modeling/LOD/camera evidence belongs to the
+  production gates.
 - **Short handoff:** what is proposed, what preserved references it follows,
   exact checks/results, review link and smallest director decision. Record
   acceptance only after explicit review; identify deferred production checks.
