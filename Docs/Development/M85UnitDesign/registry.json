@@ -2,7 +2,7 @@
   "task": "T083",
   "target": 35,
   "authoredProposals": 10,
-  "directorAccepted": 4,
+  "directorAccepted": 5,
   "productionModels": 0,
   "assets": [
     {
@@ -73,13 +73,29 @@
     {
       "stableId": "unit.rock_raiders.rapid_rider",
       "file": "Batch01RockRaiders/rapid_rider.md",
-      "status": "DESIGN_PROPOSAL_FOR_DIRECTOR_REVIEW",
-      "directorAccepted": false,
-      "productionAuthorized": false,
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "sourceEvidence": {
+        "manifest": "Batch01RockRaiders/rapid_rider_source_evidence.json",
+        "reference": "4920-page01.png",
+        "provenance": "Official LEGO 4920 instruction PDF pages 1–2; both unmodified full-page rasters and PDF hash recorded in the unit-specific source manifest."
+      },
+      "designSpec": "Batch01RockRaiders/rapid_rider.md",
       "productionDesignTarget": {
-        "state": "MIGRATION_REQUIRED",
-        "note": "Existing unaccepted package; classify and validate its director-facing target when reopened."
-      }
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch01RockRaiders/rapid_rider_target_review.html",
+        "rationale": "The official completed LEGO 4920 already represents the intended exterior; preserve its one-driver appearance and source proportions.",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch01RockRaiders/rapid_rider.md",
+        "sourceImage": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4920-page01.png",
+        "reviewReady": true,
+        "appearanceSummary": "Official completed LEGO 4920 Rapid Rider, preserving the twin-hull exterior, source proportions, open cargo tub and one source-scale driver; no added passenger seating or visible exterior adaptation."
+      },
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-24",
+      "acceptanceNote": "Директор відхилив ADAPTED-ціль із чотирма Crew та затвердив SOURCE_LOCKED вигляд офіційного LEGO 4920 з одним водієм і джерельними пропорціями. Вигляд додаткового пасажира чи альтернативного вантажу відкладено; місткість гри не змінюється.",
+      "review": "Batch01RockRaiders/rapid_rider_target_review.html"
     },
     {
       "stableId": "unit.rock_raiders.loader_dozer",
