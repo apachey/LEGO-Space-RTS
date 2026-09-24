@@ -1,8 +1,8 @@
 {
   "task": "T083",
   "target": 35,
-  "authoredProposals": 12,
-  "directorAccepted": 11,
+  "authoredProposals": 13,
+  "directorAccepted": 12,
   "productionModels": 0,
   "assets": [
     {
@@ -318,9 +318,36 @@
     },
     {
       "stableId": "unit.astronauts.solar_explorer",
-      "status": "QUEUED_NOT_AUTHORED",
-      "directorAccepted": false,
-      "productionAuthorized": false
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "file": "Batch02Astronauts/solar_explorer_design_spec_20260924_v2.md",
+      "review": "Batch02Astronauts/solar_explorer_target_review_20260924_v2.html",
+      "sourceEvidence": {
+        "manifest": "Batch02Astronauts/solar_explorer_source_manifest_20260924_v2.json",
+        "sourceSet": "7315"
+      },
+      "designSpec": "Batch02Astronauts/solar_explorer_design_spec_20260924_v2.md",
+      "productionDesignTarget": {
+        "mode": "MULTI_VIEW_BLOCKOUT",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch02Astronauts/solar_explorer_target_review_20260924_v2.html",
+        "rationale": "Збережено джерельний силует LEGO 7315 і модульні стики; ігрова адаптація відділяє центральну лабораторну секцію та перестиковує залишок корабля.",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch02Astronauts/solar_explorer_design_spec_20260924_v2.md",
+        "targetImages": [
+          "ArtSource/M85/T083/SolarExplorerSpacecraftV2/solar-explorer-spacecraft-target-approved.png"
+        ],
+        "reviewReady": true,
+        "appearanceSummary": "Довгий LEGO 7315 spacecraft: cockpit/nose, центральна червона стільникова solar/lab секція та задня кільцева engine-секція. Після розгортання центральна лабораторія відділена цілою, ніс і двигун з’єднані осьово; rover і probe/equipment окремі допоміжні елементи; без коліс чи рейок."
+      },
+      "gameAdaptations": [
+        "Центральна solar/lab секція відділяється цілою як Forward Service / польова лабораторія.",
+        "Cockpit/nose та rear/engine секції осьово перестиковуються у коротшу корабельну конфігурацію.",
+        "Короткі опори підтримують лабораторний модуль; коліс, гусениць, напрямних і автомобільного шасі немає."
+      ],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-24",
+      "acceptanceNote": "Директор затвердив світло-бежевий Production Design Target LEGO 7315: довгий модульний spacecraft; центральна стільникова solar/lab секція відділяється як Forward Service, а cockpit/nose і rear/engine осьово стикуються. Rover та probe/equipment залишаються допоміжними. T084 авторизовано лише для Solar Explorer, але не розпочато."
     },
     {
       "stableId": "unit.astronauts.mission_fighter",
