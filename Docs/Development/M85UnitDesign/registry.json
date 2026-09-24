@@ -1,8 +1,8 @@
 {
   "task": "T083",
   "target": 35,
-  "authoredProposals": 13,
-  "directorAccepted": 12,
+  "authoredProposals": 14,
+  "directorAccepted": 13,
   "productionModels": 0,
   "assets": [
     {
@@ -351,9 +351,31 @@
     },
     {
       "stableId": "unit.astronauts.mission_fighter",
-      "status": "QUEUED_NOT_AUTHORED",
-      "directorAccepted": false,
-      "productionAuthorized": false
+      "file": "Batch02Astronauts/mission_fighter_design_spec_20260924_v1.md",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "sourceEvidence": {
+        "manifest": "ArtSource/M85/T083/MissionFighterV1/source_manifest.json",
+        "sourceSets": ["7695"],
+        "provenance": "Official LEGO 7695 instruction PDF; page raster, original PDF hash and target crop are recorded in the unit-specific manifest. LEGO 5619 Crystal Hawk is documented there as a separate excluded model."
+      },
+      "designSpec": "Batch02Astronauts/mission_fighter_design_spec_20260924_v1.md",
+      "review": "Batch02Astronauts/mission_fighter_target_review_20260924_v1.html",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch02Astronauts/mission_fighter_target_review_20260924_v1.html",
+        "rationale": "Mission Fighter targets the official completed LEGO 7695 MX-11 Astro Fighter only. LEGO 5619 Crystal Hawk is a separate model and is excluded.",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch02Astronauts/mission_fighter_design_spec_20260924_v1.md",
+        "sourceImage": "ArtSource/M85/T083/MissionFighterV1/References/7695-completed-model.png",
+        "reviewReady": true,
+        "appearanceSummary": "Офіційний LEGO 7695 MX-11 Astro Fighter: тонкий білий дельтаподібний планер, помаранчева кабіна-ніс, малий темний задній вузол та антена; 5619 Crystal Hawk є окремою моделлю й виключений із цілі."
+      },
+      "gameAdaptations": [],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-24",
+      "acceptanceNote": "The director approved on 2026-09-24 the official LEGO 7695 MX-11 Astro Fighter SOURCE_LOCKED target, preserving its thin white delta-wing planform, orange canopy-nose and compact dark rear assembly. LEGO 5619 Crystal Hawk is a separate model and is excluded. T084 is authorized for this unit only and has not started."
     },
     {
       "stableId": "unit.astronauts.mx41_switch_fighter",

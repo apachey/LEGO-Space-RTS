@@ -81,6 +81,10 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   spacecraft target. Its central solar/lab module deploys as Forward Service;
   cockpit/nose and rear/engine reconnect axially. T084 is authorized for this
   unit only and remains unstarted.
+- Mission Fighter T083 is director-accepted on 2026-09-24 via the official LEGO
+  7695 MX-11 Astro Fighter SOURCE_LOCKED target. Crystal Hawk (5619) is a
+  separate model and is not part of this unit's target. T084 is authorized for
+  this unit only and remains unstarted.
 - Source/construction/state/material sheets and the local visual review are at
   [Batch 01 review](M85UnitDesign/Batch01RockRaiders/review.html) and
   [Expedition Crew review](M85UnitDesign/Batch02Astronauts/review.html).
@@ -100,7 +104,7 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   with four Crew. Tunnel Transport's loaded target is director-accepted; its
   Design Spec resolves the upper-hanger ambiguity, while the raster does not
   prove hidden load geometry.
-- The remaining 22 packages (8 Astronauts, 6 Aliens, 8 Martians) are queued,
+- The remaining 21 packages (7 Astronauts, 6 Aliens, 8 Martians) are queued,
   not authored. T084 modeling has not started; no production model is approved.
 - Workflow cleanup is merged and synchronized locally. This synchronization
   preserves all prior T083 content; it does not continue design or infer approval.
@@ -112,7 +116,7 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   Updated T083 workflow requires source evidence, a separately identified
   Production Design Target, and a Design Spec before a new design acceptance.
   Rover, Hover Scout, Granite Grinder, Drill Craft, Rapid Rider, Loader Dozer,
-  Chrome Crusher, Tunnel Transport, Mono Jet, Solar Explorer and T3-Trike have explicit director
+  Chrome Crusher, Tunnel Transport, Mono Jet, Solar Explorer, Mission Fighter and T3-Trike have explicit director
   acceptance; T084 is authorized for those units only and has not started.
 - `BLOCKING_LATER`: actual gameplay-camera/model-LOD review belongs to
   T084/T086 after production geometry exists; final animation belongs to T087.
@@ -129,7 +133,7 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 
 ## Next approved action
 
-Solar Explorer T083 is accepted. T084 is authorized for Solar Explorer only
+Mission Fighter T083 is accepted. T084 is authorized for Mission Fighter only
 but remains unstarted. Await the director’s next bounded-task direction; do not
 begin another unit automatically. Design-only packages use the targeted
 `design-package` profile; no game export, M6 networking or M7 exploration stack
