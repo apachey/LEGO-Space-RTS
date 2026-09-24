@@ -2,7 +2,7 @@
   "task": "T083",
   "target": 35,
   "authoredProposals": 10,
-  "directorAccepted": 5,
+  "directorAccepted": 6,
   "productionModels": 0,
   "assets": [
     {
@@ -100,13 +100,30 @@
     {
       "stableId": "unit.rock_raiders.loader_dozer",
       "file": "Batch01RockRaiders/loader_dozer.md",
-      "status": "DESIGN_PROPOSAL_FOR_DIRECTOR_REVIEW",
-      "directorAccepted": false,
-      "productionAuthorized": false,
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "sourceEvidence": {
+        "manifest": "Batch01RockRaiders/loader_dozer_source_evidence.json",
+        "reference": "4950-page01.png",
+        "provenance": "Official LEGO 4950 instruction PDF 4128419; unmodified page 1 plus construction pages 21–22, hashes recorded in the source manifest."
+      },
+      "designSpec": "Batch01RockRaiders/loader_dozer_design_spec.md",
       "productionDesignTarget": {
-        "state": "MIGRATION_REQUIRED",
-        "note": "Existing unaccepted package; classify and validate its director-facing target when reopened."
-      }
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch01RockRaiders/loader_dozer_target_review.html",
+        "rationale": "The official completed LEGO 4950 already shows the intended base appearance with its bucket; the researched Cutter Package is a separate game upgrade, not the base target.",
+        "designSpec": "Batch01RockRaiders/loader_dozer_design_spec.md",
+        "sourceImage": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4950-page01.png",
+        "reviewReady": true,
+        "appearanceSummary": "Official completed LEGO 4950 Loader Dozer: low gray chassis, four large black wheels, open brown operator cage, turquoise/yellow details and full-width front bucket; no visible game-specific geometry changes."
+      },
+      "review": "Batch01RockRaiders/loader_dozer_target_review.html",
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-24",
+      "acceptanceNote": "Director approved the official LEGO 4950 SOURCE_LOCKED base appearance with its bucket on 2026-09-24. The researched Cutter Package remains a separate game upgrade; its fitted appearance is not authorized by this target.",
+      "gameAdaptations": []
     },
     {
       "stableId": "unit.rock_raiders.granite_grinder",

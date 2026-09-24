@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>T083 — Огляд Loader Dozer</title>
+<style>
+:root{color-scheme:dark;--bg:#101820;--panel:#1a2832;--line:#3b515f;--ink:#edf4f6;--muted:#b4c3ca;--accent:#f4c343;--blue:#54d2d0}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 system-ui,-apple-system,sans-serif}main{max-width:1050px;margin:auto;padding:30px 20px 64px}h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.1;margin:3px 0 12px}h2{font-size:1.45rem;line-height:1.2;margin:0 0 12px}p{margin:8px 0 14px}.eyebrow,.tag{font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);font-weight:750}.summary{font-size:1.2rem;background:#263541;border-left:5px solid var(--accent);padding:18px 20px;border-radius:9px;margin:22px 0}.status{border:1px solid #8e6b19;background:#302913;padding:12px 16px;border-radius:10px;margin:18px 0}.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;margin:18px 0}.target{border:2px solid var(--accent)}img{display:block;max-width:100%;height:auto;max-height:760px;object-fit:contain;background:#e6e9ec;border-radius:8px;margin:12px auto}.caption,.muted{color:var(--muted);font-size:.94rem}.split{display:grid;grid-template-columns:1fr 1fr;gap:16px}.approval{border-left:4px solid var(--accent);padding-left:15px}a{color:#82e5e2}code{font-size:.9em}@media(max-width:700px){main{padding:22px 14px 50px}.split{grid-template-columns:1fr}}
+</style></head>
+<body><main>
+<div class="eyebrow">M8.5 · T083 · Rock Raiders · Medium</div>
+<h1>Loader Dozer</h1>
+<p class="summary"><strong>Простими словами:</strong> звичайний Loader Dozer у грі виглядає як LEGO 4950 — <strong>із ковшом</strong>. Пилка з’являється лише як окреме досліджуване поліпшення.</p>
+<div class="status"><strong>На розгляд.</strong> Дизайн ще не прийнятий; T084 не починався.</div>
+
+<section id="source-evidence"><h2>1. Source Evidence — офіційне джерело</h2><p>Це завершений LEGO Loader Dozer 4950 з офіційної інструкції. Ковш, чотири великі колеса й відкрита коричнева рама з оператором — його впізнаваний вигляд.</p>
+<article class="card"><div class="tag">LEGO 4950 · офіційна інструкція · сторінка 1</div><a href="References/4950-page01.png"><img src="References/4950-page01.png" alt="Офіційний LEGO Loader Dozer 4950 з ковшом"></a><p class="caption">Сторінки <a href="References/4950-page21.png">21</a> і <a href="References/4950-page22.png">22</a> показують механізм підйому й нахилу ковша. Походження та контрольні хеші сторінок: <a href="loader_dozer_source_evidence.json">unit-specific source manifest</a>.</p></article></section>
+
+<section id="production-target"><h2>2. Production Design Target — SOURCE_LOCKED</h2><article class="card target"><div class="tag">Це те, що пропоную будувати</div><a href="References/4950-page01.png"><img src="References/4950-page01.png" alt="Production Design Target: канонічний LEGO 4950 із фронтальним ковшом"></a><p><strong>Ціль для T084:</strong> відтворити цю офіційну зовнішність близько до джерела: сіре низьке шасі, чотири чорні колеса, відкриту коричневу раму, бірюзові та жовті деталі й широкий передній ковш.</p><p><strong>Видимих ігрових змін до базового вигляду немає.</strong> Ковш залишається на місці. Не додавати пилку, башту, броню чи командну мітку в цю базову ціль.</p></article></section>
+
+<section><h2>3. Чому в документах з’явилася пилка?</h2><div class="card"><p>Це рішення походить з ігрового канону: LEGO 1275 <em>Chainsaw Bulldozer / Chain Dozer</em> дав Loader Dozer його Cutter Package. За каноном, після дослідження це поліпшення тієї самої машини додає обертову промислову пилку для короткодійної боротьби з легкими цілями. Це не стандартний вигляд 4950 і не окремий юніт.</p><p>Попередній концепт із пилкою намагався показати таке поліпшення, але помилково виглядав як основна ціль. Він збережений як непогоджене дослідження, а не як інструкція до базової моделі: <a href="../../../../ArtSource/M85/T083/LoaderDozerCutterV1/cutter-proposal-v2.png">попередній концепт Cutter Package</a>.</p><p>Як саме пилка кріпиться до 4950 і як виглядає готовий поліпшений стан, цей пакет не затверджує. Це потребуватиме окремої цілі, якщо дійдемо до моделювання поліпшення.</p></div></section>
+
+<section><h2>4. Design Spec</h2><p>Повні інструкції для художника й межі рішення: <a href="loader_dozer_design_spec.md">Loader Dozer Design Spec</a>.</p></section>
+
+<section><h2>5. Technical / Explanatory Schematic</h2><p>Схеми немає. Офіційне зображення вище — Production Design Target, не технічна схема.</p></section>
+
+<section class="card"><h2>Що прошу затвердити</h2><div class="approval"><p>Затвердити базовий вигляд Loader Dozer як офіційний LEGO 4950 <strong>із ковшом</strong>. Пилка залишається лише окремим досліджуваним ігровим поліпшенням; її точний змодельований вигляд цим рішенням не затверджується.</p></div></section>
+</main></body></html>
