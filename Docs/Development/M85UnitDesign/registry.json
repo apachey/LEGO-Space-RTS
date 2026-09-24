@@ -2,7 +2,7 @@
   "task": "T083",
   "target": 35,
   "authoredProposals": 10,
-  "directorAccepted": 8,
+  "directorAccepted": 9,
   "productionModels": 0,
   "assets": [
     {
@@ -187,13 +187,32 @@
     {
       "stableId": "unit.rock_raiders.tunnel_transport",
       "file": "Batch01RockRaiders/tunnel_transport.md",
-      "status": "DESIGN_PROPOSAL_FOR_DIRECTOR_REVIEW",
-      "directorAccepted": false,
-      "productionAuthorized": false,
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
       "productionDesignTarget": {
-        "state": "MIGRATION_REQUIRED",
-        "note": "Existing unaccepted package; classify and validate its director-facing target when reopened."
-      }
+        "mode": "ADAPTED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch01RockRaiders/tunnel_transport_production_target_review_20260924.html",
+        "rationale": "Director approved the existing adapted loaded appearance: preserve the open LEGO 4980 lift frame and show one separate full-size Chrome Crusher on a lower frame-supported yoke.",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch01RockRaiders/tunnel_transport.md",
+        "sourceImage": "ArtSource/M85/T083/TunnelTransportLoadedV1/loaded-proposal-v2.png",
+        "reviewReady": true,
+        "appearanceSummary": "Open 4980 twin-rotor load bridge with source brown blades, gray/white crossbeam, turquoise/yellow accents and forward control module; one separate horizontal 4970 Chrome Crusher hangs below the central frame on a lower yoke. No enclosed fuselage, altered rotor geometry or extra game units."
+      },
+      "sourceEvidence": {
+        "manifest": "Batch01RockRaiders/tunnel_transport_source_evidence.json",
+        "sourceSet": "4980",
+        "provenance": "Official LEGO instructions, PDF SHA-256 and exact page-image hashes recorded in the unit-specific source evidence manifest."
+      },
+      "designSpec": "Batch01RockRaiders/tunnel_transport.md",
+      "review": "Batch01RockRaiders/tunnel_transport_production_target_review_20260924.html",
+      "gameAdaptations": [
+        "One open lower cargo yoke with paired short hangers attached only to the central load-bearing frame; it carries one unchanged, separate Chrome Crusher horizontally below the frame."
+      ],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-24",
+      "acceptanceNote": "Director approved on 2026-09-24. T084 is authorized for Tunnel Transport only; it has not started."
     },
     {
       "stableId": "unit.astronauts.expedition_crew",

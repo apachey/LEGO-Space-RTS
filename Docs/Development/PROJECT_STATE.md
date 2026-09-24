@@ -49,8 +49,10 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 
 - T083 on `codex/m85-t083`: Hover Scout is director-accepted via its official
   LEGO 4910 SOURCE_LOCKED target; T084 is authorized for this unit but remains
-  unstarted. Expedition Crew and Rover remain accepted. Two other Rock Raiders
-  proposals await review; other T083 work remains uncommitted.
+  unstarted. Expedition Crew and Rover remain accepted. Tunnel Transport is
+  accepted via its ADAPTED loaded 4980/Chrome Crusher target; T084 is authorized
+  for this unit only and remains unstarted. One other Rock Raiders proposal
+  awaits review; other T083 work remains uncommitted.
 - Drill Craft 1277 is director-accepted via its completed source-faithful
   SOURCE_LOCKED target; T084 is authorized but has not started.
 - Rapid Rider is director-accepted via the SOURCE_LOCKED official LEGO 4920
@@ -83,9 +85,10 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   accepted survey pulse and a clearly non-authoritative schematic; rear/hidden
   evidence gaps remain disclosed. Conflicting T082 prose and contracts remain
   unchanged.
-- Three appearance proposals cover Loader Dozer Cutter, Rapid Rider with four
-  Crew and Tunnel Transport carrying Chrome Crusher. The carrier's upper-hanger
-  projection ambiguity remains disclosed; the raster does not prove load geometry.
+- Two appearance proposals remain open: Loader Dozer Cutter and Rapid Rider
+  with four Crew. Tunnel Transport's loaded target is director-accepted; its
+  Design Spec resolves the upper-hanger ambiguity, while the raster does not
+  prove hidden load geometry.
 - The remaining 25 packages (11 Astronauts, 6 Aliens, 8 Martians) are queued,
   not authored. T084 modeling has not started; no production model is approved.
 - Workflow cleanup is merged and synchronized locally. This synchronization
@@ -97,9 +100,9 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   before its T084 model proceeds; research acceptance is not design acceptance.
   Updated T083 workflow requires source evidence, a separately identified
   Production Design Target, and a Design Spec before a new design acceptance.
-  Rover, Hover Scout, Granite Grinder, Drill Craft, Rapid Rider, Loader Dozer
-  and Chrome Crusher have explicit director acceptance; T084 is authorized for
-  those units only and has not started.
+  Rover, Hover Scout, Granite Grinder, Drill Craft, Rapid Rider, Loader Dozer,
+  Chrome Crusher and Tunnel Transport have explicit director acceptance; T084 is
+  authorized for those units only and has not started.
 - `BLOCKING_LATER`: actual gameplay-camera/model-LOD review belongs to
   T084/T086 after production geometry exists; final animation belongs to T087.
 - Martian sources 1195/3750 retain bounded archival evidence gaps. Do not invent

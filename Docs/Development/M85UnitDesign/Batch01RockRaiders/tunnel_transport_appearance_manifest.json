@@ -1,0 +1,34 @@
+{
+  "stableId": "unit.rock_raiders.tunnel_transport",
+  "productionDesignTarget": {
+    "mode": "ADAPTED",
+    "file": "ArtSource/M85/T083/TunnelTransportLoadedV1/loaded-proposal-v2.png",
+    "state": "DIRECTOR_ACCEPTED",
+    "acceptanceDate": "2026-09-24"
+  },
+  "generated": [
+    {
+      "file": "ArtSource/M85/T083/TunnelTransportLoadedV1/loaded-proposal-v1.png",
+      "sha256": "b6908f5d1b9abf0db3aabf951f106ad0143c19b6cc16bccbae66fdf200f07bec",
+      "state": "SUPERSEDED_PREVIOUS_REVISION",
+      "tool": "built-in image_gen"
+    },
+    {
+      "file": "ArtSource/M85/T083/TunnelTransportLoadedV1/loaded-proposal-v2.png",
+      "sha256": "7c1a2e90bbab3f0725f7b96207fea069d114f575c97810069270441aef27610f",
+      "state": "DIRECTOR_ACCEPTED_PRODUCTION_DESIGN_TARGET",
+      "tool": "built-in image_gen"
+    }
+  ],
+  "prompts": [
+    {
+      "file": "ArtSource/M85/T083/TunnelTransportLoadedV1/prompt.txt",
+      "role": "initial loaded-transport proposal prompt"
+    },
+    {
+      "file": "ArtSource/M85/T083/TunnelTransportLoadedV1/edit-prompt.txt",
+      "role": "selected v2 correction prompt"
+    }
+  ],
+  "limitations": "Concept image demonstrates overall appearance, not exact LEGO part construction or hidden load-path proof. The accepted spec defines the lower-yoke attachment."
+}
