@@ -2,7 +2,7 @@
   "task": "T083",
   "target": 35,
   "authoredProposals": 10,
-  "directorAccepted": 6,
+  "directorAccepted": 7,
   "productionModels": 0,
   "assets": [
     {
@@ -128,13 +128,32 @@
     {
       "stableId": "unit.rock_raiders.granite_grinder",
       "file": "Batch01RockRaiders/granite_grinder.md",
-      "status": "DESIGN_PROPOSAL_FOR_DIRECTOR_REVIEW",
-      "directorAccepted": false,
-      "productionAuthorized": false,
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
       "productionDesignTarget": {
-        "state": "MIGRATION_REQUIRED",
-        "note": "Existing unaccepted package; classify and validate its director-facing target when reopened."
-      }
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch01RockRaiders/granite_grinder_target_review.html",
+        "rationale": "Completed official LEGO 4940 already represents the intended exterior; instruction page 1 is the target and page 24 provides construction evidence.",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch01RockRaiders/granite_grinder.md",
+        "sourceImage": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4940-page01.png",
+        "reviewReady": true,
+        "appearanceSummary": "Completed official LEGO 4940 Granite Grinder: tall narrow walker on two separated ski feet, high open brown operator cage, long pale forward drill, gray and dark mechanism, turquoise/yellow accents, hazard bands and short rear equipment mass; no static geometry adaptation."
+      },
+      "sourceEvidence": {
+        "manifest": "Batch01RockRaiders/granite_grinder_source_evidence.json",
+        "reference": "References/4940-page01.png",
+        "provenance": "Official LEGO 4940 instruction PDF 4128317.pdf; unmodified full-page rasters and source PDF SHA-256 are recorded in the unit-specific source evidence manifest."
+      },
+      "designSpec": "Batch01RockRaiders/granite_grinder.md",
+      "review": "Batch01RockRaiders/granite_grinder_target_review.html",
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-24",
+      "acceptanceNote": "Director approved the SOURCE_LOCKED official LEGO 4940 appearance with restrained short alternating steps on 2026-09-24. T084 is authorized for this unit only and has not started.",
+      "gameAdaptations": [
+        "Restrained alternating short steps with low foot lift and minimal upper-body sway; presentation interpretation only because the LEGO instructions do not demonstrate gait."
+      ]
     },
     {
       "stableId": "unit.rock_raiders.chrome_crusher",

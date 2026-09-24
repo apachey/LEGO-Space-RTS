@@ -49,7 +49,7 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 
 - T083 on `codex/m85-t083`: Hover Scout is director-accepted via its official
   LEGO 4910 SOURCE_LOCKED target; T084 is authorized for this unit but remains
-  unstarted. Expedition Crew and Rover remain accepted. Four other Rock Raiders
+  unstarted. Expedition Crew and Rover remain accepted. Three other Rock Raiders
   proposals await review; other T083 work remains uncommitted.
 - Drill Craft 1277 is director-accepted via its completed source-faithful
   SOURCE_LOCKED target; T084 is authorized but has not started.
@@ -61,6 +61,10 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   target with bucket; T084 is authorized but remains unstarted. The researched
   Cutter Package remains separate, and its fitted appearance is not approved by
   this target.
+- Granite Grinder is director-accepted via the official LEGO 4940 SOURCE_LOCKED
+  target with a restrained short-step movement adaptation; T084 is authorized
+  for this unit only and remains unstarted. Its accepted review records the
+  official source target and keeps the source gait gap explicit.
 - Source/construction/state/material sheets and the local visual review are at
   [Batch 01 review](M85UnitDesign/Batch01RockRaiders/review.html) and
   [Expedition Crew review](M85UnitDesign/Batch02Astronauts/review.html).
@@ -90,8 +94,9 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   before its T084 model proceeds; research acceptance is not design acceptance.
   Updated T083 workflow requires source evidence, a separately identified
   Production Design Target, and a Design Spec before a new design acceptance.
-  Rover, Hover Scout, Drill Craft, Rapid Rider and Loader Dozer have explicit
-  director acceptance; T084 is authorized for those units only and has not started.
+  Rover, Hover Scout, Granite Grinder, Drill Craft, Rapid Rider and Loader Dozer
+  have explicit director acceptance; T084 is authorized for those units only and
+  has not started.
 - `BLOCKING_LATER`: actual gameplay-camera/model-LOD review belongs to
   T084/T086 after production geometry exists; final animation belongs to T087.
 - Martian sources 1195/3750 retain bounded archival evidence gaps. Do not invent
