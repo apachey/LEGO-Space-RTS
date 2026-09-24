@@ -47,6 +47,10 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 
 ## Work in progress
 
+- T3-Trike is director-accepted: the official LEGO 7312 Life on Mars look is
+  base Escort; after Field Survey Package research, the same unit may refit to
+  the official LEGO 7694 Mars Mission Survey look. T084 is authorized for this
+  unit only and remains unstarted.
 - T083 on `codex/m85-t083`: Hover Scout is director-accepted via its official
   LEGO 4910 SOURCE_LOCKED target; T084 is authorized for this unit but remains
   unstarted. Expedition Crew and Rover remain accepted. Tunnel Transport is
@@ -89,7 +93,7 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   with four Crew. Tunnel Transport's loaded target is director-accepted; its
   Design Spec resolves the upper-hanger ambiguity, while the raster does not
   prove hidden load geometry.
-- The remaining 25 packages (11 Astronauts, 6 Aliens, 8 Martians) are queued,
+- The remaining 24 packages (10 Astronauts, 6 Aliens, 8 Martians) are queued,
   not authored. T084 modeling has not started; no production model is approved.
 - Workflow cleanup is merged and synchronized locally. This synchronization
   preserves all prior T083 content; it does not continue design or infer approval.
@@ -101,8 +105,8 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   Updated T083 workflow requires source evidence, a separately identified
   Production Design Target, and a Design Spec before a new design acceptance.
   Rover, Hover Scout, Granite Grinder, Drill Craft, Rapid Rider, Loader Dozer,
-  Chrome Crusher and Tunnel Transport have explicit director acceptance; T084 is
-  authorized for those units only and has not started.
+  Chrome Crusher, Tunnel Transport and T3-Trike have explicit director
+  acceptance; T084 is authorized for those units only and has not started.
 - `BLOCKING_LATER`: actual gameplay-camera/model-LOD review belongs to
   T084/T086 after production geometry exists; final animation belongs to T087.
 - Martian sources 1195/3750 retain bounded archival evidence gaps. Do not invent

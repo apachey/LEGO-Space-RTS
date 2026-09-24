@@ -1,8 +1,8 @@
 {
   "task": "T083",
   "target": 35,
-  "authoredProposals": 10,
-  "directorAccepted": 9,
+  "authoredProposals": 11,
+  "directorAccepted": 10,
   "productionModels": 0,
   "assets": [
     {
@@ -254,9 +254,39 @@
     },
     {
       "stableId": "unit.astronauts.t3_trike",
-      "status": "QUEUED_NOT_AUTHORED",
-      "directorAccepted": false,
-      "productionAuthorized": false
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "file": "Batch02Astronauts/t3_trike_design_spec_20260924_v1.md",
+      "sourceEvidence": {
+        "manifest": "Batch02Astronauts/t3_trike_source_evidence_20260924_v1.json",
+        "sourceSets": [
+          "7312",
+          "7694"
+        ],
+        "provenance": "Official LEGO instruction PDFs and accepted T082 visual audits; exact URLs and page coverage recorded in the unit-specific source manifest."
+      },
+      "designSpec": "Batch02Astronauts/t3_trike_design_spec_20260924_v1.md",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch02Astronauts/t3_trike_production_design_review_20260924_v1.html",
+        "rationale": "Both configuration appearances are official LEGO completed builds. The director approved 7312 Life on Mars as base Escort and 7694 Mars Mission as Survey after Field Survey Package research; they are unequal refit states of one gameplay unit.",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch02Astronauts/t3_trike_design_spec_20260924_v1.md",
+        "sourceImages": [
+          "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130807.pdf#page=1",
+          "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517775.pdf#page=1"
+        ],
+        "reviewReady": true,
+        "appearanceSummary": "Base Escort: official LEGO 7312 Life on Mars T3-Trike. After Field Survey Package research and Survey refit: official LEGO 7694 Mars Mission MT-31 Trike appearance. Both preserve their distinct source geometry and palette; no hybrid design."
+      },
+      "review": "Batch02Astronauts/t3_trike_production_design_review_20260924_v1.html",
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-24",
+      "acceptanceNote": "The director approved on 2026-09-24: official 7312 Life on Mars is the base Escort look; after Field Survey Package research, the same T3-Trike can refit to the official 7694 Mars Mission Survey look. T084 is authorized for this unit only and has not started.",
+      "gameAdaptations": [
+        "Presentation maps base Escort to the official LEGO 7312 appearance and research-unlocked Survey refit to the official LEGO 7694 appearance; gameplay/refit rules are unchanged."
+      ]
     },
     {
       "stableId": "unit.astronauts.mono_jet",
