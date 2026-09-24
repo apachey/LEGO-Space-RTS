@@ -33,7 +33,7 @@ entry = next(a for a in registry['assets'] if a['stableId'] == 'unit.astronauts.
 contract = next(a for a in contracts['assets'] if a['stableId'] == 'unit.astronauts.rover')
 source = next(s for s in evidence['sources'] if s['setId'] == '7301')
 
-check(registry['target'] == 35 and registry['authoredProposals'] == 10 and registry['directorAccepted'] == 2, 'registry roster/proposal/acceptance counters')
+check(registry['target'] == 35 and registry['authoredProposals'] == 10 and registry['directorAccepted'] == 3, 'registry roster/proposal/acceptance counters (Expedition Crew, Rover, Hover Scout)')
 check(entry.get('file') == 'Batch02Astronauts/rover.md', 'registry package path')
 check(entry.get('review') == 'Batch02Astronauts/rover_review.html', 'registry review path')
 check(entry['status'] == 'DESIGN_ACCEPTED_T084_AUTHORIZED' and entry['directorAccepted'] and entry['productionAuthorized'], 'Rover director acceptance and T084 authorization')

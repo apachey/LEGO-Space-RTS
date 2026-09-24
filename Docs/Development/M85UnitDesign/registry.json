@@ -2,7 +2,7 @@
   "task": "T083",
   "target": 35,
   "authoredProposals": 10,
-  "directorAccepted": 2,
+  "directorAccepted": 3,
   "productionModels": 0,
   "assets": [
     {
@@ -19,13 +19,29 @@
     {
       "stableId": "unit.rock_raiders.hover_scout",
       "file": "Batch01RockRaiders/hover_scout.md",
-      "status": "DESIGN_PROPOSAL_FOR_DIRECTOR_REVIEW",
-      "directorAccepted": false,
-      "productionAuthorized": false,
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "sourceEvidence": {
+        "manifest": "Batch01RockRaiders/References/hover_scout_source_manifest.json",
+        "reference": "4910-page01.png",
+        "provenance": "Official LEGO 4910 instruction PDF page 1; unmodified full-page raster retained in the unit-specific source manifest."
+      },
+      "designSpec": "Batch01RockRaiders/hover_scout.md",
       "productionDesignTarget": {
-        "state": "MIGRATION_REQUIRED",
-        "note": "Existing unaccepted package; classify and validate its director-facing target when reopened."
-      }
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch01RockRaiders/hover_scout_target_review.html",
+        "rationale": "Official LEGO 4910 completed Scout at instruction step 7, framed directly from the official page; no new exterior geometry.",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch01RockRaiders/hover_scout.md",
+        "sourceImage": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4910-hover-scout-target-step7.png",
+        "reviewReady": true,
+        "appearanceSummary": "Build the open low plate sled shown at official 4910 instruction step 7: seated blue/turquoise operator, large forward angular scanner/tool assembly, exposed deck and separate rear tool rack; no closed hull, invented sensor tower or added underside hero mass."
+      },
+      "review": "Batch01RockRaiders/hover_scout_target_review.html",
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-24",
+      "acceptanceNote": "Директор затвердив через «+» 2026-09-24: офіційний LEGO 4910, крок 7; дозволені лише низький зазор зависання, короткий сигнал від штатної передньої сканерно-інструментальної збірки та мала пласка командна мітка."
     },
     {
       "stableId": "unit.rock_raiders.drill_craft",

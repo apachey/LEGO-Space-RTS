@@ -47,13 +47,19 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 
 ## Work in progress
 
-- T083 on `codex/m85-t083`: eight Rock Raiders proposals, accepted Expedition
-  Crew, and the corrected Rover source-locked package, uncommitted. Expedition
-  Crew and Rover are director-accepted; the eight Rock Raiders proposals await
-  design review.
+- T083 on `codex/m85-t083`: Hover Scout is director-accepted via its official
+  LEGO 4910 SOURCE_LOCKED target; T084 is authorized for this unit but remains
+  unstarted. Expedition Crew and Rover remain accepted. Seven other Rock Raiders
+  proposals await review; other T083 work remains uncommitted.
 - Source/construction/state/material sheets and the local visual review are at
   [Batch 01 review](M85UnitDesign/Batch01RockRaiders/review.html) and
   [Expedition Crew review](M85UnitDesign/Batch02Astronauts/review.html).
+- Hover Scout's `SOURCE_LOCKED` Production Design Target is the completed LEGO
+  4910 shown at step 7 on official instruction page 1. The target adds no
+  exterior geometry; its approved game deltas are low hover height, one brief
+  signal from the existing forward scanner/tool assembly, and a small flat
+  team marker. The old Batch 01 review card remains preserved; the accepted
+  decision is recorded in its separately named target review.
 - Rover's `SOURCE_LOCKED` Production Design Target is the completed LEGO 7301
   shown at step 7 on page 1 of official instruction PDF 4156314. Its corrected
   review/spec separate that source target, official evidence, a restrained
@@ -74,8 +80,8 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   before its T084 model proceeds; research acceptance is not design acceptance.
   Updated T083 workflow requires source evidence, a separately identified
   Production Design Target, and a Design Spec before a new design acceptance.
-  Rover's amended package passed the target gate and received explicit director
-  acceptance; T084 is authorized for this unit only.
+  Rover and Hover Scout have explicit director acceptance; T084 is authorized
+  for those units only and has not started.
 - `BLOCKING_LATER`: actual gameplay-camera/model-LOD review belongs to
   T084/T086 after production geometry exists; final animation belongs to T087.
 - Martian sources 1195/3750 retain bounded archival evidence gaps. Do not invent
@@ -91,13 +97,12 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 
 ## Next approved action
 
-Proceed with Rover's authorized T084 production when separately started; review
-remaining pending T083 proposals only after each meets the Production Design
-Target acceptance gate. Proceed to another unit's T084 production only after
-that unit's explicit design acceptance. Do
-not infer gameplay from LEGO source modules or reopen accepted references.
-Design-only packages use the targeted design-package profile; no game export,
-M6 networking or M7 exploration stack is required.
+Wait for the director's next bounded-task direction. Keep T084 unstarted.
+Review another pending T083 proposal only when explicitly directed, after it
+meets the Production Design Target gate. Do not infer gameplay from LEGO source
+modules or reopen accepted references. Design-only packages use the targeted
+design-package profile; no game export, M6 networking or M7 exploration stack
+is required.
 
 ## Detailed records and historical evidence
 
