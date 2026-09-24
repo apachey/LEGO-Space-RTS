@@ -5,6 +5,7 @@ import hashlib
 import html
 import json
 import os
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -19,6 +20,33 @@ def rel(p, start=BATCH):
 
 def esc(s):
     return html.escape(str(s), quote=True)
+
+
+def article(html_text, key):
+    import re
+    match = re.search(rf'<article id="{re.escape(key)}">.*?</article>', html_text, re.S)
+    if not match:
+        raise ValueError(f'Missing review card: {key}')
+    return match.group(0)
+
+def replace_article(html_text, key, replacement):
+    import re
+    pattern = rf'<article id="{re.escape(key)}">.*?</article>'
+    updated, count = re.subn(pattern, lambda _: replacement, html_text, count=1, flags=re.S)
+    if count != 1:
+        raise ValueError(f'Expected one review card: {key}; found {count}')
+    return updated
+
+def unit_output_paths(key):
+    review_name = 'hover_scout_target_review.html' if key == 'hover_scout' else 'review.html'
+    return (BATCH / f'{key}.md', BATCH / review_name, OUT / 'registry.json')
+
+def update_registry_entry(document, expected):
+    matches = [a for a in document['assets'] if a['stableId'] == expected['stableId']]
+    if len(matches) != 1:
+        raise ValueError(f"Expected one registry identity: {expected['stableId']}")
+    matches[0].clear()
+    matches[0].update(expected)
 
 def run(check=False):
     proposals = json.loads((BATCH / 'design_proposals.json').read_text())

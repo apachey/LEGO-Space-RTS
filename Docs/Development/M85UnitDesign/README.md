@@ -34,6 +34,21 @@ Every technical/explanatory schematic must visibly state: **NON-AUTHORITATIVE
 FOR APPEARANCE — technical explanation only**. It cannot be the review page's
 primary appearance image or satisfy the target gate.
 
+## Review gates
+
+- **BLOCKING_NOW:** director acceptance of each T083 design before that asset
+  can proceed to T084. This does not prohibit independent design authoring of
+  the remaining roster.
+- **BLOCKING_LATER:** model dimensions, hidden joints, load clearances, all
+  required LODs and gameplay-camera readability in T084; final animation in
+  T087. No such test is represented as already passed.
+- **DIAGNOSTIC:** adjacent-unit confusion checks and reference comparisons.
+  The accepted T082 three-scale diagnostic is not repeated.
+
+## Reproduction and verification
+
+Run `python3 tools/generate-m85-t083-design-review.py` to regenerate the T083 review documents. Add `--check` to verify generated output, roster identity, source membership, image hashes and acceptance-state integrity without writing files. The tool uses only the Python standard library and does not call image generation or networking.
+
 ---
 
 # Unit design packages — bounded-task template
