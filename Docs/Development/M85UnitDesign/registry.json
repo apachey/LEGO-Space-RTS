@@ -2,7 +2,7 @@
   "task": "T083",
   "target": 35,
   "authoredProposals": 10,
-  "directorAccepted": 3,
+  "directorAccepted": 4,
   "productionModels": 0,
   "assets": [
     {
@@ -46,13 +46,29 @@
     {
       "stableId": "unit.rock_raiders.drill_craft",
       "file": "Batch01RockRaiders/drill_craft.md",
-      "status": "DESIGN_PROPOSAL_FOR_DIRECTOR_REVIEW",
-      "directorAccepted": false,
-      "productionAuthorized": false,
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
       "productionDesignTarget": {
-        "state": "MIGRATION_REQUIRED",
-        "note": "Existing unaccepted package; classify and validate its director-facing target when reopened."
-      }
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch01RockRaiders/drill_craft_target_review.html",
+        "rationale": "Completed LEGO 1277 step 6 already represents the intended external appearance; target is a source-pixel crop with no new concept or exterior geometry.",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch01RockRaiders/drill_craft_design_spec.md",
+        "sourceImage": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/1277-drill-craft-target-step6.png",
+        "reviewReady": true,
+        "appearanceSummary": "Completed 1277 Hovercraft with Ice Saws: low open plate-built sled, exposed operator, central hazard panel, yellow sloped sides, turquoise grilles, paired raised round side pods and two narrow elongated forward saw bars; no central helical drill or added enclosure."
+      },
+      "sourceEvidence": {
+        "manifest": "Docs/Development/M85UnitDesign/Batch01RockRaiders/drill_craft_source_evidence.json",
+        "reference": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/1277-page02.png",
+        "provenance": "Archive-hosted scan of the official LEGO 1277 instruction page; unmodified source raster and hash recorded."
+      },
+      "designSpec": "Batch01RockRaiders/drill_craft_design_spec.md",
+      "review": "Batch01RockRaiders/drill_craft_target_review.html",
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-24",
+      "acceptanceNote": "The director accepted the completed LEGO 1277 SOURCE_LOCKED exterior on 2026-09-24; T084 is authorized but has not started."
     },
     {
       "stableId": "unit.rock_raiders.rapid_rider",
