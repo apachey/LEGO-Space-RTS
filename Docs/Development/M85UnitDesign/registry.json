@@ -1,8 +1,8 @@
 {
   "task": "T083",
   "target": 35,
-  "authoredProposals": 11,
-  "directorAccepted": 10,
+  "authoredProposals": 12,
+  "directorAccepted": 11,
   "productionModels": 0,
   "assets": [
     {
@@ -290,9 +290,31 @@
     },
     {
       "stableId": "unit.astronauts.mono_jet",
-      "status": "QUEUED_NOT_AUTHORED",
-      "directorAccepted": false,
-      "productionAuthorized": false
+      "file": "Batch02Astronauts/mono_jet_design_spec_20260924_v1.md",
+      "review": "Batch02Astronauts/mono_jet_production_review_20260924_v1.html",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "sourceEvidence": {
+        "manifest": "Batch02Astronauts/mono_jet_source_evidence_20260924_v1.json",
+        "sourceSet": "7310",
+        "provenance": "Official LEGO instruction PDF 4130805.pdf; T082 recorded its SHA-256 and audited pages 1-2."
+      },
+      "designSpec": "Batch02Astronauts/mono_jet_design_spec_20260924_v1.md",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch02Astronauts/mono_jet_production_review_20260924_v1.html",
+        "rationale": "The official completed LEGO 7310 already represents the intended compact asymmetric Field Systems craft; retain the source appearance without invented exterior geometry.",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch02Astronauts/mono_jet_design_spec_20260924_v1.md",
+        "sourceImage": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130805.pdf#page=2",
+        "reviewReady": true,
+        "appearanceSummary": "Official completed LEGO 7310: tiny exposed operator wedge and axle-mounted signal dish beside one dominant transverse wheel with a treaded surface, with the shrouded conical nozzle on the opposite side; no added geometry or visible game adaptation."
+      },
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-24",
+      "acceptanceNote": "The director accepted on 2026-09-24 the official LEGO 7310 SOURCE_LOCKED appearance as the ground monowheel-trike target, preserving its one dominant treaded wheel, exposed operator wedge and side nozzle without visible additions. T084 is authorized for Mono Jet only and has not started.",
+      "gameAdaptations": []
     },
     {
       "stableId": "unit.astronauts.solar_explorer",
