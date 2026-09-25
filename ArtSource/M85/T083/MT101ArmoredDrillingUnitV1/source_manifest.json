@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "task": "T083",
+  "stableId": "unit.astronauts.mt101_armored_drilling_unit",
+  "targetMode": "SOURCE_LOCKED",
+  "productionAccepted": false,
+  "canonImpact": "NONE",
+  "sourceSet": "7699",
+  "sourceName": "MT-101 Armored Drilling Unit",
+  "officialSources": [
+    {
+      "url": "https://www.lego.com/en-us/service/buildinginstructions/7699",
+      "role": "OFFICIAL_LEGO_INSTRUCTION_LANDING_PAGE",
+      "description": "LEGO lists set 7699 (2007), MT-101 Armored Drilling Unit, with both official instruction books."
+    },
+    {
+      "url": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517776.pdf",
+      "book": 1,
+      "pagesUsed": [
+        8,
+        29
+      ],
+      "role": "OFFICIAL_CONSTRUCTION_EVIDENCE",
+      "description": "Book 1 establishes the two-wheel mini-bike and the completed rear spacecraft as distinct nested source models."
+    },
+    {
+      "url": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517777.pdf",
+      "book": 2,
+      "pagesUsed": [
+        35,
+        42,
+        43
+      ],
+      "role": "OFFICIAL_APPEARANCE_AND_ASSEMBLY_EVIDENCE",
+      "description": "The cover is the complete-configuration appearance anchor. Page 35 documents the main chassis only; pages 42–43 document the rear-module/bike relationship and assembly context."
+    }
+  ],
+  "pageRasters": [
+    {
+      "file": "ArtSource/M85/Preproduction/MT101ControlledAppearanceV1/reference_7699_book2_cover.png",
+      "sha256": "cbb37fddf08f16da2300178cfe97ecf72d91c9caff56be04fb3186c81f69fcdd",
+      "role": "OFFICIAL_COMPLETED_CONFIGURATION_APPEARANCE_ANCHOR",
+      "pageLabel": "Book 2, cover",
+      "sourcePdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517777.pdf"
+    },
+    {
+      "file": "ArtSource/M85/Preproduction/MT101SourceRebuildV1/reference_book2_p35.png",
+      "sha256": "9c6ac3ec875ba64c717d78becf0825df41f65c640f32b213555910bd76333f54",
+      "role": "SUPPORTING_OFFICIAL_MAIN_CHASSIS_ASSEMBLY_PAGE_35",
+      "pageLabel": "Book 2, printed page 35",
+      "sourcePdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517777.pdf"
+    },
+    {
+      "file": "ArtSource/M85/Preproduction/MT101SourceRebuildV1/reference_book2_p42.png",
+      "sha256": "a24ab407fe0a923ed528a9b12e3d20119b0237c986c60ba17c02be2462084cda",
+      "role": "SUPPORTING_OFFICIAL_NESTED_ASSEMBLY_PAGE_42",
+      "pageLabel": "Book 2, printed page 42",
+      "sourcePdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517777.pdf"
+    },
+    {
+      "file": "ArtSource/M85/Preproduction/MT101ControlledAppearanceV1/reference_7699_book2_page43.png",
+      "sha256": "6bab21ecc3a968db564589af8cbe00411ccdc41a9cb4d26336d9d38ab126edfb",
+      "role": "SUPPORTING_OFFICIAL_MODULE_OWNERSHIP_PAGE_43",
+      "pageLabel": "Book 2, printed page 43",
+      "sourcePdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517777.pdf"
+    },
+    {
+      "file": "ArtSource/M85/Preproduction/MT101NestedAppearanceV1/reference_7699_book1_p08.png",
+      "sha256": "829038dc9a6d22c677796ea81232f9fe8c9f503912bf0b9e2616858ceb96cd84",
+      "role": "SUPPORTING_OFFICIAL_MINIBIKE_GEOMETRY_PAGE_8",
+      "pageLabel": "Book 1, printed page 8",
+      "sourcePdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517776.pdf"
+    },
+    {
+      "file": "ArtSource/M85/Preproduction/MT101NestedAppearanceV1/reference_7699_book1_p29.png",
+      "sha256": "339eb471d71a828b809323c41fa435e157ef910f57774ed5dd2a1a57d6ba0b6a",
+      "role": "SUPPORTING_OFFICIAL_REAR_SPACECRAFT_GEOMETRY_PAGE_29",
+      "pageLabel": "Book 1, printed page 29",
+      "sourcePdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517776.pdf"
+    }
+  ],
+  "derivedTarget": {
+    "file": "ArtSource/M85/T083/MT101ArmoredDrillingUnitV1/mt101_t082_accepted_completed_appearance_target.png",
+    "sha256": "4cd133ced25bd7962a09e203c0c9c42650efc8a3d43507d7e91906e0b0cd6150",
+    "sourceFile": "ArtSource/M85/Preproduction/MT101SourceRebuildV1/mt101_source_rebuild_rev5.png",
+    "sourceSha256": "4e6583ce4eb2ae7941967a23a2692358a42abbfc191b831a99c1dac2c1d1752c",
+    "role": "T082_ACCEPTED_SOURCE_LED_COMPLETED_APPEARANCE",
+    "description": "Unchanged source-led T082 accepted appearance raster, reused as the clear completed-model target showing the attached rear aircraft module. Official LEGO book 2 cover remains the overall appearance anchor."
+  },
+  "interpretation": {
+    "targetPolicy": "The official book 2 cover is the full-set authority; reuse the already director-accepted source-led T082 completed-appearance raster as the clear Production Design Target because independent photos and instruction page 35 commonly omit the attached rear aircraft module.",
+    "bikeRelation": "Book 2 pages 42–43 and book 1 pages 8 and 29 establish the nested mini-bike inside the directly docked rear spacecraft/aircraft module. The bike is not an additional runtime roster entry.",
+    "gameAdaptations": [],
+    "knownLaterChecks": [
+      "hidden attachment and clearance checks",
+      "contact-drill animation",
+      "gameplay-camera and LOD readability"
+    ],
+    "sourceCaveat": "Independent assembled-set photos located in research commonly show only the main drilling chassis. The official book 2 cover establishes the full attached-module configuration; the T082 accepted source-led appearance raster communicates it clearly."
+  },
+  "provenanceNote": "The page rasters above are preserved, unmodified T082 reference files. Their SHA-256 values are cross-checked against the T082 source-rebuild and nested-appearance manifests; official LEGO PDFs remain the primary source links. The review target is not a generated reconstruction."
+}

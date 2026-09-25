@@ -1,8 +1,8 @@
 {
   "task": "T083",
   "target": 35,
-  "authoredProposals": 18,
-  "directorAccepted": 17,
+  "authoredProposals": 19,
+  "directorAccepted": 18,
   "productionModels": 0,
   "assets": [
     {
@@ -510,9 +510,31 @@
     },
     {
       "stableId": "unit.astronauts.mt101_armored_drilling_unit",
-      "status": "QUEUED_NOT_AUTHORED",
-      "directorAccepted": false,
-      "productionAuthorized": false
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "file": "Batch02Astronauts/mt101_armored_drilling_unit_design_spec_20260925_v1.md",
+      "designSpec": "Batch02Astronauts/mt101_armored_drilling_unit_design_spec_20260925_v1.md",
+      "review": "Batch02Astronauts/mt101_armored_drilling_unit_director_review_20260925_v1.html",
+      "sourceEvidence": {
+        "manifest": "ArtSource/M85/T083/MT101ArmoredDrillingUnitV1/source_manifest.json",
+        "sourceSet": "7699",
+        "provenance": "Official LEGO book 2 cover is the full completed-configuration anchor; official instruction pages are supporting construction evidence. Source and hashes are recorded in the unit manifest."
+      },
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch02Astronauts/mt101_armored_drilling_unit_director_review_20260925_v1.html",
+        "rationale": "Official LEGO 7699 book 2 cover shows the completed MT-101 with its attached rear aircraft module; instruction page 35 is supporting evidence only.",
+        "designSpec": "Batch02Astronauts/mt101_armored_drilling_unit_design_spec_20260925_v1.md",
+        "sourceImage": "ArtSource/M85/T083/MT101ArmoredDrillingUnitV1/mt101_t082_accepted_completed_appearance_target.png",
+        "reviewReady": true,
+        "appearanceSummary": "Офіційна повна конфігурація LEGO 7699: біло-помаранчева важка шестиколісна бурова машина з передньою кабіною, буром, окремим верхнім пускачем і пристикованим заднім повітряним модулем."
+      },
+      "gameAdaptations": [],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-25",
+      "acceptanceNote": "Директор прийняв повний SOURCE_LOCKED Production Design Target MT-101 із пристикованим заднім літальним модулем 2026-09-25. T084 авторизовано лише для MT-101; моделювання не розпочато."
     },
     {
       "stableId": "unit.astronauts.mt201_ultra_drill_walker",
