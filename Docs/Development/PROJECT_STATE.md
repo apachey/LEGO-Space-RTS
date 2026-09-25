@@ -132,6 +132,9 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   target: low black Alien hover worker with paired shell valves, protected
   support/conduit slot, empty cargo cradle and one integrated utility clamp.
   T084 is authorized for ETX Servitor only and remains not started.
+- Alien Jet T083 is director-accepted via its unchanged `SOURCE_LOCKED` LEGO
+  5617 Production Design Target. T084 is authorized for Alien Jet only and has
+  not started.
 - Workflow cleanup is merged and synchronized locally. This synchronization
   preserves all prior T083 content; it does not continue design or infer approval.
 
@@ -144,7 +147,7 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   Rover, Hover Scout, Granite Grinder, Drill Craft, Rapid Rider, Loader Dozer,
   Chrome Crusher, Tunnel Transport, Mono Jet, Solar Explorer, Mission Fighter,
   MX-41 Switch Fighter, Mobile Mining Platform, MX-71 Recon Dropship, MT-51
-  Claw-Tank, MT-101 Armored Drilling Unit, MT-201 Ultra-Drill Walker, ETX Servitor and T3-Trike
+  Claw-Tank, MT-101 Armored Drilling Unit, MT-201 Ultra-Drill Walker, ETX Servitor, Alien Jet and T3-Trike
   have explicit director acceptance; T084 is authorized for those units only and
   has not started.
 - `BLOCKING_LATER`: actual gameplay-camera/model-LOD review belongs to
@@ -162,11 +165,11 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 
 ## Next approved action
 
-ETX Servitor T083 is director-accepted via its `ORIGINAL_EXTENDED` Production
-Design Target. T084 is authorized for ETX Servitor only and remains not started.
-Do not begin another T083 unit automatically. Design-only packages use the
-targeted `design-package` profile; no game export, M6 networking or M7
-exploration stack is required.
+Alien Jet T083 is director-accepted via its unchanged `SOURCE_LOCKED` LEGO 5617
+Production Design Target. T084 is authorized for Alien Jet only and remains
+not started. Do not begin another T083 unit or T084 automatically. Design-only
+packages use the targeted `design-package` profile; no game export, M6
+networking or M7 exploration stack is required.
 
 ## Detailed records and historical evidence
 

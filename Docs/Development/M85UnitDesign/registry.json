@@ -1,8 +1,8 @@
 {
   "task": "T083",
   "target": 35,
-  "authoredProposals": 22,
-  "directorAccepted": 21,
+  "authoredProposals": 23,
+  "directorAccepted": 22,
   "productionModels": 0,
   "assets": [
     {
@@ -633,9 +633,31 @@
     },
     {
       "stableId": "unit.aliens.alien_jet",
-      "status": "QUEUED_NOT_AUTHORED",
-      "directorAccepted": false,
-      "productionAuthorized": false
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "file": "Batch03Aliens/alien_jet_design_spec_20260925_v1.md",
+      "sourceEvidence": {
+        "manifest": "ArtSource/M85/T083/AlienJetV1/source_evidence_manifest.json",
+        "sourceSet": "5617",
+        "provenance": "Official LEGO 5617 building instructions; unchanged director-supplied visual source reference is separately identified."
+      },
+      "designSpec": "Batch03Aliens/alien_jet_design_spec_20260925_v1.md",
+      "review": "Batch03Aliens/alien_jet_director_review_20260925_v1.html",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch03Aliens/alien_jet_director_review_20260925_v1.html",
+        "rationale": "Preserve the official completed LEGO 5617 appearance. The unchanged director-supplied visual source reference is proposed as the target; official LEGO instructions remain the construction authority.",
+        "designSpec": "Batch03Aliens/alien_jet_design_spec_20260925_v1.md",
+        "targetImage": "ArtSource/M85/DirectorReferences/AlienJet/alien_jet_approved_reference.png",
+        "reviewReady": true,
+        "appearanceSummary": "Tiny open black Alien Jet with a broad swept plate, exposed central pilot, paired tall lime arches and two short lateral emitter arms, preserving the LEGO 5617 proportions and colors."
+      },
+      "gameAdaptations": [],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-25",
+      "acceptanceNote": "The director accepted this unchanged SOURCE_LOCKED LEGO 5617 Production Design Target on 2026-09-25. T084 is authorized for Alien Jet only and has not started."
     },
     {
       "stableId": "unit.aliens.razor_skimmer",
