@@ -140,6 +140,9 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   swept prongs around an open V and an exposed lime core. T084 is authorized for
   Razor Skimmer only and has not started; exact LEGO elements and connections
   remain unverified.
+- ETX Alien Strike T083 was director-accepted on 2026-09-26 via its
+  SOURCE_LOCKED official LEGO 7693 Production Design Target. T084 is authorized
+  for ETX Alien Strike only and remains unstarted.
 - Workflow cleanup is merged and synchronized locally. This synchronization
   preserves all prior T083 content; it does not continue design or infer approval.
 
@@ -172,10 +175,11 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 
 ## Next approved action
 
-Razor Skimmer T083 `ORIGINAL_EXTENDED` is director-accepted. T084 is authorized
-for Razor Skimmer only and remains unstarted. No next unit or T084 work is begun
-by this checkpoint. Design-only packages use the targeted `design-package`
-profile; no game export, M6 networking or M7 exploration stack is required.
+ETX Alien Strike T083 `SOURCE_LOCKED` was accepted on 2026-09-26. T084 is
+authorized for this unit only and remains unstarted. No next unit or T084 work
+is begun by this checkpoint. Design-only packages use the targeted
+`design-package` profile; no game export, M6 networking or M7 exploration stack
+is required.
 
 ## Detailed records and historical evidence
 

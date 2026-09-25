@@ -1,8 +1,8 @@
 {
   "task": "T083",
   "target": 35,
-  "authoredProposals": 24,
-  "directorAccepted": 24,
+  "authoredProposals": 25,
+  "directorAccepted": 25,
   "productionModels": 0,
   "assets": [
     {
@@ -715,9 +715,31 @@
     },
     {
       "stableId": "unit.aliens.etx_alien_strike",
-      "status": "QUEUED_NOT_AUTHORED",
-      "directorAccepted": false,
-      "productionAuthorized": false
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "file": "Batch03Aliens/etx_alien_strike_design_spec_20260926_v1.md",
+      "sourceEvidence": {
+        "manifest": "ArtSource/M85/T083/ETXAlienStrikeV1/source_evidence_manifest.json",
+        "sourceSet": "7693",
+        "provenance": "Official LEGO 7693 box art and instructions; independent assembled-model cross-check."
+      },
+      "designSpec": "Batch03Aliens/etx_alien_strike_design_spec_20260926_v1.md",
+      "review": "Batch03Aliens/etx_alien_strike_director_review_20260926_v1.html",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch03Aliens/etx_alien_strike_director_review_20260926_v1.html",
+        "rationale": "The official completed LEGO 7693 appearance represents the intended unit closely enough; no visible geometry adaptation is proposed.",
+        "designSpec": "Batch03Aliens/etx_alien_strike_design_spec_20260926_v1.md",
+        "targetImage": "ArtSource/M85/T083/ETXAlienStrikeV1/etx_alien_strike_production_target_20260926_v1.png",
+        "reviewReady": true,
+        "appearanceSummary": "SOURCE_LOCKED: continuous curved airborne black craft with central cockpit/emitter, paired large crescent side sections and long lime tail blades."
+      },
+      "gameAdaptations": [],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-26",
+      "acceptanceNote": "Директор прийняв SOURCE_LOCKED Production Design Target офіційного LEGO 7693 2026-09-26: вигнутий повітряний силует, центральну кабіну й випромінювач, парні серпоподібні секції та довгі лаймові хвостові лопаті. T084 авторизовано лише для ETX Alien Strike; моделювання не розпочато."
     },
     {
       "stableId": "unit.aliens.etx_alien_infiltrator",
