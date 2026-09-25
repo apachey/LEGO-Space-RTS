@@ -123,8 +123,11 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   SOURCE_LOCKED LEGO 7649 target, retaining the detachable observation shuttle
   as a visual module of this unit. T084 is authorized for MT-201 only and has
   not started.
-- The remaining 16 packages (2 Astronauts, 6 Aliens, 8 Martians) are queued,
-  not authored. T084 modeling has not started; no production model is approved.
+- MX-81 Hypersonic Operations Aircraft is director-accepted on 2026-09-25 via
+  its SOURCE_LOCKED LEGO 7644 target with the native tail transporter docked;
+  T084 is authorized for MX-81 only and remains unstarted. The remaining 15
+  packages (1 Astronaut, 6 Aliens, 8 Martians) are queued, not authored. T084
+  modeling has not started; no production model is approved.
 - Workflow cleanup is merged and synchronized locally. This synchronization
   preserves all prior T083 content; it does not continue design or infer approval.
 
@@ -155,10 +158,10 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 
 ## Next approved action
 
-MT-201 Ultra-Drill Walker T083 is accepted via its SOURCE_LOCKED completed LEGO
-7649 appearance, including the detachable observation shuttle as a visual
-module of this unit; visible adaptations: none. T084 is authorized for MT-201
-only but remains unstarted. Do not begin another unit automatically. Design-only
+MX-81 Hypersonic Operations Aircraft T083 is accepted via its SOURCE_LOCKED
+LEGO 7644 appearance with the native tail transporter docked and the launch tower
+excluded; visible adaptations: none. T084 is authorized for MX-81 only but remains
+unstarted. Do not begin another unit automatically. Design-only
 packages use the targeted
 `design-package` profile; no game export, M6 networking or M7 exploration stack
 is required.
