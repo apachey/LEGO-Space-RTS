@@ -88,6 +88,11 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 - MX-41 Switch Fighter T083 is director-accepted on 2026-09-25 via the official
   LEGO 7647 SOURCE_LOCKED target, covering its flight and completed ground
   configurations. T084 is authorized for MX-41 only and remains unstarted.
+- Mobile Mining Platform is director-accepted on 2026-09-25 via its ADAPTED
+  Production Design Target: shared tracked chassis, Crystal Reaper twin-wheel
+  and Ore Drill single-spiral configurations, two independent manipulators and
+  directly docked upper module. T084 is authorized for this unit only and has
+  not started.
 - Source/construction/state/material sheets and the local visual review are at
   [Batch 01 review](M85UnitDesign/Batch01RockRaiders/review.html) and
   [Expedition Crew review](M85UnitDesign/Batch02Astronauts/review.html).
@@ -107,7 +112,7 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   with four Crew. Tunnel Transport's loaded target is director-accepted; its
   Design Spec resolves the upper-hanger ambiguity, while the raster does not
   prove hidden load geometry.
-- The remaining 21 packages (7 Astronauts, 6 Aliens, 8 Martians) are queued,
+- The remaining 20 packages (6 Astronauts, 6 Aliens, 8 Martians) are queued,
   not authored. T084 modeling has not started; no production model is approved.
 - Workflow cleanup is merged and synchronized locally. This synchronization
   preserves all prior T083 content; it does not continue design or infer approval.
@@ -119,7 +124,8 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   Updated T083 workflow requires source evidence, a separately identified
   Production Design Target, and a Design Spec before a new design acceptance.
   Rover, Hover Scout, Granite Grinder, Drill Craft, Rapid Rider, Loader Dozer,
-  Chrome Crusher, Tunnel Transport, Mono Jet, Solar Explorer, Mission Fighter, MX-41 Switch Fighter and T3-Trike have
+  Chrome Crusher, Tunnel Transport, Mono Jet, Solar Explorer, Mission Fighter, MX-41 Switch Fighter, Mobile Mining Platform and
+  T3-Trike have
   explicit director acceptance; T084 is authorized for those units only and has not started.
 - `BLOCKING_LATER`: actual gameplay-camera/model-LOD review belongs to
   T084/T086 after production geometry exists; final animation belongs to T087.
@@ -136,8 +142,8 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 
 ## Next approved action
 
-MX-41 Switch Fighter T083 is accepted. T084 is authorized for MX-41 only but
-remains unstarted. Await the director’s next bounded-task direction; do not
+Mobile Mining Platform T083 is accepted. T084 is authorized for this unit only
+but remains unstarted. Await the director’s next bounded-task direction; do not
 begin another unit automatically. Design-only packages use the targeted
 `design-package` profile; no game export, M6 networking or M7 exploration stack
 is required.

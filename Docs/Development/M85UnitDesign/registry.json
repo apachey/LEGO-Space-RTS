@@ -1,8 +1,8 @@
 {
   "task": "T083",
   "target": 35,
-  "authoredProposals": 15,
-  "directorAccepted": 14,
+  "authoredProposals": 16,
+  "directorAccepted": 15,
   "productionModels": 0,
   "assets": [
     {
@@ -411,9 +411,39 @@
     },
     {
       "stableId": "unit.astronauts.mobile_mining_platform",
-      "status": "QUEUED_NOT_AUTHORED",
-      "directorAccepted": false,
-      "productionAuthorized": false
+      "file": "Batch02Astronauts/mobile_mining_platform_design_spec_20260925_v1.md",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "sourceEvidence": {
+        "manifest": "Batch02Astronauts/mobile_mining_platform_source_manifest_20260925_v1.json",
+        "sourceSets": [
+          "7645",
+          "7648",
+          "7693"
+        ],
+        "provenance": "Official LEGO instruction sources and hashes are inherited from the accepted T082 packet and its audited page manifests. The two appearance studies are separately identified as preproduction review material."
+      },
+      "designSpec": "Batch02Astronauts/mobile_mining_platform_design_spec_20260925_v1.md",
+      "productionDesignTarget": {
+        "mode": "ADAPTED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch02Astronauts/mobile_mining_platform_director_review_20260925_v1.html",
+        "rationale": "Two materially different front-tool configurations share one adapted tracked chassis and directly docked upper module; the exact Ore Drill composite is not a completed source model.",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch02Astronauts/mobile_mining_platform_design_spec_20260925_v1.md",
+        "sourceImage": "ArtSource/M85/Preproduction/MobileMiningPlatformSourceRebuildV1/mobile_mining_platform_source_rebuild_rev2.png",
+        "reviewReady": true,
+        "appearanceSummary": "One low tracked white/orange platform in two accepted targets: Crystal Reaper with twin large harvesting wheels, and Ore Drill with one compact forward spiral drill; both retain two independent manipulators and a directly docked upper module."
+      },
+      "gameAdaptations": [
+        "7645, 7648 and 7693 donor parts form one selectable platform with two Service-refit tool configurations.",
+        "Ore Drill replaces only the twin-wheel head with one compact spiral drill on articulated support.",
+        "A visible material path and cargo route connect the working head to the directly docked upper module."
+      ],
+      "review": "Batch02Astronauts/mobile_mining_platform_director_review_20260925_v1.html",
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-25",
+      "acceptanceNote": "Директор затвердив ADAPTED Production Design Target: одна платформа у двох конфігураціях — Crystal Reaper із парними жниварними колесами та Ore Drill з одним компактним спіральним буром; обидві з двома окремими маніпуляторами й прямо пристикованим верхнім модулем. T084 авторизовано лише для Mobile Mining Platform і не розпочато."
     },
     {
       "stableId": "unit.astronauts.mx71_recon_dropship",

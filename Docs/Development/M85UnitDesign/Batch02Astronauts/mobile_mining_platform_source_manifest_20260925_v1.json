@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "stableId": "unit.astronauts.mobile_mining_platform",
+  "status": "DIRECTOR_ACCEPTED_T083_PRODUCTION_TARGET",
+  "directorAcceptanceDate": "2026-09-25",
+  "sourceSets": ["7645", "7648", "7693"],
+  "officialReferences": [
+    {
+      "setId": "7645",
+      "title": "MT-61 Crystal Reaper",
+      "url": "https://www.lego.com/en-us/service/building-instructions/7645",
+      "pdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4549395.pdf",
+      "localAuditedPages": ["ArtSource/M85/Preproduction/MobileMiningPlatformSourceRebuildV1/reference_book2_p45.png", "ArtSource/M85/Preproduction/MobileMiningPlatformSourceRebuildV1/reference_book1_p50.png", "ArtSource/M85/Preproduction/MobileMiningPlatformSourceRebuildV1/reference_book2_p65.png"],
+      "sha256FromT082Manifest": ["70edb1b9ecfa99ef1b7447383c5296ef10c176110734005f200862788e5cf7e4", "b6f33c3b51a308e9d62c983dfdd4e8b3f28a7e768cb792ed37aa600409d5d0b4", "9e6337f135c52d88c9da52aa702a63935784a39bff8966824fad705d1be9ca95"]
+    },
+    {
+      "setId": "7648",
+      "title": "MT-21 Mobile Mining Unit",
+      "url": "https://www.lego.com/en-us/service/building-instructions/7648",
+      "pdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4525546.pdf",
+      "localAuditedPage": "ArtSource/M85/Preproduction/MobileMiningPlatformOreDrillV1/reference_7648_p28.png",
+      "sha256FromT082Manifest": "84356fe27433f3ebbf9ba87621fec9b60bf772725dfe703dab134bba9cabd7a5"
+    },
+    {
+      "setId": "7693",
+      "title": "ETX Alien Strike",
+      "url": "https://www.lego.com/en-us/service/building-instructions/7693",
+      "pdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4523183.pdf",
+      "localAuditedPage": "ArtSource/M85/Preproduction/MobileMiningPlatformOreDrillV1/reference_7693_p16.png",
+      "sha256FromT082Manifest": "d687ee17b4578752619f790a9b50818b3f744a876ba1c56f7d9d6aa32b125a2b"
+    }
+  ],
+  "productionTargets": [
+    {
+      "configuration": "CRYSTAL_REAPER",
+      "file": "ArtSource/M85/Preproduction/MobileMiningPlatformSourceRebuildV1/mobile_mining_platform_source_rebuild_rev2.png",
+      "sha256": "9011581e8d388e4f04b8a044d4a39f23f695ae2899252b66684e48b9e2311f1d",
+      "authority": "Director-accepted T083 Production Design Target for this configuration; an appearance target, not an exact LEGO build or production model."
+    },
+    {
+      "configuration": "ORE_DRILL",
+      "file": "ArtSource/M85/Preproduction/MobileMiningPlatformOreDrillV1/mobile_mining_platform_ore_drill_rev1.png",
+      "sha256": "1f0822e7e6114452d32926e6e0177d0761fc60807afad4bd30b2651bf5c2b5d9",
+      "authority": "Director-accepted T083 adapted Production Design Target for this configuration; an appearance target, not an exact LEGO build or production model."
+    }
+  ],
+  "limitations": "The exact composite and refit attachment are adaptations, not LEGO source builds. The accepted grayscale render studies do not prove exact parts, hidden fit, final color, T084 geometry or gameplay-camera readability."
+}
