@@ -143,6 +143,10 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 - ETX Alien Strike T083 was director-accepted on 2026-09-26 via its
   SOURCE_LOCKED official LEGO 7693 Production Design Target. T084 is authorized
   for ETX Alien Strike only and remains unstarted.
+- ETX Alien Infiltrator T083 was director-accepted on 2026-09-26 via the
+  SOURCE_LOCKED LEGO 7646 Production Design Target: long flight craft and the
+  same body transformed into a three-contact walker, with no visible adaptations.
+  T084 is authorized for this unit only and remains unstarted.
 - Workflow cleanup is merged and synchronized locally. This synchronization
   preserves all prior T083 content; it does not continue design or infer approval.
 
@@ -175,9 +179,9 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 
 ## Next approved action
 
-ETX Alien Strike T083 `SOURCE_LOCKED` was accepted on 2026-09-26. T084 is
-authorized for this unit only and remains unstarted. No next unit or T084 work
-is begun by this checkpoint. Design-only packages use the targeted
+ETX Alien Infiltrator T083 `SOURCE_LOCKED` was accepted on 2026-09-26. T084
+is authorized for this unit only and remains unstarted. Do not start another
+unit or begin T084. Design-only packages use the targeted
 `design-package` profile; no game export, M6 networking or M7 exploration stack
 is required.
 
