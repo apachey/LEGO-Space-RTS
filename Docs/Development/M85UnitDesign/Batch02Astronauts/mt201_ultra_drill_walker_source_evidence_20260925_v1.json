@@ -1,0 +1,46 @@
+{
+  "stableId": "unit.astronauts.mt201_ultra_drill_walker",
+  "sourceSet": "7649",
+  "targetMode": "SOURCE_LOCKED",
+  "completedModelPhoto": {
+    "url": "https://media.kijiji.ca/api/v1/ca-prod-fsbo-ads/images/5a/5ad1cce0-199f-4e75-9318-44b3f6b88a39?rule=kijijica-960-jpg",
+    "pageUrl": "https://www.kijiji.ca/v-toys-games/winnipeg/lego-mars-mission-mt-201-ultra-drill-walker-7649/1726667053",
+    "description": "Independent private-sale photograph of the assembled LEGO 7649 set; not an official LEGO image. It includes the walker, detached small craft, packaging and other set contents. The review crops the source image to make the completed walker the dominant visual.",
+    "sha256": null,
+    "hashNote": "Remote image retained by URL; no local copy or hash is claimed."
+  },
+  "officialSources": [
+    {
+      "label": "LEGO building instructions — set 7649",
+      "url": "https://www.lego.com/en-us/service/buildinginstructions/7649",
+      "purpose": "Official identity, source product and both instruction books."
+    },
+    {
+      "label": "LEGO instruction book 1",
+      "url": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4538485.pdf",
+      "purpose": "Official construction and travel configuration evidence."
+    },
+    {
+      "label": "LEGO instruction book 2",
+      "url": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4538486.pdf",
+      "purpose": "Official drill assembly and four-leg walker deployment evidence."
+    }
+  ],
+  "crossChecks": [
+    {
+      "label": "LEGO.com product-description excerpt, preserved by LEGO Space Wiki",
+      "url": "https://lego-space.fandom.com/wiki/7649_MT-201_Ultra-Drill_Walker",
+      "purpose": "Cross-check that the observation shuttle detaches; secondary source, not an appearance authority."
+    },
+    {
+      "label": "Eurobricks 2008 review",
+      "url": "https://www.eurobricks.com/forum/forums/topic/19697-mt-201-ultra-drill-walker-review/",
+      "purpose": "Independent review and additional physical-model context."
+    }
+  ],
+  "evidenceLimits": [
+    "The private-sale image is not a controlled studio photograph and contains unrelated set contents outside the review crop.",
+    "Official instructions show manually positioned states, not an animated gait or timed transition.",
+    "The source identity includes a detachable observation shuttle; it remains a visual module of this package and does not define a separate gameplay unit."
+  ]
+}

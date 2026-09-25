@@ -119,7 +119,11 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 - MT-51 Claw-Tank was director-accepted on 2026-09-25 via the ADAPTED T083
   Production Design Target supplied by the director. T084 is authorized for
   MT-51 only and remains unstarted.
-- The remaining 17 packages (3 Astronauts, 6 Aliens, 8 Martians) are queued,
+- MT-201 Ultra-Drill Walker is director-accepted on 2026-09-25 via its
+  SOURCE_LOCKED LEGO 7649 target, retaining the detachable observation shuttle
+  as a visual module of this unit. T084 is authorized for MT-201 only and has
+  not started.
+- The remaining 16 packages (2 Astronauts, 6 Aliens, 8 Martians) are queued,
   not authored. T084 modeling has not started; no production model is approved.
 - Workflow cleanup is merged and synchronized locally. This synchronization
   preserves all prior T083 content; it does not continue design or infer approval.
@@ -133,8 +137,9 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   Rover, Hover Scout, Granite Grinder, Drill Craft, Rapid Rider, Loader Dozer,
   Chrome Crusher, Tunnel Transport, Mono Jet, Solar Explorer, Mission Fighter,
   MX-41 Switch Fighter, Mobile Mining Platform, MX-71 Recon Dropship, MT-51
-  Claw-Tank, MT-101 Armored Drilling Unit and T3-Trike have explicit director
-  acceptance; T084 is authorized for those units only and has not started.
+  Claw-Tank, MT-101 Armored Drilling Unit, MT-201 Ultra-Drill Walker and T3-Trike
+  have explicit director acceptance; T084 is authorized for those units only and
+  has not started.
 - `BLOCKING_LATER`: actual gameplay-camera/model-LOD review belongs to
   T084/T086 after production geometry exists; final animation belongs to T087.
 - Martian sources 1195/3750 retain bounded archival evidence gaps. Do not invent
@@ -150,9 +155,11 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 
 ## Next approved action
 
-MT-101 Armored Drilling Unit T083 is accepted. T084 is authorized for MT-101
-only but remains unstarted. Await the director’s next bounded-task direction;
-do not begin another unit automatically. Design-only packages use the targeted
+MT-201 Ultra-Drill Walker T083 is accepted via its SOURCE_LOCKED completed LEGO
+7649 appearance, including the detachable observation shuttle as a visual
+module of this unit; visible adaptations: none. T084 is authorized for MT-201
+only but remains unstarted. Do not begin another unit automatically. Design-only
+packages use the targeted
 `design-package` profile; no game export, M6 networking or M7 exploration stack
 is required.
 

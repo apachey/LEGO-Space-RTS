@@ -1,8 +1,8 @@
 {
   "task": "T083",
   "target": 35,
-  "authoredProposals": 19,
-  "directorAccepted": 18,
+  "authoredProposals": 20,
+  "directorAccepted": 19,
   "productionModels": 0,
   "assets": [
     {
@@ -538,9 +538,31 @@
     },
     {
       "stableId": "unit.astronauts.mt201_ultra_drill_walker",
-      "status": "QUEUED_NOT_AUTHORED",
-      "directorAccepted": false,
-      "productionAuthorized": false
+      "file": "Batch02Astronauts/mt201_ultra_drill_walker_proposal_20260925_v1.md",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "sourceEvidence": {
+        "manifest": "Batch02Astronauts/mt201_ultra_drill_walker_source_evidence_20260925_v1.json",
+        "sourceSet": "7649",
+        "provenance": "Official LEGO instruction books define the source construction; the displayed completed-model photograph is an independent private-sale photo and is labelled as such."
+      },
+      "designSpec": "Batch02Astronauts/mt201_ultra_drill_walker_design_spec_20260925_v1.md",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch02Astronauts/mt201_ultra_drill_walker_director_review_20260925_v1.html",
+        "rationale": "Completed LEGO 7649 already represents the intended walker appearance; retain the source-built observation shuttle as a visual module without adding geometry.",
+        "designSpec": "Batch02Astronauts/mt201_ultra_drill_walker_design_spec_20260925_v1.md",
+        "sourceImage": "https://media.kijiji.ca/api/v1/ca-prod-fsbo-ads/images/5a/5ad1cce0-199f-4e75-9318-44b3f6b88a39?rule=kijijica-960-jpg",
+        "reviewReady": true,
+        "appearanceSummary": "Source-faithful white/orange/black LEGO 7649 four-legged drill walker with central upright drill and orange cockpit; retain its source-built detachable observation shuttle as part of this unit's visual package. No visible game adaptation is proposed."
+      },
+      "gameAdaptations": [],
+      "review": "Batch02Astronauts/mt201_ultra_drill_walker_director_review_20260925_v1.html",
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-25",
+      "acceptanceNote": "Директор затвердив SOURCE_LOCKED Production Design Target LEGO 7649 для MT-201 із човником спостереження як візуальним модулем одного юніта. T084 авторизовано лише для цього юніта; роботу не розпочато."
     },
     {
       "stableId": "unit.astronauts.mx81_operations_aircraft",
