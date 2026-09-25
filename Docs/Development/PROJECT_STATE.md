@@ -143,6 +143,8 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 - Workflow cleanup is merged and synchronized locally. This synchronization
   preserves all prior T083 content; it does not continue design or infer approval.
 
+- Rock Raiders Crew T083 was director-accepted on 2026-09-26 via its SOURCE_LOCKED 4930 Production Design Target covering all five source-specific Crew looks. T084 is authorized for Crew only and has not started.
+
 ## Blockers and deferred gates
 
 - `BLOCKING_NOW`: each T083 asset needs explicit director design acceptance
