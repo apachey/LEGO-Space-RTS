@@ -1,8 +1,8 @@
 {
   "task": "T083",
   "target": 35,
-  "authoredProposals": 17,
-  "directorAccepted": 16,
+  "authoredProposals": 18,
+  "directorAccepted": 17,
   "productionModels": 0,
   "assets": [
     {
@@ -479,9 +479,34 @@
     },
     {
       "stableId": "unit.astronauts.mt51_claw_tank",
-      "status": "QUEUED_NOT_AUTHORED",
-      "directorAccepted": false,
-      "productionAuthorized": false
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "file": "Batch02Astronauts/mt51_claw_tank_design_spec_20260925_v1.md",
+      "designSpec": "Batch02Astronauts/mt51_claw_tank_design_spec_20260925_v1.md",
+      "review": "Batch02Astronauts/mt51_claw_tank_director_review_20260925_v1.html",
+      "sourceEvidence": {
+        "manifest": "ArtSource/M85/T083/MT51ClawTankV1/source_manifest_20260925_v1.json",
+        "sourceSet": "7697",
+        "provenance": "Official LEGO instruction PDF 4515381, visually audited in the accepted T082 evidence; target-generation inputs include the preserved director-approved comparative arm correction."
+      },
+      "productionDesignTarget": {
+        "mode": "ADAPTED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Batch02Astronauts/mt51_claw_tank_director_review_20260925_v1.html",
+        "rationale": "Isolate the completed LEGO 7697 vehicle in a clean, source-colored game target while preserving the director-approved asymmetric arm arrangement.",
+        "designSpec": "Batch02Astronauts/mt51_claw_tank_design_spec_20260925_v1.md",
+        "targetImage": "ArtSource/M85/T083/MT51ClawTankV1/mt51_claw_tank_target_20260925_v1.png",
+        "reviewReady": true,
+        "appearanceSummary": "Low wide white-orange twin-track vehicle with a circular rotating upper body, orange canopy, viewer-left articulated claw and opposing viewer-right twin-bar tool/weapon arm."
+      },
+      "gameAdaptations": [
+        "Clean isolated view removes the neighboring mixed-set craft and loose components from the design target.",
+        "Source colors are restored around the previously accepted asymmetric arm arrangement."
+      ],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-25",
+      "acceptanceNote": "Директор затвердив ADAPTED Production Design Target MT-51 Claw-Tank: надсиланий кольоровий цільовий вигляд, низька широка гусенична база, круглий помаранчевий корпус, клешня зліва й парний інструмент справа. T084 авторизовано лише для MT-51; моделювання не розпочато."
     },
     {
       "stableId": "unit.astronauts.mt101_armored_drilling_unit",

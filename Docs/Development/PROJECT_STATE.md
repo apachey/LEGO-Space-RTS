@@ -116,7 +116,10 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   with four Crew. Tunnel Transport's loaded target is director-accepted; its
   Design Spec resolves the upper-hanger ambiguity, while the raster does not
   prove hidden load geometry.
-- The remaining 19 packages (5 Astronauts, 6 Aliens, 8 Martians) are queued,
+- MT-51 Claw-Tank was director-accepted on 2026-09-25 via the ADAPTED T083
+  Production Design Target supplied by the director. T084 is authorized for
+  MT-51 only and remains unstarted.
+- The remaining 18 packages (4 Astronauts, 6 Aliens, 8 Martians) are queued,
   not authored. T084 modeling has not started; no production model is approved.
 - Workflow cleanup is merged and synchronized locally. This synchronization
   preserves all prior T083 content; it does not continue design or infer approval.
@@ -128,9 +131,10 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   Updated T083 workflow requires source evidence, a separately identified
   Production Design Target, and a Design Spec before a new design acceptance.
   Rover, Hover Scout, Granite Grinder, Drill Craft, Rapid Rider, Loader Dozer,
-  Chrome Crusher, Tunnel Transport, Mono Jet, Solar Explorer, Mission Fighter, MX-41 Switch Fighter, Mobile Mining Platform, MX-71 Recon Dropship and
-  T3-Trike have
-  explicit director acceptance; T084 is authorized for those units only and has not started.
+  Chrome Crusher, Tunnel Transport, Mono Jet, Solar Explorer, Mission Fighter,
+  MX-41 Switch Fighter, Mobile Mining Platform, MX-71 Recon Dropship, MT-51
+  Claw-Tank and T3-Trike have explicit director acceptance; T084 is authorized
+  for those units only and has not started.
 - `BLOCKING_LATER`: actual gameplay-camera/model-LOD review belongs to
   T084/T086 after production geometry exists; final animation belongs to T087.
 - Martian sources 1195/3750 retain bounded archival evidence gaps. Do not invent
@@ -146,7 +150,7 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 
 ## Next approved action
 
-MX-71 Recon Dropship T083 is accepted. T084 is authorized for MX-71 only but
+MT-51 Claw-Tank T083 is accepted. T084 is authorized for MT-51 only but
 remains unstarted. Await the director’s next bounded-task direction; do not
 begin another unit automatically. Design-only packages use the targeted
 `design-package` profile; no game export, M6 networking or M7 exploration stack

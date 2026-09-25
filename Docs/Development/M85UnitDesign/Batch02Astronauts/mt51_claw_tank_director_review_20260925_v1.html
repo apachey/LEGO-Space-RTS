@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MT-51 Claw-Tank — рішення щодо візуального дизайну</title>
+<style>
+:root{color-scheme:light;--paper:#f4f2ed;--white:#fff;--ink:#20262b;--muted:#5a6268;--line:#d5d3cd;--orange:#e66b1a;--amber:#f0aa3c;--navy:#344553;--soft:#e9e6df;--green:#32705f}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.page{max-width:1440px;margin:0 auto;padding:28px 38px 44px}.topline{display:flex;justify-content:space-between;gap:24px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:17px}
+.identity{display:flex;align-items:center;gap:14px}.mark{width:44px;height:44px;border:2px solid var(--orange);border-radius:50%;display:grid;place-items:center;background:#fff}.mark svg{width:26px;height:26px;stroke:var(--navy);fill:none;stroke-width:1.8}
+.eyebrow{font-size:12px;font-weight:750;letter-spacing:.12em;color:var(--muted);text-transform:uppercase}.name{font-size:30px;line-height:1.1;margin:3px 0 0;font-weight:760;letter-spacing:-.025em}.status{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}.pill{padding:8px 12px;border-radius:4px;font-weight:760;font-size:12px;letter-spacing:.035em}.review{background:#e4eee9;color:#245444;border:1px solid #bad0c6}.production{background:#fff1df;color:#874310;border:1px solid #e9c29a}
+.meta{display:flex;align-items:center;gap:12px;margin:14px 0 18px;color:var(--muted);font-size:14px}.faction{font-weight:730;color:var(--navy)}.sep{color:#aaa}.mode{font:700 12px ui-monospace,SFMono-Regular,Menlo,monospace;background:#e7e4dd;padding:4px 8px;border-radius:3px;color:#343a3e}
+.target{background:var(--white);border:1px solid var(--line);border-top:4px solid var(--orange);padding:16px 18px 14px;box-shadow:0 5px 18px #20262b0b}.targethead{display:flex;justify-content:space-between;align-items:baseline;gap:18px;margin-bottom:10px}.target h2{font-size:18px;margin:0;letter-spacing:.005em}.sub{font-size:12px;color:var(--muted)}.hero{display:block;width:100%;height:min(59vh,650px);min-height:390px;object-fit:contain;background:#f8f8f7;border:1px solid #e2e0db}.caption{display:flex;justify-content:space-between;gap:20px;color:var(--muted);font-size:12px;margin-top:8px}
+.decisionrow{display:grid;grid-template-columns:1.15fr 1fr;gap:16px;margin-top:16px}.mini{background:#fff;border:1px solid var(--line);padding:13px 16px}.mini h2{font-size:14px;margin:0 0 7px;color:var(--navy)}.mini p{margin:0;color:#343b40;font-size:14px}.mini ul{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:5px 15px}.mini li{font-size:13px}.mini li:before{content:"✓";color:var(--green);font-weight:800;margin-right:7px}
+.sections{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}.card{background:#fff;border:1px solid var(--line);padding:18px}.card h2{font-size:17px;margin:0 0 10px}.card ul{margin:0;padding-left:19px}.card li{margin:5px 0}.links{display:flex;flex-wrap:wrap;gap:8px 18px}.links a{color:#945016;font-weight:650;text-underline-offset:3px}.ask{background:#f2f5f6;border-left:4px solid var(--navy)}.ask p{margin:0}.ask strong{color:#273d4b}.fine{font-size:13px;color:var(--muted)}details{margin-top:14px;border:1px solid var(--line);background:#efede8;padding:12px 15px}summary{cursor:pointer;font-weight:680;color:#41484d}details dl{display:grid;grid-template-columns:180px 1fr;gap:6px 14px;font-size:12px;margin:13px 0 2px}dt{color:var(--muted)}dd{margin:0;overflow-wrap:anywhere}
+@media(max-width:850px){.page{padding:18px 14px 30px}.topline{align-items:flex-start;flex-direction:column}.status{justify-content:flex-start}.name{font-size:25px}.hero{height:auto;min-height:0}.decisionrow,.sections{grid-template-columns:1fr}.meta{flex-wrap:wrap}.caption{display:block}.caption span{display:block;margin-top:4px}}
+@media print{body{background:#fff}.page{padding:10px;max-width:none}.hero{height:58vh}.target,.card,.mini{box-shadow:none;break-inside:avoid}}
+</style>
+</head>
+<body>
+<main class="page">
+  <header class="topline">
+    <div class="identity">
+      <div class="mark" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M5 21h22M8 21l2-6h12l4 6M11 15l2-4h7l2 4M11 24a2 2 0 1 0 0 .1M23 24a2 2 0 1 0 0 .1M16 11V5m-3 2h6"/><path d="M4 25h24"/></svg></div>
+      <div><div class="eyebrow">Astronauts · Mission Systems</div><h1 class="name">MT-51 Claw-Tank</h1></div>
+    </div>
+    <div class="status"><span class="pill review">ДИЗАЙН ПРИЙНЯТО · 25.09.2026</span><span class="pill production">T084 — НЕ РОЗПОЧАТО</span></div>
+  </header>
+  <div class="meta"><span class="faction">Фракція: Астронавти</span><span class="sep">•</span><span>Роль: фронтовий бій проти легких і середніх цілей</span><span class="sep">•</span><span class="mode">ADAPTED</span></div>
+
+  <section class="target" aria-labelledby="target-title">
+    <div class="targethead"><h2 id="target-title">Production Design Target</h2><span class="sub">Прийнятий ігровий цільовий вигляд</span></div>
+    <a href="../../../../ArtSource/M85/T083/MT51ClawTankV1/mt51_claw_tank_target_20260925_v1.png" aria-label="Відкрити Production Target у повному розмірі"><img class="hero" src="../../../../ArtSource/M85/T083/MT51ClawTankV1/mt51_claw_tank_target_20260925_v1.png" alt="Повністю зібраний LEGO-подібний біло-помаранчевий MT-51 Claw-Tank: широка гусенична база, круглий верх із помаранчевою кабіною, клешня зліва та парний інструмент справа"></a>
+    <div class="caption"><span>Чиста ігрова подача зберігає силует LEGO 7697 і прийняте розташування рук.</span><span>Точні анімації та розміри перевіряються пізніше.</span></div>
+  </section>
+
+  <div class="decisionrow">
+    <section class="mini"><h2>Видимі адаптації</h2><ul><li>Чистий ракурс без сусіднього наборного апарата.</li><li>Кольори Mars Mission відновлено за LEGO 7697.</li><li>Клешня ліворуч, парний інструмент праворуч.</li></ul></section>
+    <section class="mini"><h2>Затверджено директором</h2><p>Силует, пропорції, біло-помаранчева ідентичність LEGO 7697 та пара асиметричних рук — клешня зліва, парний інструмент справа.</p></section>
+  </div>
+
+  <div class="sections">
+    <section class="card"><h2>Конструкція та рух</h2><ul><li>Низькі широкі парні гусениці несуть поворотний круглий корпус.</li><li>Клешня й протилежний парний інструмент залишаються довгими та асиметричними.</li><li>Корпус може повертатися незалежно від напрямку руху бази.</li></ul></section>
+    <section class="card"><h2>Джерела</h2><div class="links"><a href="https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4515381.pdf">LEGO 7697 · офіційний посібник (PDF)</a><a href="../../../../ArtSource/M85/Preproduction/ClawTankArmCorrectionV2/claw_tank_arms_rev2.png">Попереднє погоджене уточнення рук</a><a href="../../../../ArtSource/M85/T083/MT51ClawTankV1/source_manifest_20260925_v1.json">Маніфест джерела</a></div><p class="fine">Сторінка 66 також показує інший апарат і вільні деталі; вони не належать до MT-51.</p></section>
+    <section class="card ask"><h2>Рішення директора · 25.09.2026</h2><p><strong>Production Design Target прийнято.</strong> T084 авторизовано лише для MT-51, але моделювання не розпочато. Точний ритм багатоцільової атаки не затверджувався.</p></section>
+    <section class="card"><h2>Що залишиться для наступних етапів</h2><p class="fine">Точний ритм багатоцільової атаки, рух під час відступу, ігровий масштаб, LOD і читабельність з камери перевірятимуться у виробничих етапах. Посібник LEGO не задає ці параметри.</p></section>
+  </div>
+
+  <details><summary>Технічні деталі</summary><dl>
+    <dt>Stable ID</dt><dd>unit.astronauts.mt51_claw_tank</dd>
+    <dt>Специфікація</dt><dd><a href="mt51_claw_tank_design_spec_20260925_v1.md">mt51_claw_tank_design_spec_20260925_v1.md</a></dd>
+    <dt>Маніфест</dt><dd><a href="../../../../ArtSource/M85/T083/MT51ClawTankV1/source_manifest_20260925_v1.json">source_manifest_20260925_v1.json</a></dd>
+    <dt>Зображення цілі</dt><dd>mt51_claw_tank_target_20260925_v1.png · SHA-256 у маніфесті</dd>
+    <dt>Статус</dt><dd>Дизайн прийнятий 2026-09-25. T084 авторизовано лише для MT-51, моделювання не розпочато.</dd>
+  </dl></details>
+</main>
+</body>
+</html>
