@@ -93,6 +93,10 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   and Ore Drill single-spiral configurations, two independent manipulators and
   directly docked upper module. T084 is authorized for this unit only and has
   not started.
+- MX-71 Recon Dropship is director-accepted on 2026-09-25 via its ADAPTED
+  Production Design Target based on the completed LEGO 7692 carrier and its
+  open underside cargo attachment. T084 is authorized for MX-71 only and
+  remains unstarted; final clearance of each eligible payload is a T084 check.
 - Source/construction/state/material sheets and the local visual review are at
   [Batch 01 review](M85UnitDesign/Batch01RockRaiders/review.html) and
   [Expedition Crew review](M85UnitDesign/Batch02Astronauts/review.html).
@@ -112,7 +116,7 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   with four Crew. Tunnel Transport's loaded target is director-accepted; its
   Design Spec resolves the upper-hanger ambiguity, while the raster does not
   prove hidden load geometry.
-- The remaining 20 packages (6 Astronauts, 6 Aliens, 8 Martians) are queued,
+- The remaining 19 packages (5 Astronauts, 6 Aliens, 8 Martians) are queued,
   not authored. T084 modeling has not started; no production model is approved.
 - Workflow cleanup is merged and synchronized locally. This synchronization
   preserves all prior T083 content; it does not continue design or infer approval.
@@ -124,7 +128,7 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   Updated T083 workflow requires source evidence, a separately identified
   Production Design Target, and a Design Spec before a new design acceptance.
   Rover, Hover Scout, Granite Grinder, Drill Craft, Rapid Rider, Loader Dozer,
-  Chrome Crusher, Tunnel Transport, Mono Jet, Solar Explorer, Mission Fighter, MX-41 Switch Fighter, Mobile Mining Platform and
+  Chrome Crusher, Tunnel Transport, Mono Jet, Solar Explorer, Mission Fighter, MX-41 Switch Fighter, Mobile Mining Platform, MX-71 Recon Dropship and
   T3-Trike have
   explicit director acceptance; T084 is authorized for those units only and has not started.
 - `BLOCKING_LATER`: actual gameplay-camera/model-LOD review belongs to
@@ -142,8 +146,8 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 
 ## Next approved action
 
-Mobile Mining Platform T083 is accepted. T084 is authorized for this unit only
-but remains unstarted. Await the director’s next bounded-task direction; do not
+MX-71 Recon Dropship T083 is accepted. T084 is authorized for MX-71 only but
+remains unstarted. Await the director’s next bounded-task direction; do not
 begin another unit automatically. Design-only packages use the targeted
 `design-package` profile; no game export, M6 networking or M7 exploration stack
 is required.

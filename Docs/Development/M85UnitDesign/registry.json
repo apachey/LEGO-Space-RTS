@@ -1,8 +1,8 @@
 {
   "task": "T083",
   "target": 35,
-  "authoredProposals": 16,
-  "directorAccepted": 15,
+  "authoredProposals": 17,
+  "directorAccepted": 16,
   "productionModels": 0,
   "assets": [
     {
@@ -447,9 +447,35 @@
     },
     {
       "stableId": "unit.astronauts.mx71_recon_dropship",
-      "status": "QUEUED_NOT_AUTHORED",
-      "directorAccepted": false,
-      "productionAuthorized": false
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "file": "Batch02Astronauts/mx71_recon_dropship_design_spec_20260925_v2.md",
+      "designSpec": "Batch02Astronauts/mx71_recon_dropship_design_spec_20260925_v2.md",
+      "review": "Batch02Astronauts/mx71_recon_dropship_director_review_20260925_v2.html",
+      "sourceEvidence": {
+        "manifest": "Batch02Astronauts/mx71_recon_dropship_source_evidence_20260925_v2.json",
+        "sourceSet": "7692",
+        "provenance": "Official LEGO instruction PDF 4524070 plus independent JANG and Eurobricks completed-model photographs; source hashes and provenance are recorded in the unit manifest."
+      },
+      "productionDesignTarget": {
+        "mode": "ADAPTED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch02Astronauts/mx71_recon_dropship_director_review_20260925_v2.html",
+        "rationale": "Use the source-faithful completed LEGO 7692 as the carrier target; adapt only the open underside connection to accept one permitted game payload at a time.",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch02Astronauts/mx71_recon_dropship_design_spec_20260925_v2.md",
+        "targetImage": "ArtSource/M85/T083/MX71ReconDropshipV2/mx71-recon-dropship-target-20260925-v2.png",
+        "reviewReady": true,
+        "appearanceSummary": "Source-faithful white-orange LEGO 7692: long narrow high wing, amber cockpit, twin rear engine pods, orange tanks and flexible tubes, compact dark landing supports; one permitted game payload attaches visibly below the aircraft."
+      },
+      "gameAdaptations": [
+        "One permitted payload at a time attaches below the source-faithful aircraft: Crew, Rover, T3-Trike or Claw-Tank.",
+        "Keep the LEGO 7692 silhouette and white/orange source palette, including its amber transparent cockpit.",
+        "Short blue-tipped forward details stay on the airframe, separate from any payload."
+      ],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-25",
+      "acceptanceNote": "Директор прийняв ADAPTED Production Design Target MX-71 Recon Dropship 2026-09-25: зберегти силует і пропорції зібраного LEGO 7692, бурштинову кабіну, помаранчеві баки й трубки та компактні темні опори; під корпусом — один дозволений ігровий вантаж. T084 авторизовано лише для MX-71 і не розпочато."
     },
     {
       "stableId": "unit.astronauts.mt51_claw_tank",
