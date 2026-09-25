@@ -1,8 +1,8 @@
 {
   "task": "T083",
   "target": 35,
-  "authoredProposals": 23,
-  "directorAccepted": 22,
+  "authoredProposals": 24,
+  "directorAccepted": 23,
   "productionModels": 0,
   "assets": [
     {
@@ -661,9 +661,35 @@
     },
     {
       "stableId": "unit.aliens.razor_skimmer",
-      "status": "QUEUED_NOT_AUTHORED",
-      "directorAccepted": false,
-      "productionAuthorized": false
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "file": "Batch03Aliens/razor_skimmer_design_spec_20260925_v2.md",
+      "sourceEvidence": {
+        "manifest": "ArtSource/M85/T083/RazorSkimmerV1/source_evidence_manifest.json",
+        "sourceSets": ["7645", "7692", "7697"],
+        "provenance": "Official LEGO instructions establish the donor craft only; no source set depicts the complete Razor Skimmer composition."
+      },
+      "designSpec": "Batch03Aliens/razor_skimmer_design_spec_20260925_v2.md",
+      "productionDesignTarget": {
+        "mode": "ORIGINAL_EXTENDED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch03Aliens/razor_skimmer_director_review_20260925_v2.html",
+        "rationale": "The accepted T082 packet defines a composite family and reserves donor selection and completed composition for T083; the T083 target resolves the visual choices explicitly.",
+        "designSpec": "Batch03Aliens/razor_skimmer_design_spec_20260925_v2.md",
+        "targetImage": "ArtSource/M85/T083/RazorSkimmerV1/razor_skimmer_production_target_20260925_v3.png",
+        "reviewReady": true,
+        "appearanceSummary": "Accepted compact low black Alien hover skimmer with two inward-swept forward prongs around an open V, an exposed central lime core in an open frame, and small aft propulsion. Target image is a visual proposal, not a part-verified build."
+      },
+      "review": "Batch03Aliens/razor_skimmer_director_review_20260925_v2.html",
+      "gameAdaptations": [
+        "Use a compact low skimmer silhouette with two short inward-swept forward prongs and a clear open V gap.",
+        "Keep the central lime energy form exposed in an open frame; the vehicle has no enclosed or glass cockpit.",
+        "Keep aft propulsion small and subordinate to the light craft silhouette."
+      ],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-26",
+      "acceptanceNote": "Director accepted the Razor Skimmer ORIGINAL_EXTENDED Production Design Target on 2026-09-26. T084 is authorized for this unit only and has not started; exact LEGO elements and physical connections remain unverified."
     },
     {
       "stableId": "unit.aliens.etx_alien_strike",

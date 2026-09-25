@@ -135,6 +135,11 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 - Alien Jet T083 is director-accepted via its unchanged `SOURCE_LOCKED` LEGO
   5617 Production Design Target. T084 is authorized for Alien Jet only and has
   not started.
+- Razor Skimmer T083 was director-accepted on 2026-09-26 via its
+  `ORIGINAL_EXTENDED` target: a compact low hover skimmer with two short inward-
+  swept prongs around an open V and an exposed lime core. T084 is authorized for
+  Razor Skimmer only and has not started; exact LEGO elements and connections
+  remain unverified.
 - Workflow cleanup is merged and synchronized locally. This synchronization
   preserves all prior T083 content; it does not continue design or infer approval.
 
@@ -147,7 +152,7 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   Rover, Hover Scout, Granite Grinder, Drill Craft, Rapid Rider, Loader Dozer,
   Chrome Crusher, Tunnel Transport, Mono Jet, Solar Explorer, Mission Fighter,
   MX-41 Switch Fighter, Mobile Mining Platform, MX-71 Recon Dropship, MT-51
-  Claw-Tank, MT-101 Armored Drilling Unit, MT-201 Ultra-Drill Walker, ETX Servitor, Alien Jet and T3-Trike
+  Claw-Tank, MT-101 Armored Drilling Unit, MT-201 Ultra-Drill Walker, ETX Servitor, Alien Jet, Razor Skimmer and T3-Trike
   have explicit director acceptance; T084 is authorized for those units only and
   has not started.
 - `BLOCKING_LATER`: actual gameplay-camera/model-LOD review belongs to
@@ -165,11 +170,10 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 
 ## Next approved action
 
-Alien Jet T083 is director-accepted via its unchanged `SOURCE_LOCKED` LEGO 5617
-Production Design Target. T084 is authorized for Alien Jet only and remains
-not started. Do not begin another T083 unit or T084 automatically. Design-only
-packages use the targeted `design-package` profile; no game export, M6
-networking or M7 exploration stack is required.
+Razor Skimmer T083 `ORIGINAL_EXTENDED` is director-accepted. T084 is authorized
+for Razor Skimmer only and remains unstarted. No next unit or T084 work is begun
+by this checkpoint. Design-only packages use the targeted `design-package`
+profile; no game export, M6 networking or M7 exploration stack is required.
 
 ## Detailed records and historical evidence
 
