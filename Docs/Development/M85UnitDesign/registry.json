@@ -1,8 +1,8 @@
 {
   "task": "T083",
   "target": 35,
-  "authoredProposals": 21,
-  "directorAccepted": 20,
+  "authoredProposals": 22,
+  "directorAccepted": 21,
   "productionModels": 0,
   "assets": [
     {
@@ -597,9 +597,39 @@
     },
     {
       "stableId": "unit.aliens.etx_servitor",
-      "status": "QUEUED_NOT_AUTHORED",
-      "directorAccepted": false,
-      "productionAuthorized": false
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "file": "Batch03Aliens/etx_servitor_design_spec_20260925_v1.md",
+      "sourceEvidence": {
+        "manifest": "ArtSource/M85/T083/ETXServitorV1/source_evidence_manifest.json",
+        "sourceSets": [
+          "5617",
+          "7646",
+          "7691"
+        ],
+        "provenance": "Official LEGO building instructions; official LEGO magazine cutaways archived at Internet Archive; source audit and limits recorded in manifest."
+      },
+      "designSpec": "Batch03Aliens/etx_servitor_design_spec_20260925_v1.md",
+      "productionDesignTarget": {
+        "mode": "ORIGINAL_EXTENDED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch03Aliens/etx_servitor_director_review_20260925_v1.html",
+        "rationale": "No official dedicated worker exists; the source-derived hover shell and internal biomechanical grammar are composed with the role-required cradle and integrated clamp as disclosed adaptations.",
+        "designSpec": "Batch03Aliens/etx_servitor_design_spec_20260925_v1.md",
+        "targetImage": "ArtSource/M85/T083/ETXServitorV1/etx_servitor_production_target_20260925_v1.png",
+        "reviewReady": true,
+        "appearanceSummary": "Tiny low black Alien hover worker with paired curved shell valves, protected pale support ribs and dark-green living conduits, an empty external cargo cradle and one short integrated two-jaw utility clamp."
+      },
+      "review": "Batch03Aliens/etx_servitor_director_review_20260925_v1.html",
+      "gameAdaptations": [
+        "Low paired-shell hover worker composition derived from Alien craft grammar.",
+        "Protected support/conduit slot and external empty cargo cradle.",
+        "Single short hull-integrated utility clamp."
+      ],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-25",
+      "acceptanceNote": "Director approved this ORIGINAL_EXTENDED Production Design Target on 2026-09-25: low black Alien hover worker with paired shell valves, protected support/conduit slot, empty cargo cradle and one short integrated utility clamp. T084 is authorized for ETX Servitor only and remains not started."
     },
     {
       "stableId": "unit.aliens.alien_jet",

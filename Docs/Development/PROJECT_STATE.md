@@ -128,6 +128,10 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   T084 is authorized for MX-81 only and remains unstarted. The remaining 15
   packages (1 Astronaut, 6 Aliens, 8 Martians) are queued, not authored. T084
   modeling has not started; no production model is approved.
+- ETX Servitor was director-accepted on 2026-09-25 via its `ORIGINAL_EXTENDED`
+  target: low black Alien hover worker with paired shell valves, protected
+  support/conduit slot, empty cargo cradle and one integrated utility clamp.
+  T084 is authorized for ETX Servitor only and remains not started.
 - Workflow cleanup is merged and synchronized locally. This synchronization
   preserves all prior T083 content; it does not continue design or infer approval.
 
@@ -140,7 +144,7 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   Rover, Hover Scout, Granite Grinder, Drill Craft, Rapid Rider, Loader Dozer,
   Chrome Crusher, Tunnel Transport, Mono Jet, Solar Explorer, Mission Fighter,
   MX-41 Switch Fighter, Mobile Mining Platform, MX-71 Recon Dropship, MT-51
-  Claw-Tank, MT-101 Armored Drilling Unit, MT-201 Ultra-Drill Walker and T3-Trike
+  Claw-Tank, MT-101 Armored Drilling Unit, MT-201 Ultra-Drill Walker, ETX Servitor and T3-Trike
   have explicit director acceptance; T084 is authorized for those units only and
   has not started.
 - `BLOCKING_LATER`: actual gameplay-camera/model-LOD review belongs to
@@ -158,13 +162,11 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 
 ## Next approved action
 
-MX-81 Hypersonic Operations Aircraft T083 is accepted via its SOURCE_LOCKED
-LEGO 7644 appearance with the native tail transporter docked and the launch tower
-excluded; visible adaptations: none. T084 is authorized for MX-81 only but remains
-unstarted. Do not begin another unit automatically. Design-only
-packages use the targeted
-`design-package` profile; no game export, M6 networking or M7 exploration stack
-is required.
+ETX Servitor T083 is director-accepted via its `ORIGINAL_EXTENDED` Production
+Design Target. T084 is authorized for ETX Servitor only and remains not started.
+Do not begin another T083 unit automatically. Design-only packages use the
+targeted `design-package` profile; no game export, M6 networking or M7
+exploration stack is required.
 
 ## Detailed records and historical evidence
 
