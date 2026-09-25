@@ -85,6 +85,9 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   7695 MX-11 Astro Fighter SOURCE_LOCKED target. Crystal Hawk (5619) is a
   separate model and is not part of this unit's target. T084 is authorized for
   this unit only and remains unstarted.
+- MX-41 Switch Fighter T083 is director-accepted on 2026-09-25 via the official
+  LEGO 7647 SOURCE_LOCKED target, covering its flight and completed ground
+  configurations. T084 is authorized for MX-41 only and remains unstarted.
 - Source/construction/state/material sheets and the local visual review are at
   [Batch 01 review](M85UnitDesign/Batch01RockRaiders/review.html) and
   [Expedition Crew review](M85UnitDesign/Batch02Astronauts/review.html).
@@ -116,8 +119,8 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   Updated T083 workflow requires source evidence, a separately identified
   Production Design Target, and a Design Spec before a new design acceptance.
   Rover, Hover Scout, Granite Grinder, Drill Craft, Rapid Rider, Loader Dozer,
-  Chrome Crusher, Tunnel Transport, Mono Jet, Solar Explorer, Mission Fighter and T3-Trike have explicit director
-  acceptance; T084 is authorized for those units only and has not started.
+  Chrome Crusher, Tunnel Transport, Mono Jet, Solar Explorer, Mission Fighter, MX-41 Switch Fighter and T3-Trike have
+  explicit director acceptance; T084 is authorized for those units only and has not started.
 - `BLOCKING_LATER`: actual gameplay-camera/model-LOD review belongs to
   T084/T086 after production geometry exists; final animation belongs to T087.
 - Martian sources 1195/3750 retain bounded archival evidence gaps. Do not invent
@@ -133,8 +136,8 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 
 ## Next approved action
 
-Mission Fighter T083 is accepted. T084 is authorized for Mission Fighter only
-but remains unstarted. Await the director’s next bounded-task direction; do not
+MX-41 Switch Fighter T083 is accepted. T084 is authorized for MX-41 only but
+remains unstarted. Await the director’s next bounded-task direction; do not
 begin another unit automatically. Design-only packages use the targeted
 `design-package` profile; no game export, M6 networking or M7 exploration stack
 is required.

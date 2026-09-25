@@ -1,8 +1,8 @@
 {
   "task": "T083",
   "target": 35,
-  "authoredProposals": 14,
-  "directorAccepted": 13,
+  "authoredProposals": 15,
+  "directorAccepted": 14,
   "productionModels": 0,
   "assets": [
     {
@@ -379,9 +379,35 @@
     },
     {
       "stableId": "unit.astronauts.mx41_switch_fighter",
-      "status": "QUEUED_NOT_AUTHORED",
-      "directorAccepted": false,
-      "productionAuthorized": false
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "file": "Batch02Astronauts/mx41_switch_fighter_design_spec_20260924_v1.md",
+      "sourceEvidence": {
+        "manifest": "ArtSource/M85/T083/MX41SwitchFighterV1/source_manifest.json",
+        "sourceSets": [
+          "7647"
+        ],
+        "provenance": "Офіційне фото завершеної моделі LEGO.com і офіційний LEGO 7647 PDF; джерело та контрольні суми описані в маніфесті."
+      },
+      "designSpec": "Batch02Astronauts/mx41_switch_fighter_design_spec_20260924_v1.md",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch02Astronauts/mx41_switch_fighter_director_review_20260924_v2.html",
+        "rationale": "Офіційний LEGO 7647 без геометричних змін; польотний вигляд показано головною ціллю, наземну конфігурацію підтверджує окремий фрагмент офіційної інструкції.",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch02Astronauts/mx41_switch_fighter_design_spec_20260924_v1.md",
+        "sourceImage": "ArtSource/M85/T083/MX41SwitchFighterV1/References/7647-official-flight-target.jpg",
+        "reviewReady": true,
+        "appearanceSummary": "Офіційний 7647 MX-41: довгий біло-помаранчевий корпус. У наземному Pursuit бокові рами складені вздовж низького корпуса, видно три помаранчеві колеса з ближнього боку (усього шість); у польоті рами розгорнуті в широкий планер. Наземний стан показано за фінальним кроком офіційної інструкції, с. 64."
+      },
+      "review": "Batch02Astronauts/mx41_switch_fighter_director_review_20260924_v2.html",
+      "gameAdaptations": [
+        "Без видимої зміни геометрії. Ігровий перехід зберігає з’єднання корпуса замість ручного роз’єднання, показаного під час складання."
+      ],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-25",
+      "acceptanceNote": "Директор прийняв SOURCE_LOCKED Production Design Target офіційного LEGO 7647: польотну й завершену наземну конфігурації без видимих змін геометрії. T084 авторизовано лише для MX-41, роботу ще не розпочато."
     },
     {
       "stableId": "unit.astronauts.mobile_mining_platform",
