@@ -1,0 +1,72 @@
+{
+  "stableId": "unit.martians.recon_mech_rp",
+  "sourceSet": "7314-1",
+  "targetMode": "SOURCE_LOCKED",
+  "primarySource": {
+    "title": "LEGO 7314 Recon-Mech RP building instructions",
+    "url": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130809.pdf",
+    "productPage": "https://www.lego.com/en-us/service/building-instructions/7314",
+    "printedPagesInspected": [2, 16, 17, 25, 26, 28, 29, 30, 31, 32, 33, 34],
+    "localFile": "References/lego_7314_official_instructions.pdf",
+    "sha256": "abf11efeeee9e07076b6592c1aa726e786491eb99efc1bd55330f35991540ea9",
+    "findings": [
+      "The completed two-leg walker is shown on printed page 30.",
+      "Printed pages 31-34 show the upper craft and lower leg module manually separated, rotated and reconnected into a flight configuration.",
+      "The walker has a broad open cockpit body, one black claw arm, one long red arm ending in a dark disc and orange flame-shaped element, twin legs with broad feet, hoses and a raised rear tank assembly."
+    ]
+  },
+  "productionTarget": {
+    "role": "Official completed-model photograph, framed from printed page 30; source pixels retained without retouching.",
+    "localFile": "lego_7314_completed_target_page30_crop.png",
+    "cropFrom": "References/lego_7314_official_instructions.pdf",
+    "printedPage": 30,
+    "sha256": "dc76c86aa4dc070336d180fdedbafa8303e2f34a273b6edb6250f24fb7c59b47"
+  },
+  "secondaryEvidence": [
+    {
+      "title": "Eurobricks completed model review",
+      "url": "https://www.eurobricks.com/forum/forums/topic/37747-review-7314-recon-mech-rp/",
+      "imageViews": [
+        {
+          "view": "front three-quarter",
+          "url": "https://f005.backblazeb2.com/file/Brickshelf/bs01/gallery/nahadef/7314/7314_-_21.jpg",
+          "localFile": "References/eurobricks_7314_front_three_quarter.jpg",
+          "sha256": "a742d9b0d6ffa80e91f80c6e2e7956a0dced9efef3041c37b8a925fca1c3188d"
+        },
+        {
+          "view": "rear",
+          "url": "https://f005.backblazeb2.com/file/Brickshelf/bs01/gallery/nahadef/7314/7314_-_16.jpg",
+          "localFile": "References/eurobricks_7314_rear.jpg",
+          "sha256": "7360ff8f13fb4583f4011436882fffb4384765b487fea05ac57d6be7ef0ad29d"
+        },
+        {
+          "view": "top",
+          "url": "https://f005.backblazeb2.com/file/Brickshelf/bs01/gallery/nahadef/7314/7314_-_23.jpg",
+          "localFile": "References/eurobricks_7314_top.jpg",
+          "sha256": "b5d610c2917dc4b2ee9ae61e4845998c9424439be0982986ab56b2bd6bc314b4"
+        }
+      ],
+      "use": "Secondary confirmation of source arm placement and rear/tank relationship; official LEGO instructions remain primary."
+    },
+    {
+      "title": "The Rambling Brick: 7314 completed-model comparative review",
+      "url": "https://ramblingbrick.com/2023/03/25/the-old-and-the-new-7314-recon-mech-rd-vs-71785-jays-titan-mech-face-to-face-review/",
+      "use": "Secondary construction and color-family cross-check."
+    },
+    {
+      "title": "Brickset 7314 catalog record",
+      "url": "https://brickset.com/sets/7314",
+      "use": "Set identity and catalog cross-check."
+    }
+  ],
+  "evidenceDistinction": {
+    "directlyShown": "Finished walker and documented manually rebuilt flight configuration in the official LEGO instructions.",
+    "crossSourceInference": "Relative arm identity: from the model's forward direction, the black claw is on its left and the long red flame-shaped projector arm is on its right; checked against the official instructions and completed front-facing collector photo.",
+    "unresolved": [
+      "The official source does not show a walking gait or sensor/anti-air tracking cycle.",
+      "The T082 packet calls the long arm a drill/lance; completed source photos and independent reviews instead identify its visible orange flame-shaped end as a flame projector. The T083 target retains the source geometry and does not add new tracking parts."
+    ],
+    "adaptations": "No visible geometry adaptation. The canonical detection/anti-air function is an in-game use of the retained source appearance, not evidence for added geometry."
+  },
+  "researchDate": "2026-09-26"
+}

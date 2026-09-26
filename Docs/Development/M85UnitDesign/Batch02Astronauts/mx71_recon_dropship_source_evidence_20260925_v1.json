@@ -1,0 +1,17 @@
+{
+  "stableId": "unit.astronauts.mx71_recon_dropship",
+  "sourceSet": "7692",
+  "sourceTitle": "MX-71 Recon Dropship",
+  "sourceUrl": "https://www.lego.com/en-us/service/building-instructions/7692",
+  "officialInstructionPdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4524070.pdf",
+  "officialInstructionSha256": "4b504dd8e144df114b6d558cbc10e123d3398c9bb0304f6ad832ff3ee863e345",
+  "sourceEvidenceReference": "ArtSource/M85/Preproduction/MX71LocalizedWeaponEditV1/reference_7692_page69.png",
+  "sourceEvidenceReferenceSha256": "e0ee470e7e7aa827dcd6bda3a6ea32624b24b4f65e3efd3485b7d466ee17040d",
+  "sourceEvidenceStatus": "OFFICIAL_PDF_VISUALLY_AUDITED_IN_T082",
+  "sourceScope": "Pages 24-71 establish the aircraft; pages 70-71 show the separate rover being lifted/released below the fuselage. The page raster is inherited T082 evidence and is not modified here.",
+  "targetImage": "ArtSource/M85/T083/mx71-recon-dropship-target-20260925-v1.png",
+  "targetImageSha256": "15064b52a571384517b04bbb17580a80af2554d1a79852c500f45666fb8f1c76",
+  "targetImageStatus": "T083_ADAPTED_PROPOSAL_NOT_APPROVED",
+  "targetImageProvenance": "AI-generated adaptation visualization based on the official LEGO instruction page 69 shown during authoring; not official LEGO imagery and not production geometry.",
+  "remainingAppearanceGap": "Exact clearance for each canonical cargo class is a T084 production check; the T083 proposal fixes the visible open-cradle relationship."
+}

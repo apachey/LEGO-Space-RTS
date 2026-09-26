@@ -1,0 +1,61 @@
+{
+  "stableId": "unit.aliens.alien_mothership",
+  "sourceSet": "7691",
+  "sourceName": "ETX Alien Mothership Assault",
+  "sourceAuthority": "Official LEGO product image and official LEGO building instructions",
+  "targetMode": "SOURCE_LOCKED",
+  "references": [
+    {
+      "role": "Production Design Target; crop of the official completed-model photograph",
+      "path": "alien_mothership_7691_official_completed_target.png",
+      "derivedFrom": "References/7691-lego-official-product.jpg",
+      "sourceUrl": "https://www.lego.com/cdn/product-assets/product.img.pri/7691_prod.jpg",
+      "sha256": "17e58ab56c654e0f06f7a9b06f893711c2250e5048ce81f66ebf9cc5301b5d82",
+      "note": "Crop isolates the completed alien carrier from the human extraction station also pictured in the set photograph; two small white background masks remove only the unrelated station at the crop edge. No Mothership pixels are changed or synthesized."
+    },
+    {
+      "role": "Official completed-model instruction illustration and construction cross-check",
+      "path": "References/7691-page-68.png",
+      "derivedFrom": "References/7691-official-instructions.pdf, printed page 68",
+      "sourceUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4516029.pdf",
+      "sha256": "8031e10baac73e89f45f7614c4505489a653db163f6699fc02211602ea04005a",
+      "note": "Official instruction page shows the whole carrier with its center craft, paired side craft and two outer circular modules docked. The full page is retained; only the instruction illustration, not the page arrow, was used for silhouette verification."
+    },
+    {
+      "role": "Official source photograph before crop",
+      "path": "References/7691-lego-official-product.jpg",
+      "sourceUrl": "https://www.lego.com/cdn/product-assets/product.img.pri/7691_prod.jpg",
+      "sha256": "a017f84176368ccca35a8ae8893364a14b9072804ef182a2652f8e116a51b66b",
+      "note": "LEGO-hosted 500×462 product image; it shows the completed Mothership above a separate human extraction station from the same set. The lower station is excluded from the target."
+    },
+    {
+      "role": "Official building instructions",
+      "path": "References/7691-official-instructions.pdf",
+      "sourceUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4516029.pdf",
+      "sha256": "2a6d4ddeac8fd1b67fa0a405fa623a4de15369db8458a27fb923666779752e8f",
+      "note": "LEGO-hosted 76-page PDF. Printed pages 28–49 build the main carrier, 50–56 the two side craft, 57–63 the center craft, and 64–68 the outer disc modules and assembled mothership."
+    },
+    {
+      "role": "Official LEGO separation configuration shown in the director review",
+      "path": "7691-page-50-separated-configuration.png",
+      "derivedFrom": "References/7691-official-instructions.pdf, printed page 50",
+      "sourceUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4516029.pdf",
+      "sha256": "5fa03bfb35748bf5334f268686525975c3eb933bb438fa869c140fe01d352503",
+      "note": "Crop of LEGO printed page 50 showing the mothership carrier hull with three detached craft. It is an official instruction illustration and is not reconstructed, recolored, or composited."
+    }
+  ],
+  "verifiedSourceFeatures": [
+    "Flattened, interrupted circular black carrier hull with an open central machinery channel.",
+    "Long multi-blade tail creates a strong front-to-rear direction.",
+    "One central/front craft, two paired seated side craft and two outer circular modules are docked in the completed source arrangement.",
+    "Black and dark-gray construction with bright lime conduits and translucent lime elements.",
+    "Official printed instruction page 50 shows the main carrier with three separate craft; paired side craft retain their round disk modules and guns.",
+    "Printed page 68 shows the fully assembled mothership with those craft docked."
+  ],
+  "boundedUnknowns": [
+    "The source does not determine game launch/recovery timing, roster or capacity.",
+    "Reverse-side clearances and exact production joints are T084 checks.",
+    "The official product image is small; official instruction pages remain the construction reference.",
+    "The design package approves appearance in both source-shown configurations only; it does not define the gameplay event, timing, detached-unit names, roles, or control."
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "stableId": "unit.aliens.etx_alien_strike",
+  "sourceSet": "7693",
+  "sourceName": "ETX Alien Strike",
+  "targetMode": "SOURCE_LOCKED",
+  "officialAuthority": "LEGO official box art and official building instructions",
+  "officialInstructionPage": "https://www.lego.com/en-us/service/building-instructions/7693",
+  "officialInstructionPdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4523183.pdf",
+  "officialBoxArtLocalSource": "ArtSource/M85/Preproduction/ETXAlienStrikeSourceRebuildV1/reference_7693_cover.png",
+  "officialBoxArtSourceSha256": "357a72c03bcc7e9df723b6a305ab02a469edd066e5077d82a4d14338e7519325",
+  "targetImage": "ArtSource/M85/T083/ETXAlienStrikeV1/etx_alien_strike_production_target_20260926_v1.png",
+  "targetImageSha256": "6adb9c873b5b91a65767c1c2ff5ca3d5db42313554f3fdc51b60dbc23c8f7697",
+  "targetImageDerivation": {
+    "method": "crop only; no generative or appearance edits",
+    "sourceCropPixels": [
+      430,
+      300,
+      2360,
+      2300
+    ],
+    "sourceDimensions": [
+      2465,
+      2309
+    ],
+    "targetDimensions": [
+      1930,
+      2000
+    ]
+  },
+  "independentCompletedModelCrossCheck": {
+    "page": "https://rebrickable.com/sets/7693-1/etx-alien-strike/",
+    "image": "https://cdn.rebrickable.com/media/thumbs/sets/7693-1/107260.jpg/1000x800p.jpg",
+    "use": "independent assembled-model comparison; not appearance authority"
+  },
+  "constructionInventoryCrossCheck": "https://www.bricklink.com/catalogItemInv.asp?S=7693-1",
+  "verifiedSourceFeatures": [
+    "long central black keel",
+    "central cockpit and forward emitter",
+    "two large curved crescent side sections on visible hinges",
+    "long layered translucent-lime tail blades",
+    "one continuously airborne craft in the represented target"
+  ],
+  "excludedSetContents": [
+    "human mining rover",
+    "astronaut minifigure",
+    "loose scene crystals"
+  ],
+  "adaptations": [],
+  "limitations": [
+    "box artwork depicts an action pose and does not set an authoritative flight height or bank range",
+    "this target does not certify exact part topology or hidden hinge fit; official instructions remain the construction authority"
+  ],
+  "officialInstructionPdfFetchState": "Official LEGO PDF linked and visually audited in the accepted T082 packet; no local PDF hash is asserted."
+}

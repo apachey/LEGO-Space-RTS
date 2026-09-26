@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Red Planet Cruiser — візуальне рішення директора</title>
+<style>
+:root{color-scheme:dark;--bg:#111719;--panel:#1c2527;--edge:#445256;--ink:#f1eee4;--muted:#bac5c1;--sand:#d7c39a;--blue:#8eb2c1;--rust:#d27745;--signal:#a8cf88}
+*{box-sizing:border-box}html{background:var(--bg)}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.42 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}main{max-width:1500px;margin:auto;padding:22px 28px 18px}
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;border-bottom:1px solid var(--edge);padding-bottom:14px}.eyebrow{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--blue);font-weight:700}h1{font-size:clamp(28px,3vw,41px);line-height:1.02;margin:6px 0 8px;letter-spacing:-.03em}.identity{display:flex;gap:6px 17px;flex-wrap:wrap;color:var(--muted);font-size:13px}.identity strong{color:var(--ink);font-weight:650}.badges{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;padding-top:2px}.badge{border:1px solid var(--edge);padding:7px 10px;border-radius:3px;font-size:11px;font-weight:750;letter-spacing:.035em;white-space:nowrap}.badge.ready{border-color:#829a67;color:#d2e7b0;background:#273126}.badge.mode{border-color:#92724e;color:#f0cc94;background:#30271f}
+.hero{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(310px,.8fr);gap:16px;margin-top:15px;align-items:stretch}.target,.decision{border:1px solid var(--edge);background:var(--panel);border-radius:5px;overflow:hidden}.target-head{display:flex;justify-content:space-between;align-items:center;padding:11px 15px 10px;border-bottom:1px solid var(--edge);gap:12px}.target-head h2{font-size:14px;margin:0;letter-spacing:.02em}.flow{font-size:10px;color:var(--muted);letter-spacing:.045em}.flow b{color:var(--sand);font-weight:700}.target-main{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(220px,.75fr);gap:12px;padding:12px;background:#202a2c}.view{border:1px solid #596668;background:#d7d2c7;min-width:0}.view img{display:block;width:100%;height:clamp(265px,42vh,410px);object-fit:contain;background:#d7d2c7}.view.second img{height:clamp(210px,34vh,330px)}.view-label{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:7px 9px;background:#192123;border-top:1px solid #596668;color:var(--muted);font-size:10px}.view-label strong{color:var(--ink);font-weight:650}.caption{padding:8px 14px 10px;color:var(--muted);font-size:11px;border-top:1px solid var(--edge)}
+.decision{padding:16px 18px;display:flex;flex-direction:column;gap:12px}.section-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);font-weight:750;margin:0 0 6px}.adapt{border-left:3px solid var(--rust);padding:1px 0 1px 11px}.adapt p{margin:0;font-size:14px}.source-note{font-size:12px;color:var(--muted);margin:0}.approval{margin-top:auto;border-top:1px solid var(--edge);padding-top:11px}.question{font-size:14px;line-height:1.35;margin:0 0 7px}.checklist{list-style:none;margin:0;padding:0;display:grid;gap:5px;font-size:12px;color:var(--muted)}.checklist li{display:flex;gap:7px}.checklist li:before{content:"✓";color:var(--sand);font-size:15px;line-height:1.1}.decision-line{margin:9px 0 0;padding:8px 9px;background:#283437;border:1px solid #536367;border-radius:3px;font-size:11px;font-weight:650}
+.sources{margin-top:11px;display:flex;gap:8px 17px;align-items:center;flex-wrap:wrap;padding:9px 13px;border:1px solid var(--edge);border-radius:4px;color:var(--muted);font-size:11px}.sources strong{color:var(--sand);letter-spacing:.06em;text-transform:uppercase}.sources a{color:#c8dce3;text-decoration-thickness:1px;text-underline-offset:3px}.foot{margin-top:8px;color:var(--muted);font-size:10px;display:flex;justify-content:space-between;gap:14px}details{margin-top:10px;border-top:1px solid var(--edge);padding-top:8px;color:var(--muted);font-size:11px}summary{cursor:pointer;color:var(--muted)}details ul{margin:7px 0;padding-left:19px}code{color:var(--sand)}
+@media(max-width:850px){main{padding:16px 12px}.top{display:block}.badges{justify-content:flex-start;margin-top:11px}.hero{grid-template-columns:1fr}.target-main{grid-template-columns:1fr}.view img,.view.second img{height:auto;max-height:58vh;min-height:0}.decision{min-height:0}.approval{margin-top:0}.foot{display:block}.foot span{display:block;margin-top:4px}}
+</style>
+</head>
+<body>
+<main>
+  <header class="top">
+    <div>
+      <div class="eyebrow">Марсіани · бойова машина переднього краю</div>
+      <h1>Red Planet Cruiser</h1>
+      <div class="identity"><span><strong>Фракція</strong> · Martians</span><span><strong>Роль</strong> · Бойова машина переднього краю</span><span><strong>Джерело</strong> · LEGO 7311</span></div>
+    </div>
+    <div class="badges" aria-label="Стан пакета">
+      <span class="badge ready">ДИРЕКТОР ПРИЙНЯВ · 2026-09-26</span>
+      <span class="badge mode">SOURCE_LOCKED</span>
+      <span class="badge">T084 — НЕ РОЗПОЧАТО</span>
+    </div>
+  </header>
+
+  <section class="hero" aria-label="Візуальне рішення">
+    <article class="target">
+      <div class="target-head"><h2>Production Design Target</h2><div class="flow"><b>ОФІЦІЙНИЙ LEGO 7311</b> · без змін</div></div>
+      <div class="target-main">
+        <div class="view">
+          <img src="../../../../ArtSource/M85/T083/RedPlanetCruiserV1/lego_7311_official_boxart_completed_appearance.png" alt="Офіційний LEGO 7311 Red Planet Cruiser: відкритий апарат середньої висоти з парними боковими платформами, оператором Altair і двома шарнірними руками">
+          <div class="view-label"><strong>Основний завершений вигляд</strong><span>Офіційний LEGO · обкладинка інструкції</span></div>
+        </div>
+        <div class="view second">
+          <img src="../../../../ArtSource/M85/T083/RedPlanetCruiserV1/lego_7311_upright_configuration_step19.png" alt="Офіційний крок 19: той самий LEGO 7311 у вертикальному положенні на одній шарнірній опорі">
+          <div class="view-label"><strong>Друга конфігурація з інструкції</strong><span>Крок 19 · одна опора</span></div>
+        </div>
+      </div>
+      <div class="caption">Зберегти оригінальний силует, відкриту конструкцію, фігурку, кольори та шарнірні вузли. Друга конфігурація підтверджена LEGO; окремої підставки чи нової трансформаційної механіки цей пакет не додає.</div>
+    </article>
+
+    <aside class="decision">
+      <div class="adapt">
+        <p class="section-label">Видимі адаптації</p>
+        <p>Стрибки на одній нозі з плануванням. Геометрія джерела зберігається.</p>
+      </div>
+      <div>
+        <p class="section-label">Що видно в джерелі</p>
+        <p class="source-note">Відкритий корпус середньої висоти, парні широкі панелі, оператор посередині, дві шарнірні руки та одна складна опора. Що саме закріплено на руках — вільна інтерпретація.</p>
+      </div>
+      <div class="approval">
+        <p class="section-label">Прийняте рішення</p>
+        <p class="question">Директор прийняв силует LEGO 7311 середньої висоти й подачу руху — стрибки на одній нозі з плануванням.</p>
+        <ul class="checklist">
+          <li>Зберегти відкритий силует середньої висоти й парні бокові панелі.</li>
+          <li>Зберегти дві руки; їхнє оснащення не фіксується цим рішенням.</li>
+          <li>Передати стрибок на одній нозі з подальшим плануванням.</li>
+          <li>Врахувати офіційну вертикальну конфігурацію на одній опорі.</li>
+        </ul>
+        <p class="decision-line">Production Design Target прийнятий. T084 ще не розпочато.</p>
+      </div>
+    </aside>
+  </section>
+
+  <nav class="sources" aria-label="Джерела">
+    <strong>Джерела</strong>
+    <a href="https://www.lego.com/en-gb/service/building-instructions/7311">Офіційна сторінка LEGO</a>
+    <a href="https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130806.pdf">Інструкція LEGO · сторінки 1, 11, 14–15</a>
+    <a href="https://www.eurobricks.com/forum/forums/topic/32047-7311-red-planet-cruiser/">Фото завершеної моделі · ракурси</a>
+    <a href="https://thetripleoption.wordpress.com/2014/08/20/lego-7311-red-planet-cruiser-life-on-mars-review-and-mod/">Незалежний огляд</a>
+  </nav>
+  <div class="foot"><span>LEGO визначає геометрію; стрибок і планування — прийнята візуальна подача руху.</span><span>Прийнято директором · 2026-09-26</span></div>
+  <details>
+    <summary>Технічні деталі</summary>
+    <ul>
+      <li>Stable ID: <code>unit.martians.red_planet_cruiser</code>.</li>
+      <li>Design Spec: <a href="red_planet_cruiser_design_spec_20260926_v1.md">Production Design Target і межі джерел</a>.</li>
+      <li>Маніфест та хеші: <a href="../../../../ArtSource/M85/T083/RedPlanetCruiserV1/source_evidence_manifest.json">відкрити докази</a>.</li>
+      <li>Рух: візуальна подача за вказівкою директора; класифікація та правила руху не змінюються.</li>
+      <li>Перевірка: `./tools/verify.sh --targeted design-package` — попередній запуск PASS; після цієї правки повторюється. PNG-знімок сторінки відсутній: доступний браузер блокує локальну адресу.</li>
+      <li>Гілка: `codex/m85-t083`. Дизайн прийнято; T084 авторизовано лише для цього юніта, моделювання не розпочато.</li>
+      <li>Перевірка в T084 пізніше: створити геометрію за прийнятою ціллю та звірити силует у M7 Final із контуром. Жодної виробничої моделі зараз немає.</li>
+    </ul>
+  </details>
+</main>
+</body>
+</html>

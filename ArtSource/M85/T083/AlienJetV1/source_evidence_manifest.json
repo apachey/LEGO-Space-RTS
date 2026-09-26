@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "stableId": "unit.aliens.alien_jet",
+  "task": "T083",
+  "targetMode": "SOURCE_LOCKED",
+  "sources": [
+    {
+      "sourceSet": "5617",
+      "setName": "Alien Jet",
+      "role": "OFFICIAL_CONSTRUCTION_AND_APPEARANCE_SOURCE",
+      "instructionsPage": "https://www.lego.com/en-us/service/building-instructions/5617",
+      "instructionPdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4525566.pdf",
+      "evidence": "The official five-step build documents the broad swept plate, exposed pilot, paired flexible lime arches, two short lateral emitter arms and compact rear block. The T082 audit records front, rear, side and underside coverage as partial where the instructions do not show a complete view."
+    },
+    {
+      "sourceSet": "5617",
+      "role": "DIRECTOR_APPROVED_VISUAL_SOURCE_REFERENCE",
+      "file": "ArtSource/M85/DirectorReferences/AlienJet/alien_jet_approved_reference.png",
+      "sha256": "6e4f76023dda7ad7cc72716bced242aa580bf6d35198268491aa58716f975892",
+      "provenance": "Image supplied directly by the game director on 2026-09-23. Preserved unchanged; the director accepted it as a visual reference only. This T083 package proposes the same image as the Production Design Target, pending the decision shown in the review."
+    }
+  ],
+  "limitations": [
+    "The director-supplied image is not an official LEGO product photograph and does not establish LEGO part topology; use official instructions for construction.",
+    "Official source audit records partial front, rear, side and underside coverage.",
+    "The source establishes two lateral emitters but not their gameplay firing relationship."
+  ]
+}

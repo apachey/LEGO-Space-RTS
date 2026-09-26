@@ -1,0 +1,57 @@
+{
+  "stableId": "unit.astronauts.mx41_switch_fighter",
+  "sourceSet": "7647",
+  "sourceTitle": "MX-41 Switch Fighter",
+  "evidence": [
+    {
+      "role": "official_completed_model_product_image",
+      "file": "References/7647-official-product-image.jpg",
+      "sourceUrl": "https://www.lego.com/en-us/service/building-instructions/7647",
+      "assetUrl": "https://www.lego.com/cdn/product-assets/product.img.pri/7647_prod.jpg?format=webply&fit=bounds&quality=60&width=500&height=500&dpr=2",
+      "sha256": "fe3e459eea859b898193d43a1118442e7c948a3fbbad3016531f0cc28f925d74",
+      "notes": "Офіційне фото готової моделі LEGO.com; кадрування таргета показує MX-41 у польотній конфігурації, не змінює модель."
+    },
+    {
+      "role": "official_completed_model_flight_target_director_crop",
+      "file": "References/7647-official-flight-target-director.jpg",
+      "derivedFrom": "References/7647-official-flight-target.jpg",
+      "sha256": "712f28346076c04b797faa97b6f3611151d4e950c2cee69da25dde7d10e5858b",
+      "notes": "Щільніше кадрування тієї самої офіційної моделі для читабельнішого показу цілі; без перемальовування чи ретуші."
+    },
+    {
+      "role": "production_design_target_crop",
+      "file": "References/7647-official-flight-target.jpg",
+      "derivedFrom": "References/7647-official-product-image.jpg",
+      "sha256": "d85dfc268b530002c387f3e53026d1ce12df8195ca2a9bffb92756151bfc5190",
+      "notes": "Прямокутне кадрування лівої офіційної моделі MX-41 для оглядової сторінки; LEGO-модель не перемальовувалась і не ретушувалась."
+    },
+    {
+      "role": "official_instruction_pdf",
+      "file": "References/7647-official-instructions.pdf",
+      "url": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4525547.pdf",
+      "sha256": "4bfb7facd38a10a6d68ccb42c600cb3ff8c8aee0352a69664a9947a87284bd00",
+      "pageCount": 76,
+      "relevantPages": "15-64",
+      "notes": "Офіційна інструкція доводить наземну шестиколісну конфігурацію, польотну конфігурацію та перетворення між ними; окрема плита шасі має шість помаранчевих коліс."
+    },
+    {
+      "role": "official_instruction_intermediate_transform_view",
+      "file": "References/7647-instructions-page63-ground-detail.png",
+      "derivedFrom": "References/7647-official-instructions.pdf, page 63",
+      "sha256": "1f6298989a4ceb73007e5f9825e5271a824bb8d57905e010115274035955e3ac",
+      "notes": "Сторінка 63 показує проміжний етап трансформації/складання, а не завершений наземний вигляд. Збережено як історичне джерельне свідчення; не використовувати як цільовий силует."
+    },
+    {
+      "role": "official_instruction_completed_ground_configuration",
+      "file": "References/7647-instructions-page64-ground-complete.png",
+      "derivedFrom": "References/7647-official-instructions.pdf, page 64, final ground configuration",
+      "sha256": "6e38e905183c943491a8619e43c211c6788b4ebf6bb1e2eeff4085bcd3dcb338",
+      "notes": "Щільне кадрування завершеного наземного Pursuit з фінального стану офіційної інструкції; три колеса видно з ближнього боку. Не перемальовано чи ретушовано."
+    }
+  ],
+  "limits": [
+    "Фото товарної сторінки показує тільки польотну конфігурацію; наземний стан і складання звіряються з офіційною інструкцією.",
+    "Інструкція на мить роз'єднує корпус під час ручного складання; це не дозволяє видиме розбирання в ігровій трансформації.",
+    "Офіційні зображення джерела не затверджують анімаційний таймінг, матеріальні ефекти чи T084 геометрію."
+  ]
+}

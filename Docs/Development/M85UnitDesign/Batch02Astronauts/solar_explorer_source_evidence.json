@@ -1,0 +1,41 @@
+{
+  "reviewDisposition": "REJECTED_BY_DIRECTOR_2026-09-24",
+  "rejectionReason": "Incorrect wheeled ground-carrier interpretation. Preserve the official long modular spacecraft appearance; see solar_explorer_source_audit_20260924_v1.md and solar_explorer_source_manifest_20260924_v2.json.",
+  "supersededBy": "solar_explorer_target_review_20260924_v2.html",
+  "stableId": "unit.astronauts.solar_explorer",
+  "sourceSet": "7315",
+  "sourceName": "Solar Explorer",
+  "sourceAuthority": "OFFICIAL_LEGO_PRIMARY",
+  "sourceArtifact": {
+    "url": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130810.pdf",
+    "instructionPage": "https://www.lego.com/en-us/service/building-instructions/7315",
+    "sha256": null,
+    "hashNote": "The official PDF was reachable through web indexing but could not be downloaded in this workspace; no local raster or digest is claimed."
+  },
+  "acceptedT082Packet": "Docs/Development/M85SuperScout/Packets/unit_astronauts_solar_explorer.md",
+  "t082SourceAudit": "Docs/Development/M85SuperScout/Matrices/astronauts_source_audit.md#7315--solar-explorer",
+  "sourceInstructionIndex": "Docs/Development/M85SuperScout/Matrices/source_instruction_index.csv",
+  "verifiedSourceFindings": [
+    "Pages 2–7: detachable forward cockpit craft with low nose and broad side plates.",
+    "Pages 8–17: long modular central body under one curved honeycomb canopy plus separate small support pod.",
+    "Pages 18–23: compact rear service section with circular frame, dome, and paired small fins.",
+    "The official set does not provide wheels for the complete assembly; ground running gear is an explicit game adaptation."
+  ],
+  "knownGaps": [
+    "The PDF does not demonstrate the Forward Service deployed state.",
+    "Exact wheel count, axle placement, and continuity/clearance of the deployment connection are T083 proposal decisions and remain for director approval.",
+    "Rear/underside details are partial; no unpictured construction is inferred."
+  ],
+  "targetImages": [
+    {
+      "path": "ArtSource/M85/T083/SolarExplorerFieldCarrierV1/transit-target.png",
+      "role": "PROPOSED_PRODUCTION_DESIGN_TARGET_TRANSIT",
+      "sha256": "95c83d618b0db037216772fb109b6103e44e03cac9aca977e188c68169dcc331"
+    },
+    {
+      "path": "ArtSource/M85/T083/SolarExplorerFieldCarrierV1/deployed-target.png",
+      "role": "PROPOSED_PRODUCTION_DESIGN_TARGET_DEPLOYED",
+      "sha256": "4ccc54a69ea4c39f5c88746b0bcd411a2e1319a7d14182e52005a757ba68f0c8"
+    }
+  ]
+}

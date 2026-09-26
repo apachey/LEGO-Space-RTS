@@ -1,0 +1,32 @@
+{
+  "stableId": "unit.astronauts.solar_explorer",
+  "state": "PROPOSED_FOR_DIRECTOR_REVIEW",
+  "method": "OpenAI ImageGen; second view edited from the transit proposal",
+  "constraints": "T082-audited LEGO 7315 source modules retained; six-wheel subordinate ground carrier and rear service deployment are explicit unapproved adaptations.",
+  "files": [
+    {
+      "path": "transit-target.png",
+      "prompt": "Use case: director review Production Design Target for a strategy game unit, a clean 3D model appearance render. Create one single finished, plausible LEGO-built vehicle on a neutral pale warm-gray studio background, three-quarter front view, no text, no labels, no watermark. The unit is Solar Explorer, faithfully adapted from the completed 2001 LEGO Life on Mars set 7315. Preserve the recognizable source assembly: a very long low white/light-gray modular carrier; foremost detachable compact cockpit craft with low pointed wedge nose and broad blue side plates; central habitation/cargo module dominated by one large curved translucent dark-red canopy with a clear repeating hexagonal honeycomb pattern; a compact rear service module organized around an open circular white frame with red dome and two small red fins; a small four-wheel scout rover attached as a distinct subordinate pod. Visible game adaptation: add exactly six modest rugged black wheels as three paired axles, low and tucked under the long carrier, clearly secondary to the source modules; visible simple white/medium-blue structural carrier spine and standardized couplers between modules; add a small fold-down stabilizer at the rear service module, restrained and subordinate. Keep classic Life on Mars white, medium-blue, dark gray and red source palette, exposed brick-built construction and toy-like LEGO part logic; crisp seams, sturdy geometry, readable RTS-scale silhouette. Do not turn it into a generic sci-fi bus, aircraft, tank, giant truck or modern vehicle. No weapons, no extra modules, no extra wheels, no solar panel wings, no loose crew. The canopy, cockpit craft, rover, and circular rear frame must remain individually legible. Present an appearance target, not a diagram or parts breakdown.",
+      "revisions": [
+        {
+          "method": "edit from previous proposed transit image",
+          "prompt": "Make a precise cleanup edit to this proposed LEGO Life on Mars Solar Explorer T083 target. Preserve the long low six-wheel carrier, front detachable wedge cockpit, ONE central curved red honeycomb habitat canopy, the compact separate rear service module with its circular frame, small red dome and paired short fins, plus the separate small rover. Remove both tall white-and-blue vertical towers/pylons above the rear service module; the source has only two small fins, each less than half the circular frame height. Remove tall red antenna cylinders and extraneous stacked rear structures. Keep all upper modules low and compact so the honeycomb canopy remains the highest large mass. Retain the proposed six modest wheels, exposed white/blue carrier spine, source palette and neutral background. Do not duplicate any canopy, ring, or module. No new structure, no weapons, no solar wings, no text."
+        }
+      ]
+    },
+    {
+      "path": "deployed-target.png",
+      "prompt": "Create a second appearance view of this exact proposed LEGO Life on Mars Solar Explorer game adaptation in its deployed Forward Service state. Keep the same white/medium-blue/red brick-built style and matching proportions. Show a compact rear service module with its circular frame, red dome, and paired fins slid off the back of the six-wheel carrier on a short straight visible docking rail, then lowered onto two small planted stabilizer feet; one thin blue service cable/connector remains between the module and carrier. Keep the front cockpit craft and central honeycomb canopy carrier intact and stationary. The detached service module is a small rear module, not a second vehicle and not an aircraft. Clean pale gray studio background, one three-quarter side view, no text, no logos, no weapons, no new geometry beyond the modest short rail and small feet needed to explain this state. Preserve source-like module identities; do not enlarge the circular ring or canopy.",
+      "revisions": [
+        {
+          "method": "edit from previous proposed deployed-state image",
+          "prompt": "Clean up the deployed-state Solar Explorer view to match the T082 source audit. Keep the central habitat canopy and front cockpit low, and show the same long low six-wheel carrier. The rear deployed service module must be compact: one circular frame around a small red dome with only two short red fins, each less than half the ring height. Remove the tall white-and-blue vertical towers, remove tall red antenna/cylinders, remove oversized stacked structures. The module may slide back a short distance on a simple low rail and sit on exactly two small planted feet; retain one slim blue connector cable to the carrier. Preserve the low Field Systems white/blue chassis, LEGO brick construction, and pale studio background. No weapons, no new modules, no text, no duplicated rings or canopies."
+        }
+      ]
+    }
+  ],
+  "revisionNotes": [
+    "Revision 2 for transit removed unsupported tall rear towers and long antenna-like cylinders; paired rear fins remain short.",
+    "Revision 2 for deployed view applies the same correction and retains the short rail, connected blue service link, and two planted feet."
+  ]
+}

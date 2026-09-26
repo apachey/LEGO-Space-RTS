@@ -1,0 +1,25 @@
+{
+  "stableId": "unit.astronauts.mono_jet",
+  "sourceSet": "7310",
+  "sourceArtifact": {
+    "type": "official_instruction_pdf",
+    "url": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130805.pdf",
+    "pageCount": 2,
+    "sha256": "25f9c0f5dc1f097829ff5c7491db0a7b3c192f3d3507c3f6861b86751243e303",
+    "targetPage": 2
+  },
+  "evidenceState": "T082_OFFICIAL_PDF_VISUALLY_AUDITED",
+  "targetUse": "The official completed LEGO 7310 on page 2 is both the source evidence and SOURCE_LOCKED Production Design Target; it is shown once in the director review.",
+  "constructionCoverage": "Pages 1-2 show the full eleven-step build, side/top views, and final operator view.",
+  "verifiedFindings": [
+    "Extremely compact asymmetric one-person craft with no enclosed fuselage.",
+    "One dominant transverse wheel with a treaded surface directly between the shrouded conical nozzle and tiny operator platform.",
+    "Exposed operator, short wedge deck, and small axle-mounted signal dish."
+  ],
+  "knownGaps": [
+    "Front view is partial.",
+    "The static manual does not establish terrain response, steering behavior, or exact wheel motion."
+  ],
+  "t082Packet": "Docs/Development/M85SuperScout/Packets/unit_astronauts_mono_jet.md",
+  "t082SourceEvidence": "Content/Presentation/SuperScout/astronauts_source_evidence.json"
+}

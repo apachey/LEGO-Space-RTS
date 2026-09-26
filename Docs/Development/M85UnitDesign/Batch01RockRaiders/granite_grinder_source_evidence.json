@@ -1,0 +1,33 @@
+{
+  "task": "T083",
+  "unitStableId": "unit.rock_raiders.granite_grinder",
+  "operation": "Unmodified full-page official instruction PDF rasterization; not generated artwork.",
+  "sourceArtifact": {
+    "url": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128317.pdf",
+    "sha256": "893e7639981954dfb4dcb329caa5f2fda001134707c16397e40988049e98c072"
+  },
+  "references": [
+    {
+      "setId": "4940",
+      "page": 1,
+      "file": "References/4940-page01.png",
+      "sha256": "0a636c59fd49302b0ede617d45a2597cfef9b63afaa957c13eb68d49dcf550b4",
+      "sourceUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128317.pdf",
+      "sourceSha256": "893e7639981954dfb4dcb329caa5f2fda001134707c16397e40988049e98c072",
+      "retrieved": "2026-09-23",
+      "kind": "OFFICIAL_INSTRUCTION_PAGE",
+      "rights": "LEGO Group source material; research/reference only, not runtime art or a redistribution license."
+    },
+    {
+      "setId": "4940",
+      "page": 24,
+      "file": "References/4940-page24.png",
+      "sha256": "b5875272f024943150cb5307ef8e69102f92d85f60824660e284c6c7bd7f6028",
+      "sourceUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128317.pdf",
+      "sourceSha256": "893e7639981954dfb4dcb329caa5f2fda001134707c16397e40988049e98c072",
+      "retrieved": "2026-09-23",
+      "kind": "OFFICIAL_INSTRUCTION_PAGE",
+      "rights": "LEGO Group source material; research/reference only, not runtime art or a redistribution license."
+    }
+  ]
+}

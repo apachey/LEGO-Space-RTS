@@ -1,0 +1,30 @@
+{
+  "task": "T083",
+  "unitStableId": "unit.rock_raiders.chrome_crusher",
+  "sourceSet": "4970",
+  "operation": "Unmodified full-page rasters from official LEGO instruction PDF; source images remain research/reference only.",
+  "references": [
+    {
+      "setId": "4970",
+      "page": 1,
+      "file": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4970-page01.png",
+      "sha256": "7f42aee2434f6605cdc95b46e1036d9d52c764756abbbb355a06a940f03f724f",
+      "sourceUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4129264.pdf",
+      "sourceSha256": "21c5d295b105a36c967740bdac29965b73c58946601a1e7542bae3a547475c5d",
+      "retrieved": "2026-09-23",
+      "kind": "OFFICIAL_INSTRUCTION_PAGE",
+      "rights": "LEGO Group source material; research/reference only, not runtime art or a redistribution license."
+    },
+    {
+      "setId": "4970",
+      "page": 33,
+      "file": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4970-page33.png",
+      "sha256": "44a817b7b90035c2a76414837fccc8c2f8641108cc821aea71dd0c9bfdff57b7",
+      "sourceUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4129264.pdf",
+      "sourceSha256": "21c5d295b105a36c967740bdac29965b73c58946601a1e7542bae3a547475c5d",
+      "retrieved": "2026-09-23",
+      "kind": "OFFICIAL_INSTRUCTION_PAGE",
+      "rights": "LEGO Group source material; research/reference only, not runtime art or a redistribution license."
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "stableId": "unit.rock_raiders.drill_craft",
+  "setId": "1277",
+  "evidenceType": "ARCHIVAL_SCAN_OF_OFFICIAL_LEGO_INSTRUCTIONS",
+  "sourcePdf": "https://kb.rockraidersunited.com/images/2/2f/1277_Hovercraft_with_Ice_Saws.pdf",
+  "hosting": "Rock Raiders United archive; not hosted by LEGO",
+  "sourcePages": [
+    {
+      "page": 1,
+      "file": "References/1277-page01.png",
+      "sha256": "547c6304ab90b4b28b04ca37fc4c9742ec3515ef9ceb176fffc105457b610b37",
+      "role": "Source Evidence: cover and construction sequence"
+    },
+    {
+      "page": 2,
+      "file": "References/1277-page02.png",
+      "sha256": "a16da8642e21944158c5f2bfbce3ca11257ce307e102147cd214be894a883f74",
+      "role": "Source Evidence and Production Design Target source: completed step 6"
+    }
+  ],
+  "targetCrop": {
+    "file": "References/1277-drill-craft-target-step6.png",
+    "source": "References/1277-page02.png",
+    "sourceSha256": "a16da8642e21944158c5f2bfbce3ca11257ce307e102147cd214be894a883f74",
+    "sha256": "cc979df0e3aad8bc55ac99f62ac759b3d86a3b181aeee2e2d71ea11dab21d170",
+    "cropPixels": [250, 1070, 730, 1455],
+    "operation": "Crop only; no retouching, recoloring, or generated content"
+  },
+  "provenanceLimits": [
+    "Pages carry LEGO branding, set number 1277, product code 4132646 and a 1999 LEGO Group copyright notice.",
+    "The scan host is an archive and is not LEGO's current archive.",
+    "Research/reference only; not runtime art or a redistribution license."
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "stableId": "unit.aliens.razor_skimmer",
+  "sourceClass": "COMPOSITE-ADAPTATION",
+  "sourceState": "OFFICIAL_INSTRUCTIONS_VISUALLY_AUDITED_IN_T082",
+  "provenance": "Офіційні інструкції LEGO підтверджують донорські кораблі та їхні окремі збірки. Жодне джерело не показує готовий Razor Skimmer; ціль є новою складеною ігровою композицією.",
+  "sources": [
+    {
+      "setId": "7645",
+      "name": "MT-61 Crystal Reaper",
+      "officialInstructions": "https://www.lego.com/en-us/service/building-instructions/7645",
+      "officialPdfBook1": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4534846.pdf",
+      "officialPdfBook2": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4549395.pdf",
+      "auditedPages": "Book 1, pp. 3–26: мала низька Alien attack craft; довгий розділений ніс, чотири окремі swept blades, лаймові енергетичні маси, задні двигуни й відкрита зона екіпажу.",
+      "useInTarget": "Носова композиція та низький рушійний вузол; blade count зменшено до двох і зона екіпажу не переноситься.",
+      "authority": "OFFICIAL_LEGO_INSTRUCTIONS"
+    },
+    {
+      "setId": "7692",
+      "name": "MX-71 Recon Dropship",
+      "officialInstructions": "https://www.lego.com/en-us/service/building-instructions/7692",
+      "officialPdfBook1": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4524070.pdf",
+      "auditedPages": "pp. 13–23: окремий малий Alien craft із двома високими вертикальними лезами, відкритим центром, lime conduits і трьома задніми емітерами.",
+      "useInTarget": "Енергетичний/рушійний контекст родини; високі вертикальні леза й екіпажна конфігурація відхилені для основного силуету.",
+      "authority": "OFFICIAL_LEGO_INSTRUCTIONS"
+    },
+    {
+      "setId": "7697",
+      "name": "MT-51 Claw-Tank Ambush",
+      "officialInstructions": "https://www.lego.com/en-us/service/building-instructions/7697",
+      "officialPdfBook1": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4515381.pdf",
+      "auditedPages": "pp. 3–15: низький Alien craft із трьома вигнутими чорними стулками, відкритим пілотом, lime conduits та рознесеними емітерами.",
+      "useInTarget": "Низька форма бокових стулок; кількість зафіксована як дві, пілот і розподілені гармати не переносяться.",
+      "authority": "OFFICIAL_LEGO_INSTRUCTIONS"
+    }
+  ],
+  "t082Packet": "Docs/Development/M85SuperScout/Packets/unit_aliens_razor_skimmer.md",
+  "t082Audit": "Docs/Development/M85SuperScout/Matrices/aliens_source_audit.md",
+  "scopeNote": "Інструкції доводять тільки показану конструкцію донорських малих craft. Центральне осердя як головна візуальна маса та точна компоновка є T083 адаптацією згідно з прийнятим T082 identity/construction contract."
+}

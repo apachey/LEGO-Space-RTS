@@ -1,0 +1,59 @@
+{
+  "stableId": "unit.astronauts.mx71_recon_dropship",
+  "sourceSet": "7692",
+  "sourceTitle": "MX-71 Recon Dropship",
+  "targetMode": "ADAPTED",
+  "targetImage": "ArtSource/M85/T083/MX71ReconDropshipV2/mx71-recon-dropship-target-20260925-v2.png",
+  "targetImageSha256": "229f2a287e9efff27f928d0231bbbaa9546fb592b750bee04e0be1258a3c7811",
+  "targetImageStatus": "T083_ADAPTED_DIRECTOR_ACCEPTED",
+  "targetImageProvenance": "Crop of a photograph of the completed physical LEGO 7692 model by JANG, independent fan reviewer; crop excludes other models/figures. No geometry or color was generated or altered.",
+  "officialSources": [
+    {
+      "title": "LEGO MX-71 Recon Dropship product/instructions page",
+      "url": "https://www.lego.com/en-us/service/buildinginstructions/7692",
+      "officialInstructionPdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4524070.pdf",
+      "officialInstructionSha256": "4b504dd8e144df114b6d558cbc10e123d3398c9bb0304f6ad832ff3ee863e345",
+      "scope": "Pages 24–71 establish the 7692 aircraft; page 70 shows the set rover attached below the aircraft and its release connection."
+    }
+  ],
+  "independentReferences": [
+    {
+      "title": "JANG independent review/photo of the completed MX-71",
+      "reviewUrl": "https://www.jangbricks.com/2015/07/lego-mars-mission-mx-71-recon-dropship.html",
+      "photoUrl": "https://3.bp.blogspot.com/-LAv4vdgkNGo/VamSoVi3WCI/AAAAAAAAJa0/bkNU1V_hmUw/s1600/150717a-lego-mars-mission-7692-mx-71-recon-dropship-2007a.jpg",
+      "localReference": "ArtSource/M85/T083/MX71ReconDropshipV2/References/jang-independent-photo-7692.jpg",
+      "localReferenceSha256": "e5e69caacbd352477b6834b23d680ceb0a0c3271af9092bd03a72f74c368f540"
+    },
+    {
+      "title": "Eurobricks independent 7692 review and builder photo",
+      "reviewUrl": "https://www.eurobricks.com/forum/forums/topic/51449-review-7692-mars-mission-recon-dropship/",
+      "photoUrl": "https://www.brickshelf.com/gallery/Dunjohn/MarsDropship/img_2203.jpg",
+      "localReference": "ArtSource/M85/T083/MX71ReconDropshipV2/References/eurobricks-builder-photo-7692.jpg",
+      "localReferenceSha256": "b8ccac968ab1497da5291541f3e63168ac00571f656b119f43635022d20a0951"
+    },
+    {
+      "title": "Bricks & Minifigs assembled-set photograph",
+      "pageUrl": "https://bampearland.com/products/7692-mx-71-recon-dropship-u",
+      "photoUrl": "https://bampearland.com/cdn/shop/products/fca62583IMG_6870_2048x.png?v=1696201732",
+      "localReference": "ArtSource/M85/T083/MX71ReconDropshipV2/References/7692-assembled-independent-photo.png",
+      "localReferenceSha256": "c2358435ce8f7c359ba370f5b3a9aecb528cf2f09a1f44ff0593ff0eaca6837f"
+    }
+  ],
+  "cargoEvidence": {
+    "officialPageImageUrl": "https://lego.brickinstructions.com/instructions/07000/7692/070.jpg",
+    "localReference": "ArtSource/M85/T083/MX71ReconDropshipV2/References/7692-instructions-page70-cargo.png",
+    "localReferenceSha256": "36e398e672c036b79ea7c607f3ae49c39d314b622c08eb65d66488cc23309a2f",
+    "note": "A cached raster of official instruction page 70, hosted by a third-party instruction archive. Used only as connection evidence; the completed model photograph is the appearance target."
+  },
+  "supersedes": {
+    "targetImage": "ArtSource/M85/T083/mx71-recon-dropship-target-20260925-v1.png",
+    "status": "PRESERVED_SUPERSEDED_NOT_TARGET"
+  },
+  "remainingAppearanceGap": "Exact clearance and final geometry for each of the four canonical payload classes are production checks; no change to the source aircraft silhouette is proposed.",
+  "directorAcceptance": {
+    "decision": "ACCEPTED",
+    "date": "2026-09-25",
+    "targetMode": "ADAPTED",
+    "t084": "AUTHORIZED_NOT_STARTED"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "task": "T083",
+  "unit": "unit.rock_raiders.hover_scout",
+  "operation": "Unmodified full-page PDF rasterization and exact photo copy; not generated artwork.",
+  "references": [
+    {
+      "setId": "4910",
+      "page": 1,
+      "file": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4910-page01.png",
+      "sha256": "6c342f3c9fe2db9a590c5ad5d8766b83fbffd39344bdd62db00ef888917444d9",
+      "sourceUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128290.pdf",
+      "sourceSha256": "df5c632dabec93ba1e31d15b4fd045f8f76b2e4e997a9ef217a56701ab1e3a0a",
+      "retrieved": "2026-09-23",
+      "kind": "OFFICIAL_INSTRUCTION_PAGE",
+      "rights": "LEGO Group source material; research/reference only, not runtime art or a redistribution license."
+    }
+  ],
+  "derivedTargets": [
+    {
+      "file": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4910-hover-scout-target-step7.png",
+      "sha256": "664cd37ba336f423a3193ec548481c6fbd3b2897abbc18ab2e5bc9faf3c46684",
+      "sourceFile": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4910-page01.png",
+      "sourceSha256": "6c342f3c9fe2db9a590c5ad5d8766b83fbffd39344bdd62db00ef888917444d9",
+      "regionPixels": [
+        690,
+        1240,
+        1050,
+        1495
+      ],
+      "operation": "Crop only; official instruction pixels retained, no retouching or generated content."
+    }
+  ]
+}

@@ -1,0 +1,1047 @@
+{
+  "task": "T083",
+  "target": 35,
+  "authoredProposals": 35,
+  "directorAccepted": 35,
+  "productionModels": 0,
+  "assets": [
+    {
+      "stableId": "unit.rock_raiders.crew",
+      "file": "Batch01RockRaiders/crew.md",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "sourceEvidence": {
+        "manifest": "Batch01RockRaiders/References/source_manifest.json",
+        "reference": "4930-outbox.jpg",
+        "provenance": "Archive-hosted photograph of the completed official set; photographer/license unverified; research/reference only."
+      },
+      "designSpec": "Batch01RockRaiders/crew_design_spec.md",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch01RockRaiders/crew_review.html",
+        "rationale": "Official source visual retained closely.",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch01RockRaiders/crew_design_spec.md",
+        "sourceImage": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4930-outbox.jpg",
+        "reviewReady": true,
+        "appearanceSummary": "One Tiny Crew unit identity with five source-specific 4930 figure looks and their individual visible headwear, clothing colors and tools; no visible game-geometry adaptation."
+      },
+      "review": "Batch01RockRaiders/crew_review.html",
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceNote": "The director confirmed on 2026-09-24 that this Crew Production Design Target had already been accepted; this records the prior acceptance without changing the target.",
+      "acceptanceDate": "2026-09-24"
+    },
+    {
+      "stableId": "unit.rock_raiders.hover_scout",
+      "file": "Batch01RockRaiders/hover_scout.md",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "sourceEvidence": {
+        "manifest": "Batch01RockRaiders/References/hover_scout_source_manifest.json",
+        "reference": "4910-page01.png",
+        "provenance": "Official LEGO 4910 instruction PDF page 1; unmodified full-page raster retained in the unit-specific source manifest."
+      },
+      "designSpec": "Batch01RockRaiders/hover_scout.md",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch01RockRaiders/hover_scout_target_review.html",
+        "rationale": "Official LEGO 4910 completed Scout at instruction step 7, framed directly from the official page; no new exterior geometry.",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch01RockRaiders/hover_scout.md",
+        "sourceImage": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4910-hover-scout-target-step7.png",
+        "reviewReady": true,
+        "appearanceSummary": "Build the open low plate sled shown at official 4910 instruction step 7: seated blue/turquoise operator, large forward angular scanner/tool assembly, exposed deck and separate rear tool rack; no closed hull, invented sensor tower or added underside hero mass."
+      },
+      "review": "Batch01RockRaiders/hover_scout_target_review.html",
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-24",
+      "acceptanceNote": "Директор затвердив через «+» 2026-09-24: офіційний LEGO 4910, крок 7; дозволені лише низький зазор зависання, короткий сигнал від штатної передньої сканерно-інструментальної збірки та мала пласка командна мітка."
+    },
+    {
+      "stableId": "unit.rock_raiders.drill_craft",
+      "file": "Batch01RockRaiders/drill_craft.md",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch01RockRaiders/drill_craft_target_review.html",
+        "rationale": "Completed LEGO 1277 step 6 already represents the intended external appearance; target is a source-pixel crop with no new concept or exterior geometry.",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch01RockRaiders/drill_craft_design_spec.md",
+        "sourceImage": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/1277-drill-craft-target-step6.png",
+        "reviewReady": true,
+        "appearanceSummary": "Completed 1277 Hovercraft with Ice Saws: low open plate-built sled, exposed operator, central hazard panel, yellow sloped sides, turquoise grilles, paired raised round side pods and two narrow elongated forward saw bars; no central helical drill or added enclosure."
+      },
+      "sourceEvidence": {
+        "manifest": "Docs/Development/M85UnitDesign/Batch01RockRaiders/drill_craft_source_evidence.json",
+        "reference": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/1277-page02.png",
+        "provenance": "Archive-hosted scan of the official LEGO 1277 instruction page; unmodified source raster and hash recorded."
+      },
+      "designSpec": "Batch01RockRaiders/drill_craft_design_spec.md",
+      "review": "Batch01RockRaiders/drill_craft_target_review.html",
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-24",
+      "acceptanceNote": "The director accepted the completed LEGO 1277 SOURCE_LOCKED exterior on 2026-09-24; T084 is authorized but has not started."
+    },
+    {
+      "stableId": "unit.rock_raiders.rapid_rider",
+      "file": "Batch01RockRaiders/rapid_rider.md",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "sourceEvidence": {
+        "manifest": "Batch01RockRaiders/rapid_rider_source_evidence.json",
+        "reference": "4920-page01.png",
+        "provenance": "Official LEGO 4920 instruction PDF pages 1–2; both unmodified full-page rasters and PDF hash recorded in the unit-specific source manifest."
+      },
+      "designSpec": "Batch01RockRaiders/rapid_rider.md",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch01RockRaiders/rapid_rider_target_review.html",
+        "rationale": "The official completed LEGO 4920 already represents the intended exterior; preserve its one-driver appearance and source proportions.",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch01RockRaiders/rapid_rider.md",
+        "sourceImage": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4920-page01.png",
+        "reviewReady": true,
+        "appearanceSummary": "Official completed LEGO 4920 Rapid Rider, preserving the twin-hull exterior, source proportions, open cargo tub and one source-scale driver; no added passenger seating or visible exterior adaptation."
+      },
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-24",
+      "acceptanceNote": "Директор відхилив ADAPTED-ціль із чотирма Crew та затвердив SOURCE_LOCKED вигляд офіційного LEGO 4920 з одним водієм і джерельними пропорціями. Вигляд додаткового пасажира чи альтернативного вантажу відкладено; місткість гри не змінюється.",
+      "review": "Batch01RockRaiders/rapid_rider_target_review.html"
+    },
+    {
+      "stableId": "unit.rock_raiders.loader_dozer",
+      "file": "Batch01RockRaiders/loader_dozer.md",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "sourceEvidence": {
+        "manifest": "Batch01RockRaiders/loader_dozer_source_evidence.json",
+        "reference": "4950-page01.png",
+        "provenance": "Official LEGO 4950 instruction PDF 4128419; unmodified page 1 plus construction pages 21–22, hashes recorded in the source manifest."
+      },
+      "designSpec": "Batch01RockRaiders/loader_dozer_design_spec.md",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch01RockRaiders/loader_dozer_target_review.html",
+        "rationale": "The official completed LEGO 4950 already shows the intended base appearance with its bucket; the researched Cutter Package is a separate game upgrade, not the base target.",
+        "designSpec": "Batch01RockRaiders/loader_dozer_design_spec.md",
+        "sourceImage": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4950-page01.png",
+        "reviewReady": true,
+        "appearanceSummary": "Official completed LEGO 4950 Loader Dozer: low gray chassis, four large black wheels, open brown operator cage, turquoise/yellow details and full-width front bucket; no visible game-specific geometry changes."
+      },
+      "review": "Batch01RockRaiders/loader_dozer_target_review.html",
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-24",
+      "acceptanceNote": "Director approved the official LEGO 4950 SOURCE_LOCKED base appearance with its bucket on 2026-09-24. The researched Cutter Package remains a separate game upgrade; its fitted appearance is not authorized by this target.",
+      "gameAdaptations": []
+    },
+    {
+      "stableId": "unit.rock_raiders.granite_grinder",
+      "file": "Batch01RockRaiders/granite_grinder.md",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch01RockRaiders/granite_grinder_target_review.html",
+        "rationale": "Completed official LEGO 4940 already represents the intended exterior; instruction page 1 is the target and page 24 provides construction evidence.",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch01RockRaiders/granite_grinder.md",
+        "sourceImage": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4940-page01.png",
+        "reviewReady": true,
+        "appearanceSummary": "Completed official LEGO 4940 Granite Grinder: tall narrow walker on two separated ski feet, high open brown operator cage, long pale forward drill, gray and dark mechanism, turquoise/yellow accents, hazard bands and short rear equipment mass; no static geometry adaptation."
+      },
+      "sourceEvidence": {
+        "manifest": "Batch01RockRaiders/granite_grinder_source_evidence.json",
+        "reference": "References/4940-page01.png",
+        "provenance": "Official LEGO 4940 instruction PDF 4128317.pdf; unmodified full-page rasters and source PDF SHA-256 are recorded in the unit-specific source evidence manifest."
+      },
+      "designSpec": "Batch01RockRaiders/granite_grinder.md",
+      "review": "Batch01RockRaiders/granite_grinder_target_review.html",
+      "gameAdaptations": [
+        "Restrained alternating short steps with low foot lift and minimal upper-body sway; presentation interpretation only because the LEGO instructions do not demonstrate gait."
+      ],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-24",
+      "acceptanceNote": "Director approved the SOURCE_LOCKED official LEGO 4940 appearance with restrained short alternating steps on 2026-09-24. T084 is authorized for this unit only and has not started."
+    },
+    {
+      "stableId": "unit.rock_raiders.chrome_crusher",
+      "file": "Batch01RockRaiders/chrome_crusher.md",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "sourceEvidence": {
+        "manifest": "Batch01RockRaiders/chrome_crusher_source_evidence.json",
+        "sourceSet": "4970"
+      },
+      "designSpec": "Batch01RockRaiders/chrome_crusher.md",
+      "review": "Batch01RockRaiders/chrome_crusher_target_review.html",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch01RockRaiders/chrome_crusher_target_review.html",
+        "rationale": "Official LEGO 4970 is the target image; the director accepted its one small game-specific team marker.",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch01RockRaiders/chrome_crusher.md",
+        "sourceImage": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4970-page01.png",
+        "reviewReady": true,
+        "appearanceSummary": "Official LEGO 4970 long open frame, four large wheels, offset powered drill, operator cage, open service area and raised work beam; one small flat team marker is the only visible game adaptation."
+      },
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-24",
+      "acceptanceNote": "Director approved the official LEGO 4970 SOURCE_LOCKED Production Design Target with one small flat team marker on the outer central frame. No other visible geometry or color adaptation. T084 is authorized for this unit only and has not started.",
+      "gameAdaptations": [
+        "One small flat team marker on the outside of the central frame above the rear wheel pair."
+      ]
+    },
+    {
+      "stableId": "unit.rock_raiders.tunnel_transport",
+      "file": "Batch01RockRaiders/tunnel_transport.md",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "productionDesignTarget": {
+        "mode": "ADAPTED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch01RockRaiders/tunnel_transport_production_target_review_20260924.html",
+        "rationale": "Director approved the existing adapted loaded appearance: preserve the open LEGO 4980 lift frame and show one separate full-size Chrome Crusher on a lower frame-supported yoke.",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch01RockRaiders/tunnel_transport.md",
+        "sourceImage": "ArtSource/M85/T083/TunnelTransportLoadedV1/loaded-proposal-v2.png",
+        "reviewReady": true,
+        "appearanceSummary": "Open 4980 twin-rotor load bridge with source brown blades, gray/white crossbeam, turquoise/yellow accents and forward control module; one separate horizontal 4970 Chrome Crusher hangs below the central frame on a lower yoke. No enclosed fuselage, altered rotor geometry or extra game units."
+      },
+      "sourceEvidence": {
+        "manifest": "Batch01RockRaiders/tunnel_transport_source_evidence.json",
+        "sourceSet": "4980",
+        "provenance": "Official LEGO instructions, PDF SHA-256 and exact page-image hashes recorded in the unit-specific source evidence manifest."
+      },
+      "designSpec": "Batch01RockRaiders/tunnel_transport.md",
+      "review": "Batch01RockRaiders/tunnel_transport_production_target_review_20260924.html",
+      "gameAdaptations": [
+        "One open lower cargo yoke with paired short hangers attached only to the central load-bearing frame; it carries one unchanged, separate Chrome Crusher horizontally below the frame."
+      ],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-24",
+      "acceptanceNote": "Director approved on 2026-09-24. T084 is authorized for Tunnel Transport only; it has not started."
+    },
+    {
+      "stableId": "unit.astronauts.expedition_crew",
+      "file": "Batch02Astronauts/expedition_crew.md",
+      "review": "Batch02Astronauts/review.html",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "acceptanceGate": "LEGACY_ACCEPTED_PRE_GATE",
+      "productionDesignTarget": {
+        "state": "LEGACY_ACCEPTED_TARGET_NOT_REVALIDATED",
+        "note": "Accepted before the target gate; preserve accepted decision without automatic invalidation."
+      }
+    },
+    {
+      "stableId": "unit.astronauts.rover",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-24",
+      "acceptanceNote": "Director accepted the official LEGO 7301 SOURCE_LOCKED target after the antenna/mast wording was corrected to follow the source image without interpreting its terminal shape.",
+      "file": "Batch02Astronauts/rover.md",
+      "review": "Batch02Astronauts/rover_review.html",
+      "productionDesignTarget": {
+        "state": "DIRECTOR_ACCEPTED",
+        "mode": "SOURCE_LOCKED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch02Astronauts/rover_review.html",
+        "reviewReady": true,
+        "appearanceSummary": "Official LEGO 7301 page 1 completed Rover: very small compact open vehicle, four dominant white half-dome wheels, light chassis, seated astronaut, black front boom and short black dish mast; no large blue equipment box."
+      },
+      "sourceEvidence": {
+        "manifest": "Batch02Astronauts/rover_source_evidence.json"
+      },
+      "designSpec": "Batch02Astronauts/rover_design_spec.md",
+      "gameAdaptations": [
+        "Restrained temporary survey pulse at the source front boom tip; presentation effect only."
+      ]
+    },
+    {
+      "stableId": "unit.astronauts.t3_trike",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "file": "Batch02Astronauts/t3_trike_design_spec_20260924_v1.md",
+      "sourceEvidence": {
+        "manifest": "Batch02Astronauts/t3_trike_source_evidence_20260924_v1.json",
+        "sourceSets": [
+          "7312",
+          "7694"
+        ],
+        "provenance": "Official LEGO instruction PDFs and accepted T082 visual audits; exact URLs and page coverage recorded in the unit-specific source manifest."
+      },
+      "designSpec": "Batch02Astronauts/t3_trike_design_spec_20260924_v1.md",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch02Astronauts/t3_trike_production_design_review_20260924_v1.html",
+        "rationale": "Both configuration appearances are official LEGO completed builds. The director approved 7312 Life on Mars as base Escort and 7694 Mars Mission as Survey after Field Survey Package research; they are unequal refit states of one gameplay unit.",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch02Astronauts/t3_trike_design_spec_20260924_v1.md",
+        "sourceImages": [
+          "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130807.pdf#page=1",
+          "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517775.pdf#page=1"
+        ],
+        "reviewReady": true,
+        "appearanceSummary": "Base Escort: official LEGO 7312 Life on Mars T3-Trike. After Field Survey Package research and Survey refit: official LEGO 7694 Mars Mission MT-31 Trike appearance. Both preserve their distinct source geometry and palette; no hybrid design."
+      },
+      "review": "Batch02Astronauts/t3_trike_production_design_review_20260924_v1.html",
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-24",
+      "acceptanceNote": "The director approved on 2026-09-24: official 7312 Life on Mars is the base Escort look; after Field Survey Package research, the same T3-Trike can refit to the official 7694 Mars Mission Survey look. T084 is authorized for this unit only and has not started.",
+      "gameAdaptations": [
+        "Presentation maps base Escort to the official LEGO 7312 appearance and research-unlocked Survey refit to the official LEGO 7694 appearance; gameplay/refit rules are unchanged."
+      ]
+    },
+    {
+      "stableId": "unit.astronauts.mono_jet",
+      "file": "Batch02Astronauts/mono_jet_design_spec_20260924_v1.md",
+      "review": "Batch02Astronauts/mono_jet_production_review_20260924_v1.html",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "sourceEvidence": {
+        "manifest": "Batch02Astronauts/mono_jet_source_evidence_20260924_v1.json",
+        "sourceSet": "7310",
+        "provenance": "Official LEGO instruction PDF 4130805.pdf; T082 recorded its SHA-256 and audited pages 1-2."
+      },
+      "designSpec": "Batch02Astronauts/mono_jet_design_spec_20260924_v1.md",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch02Astronauts/mono_jet_production_review_20260924_v1.html",
+        "rationale": "The official completed LEGO 7310 already represents the intended compact asymmetric Field Systems craft; retain the source appearance without invented exterior geometry.",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch02Astronauts/mono_jet_design_spec_20260924_v1.md",
+        "sourceImage": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130805.pdf#page=2",
+        "reviewReady": true,
+        "appearanceSummary": "Official completed LEGO 7310: tiny exposed operator wedge and axle-mounted signal dish beside one dominant transverse wheel with a treaded surface, with the shrouded conical nozzle on the opposite side; no added geometry or visible game adaptation."
+      },
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-24",
+      "acceptanceNote": "The director accepted on 2026-09-24 the official LEGO 7310 SOURCE_LOCKED appearance as the ground monowheel-trike target, preserving its one dominant treaded wheel, exposed operator wedge and side nozzle without visible additions. T084 is authorized for Mono Jet only and has not started.",
+      "gameAdaptations": []
+    },
+    {
+      "stableId": "unit.astronauts.solar_explorer",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "file": "Batch02Astronauts/solar_explorer_design_spec_20260924_v2.md",
+      "review": "Batch02Astronauts/solar_explorer_target_review_20260924_v2.html",
+      "sourceEvidence": {
+        "manifest": "Batch02Astronauts/solar_explorer_source_manifest_20260924_v2.json",
+        "sourceSet": "7315"
+      },
+      "designSpec": "Batch02Astronauts/solar_explorer_design_spec_20260924_v2.md",
+      "productionDesignTarget": {
+        "mode": "MULTI_VIEW_BLOCKOUT",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch02Astronauts/solar_explorer_target_review_20260924_v2.html",
+        "rationale": "Збережено джерельний силует LEGO 7315 і модульні стики; ігрова адаптація відділяє центральну лабораторну секцію та перестиковує залишок корабля.",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch02Astronauts/solar_explorer_design_spec_20260924_v2.md",
+        "targetImages": [
+          "ArtSource/M85/T083/SolarExplorerSpacecraftV2/solar-explorer-spacecraft-target-approved.png"
+        ],
+        "reviewReady": true,
+        "appearanceSummary": "Довгий LEGO 7315 spacecraft: cockpit/nose, центральна червона стільникова solar/lab секція та задня кільцева engine-секція. Після розгортання центральна лабораторія відділена цілою, ніс і двигун з’єднані осьово; rover і probe/equipment окремі допоміжні елементи; без коліс чи рейок."
+      },
+      "gameAdaptations": [
+        "Центральна solar/lab секція відділяється цілою як Forward Service / польова лабораторія.",
+        "Cockpit/nose та rear/engine секції осьово перестиковуються у коротшу корабельну конфігурацію.",
+        "Короткі опори підтримують лабораторний модуль; коліс, гусениць, напрямних і автомобільного шасі немає."
+      ],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-24",
+      "acceptanceNote": "Директор затвердив світло-бежевий Production Design Target LEGO 7315: довгий модульний spacecraft; центральна стільникова solar/lab секція відділяється як Forward Service, а cockpit/nose і rear/engine осьово стикуються. Rover та probe/equipment залишаються допоміжними. T084 авторизовано лише для Solar Explorer, але не розпочато."
+    },
+    {
+      "stableId": "unit.astronauts.mission_fighter",
+      "file": "Batch02Astronauts/mission_fighter_design_spec_20260924_v1.md",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "sourceEvidence": {
+        "manifest": "ArtSource/M85/T083/MissionFighterV1/source_manifest.json",
+        "sourceSets": [
+          "7695"
+        ],
+        "provenance": "Official LEGO 7695 instruction PDF; page raster, original PDF hash and target crop are recorded in the unit-specific manifest. LEGO 5619 Crystal Hawk is documented there as a separate excluded model."
+      },
+      "designSpec": "Batch02Astronauts/mission_fighter_design_spec_20260924_v1.md",
+      "review": "Batch02Astronauts/mission_fighter_target_review_20260924_v1.html",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch02Astronauts/mission_fighter_target_review_20260924_v1.html",
+        "rationale": "Mission Fighter targets the official completed LEGO 7695 MX-11 Astro Fighter only. LEGO 5619 Crystal Hawk is a separate model and is excluded.",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch02Astronauts/mission_fighter_design_spec_20260924_v1.md",
+        "sourceImage": "ArtSource/M85/T083/MissionFighterV1/References/7695-completed-model.png",
+        "reviewReady": true,
+        "appearanceSummary": "Офіційний LEGO 7695 MX-11 Astro Fighter: тонкий білий дельтаподібний планер, помаранчева кабіна-ніс, малий темний задній вузол та антена; 5619 Crystal Hawk є окремою моделлю й виключений із цілі."
+      },
+      "gameAdaptations": [],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-24",
+      "acceptanceNote": "The director approved on 2026-09-24 the official LEGO 7695 MX-11 Astro Fighter SOURCE_LOCKED target, preserving its thin white delta-wing planform, orange canopy-nose and compact dark rear assembly. LEGO 5619 Crystal Hawk is a separate model and is excluded. T084 is authorized for this unit only and has not started."
+    },
+    {
+      "stableId": "unit.astronauts.mx41_switch_fighter",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "file": "Batch02Astronauts/mx41_switch_fighter_design_spec_20260924_v1.md",
+      "sourceEvidence": {
+        "manifest": "ArtSource/M85/T083/MX41SwitchFighterV1/source_manifest.json",
+        "sourceSets": [
+          "7647"
+        ],
+        "provenance": "Офіційне фото завершеної моделі LEGO.com і офіційний LEGO 7647 PDF; джерело та контрольні суми описані в маніфесті."
+      },
+      "designSpec": "Batch02Astronauts/mx41_switch_fighter_design_spec_20260924_v1.md",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch02Astronauts/mx41_switch_fighter_director_review_20260924_v2.html",
+        "rationale": "Офіційний LEGO 7647 без геометричних змін; польотний вигляд показано головною ціллю, наземну конфігурацію підтверджує окремий фрагмент офіційної інструкції.",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch02Astronauts/mx41_switch_fighter_design_spec_20260924_v1.md",
+        "sourceImage": "ArtSource/M85/T083/MX41SwitchFighterV1/References/7647-official-flight-target.jpg",
+        "reviewReady": true,
+        "appearanceSummary": "Офіційний 7647 MX-41: довгий біло-помаранчевий корпус. У наземному Pursuit бокові рами складені вздовж низького корпуса, видно три помаранчеві колеса з ближнього боку (усього шість); у польоті рами розгорнуті в широкий планер. Наземний стан показано за фінальним кроком офіційної інструкції, с. 64."
+      },
+      "review": "Batch02Astronauts/mx41_switch_fighter_director_review_20260924_v2.html",
+      "gameAdaptations": [
+        "Без видимої зміни геометрії. Ігровий перехід зберігає з’єднання корпуса замість ручного роз’єднання, показаного під час складання."
+      ],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-25",
+      "acceptanceNote": "Директор прийняв SOURCE_LOCKED Production Design Target офіційного LEGO 7647: польотну й завершену наземну конфігурації без видимих змін геометрії. T084 авторизовано лише для MX-41, роботу ще не розпочато."
+    },
+    {
+      "stableId": "unit.astronauts.mobile_mining_platform",
+      "file": "Batch02Astronauts/mobile_mining_platform_design_spec_20260925_v1.md",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "sourceEvidence": {
+        "manifest": "Batch02Astronauts/mobile_mining_platform_source_manifest_20260925_v1.json",
+        "sourceSets": [
+          "7645",
+          "7648",
+          "7693"
+        ],
+        "provenance": "Official LEGO instruction sources and hashes are inherited from the accepted T082 packet and its audited page manifests. The two appearance studies are separately identified as preproduction review material."
+      },
+      "designSpec": "Batch02Astronauts/mobile_mining_platform_design_spec_20260925_v1.md",
+      "productionDesignTarget": {
+        "mode": "ADAPTED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch02Astronauts/mobile_mining_platform_director_review_20260925_v1.html",
+        "rationale": "Two materially different front-tool configurations share one adapted tracked chassis and directly docked upper module; the exact Ore Drill composite is not a completed source model.",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch02Astronauts/mobile_mining_platform_design_spec_20260925_v1.md",
+        "sourceImage": "ArtSource/M85/Preproduction/MobileMiningPlatformSourceRebuildV1/mobile_mining_platform_source_rebuild_rev2.png",
+        "reviewReady": true,
+        "appearanceSummary": "One low tracked white/orange platform in two accepted targets: Crystal Reaper with twin large harvesting wheels, and Ore Drill with one compact forward spiral drill; both retain two independent manipulators and a directly docked upper module."
+      },
+      "gameAdaptations": [
+        "7645, 7648 and 7693 donor parts form one selectable platform with two Service-refit tool configurations.",
+        "Ore Drill replaces only the twin-wheel head with one compact spiral drill on articulated support.",
+        "A visible material path and cargo route connect the working head to the directly docked upper module."
+      ],
+      "review": "Batch02Astronauts/mobile_mining_platform_director_review_20260925_v1.html",
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-25",
+      "acceptanceNote": "Директор затвердив ADAPTED Production Design Target: одна платформа у двох конфігураціях — Crystal Reaper із парними жниварними колесами та Ore Drill з одним компактним спіральним буром; обидві з двома окремими маніпуляторами й прямо пристикованим верхнім модулем. T084 авторизовано лише для Mobile Mining Platform і не розпочато."
+    },
+    {
+      "stableId": "unit.astronauts.mx71_recon_dropship",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "file": "Batch02Astronauts/mx71_recon_dropship_design_spec_20260925_v2.md",
+      "designSpec": "Batch02Astronauts/mx71_recon_dropship_design_spec_20260925_v2.md",
+      "review": "Batch02Astronauts/mx71_recon_dropship_director_review_20260925_v2.html",
+      "sourceEvidence": {
+        "manifest": "Batch02Astronauts/mx71_recon_dropship_source_evidence_20260925_v2.json",
+        "sourceSet": "7692",
+        "provenance": "Official LEGO instruction PDF 4524070 plus independent JANG and Eurobricks completed-model photographs; source hashes and provenance are recorded in the unit manifest."
+      },
+      "productionDesignTarget": {
+        "mode": "ADAPTED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch02Astronauts/mx71_recon_dropship_director_review_20260925_v2.html",
+        "rationale": "Use the source-faithful completed LEGO 7692 as the carrier target; adapt only the open underside connection to accept one permitted game payload at a time.",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch02Astronauts/mx71_recon_dropship_design_spec_20260925_v2.md",
+        "targetImage": "ArtSource/M85/T083/MX71ReconDropshipV2/mx71-recon-dropship-target-20260925-v2.png",
+        "reviewReady": true,
+        "appearanceSummary": "Source-faithful white-orange LEGO 7692: long narrow high wing, amber cockpit, twin rear engine pods, orange tanks and flexible tubes, compact dark landing supports; one permitted game payload attaches visibly below the aircraft."
+      },
+      "gameAdaptations": [
+        "One permitted payload at a time attaches below the source-faithful aircraft: Crew, Rover, T3-Trike or Claw-Tank.",
+        "Keep the LEGO 7692 silhouette and white/orange source palette, including its amber transparent cockpit.",
+        "Short blue-tipped forward details stay on the airframe, separate from any payload."
+      ],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-25",
+      "acceptanceNote": "Директор прийняв ADAPTED Production Design Target MX-71 Recon Dropship 2026-09-25: зберегти силует і пропорції зібраного LEGO 7692, бурштинову кабіну, помаранчеві баки й трубки та компактні темні опори; під корпусом — один дозволений ігровий вантаж. T084 авторизовано лише для MX-71 і не розпочато."
+    },
+    {
+      "stableId": "unit.astronauts.mt51_claw_tank",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "file": "Batch02Astronauts/mt51_claw_tank_design_spec_20260925_v1.md",
+      "designSpec": "Batch02Astronauts/mt51_claw_tank_design_spec_20260925_v1.md",
+      "review": "Batch02Astronauts/mt51_claw_tank_director_review_20260925_v1.html",
+      "sourceEvidence": {
+        "manifest": "ArtSource/M85/T083/MT51ClawTankV1/source_manifest_20260925_v1.json",
+        "sourceSet": "7697",
+        "provenance": "Official LEGO instruction PDF 4515381, visually audited in the accepted T082 evidence; target-generation inputs include the preserved director-approved comparative arm correction."
+      },
+      "productionDesignTarget": {
+        "mode": "ADAPTED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch02Astronauts/mt51_claw_tank_director_review_20260925_v1.html",
+        "rationale": "Isolate the completed LEGO 7697 vehicle in a clean, source-colored game target while preserving the director-approved asymmetric arm arrangement.",
+        "designSpec": "Batch02Astronauts/mt51_claw_tank_design_spec_20260925_v1.md",
+        "targetImage": "ArtSource/M85/T083/MT51ClawTankV1/mt51_claw_tank_target_20260925_v1.png",
+        "reviewReady": true,
+        "appearanceSummary": "Low wide white-orange twin-track vehicle with a circular rotating upper body, orange canopy, viewer-left articulated claw and opposing viewer-right twin-bar tool/weapon arm."
+      },
+      "gameAdaptations": [
+        "Clean isolated view removes the neighboring mixed-set craft and loose components from the design target.",
+        "Source colors are restored around the previously accepted asymmetric arm arrangement."
+      ],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-25",
+      "acceptanceNote": "Директор затвердив ADAPTED Production Design Target MT-51 Claw-Tank: надсиланий кольоровий цільовий вигляд, низька широка гусенична база, круглий помаранчевий корпус, клешня зліва й парний інструмент справа. T084 авторизовано лише для MT-51; моделювання не розпочато."
+    },
+    {
+      "stableId": "unit.astronauts.mt101_armored_drilling_unit",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "file": "Batch02Astronauts/mt101_armored_drilling_unit_design_spec_20260925_v1.md",
+      "designSpec": "Batch02Astronauts/mt101_armored_drilling_unit_design_spec_20260925_v1.md",
+      "review": "Batch02Astronauts/mt101_armored_drilling_unit_director_review_20260925_v1.html",
+      "sourceEvidence": {
+        "manifest": "ArtSource/M85/T083/MT101ArmoredDrillingUnitV1/source_manifest.json",
+        "sourceSet": "7699",
+        "provenance": "Official LEGO book 2 cover is the full completed-configuration anchor; official instruction pages are supporting construction evidence. Source and hashes are recorded in the unit manifest."
+      },
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch02Astronauts/mt101_armored_drilling_unit_director_review_20260925_v1.html",
+        "rationale": "Official LEGO 7699 book 2 cover shows the completed MT-101 with its attached rear aircraft module; instruction page 35 is supporting evidence only.",
+        "designSpec": "Batch02Astronauts/mt101_armored_drilling_unit_design_spec_20260925_v1.md",
+        "sourceImage": "ArtSource/M85/T083/MT101ArmoredDrillingUnitV1/mt101_t082_accepted_completed_appearance_target.png",
+        "reviewReady": true,
+        "appearanceSummary": "Офіційна повна конфігурація LEGO 7699: біло-помаранчева важка шестиколісна бурова машина з передньою кабіною, буром, окремим верхнім пускачем і пристикованим заднім повітряним модулем."
+      },
+      "gameAdaptations": [],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-25",
+      "acceptanceNote": "Директор прийняв повний SOURCE_LOCKED Production Design Target MT-101 із пристикованим заднім літальним модулем 2026-09-25. T084 авторизовано лише для MT-101; моделювання не розпочато."
+    },
+    {
+      "stableId": "unit.astronauts.mt201_ultra_drill_walker",
+      "file": "Batch02Astronauts/mt201_ultra_drill_walker_proposal_20260925_v1.md",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "sourceEvidence": {
+        "manifest": "Batch02Astronauts/mt201_ultra_drill_walker_source_evidence_20260925_v1.json",
+        "sourceSet": "7649",
+        "provenance": "Official LEGO instruction books define the source construction; the displayed completed-model photograph is an independent private-sale photo and is labelled as such."
+      },
+      "designSpec": "Batch02Astronauts/mt201_ultra_drill_walker_design_spec_20260925_v1.md",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch02Astronauts/mt201_ultra_drill_walker_director_review_20260925_v1.html",
+        "rationale": "Completed LEGO 7649 already represents the intended walker appearance; retain the source-built observation shuttle as a visual module without adding geometry.",
+        "designSpec": "Batch02Astronauts/mt201_ultra_drill_walker_design_spec_20260925_v1.md",
+        "sourceImage": "https://media.kijiji.ca/api/v1/ca-prod-fsbo-ads/images/5a/5ad1cce0-199f-4e75-9318-44b3f6b88a39?rule=kijijica-960-jpg",
+        "reviewReady": true,
+        "appearanceSummary": "Source-faithful white/orange/black LEGO 7649 four-legged drill walker with central upright drill and orange cockpit; retain its source-built detachable observation shuttle as part of this unit's visual package. No visible game adaptation is proposed."
+      },
+      "gameAdaptations": [],
+      "review": "Batch02Astronauts/mt201_ultra_drill_walker_director_review_20260925_v1.html",
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-25",
+      "acceptanceNote": "Директор затвердив SOURCE_LOCKED Production Design Target LEGO 7649 для MT-201 із човником спостереження як візуальним модулем одного юніта. T084 авторизовано лише для цього юніта; роботу не розпочато."
+    },
+    {
+      "stableId": "unit.astronauts.mx81_operations_aircraft",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "file": "Batch02Astronauts/mx81_operations_aircraft_design_spec_20260925_v1.md",
+      "sourceEvidence": {
+        "manifest": "ArtSource/M85/T083/MX81OperationsAircraftV1/source_manifest.json",
+        "sourceSets": [
+          "7644"
+        ],
+        "provenance": "Офіційне фото LEGO.com і дві офіційні книги інструкцій; незалежні фотографії використано лише для перехресної перевірки."
+      },
+      "designSpec": "Batch02Astronauts/mx81_operations_aircraft_design_spec_20260925_v1.md",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch02Astronauts/mx81_operations_aircraft_director_review_20260925_v1.html",
+        "rationale": "Офіційний зібраний LEGO 7644 задає літак без змін геометрії; інструкції відокремлюють пускову вежу й підтверджують рідний транспортер на хвості.",
+        "designSpec": "Batch02Astronauts/mx81_operations_aircraft_design_spec_20260925_v1.md",
+        "sourceImage": "ArtSource/M85/T083/MX81OperationsAircraftV1/mx81-7644-production-target.png",
+        "reviewReady": true,
+        "appearanceSummary": "Дуже широке тонке крило, біло-чорний центральний корпус, помаранчеві двигуни та рідний малий транспортер, пристикований до хвоста; пускова вежа — окрема збірка."
+      },
+      "review": "Batch02Astronauts/mx81_operations_aircraft_director_review_20260925_v1.html",
+      "gameAdaptations": [],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "sourceModuleSelection": "Малий шахтарський транспортер, який LEGO описує як знімний модуль із хвоста; він лишається візуально пристикованим модулем MX-81 і не визначає ігрові вантажі чи місткість.",
+      "acceptanceDate": "2026-09-25",
+      "acceptanceNote": "Директор прийняв 2026-09-25 SOURCE_LOCKED Production Design Target офіційного LEGO 7644: літак із рідним транспортером на хвості, без пускової вежі та інших моделей набору. T084 авторизовано лише для MX-81; роботу не розпочато."
+    },
+    {
+      "stableId": "unit.aliens.etx_servitor",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "file": "Batch03Aliens/etx_servitor_design_spec_20260925_v1.md",
+      "sourceEvidence": {
+        "manifest": "ArtSource/M85/T083/ETXServitorV1/source_evidence_manifest.json",
+        "sourceSets": [
+          "5617",
+          "7646",
+          "7691"
+        ],
+        "provenance": "Official LEGO building instructions; official LEGO magazine cutaways archived at Internet Archive; source audit and limits recorded in manifest."
+      },
+      "designSpec": "Batch03Aliens/etx_servitor_design_spec_20260925_v1.md",
+      "productionDesignTarget": {
+        "mode": "ORIGINAL_EXTENDED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch03Aliens/etx_servitor_director_review_20260925_v1.html",
+        "rationale": "No official dedicated worker exists; the source-derived hover shell and internal biomechanical grammar are composed with the role-required cradle and integrated clamp as disclosed adaptations.",
+        "designSpec": "Batch03Aliens/etx_servitor_design_spec_20260925_v1.md",
+        "targetImage": "ArtSource/M85/T083/ETXServitorV1/etx_servitor_production_target_20260925_v1.png",
+        "reviewReady": true,
+        "appearanceSummary": "Tiny low black Alien hover worker with paired curved shell valves, protected pale support ribs and dark-green living conduits, an empty external cargo cradle and one short integrated two-jaw utility clamp."
+      },
+      "review": "Batch03Aliens/etx_servitor_director_review_20260925_v1.html",
+      "gameAdaptations": [
+        "Low paired-shell hover worker composition derived from Alien craft grammar.",
+        "Protected support/conduit slot and external empty cargo cradle.",
+        "Single short hull-integrated utility clamp."
+      ],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-25",
+      "acceptanceNote": "Director approved this ORIGINAL_EXTENDED Production Design Target on 2026-09-25: low black Alien hover worker with paired shell valves, protected support/conduit slot, empty cargo cradle and one short integrated utility clamp. T084 is authorized for ETX Servitor only and remains not started."
+    },
+    {
+      "stableId": "unit.aliens.alien_jet",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "file": "Batch03Aliens/alien_jet_design_spec_20260925_v1.md",
+      "sourceEvidence": {
+        "manifest": "ArtSource/M85/T083/AlienJetV1/source_evidence_manifest.json",
+        "sourceSet": "5617",
+        "provenance": "Official LEGO 5617 building instructions; unchanged director-supplied visual source reference is separately identified."
+      },
+      "designSpec": "Batch03Aliens/alien_jet_design_spec_20260925_v1.md",
+      "review": "Batch03Aliens/alien_jet_director_review_20260925_v1.html",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch03Aliens/alien_jet_director_review_20260925_v1.html",
+        "rationale": "Preserve the official completed LEGO 5617 appearance. The unchanged director-supplied visual source reference is proposed as the target; official LEGO instructions remain the construction authority.",
+        "designSpec": "Batch03Aliens/alien_jet_design_spec_20260925_v1.md",
+        "targetImage": "ArtSource/M85/DirectorReferences/AlienJet/alien_jet_approved_reference.png",
+        "reviewReady": true,
+        "appearanceSummary": "Tiny open black Alien Jet with a broad swept plate, exposed central pilot, paired tall lime arches and two short lateral emitter arms, preserving the LEGO 5617 proportions and colors."
+      },
+      "gameAdaptations": [],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-25",
+      "acceptanceNote": "The director accepted this unchanged SOURCE_LOCKED LEGO 5617 Production Design Target on 2026-09-25. T084 is authorized for Alien Jet only and has not started."
+    },
+    {
+      "stableId": "unit.aliens.razor_skimmer",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "file": "Batch03Aliens/razor_skimmer_design_spec_20260925_v2.md",
+      "sourceEvidence": {
+        "manifest": "ArtSource/M85/T083/RazorSkimmerV1/source_evidence_manifest.json",
+        "sourceSets": [
+          "7645",
+          "7692",
+          "7697"
+        ],
+        "provenance": "Official LEGO instructions establish the donor craft only; no source set depicts the complete Razor Skimmer composition."
+      },
+      "designSpec": "Batch03Aliens/razor_skimmer_design_spec_20260925_v2.md",
+      "productionDesignTarget": {
+        "mode": "ORIGINAL_EXTENDED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch03Aliens/razor_skimmer_director_review_20260925_v2.html",
+        "rationale": "The accepted T082 packet defines a composite family and reserves donor selection and completed composition for T083; the new target resolves those visual choices explicitly.",
+        "designSpec": "Batch03Aliens/razor_skimmer_design_spec_20260925_v2.md",
+        "targetImage": "ArtSource/M85/T083/RazorSkimmerV1/razor_skimmer_production_target_20260925_v3.png",
+        "reviewReady": true,
+        "appearanceSummary": "Accepted compact low black Alien hover skimmer with two inward-swept forward prongs around an open V, an exposed central lime core in an open frame, and small aft propulsion. Target image is a visual proposal, not a part-verified build."
+      },
+      "review": "Batch03Aliens/razor_skimmer_director_review_20260925_v2.html",
+      "gameAdaptations": [
+        "Use a compact low skimmer silhouette with two short inward-swept forward prongs and a clear open V gap.",
+        "Keep the central lime energy form exposed in an open frame; the vehicle has no enclosed or glass cockpit.",
+        "Keep aft propulsion small and subordinate to the light craft silhouette."
+      ],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-26",
+      "acceptanceNote": "Director accepted the Razor Skimmer ORIGINAL_EXTENDED Production Design Target on 2026-09-26. T084 is authorized for this unit only and has not started; exact LEGO elements and physical connections remain unverified."
+    },
+    {
+      "stableId": "unit.aliens.etx_alien_strike",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "file": "Batch03Aliens/etx_alien_strike_design_spec_20260926_v1.md",
+      "sourceEvidence": {
+        "manifest": "ArtSource/M85/T083/ETXAlienStrikeV1/source_evidence_manifest.json",
+        "sourceSet": "7693",
+        "provenance": "Official LEGO 7693 box art and instructions; independent assembled-model cross-check."
+      },
+      "designSpec": "Batch03Aliens/etx_alien_strike_design_spec_20260926_v1.md",
+      "review": "Batch03Aliens/etx_alien_strike_director_review_20260926_v1.html",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch03Aliens/etx_alien_strike_director_review_20260926_v1.html",
+        "rationale": "The official completed LEGO 7693 appearance represents the intended unit closely enough; no visible geometry adaptation is proposed.",
+        "designSpec": "Batch03Aliens/etx_alien_strike_design_spec_20260926_v1.md",
+        "targetImage": "ArtSource/M85/T083/ETXAlienStrikeV1/etx_alien_strike_production_target_20260926_v1.png",
+        "reviewReady": true,
+        "appearanceSummary": "SOURCE_LOCKED: continuous curved airborne black craft with central cockpit/emitter, paired large crescent side sections and long lime tail blades."
+      },
+      "gameAdaptations": [],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-26",
+      "acceptanceNote": "Директор прийняв SOURCE_LOCKED Production Design Target офіційного LEGO 7693 2026-09-26: вигнутий повітряний силует, центральну кабіну й випромінювач, парні серпоподібні секції та довгі лаймові хвостові лопаті. T084 авторизовано лише для ETX Alien Strike; моделювання не розпочато."
+    },
+    {
+      "stableId": "unit.aliens.etx_alien_infiltrator",
+      "file": "Batch03Aliens/etx_alien_infiltrator_design_spec_20260926_v1.md",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "sourceEvidence": {
+        "manifest": "ArtSource/M85/T083/ETXAlienInfiltratorV1/source_evidence_manifest.json",
+        "sourceSets": [
+          "7646"
+        ],
+        "provenance": "Official LEGO 7646 instructions (pages 29–68); completed flight-model cross-check by JANGBRiCKS."
+      },
+      "designSpec": "Batch03Aliens/etx_alien_infiltrator_design_spec_20260926_v1.md",
+      "review": "Batch03Aliens/etx_alien_infiltrator_director_review_20260926_v1.html",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch03Aliens/etx_alien_infiltrator_director_review_20260926_v1.html",
+        "rationale": "Офіційний LEGO 7646 задає обидва потрібні завершені стани того самого юніта: повітряний корабель і триопорний крокохід. Геометричних адаптацій не запропоновано.",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch03Aliens/etx_alien_infiltrator_design_spec_20260926_v1.md",
+        "reviewReady": true,
+        "appearanceSummary": "Довгий чорний повітряний корабель із розділеним носом, відкритим центральним ядром/екіпажем, двома вигнутими боковими секціями та лаймовими гнучкими каналами; ті самі три модулі повертаються вниз у триопорний крокохід."
+      },
+      "gameAdaptations": [],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-26",
+      "acceptanceNote": "Директор прийняв 2026-09-26 SOURCE_LOCKED Production Design Target офіційного LEGO 7646: довгий повітряний корабель і той самий корпус у вигляді триопорного крокохода; зовнішні адаптації відсутні. T084 авторизовано лише для ETX Alien Infiltrator; моделювання не розпочато."
+    },
+    {
+      "stableId": "unit.aliens.alien_mothership",
+      "file": "Batch03Aliens/alien_mothership_design_spec_20260926_v1.md",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "sourceEvidence": {
+        "manifest": "ArtSource/M85/T083/AlienMothershipV1/source_evidence_manifest.json",
+        "sourceSets": [
+          "7691"
+        ],
+        "provenance": "Офіційне фото LEGO завершеної конфігурації та офіційна інструкція, сторінки 28–68; джерела й SHA-256 записані в маніфесті."
+      },
+      "designSpec": "Batch03Aliens/alien_mothership_design_spec_20260926_v1.md",
+      "review": "Batch03Aliens/alien_mothership_director_review_20260926_v1.html",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch03Aliens/alien_mothership_director_review_20260926_v1.html",
+        "rationale": "Офіційні матеріали LEGO 7691 показують ціль у двох станах: зібраний носій і центральний корпус із трьома відокремленими кораблями. Видимих геометричних адаптацій немає.",
+        "designSpec": "Batch03Aliens/alien_mothership_design_spec_20260926_v1.md",
+        "sourceImage": "ArtSource/M85/T083/AlienMothershipV1/alien_mothership_7691_official_completed_target.png",
+        "reviewReady": true,
+        "appearanceSummary": "Сплощений чорний Alien Mothership із відкритим центральним каналом, хвостовими лопатями й лаймовими каналами у зібраному стані; після розділення — центральний корпус і три кораблі, з парними боковими модулями, дисками та гарматами."
+      },
+      "gameAdaptations": [],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-26",
+      "acceptanceNote": "Директор прийняв 2026-09-26 SOURCE_LOCKED Production Design Target офіційного LEGO 7691 в обох показаних станах: зібраний носій та центральний корпус із трьома відокремленими кораблями. Видимих адаптацій немає. T084 авторизовано лише для Alien Mothership; моделювання не розпочато."
+    },
+    {
+      "stableId": "unit.martians.worker_robot",
+      "file": "Batch04Martians/worker_robot_design_spec_20260926_v1.md",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "sourceEvidence": {
+        "manifest": "ArtSource/M85/T083/MartianWorkerRobotV1/source_evidence_manifest.json",
+        "sourceSets": [
+          "7302",
+          "1416"
+        ],
+        "provenance": "Офіційна інструкція LEGO 7302, візуально перевірена в межах T082; 1416 є дубльованим випуском. Незалежні каталоги підтверджують ідентичність набору."
+      },
+      "designSpec": "Batch04Martians/worker_robot_design_spec_20260926_v1.md",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch04Martians/worker_robot_director_review_20260926_v1.html",
+        "rationale": "Незмінена завершена модель LEGO 7302 уже є цільовим виглядом; додані ігрові деталі не потрібні.",
+        "designSpec": "Batch04Martians/worker_robot_design_spec_20260926_v1.md",
+        "targetImage": "ArtSource/M85/T083/MartianWorkerRobotV1/lego_7302_official_completed_model.jpg",
+        "reviewReady": true,
+        "appearanceSummary": "Низький трохи широкий симетричний відкритий двоногий робот з оператором, коротким бірюзовим важелем панелі керування, короткими ногами й широкими трикутними стопами; без рук, затискачів і маніпуляторів."
+      },
+      "review": "Batch04Martians/worker_robot_director_review_20260926_v1.html",
+      "gameAdaptations": [],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-26",
+      "acceptanceNote": "Директор схвалив 2026-09-26 незмінений SOURCE_LOCKED Production Design Target офіційного LEGO 7302: низький трохи широкий симетричний робот із відкритим оператором, коротким бірюзовим важелем панелі керування та короткими ногами з широкими трикутними стопами. Видимих адаптацій немає. T084 дозволено лише для Worker Robot, але не розпочато."
+    },
+    {
+      "stableId": "unit.martians.double_hover",
+      "file": "Batch04Martians/double_hover_design_spec_20260926_v1.md",
+      "status": "DESIGN_ACCEPTED",
+      "directorAccepted": true,
+      "productionAuthorized": false,
+      "sourceEvidence": {
+        "manifest": "ArtSource/M85/T083/DoubleHoverV1/source_evidence_manifest.json",
+        "sourceSets": [
+          "7300",
+          "7308",
+          "1414"
+        ],
+        "provenance": "Офіційна інструкція LEGO 7300/7308 і директорське чітке фото завершеної моделі; 7308 та 1414 є дублями того самого дизайну. Додаткові директорські ракурси збережено окремо; походження їхнього початкового URL не надано."
+      },
+      "designSpec": "Batch04Martians/double_hover_design_spec_20260926_v1.md",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch04Martians/double_hover_director_review_20260926_v1.html",
+        "rationale": "Завершений LEGO 7300 є бажаною ціллю. Перевірка чіткого фото та фронтального, бокового й верхньо-заднього ракурсів показала симетричне компонування; попереднє трактування двох модулів як бокових було перспективною помилкою.",
+        "designSpec": "Batch04Martians/double_hover_design_spec_20260926_v1.md",
+        "targetImage": "ArtSource/M85/T083/DoubleHoverV1/lego_7300_director_supplied_completed_photo.png",
+        "reviewReady": true,
+        "appearanceSummary": "Мала відкрита Martian-розвідмашина LEGO 7300: симетричні паралельні лижі й помаранчеві ґратки; оператор і круглий друкований диск розміщені по центральній осі, панель керування — перед оператором."
+      },
+      "review": "Batch04Martians/double_hover_director_review_20260926_v1.html",
+      "gameAdaptations": [],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-26",
+      "acceptanceNote": "Директор схвалив 2026-09-26 незмінений SOURCE_LOCKED Production Design Target LEGO 7300: симетричні паралельні лижі й помаранчеві ґратки, відкриту платформу, оператора та круглий диск на центральній осі, панель керування перед оператором. Видимих адаптацій немає. Попереднє твердження про асиметрію виправлено як помилку перспективи. T084 не авторизовано й не розпочато."
+    },
+    {
+      "stableId": "unit.martians.jet_scooter",
+      "file": "Batch04Martians/jet_scooter_design_spec_20260926_v1.md",
+      "status": "DESIGN_ACCEPTED",
+      "directorAccepted": true,
+      "productionAuthorized": false,
+      "sourceEvidence": {
+        "manifest": "ArtSource/M85/T083/JetScooterV1/source_evidence_manifest.json",
+        "sourceSets": [
+          "7303",
+          "1415"
+        ],
+        "provenance": "Офіційна інструкція LEGO 7303; 1415 звірено за вторинними каталогами як дубльований випуск."
+      },
+      "designSpec": "Batch04Martians/jet_scooter_design_spec_20260926_v1.md",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch04Martians/jet_scooter_director_review_20260926_v1.html",
+        "rationale": "Завершений LEGO 7303 уже відповідає потрібному зовнішньому вигляду; видимих адаптацій не запропоновано.",
+        "designSpec": "Batch04Martians/jet_scooter_design_spec_20260926_v1.md",
+        "targetImage": "https://lego.brickinstructions.com/instructions/07000/7303/001.jpg",
+        "reviewReady": true,
+        "appearanceSummary": "Незмінений Jet Scooter LEGO 7303: довга відкрита палуба, один райдер, парні бокові труби, два помаранчеві носові конуси та синя задня збірка."
+      },
+      "review": "Batch04Martians/jet_scooter_director_review_20260926_v1.html",
+      "gameAdaptations": [],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-26",
+      "acceptanceNote": "Директор прийняв незмінений SOURCE_LOCKED Production Design Target LEGO 7303 Jet Scooter 2026-09-26. T084 не авторизовано й не розпочато."
+    },
+    {
+      "stableId": "unit.martians.aero_skiff",
+      "file": "Batch04Martians/aero_skiff_design_spec_20260926_v3.md",
+      "status": "DESIGN_ACCEPTED",
+      "directorAccepted": true,
+      "productionAuthorized": false,
+      "sourceEvidence": {
+        "manifest": "ArtSource/M85/T083/AeroSkiffV1/source_evidence_manifest_v3.json",
+        "sourceSet": "1195-1",
+        "provenance": "Director-provided completed-set photo, origin unverified; cross-checked against the 1195 instruction scan and independent set/catalog records. Symmetric layout clarified by the director."
+      },
+      "designSpec": "Batch04Martians/aero_skiff_design_spec_20260926_v3.md",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch04Martians/aero_skiff_director_review_20260926_v3.html",
+        "rationale": "Preserve the completed 1195 Martian craft without visible game adaptations. The high-resolution visualization presents the director-clarified symmetric component layout; it is not a part-verified build.",
+        "designSpec": "Batch04Martians/aero_skiff_design_spec_20260926_v3.md",
+        "targetImage": "ArtSource/M85/T083/AeroSkiffV1/aero_skiff_production_target_20260926_v3.png",
+        "reviewReady": true,
+        "appearanceSummary": "Symmetric compact Martian craft: perforated rear radial shield with centered green beacon box, central black tube, triangular open pilot platform with two matched green cone lamps, and one operator at the front."
+      },
+      "review": "Batch04Martians/aero_skiff_director_review_20260926_v3.html",
+      "gameAdaptations": [],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-26",
+      "acceptanceNote": "Директор затвердив 2026-09-26 симетричний SOURCE_LOCKED Production Design Target LEGO 1195: задній радіальний щиток із центрованою коробкою та ліхтарем, центральну чорну трубку, трикутну платформу з парними конусними ліхтарями й оператора спереду. Видимих адаптацій немає. T084 не авторизовано й не розпочато."
+    },
+    {
+      "stableId": "unit.martians.red_planet_cruiser",
+      "file": "Batch04Martians/red_planet_cruiser_design_spec_20260926_v1.md",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "sourceEvidence": {
+        "manifest": "ArtSource/M85/T083/RedPlanetCruiserV1/source_evidence_manifest.json",
+        "sourceSets": [
+          "7311-1",
+          "78777-1 (contains 7311-1)"
+        ],
+        "provenance": "Official LEGO 7311 instruction booklet, visually inspected across the cover, completed build, hinge sequence and upright single-foot configuration; cross-checked with completed-model collector photographs and reviews."
+      },
+      "designSpec": "Batch04Martians/red_planet_cruiser_design_spec_20260926_v1.md",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch04Martians/red_planet_cruiser_director_review_20260926_v1.html",
+        "rationale": "The official completed LEGO 7311 appearance directly defines the cruiser geometry and paired arms; the manual also documents its single-foot upright configuration. The director specifies a medium-height visual profile and hop-on-one-leg followed by gliding as presentation guidance; gameplay movement rules are unchanged.",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch04Martians/red_planet_cruiser_design_spec_20260926_v1.md",
+        "targetImage": "ArtSource/M85/T083/RedPlanetCruiserV1/lego_7311_official_boxart_completed_appearance.png",
+        "reviewReady": true,
+        "appearanceSummary": "Open green and gray cruiser of medium visual height, with paired broad side panels, centered seated Altair, two articulated arms with open interpretation of their attachments, and a single foldable rear support; official instructions also show the same build upright on that one support."
+      },
+      "review": "Batch04Martians/red_planet_cruiser_director_review_20260926_v1.html",
+      "gameAdaptations": [
+        "Director-specified visual movement: hop on one leg followed by gliding; presentation direction only, with no change to movement classification or rules."
+      ],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-26",
+      "acceptanceNote": "Директор прийняв 2026-09-26 SOURCE_LOCKED Production Design Target LEGO 7311: відкритий апарат середньої висоти з двома шарнірними руками, оснащення яких лишається вільною інтерпретацією; візуальна подача руху — стрибки на одній нозі з плануванням. T084 авторизовано лише для Red Planet Cruiser; моделювання не розпочато."
+    },
+    {
+      "stableId": "unit.martians.recon_mech_rp",
+      "file": "Batch04Martians/recon_mech_rp_design_spec_20260926_v1.md",
+      "status": "DESIGN_ACCEPTED",
+      "directorAccepted": true,
+      "productionAuthorized": false,
+      "sourceEvidence": {
+        "manifest": "ArtSource/M85/T083/ReconMechRPV1/source_evidence_manifest.json",
+        "sourceSets": [
+          "7314-1"
+        ],
+        "provenance": "Офіційна LEGO інструкція, завершена модель на друкованій сторінці 30; фронтальний, задній та верхній ракурси звірені з незалежним фотооглядом."
+      },
+      "designSpec": "Batch04Martians/recon_mech_rp_design_spec_20260926_v1.md",
+      "review": "Batch04Martians/recon_mech_rp_director_review_20260926_v1.html",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch04Martians/recon_mech_rp_director_review_20260926_v1.html",
+        "rationale": "Офіційна завершена модель LEGO 7314 без видимих геометричних адаптацій відповідає цільовому розвідувальному крокоходу. Джерельні асиметричні руки збережені; нової сенсорної геометрії не додано.",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch04Martians/recon_mech_rp_design_spec_20260926_v1.md",
+        "targetImage": "ArtSource/M85/T083/ReconMechRPV1/lego_7314_completed_target_page30_crop.png",
+        "reviewReady": true,
+        "appearanceSummary": "Високий двоногий червоно-сірий відкритий крокохід із широким корпусом-кабіною, високим заднім баком, двома шланговими асиметричними руками: ліворуч чорний затискач, праворуч довга червона рука з помаранчевим наконечником; короткі ноги та широкі стопи."
+      },
+      "gameAdaptations": [],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-26",
+      "acceptanceNote": "Директор прийняв незмінений SOURCE_LOCKED Production Design Target завершеного LEGO 7314: відкритий широкий корпус, високий задній бак, коротке двоноге шасі й асиметричні руки у джерельному розташуванні. Видимих адаптацій немає. T084 не розпочато й не авторизовано."
+    },
+    {
+      "stableId": "unit.martians.red_planet_protector",
+      "status": "DESIGN_ACCEPTED",
+      "directorAccepted": true,
+      "productionAuthorized": false,
+      "file": "Batch04Martians/red_planet_protector_design_spec_20260926_v1.md",
+      "sourceEvidence": {
+        "manifest": "ArtSource/M85/T083/RedPlanetProtectorV1/source_evidence_manifest.json",
+        "sourceSets": [
+          "7313-1"
+        ],
+        "provenance": "Ілюстрація обкладинки офіційної інструкції LEGO 7313 задає прийняту цільову позу; завершені ракурси підтверджують геометрію та компонування."
+      },
+      "designSpec": "Batch04Martians/red_planet_protector_design_spec_20260926_v1.md",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch04Martians/red_planet_protector_director_review_20260926_v1.html",
+        "rationale": "Директор прийняв офіційний вигляд LEGO 7313 і позу з обкладинки інструкції. Геометричних ігрових адаптацій немає.",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch04Martians/red_planet_protector_design_spec_20260926_v1.md",
+        "targetImage": "https://legcdn.nyc3.cdn.digitaloceanspaces.com/images/7313-red-planet-protector/4160158/page-1.jpg",
+        "reviewReady": true,
+        "appearanceSummary": "Один синьо-сірий двоногий LEGO 7313 у широкій зігнутій офіційній позі з обкладинки: клиноподібний корпус і пілот, велика дискова гармата ліворуч, коротший ствол праворуч, парні бокові вузли; конструкцію та пропорції звіряти із завершеним набором."
+      },
+      "review": "Batch04Martians/red_planet_protector_director_review_20260926_v1.html",
+      "gameAdaptations": [],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-26",
+      "acceptanceNote": "Директор прийняв SOURCE_LOCKED Production Design Target LEGO 7313: офіційна поза з обкладинки інструкції та завершена джерельна геометрія; видимих адаптацій немає. T084 не авторизовано й не розпочато."
+    },
+    {
+      "stableId": "unit.martians.excavation_searcher",
+      "file": "Batch04Martians/excavation_searcher_design_spec_20260926_v1.md",
+      "status": "DESIGN_ACCEPTED",
+      "directorAccepted": true,
+      "productionAuthorized": false,
+      "sourceEvidence": {
+        "manifest": "ArtSource/M85/T083/ExcavationSearcherV1/source_evidence_manifest.json",
+        "reference": "ArtSource/M85/T083/ExcavationSearcherV1/excavation_searcher_source_target_20260926_v1.png",
+        "provenance": "Rebrickable completed-set image 76627, unretouched framing crop; primary structure and set boundary cross-checked against official LEGO 7316 instructions."
+      },
+      "designSpec": "Batch04Martians/excavation_searcher_design_spec_20260926_v1.md",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch04Martians/excavation_searcher_director_review_20260926_v1.html",
+        "rationale": "The completed LEGO 7316 main walker is the intended appearance; no visible game geometry adaptation is proposed.",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch04Martians/excavation_searcher_design_spec_20260926_v1.md",
+        "sourceImage": "ArtSource/M85/T083/ExcavationSearcherV1/excavation_searcher_source_target_20260926_v1.png",
+        "reviewReady": true,
+        "appearanceSummary": "Four-legged tan/brown Martian walker with central cockpit and meteorite compartment, unlike front claw and orange-dish tools, small flyer mounted below, and raised articulated rear crane with orange handling head. The separate docking bay is excluded."
+      },
+      "review": "Batch04Martians/excavation_searcher_director_review_20260926_v1.html",
+      "gameAdaptations": [],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-26",
+      "acceptanceNote": "Директор схвалив 2026-09-26 незмінений SOURCE_LOCKED Production Design Target LEGO 7316 Excavation Searcher. Видимих адаптацій немає. T084 не авторизовано й не розпочато."
+    }
+  ]
+}

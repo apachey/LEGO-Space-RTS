@@ -1,0 +1,52 @@
+{
+  "stableId": "unit.martians.worker_robot",
+  "task": "T083",
+  "sourceSets": [
+    "7302",
+    "1416"
+  ],
+  "sourceSetRelationship": "1416 is the duplicate promotional release of the 7302 Worker Robot; use 7302 instructions as the construction authority.",
+  "officialSources": [
+    {
+      "kind": "building_instructions",
+      "url": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130290.pdf",
+      "officialInstructionsPage": "https://www.lego.com/en-us/service/building-instructions/7302",
+      "pdfCode": "4130290",
+      "evidenceRecord": "T082 packet documents a visual audit of both PDF pages; page 1 shows the pilot and walking cover pose, page 2 shows the central wedge, mirrored articulated legs, and final seated biped.",
+      "verifiedFeatures": [
+        "shallow central operator wedge with exposed seat/control tile and rear wall",
+        "two mirrored multi-joint legs",
+        "one broad rectangular foot per leg",
+        "open operated tiny walker silhouette"
+      ],
+      "knownGaps": [
+        "full rear geometry is partial",
+        "underside and foot construction are partial",
+        "instructions do not prove a complete gait cycle",
+        "source has no dedicated work arm or tool"
+      ]
+    }
+  ],
+  "crossChecks": [
+    {
+      "url": "https://www.bricklink.com/v2/catalog/catalogitem.page?S=7302",
+      "use": "independent set identity and 1416 duplicate relationship; not appearance authority"
+    },
+    {
+      "url": "https://brickset.com/sets/7302-1/Worker-Robot",
+      "use": "independent set name and release identity; box art is not treated as a completed-model photo"
+    }
+  ],
+  "productionDesignTarget": {
+    "mode": "SOURCE_LOCKED",
+    "artifact": "Docs/Development/M85UnitDesign/Batch04Martians/worker_robot_director_review_20260926_v1.html",
+    "image": "ArtSource/M85/T083/MartianWorkerRobotV1/lego_7302_official_completed_model.jpg",
+    "sha256": "0d48053cc3ccc3d9a5cf2d54ad5384fd6b8296986be4d8d0b36d9e84dcce961f",
+    "origin": "Official LEGO product image of the completed 7302 model, retrieved unchanged from LEGO building-instructions product page.",
+    "appearanceSummary": "Low, slightly wide, symmetric open biped with visible operator, short turquoise control-panel lever, short legs and broad triangular-outline feet. No hands, clamps, manipulators, or visible adaptations."
+  },
+  "reviewStatus": "DIRECTOR_ACCEPTED",
+  "productionStatus": "T084_NOT_STARTED",
+  "acceptanceDate": "2026-09-26",
+  "acceptanceNote": "Director accepted the unchanged SOURCE_LOCKED LEGO 7302 appearance. No visible adaptations. T084 is authorized for this unit only and has not started."
+}

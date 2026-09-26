@@ -1,0 +1,48 @@
+{
+  "task": "T083",
+  "stableId": "unit.rock_raiders.loader_dozer",
+  "sourceSet": "4950",
+  "sourceArtifact": {
+    "title": "LEGO 4950 Loader Dozer official building instructions",
+    "url": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128419.pdf",
+    "sha256": "e27833b6b1a196a7f2e895cfbba63ee851b451340d417afae78125ddcd38586a",
+    "retrieved": "2026-09-23",
+    "kind": "OFFICIAL_INSTRUCTION_PDF",
+    "rights": "LEGO Group source material; research/reference only, not runtime art or a redistribution license."
+  },
+  "references": [
+    {
+      "setId": "4950",
+      "page": 1,
+      "file": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4950-page01.png",
+      "sha256": "785221c7f9d61146f3578d8654185ac237dc8727ff8f5d1ebf9a35c05c2a47b9",
+      "sourceUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128419.pdf",
+      "sourceSha256": "e27833b6b1a196a7f2e895cfbba63ee851b451340d417afae78125ddcd38586a",
+      "retrieved": "2026-09-23",
+      "kind": "OFFICIAL_INSTRUCTION_PAGE",
+      "rights": "LEGO Group source material; research/reference only, not runtime art or a redistribution license."
+    },
+    {
+      "setId": "4950",
+      "page": 21,
+      "file": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4950-page21.png",
+      "sha256": "653071c4828a30b8f481ff38259ef9e34f2c2be645fb207c086e3676ce370e2f",
+      "sourceUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128419.pdf",
+      "sourceSha256": "e27833b6b1a196a7f2e895cfbba63ee851b451340d417afae78125ddcd38586a",
+      "retrieved": "2026-09-23",
+      "kind": "OFFICIAL_INSTRUCTION_PAGE",
+      "rights": "LEGO Group source material; research/reference only, not runtime art or a redistribution license."
+    },
+    {
+      "setId": "4950",
+      "page": 22,
+      "file": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4950-page22.png",
+      "sha256": "8d9ece5362f8e080db2290b0d7e0c004aa242073e8cbe06564b712b3a6cce0cf",
+      "sourceUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128419.pdf",
+      "sourceSha256": "e27833b6b1a196a7f2e895cfbba63ee851b451340d417afae78125ddcd38586a",
+      "retrieved": "2026-09-23",
+      "kind": "OFFICIAL_INSTRUCTION_PAGE",
+      "rights": "LEGO Group source material; research/reference only, not runtime art or a redistribution license."
+    }
+  ]
+}

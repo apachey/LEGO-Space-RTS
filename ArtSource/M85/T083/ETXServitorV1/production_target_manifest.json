@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "stable_id": "unit.aliens.etx_servitor",
+  "mode": "ORIGINAL_EXTENDED",
+  "state": "DIRECTOR_ACCEPTED",
+  "target": "etx_servitor_production_target_20260925_v1.png",
+  "sha256": "815a8733c54c51b0ef6ef4d8a8608f9786686619d0e034abc96d7c81c1cd2ae1",
+  "created_with": "OpenAI image generation",
+  "source_evidence_manifest": "source_evidence_manifest.json",
+  "design_spec": "Docs/Development/M85UnitDesign/Batch03Aliens/etx_servitor_design_spec_20260925_v1.md",
+  "limitations": [
+    "Generated proposal, not official LEGO source imagery or physical-build proof.",
+    "Interior forms communicate protected supports and conduits; exact anatomy and joints are adaptations.",
+    "Director accepted the target on 2026-09-25; T084 is authorized for ETX Servitor only and remains not started."
+  ]
+}

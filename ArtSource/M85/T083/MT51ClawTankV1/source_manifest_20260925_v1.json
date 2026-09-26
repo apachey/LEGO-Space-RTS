@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "stableId": "unit.astronauts.mt51_claw_tank",
+  "sourceSet": "7697",
+  "sourceTitle": "MT-51 Claw-Tank Ambush",
+  "sourceUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4515381.pdf",
+  "sourcePdfSha256": "4c2066be74288f4f459c9e277ad189d5b6248b16188f574b1213a27d7e84398e",
+  "sourceEvidence": "Content/Presentation/SuperScout/astronauts_source_evidence.json",
+  "sourceEvidenceState": "OFFICIAL_PDF_VISUALLY_AUDITED",
+  "officialSourcePageRaster": "ArtSource/M85/Preproduction/ClawTankArmCorrectionV2/reference_7697_page66.png",
+  "officialSourcePageRasterSha256": "df71baa87de6def2ac12544370a712c5f1ebcd0cca38f347831bf92911cbf2ec",
+  "productionDesignTarget": {
+    "mode": "ADAPTED",
+    "artifact": "Docs/Development/M85UnitDesign/Batch02Astronauts/mt51_claw_tank_director_review_20260925_v1.html",
+    "targetImage": "mt51_claw_tank_target_20260925_v1.png",
+    "targetImageSha256": "4e1941fafc3d10bcba31919a3b5f76e778b657a0d0b23236c1159ae2d9785f39",
+    "rationale": "The isolated, colorized game target preserves the completed 7697 chassis and the exact director-accepted arm arrangement while removing neighboring mixed-set pieces from the target view."
+  },
+  "adaptation": "Source-faithful presentation cleanup and color restoration only; no gameplay or exterior geometry additions.",
+  "targetImageOrigin": "Final Production Design Target supplied by the game director and accepted on 2026-09-25; previous comparative correction and official LEGO 7697 evidence remain documented separately.",
+  "directorComparison": {
+    "file": "ArtSource/M85/Preproduction/ClawTankArmCorrectionV2/claw_tank_arms_rev2.png",
+    "sha256": "5daea3689075e0ee6b116717bc39c58ff3e7ccf894daa17ef21fe01ec8e73c59",
+    "scope": "Historical comparative approval of viewer-left claw and viewer-right tool/weapon arm; not T083 design acceptance."
+  }
+}

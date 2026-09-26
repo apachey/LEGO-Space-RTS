@@ -1,0 +1,84 @@
+{
+  "stableId": "unit.martians.red_planet_cruiser",
+  "task": "T083",
+  "sourceSets": [
+    "7311-1",
+    "78777-1 (contains 7311-1)"
+  ],
+  "sourceMode": "SOURCE_LOCKED",
+  "officialAuthority": {
+    "instructionPage": "https://www.lego.com/en-gb/service/building-instructions/7311",
+    "instructionPdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130806.pdf",
+    "pdfSha256": "77c545b88d3d2a66b488038b3ffba81a489219eeae2ba65c457adec5a9339c32",
+    "pdfPages": 15,
+    "inspection": "LEGO booklet cover (PDF p.1), completed build and hinge assembly (PDF pp.6-11 / printed pp.8-17), and the official upright single-foot configuration (PDF pp.14-15 / printed pp.18-19)."
+  },
+  "localReviewImages": [
+    {
+      "path": "lego_7311_official_boxart_completed_appearance.png",
+      "role": "PRODUCTION_DESIGN_TARGET",
+      "source": "Official LEGO instruction booklet cover, PDF p.1; crop only, no retouching or geometry changes.",
+      "sha256": "f2429d56e875652dd53343890c08c17d772b6d1b958f376c36ecf73efe62c2aa"
+    },
+    {
+      "path": "lego_7311_upright_configuration_step19.png",
+      "role": "OFFICIAL_ALTERNATE_CONFIGURATION_EVIDENCE",
+      "source": "Official LEGO instruction booklet, PDF p.15 / printed step 19; crop only, no retouching or geometry changes.",
+      "sha256": "836a7cf7ab562e09a44762802c652c79400692fd7b2c1b2be97b99c5e67e22eb"
+    },
+    {
+      "path": "lego_7311_main_target_instruction_step17.png",
+      "role": "OFFICIAL_COMPLETED_BUILD_CROSSCHECK",
+      "source": "Official LEGO instruction booklet, PDF p.11 / printed step 17; crop only, no retouching or geometry changes.",
+      "sha256": "c65b8b27de6d3915cbae7c8800104400bf0cb8ce1a7e0ee1556f8f7a3a280107"
+    }
+  ],
+  "directlyShown": [
+    "The completed craft has an open center, broad paired side platforms, a seated Altair figure, two hinged arms with translucent orange tips, one articulated support, and visible green, sand-green, gray and orange parts.",
+    "The instruction sequence shows the two hinged arms and the single articulated support; the support folds close to the underside in the flight arrangement.",
+    "Printed steps 18-19 show the same craft connected to a single-foot upright stance. It is an official alternate configuration, not a detached docking pedestal or a second vehicle."
+  ],
+  "inferredByCrossChecking": [
+    "The paired arms are mirrored in the finished front-facing views; the center craft and single rear support are not evidence for a broad offset-platform layout.",
+    "The official source preserves its proportions and documents flight and upright configurations. The director describes the preferred visual height as medium: neither low nor high.",
+    "The director specifies a visual movement presentation of hopping on one leg followed by gliding. This is animation/presentation guidance only; it does not change gameplay movement classification or rules."
+  ],
+  "unknownOrDisputed": [
+    "The source does not define the exact intended movement cycle, flight height, or whether the upright pose represents walking, landing, or display.",
+    "The director confirms two arms but leaves what is attached to them open to interpretation; this package does not lock their payload as a weapon, sensor, or other specific function.",
+    "Earlier T082 packet/audit text describing a broad irregular cruiser on a two-stage docking pedestal conflicts with the actual LEGO 7311 instructions and completed-set evidence. This T083 package corrects the selected unit appearance record; T082 history is preserved unchanged."
+  ],
+  "secondaryCrossChecks": [
+    {
+      "url": "https://thetripleoption.wordpress.com/2014/08/20/lego-7311-red-planet-cruiser-life-on-mars-review-and-mod/",
+      "type": "Independent completed-model review",
+      "views": "Completed model and modified-model views; text confirms hinged arms, wing thrusters, the single articulated leg and the seated Altair figure. The modification is explicitly excluded from this target."
+    },
+    {
+      "url": "https://www.eurobricks.com/forum/forums/topic/32047-7311-red-planet-cruiser/",
+      "type": "Collector completed-model review",
+      "views": "Front, rear, side and folded-rod configuration photos are indexed in the post (images 7311-24 through 7311-29); the post text describes the three hinges and single rear support. These corroborate views; the official PDF remains authoritative."
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=2xuOuJh7xtM",
+      "type": "Video review",
+      "views": "Completed-set review; chapter 3:43 covers Red Planet Cruiser. Used as a secondary research lead; no claim depends on a unique video-only fact."
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=AEweKS6hg_o",
+      "type": "Video review",
+      "views": "Independent 7311 review; corroborative source only."
+    },
+    {
+      "url": "https://www.bricklink.com/v2/catalog/catalogitem.page?S=7311-1",
+      "type": "Set identity and catalog cross-check",
+      "views": "Catalog identifies the 2001 7311-1 Red Planet Cruiser. The 78777 pack contains this 7311 set rather than a distinct Cruiser redesign."
+    }
+  ],
+  "visualConclusion": "Preserve the official LEGO 7311 silhouette, proportions, two articulated arms, pilot, support articulation and source colors. Frame the overall height as medium (neither low nor high), per director guidance. Show the instruction-documented single-foot upright arrangement as a secondary source configuration. Present the director-specified hop on one leg followed by gliding as a visual movement treatment only; arm payload remains open. No invented pedestal, extra platforms, cockpit enclosure or new surface detail is proposed.",
+  "sha256": {
+    "lego_7311_official_boxart_completed_appearance.png": "f2429d56e875652dd53343890c08c17d772b6d1b958f376c36ecf73efe62c2aa",
+    "lego_7311_upright_configuration_step19.png": "836a7cf7ab562e09a44762802c652c79400692fd7b2c1b2be97b99c5e67e22eb",
+    "lego_7311_main_target_instruction_step17.png": "c65b8b27de6d3915cbae7c8800104400bf0cb8ce1a7e0ee1556f8f7a3a280107"
+  }
+}

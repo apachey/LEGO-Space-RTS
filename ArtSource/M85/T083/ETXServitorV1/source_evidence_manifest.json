@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "stable_id": "unit.aliens.etx_servitor",
+  "status": "T083_SOURCE_EVIDENCE_FOR_PROPOSAL",
+  "sources": [
+    {
+      "id": "LEGO-5617",
+      "kind": "OFFICIAL_BUILDING_INSTRUCTIONS",
+      "url": "https://www.lego.com/en-us/service/building-instructions/5617",
+      "official_pdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4525566.pdf",
+      "verified_features": ["compact black Alien craft", "lime flexible arches and small molded modules"],
+      "use": "compact craft construction and material grammar only; pilot, arches and emitters are not transplanted"
+    },
+    {
+      "id": "LEGO-7646",
+      "kind": "OFFICIAL_BUILDING_INSTRUCTIONS",
+      "url": "https://www.lego.com/en-us/service/building-instructions/7646",
+      "official_pdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4534848.pdf",
+      "verified_features": ["separately built curved side modules", "physical articulated joins", "connected flexible lime conduits"],
+      "use": "shell articulation and conduit connection grammar only; Infiltrator silhouette and transformation are not transplanted"
+    },
+    {
+      "id": "LEGO-7691",
+      "kind": "OFFICIAL_BUILDING_INSTRUCTIONS",
+      "url": "https://www.lego.com/en-us/service/building-instructions/7691",
+      "official_pdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4516029.pdf",
+      "verified_features": ["large flattened segmented black carrier", "open central machinery channel", "separately assembled and docked craft modules"],
+      "use": "Alien internal construction family context; carrier exterior is not copied"
+    },
+    {
+      "id": "BrickMaster-2007-Mars-Tech",
+      "kind": "OFFICIAL_MAGAZINE_PROMO_CUTAWAY_ARCHIVAL_HOST",
+      "url": "https://archive.org/details/brickmaster-issue17/page/n5/mode/1up",
+      "verified_features": ["cutaway shows pale support forms and branching internal channels within armored craft"],
+      "visual_inference": "skeletal/vascular-like reading; the scan does not name every channel as a vessel",
+      "use": "secondary internal biomechanical grammar; not a literal Servitor anatomy source"
+    },
+    {
+      "id": "LEGO-Club-2008-Mars-Tech-2",
+      "kind": "OFFICIAL_MAGAZINE_PROMO_CUTAWAY_ARCHIVAL_HOST",
+      "url": "https://archive.org/details/LEGOClubMagazineUS-JulyAugust2008-Miniland/page/n19/mode/1up",
+      "verified_features": ["cutaway text explicitly labels a Bio-Organic antigravity propulsion drive"],
+      "use": "confirms biological technology in the Alien craft family; not a Servitor-specific component"
+    }
+  ],
+  "source_audit": "Docs/Development/M85SuperScout/Packets/unit_aliens_etx_servitor.md",
+  "canon_identity": "Docs/Canon/02A_ALIEN_BIOMECHANICAL_SOURCE_RECONCILIATION.md",
+  "provenance_note": "Official LEGO instruction sources and official LEGO magazine content are distinguished from the newly composed target. T082 packet records page-level visual audit."
+}

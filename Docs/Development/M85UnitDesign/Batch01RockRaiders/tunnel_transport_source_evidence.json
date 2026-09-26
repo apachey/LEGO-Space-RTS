@@ -1,0 +1,65 @@
+{
+  "stableId": "unit.rock_raiders.tunnel_transport",
+  "sourceSet": "4980",
+  "sourceName": "Tunnel Transport",
+  "officialInstructions": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128427.pdf",
+  "sourcePdfSha256": "de699abd28a8fd0213ca740e3e99f6d026f47864c084d77649bdaa593e0bab4d",
+  "provenance": "Official LEGO instruction PDF; original page rasters preserved byte-for-byte. Research/reference only, not runtime art.",
+  "references": [
+    {
+      "setId": "4980",
+      "page": 1,
+      "file": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4980-page01.png",
+      "sha256": "e4f84b7de8dcc71570c42be157d8a12a198ad1dd8470e91858cd38c8df9c6cd1",
+      "sourceUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128427.pdf",
+      "sourceSha256": "de699abd28a8fd0213ca740e3e99f6d026f47864c084d77649bdaa593e0bab4d",
+      "retrieved": "2026-09-23",
+      "kind": "OFFICIAL_INSTRUCTION_PAGE",
+      "rights": "LEGO Group source material; research/reference only, not runtime art or a redistribution license."
+    },
+    {
+      "setId": "4980",
+      "page": 29,
+      "file": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4980-page29.png",
+      "sha256": "d60ced2f295165bb77498180e4760630ccd9018a1f42ee38034e585c0cdf7cbe",
+      "sourceUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128427.pdf",
+      "sourceSha256": "de699abd28a8fd0213ca740e3e99f6d026f47864c084d77649bdaa593e0bab4d",
+      "retrieved": "2026-09-23",
+      "kind": "OFFICIAL_INSTRUCTION_PAGE",
+      "rights": "LEGO Group source material; research/reference only, not runtime art or a redistribution license."
+    },
+    {
+      "setId": "4980",
+      "page": 30,
+      "file": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4980-page30.png",
+      "sha256": "91447edf090e37822474c66a4a9b83ee10b320196a7b961f8d604ec0c835dd59",
+      "sourceUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128427.pdf",
+      "sourceSha256": "de699abd28a8fd0213ca740e3e99f6d026f47864c084d77649bdaa593e0bab4d",
+      "retrieved": "2026-09-23",
+      "kind": "OFFICIAL_INSTRUCTION_PAGE",
+      "rights": "LEGO Group source material; research/reference only, not runtime art or a redistribution license."
+    },
+    {
+      "setId": "4980",
+      "page": 31,
+      "file": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4980-page31.png",
+      "sha256": "5eb65107b52ae139d9afbf930350cec46694c6019880391e3f54806e7a7c4703",
+      "sourceUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128427.pdf",
+      "sourceSha256": "de699abd28a8fd0213ca740e3e99f6d026f47864c084d77649bdaa593e0bab4d",
+      "retrieved": "2026-09-23",
+      "kind": "OFFICIAL_INSTRUCTION_PAGE",
+      "rights": "LEGO Group source material; research/reference only, not runtime art or a redistribution license."
+    },
+    {
+      "setId": "4980",
+      "page": 32,
+      "file": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4980-page32.png",
+      "sha256": "51759a6db315f5574e52fb0b5176f13e0a14bcc9babb73c657ad3e59fd34a2ac",
+      "sourceUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128427.pdf",
+      "sourceSha256": "de699abd28a8fd0213ca740e3e99f6d026f47864c084d77649bdaa593e0bab4d",
+      "retrieved": "2026-09-23",
+      "kind": "OFFICIAL_INSTRUCTION_PAGE",
+      "rights": "LEGO Group source material; research/reference only, not runtime art or a redistribution license."
+    }
+  ]
+}

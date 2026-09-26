@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Excavation Searcher — директорське рев’ю T083</title>
+<style>
+:root{color-scheme:dark;--bg:#111719;--panel:#1d2526;--edge:#455253;--ink:#f1eee4;--muted:#bac3bd;--sand:#d1bd96;--blue:#91b3bd;--rust:#d47a47;--signal:#b8ce8a}
+*{box-sizing:border-box}html{background:var(--bg)}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}main{max-width:1500px;margin:auto;padding:22px 28px 24px}
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;border-bottom:1px solid var(--edge);padding-bottom:14px}.eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);font-weight:750}h1{font-size:clamp(28px,3vw,40px);line-height:1;margin:6px 0 9px;letter-spacing:-.03em}.identity{display:flex;gap:7px 18px;flex-wrap:wrap;color:var(--muted);font-size:13px}.identity strong{color:var(--ink);font-weight:650}.badges{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end;padding-top:2px}.badge{border:1px solid var(--edge);padding:7px 10px;border-radius:3px;font-size:11px;font-weight:750;letter-spacing:.035em;white-space:nowrap}.ready{border-color:#829a67;color:#d6e8b8;background:#273127}.mode{border-color:#92724e;color:#f0cc94;background:#30271f}
+.hero{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(295px,.78fr);gap:16px;margin-top:16px;align-items:stretch}.target,.decision{border:1px solid var(--edge);background:var(--panel);border-radius:4px;overflow:hidden}.target-head{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--edge);gap:12px}.target-head h2{font-size:14px;margin:0;letter-spacing:.02em}.flow{font-size:10px;color:var(--muted);letter-spacing:.07em;text-transform:uppercase}.flow b{color:var(--sand);font-weight:750}.target-visual{height:min(55vh,510px);min-height:360px;background:#e9e8e3;display:grid;place-items:center}.target-visual img{display:block;max-width:100%;width:auto;height:100%;object-fit:contain}.caption{padding:7px 14px 9px;color:var(--muted);font-size:11px;border-top:1px solid var(--edge)}
+.decision{padding:16px 18px;display:flex;flex-direction:column;gap:12px}.section-label{font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--blue);font-weight:750;margin:0 0 6px}.role{margin:0;color:var(--muted);font-size:13px}.adapt{border-left:3px solid var(--rust);padding:2px 0 2px 11px}.adapt p{margin:0;font-size:13px}.approval{margin-top:auto;border-top:1px solid var(--edge);padding-top:12px}.question{font-size:14px;line-height:1.35;margin:0 0 9px}.checklist{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:12px;color:var(--muted)}.checklist li{display:flex;gap:8px}.checklist li:before{content:"□";color:var(--sand);font-size:15px;line-height:1}.decision-line{margin:10px 0 0;padding:9px 10px;background:#293537;border:1px solid #536366;border-radius:3px;font-size:12px;font-weight:650;color:var(--ink)}
+.sources{margin-top:13px;border:1px solid var(--edge);background:#182022;border-radius:4px;padding:10px 14px}.sources h2{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--sand);margin:0 0 7px}.links{display:flex;gap:7px 20px;flex-wrap:wrap;font-size:12px}.links a,details a{color:#c8dce3;text-decoration-thickness:1px;text-underline-offset:3px}.links a:hover,details a:hover{color:white}.source-note{font-size:11px;color:var(--muted);margin:7px 0 0}
+details{margin-top:11px;border-top:1px solid var(--edge);padding-top:8px;color:var(--muted);font-size:11px}summary{cursor:pointer;color:var(--muted)}details ul{margin:7px 0;padding-left:18px;display:grid;gap:4px}code{color:var(--sand);overflow-wrap:anywhere}
+@media(max-width:820px){main{padding:16px 13px}.top{display:block}.badges{justify-content:flex-start;margin-top:11px}.hero{grid-template-columns:1fr}.target-visual{height:auto;min-height:0;max-height:64vh}.target-visual img{width:100%;height:auto;max-height:64vh}.approval{margin-top:0}.sources .links{display:grid;grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<main>
+<header class="top">
+  <div>
+    <div class="eyebrow">Марсіани · T083 Production Design Target</div>
+    <h1>Excavation Searcher</h1>
+    <div class="identity"><span><strong>Фракція</strong> · Марсіани</span><span><strong>Роль</strong> · Великий крокохід для копання й механічного захоплення</span></div>
+  </div>
+  <div class="badges" aria-label="Поточний стан пакета">
+    <span class="badge ready">T083 ПРИЙНЯТО</span>
+    <span class="badge mode">SOURCE_LOCKED</span>
+    <span class="badge">T084 — НЕ РОЗПОЧАТО</span>
+  </div>
+</header>
+<section class="hero" aria-label="Вигляд юніта та рішення директора">
+  <article class="target">
+    <div class="target-head"><h2>Production Design Target</h2><div class="flow"><b>LEGO 7316</b> · стандартна зібрана машина</div></div>
+    <div class="target-visual"><img src="../../../../ArtSource/M85/T083/ExcavationSearcherV1/excavation_searcher_source_target_20260926_v1.png" alt="Завершена чотиринога машина LEGO 7316 у ракурсі три чверті: центральна кабіна й відсік, різні передні маніпулятори, малий апарат під корпусом і піднятий задній кран. Це Production Design Target без видимих адаптацій."></div>
+    <div class="caption">Завершений LEGO 7316 — головна машина; окрема док-станція й фігурки не входять до таргета.</div>
+  </article>
+  <aside class="decision">
+    <div><p class="section-label">Видимі адаптації</p><div class="adapt"><p>Видимих адаптацій немає.</p></div></div>
+    <div class="approval">
+      <p class="section-label">Схвалене рішення T083 · 26.09.2026</p>
+      <p class="question">Цей вигляд LEGO 7316 прийнято без видимих змін.</p>
+      <ul class="checklist"><li>Чотири ноги, центральна кабіна й відсік</li><li>Різні передні інструменти та задній кран</li><li>Джерельні пропорції й кольори LEGO 7316</li></ul>
+      <p class="decision-line">T084 не авторизовано й залишається нерозпочатим.</p>
+    </div>
+  </aside>
+</section>
+<section class="sources" aria-label="Підтверджувальні джерела">
+  <h2>Джерела</h2>
+  <nav class="links">
+    <a href="https://www.lego.com/en-us/service/building-instructions/7316">LEGO · набір 7316</a>
+    <a href="https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130811.pdf#page=27">LEGO · складання, сторінки 27–33</a>
+    <a href="https://www.flickr.com/photos/155036173@N02/49217586706/">Завершена модель · задній ракурс</a>
+    <a href="https://www.flickr.com/photos/155036173@N02/49217819732/">Кабіна й передні інструменти</a>
+    <a href="https://thetripleoption.wordpress.com/2014/08/07/lego-7316-excavation-searcher-life-on-mars-review/">Незалежний огляд</a>
+  </nav>
+  <p class="source-note">Уточнення до старого опису T082: зображення показують клешню та окремий дисковий інструмент, центральний відсік і малий апарат під ним — не пару передніх клешень, бур і нижні санчата.</p>
+</section>
+<details>
+  <summary>Технічні деталі</summary>
+  <ul>
+    <li>Stable ID: <code>unit.martians.excavation_searcher</code>.</li>
+    <li>Маніфест доказів: <a href="../../../../ArtSource/M85/T083/ExcavationSearcherV1/source_evidence_manifest.json">source_evidence_manifest.json</a>.</li>
+    <li>Специфікація: <a href="excavation_searcher_design_spec_20260926_v1.md">Excavation Searcher — Design Spec</a>.</li>
+    <li>Цільова перевірка: <code>./tools/verify.sh --targeted design-package</code> та локальна перевірка хешів, посилань, ідентичності й стану рішення.</li>
+    <li>Значення дискового переднього інструмента невідоме; форма залишається джерельною, функція не домислюється.</li>
+    <li>Git: <code>codex/m85-t083</code>; наявні не пов’язані зміни робочого дерева збережені.</li>
+  </ul>
+</details>
+</main>
+</body>
+</html>

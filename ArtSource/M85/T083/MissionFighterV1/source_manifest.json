@@ -1,0 +1,35 @@
+{
+  "stableId": "unit.astronauts.mission_fighter",
+  "targetMode": "SOURCE_LOCKED",
+  "authority": "Only the official LEGO 7695 MX-11 Astro Fighter is the Mission Fighter appearance target. LEGO 5619 Crystal Hawk is a separate model and is excluded from this unit's package.",
+  "sources": [
+    {
+      "set": "7695",
+      "name": "MX-11 Astro Fighter",
+      "url": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517774.pdf",
+      "pdf": "References/7695-instructions.pdf",
+      "pdfSha256": "3cc714938fac7127e521e4f9f2e0c9c51b4522d6a65090c7dd6e5c721e06c498",
+      "page": 1,
+      "pageRaster": "References/7695-page01.png",
+      "pageRasterSha256": "48739dc40f17f0083be90d6f3323cd289d4ad8d9cfcaa19657651c7d82b1d01a",
+      "targetCrop": "References/7695-completed-model.png",
+      "targetAppearance": "Thin white delta-wing craft with orange canopy-nose and small dark rear equipment block/antenna."
+    }
+  ],
+  "productionTarget": {
+    "set": "7695",
+    "name": "MX-11 Astro Fighter",
+    "targetCrop": "References/7695-completed-model.png",
+    "targetAppearance": "Thin white delta-wing craft with orange canopy-nose and small dark rear equipment block/antenna."
+  },
+  "excludedRelatedModels": [
+    {
+      "name": "LEGO 5619 Crystal Hawk",
+      "note": "Director clarified that this is a separate model, not a Mission Fighter variant; it is excluded from the accepted package."
+    }
+  ],
+  "limitations": [
+    "Clean orthogonal rear/underside and propulsion views are not present; hidden geometry remains unspecified.",
+    "T082 source mapping lists both 5619 and 7695 under Mission Fighter; per director clarification, Crystal Hawk is a separate model and is excluded from this unit's target."
+  ]
+}

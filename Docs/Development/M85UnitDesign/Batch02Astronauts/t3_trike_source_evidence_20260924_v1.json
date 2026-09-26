@@ -1,0 +1,27 @@
+{
+  "stableId": "unit.astronauts.t3_trike",
+  "packet": "Docs/Development/M85SuperScout/Packets/unit_astronauts_t3_trike.md",
+  "sources": [
+    {
+      "set": "7312",
+      "name": "T3-Trike",
+      "publisher": "LEGO",
+      "url": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130807.pdf",
+      "officialInstructionPdf": true,
+      "auditState": "OFFICIAL_PDF_VISUALLY_AUDITED",
+      "auditedPages": "PDF pages 1-17; completed vehicle on page 1 and pages 14-17; construction pages 2-9",
+      "targetRole": "SOURCE_LOCKED official completed build"
+    },
+    {
+      "set": "7694",
+      "name": "MT-31 Trike",
+      "publisher": "LEGO",
+      "url": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4517775.pdf",
+      "officialInstructionPdf": true,
+      "auditState": "OFFICIAL_PDF_VISUALLY_AUDITED",
+      "auditedPages": "PDF pages 1-21; completed vehicle on page 1 and pages 14-21; construction pages 2-13",
+      "targetRole": "SOURCE_LOCKED official completed build"
+    }
+  ],
+  "provenanceNote": "Uses the accepted T082 visual audits and official LEGO instruction PDFs. This package does not assert local copies or independently computed source-file hashes."
+}

@@ -1,0 +1,31 @@
+{
+  "stableId": "unit.aliens.etx_alien_infiltrator",
+  "sourceSet": "7646",
+  "sourceName": "ETX Alien Infiltrator",
+  "targetMode": "SOURCE_LOCKED",
+  "officialAuthority": "LEGO official building instructions and completed source model",
+  "officialInstructionPage": "https://www.lego.com/en-us/service/building-instructions/7646",
+  "officialInstructionPdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4534848.pdf",
+  "verifiedInstructionPages": {
+    "flightConstruction": "29-50",
+    "sideModuleConstruction": "51-67",
+    "completedTransformation": "68"
+  },
+  "targetImageUrl": "https://lego.brickinstructions.com/instructions/07000/7646/068.jpg",
+  "targetImageRole": "Scan of official LEGO instruction page 68 showing the completed flight model and its three-leg walker conversion in one source composition. The scan is hosted by a third party; the linked LEGO-hosted PDF is the source authority.",
+  "independentCompletedModelCrossCheck": {
+    "publisher": "JANGBRiCKS",
+    "url": "https://www.jangbricks.com/2015/09/lego-mars-mission-etx-alien-infiltrator.html",
+    "role": "Independent close-up of assembled LEGO 7646 flight configuration; supports proportions, actual LEGO construction language and color/print read."
+  },
+  "sourceFindings": [
+    "The completed flight model has a long split central nose, an exposed crew/core deck, two independently built curved side modules, red weapon tips and flexible lime conduits.",
+    "Official instructions build both side modules separately and attach them to the central craft.",
+    "Official instruction page 68 shows those same two side modules and the long forward hull rotated down into exactly three planted walker members.",
+    "No extra spider legs or alternate chassis are part of the source conversion."
+  ],
+  "evidenceLimits": [
+    "Available independent assembled-model photography confirms the flight state; the official final transformation page is the direct visual evidence for the completed walker state.",
+    "The source does not define continuous gait, gameplay weapon timing or detector-sweep timing; those are not visual geometry decisions in this package."
+  ]
+}

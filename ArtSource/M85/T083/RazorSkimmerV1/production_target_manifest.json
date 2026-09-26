@@ -1,0 +1,19 @@
+{
+  "stableId": "unit.aliens.razor_skimmer",
+  "mode": "ORIGINAL_EXTENDED",
+  "status": "DIRECTOR_ACCEPTED",
+  "target": "razor_skimmer_production_target_20260925_v3.png",
+  "sha256": "6dac5970aa80065248ef3579b7672982c55aadf4e2a182b62ba02177f9624b2b",
+  "dimensions": "1536x1024",
+  "creation": "ImageGen visual proposal; not official LEGO imagery, a photographed completed set, a verified physical build, or production geometry.",
+  "prompt": "Create a compact low Alien hover skimmer guided by selected direction 3: narrow spine, two forward blades swept inward with an open V gap, exposed central lime core, open frame and small rear propulsion. Use Alien Jet 5617 only as a scale reference, not silhouette. No broad wings, heavy armor, closed cockpit, canopy or glass. Favor a few plausible LEGO plate/slope/bar/clips forms.",
+  "sourceAuthority": "Source features are separately itemized in source_evidence_manifest.json. This new image is the proposed appearance authority for ORIGINAL_EXTENDED.",
+  "designSpec": "Docs/Development/M85UnitDesign/Batch03Aliens/razor_skimmer_design_spec_20260925_v2.md",
+  "review": "Docs/Development/M85UnitDesign/Batch03Aliens/razor_skimmer_director_review_20260925_v2.html",
+  "revisionHistory": [
+    "v1 збережено як перша ескізна спроба",
+    "v2 посилює вигнуті сегментовані стулки та центральну нішу після директорського відгуку",
+    "v3 переосмислює силует за обраним директором напрямом 3; генерація не є перевіреною збіркою, конкретні елементи та з'єднання лишаються непідтвердженими",
+    "Візуальний Production Design Target прийнято директором 2026-09-26; прийняття не є перевіркою фізичної LEGO-збірки"
+  ]
+}

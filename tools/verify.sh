@@ -509,6 +509,9 @@ if includes references || explores design-package; then
   run_stage "[BLOCKING_NOW T082] Super Scout identity-baseline integrity" "m85-super-scout" python3 "${ROOT}/tools/Validation/validate_m85_super_scout.py"
   run_stage "[BLOCKING_NOW T082] Super Scout director-review recording guards" "m85-review-guards" python3 "${ROOT}/tools/Validation/test_m85_super_scout_review_guards.py"
 fi
+if explores design-package; then
+  run_stage "[BLOCKING_NOW T083] Production Design Target acceptance gate" "m85-t083-target-gate" python3 "${ROOT}/tools/validate-m85-t083-rover-package.py"
+fi
 if includes network; then
   run_stage "[BLOCKING_NOW T058] Godot ENet dedicated host with two clients" "m6-transport" godot_m6_transport_smoke
   run_stage "[BLOCKING_NOW T059] Godot server command authority over ENet" "m6-command" godot_m6_command_smoke

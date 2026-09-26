@@ -1,0 +1,67 @@
+{
+  "stableId": "unit.astronauts.mx81_operations_aircraft",
+  "sourceSet": "7644",
+  "targetMode": "SOURCE_LOCKED",
+  "completedModelPhoto": {
+    "url": "https://www.lego.com/cdn/product-assets/product.img.pri/7644_prod.jpg?format=webply&fit=bounds&quality=60&width=500&height=500&dpr=2",
+    "pageUrl": "https://www.lego.com/en-us/service/building-instructions/7644",
+    "description": "Офіційне фото LEGO.com набору 7644. Локальний Production Design Target є точним кадруванням центрального літака; вежа й інші комплектні моделі на повному джерельному фото позначені як окремі збірки.",
+    "sha256": "1e60ffd9e5c453abd372dbfc3f825e4379019620906ba22170242cbd2899319b",
+    "localImage": "lego-7644-official-product-target.jpg",
+    "targetCrop": {
+      "file": "mx81-7644-production-target.png",
+      "rectangle": [
+        120,
+        42,
+        492,
+        268
+      ],
+      "sourceDimensions": [
+        500,
+        375
+      ],
+      "sha256": "2a74cf9d0708c9993adcd3e972c6e41f74c2e26badf8f80309880133fde8c643"
+    }
+  },
+  "officialSources": [
+    {
+      "label": "LEGO building instructions — set 7644",
+      "url": "https://www.lego.com/en-us/service/building-instructions/7644",
+      "purpose": "Офіційна ідентичність набору, опис повітряного комплексу та доступ до обох книг інструкцій."
+    },
+    {
+      "label": "LEGO instruction book 1",
+      "url": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4534843.pdf",
+      "purpose": "Офіційні конструкції набору й підтвердження, що коробка містить кілька окремих моделей."
+    },
+    {
+      "label": "LEGO instruction book 2",
+      "url": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4537579.pdf",
+      "purpose": "Побудова центрального літака, крила, кабіни, двигунів і модулів; фінальне збирання показано на завершальних сторінках."
+    }
+  ],
+  "crossChecks": [
+    {
+      "label": "Опис набору LEGO 7644 у Brickmerge",
+      "url": "https://www.brickmerge.de/7644-1_lego-space-mx-81-uberschall-raumschiff",
+      "purpose": "Незалежна перевірка співвідношення частин: два передні кораблі знімаються, малий транспортний апарат від'єднується від хвоста; не є авторитетом геометрії."
+    },
+    {
+      "label": "Brickset — набір 7644",
+      "url": "https://brickset.com/sets/7644-1/MX-81-Hypersonic-Operations-Aircraft",
+      "purpose": "Додаткова фотографічна перевірка фізичного масштабу й силуету зібраної моделі."
+    },
+    {
+      "label": "Незалежне фото зібраного MX-81 без пускової вежі",
+      "url": "https://i.ebayimg.com/images/g/DhEAAOSwP3hivLuA/s-l1200.jpg",
+      "pageUrl": "https://www.ebay.com/itm/204017034548",
+      "purpose": "Перевірка фізичного зібраного літака окремо від вежі; фото продавця, не офіційне LEGO й не Production Design Target."
+    }
+  ],
+  "evidenceLimits": [
+    "Офіційне продуктове фото є студійним зображенням набору з окремою пусковою вежею, іншими моделями й фігурами; вони не належать до літака MX-81.",
+    "Інструкції підтверджують знімні модулі, але не визначають ігрові пасажири, місткість, окремі команди чи правила перевезення.",
+    "Малий транспортер на хвості є вибраним джерельним модулем обмеженої транспортної візуальної ролі; цей пакет не задає ігрову місткість або вантаж.",
+    "Польотний рух, камера, LOD і візуальні стани пошкодження залишаються перевірками T084/T086/T087."
+  ]
+}

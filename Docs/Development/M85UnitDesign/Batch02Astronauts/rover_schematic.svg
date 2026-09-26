@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 560" role="img" aria-labelledby="title desc">
+<title id="title">Non-authoritative Rover technical schematic</title><desc id="desc">NON-AUTHORITATIVE FOR APPEARANCE. Minimal explanatory diagram: small exposed rover with four white hemispherical wheels, seated operator and a short black radar mast with a dish. There is no blue box. This is not source evidence, the Production Design Target, or a model blueprint.</desc>
+<rect width="1100" height="560" rx="20" fill="#edf0ed"/>
+<text x="42" y="55" font-family="system-ui,sans-serif" font-size="17" font-weight="700" letter-spacing="2.5" fill="#5b6c6d">NON-AUTHORITATIVE FOR APPEARANCE · TECHNICAL EXPLANATION ONLY</text>
+<text x="42" y="105" font-family="system-ui,sans-serif" font-size="37" font-weight="750" fill="#152d35">A very small open rover</text>
+<text x="42" y="139" font-family="system-ui,sans-serif" font-size="18" fill="#526367">The black outlines below separate four white half-dome wheels from the light chassis.</text>
+<!-- Compact exposed frame, viewed from a slightly elevated angle. -->
+<ellipse cx="538" cy="410" rx="254" ry="42" fill="#d5ddda"/>
+<!-- white hemispherical wheel pods: visible half-dome profile, repeated four times -->
+<g stroke="#42585d" stroke-width="5">
+ <path d="M334 360a57 57 0 0 1 114 0v39h-114z" fill="#fbfcf5"/><path d="M334 360h114" fill="none"/>
+ <path d="M651 360a57 57 0 0 1 114 0v39h-114z" fill="#fbfcf5"/><path d="M651 360h114" fill="none"/>
+ <path d="M334 421a57 57 0 0 1 114 0v39h-114z" fill="#fbfcf5"/><path d="M334 421h114" fill="none"/>
+ <path d="M651 421a57 57 0 0 1 114 0v39h-114z" fill="#fbfcf5"/><path d="M651 421h114" fill="none"/>
+ <!-- small light chassis and open seat well -->
+ <path d="M386 351l119-40 202 41-119 44z" fill="#dfe5df"/>
+ <path d="M432 357l75-24 58 12-75 25z" fill="#bfcac5"/>
+ <path d="M519 337l96-31 51 11-97 32z" fill="#e8ece6"/>
+ <!-- seated operator silhouette, kept central and larger than the vehicle detail -->
+ <circle cx="560" cy="267" r="28" fill="#e0c18c"/>
+ <path d="M538 292q23-13 47 1l20 47-63 18-22-34z" fill="#f7f7ed"/>
+ <path d="M540 331l39 14-13 25-37-16zM575 342l31-7 20 23-35 15z" fill="#576f78"/>
+ <!-- short black radar mast and shallow dish -->
+ <path d="M634 317l11-89" fill="none" stroke="#202b2f" stroke-width="8" stroke-linecap="round"/>
+ <path d="M619 221q27-20 55 0q-28 22-55 0z" fill="#303c40"/>
+ <circle cx="646" cy="221" r="5" fill="#cbd2cc"/>
+</g>
+<!-- labels -->
+<g font-family="system-ui,sans-serif" fill="#29464e" stroke="#648084" stroke-width="2">
+ <path d="M289 238L377 342"/><circle cx="377" cy="342" r="5" fill="#648084"/><text x="72" y="225" stroke="none" font-size="19" font-weight="700">4 WHITE HALF-DOME WHEELS</text>
+ <path d="M704 182L651 222"/><circle cx="651" cy="222" r="5" fill="#648084"/><text x="715" y="179" stroke="none" font-size="19" font-weight="700">SHORT BLACK MAST + DISH</text>
+ <path d="M467 252L538 298"/><circle cx="538" cy="298" r="5" fill="#648084"/><text x="328" y="229" stroke="none" font-size="19" font-weight="700">OPEN SEATED OPERATOR</text>
+</g>
+<rect x="799" y="274" width="248" height="133" rx="12" fill="#fff" stroke="#c8d2ce" stroke-width="2"/>
+<text x="823" y="315" font-family="system-ui,sans-serif" font-size="17" font-weight="700" fill="#354e53">SOURCE CUES</text>
+<text x="823" y="349" font-family="system-ui,sans-serif" font-size="17" fill="#354e53">Tiny · open · light chassis</text>
+<text x="823" y="378" font-family="system-ui,sans-serif" font-size="17" fill="#354e53">No blue equipment box</text>
+<text x="42" y="520" font-family="system-ui,sans-serif" font-size="15" fill="#68797a">Illustrates only the director-identified forms; exact dimensions and hidden attachments are intentionally omitted.</text>
+</svg>
