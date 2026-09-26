@@ -147,6 +147,10 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   SOURCE_LOCKED LEGO 7646 Production Design Target: long flight craft and the
   same body transformed into a three-contact walker, with no visible adaptations.
   T084 is authorized for this unit only and remains unstarted.
+- Alien Mothership T083 was director-accepted on 2026-09-26 via its
+  SOURCE_LOCKED official LEGO 7691 target in both shown states: assembled carrier
+  and central hull with three detached craft. No visible adaptations. T084 is
+  authorized for Alien Mothership only and remains unstarted.
 - Workflow cleanup is merged and synchronized locally. This synchronization
   preserves all prior T083 content; it does not continue design or infer approval.
 
@@ -179,11 +183,11 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 
 ## Next approved action
 
-ETX Alien Infiltrator T083 `SOURCE_LOCKED` was accepted on 2026-09-26. T084
-is authorized for this unit only and remains unstarted. Do not start another
-unit or begin T084. Design-only packages use the targeted
-`design-package` profile; no game export, M6 networking or M7 exploration stack
-is required.
+Alien Mothership T083 `SOURCE_LOCKED` was accepted on 2026-09-26 in its
+assembled and separated LEGO 7691 configurations. T084 is authorized for this
+unit only and remains unstarted. Do not start another unit or begin T084.
+Design-only packages use the targeted `design-package` profile; no game export,
+M6 networking or M7 exploration stack is required.
 
 ## Detailed records and historical evidence
 
