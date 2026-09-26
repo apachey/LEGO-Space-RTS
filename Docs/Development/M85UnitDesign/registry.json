@@ -1,8 +1,8 @@
 {
   "task": "T083",
   "target": 35,
-  "authoredProposals": 31,
-  "directorAccepted": 31,
+  "authoredProposals": 32,
+  "directorAccepted": 32,
   "productionModels": 0,
   "assets": [
     {
@@ -924,9 +924,36 @@
     },
     {
       "stableId": "unit.martians.red_planet_cruiser",
-      "status": "QUEUED_NOT_AUTHORED",
-      "directorAccepted": false,
-      "productionAuthorized": false
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "file": "Batch04Martians/red_planet_cruiser_design_spec_20260926_v1.md",
+      "sourceEvidence": {
+        "manifest": "ArtSource/M85/T083/RedPlanetCruiserV1/source_evidence_manifest.json",
+        "sourceSets": [
+          "7311-1",
+          "78777-1 (contains 7311-1)"
+        ],
+        "provenance": "Official LEGO 7311 instruction booklet, visually inspected across the cover, completed build, hinge sequence and upright single-foot configuration; cross-checked with completed-model collector photographs and reviews."
+      },
+      "designSpec": "Batch04Martians/red_planet_cruiser_design_spec_20260926_v1.md",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch04Martians/red_planet_cruiser_director_review_20260926_v1.html",
+        "rationale": "The official completed LEGO 7311 appearance directly defines the cruiser geometry and paired arms; the manual also documents its single-foot upright configuration. The director specifies a medium-height visual profile and hop-on-one-leg followed by gliding as presentation guidance; gameplay movement rules are unchanged.",
+        "designSpec": "Batch04Martians/red_planet_cruiser_design_spec_20260926_v1.md",
+        "targetImage": "ArtSource/M85/T083/RedPlanetCruiserV1/lego_7311_official_boxart_completed_appearance.png",
+        "reviewReady": true,
+        "appearanceSummary": "Open green and gray cruiser of medium visual height, with paired broad side panels, centered seated Altair, two articulated arms with open interpretation of their attachments, and a single foldable rear support; official instructions also show the same build upright on that one support."
+      },
+      "review": "Batch04Martians/red_planet_cruiser_director_review_20260926_v1.html",
+      "gameAdaptations": [
+        "Director-specified visual movement: hop on one leg followed by gliding; presentation direction only, with no change to movement classification or rules."
+      ],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-26",
+      "acceptanceNote": "Директор прийняв 2026-09-26 SOURCE_LOCKED Production Design Target LEGO 7311: відкритий апарат середньої висоти з двома шарнірними руками, оснащення яких лишається вільною інтерпретацією; візуальна подача руху — стрибки на одній нозі з плануванням. T084 авторизовано лише для Red Planet Cruiser; моделювання не розпочато."
     },
     {
       "stableId": "unit.martians.recon_mech_rp",

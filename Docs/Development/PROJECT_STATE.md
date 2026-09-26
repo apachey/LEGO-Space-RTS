@@ -169,6 +169,15 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   shield with centered green beacon box, central black tube, triangular pilot
   platform with paired cone lamps, and operator at the front. No visible
   adaptations. T084 is not authorized or started.
+- Red Planet Cruiser T083 was director-accepted on 2026-09-26 via its
+  `SOURCE_LOCKED` LEGO 7311 Production Design Target: open cruiser of medium
+  visual height, two articulated arms with open interpretation of attachments,
+  and director-specified hopping on one leg followed by gliding as visual
+  movement direction. Gameplay movement rules are unchanged. Official
+  instructions and completed-set views correct the older T082 wide-offset,
+  two-stage-pedestal description; the T082 record is preserved. T084 is
+  authorized for this unit only and remains unstarted. The review PNG capture is
+  still missing; the HTML decision screen and source images remain available.
 - Workflow cleanup is merged and synchronized locally. This synchronization
   preserves all prior T083 content; it does not continue design or infer approval.
 
@@ -183,8 +192,10 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   Rover, Hover Scout, Granite Grinder, Drill Craft, Rapid Rider, Loader Dozer,
   Chrome Crusher, Tunnel Transport, Mono Jet, Solar Explorer, Mission Fighter,
   MX-41 Switch Fighter, Mobile Mining Platform, MX-71 Recon Dropship, MT-51
-  Claw-Tank, MT-101 Armored Drilling Unit, MT-201 Ultra-Drill Walker, ETX Servitor, Alien Jet, Razor Skimmer, Worker Robot, Jet Scooter and T3-Trike
-  have explicit director acceptance; T084 is authorized only for specifically
+  Claw-Tank, MT-101 Armored Drilling Unit, MT-201 Ultra-Drill Walker,
+  ETX Servitor, Alien Jet, Razor Skimmer, Worker Robot, Jet Scooter, Red Planet
+  Cruiser and T3-Trike have explicit director acceptance; T084 is authorized
+  only for specifically
   authorized units. Double Hover and Jet Scooter are not authorized; no
   production model has started.
 - `BLOCKING_LATER`: actual gameplay-camera/model-LOD review belongs to
@@ -202,12 +213,12 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 
 ## Next approved action
 
-Aero Skiff T083 was director-accepted on 2026-09-26 as the symmetric
-`SOURCE_LOCKED` LEGO 1195 appearance. T084 is not authorized and remains
-unstarted. Do not start another unit or begin T084 in this checkpoint; select
-any next unit only in a separate bounded task. Design-only packages use the
-targeted `design-package` profile; no game export, M6 networking or M7
-exploration stack is required.
+Red Planet Cruiser T083 was director-accepted on 2026-09-26. Its review PNG
+capture remains missing; use a policy-compliant capture flow if available.
+T084 is authorized for this unit only and remains unstarted. Do not begin
+another unit automatically. Design-only packages use the targeted
+`design-package` profile; no game export, M6 networking or M7 exploration stack
+is required.
 
 ## Detailed records and historical evidence
 
