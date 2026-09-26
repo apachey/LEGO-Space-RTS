@@ -1,0 +1,217 @@
+{
+  "task": "T083",
+  "operation": "Unmodified full-page PDF rasterization and exact photo copy; not generated artwork.",
+  "references": [
+    {
+      "setId": "1277",
+      "page": 1,
+      "file": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/1277-page01.png",
+      "sha256": "547c6304ab90b4b28b04ca37fc4c9742ec3515ef9ceb176fffc105457b610b37",
+      "sourceUrl": "https://kb.rockraidersunited.com/images/2/2f/1277_Hovercraft_with_Ice_Saws.pdf",
+      "sourceSha256": "bad8c22f08fe7d9c3241421a28022467f1ea397c162ad8790179c5d87ced9027",
+      "retrieved": "2026-09-23",
+      "kind": "ARCHIVAL_SCAN_OF_OFFICIAL_INSTRUCTIONS",
+      "rights": "LEGO Group source material; research/reference only, not runtime art or a redistribution license."
+    },
+    {
+      "setId": "1277",
+      "page": 2,
+      "file": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/1277-page02.png",
+      "sha256": "a16da8642e21944158c5f2bfbce3ca11257ce307e102147cd214be894a883f74",
+      "sourceUrl": "https://kb.rockraidersunited.com/images/2/2f/1277_Hovercraft_with_Ice_Saws.pdf",
+      "sourceSha256": "bad8c22f08fe7d9c3241421a28022467f1ea397c162ad8790179c5d87ced9027",
+      "retrieved": "2026-09-23",
+      "kind": "ARCHIVAL_SCAN_OF_OFFICIAL_INSTRUCTIONS",
+      "rights": "LEGO Group source material; research/reference only, not runtime art or a redistribution license."
+    },
+    {
+      "setId": "4910",
+      "page": 1,
+      "file": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4910-page01.png",
+      "sha256": "6c342f3c9fe2db9a590c5ad5d8766b83fbffd39344bdd62db00ef888917444d9",
+      "sourceUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128290.pdf",
+      "sourceSha256": "df5c632dabec93ba1e31d15b4fd045f8f76b2e4e997a9ef217a56701ab1e3a0a",
+      "retrieved": "2026-09-23",
+      "kind": "OFFICIAL_INSTRUCTION_PAGE",
+      "rights": "LEGO Group source material; research/reference only, not runtime art or a redistribution license."
+    },
+    {
+      "setId": "4920",
+      "page": 1,
+      "file": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4920-page01.png",
+      "sha256": "abc1478c5c16d8379e5be6f094446aaf4dc0a35cab1c31cf998e686a13aada81",
+      "sourceUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128168.pdf",
+      "sourceSha256": "14fbe2a681049eacf5efc82d37e8a8cb555739e2f06a2b87d31c099bf066c3cd",
+      "retrieved": "2026-09-23",
+      "kind": "OFFICIAL_INSTRUCTION_PAGE",
+      "rights": "LEGO Group source material; research/reference only, not runtime art or a redistribution license."
+    },
+    {
+      "setId": "4920",
+      "page": 2,
+      "file": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4920-page02.png",
+      "sha256": "001b4842297256630c8cc3625bf70ce26702f3ce14b9ac74fc429f25aac5dc86",
+      "sourceUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128168.pdf",
+      "sourceSha256": "14fbe2a681049eacf5efc82d37e8a8cb555739e2f06a2b87d31c099bf066c3cd",
+      "retrieved": "2026-09-23",
+      "kind": "OFFICIAL_INSTRUCTION_PAGE",
+      "rights": "LEGO Group source material; research/reference only, not runtime art or a redistribution license."
+    },
+    {
+      "setId": "4940",
+      "page": 1,
+      "file": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4940-page01.png",
+      "sha256": "0a636c59fd49302b0ede617d45a2597cfef9b63afaa957c13eb68d49dcf550b4",
+      "sourceUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128317.pdf",
+      "sourceSha256": "893e7639981954dfb4dcb329caa5f2fda001134707c16397e40988049e98c072",
+      "retrieved": "2026-09-23",
+      "kind": "OFFICIAL_INSTRUCTION_PAGE",
+      "rights": "LEGO Group source material; research/reference only, not runtime art or a redistribution license."
+    },
+    {
+      "setId": "4940",
+      "page": 24,
+      "file": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4940-page24.png",
+      "sha256": "b5875272f024943150cb5307ef8e69102f92d85f60824660e284c6c7bd7f6028",
+      "sourceUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128317.pdf",
+      "sourceSha256": "893e7639981954dfb4dcb329caa5f2fda001134707c16397e40988049e98c072",
+      "retrieved": "2026-09-23",
+      "kind": "OFFICIAL_INSTRUCTION_PAGE",
+      "rights": "LEGO Group source material; research/reference only, not runtime art or a redistribution license."
+    },
+    {
+      "setId": "4950",
+      "page": 1,
+      "file": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4950-page01.png",
+      "sha256": "785221c7f9d61146f3578d8654185ac237dc8727ff8f5d1ebf9a35c05c2a47b9",
+      "sourceUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128419.pdf",
+      "sourceSha256": "e27833b6b1a196a7f2e895cfbba63ee851b451340d417afae78125ddcd38586a",
+      "retrieved": "2026-09-23",
+      "kind": "OFFICIAL_INSTRUCTION_PAGE",
+      "rights": "LEGO Group source material; research/reference only, not runtime art or a redistribution license."
+    },
+    {
+      "setId": "4950",
+      "page": 21,
+      "file": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4950-page21.png",
+      "sha256": "653071c4828a30b8f481ff38259ef9e34f2c2be645fb207c086e3676ce370e2f",
+      "sourceUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128419.pdf",
+      "sourceSha256": "e27833b6b1a196a7f2e895cfbba63ee851b451340d417afae78125ddcd38586a",
+      "retrieved": "2026-09-23",
+      "kind": "OFFICIAL_INSTRUCTION_PAGE",
+      "rights": "LEGO Group source material; research/reference only, not runtime art or a redistribution license."
+    },
+    {
+      "setId": "4950",
+      "page": 22,
+      "file": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4950-page22.png",
+      "sha256": "8d9ece5362f8e080db2290b0d7e0c004aa242073e8cbe06564b712b3a6cce0cf",
+      "sourceUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128419.pdf",
+      "sourceSha256": "e27833b6b1a196a7f2e895cfbba63ee851b451340d417afae78125ddcd38586a",
+      "retrieved": "2026-09-23",
+      "kind": "OFFICIAL_INSTRUCTION_PAGE",
+      "rights": "LEGO Group source material; research/reference only, not runtime art or a redistribution license."
+    },
+    {
+      "setId": "4970",
+      "page": 1,
+      "file": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4970-page01.png",
+      "sha256": "7f42aee2434f6605cdc95b46e1036d9d52c764756abbbb355a06a940f03f724f",
+      "sourceUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4129264.pdf",
+      "sourceSha256": "21c5d295b105a36c967740bdac29965b73c58946601a1e7542bae3a547475c5d",
+      "retrieved": "2026-09-23",
+      "kind": "OFFICIAL_INSTRUCTION_PAGE",
+      "rights": "LEGO Group source material; research/reference only, not runtime art or a redistribution license."
+    },
+    {
+      "setId": "4970",
+      "page": 33,
+      "file": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4970-page33.png",
+      "sha256": "44a817b7b90035c2a76414837fccc8c2f8641108cc821aea71dd0c9bfdff57b7",
+      "sourceUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4129264.pdf",
+      "sourceSha256": "21c5d295b105a36c967740bdac29965b73c58946601a1e7542bae3a547475c5d",
+      "retrieved": "2026-09-23",
+      "kind": "OFFICIAL_INSTRUCTION_PAGE",
+      "rights": "LEGO Group source material; research/reference only, not runtime art or a redistribution license."
+    },
+    {
+      "setId": "4980",
+      "page": 1,
+      "file": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4980-page01.png",
+      "sha256": "e4f84b7de8dcc71570c42be157d8a12a198ad1dd8470e91858cd38c8df9c6cd1",
+      "sourceUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128427.pdf",
+      "sourceSha256": "de699abd28a8fd0213ca740e3e99f6d026f47864c084d77649bdaa593e0bab4d",
+      "retrieved": "2026-09-23",
+      "kind": "OFFICIAL_INSTRUCTION_PAGE",
+      "rights": "LEGO Group source material; research/reference only, not runtime art or a redistribution license."
+    },
+    {
+      "setId": "4980",
+      "page": 29,
+      "file": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4980-page29.png",
+      "sha256": "d60ced2f295165bb77498180e4760630ccd9018a1f42ee38034e585c0cdf7cbe",
+      "sourceUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128427.pdf",
+      "sourceSha256": "de699abd28a8fd0213ca740e3e99f6d026f47864c084d77649bdaa593e0bab4d",
+      "retrieved": "2026-09-23",
+      "kind": "OFFICIAL_INSTRUCTION_PAGE",
+      "rights": "LEGO Group source material; research/reference only, not runtime art or a redistribution license."
+    },
+    {
+      "setId": "4980",
+      "page": 30,
+      "file": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4980-page30.png",
+      "sha256": "91447edf090e37822474c66a4a9b83ee10b320196a7b961f8d604ec0c835dd59",
+      "sourceUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128427.pdf",
+      "sourceSha256": "de699abd28a8fd0213ca740e3e99f6d026f47864c084d77649bdaa593e0bab4d",
+      "retrieved": "2026-09-23",
+      "kind": "OFFICIAL_INSTRUCTION_PAGE",
+      "rights": "LEGO Group source material; research/reference only, not runtime art or a redistribution license."
+    },
+    {
+      "setId": "4980",
+      "page": 31,
+      "file": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4980-page31.png",
+      "sha256": "5eb65107b52ae139d9afbf930350cec46694c6019880391e3f54806e7a7c4703",
+      "sourceUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128427.pdf",
+      "sourceSha256": "de699abd28a8fd0213ca740e3e99f6d026f47864c084d77649bdaa593e0bab4d",
+      "retrieved": "2026-09-23",
+      "kind": "OFFICIAL_INSTRUCTION_PAGE",
+      "rights": "LEGO Group source material; research/reference only, not runtime art or a redistribution license."
+    },
+    {
+      "setId": "4980",
+      "page": 32,
+      "file": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4980-page32.png",
+      "sha256": "51759a6db315f5574e52fb0b5176f13e0a14bcc9babb73c657ad3e59fd34a2ac",
+      "sourceUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4128427.pdf",
+      "sourceSha256": "de699abd28a8fd0213ca740e3e99f6d026f47864c084d77649bdaa593e0bab4d",
+      "retrieved": "2026-09-23",
+      "kind": "OFFICIAL_INSTRUCTION_PAGE",
+      "rights": "LEGO Group source material; research/reference only, not runtime art or a redistribution license."
+    },
+    {
+      "setId": "4930",
+      "file": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4930-outbox.jpg",
+      "sha256": "c7cb1da63bbcb267a80d5859309f1216be9723614badbb6e87c4948d24018b06",
+      "sourceUrl": "https://kb.rockraidersunited.com/images/b/bd/4930_OutBox.jpg",
+      "retrieved": "2026-09-23",
+      "kind": "ARCHIVAL_PRODUCT_PHOTO",
+      "rights": "Archive-hosted photograph of official set; photographer/license unverified; research/reference only, excluded from runtime assets."
+    }
+  ],
+  "derivedTargets": [
+    {
+      "file": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4910-hover-scout-target-step7.png",
+      "sha256": "664cd37ba336f423a3193ec548481c6fbd3b2897abbc18ab2e5bc9faf3c46684",
+      "sourceFile": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4910-page01.png",
+      "sourceSha256": "6c342f3c9fe2db9a590c5ad5d8766b83fbffd39344bdd62db00ef888917444d9",
+      "regionPixels": [
+        690,
+        1240,
+        1050,
+        1495
+      ],
+      "operation": "Crop only; official instruction pixels retained, no retouching or generated content."
+    }
+  ]
+}

@@ -1,0 +1,161 @@
+{
+  "task": "T083",
+  "baseline": "633542a",
+  "directorAccepted": false,
+  "productionAuthorized": false,
+  "generated": [
+    {
+      "file": "ArtSource/M85/T083/LoaderDozerCutterV1/cutter-proposal-v1.png",
+      "sha256": "228484c0d2d61260f0414db8b4055dba1f75e02d0a5e9cd7b385b757ae2153a8",
+      "tool": "built-in image_gen",
+      "date": "2026-09-23",
+      "state": "SUPERSEDED_LOCAL_CORRECTION",
+      "prompt": "ArtSource/M85/T083/LoaderDozerCutterV1/prompt.txt",
+      "sourceEvidence": false,
+      "productionAccepted": false
+    },
+    {
+      "file": "ArtSource/M85/T083/LoaderDozerCutterV1/cutter-proposal-v2.png",
+      "sha256": "a797af76a65f96a0cf3071f6f3736c68e374d30bd26112e1c473e616f6495fd3",
+      "tool": "built-in image_gen",
+      "date": "2026-09-23",
+      "state": "SELECTED_PROPOSAL_NOT_DIRECTOR_ACCEPTED",
+      "prompt": "ArtSource/M85/T083/LoaderDozerCutterV1/edit-prompt.txt",
+      "sourceEvidence": false,
+      "productionAccepted": false
+    },
+    {
+      "file": "ArtSource/M85/T083/RapidRiderPassengerV1/passenger-proposal-v1.png",
+      "sha256": "8afa4a4a204f390a11e49b92e7387e38f7e1095d8599d036087e750f4b317c0d",
+      "tool": "built-in image_gen",
+      "date": "2026-09-23",
+      "state": "SELECTED_PROPOSAL_NOT_DIRECTOR_ACCEPTED",
+      "prompt": "ArtSource/M85/T083/RapidRiderPassengerV1/prompt.txt",
+      "sourceEvidence": false,
+      "productionAccepted": false
+    },
+    {
+      "file": "ArtSource/M85/T083/TunnelTransportLoadedV1/loaded-proposal-v1.png",
+      "sha256": "b6908f5d1b9abf0db3aabf951f106ad0143c19b6cc16bccbae66fdf200f07bec",
+      "tool": "built-in image_gen",
+      "date": "2026-09-23",
+      "state": "SUPERSEDED_LOCAL_CORRECTION",
+      "prompt": "ArtSource/M85/T083/TunnelTransportLoadedV1/prompt.txt",
+      "sourceEvidence": false,
+      "productionAccepted": false
+    },
+    {
+      "file": "ArtSource/M85/T083/TunnelTransportLoadedV1/loaded-proposal-v2.png",
+      "sha256": "7c1a2e90bbab3f0725f7b96207fea069d114f575c97810069270441aef27610f",
+      "tool": "built-in image_gen",
+      "date": "2026-09-23",
+      "state": "SELECTED_PROPOSAL_NOT_DIRECTOR_ACCEPTED",
+      "prompt": "ArtSource/M85/T083/TunnelTransportLoadedV1/edit-prompt.txt",
+      "sourceEvidence": false,
+      "productionAccepted": false
+    }
+  ],
+  "assets": {
+    "unit.rock_raiders.crew": {
+      "primary": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4930-outbox.jpg",
+      "caption": "Архівне фото завершеного 4930: п’ять джерельних персонажів. Авторство фотографії / ліцензія не встановлені; лише референс.",
+      "additional": []
+    },
+    "unit.rock_raiders.hover_scout": {
+      "primary": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4910-page01.png",
+      "caption": "Офіційний завершений набір LEGO — джерело зовнішності; не новий ігровий рендер.",
+      "additional": [],
+      "crop": [
+        0,
+        0,
+        534,
+        379,
+        1062,
+        1500
+      ],
+      "targetMode": "SOURCE_LOCKED",
+      "targetArtifact": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4910-hover-scout-target-step7.png",
+      "targetCaption": "Офіційна інструкція LEGO 4910, сторінка 1, зібраний Hover Scout на кроці 7. Лише кадрування джерельного растра; геометрія/колір не перемальовані.",
+      "targetSha256": "664cd37ba336f423a3193ec548481c6fbd3b2897abbc18ab2e5bc9faf3c46684"
+    },
+    "unit.rock_raiders.drill_craft": {
+      "primary": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/1277-page02.png",
+      "caption": "Завершений крок 6 офіційного 1277 в архівному скані: дві видовжені пили. Лише оформлення сторінки кадрує цей фрагмент; повний скан доступний за кліком.",
+      "additional": [],
+      "crop": [
+        185,
+        1080,
+        545,
+        325,
+        1060,
+        1500
+      ]
+    },
+    "unit.rock_raiders.rapid_rider": {
+      "primary": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4920-page01.png",
+      "caption": "Офіційна сторінка LEGO 4920. Production Design Target — точний незмінений кадр завершеного набору з одним водієм; повна сторінка доступна як Source Evidence.",
+      "additional": [
+        {
+          "file": "ArtSource/M85/T083/RapidRiderPassengerV1/passenger-proposal-v1.png",
+          "caption": "ВІДХИЛЕНО ДИРЕКТОРОМ: попередня ADAPTED-пропозиція з чотирма Crew у чаші. Залишена лише як історія перегляду; не є Production Design Target і не є джерелом геометрії."
+        }
+      ],
+      "targetArtifact": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4920-page01.png",
+      "targetMode": "SOURCE_LOCKED",
+      "targetCaption": "Офіційний завершений LEGO Rapid Rider 4920 з одним водієм. Target — точне джерельне зображення з офіційної сторінки інструкції, без перемальовування чи нової геометрії.",
+      "crop": [
+        25,
+        20,
+        505,
+        350,
+        1062,
+        1500
+      ],
+      "targetSha256": "abc1478c5c16d8379e5be6f094446aaf4dc0a35cab1c31cf998e686a13aada81"
+    },
+    "unit.rock_raiders.loader_dozer": {
+      "primary": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4950-page01.png",
+      "caption": "Офіційний завершений набір LEGO — джерело зовнішності; не новий ігровий рендер.",
+      "additional": [
+        {
+          "file": "ArtSource/M85/T083/LoaderDozerCutterV1/cutter-proposal-v2.png",
+          "caption": "НОВА АДАПТАЦІЯ: Cutter Package, завершений концепт v2. Один компактний вертикальний диск. Не офіційний набір і не прийнята модель."
+        }
+      ]
+    },
+    "unit.rock_raiders.granite_grinder": {
+      "primary": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4940-page01.png",
+      "caption": "Офіційний завершений набір LEGO — джерело зовнішності; не новий ігровий рендер.",
+      "additional": []
+    },
+    "unit.rock_raiders.chrome_crusher": {
+      "primary": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4970-page01.png",
+      "caption": "SOURCE EVIDENCE: незмінена офіційна сторінка інструкції LEGO 4970, крок 1; research/reference only, не ігрова текстура.",
+      "additional": [
+        {
+          "file": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4970-page33.png",
+          "caption": "SOURCE EVIDENCE: офіційна інструкція LEGO 4970, сторінка 33; показує збірку балки/бура та їхні вузли. Це доказ конструкції, не окремий вигляд моделі й не схема для домислювання прихованих з’єднань."
+        }
+      ],
+      "targetMode": "SOURCE_LOCKED",
+      "targetArtifact": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4970-page01.png",
+      "targetCaption": "PRODUCTION DESIGN TARGET · SOURCE_LOCKED: завершений офіційний LEGO 4970 з усіма джерельними пропорціями й деталями. Єдина запропонована видима ігрова дельта — мала командна мітка на зовнішній боковині центральної рами; решта геометрії/кольору лишається як на цій офіційній сторінці.",
+      "targetSha256": "7f42aee2434f6605cdc95b46e1036d9d52c764756abbbb355a06a940f03f724f"
+    },
+    "unit.rock_raiders.tunnel_transport": {
+      "primary": "Docs/Development/M85UnitDesign/Batch01RockRaiders/References/4980-page01.png",
+      "caption": "Офіційний завершений набір LEGO — джерело зовнішності; не новий ігровий рендер.",
+      "additional": [
+        {
+          "file": "ArtSource/M85/T083/TunnelTransportLoadedV1/loaded-proposal-v2.png",
+          "caption": "НОВА АДАПТАЦІЯ: зовнішній нижній підвіс Chrome Crusher, концепт v2. Загальний завершений вигляд для рішення; верхня дальня точка кріплення накладається на роторну опору в цьому ракурсі. Текст вимагає кріплення до центральної рами; растр не доводить силовий шлях. Додатковий зображений оператор не встановлює ігровий екіпаж."
+        }
+      ]
+    }
+  },
+  "qaNotes": {
+    "cutter": "v1 loose rocks, oversized blade and roof lettering corrected in v2; final blade approximately tire-sized; hidden drive not proven.",
+    "rapidRider": "Exactly four visible passengers; open tub and separated runners retained; precise figure dimensions/clearance are model gates.",
+    "tunnelTransport": "v1 extra scooter removed in v2 and support brackets improved. v2 retains projection ambiguity at the far upper hanger and additional carrier figure. Review overall lower-suspended-load appearance only; do not build hidden topology or infer crew from raster."
+  }
+}

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aero Skiff — візуальне рішення директора</title>
+<style>
+:root{color-scheme:dark;--bg:#111719;--panel:#1c2527;--edge:#445256;--ink:#f1eee4;--muted:#bac5c1;--sand:#d7c39a;--blue:#8eb2c1;--rust:#d27745;--signal:#a8cf88}
+*{box-sizing:border-box}html{background:var(--bg)}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.42 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}main{max-width:1460px;margin:auto;padding:22px 30px 18px}
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;border-bottom:1px solid var(--edge);padding-bottom:15px}.eyebrow{font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--blue);font-weight:700}h1{font-size:clamp(28px,3vw,42px);line-height:1.02;margin:7px 0 9px;letter-spacing:-.03em}.identity{display:flex;gap:8px 18px;flex-wrap:wrap;color:var(--muted);font-size:14px}.identity strong{color:var(--ink);font-weight:600}.badges{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;padding-top:2px}.badge{border:1px solid var(--edge);padding:8px 11px;border-radius:3px;font-size:12px;font-weight:750;letter-spacing:.04em;white-space:nowrap}.badge.ready{border-color:#829a67;color:#d2e7b0;background:#273126}.badge.mode{border-color:#92724e;color:#f0cc94;background:#30271f}
+.hero{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(300px,.8fr);gap:18px;margin-top:17px;align-items:stretch}.target,.decision{border:1px solid var(--edge);background:var(--panel);border-radius:5px;overflow:hidden}.target-head{display:flex;justify-content:space-between;align-items:center;padding:12px 16px 11px;border-bottom:1px solid var(--edge);gap:16px}.target-head h2{font-size:15px;margin:0;letter-spacing:.02em}.flow{font-size:11px;color:var(--muted);letter-spacing:.045em}.flow b{color:var(--sand);font-weight:700}.target img{display:block;width:100%;height:min(54vh,560px);min-height:460px;object-fit:contain;background:#d6d4cf}.caption{padding:8px 15px 10px;color:var(--muted);font-size:12px;border-top:1px solid var(--edge)}
+.decision{padding:17px 19px;display:flex;flex-direction:column;gap:13px}.section-label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);font-weight:750;margin:0 0 6px}.adapt{border-left:3px solid var(--rust);padding:2px 0 2px 12px}.adapt p{margin:0;font-size:14px}.source-note{font-size:12px;color:var(--muted);margin:0}.source-note strong{color:var(--ink)}.approval{margin-top:auto;border-top:1px solid var(--edge);padding-top:12px}.question{font-size:15px;margin:0 0 8px}.checklist{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:13px;color:var(--muted)}.checklist li{display:flex;gap:8px}.checklist li:before{content:"□";color:var(--sand);font-size:16px;line-height:1.15}.decision-line{margin:10px 0 0;padding:9px 10px;background:#283437;border:1px solid #536367;border-radius:3px;font-size:13px;font-weight:650}
+.sources{margin-top:12px;display:flex;gap:8px 20px;align-items:center;flex-wrap:wrap;padding:10px 14px;border:1px solid var(--edge);border-radius:4px;color:var(--muted);font-size:12px}.sources strong{color:var(--sand);letter-spacing:.06em;text-transform:uppercase}.sources a{color:#c8dce3;text-decoration-thickness:1px;text-underline-offset:3px}.sources a:hover{color:white}.foot{margin-top:9px;display:flex;justify-content:space-between;gap:18px;color:var(--muted);font-size:11px}.foot strong{color:var(--ink)}details{margin-top:9px;border-top:1px solid var(--edge);padding-top:8px;color:var(--muted);font-size:11px}summary{cursor:pointer;color:var(--muted)}details ul{margin:7px 0;padding-left:19px}code{color:var(--sand)}
+@media(max-width:850px){main{padding:16px 13px}.top{display:block}.badges{justify-content:flex-start;margin-top:12px}.hero{grid-template-columns:1fr}.target img{height:auto;min-height:0;max-height:58vh}.decision{min-height:0}.approval{margin-top:0}.foot{display:block}.foot span{display:block;margin-top:4px}}
+</style>
+</head>
+<body>
+<main>
+  <header class="top">
+    <div>
+      <div class="eyebrow">Марсіани · легкий повітряний транспорт</div>
+      <h1>Aero Skiff</h1>
+      <div class="identity"><span><strong>Фракція</strong> · Martians</span><span><strong>Роль</strong> · легкий повітряний транспорт</span><span><strong>Місткість</strong> · 2 особи</span></div>
+    </div>
+    <div class="badges" aria-label="Стан пакета">
+      <span class="badge ready">ГОТОВО ДО РЕВ’Ю</span>
+      <span class="badge mode">ADAPTED</span>
+      <span class="badge">T084 — НЕ РОЗПОЧАТО</span>
+    </div>
+  </header>
+
+  <section class="hero" aria-label="Візуальне рішення">
+    <article class="target">
+      <div class="target-head"><h2>Production Design Target</h2><div class="flow"><b>ДЖЕРЕЛО → ІГРОВИЙ ВИГЛЯД</b></div></div>
+      <img src="../../../../ArtSource/M85/T083/AeroSkiffV1/aero_skiff_production_target_20260926_v1.png" alt="Запропонована адаптація Martian Aero Skiff: відкрита зелено-бірюзова платформа з двома помаранчево-бірюзовими пасажирами, зміщеним сірим радіальним диском, зеленим сигнальним маяком і нижнім чорним гвинтом">
+      <div class="caption">Ігровий Production Target. Відкритий корпус і зміщені джерельні вузли 1195 збережені; поруч із пілотом додано одне відкрите місце пасажира.</div>
+    </article>
+    <aside class="decision">
+      <div class="adapt">
+        <p class="section-label">Видимі адаптації</p>
+        <p>Одне компактне відкрите місце пасажира поруч і трохи позаду пілота.</p>
+      </div>
+      <div>
+        <p class="section-label">Що потрібно затвердити</p>
+        <p class="question">Чи саме цей вигляд передати в T084?</p>
+        <ul class="checklist">
+          <li>Низька відкрита платформа впізнавано зберігає 1195.</li>
+          <li>Зміщена радіальна площина й нижній гвинт лишаються головними елементами силуету.</li>
+          <li>Друге відкрите місце читається як частина одного апарата.</li>
+        </ul>
+        <p class="decision-line">Потрібне рішення директора: затвердити чи відхилити цю композицію та друге місце.</p>
+      </div>
+      <p class="source-note"><strong>Межа доказів:</strong> невідомі ракурси й точні з’єднання не домальовані як підтверджені факти. Зображення задає вигляд, а не перевірену збірку конкретних деталей.</p>
+    </aside>
+  </section>
+
+  <nav class="sources" aria-label="Джерела">
+    <strong>Джерела</strong>
+    <a href="https://www.lego.com/en-us/service/building-instructions/1195">LEGO · 1195</a>
+    <a href="https://lego.brickinstructions.com/instructions/01000/1195/001.jpg">Скан буклета · сторінка 1</a>
+    <a href="https://www.youtube.com/watch?v=Qvg5py5KWxU">Огляд · інший ракурс</a>
+    <a href="https://www.bricklink.com/catalogItemInv.asp?S=1195-1">Інвентар деталей</a>
+  </nav>
+  <div class="foot"><span>Ціль пропонує зовнішність; ігрові правила й рух залишаються без змін.</span><span><strong>Дизайн не прийнято · T084 не розпочато.</strong></span></div>
+  <details>
+    <summary>Технічні деталі</summary>
+    <ul>
+      <li>Stable ID: <code>unit.martians.aero_skiff</code> · Target mode: <code>ADAPTED</code> · виробничих моделей: немає.</li>
+      <li>Специфікація: <a href="aero_skiff_design_spec_20260926_v1.md">Production Design Target</a> · маніфест доказів: <a href="../../../../ArtSource/M85/T083/AeroSkiffV1/source_evidence_manifest.json">1195 та межі джерел</a>.</li>
+      <li>Цільовий рендер створено для T083; його SHA-256 і походження записані в маніфесті. Він не є part-verified LEGO build.</li>
+      <li>Цільова перевірка: <code>./tools/verify.sh --targeted design-package</code> плюс валідатор пакета. T084 — окреме рішення після схвалення цього вигляду.</li>
+    </ul>
+  </details>
+</main>
+</body>
+</html>

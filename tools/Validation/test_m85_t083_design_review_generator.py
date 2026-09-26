@@ -11,6 +11,47 @@ SPEC.loader.exec_module(GENERATOR)
 
 
 class PerUnitGenerationTests(unittest.TestCase):
+    def test_registry_acceptance_owns_package_even_if_proposal_input_is_unaccepted(self):
+        accepted = 'unit.rock_raiders.crew'
+        registry = {'assets': [{'stableId': accepted, 'directorAccepted': True}]}
+        records = [{'stableId': accepted}, {'stableId': 'unit.rock_raiders.loader_dozer'}]
+
+        self.assertEqual(GENERATOR.accepted_unit_ids(registry), {accepted})
+        generated = {
+            GENERATOR.BATCH / 'crew.md': 'proposal output',
+            GENERATOR.BATCH / 'loader_dozer.md': 'unaccepted proposal output',
+            GENERATOR.BATCH / 'review.html': '<article id="crew">proposal</article>',
+        }
+        owned = GENERATOR.proposal_outputs_for_check(generated, records, {accepted})
+
+        self.assertNotIn(GENERATOR.BATCH / 'crew.md', owned)
+        self.assertIn(GENERATOR.BATCH / 'loader_dozer.md', owned)
+        self.assertIn(GENERATOR.BATCH / 'review.html', owned)
+
+    def test_accepted_review_card_is_preserved_and_unaccepted_card_remains_generated(self):
+        records = [
+            {'stableId': 'unit.rock_raiders.crew'},
+            {'stableId': 'unit.rock_raiders.loader_dozer'},
+        ]
+        generated = '<article id="crew">unaccepted template</article><article id="loader_dozer">new proposal</article>'
+        current = '<article id="crew">director accepted card</article><article id="loader_dozer">old proposal</article>'
+
+        result = GENERATOR.preserve_accepted_review_cards(
+            generated, current, records, {'unit.rock_raiders.crew'}
+        )
+
+        self.assertEqual(GENERATOR.article(result, 'crew'), '<article id="crew">director accepted card</article>')
+        self.assertEqual(GENERATOR.article(result, 'loader_dozer'), '<article id="loader_dozer">new proposal</article>')
+
+    def test_unaccepted_proposal_remains_reproducibility_owned(self):
+        record = {'stableId': 'unit.rock_raiders.loader_dozer'}
+        outputs = {GENERATOR.BATCH / 'loader_dozer.md': 'proposal'}
+
+        self.assertEqual(
+            GENERATOR.proposal_outputs_for_check(outputs, [record], set()),
+            outputs,
+        )
+
     def test_unit_scope_names_only_selected_package_outputs(self):
         markdown, review, registry = GENERATOR.unit_output_paths('sample_unit')
 

@@ -33,7 +33,9 @@ entry = next(a for a in registry['assets'] if a['stableId'] == 'unit.astronauts.
 contract = next(a for a in contracts['assets'] if a['stableId'] == 'unit.astronauts.rover')
 source = next(s for s in evidence['sources'] if s['setId'] == '7301')
 
-check(registry['target'] == 35 and registry['authoredProposals'] == 10 and registry['directorAccepted'] == 3, 'registry roster/proposal/acceptance counters (Expedition Crew, Rover, Hover Scout)')
+authored_count = sum(asset.get('status') != 'QUEUED_NOT_AUTHORED' for asset in registry['assets'])
+accepted_count = sum(bool(asset.get('directorAccepted')) for asset in registry['assets'])
+check(registry['target'] == 35 and registry['authoredProposals'] == authored_count and registry['directorAccepted'] == accepted_count, 'registry roster/proposal/acceptance counters match asset records')
 check(entry.get('file') == 'Batch02Astronauts/rover.md', 'registry package path')
 check(entry.get('review') == 'Batch02Astronauts/rover_review.html', 'registry review path')
 check(entry['status'] == 'DESIGN_ACCEPTED_T084_AUTHORIZED' and entry['directorAccepted'] and entry['productionAuthorized'], 'Rover director acceptance and T084 authorization')
@@ -91,7 +93,10 @@ def validate_acceptance_gate():
             check(asset.get(field), f"accepted unit lacks {field}: {asset['stableId']}")
         source_ref = asset['sourceEvidence']
         source_manifest = source_ref.get('manifest') if isinstance(source_ref, dict) else None
-        check(source_manifest and (ROOT / 'Docs/Development/M85UnitDesign' / source_manifest).is_file(), f"accepted unit source manifest missing: {asset['stableId']}")
+        manifest_path = (ROOT / source_manifest) if source_manifest else None
+        if manifest_path is None or not manifest_path.is_file():
+            manifest_path = (ROOT / 'Docs/Development/M85UnitDesign' / source_manifest) if source_manifest else None
+        check(manifest_path is not None and manifest_path.is_file(), f"accepted unit source manifest missing: {asset['stableId']}")
         spec = asset['designSpec']
         check((ROOT / 'Docs/Development/M85UnitDesign' / spec).is_file(), f"accepted unit Design Spec missing: {asset['stableId']}")
         production_target = asset['productionDesignTarget']

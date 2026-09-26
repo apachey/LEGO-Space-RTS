@@ -1,0 +1,64 @@
+{
+  "stableId": "unit.martians.aero_skiff",
+  "task": "T083",
+  "targetMode": "ADAPTED",
+  "setRecords": [
+    {
+      "setId": "1195",
+      "name": "Alien Encounter",
+      "officialListing": "https://www.lego.com/en-us/service/building-instructions/1195",
+      "officialPdfFound": false,
+      "archivalInstructionScan": {
+        "page1": "https://lego.brickinstructions.com/instructions/01000/1195/001.jpg",
+        "page2": "https://lego.brickinstructions.com/instructions/01000/1195/002.jpg",
+        "hostStatus": "THIRD_PARTY_HOST_OF_SCANNED_LEGO_BOOKLET"
+      },
+      "completedModelVideo": {
+        "url": "https://www.youtube.com/watch?v=Qvg5py5KWxU",
+        "reviewer": "Brian's Bricks",
+        "reviewDate": "2018-07-13",
+        "inspection": "Paused/inspected at 1:35 and 2:10. Both show the completed craft with the open low base and offset radial plane from an upper/side three-quarter view; no full turnaround, opposite-side, top or underside view was verified. At 2:10 the reviewer infers that the rider seat rocks; this remains a secondary inference, not a sourced construction requirement."
+      },
+      "catalogCrossChecks": [
+        "https://brickset.com/sets/1195-1/alien-encounter",
+        "https://brickset.com/inventories/1195-1",
+        "https://www.bricklink.com/catalogItemInv.asp?S=1195-1"
+      ],
+      "directlyShown": [
+        "Assembled Martian vehicle with low open green/turquoise base",
+        "One Martian rider in orange mechanical frame",
+        "Offset pale-gray radial dish/ring",
+        "Dark-green raised block with a translucent-green beacon",
+        "Horizontal three-blade propeller shown in assembly steps below the radial part"
+      ],
+      "inferredByComparison": [
+        "The assembled 1195 vehicle is visibly asymmetric in the shown three-quarter views.",
+        "The dish/ring and underside propeller are connected to the craft as one source vehicle; unseen attachment detail is not resolved."
+      ],
+      "unknownOrDisputed": [
+        "Rear, top, opposite side, and complete underside views were not found.",
+        "The instruction archive exposes two booklet pages; page 3 is unavailable.",
+        "The official LEGO service page lists the instruction service, but no official 1195 PDF was found.",
+        "Source material does not show a second rider seat or establish the structural load path of a game-capacity-2 vehicle."
+      ]
+    },
+    {
+      "setId": "7317",
+      "name": "Aero Tube Hangar",
+      "officialPdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4160159.pdf",
+      "useBoundary": "Faction-level context for open Life on Mars structures only; not a geometry donor or direct Aero Skiff source."
+    }
+  ],
+  "productionTarget": {
+    "path": "ArtSource/M85/T083/AeroSkiffV1/aero_skiff_production_target_20260926_v1.png",
+    "sha256": "0d3aa1b12db2a5d5ad93da7b2fae1a070e219b2aac044f4965b64d8193eb664c",
+    "kind": "GENERATED_ADAPTED_VISUAL_TARGET",
+    "provenance": "Generated for this T083 package using the inspected 1195 instruction-page view as the visual reference. It retains the source identity and depicts one proposed additional open passenger perch. Generated construction is not verified against physical LEGO connections or unavailable source views."
+  },
+  "gameSpecificAdaptation": "One compact open passenger perch beside and slightly behind the source rider to communicate the canon-derived two-person transport capacity.",
+  "notEstablished": [
+    "Exact LEGO part identities and connection points",
+    "Unseen source geometry",
+    "Animation, hover height, gameplay behavior, or production sockets"
+  ]
+}

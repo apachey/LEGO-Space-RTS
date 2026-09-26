@@ -12,7 +12,7 @@
       "directorAccepted": true,
       "productionAuthorized": true,
       "sourceEvidence": {
-        "manifest": "Batch01RockRaiders/crew_source_manifest.json",
+        "manifest": "Batch01RockRaiders/References/source_manifest.json",
         "reference": "4930-outbox.jpg",
         "provenance": "Archive-hosted photograph of the completed official set; photographer/license unverified; research/reference only."
       },
@@ -29,8 +29,8 @@
       },
       "review": "Batch01RockRaiders/crew_review.html",
       "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
-      "acceptanceNote": "Director accepted the existing SOURCE_LOCKED Production Design Target for the five source-specific 4930 Crew looks on 2026-09-26; T084 is authorized for this unit only and has not started.",
-      "acceptanceDate": "2026-09-26"
+      "acceptanceNote": "The director confirmed on 2026-09-24 that this Crew Production Design Target had already been accepted; this records the prior acceptance without changing the target.",
+      "acceptanceDate": "2026-09-24"
     },
     {
       "stableId": "unit.rock_raiders.hover_scout",
@@ -164,12 +164,12 @@
       },
       "designSpec": "Batch01RockRaiders/granite_grinder.md",
       "review": "Batch01RockRaiders/granite_grinder_target_review.html",
-      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
-      "acceptanceDate": "2026-09-24",
-      "acceptanceNote": "Director approved the SOURCE_LOCKED official LEGO 4940 appearance with restrained short alternating steps on 2026-09-24. T084 is authorized for this unit only and has not started.",
       "gameAdaptations": [
         "Restrained alternating short steps with low foot lift and minimal upper-body sway; presentation interpretation only because the LEGO instructions do not demonstrate gait."
-      ]
+      ],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-24",
+      "acceptanceNote": "Director approved the SOURCE_LOCKED official LEGO 4940 appearance with restrained short alternating steps on 2026-09-24. T084 is authorized for this unit only and has not started."
     },
     {
       "stableId": "unit.rock_raiders.chrome_crusher",
@@ -177,6 +177,12 @@
       "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
       "directorAccepted": true,
       "productionAuthorized": true,
+      "sourceEvidence": {
+        "manifest": "Batch01RockRaiders/chrome_crusher_source_evidence.json",
+        "sourceSet": "4970"
+      },
+      "designSpec": "Batch01RockRaiders/chrome_crusher.md",
+      "review": "Batch01RockRaiders/chrome_crusher_target_review.html",
       "productionDesignTarget": {
         "mode": "SOURCE_LOCKED",
         "state": "DIRECTOR_ACCEPTED",
@@ -187,12 +193,6 @@
         "reviewReady": true,
         "appearanceSummary": "Official LEGO 4970 long open frame, four large wheels, offset powered drill, operator cage, open service area and raised work beam; one small flat team marker is the only visible game adaptation."
       },
-      "sourceEvidence": {
-        "manifest": "Batch01RockRaiders/chrome_crusher_source_evidence.json",
-        "sourceSet": "4970"
-      },
-      "designSpec": "Batch01RockRaiders/chrome_crusher.md",
-      "review": "Batch01RockRaiders/chrome_crusher_target_review.html",
       "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
       "acceptanceDate": "2026-09-24",
       "acceptanceNote": "Director approved the official LEGO 4970 SOURCE_LOCKED Production Design Target with one small flat team marker on the outer central frame. No other visible geometry or color adaptation. T084 is authorized for this unit only and has not started.",
@@ -511,7 +511,7 @@
       "productionDesignTarget": {
         "mode": "ADAPTED",
         "state": "DIRECTOR_ACCEPTED",
-        "artifact": "Batch02Astronauts/mt51_claw_tank_director_review_20260925_v1.html",
+        "artifact": "Docs/Development/M85UnitDesign/Batch02Astronauts/mt51_claw_tank_director_review_20260925_v1.html",
         "rationale": "Isolate the completed LEGO 7697 vehicle in a clean, source-colored game target while preserving the director-approved asymmetric arm arrangement.",
         "designSpec": "Batch02Astronauts/mt51_claw_tank_design_spec_20260925_v1.md",
         "targetImage": "ArtSource/M85/T083/MT51ClawTankV1/mt51_claw_tank_target_20260925_v1.png",
@@ -697,7 +697,7 @@
         "mode": "ORIGINAL_EXTENDED",
         "state": "DIRECTOR_ACCEPTED",
         "artifact": "Docs/Development/M85UnitDesign/Batch03Aliens/razor_skimmer_director_review_20260925_v2.html",
-        "rationale": "The accepted T082 packet defines a composite family and reserves donor selection and completed composition for T083; the T083 target resolves the visual choices explicitly.",
+        "rationale": "The accepted T082 packet defines a composite family and reserves donor selection and completed composition for T083; the new target resolves those visual choices explicitly.",
         "designSpec": "Batch03Aliens/razor_skimmer_design_spec_20260925_v2.md",
         "targetImage": "ArtSource/M85/T083/RazorSkimmerV1/razor_skimmer_production_target_20260925_v3.png",
         "reviewReady": true,
@@ -743,10 +743,10 @@
     },
     {
       "stableId": "unit.aliens.etx_alien_infiltrator",
+      "file": "Batch03Aliens/etx_alien_infiltrator_design_spec_20260926_v1.md",
       "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
       "directorAccepted": true,
       "productionAuthorized": true,
-      "file": "Batch03Aliens/etx_alien_infiltrator_design_spec_20260926_v1.md",
       "sourceEvidence": {
         "manifest": "ArtSource/M85/T083/ETXAlienInfiltratorV1/source_evidence_manifest.json",
         "sourceSets": [
@@ -772,16 +772,16 @@
     },
     {
       "stableId": "unit.aliens.alien_mothership",
+      "file": "Batch03Aliens/alien_mothership_design_spec_20260926_v1.md",
       "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
       "directorAccepted": true,
       "productionAuthorized": true,
-      "file": "Batch03Aliens/alien_mothership_design_spec_20260926_v1.md",
       "sourceEvidence": {
         "manifest": "ArtSource/M85/T083/AlienMothershipV1/source_evidence_manifest.json",
         "sourceSets": [
           "7691"
         ],
-        "provenance": "Офіційне фото завершеної LEGO-моделі та офіційна інструкція LEGO; сторінка 50 показує розділену конфігурацію, сторінка 68 — зібрану. URL і SHA-256 збережені в маніфесті."
+        "provenance": "Офіційне фото LEGO завершеної конфігурації та офіційна інструкція, сторінки 28–68; джерела й SHA-256 записані в маніфесті."
       },
       "designSpec": "Batch03Aliens/alien_mothership_design_spec_20260926_v1.md",
       "review": "Batch03Aliens/alien_mothership_director_review_20260926_v1.html",
@@ -924,10 +924,10 @@
     },
     {
       "stableId": "unit.martians.red_planet_cruiser",
+      "file": "Batch04Martians/red_planet_cruiser_design_spec_20260926_v1.md",
       "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
       "directorAccepted": true,
       "productionAuthorized": true,
-      "file": "Batch04Martians/red_planet_cruiser_design_spec_20260926_v1.md",
       "sourceEvidence": {
         "manifest": "ArtSource/M85/T083/RedPlanetCruiserV1/source_evidence_manifest.json",
         "sourceSets": [
@@ -942,7 +942,7 @@
         "state": "DIRECTOR_ACCEPTED",
         "artifact": "Docs/Development/M85UnitDesign/Batch04Martians/red_planet_cruiser_director_review_20260926_v1.html",
         "rationale": "The official completed LEGO 7311 appearance directly defines the cruiser geometry and paired arms; the manual also documents its single-foot upright configuration. The director specifies a medium-height visual profile and hop-on-one-leg followed by gliding as presentation guidance; gameplay movement rules are unchanged.",
-        "designSpec": "Batch04Martians/red_planet_cruiser_design_spec_20260926_v1.md",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch04Martians/red_planet_cruiser_design_spec_20260926_v1.md",
         "targetImage": "ArtSource/M85/T083/RedPlanetCruiserV1/lego_7311_official_boxart_completed_appearance.png",
         "reviewReady": true,
         "appearanceSummary": "Open green and gray cruiser of medium visual height, with paired broad side panels, centered seated Altair, two articulated arms with open interpretation of their attachments, and a single foldable rear support; official instructions also show the same build upright on that one support."
@@ -963,7 +963,9 @@
       "productionAuthorized": false,
       "sourceEvidence": {
         "manifest": "ArtSource/M85/T083/ReconMechRPV1/source_evidence_manifest.json",
-        "sourceSets": ["7314-1"],
+        "sourceSets": [
+          "7314-1"
+        ],
         "provenance": "Офіційна LEGO інструкція, завершена модель на друкованій сторінці 30; фронтальний, задній та верхній ракурси звірені з незалежним фотооглядом."
       },
       "designSpec": "Batch04Martians/recon_mech_rp_design_spec_20260926_v1.md",

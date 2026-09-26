@@ -1,0 +1,61 @@
+{
+  "stableId": "unit.martians.aero_skiff",
+  "task": "T083",
+  "targetMode": "SOURCE_LOCKED",
+  "supersedes": "source_evidence_manifest.json (v1 proposal retained unchanged)",
+  "sourceSet": {
+    "setId": "1195-1",
+    "name": "Alien Encounter",
+    "officialListing": "https://www.lego.com/en-us/service/buildinginstructions/1195",
+    "officialPdfFound": false,
+    "completedModelPhoto": {
+      "path": "ArtSource/M85/T083/AeroSkiffV1/References/user-provided-1195-completed-set-photo.png",
+      "sha256": "853c356cd69efee96d4589f26bb5520472b8385e4424debffd18ab361eab9950",
+      "providedBy": "Director in this task",
+      "publicationPhotographerAndOriginalURL": "UNKNOWN_NOT_VERIFIED",
+      "directlyShown": "Completed set photo showing the Martian flyer at left and the separate astronaut tracked rover at right. The crop used as target isolates the left craft and masks the neighboring rover; no LEGO parts or geometry were redrawn."
+    },
+    "archivalInstructionScan": {
+      "page1": "https://lego.brickinstructions.com/instructions/01000/1195/001.jpg",
+      "page2": "https://lego.brickinstructions.com/instructions/01000/1195/002.jpg",
+      "hostStatus": "THIRD_PARTY_HOST_OF_SCANNED_LEGO_BOOKLET",
+      "page1Use": "Completed composition and assembly steps for the Martian craft."
+    },
+    "officialServiceChecked": true,
+    "secondaryCrossChecks": [
+      "https://brickset.com/sets/1195-1/Alien-Encounter",
+      "https://brickset.com/article/80448/random-set-of-the-day-alien-encounter",
+      "https://www.brickeconomy.com/set/1195-1/lego-life-on-mars-alien-encounter",
+      "https://www.bricklink.com/catalogItemInv.asp?S=1195-1",
+      "https://www.youtube.com/watch?v=Qvg5py5KWxU&t=95s"
+    ]
+  },
+  "directlyShown": [
+    "One Martian rider in an orange frame and an open low green/turquoise platform.",
+    "A control console in front of the rider.",
+    "A light-gray radial ring offset behind and to the left in the supplied three-quarter view, with a dark support and raised green beacon block.",
+    "A dark underside propeller/rotor assembly; BrickLink set inventory lists one black three-blade propeller."
+  ],
+  "inferredByComparison": [
+    "The supplied photo, instruction page 1 and set inventory represent the completed Martian craft from set 1195-1.",
+    "The photo establishes visible relative placement in one three-quarter view; it does not establish unseen-side geometry."
+  ],
+  "unknownOrDisputed": [
+    "The source photo publication and photographer are unverified.",
+    "Rear, top, opposite-side and complete underside views are not established by the selected photo or linked instruction image.",
+    "Hidden connections and whether the pilot assembly moves are not established.",
+    "The visible source has one rider. Game capacity data is not visual evidence for an additional seat; no second seat is proposed."
+  ],
+  "productionTarget": {
+    "path": "ArtSource/M85/T083/AeroSkiffV1/aero_skiff_production_target_20260926_v2.png",
+    "sha256": "6b39f31d673206d478ed896d9799dedfcdbe575eb390ea3c209c56ebdb04e7f9",
+    "kind": "DIRECTOR_SUPPLIED_COMPLETED_SET_PHOTOGRAPH_CROP",
+    "provenance": "Pixel crop from the director-provided completed-set photograph. A white mask removes the neighboring astronaut rover at the image edge. The entire unmodified source photo is retained in References. No target geometry was generated or redrawn."
+  },
+  "gameSpecificAdaptations": [],
+  "notEstablished": [
+    "Exact LEGO part identities and hidden connection points beyond the inventory and shown views",
+    "Unseen source geometry",
+    "Animation, hover height, gameplay behavior, or production sockets"
+  ]
+}
