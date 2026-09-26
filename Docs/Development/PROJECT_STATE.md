@@ -6,10 +6,10 @@ Historical snapshots linked below are not current instructions.
 
 ## Accepted baseline
 
-- Current accepted workflow base: `e414f659` on `origin/codex/m85-t082`,
-  merging cleanup PR #15 over director-accepted T082 `633542a`.
-- Local `codex/m85-t083` is fast-forwarded to that merge; its uncommitted
-  design work is preserved above it. Older `origin/main` is not this task's base.
+- Current accepted workflow base: `4858c32` on `origin/codex/m85-t082`,
+  merging the completed T083 unit design packages (PR #16) over cleanup PR #15
+  and director-accepted T082 `633542a`. Older `origin/main` is not this base.
+- T085 work is on `codex/m85-t085`, branched from `4858c32`; not merged.
 - Core remains Godot 4.7.1-stable .NET/C#, engine-independent deterministic
   SimCore, fixed 20 Hz and project-owned navigation. No architecture change.
 
@@ -36,9 +36,8 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   content-reference validation. Approved T073 values are recorded separately.
 - M8.5 T083: all 35 unit visual design packages are complete and explicitly
   director-accepted. The acceptance-aware generator preserves accepted package
-  artifacts and checks proposal-owned outputs. T083 targeted design-package
-  verification passed on 2026-09-26; the branch is ready for PR review and is
-  not merged. T084 has not started.
+  artifacts and checks proposal-owned outputs. T083 is merged into
+  `codex/m85-t082` via PR #16 (`4858c32`). T084 has not started.
 - T081: Blender → GLB → Godot production pipeline is implemented, verified
   and director-accepted; scale, orientation, LODs, pivots/sockets and materials
   have an accepted reference fixture.
@@ -53,7 +52,17 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 
 ## Work in progress
 
-- T083 is complete on `codex/m85-t083`; all 35 unit design packages are
+- T085 started on 2026-09-26 on `codex/m85-t085` (not merged). Entry 1 of 31,
+  Rock Raiders HQ, has an `ADAPTED` Production Design Target proposal awaiting
+  director review: the complete LEGO 4990 base re-seated on one 8×8 rock plinth,
+  with a non-firing rotating light beam, Crew pad, receiving hopper and energy
+  crystal. It is not accepted; T086 is not started or authorized; no other
+  infrastructure entry has started. Official 4990 imagery could not be opened
+  in the cloud session (network policy denied LEGO hosts), so module appearance
+  stays locked to the official instructions pending a pixel check. Review:
+  [HQ director review](M85InfrastructureDesign/Batch01RockRaiders/rock_raiders_hq_director_review_20260926_v1.html),
+  registry `M85InfrastructureDesign/registry.json`.
+- T083 is complete and merged (PR #16); all 35 unit design packages are
   director-accepted. The accepted targets and unit-specific T084 authorization
   states are recorded in `M85UnitDesign/registry.json`. No production model has
   started. Crew's prior acceptance was reconfirmed on
@@ -194,6 +203,11 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 - `BLOCKING_LATER — M9 large-battle acceptance`: Stress60 still exposes
   mid-route corridor traffic/yield deadlock. It remains a visible diagnostic
   in full verification before M9, not a blocker for bounded production work.
+- `BLOCKING_NOW` for locking the T085 HQ module appearance: an official LEGO
+  4990 pixel check (network access to `www.lego.com` or director-supplied
+  images). The composition decision itself is not blocked.
+- Cloud sessions lack Pillow, so the T082 design-package validator stages fail
+  there before checking content; the same failure reproduces on `4858c32`.
 - Representative 24-mover behavior remains covered by the NUnit suite.
 - Failed portal-flow/local-pressure research (`6105cf0`, `f896b01`) is preserved,
   not production-ready. Another traffic coordinator/solver attempt requires
@@ -202,10 +216,12 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 
 ## Next approved action
 
-T083 is complete and awaiting the user's PR review/merge. Do not begin T084
-until the director issues the next instruction. No production model has started.
-Design-only package work uses the targeted `design-package` profile; no game
-export, M6 networking or M7 exploration stack is required.
+The director reviews the T085 Rock Raiders HQ proposal: composition, the
+non-firing light beam, and whether to accept the composition before or after
+the official 4990 pixel check. Do not start the next infrastructure entry,
+T084 or T086 until the director instructs. No production model has started.
+Design-only package work uses the targeted `design-package` profile plus the
+package validator; no game export, M6 networking or M7 exploration stack.
 
 ## Detailed records and historical evidence
 

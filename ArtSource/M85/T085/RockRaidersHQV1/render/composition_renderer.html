@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Rock Raiders HQ composition renderer</title>
+<style>html,body{margin:0;padding:0;background:#ffffff;overflow:hidden}canvas{display:block}</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script src="scene_data.js"></script>
+<script>
+'use strict';
+// T085 Rock Raiders HQ composition renderer.
+// Project-authored review aid for the ADAPTED composition target.
+// NON-AUTHORITATIVE FOR OFFICIAL LEGO 4990 MODULE GEOMETRY: every module's
+// exact bricks, colours and connections follow the official instructions.
+// Usage: composition_renderer.html#view=<view>&state=<state>
+(() => {
+  const params = new URLSearchParams(location.hash.slice(1));
+  const scene = window.HQ_SCENE;
+  const view = scene && scene.views[params.get('view')];
+  const state = scene && scene.states[params.get('state')];
+  if (!view || !state) { document.title = 'ERROR: unknown view or state'; return; }
+
+  const W = view.width, H = view.height, SS = view.supersample || 2;
+  const canvas = document.getElementById('c');
+  canvas.width = W * SS; canvas.height = H * SS;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+  const gl = canvas.getContext('webgl2', { antialias: false, preserveDrawingBuffer: true });
+  if (!gl) { document.title = 'ERROR: WebGL2 unavailable'; return; }
+  const silhouette = view.mode === 'silhouette';
+
+  // ---------- small linear-algebra helpers (column-major) ----------
+  const mul = (a, b) => { const o = new Array(16).fill(0);
+    for (let c = 0; c < 4; c++) for (let r = 0; r < 4; r++) { let s = 0;
+      for (let k = 0; k < 4; k++) s += a[k * 4 + r] * b[c * 4 + k]; o[c * 4 + r] = s; } return o; };
+  const norm = v => { const l = Math.hypot(v[0], v[1], v[2]) || 1; return [v[0] / l, v[1] / l, v[2] / l]; };
+  const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+  const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+  const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+  const lookAt = (eye, at, up) => { const z = norm(sub(eye, at)); const x = norm(cross(up, z)); const y = cross(z, x);
+    return [x[0], y[0], z[0], 0, x[1], y[1], z[1], 0, x[2], y[2], z[2], 0, -dot(x, eye), -dot(y, eye), -dot(z, eye), 1]; };
+  const persp = (fovy, asp, n, f) => { const t = 1 / Math.tan(fovy / 2);
+    return [t / asp, 0, 0, 0, 0, t, 0, 0, 0, 0, (f + n) / (n - f), -1, 0, 0, 2 * f * n / (n - f), 0]; };
+  const ortho = (l, r, b, t, n, f) => [2 / (r - l), 0, 0, 0, 0, 2 / (t - b), 0, 0, 0, 0, -2 / (f - n), 0,
+    -(r + l) / (r - l), -(t + b) / (t - b), -(f + n) / (f - n), 1];
+  const hex = h => [parseInt(h.slice(1, 3), 16) / 255, parseInt(h.slice(3, 5), 16) / 255, parseInt(h.slice(5, 7), 16) / 255];
+
+  // ---------- geometry ----------
+  const P = [], N = [], C = [], E = [], I = [];
+  const palette = scene.palette.map(hex);
+  const mats = state.matrices;
+  function tf(m, p) { if (!m) return p; return [m[0] * p[0] + m[4] * p[1] + m[8] * p[2] + m[12],
+    m[1] * p[0] + m[5] * p[1] + m[9] * p[2] + m[13], m[2] * p[0] + m[6] * p[1] + m[10] * p[2] + m[14]]; }
+  function tn(m, n) { if (!m) return n; return norm([m[0] * n[0] + m[4] * n[1] + m[8] * n[2],
+    m[1] * n[0] + m[5] * n[1] + m[9] * n[2], m[2] * n[0] + m[6] * n[1] + m[10] * n[2]]); }
+  function tri(m, a, b, c, n, col, emi, id) {
+    const nn = tn(m, n);
+    for (const p of [a, b, c]) { const q = tf(m, p); P.push(q[0], q[1], q[2]); N.push(nn[0], nn[1], nn[2]);
+      C.push(col[0], col[1], col[2]); E.push(emi); I.push(id); } }
+  function quad(m, a, b, c, d, n, col, emi, id) { tri(m, a, b, c, n, col, emi, id); tri(m, a, c, d, n, col, emi, id); }
+  function box(m, cx, cy, cz, sx, sy, sz, col, emi, id) {
+    const x0 = cx - sx / 2, x1 = cx + sx / 2, y0 = cy - sy / 2, y1 = cy + sy / 2, z0 = cz - sz / 2, z1 = cz + sz / 2;
+    quad(m, [x0, y1, z0], [x0, y1, z1], [x1, y1, z1], [x1, y1, z0], [0, 1, 0], col, emi, id);
+    quad(m, [x0, y0, z0], [x1, y0, z0], [x1, y0, z1], [x0, y0, z1], [0, -1, 0], col, emi, id);
+    quad(m, [x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1], [0, 0, 1], col, emi, id);
+    quad(m, [x1, y0, z0], [x0, y0, z0], [x0, y1, z0], [x1, y1, z0], [0, 0, -1], col, emi, id);
+    quad(m, [x1, y0, z1], [x1, y0, z0], [x1, y1, z0], [x1, y1, z1], [1, 0, 0], col, emi, id);
+    quad(m, [x0, y0, z0], [x0, y0, z1], [x0, y1, z1], [x0, y1, z0], [-1, 0, 0], col, emi, id);
+  }
+  // Cylinder along a local axis: 'y' vertical (base centre), 'x' or 'z' horizontal (start centre).
+  function cyl(m, bx, by, bz, r, h, axis, seg, col, emi, id, caps) {
+    const map = (u, v, w) => axis === 'y' ? [bx + u, by + w, bz + v] : axis === 'x' ? [bx + w, by + u, bz + v] : [bx + u, by + v, bz + w];
+    const mapN = (u, v, w) => axis === 'y' ? [u, w, v] : axis === 'x' ? [w, u, v] : [u, v, w];
+    for (let i = 0; i < seg; i++) {
+      const a0 = i / seg * Math.PI * 2, a1 = (i + 1) / seg * Math.PI * 2, am = (a0 + a1) / 2;
+      const u0 = Math.cos(a0) * r, v0 = Math.sin(a0) * r, u1 = Math.cos(a1) * r, v1 = Math.sin(a1) * r;
+      const n = mapN(Math.cos(am), Math.sin(am), 0);
+      quad(m, map(u0, v0, 0), map(u1, v1, 0), map(u1, v1, h), map(u0, v0, h), n, col, emi, id);
+      if (caps & 2) tri(m, map(0, 0, h), map(u0, v0, h), map(u1, v1, h), mapN(0, 0, 1), col, emi, id);
+      if (caps & 1) tri(m, map(0, 0, 0), map(u1, v1, 0), map(u0, v0, 0), mapN(0, 0, -1), col, emi, id);
+    }
+  }
+  // Wedge/ramp: box whose top descends toward 'dir' to height 'low' (fraction of sy).
+  function wedge(m, cx, cy, cz, sx, sy, sz, dir, low, col, emi, id) {
+    const x0 = cx - sx / 2, x1 = cx + sx / 2, y0 = cy - sy / 2, y1 = cy + sy / 2, z0 = cz - sz / 2, z1 = cz + sz / 2;
+    const yl = y0 + sy * low;
+    const top = (x, z) => { let t = 0;
+      if (dir === '+z') t = (z - z0) / sz; else if (dir === '-z') t = (z1 - z) / sz;
+      else if (dir === '+x') t = (x - x0) / sx; else t = (x1 - x) / sx; return y1 + (yl - y1) * t; };
+    const a = [x0, top(x0, z0), z0], b = [x0, top(x0, z1), z1], c = [x1, top(x1, z1), z1], d = [x1, top(x1, z0), z0];
+    const nt = norm(cross(sub(b, a), sub(d, a)));
+    quad(m, a, b, c, d, nt[1] < 0 ? nt.map(v => -v) : nt, col, emi, id);
+    quad(m, [x0, y0, z0], [x1, y0, z0], [x1, y0, z1], [x0, y0, z1], [0, -1, 0], col, emi, id);
+    quad(m, [x0, y0, z1], [x1, y0, z1], c, b, [0, 0, 1], col, emi, id);
+    quad(m, [x1, y0, z0], [x0, y0, z0], a, d, [0, 0, -1], col, emi, id);
+    quad(m, [x1, y0, z1], [x1, y0, z0], d, c, [1, 0, 0], col, emi, id);
+    quad(m, [x0, y0, z0], [x0, y0, z1], b, a, [-1, 0, 0], col, emi, id);
+  }
+  // Hexagonal bipyramid crystal (vertical).
+  function crystal(m, cx, cy, cz, r, h, col, emi, id) {
+    const top = [cx, cy + h / 2, cz], bot = [cx, cy - h / 2, cz], mid = cy - h * 0.08;
+    for (let i = 0; i < 6; i++) { const a0 = i / 6 * Math.PI * 2, a1 = (i + 1) / 6 * Math.PI * 2;
+      const p0 = [cx + Math.cos(a0) * r, mid, cz + Math.sin(a0) * r], p1 = [cx + Math.cos(a1) * r, mid, cz + Math.sin(a1) * r];
+      tri(m, p0, top, p1, norm(cross(sub(top, p0), sub(p1, p0))).map(v => -v), col, emi, id);
+      tri(m, p1, bot, p0, norm(cross(sub(bot, p1), sub(p0, p1))).map(v => -v), col, emi, id); }
+  }
+  // Deterministic faceted boulder: once-subdivided octahedron with shared jittered vertices.
+  function rock(m, cx, cy, cz, r, seed, col, id) {
+    let s = seed >>> 0; const rnd = () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; };
+    const V = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]];
+    let F = [[0, 2, 4], [4, 2, 1], [1, 2, 5], [5, 2, 0], [4, 3, 0], [1, 3, 4], [5, 3, 1], [0, 3, 5]];
+    const mid = new Map();
+    const midpoint = (a, b) => { const key = a < b ? a + ':' + b : b + ':' + a;
+      if (!mid.has(key)) { V.push(norm([(V[a][0] + V[b][0]) / 2, (V[a][1] + V[b][1]) / 2, (V[a][2] + V[b][2]) / 2])); mid.set(key, V.length - 1); }
+      return mid.get(key); };
+    const G = [];
+    for (const [a, b, c] of F) { const ab = midpoint(a, b), bc = midpoint(b, c), ca = midpoint(c, a);
+      G.push([a, ab, ca], [ab, b, bc], [ca, bc, c], [ab, bc, ca]); }
+    F = G;
+    const k = V.map(() => 0.82 + rnd() * 0.3);
+    const pt = j => [cx + V[j][0] * r * k[j] * 1.1, cy + V[j][1] * r * k[j] * 0.72, cz + V[j][2] * r * k[j] * 0.95];
+    for (const f of F) { const p = f.map(pt); const n = norm(cross(sub(p[1], p[0]), sub(p[2], p[0])));
+      tri(m, p[0], p[1], p[2], dot(n, sub(p[0], [cx, cy, cz])) < 0 ? n.map(v => -v) : n, col, 0, id); }
+  }
+
+  let bmin = [1e9, 1e9, 1e9], bmax = [-1e9, -1e9, -1e9];
+  const grow = (x, y, z, r) => { bmin = [Math.min(bmin[0], x - r), Math.min(bmin[1], y - r), Math.min(bmin[2], z - r)];
+    bmax = [Math.max(bmax[0], x + r), Math.max(bmax[1], y + r), Math.max(bmax[2], z + r)]; };
+  const black = [0.02, 0.02, 0.02];
+  for (const p of state.prims) {
+    const k = p[0];
+    const m = p[p.length - 1] >= 0 ? mats[p[p.length - 1]] : null;
+    if (k === 's') { // stud: x, y, z, colour
+      const col = silhouette ? black : palette[p[4]];
+      cyl(m, p[1], p[2], p[3], 0.12, 0.09, 'y', 10, col, 0, p[5], 2);
+      continue; }
+    const col = silhouette ? black : palette[p[7]];
+    const emi = silhouette ? 0 : p[8];
+    const id = p[9];
+    if (k === 'b') { box(m, p[1], p[2], p[3], p[4], p[5], p[6], col, emi, id); grow(p[1], p[2], p[3], Math.max(p[4], p[5], p[6])); }
+    else if (k === 'c') { cyl(m, p[1], p[2], p[3], p[4], p[5], p[6] === 1 ? 'x' : p[6] === 2 ? 'z' : 'y', 16, col, emi, id, 3); }
+    else if (k === 'w') { wedge(m, p[1], p[2], p[3], p[4], p[5], p[6], ['+z', '-z', '+x', '-x'][p[10]], p[11], col, emi, id); }
+    else if (k === 'x') { crystal(m, p[1], p[2], p[3], p[4], p[5], col, emi, id); }
+    else if (k === 'r') { rock(m, p[1], p[2], p[3], p[4], p[5], col, id); }
+  }
+  // Ground plane (id 0: never outlined).
+  const g = silhouette ? [1, 1, 1] : hex(view.ground || '#d8d4ca');
+  const G = view.groundSize || 400;
+  quad(null, [-G, 0, -G], [-G, 0, G], [G, 0, G], [G, 0, -G], [0, 1, 0], g, 0, 0);
+  for (const d of (view.decals || [])) { // flat ground decals: [x0,z0,x1,z1,'#hex']
+    const c = silhouette ? [1, 1, 1] : hex(d[4]);
+    quad(null, [d[0], 0.006, d[1]], [d[0], 0.006, d[3]], [d[2], 0.006, d[3]], [d[2], 0.006, d[1]], [0, 1, 0], c, 0, 0); }
+
+  // ---------- GL setup ----------
+  function sh(type, src) { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; }
+  function prog(vs, fs) { const p = gl.createProgram(); gl.attachShader(p, sh(gl.VERTEX_SHADER, vs));
+    gl.attachShader(p, sh(gl.FRAGMENT_SHADER, fs)); gl.linkProgram(p);
+    if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p)); return p; }
+  const vao = gl.createVertexArray(); gl.bindVertexArray(vao);
+  const attr = (loc, data, size) => { const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW); gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, size, gl.FLOAT, false, 0, 0); };
+  attr(0, P, 3); attr(1, N, 3); attr(2, C, 3); attr(3, E, 1); attr(4, I, 1);
+  const count = P.length / 3;
+
+  // ---------- camera ----------
+  const deg = Math.PI / 180;
+  let V, Pm, eye, near, far, isOrtho = false;
+  if (view.type === 'ortho') {
+    isOrtho = true; eye = [view.center[0], 120, view.center[1]];
+    V = lookAt(eye, [view.center[0], 0, view.center[1]], [0, 0, -1]);
+    near = 1; far = 260; Pm = ortho(-view.halfWidth, view.halfWidth, -view.halfWidth * H / W, view.halfWidth * H / W, near, far);
+  } else {
+    const aspect = W / H, fov = view.fovY * deg;
+    let dist = view.distance;
+    if (view.zoomCells) dist = (view.zoomCells * 2 * 0.5) / Math.max(0.1, Math.tan(fov / 2) * aspect);
+    const yaw = view.yaw * deg, pitch = view.pitch * deg;
+    const dir = [Math.sin(yaw) * Math.cos(pitch), Math.sin(pitch), Math.cos(yaw) * Math.cos(pitch)];
+    const t = view.target;
+    eye = [t[0] + dir[0] * dist, t[1] + dir[1] * dist, t[2] + dir[2] * dist];
+    V = lookAt(eye, t, [0, 1, 0]); near = Math.max(0.5, dist * 0.2); far = dist * 3 + 60;
+    Pm = persp(fov, aspect, near, far);
+  }
+  const VP = mul(Pm, V);
+
+  // ---------- light / shadow map ----------
+  const L = norm(scene.light);
+  const bc = [(bmin[0] + bmax[0]) / 2, (bmin[1] + bmax[1]) / 2, (bmin[2] + bmax[2]) / 2];
+  const br = Math.hypot(bmax[0] - bmin[0], bmax[1] - bmin[1], bmax[2] - bmin[2]) / 2 + 2;
+  const LV = lookAt([bc[0] + L[0] * br * 2, bc[1] + L[1] * br * 2, bc[2] + L[2] * br * 2], bc, Math.abs(L[1]) > 0.95 ? [0, 0, 1] : [0, 1, 0]);
+  const LVP = mul(ortho(-br, br, -br, br, br * 0.5, br * 3.5), LV);
+  const SM = 4096;
+  const shadowTex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, shadowTex);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT24, SM, SM, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null);
+  for (const [k, v] of [[gl.TEXTURE_MIN_FILTER, gl.NEAREST], [gl.TEXTURE_MAG_FILTER, gl.NEAREST], [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE]]) gl.texParameteri(gl.TEXTURE_2D, k, v);
+  const shadowFbo = gl.createFramebuffer(); gl.bindFramebuffer(gl.FRAMEBUFFER, shadowFbo);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, shadowTex, 0);
+  const shadowProg = prog(`#version 300 es
+    layout(location=0) in vec3 aPos; uniform mat4 uLVP; void main(){ gl_Position = uLVP * vec4(aPos,1.0); }`,
+    `#version 300 es
+    precision highp float; void main(){}`);
+  gl.viewport(0, 0, SM, SM); gl.enable(gl.DEPTH_TEST); gl.clear(gl.DEPTH_BUFFER_BIT);
+  gl.useProgram(shadowProg); gl.uniformMatrix4fv(gl.getUniformLocation(shadowProg, 'uLVP'), false, LVP);
+  if (!silhouette) gl.drawArrays(gl.TRIANGLES, 0, count);
+
+  // ---------- main pass (MRT) ----------
+  const RW = W * SS, RH = H * SS;
+  const mkTex = (ifmt, fmt, type) => { const t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t);
+    gl.texImage2D(gl.TEXTURE_2D, 0, ifmt, RW, RH, 0, fmt, type, null);
+    for (const [k, v] of [[gl.TEXTURE_MIN_FILTER, gl.NEAREST], [gl.TEXTURE_MAG_FILTER, gl.NEAREST], [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE]]) gl.texParameteri(gl.TEXTURE_2D, k, v);
+    return t; };
+  const colTex = mkTex(gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE), nidTex = mkTex(gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE);
+  const depTex = mkTex(gl.DEPTH_COMPONENT24, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT);
+  const fbo = gl.createFramebuffer(); gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, colTex, 0);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT1, gl.TEXTURE_2D, nidTex, 0);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, depTex, 0);
+  gl.drawBuffers([gl.COLOR_ATTACHMENT0, gl.COLOR_ATTACHMENT1]);
+  const mainProg = prog(`#version 300 es
+    layout(location=0) in vec3 aPos; layout(location=1) in vec3 aNrm; layout(location=2) in vec3 aCol;
+    layout(location=3) in float aEmi; layout(location=4) in float aId;
+    uniform mat4 uVP; uniform mat4 uLVP;
+    out vec3 vPos; out vec3 vNrm; out vec3 vCol; out float vEmi; out float vId; out vec4 vL;
+    void main(){ vPos=aPos; vNrm=aNrm; vCol=aCol; vEmi=aEmi; vId=aId; vL=uLVP*vec4(aPos,1.0); gl_Position=uVP*vec4(aPos,1.0); }`,
+    `#version 300 es
+    precision highp float;
+    in vec3 vPos; in vec3 vNrm; in vec3 vCol; in float vEmi; in float vId; in vec4 vL;
+    uniform sampler2D uShadow; uniform vec3 uLdir; uniform vec3 uEye; uniform float uSil; uniform float uTexel;
+    layout(location=0) out vec4 oCol; layout(location=1) out vec4 oNid;
+    float shadowAt(){ vec3 p = vL.xyz / vL.w * 0.5 + 0.5; if(p.x<0.0||p.x>1.0||p.y<0.0||p.y>1.0) return 1.0;
+      float s = 0.0; for(int x=-2;x<=2;x++) for(int y=-2;y<=2;y++){ float d = texture(uShadow, p.xy + vec2(x,y)*uTexel*1.5).r;
+      s += (p.z - 0.0009 > d) ? 0.0 : 1.0; } return s / 25.0; }
+    void main(){
+      vec3 Nn = normalize(vNrm);
+      vec3 col;
+      if (uSil > 0.5) { col = vCol; }
+      else {
+        vec3 base = pow(vCol, vec3(2.2));
+        float sh = shadowAt();
+        float ndl = max(dot(Nn, uLdir), 0.0);
+        vec3 sky = vec3(0.60, 0.66, 0.74), gnd = vec3(0.34, 0.31, 0.27), sun = vec3(1.0, 0.95, 0.86);
+        vec3 amb = mix(gnd, sky, Nn.y * 0.5 + 0.5);
+        col = base * (amb * 0.70 + sun * ndl * sh * 0.95);
+        vec3 Vd = normalize(uEye - vPos); vec3 Hh = normalize(uLdir + Vd);
+        col += sun * pow(max(dot(Nn, Hh), 0.0), 64.0) * 0.20 * sh;
+        col = mix(col, base * 1.55 + 0.05, clamp(vEmi, 0.0, 1.0));
+        col = pow(clamp(col, 0.0, 1.0), vec3(1.0 / 2.2));
+      }
+      oCol = vec4(col, clamp(vEmi, 0.0, 1.0));
+      oNid = vec4(Nn * 0.5 + 0.5, vId / 255.0);
+    }`);
+  gl.viewport(0, 0, RW, RH); gl.clearColor(1, 1, 1, 0); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  gl.useProgram(mainProg);
+  gl.uniformMatrix4fv(gl.getUniformLocation(mainProg, 'uVP'), false, VP);
+  gl.uniformMatrix4fv(gl.getUniformLocation(mainProg, 'uLVP'), false, LVP);
+  gl.uniform3fv(gl.getUniformLocation(mainProg, 'uLdir'), L);
+  gl.uniform3fv(gl.getUniformLocation(mainProg, 'uEye'), eye);
+  gl.uniform1f(gl.getUniformLocation(mainProg, 'uSil'), silhouette ? 1 : 0);
+  gl.uniform1f(gl.getUniformLocation(mainProg, 'uTexel'), 1 / SM);
+  gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, shadowTex);
+  gl.uniform1i(gl.getUniformLocation(mainProg, 'uShadow'), 0);
+  gl.drawArrays(gl.TRIANGLES, 0, count);
+
+  // ---------- post: outline + lamp glow ----------
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  const postProg = prog(`#version 300 es
+    void main(){ vec2 p = vec2((gl_VertexID==1)?3.0:-1.0, (gl_VertexID==2)?3.0:-1.0); gl_Position = vec4(p,0.0,1.0); }`,
+    `#version 300 es
+    precision highp float;
+    uniform sampler2D uCol; uniform sampler2D uNid; uniform sampler2D uDep;
+    uniform vec2 uTexel; uniform float uR; uniform float uOutline; uniform float uIdEdges; uniform float uGlow;
+    uniform float uNear; uniform float uFar; uniform float uOrtho; uniform vec3 uOutlineCol;
+    out vec4 o;
+    float lin(float d){ if(uOrtho>0.5) return uNear + d*(uFar-uNear); float z=d*2.0-1.0; return (2.0*uNear*uFar)/(uFar+uNear-z*(uFar-uNear)); }
+    void main(){
+      vec2 uv = gl_FragCoord.xy * uTexel;
+      vec4 c = texture(uCol, uv);
+      vec3 col = c.rgb;
+      if (uOutline > 0.5) {
+        vec4 n0 = texture(uNid, uv); float d0 = lin(texture(uDep, uv).r); vec3 N0 = n0.xyz*2.0-1.0;
+        float eSil = 0.0, eCrease = 0.0;
+        for (int i = 0; i < 8; i++) {
+          float a = float(i) * 0.785398;
+          vec2 u2 = uv + vec2(cos(a), sin(a)) * uR * uTexel;
+          vec4 n1 = texture(uNid, u2); float d1 = lin(texture(uDep, u2).r); vec3 N1 = n1.xyz*2.0-1.0;
+          if (uIdEdges > 0.5 && abs(n1.a - n0.a) > 0.5/255.0 && min(n0.a, n1.a) > 0.5/255.0) eCrease = 1.0;
+          if (dot(N0, N1) < 0.72) eCrease = 1.0;
+          if (abs(d1 - d0) > 0.035 * min(d0, d1)) eSil = 1.0;
+        }
+        col = mix(col, uOutlineCol, max(eSil * 0.9, eCrease * 0.52));
+      }
+      if (uGlow > 0.0) {
+        vec3 g = vec3(0.0);
+        for (int i = 0; i < 16; i++) { float a = float(i) * 0.392699;
+          for (int k = 1; k <= 3; k++) { vec4 s = texture(uCol, uv + vec2(cos(a), sin(a)) * float(k) * uGlow * uTexel); g += s.rgb * s.a; } }
+        col += g / 48.0 * 0.85;
+      }
+      o = vec4(clamp(col, 0.0, 1.0), 1.0);
+    }`);
+  gl.viewport(0, 0, RW, RH); gl.disable(gl.DEPTH_TEST); gl.useProgram(postProg);
+  const bindT = (unit, tex, name) => { gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.uniform1i(gl.getUniformLocation(postProg, name), unit); };
+  bindT(0, colTex, 'uCol'); bindT(1, nidTex, 'uNid'); bindT(2, depTex, 'uDep');
+  gl.uniform2f(gl.getUniformLocation(postProg, 'uTexel'), 1 / RW, 1 / RH);
+  gl.uniform1f(gl.getUniformLocation(postProg, 'uR'), (view.outlinePx || 1.2) * SS);
+  gl.uniform1f(gl.getUniformLocation(postProg, 'uOutline'), silhouette ? 0 : 1);
+  gl.uniform1f(gl.getUniformLocation(postProg, 'uIdEdges'), view.partEdges ? 1 : 0);
+  gl.uniform1f(gl.getUniformLocation(postProg, 'uGlow'), silhouette ? 0 : (view.glowPx || 5) * SS);
+  gl.uniform1f(gl.getUniformLocation(postProg, 'uNear'), near);
+  gl.uniform1f(gl.getUniformLocation(postProg, 'uFar'), far);
+  gl.uniform1f(gl.getUniformLocation(postProg, 'uOrtho'), isOrtho ? 1 : 0);
+  gl.uniform3fv(gl.getUniformLocation(postProg, 'uOutlineCol'), [0.07, 0.08, 0.09]);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+  gl.finish();
+  document.title = 'RENDERED ' + count + ' vertices';
+})();
+</script>
+</body>
+</html>

@@ -1703,3 +1703,27 @@ simulation, public format, dependency or canon. All packets remain `HOLD`.
 
 This is preproduction implementation detail only. It changes no gameplay,
 simulation, public format, dependency or canon. All packets remain `HOLD`.
+
+## 2026-09-26 — Start T085 with a separate infrastructure registry
+
+- T085 packages live in `Docs/Development/M85InfrastructureDesign/`. Its
+  `registry.json` lists the 31 canonical infrastructure entries in the
+  `roster_identity_baseline.json` order and reuses the accepted T083 authority
+  split: Source Evidence, Production Design Target, Design Spec and
+  non-authoritative review aids.
+- Infrastructure targets separate module appearance, which stays locked to the
+  official instructions, from the composition on the authoritative footprint,
+  exit and receiving edges. A shared source such as LEGO 4990 is decomposed
+  explicitly: the HQ consumes the complete base, and later Rock Raiders
+  infrastructure may take motifs but not the HQ modules as primary forms.
+- `tools/generate-m85-t085-rock-raiders-hq-target.py` builds a deterministic
+  stud/plate composition scene and renders review views through an existing
+  local Chromium or Chrome (WebGL2), reproducing the `RtsCameraController`
+  framing at 24/44/72 cells. The renders are project-authored review aids, not
+  official imagery or source evidence; `--check` verifies the scene hash and
+  render hashes without a browser. Standard library only; no package added.
+- The HQ package was authored while the cloud network policy denied LEGO
+  hosts. Its source manifest records that limitation and keeps the official
+  pixel check open instead of inferring module geometry.
+
+This changes no gameplay, simulation, public format, dependency or canon.

@@ -1,0 +1,171 @@
+{
+  "packageId": "building.rock_raiders.hq",
+  "task": "T085",
+  "revision": "2026-09-26-v1",
+  "targetMode": "ADAPTED",
+  "reviewState": "PROPOSED_AWAITING_DIRECTOR_REVIEW",
+  "directorAccepted": false,
+  "productionAuthorized": false,
+  "retrievalDate": "2026-09-26",
+  "retrievalEnvironment": {
+    "summary": "Cloud session egress policy denied every LEGO reference host (HTTP 403 on CONNECT). No official page, PDF raster or completed-set photograph was opened or hashed in this session.",
+    "deniedHosts": [
+      "www.lego.com",
+      "rebrickable.com",
+      "cdn.rebrickable.com",
+      "brickset.com",
+      "images.brickset.com",
+      "www.bricklink.com",
+      "img.bricklink.com",
+      "kb.rockraidersunited.com",
+      "www.eurobricks.com",
+      "www.flickr.com",
+      "brickipedia.fandom.com",
+      "en.wikipedia.org",
+      "www.youtube.com",
+      "i.ytimg.com",
+      "www.toysperiod.com"
+    ],
+    "method": "Web-search result summaries only (text). Text claims below are recorded with the pages the search index attributed them to; the pages themselves were not opened.",
+    "consequence": "The official LEGO 4990 appearance was not inspected at pixel level. Module geometry, colours and heights in the T085 composition renders are placeholders that must be corrected against the official instructions before any appearance lock."
+  },
+  "sources": [
+    {
+      "id": "lego-instructions-page",
+      "authority": "PRIMARY_OFFICIAL",
+      "url": "https://www.lego.com/en-us/service/building-instructions/4990",
+      "t082Status": "PRIMARY_VERIFIED in the accepted T082 source ledger (retrieved 2026-09-10).",
+      "thisSession": "NOT_RETRIEVED (egress 403).",
+      "use": "Set identity and entry to the official instructions."
+    },
+    {
+      "id": "lego-instructions-pdf",
+      "authority": "PRIMARY_OFFICIAL",
+      "url": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4129017.pdf",
+      "pageCount": 43,
+      "sha256": "eccfc7b81cc9799637011e45b143d87cac6a23ebe49d2fec4f0a42b322f66dae",
+      "t082Status": "OFFICIAL_PDF_VISUALLY_AUDITED in T082 (hash above from the T082 retrieval on 2026-09-10).",
+      "t082PageMap": {
+        "2-7": "Small work vehicles, crystal handling and compact workstation modules.",
+        "8-10": "Tall illuminated machinery/power tower with open service access.",
+        "11-19": "Long articulated crane/tool boom mounted to the tower and used for rock handling.",
+        "20-29": "Open vehicle-width gantry/workshop with sloped supports, lamps and overhead rails.",
+        "30-34": "Conveyor/processing module attaches to the gantry and completes a visible material route.",
+        "35-40": "Modules connect across an irregular rock worksite base rather than a sealed building shell.",
+        "41-43": "Final product photography supplies overall skyline, module spacing and worksite context."
+      },
+      "thisSession": "NOT_RETRIEVED (egress 403). A web-search result lists this exact URL under the title '4990 Rock Raiders' (index confirmation only).",
+      "use": "Construction authority for every retained module once inspected; pages 1 and 41-43 are the first pages to open for the appearance lock."
+    },
+    {
+      "id": "brickipedia-4990",
+      "authority": "SECONDARY_WIKI_TEXT",
+      "url": "https://brickipedia.fandom.com/wiki/4990_Rock_Raiders_HQ",
+      "mirror": "https://en.brickimedia.org/wiki/4990_Rock_Raiders_HQ",
+      "thisSession": "SEARCH_SUMMARY_ONLY",
+      "claims": [
+        "Released 1999; largest Rock Raiders set; 402 pieces for four minifigures, a Rock Monster, a base and two vehicles.",
+        "The HQ has an energy production/storage area, a boulder splitter, a place which drops boulders onto vehicles, a laser for drilling or fighting Rock Monsters, and a crane.",
+        "The crane lowers, raises and carries boulders; the laser is on the tallest part of the base and rotates.",
+        "The crystal is placed in the energy production/storage area; the boulder-splitting area holds a boulder whose top is taken off by the crane.",
+        "The base is mostly bright bluish green, bright yellow and grey.",
+        "Vehicles: a small four-wheeler with a boulder bucket (yellow, teal, dark grey) and a small hovercraft piloted by Jet."
+      ]
+    },
+    {
+      "id": "rru-kb-4990",
+      "authority": "SECONDARY_FAN_KNOWLEDGE_BASE_TEXT",
+      "url": "https://kb.rockraidersunited.com/4990_Rock_Raiders_HQ",
+      "thisSession": "SEARCH_SUMMARY_ONLY",
+      "claims": [
+        "The structure is composed of four major buildings resembling the video game's Upgrade Station (the Crane), Mining Laser (the Brickonium Blaster), Teleport Pad (parking space for the hovercraft) and the top of the Power Station (used to cut open rocks), plus a building that carries and deposits LEGO ore boulders.",
+        "The Brickonium Blaster needs two AAA batteries; the set includes a light brick.",
+        "Minifigures: Bandit, Docs, Jet, Sparks; plus a Rock Monster."
+      ]
+    },
+    {
+      "id": "rru-kb-teleport-pad",
+      "authority": "SECONDARY_FAN_KNOWLEDGE_BASE_TEXT",
+      "url": "https://kb.rockraidersunited.com/Teleport_Pad",
+      "thisSession": "SEARCH_SUMMARY_ONLY",
+      "claims": [
+        "The Teleport Pad appears in 4990, where it serves as a parking space for a small hovercraft."
+      ]
+    },
+    {
+      "id": "lego-ideas-fan-description",
+      "authority": "SECONDARY_FAN_COMMENTARY",
+      "url": "https://beta.ideas.lego.com/challenges/43af943e-a70d-42ef-81e0-30def788a294/entries/6c6d13df-1262-413a-8ea5-248404919600",
+      "thisSession": "SEARCH_SUMMARY_ONLY",
+      "claims": [
+        "The four main sections could be swapped around in any order and interacted: the crane lifts a rock to the small laser, the rock is cut open and the crystal removed, then the crane moves it to the dumper, which tips it into the truck."
+      ],
+      "note": "Fan commentary; used only as corroboration of the modular, swappable section design."
+    },
+    {
+      "id": "bricklink-30271px3",
+      "authority": "SECONDARY_CATALOGUE_TEXT",
+      "url": "https://www.bricklink.com/v2/catalog/catalogitem.page?P=30271px3",
+      "thisSession": "SEARCH_SUMMARY_ONLY",
+      "claims": [
+        "Part 30271px3: Baseplate, Raised 32 x 48 x 6 with 4 Corner Pits with Rock Raiders Pattern; light grey; appears in set 4990."
+      ]
+    },
+    {
+      "id": "bricklink-30346c01",
+      "authority": "SECONDARY_CATALOGUE_TEXT",
+      "url": "https://www.bricklink.com/v2/catalog/catalogitem.page?P=30346c01",
+      "thisSession": "SEARCH_SUMMARY_ONLY",
+      "claims": [
+        "Part 30346c01: Electric, Light Rock Raiders Laser, complete assembly (30346c00 bottom / 30348 top) in dark grey, 4 x 12 x 2 studs, released 1999 and used only in 4970 Chrome Crusher and 4990 Rock Raiders HQ."
+      ],
+      "crossReference": "The same assembly is the raised work beam of the director-accepted T083 Chrome Crusher target, where it is not a ranged weapon."
+    },
+    {
+      "id": "bricklink-set-4990",
+      "authority": "SECONDARY_CATALOGUE",
+      "url": "https://www.bricklink.com/v2/catalog/catalogitem.page?S=4990-1",
+      "thisSession": "NOT_RETRIEVED (egress 403).",
+      "use": "Inventory cross-check for colours once reachable."
+    },
+    {
+      "id": "video-reviews",
+      "authority": "SECONDARY_VIDEO_REVIEW",
+      "urls": [
+        "https://www.youtube.com/watch?v=0UdpyRzIBTA",
+        "https://www.youtube.com/watch?v=GHa3aDNjmvw",
+        "https://www.youtube.com/watch?v=fkYiJjJMK9E"
+      ],
+      "thisSession": "NOT_INSPECTED (egress 403).",
+      "use": "Turntable views for rear/side orientation once reachable."
+    }
+  ],
+  "findings": {
+    "textCorroborated": [
+      "4990 is a modular playset: four swappable sections on one raised baseplate, plus two vehicles, four minifigures and a Rock Monster.",
+      "Sections: a crane (lifts and carries boulders), a rotating light-up Mining Laser on the tallest part, a Teleport Pad used as the hovercraft parking/dock, a Power Station top with the crystal energy store and a boulder splitter (small laser), and a boulder dumper that drops boulders onto a vehicle.",
+      "The base is the light-grey raised baseplate 30271px3 (32 x 48 studs) with four corner pits and a printed rock pattern.",
+      "The base palette is dominated by bright bluish green (LEGO's name for dark turquoise), bright yellow and grey; the Faction Bible independently records dark turquoise and dark grey as the Rock Raiders primaries.",
+      "The rotating laser is the dark-grey 30346c01 light assembly (4 x 12 x 2 studs), shared only with 4970 Chrome Crusher."
+    ],
+    "adaptedInTarget": [
+      "Square 40 x 40-stud plinth (8 x 8 cells, 16 x 16 m) replacing the 32 x 48 baseplate; area 1600 vs 1536 studs squared keeps module sizes relative to the minifigure at 1 stud = 0.4 m.",
+      "Section arrangement for the game footprint and camera (tall section at the north-west back corner).",
+      "Mining Laser presented as a non-firing rotating work beam.",
+      "Teleport Pad presented as the Crew production pad with a south ramp to the 2 x 2 production exit.",
+      "Boulder dumper presented as the emergency Ore receiving bay.",
+      "Two flat team Identification Tiles; restrained lane hazard decal."
+    ],
+    "unknownOrDisputed": [
+      "Exact construction, height and colour distribution of every section, including what carries the laser on the tallest part.",
+      "Exact relief, pit shape and section seating on 30271px3, and how the four sections sit on it.",
+      "Lens colour of the light assembly.",
+      "Whether a conveyor exists: the T082 page map mentions a conveyor/processing module; no text source mentions one. The T085 target does not add a conveyor.",
+      "Whether the crane is mounted on the tower (T082 wording) or is a separate section (text sources call it a separate building). The T085 target treats it as a separate section."
+    ],
+    "correctionsToEarlierT082Draft": [
+      "T082 names a power tower, a crane mounted to it, a vehicle gantry and a conveyor. Independent text sources name a rotating light-up Mining Laser on the tallest part, a separate crane section, a Teleport Pad, a Power Station top and a boulder dumper. The gantry wording is compatible with the dumper over a vehicle lane; the conveyor is uncorroborated. The T082 packet is preserved unchanged; the official pages must settle the difference."
+    ]
+  },
+  "renderAuthority": "ArtSource/M85/T085/RockRaidersHQV1/composition_render_manifest.json lists project-authored composition renders. They are review aids for the ADAPTED target, not source evidence and not official LEGO imagery."
+}

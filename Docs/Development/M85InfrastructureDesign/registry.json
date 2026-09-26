@@ -1,0 +1,570 @@
+{
+ "task": "T085",
+ "target": 31,
+ "authoredProposals": 1,
+ "directorAccepted": 0,
+ "productionModels": 0,
+ "rosterSource": "Content/Presentation/SuperScout/roster_identity_baseline.json",
+ "canonicalRoster": "Docs/Canon/03_UNIT_BUILDING_ROSTER.md (Final building/infrastructure rosters)",
+ "assets": [
+  {
+   "rosterIndex": 1,
+   "stableId": "building.rock_raiders.hq",
+   "displayName": "Rock Raiders HQ",
+   "faction": "RockRaiders",
+   "footprint": "Huge",
+   "sourceClassification": "OFFICIAL-ADAPTED",
+   "sourceSets": [
+    "4990"
+   ],
+   "batch": "Batch01RockRaiders",
+   "t082Packet": "Docs/Development/M85SuperScout/Packets/building_rock_raiders_hq.md",
+   "status": "DESIGN_PROPOSED_AWAITING_DIRECTOR_REVIEW",
+   "directorAccepted": false,
+   "productionAuthorized": false,
+   "file": "Batch01RockRaiders/rock_raiders_hq_design_spec_20260926_v1.md",
+   "designSpec": "Batch01RockRaiders/rock_raiders_hq_design_spec_20260926_v1.md",
+   "review": "Batch01RockRaiders/rock_raiders_hq_director_review_20260926_v1.html",
+   "sourceEvidence": {
+    "manifest": "ArtSource/M85/T085/RockRaidersHQV1/source_evidence_manifest.json",
+    "sourceSet": "4990",
+    "officialPixelCheck": "NOT_PERFORMED_NETWORK_POLICY_BLOCKED"
+   },
+   "productionDesignTarget": {
+    "mode": "ADAPTED",
+    "state": "PROPOSED",
+    "artifact": "Docs/Development/M85InfrastructureDesign/Batch01RockRaiders/rock_raiders_hq_director_review_20260926_v1.html",
+    "designSpec": "Docs/Development/M85InfrastructureDesign/Batch01RockRaiders/rock_raiders_hq_design_spec_20260926_v1.md",
+    "compositionRenders": "ArtSource/M85/T085/RockRaidersHQV1/composition_render_manifest.json",
+    "heroImage": "ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_composition_target_hero.png",
+    "moduleAppearanceAuthority": "Official LEGO 4990 instructions, SOURCE_LOCKED per module; not inspected in the authoring session because the network policy blocked LEGO hosts.",
+    "reviewReady": true,
+    "appearanceSummary": "The complete LEGO 4990 base on one square 8 x 8-cell light-grey rock plinth: north-west tower crowned by the rotating dark-grey 30346c01 light beam (non-firing), east crane over the north-east receiving hopper gantry, south-east Power Station top with glowing energy crystal and boulder splitter, central Crew pad with a south ramp to the 2 x 2 production exit, open south-west rock seat. Vehicles, minifigures and the Rock Monster are excluded."
+   },
+   "gameAdaptations": [
+    "A1 Square 40 x 40-stud plinth (16 x 16 m) with plus-shaped rock relief and four recessed corner seats; official sections re-seated for the footprint and default camera.",
+    "A2 The rotating light-up Mining Laser is a non-firing rotating work beam, as for the accepted Chrome Crusher work beam.",
+    "A3 The Teleport Pad (hovercraft dock) is the Crew production pad; a south ramp leads to the production exit; no teleport effect.",
+    "A4 The boulder dumper is the emergency Ore receiving bay; the receiving point sits on the east footprint edge.",
+    "A5 The Power Station top presents HQ auxiliary energy and raw-crystal holding through the crystal glow.",
+    "A6 Two small flat team Identification Tiles: tower deck and Crew pad south edge.",
+    "A7 Restrained receiving-lane hazard decal (texture, not geometry).",
+    "A8 Tower crown at about 9.3 m for readability; the centred HQ fits the 24-cell close camera."
+   ],
+   "openDirectorDecisions": [
+    "Accept, change or reject the composition of the complete 4990 base on one 8 x 8 plinth.",
+    "Confirm the non-firing rotating work beam for the source Mining Laser.",
+    "Choose: accept composition now and lock module appearance after the official-source check, or hold acceptance until the check."
+   ],
+   "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE"
+  },
+  {
+   "rosterIndex": 2,
+   "stableId": "building.rock_raiders.ore_processing_plant",
+   "displayName": "Ore Processing Plant",
+   "faction": "RockRaiders",
+   "footprint": "Large",
+   "sourceClassification": "COMPOSITE-ADAPTATION",
+   "sourceSets": [
+    "4990"
+   ],
+   "batch": "Batch01RockRaiders",
+   "t082Packet": "Docs/Development/M85SuperScout/Packets/building_rock_raiders_ore_processing_plant.md",
+   "status": "QUEUED_NOT_AUTHORED",
+   "directorAccepted": false,
+   "productionAuthorized": false
+  },
+  {
+   "rosterIndex": 3,
+   "stableId": "building.rock_raiders.power_station",
+   "displayName": "Power Station",
+   "faction": "RockRaiders",
+   "footprint": "Large",
+   "sourceClassification": "COMPOSITE-ADAPTATION",
+   "sourceSets": [
+    "4990"
+   ],
+   "batch": "Batch01RockRaiders",
+   "t082Packet": "Docs/Development/M85SuperScout/Packets/building_rock_raiders_power_station.md",
+   "status": "QUEUED_NOT_AUTHORED",
+   "directorAccepted": false,
+   "productionAuthorized": false
+  },
+  {
+   "rosterIndex": 4,
+   "stableId": "building.rock_raiders.vehicle_service_bay",
+   "displayName": "Vehicle Service Bay",
+   "faction": "RockRaiders",
+   "footprint": "Huge",
+   "sourceClassification": "COMPOSITE-ADAPTATION",
+   "sourceSets": [
+    "4990"
+   ],
+   "batch": "Batch01RockRaiders",
+   "t082Packet": "Docs/Development/M85SuperScout/Packets/building_rock_raiders_vehicle_service_bay.md",
+   "status": "QUEUED_NOT_AUTHORED",
+   "directorAccepted": false,
+   "productionAuthorized": false
+  },
+  {
+   "rosterIndex": 5,
+   "stableId": "building.rock_raiders.engineering_workshop",
+   "displayName": "Engineering Workshop",
+   "faction": "RockRaiders",
+   "footprint": "Huge",
+   "sourceClassification": "COMPOSITE-ADAPTATION",
+   "sourceSets": [
+    "4940",
+    "4970",
+    "4990"
+   ],
+   "batch": "Batch01RockRaiders",
+   "t082Packet": "Docs/Development/M85SuperScout/Packets/building_rock_raiders_engineering_workshop.md",
+   "status": "QUEUED_NOT_AUTHORED",
+   "directorAccepted": false,
+   "productionAuthorized": false
+  },
+  {
+   "rosterIndex": 6,
+   "stableId": "building.rock_raiders.crystal_vault",
+   "displayName": "Crystal Vault",
+   "faction": "RockRaiders",
+   "footprint": "Large",
+   "sourceClassification": "COMPOSITE-ADAPTATION",
+   "sourceSets": [
+    "4970",
+    "4990"
+   ],
+   "batch": "Batch01RockRaiders",
+   "t082Packet": "Docs/Development/M85SuperScout/Packets/building_rock_raiders_crystal_vault.md",
+   "status": "QUEUED_NOT_AUTHORED",
+   "directorAccepted": false,
+   "productionAuthorized": false
+  },
+  {
+   "rosterIndex": 7,
+   "stableId": "building.rock_raiders.crusher_barrier",
+   "displayName": "Crusher Barrier",
+   "faction": "RockRaiders",
+   "footprint": "Small",
+   "sourceClassification": "NEW GAME CONTENT",
+   "sourceSets": [
+    "4950"
+   ],
+   "batch": "Batch01RockRaiders",
+   "t082Packet": "Docs/Development/M85SuperScout/Packets/building_rock_raiders_crusher_barrier.md",
+   "status": "QUEUED_NOT_AUTHORED",
+   "directorAccepted": false,
+   "productionAuthorized": false
+  },
+  {
+   "rosterIndex": 8,
+   "stableId": "building.rock_raiders.cutter_mast",
+   "displayName": "Cutter Mast",
+   "faction": "RockRaiders",
+   "footprint": "Small",
+   "sourceClassification": "NEW GAME CONTENT",
+   "sourceSets": [
+    "4910",
+    "4990"
+   ],
+   "batch": "Batch01RockRaiders",
+   "t082Packet": "Docs/Development/M85SuperScout/Packets/building_rock_raiders_cutter_mast.md",
+   "status": "QUEUED_NOT_AUTHORED",
+   "directorAccepted": false,
+   "productionAuthorized": false
+  },
+  {
+   "rosterIndex": 9,
+   "stableId": "building.ast.mb01_eagle_command_base",
+   "displayName": "MB-01 Eagle Command Base",
+   "faction": "Astronauts",
+   "footprint": "Huge",
+   "sourceClassification": "OFFICIAL-ADAPTED",
+   "sourceSets": [
+    "7690"
+   ],
+   "batch": "Batch02Astronauts",
+   "t082Packet": "Docs/Development/M85SuperScout/Packets/building_ast_mb01_eagle_command_base.md",
+   "status": "QUEUED_NOT_AUTHORED",
+   "directorAccepted": false,
+   "productionAuthorized": false
+  },
+  {
+   "rosterIndex": 10,
+   "stableId": "building.ast.field_systems_garage",
+   "displayName": "Field Systems Garage",
+   "faction": "Astronauts",
+   "footprint": "Huge",
+   "sourceClassification": "COMPOSITE-ADAPTATION",
+   "sourceSets": [
+    "7301",
+    "7312",
+    "7315"
+   ],
+   "batch": "Batch02Astronauts",
+   "t082Packet": "Docs/Development/M85SuperScout/Packets/building_ast_field_systems_garage.md",
+   "status": "QUEUED_NOT_AUTHORED",
+   "directorAccepted": false,
+   "productionAuthorized": false
+  },
+  {
+   "rosterIndex": 11,
+   "stableId": "building.ast.mission_vehicle_bay",
+   "displayName": "Mission Vehicle Bay",
+   "faction": "Astronauts",
+   "footprint": "Huge",
+   "sourceClassification": "COMPOSITE-ADAPTATION",
+   "sourceSets": [
+    "7645",
+    "7647",
+    "7697",
+    "7699"
+   ],
+   "batch": "Batch02Astronauts",
+   "t082Packet": "Docs/Development/M85SuperScout/Packets/building_ast_mission_vehicle_bay.md",
+   "status": "QUEUED_NOT_AUTHORED",
+   "directorAccepted": false,
+   "productionAuthorized": false
+  },
+  {
+   "rosterIndex": 12,
+   "stableId": "building.ast.flight_operations_pad",
+   "displayName": "Flight Operations Pad",
+   "faction": "Astronauts",
+   "footprint": "Huge",
+   "sourceClassification": "COMPOSITE-ADAPTATION",
+   "sourceSets": [
+    "5619",
+    "7644",
+    "7692",
+    "7695"
+   ],
+   "batch": "Batch02Astronauts",
+   "t082Packet": "Docs/Development/M85SuperScout/Packets/building_ast_flight_operations_pad.md",
+   "status": "QUEUED_NOT_AUTHORED",
+   "directorAccepted": false,
+   "productionAuthorized": false
+  },
+  {
+   "rosterIndex": 13,
+   "stableId": "building.ast.service_refit_hub",
+   "displayName": "Service & Refit Hub",
+   "faction": "Astronauts",
+   "footprint": "Huge",
+   "sourceClassification": "COMPOSITE-ADAPTATION",
+   "sourceSets": [
+    "7315",
+    "7690"
+   ],
+   "batch": "Batch02Astronauts",
+   "t082Packet": "Docs/Development/M85SuperScout/Packets/building_ast_service_refit_hub.md",
+   "status": "QUEUED_NOT_AUTHORED",
+   "directorAccepted": false,
+   "productionAuthorized": false
+  },
+  {
+   "rosterIndex": 14,
+   "stableId": "building.ast.solar_energy_array",
+   "displayName": "Solar Energy Array",
+   "faction": "Astronauts",
+   "footprint": "Large",
+   "sourceClassification": "OFFICIAL-ADAPTED",
+   "sourceSets": [
+    "7315"
+   ],
+   "batch": "Batch02Astronauts",
+   "t082Packet": "Docs/Development/M85SuperScout/Packets/building_ast_solar_energy_array.md",
+   "status": "QUEUED_NOT_AUTHORED",
+   "directorAccepted": false,
+   "productionAuthorized": false
+  },
+  {
+   "rosterIndex": 15,
+   "stableId": "building.ast.frontier_extraction_station",
+   "displayName": "Frontier Extraction Station",
+   "faction": "Astronauts",
+   "footprint": "Large",
+   "sourceClassification": "COMPOSITE-ADAPTATION",
+   "sourceSets": [
+    "7691",
+    "7648"
+   ],
+   "batch": "Batch02Astronauts",
+   "t082Packet": "Docs/Development/M85SuperScout/Packets/building_ast_frontier_extraction_station.md",
+   "status": "QUEUED_NOT_AUTHORED",
+   "directorAccepted": false,
+   "productionAuthorized": false
+  },
+  {
+   "rosterIndex": 16,
+   "stableId": "building.ast.modular_sentinel_defense",
+   "displayName": "Modular Sentinel Defense",
+   "faction": "Astronauts",
+   "footprint": "Small",
+   "sourceClassification": "NEW GAME CONTENT",
+   "sourceSets": [
+    "7690",
+    "7695"
+   ],
+   "batch": "Batch02Astronauts",
+   "t082Packet": "Docs/Development/M85SuperScout/Packets/building_ast_modular_sentinel_defense.md",
+   "status": "QUEUED_NOT_AUTHORED",
+   "directorAccepted": false,
+   "productionAuthorized": false
+  },
+  {
+   "rosterIndex": 17,
+   "stableId": "building.ali.etx_command_core",
+   "displayName": "ETX Command Core",
+   "faction": "Aliens",
+   "footprint": "Huge",
+   "sourceClassification": "NEW GAME CONTENT",
+   "sourceSets": [
+    "7691",
+    "7646"
+   ],
+   "batch": "Batch03Aliens",
+   "t082Packet": "Docs/Development/M85SuperScout/Packets/building_ali_etx_command_core.md",
+   "status": "QUEUED_NOT_AUTHORED",
+   "directorAccepted": false,
+   "productionAuthorized": false
+  },
+  {
+   "rosterIndex": 18,
+   "stableId": "building.ali.resonance_core",
+   "displayName": "Resonance Core",
+   "faction": "Aliens",
+   "footprint": "Small",
+   "sourceClassification": "NEW GAME CONTENT",
+   "sourceSets": [
+    "7691",
+    "7646"
+   ],
+   "batch": "Batch03Aliens",
+   "t082Packet": "Docs/Development/M85SuperScout/Packets/building_ali_resonance_core.md",
+   "status": "QUEUED_NOT_AUTHORED",
+   "directorAccepted": false,
+   "productionAuthorized": false
+  },
+  {
+   "rosterIndex": 19,
+   "stableId": "building.ali.etx_fabricator",
+   "displayName": "ETX Fabricator",
+   "faction": "Aliens",
+   "footprint": "Large",
+   "sourceClassification": "NEW GAME CONTENT",
+   "sourceSets": [
+    "7691",
+    "7690"
+   ],
+   "batch": "Batch03Aliens",
+   "t082Packet": "Docs/Development/M85SuperScout/Packets/building_ali_etx_fabricator.md",
+   "status": "QUEUED_NOT_AUTHORED",
+   "directorAccepted": false,
+   "productionAuthorized": false
+  },
+  {
+   "rosterIndex": 20,
+   "stableId": "building.ali.reconfiguration_dock",
+   "displayName": "Reconfiguration Dock",
+   "faction": "Aliens",
+   "footprint": "Huge",
+   "sourceClassification": "NEW GAME CONTENT",
+   "sourceSets": [
+    "7646",
+    "7693",
+    "7691"
+   ],
+   "batch": "Batch03Aliens",
+   "t082Packet": "Docs/Development/M85SuperScout/Packets/building_ali_reconfiguration_dock.md",
+   "status": "QUEUED_NOT_AUTHORED",
+   "directorAccepted": false,
+   "productionAuthorized": false
+  },
+  {
+   "rosterIndex": 21,
+   "stableId": "building.ali.power_coupler",
+   "displayName": "Power Coupler",
+   "faction": "Aliens",
+   "footprint": "Small",
+   "sourceClassification": "NEW GAME CONTENT",
+   "sourceSets": [
+    "7691",
+    "7646"
+   ],
+   "batch": "Batch03Aliens",
+   "t082Packet": "Docs/Development/M85SuperScout/Packets/building_ali_power_coupler.md",
+   "status": "QUEUED_NOT_AUTHORED",
+   "directorAccepted": false,
+   "productionAuthorized": false
+  },
+  {
+   "rosterIndex": 22,
+   "stableId": "building.ali.etx_defense_node",
+   "displayName": "ETX Defense Node",
+   "faction": "Aliens",
+   "footprint": "Small",
+   "sourceClassification": "NEW GAME CONTENT",
+   "sourceSets": [
+    "5617",
+    "7692",
+    "7697"
+   ],
+   "batch": "Batch03Aliens",
+   "t082Packet": "Docs/Development/M85SuperScout/Packets/building_ali_etx_defense_node.md",
+   "status": "QUEUED_NOT_AUTHORED",
+   "directorAccepted": false,
+   "productionAuthorized": false
+  },
+  {
+   "rosterIndex": 23,
+   "stableId": "building.mar.aero_tube_hangar",
+   "displayName": "Aero Tube Hangar",
+   "faction": "Martians",
+   "footprint": "Huge",
+   "sourceClassification": "OFFICIAL-ADAPTED",
+   "sourceSets": [
+    "7317"
+   ],
+   "batch": "Batch04Martians",
+   "t082Packet": "Docs/Development/M85SuperScout/Packets/building_mar_aero_tube_hangar.md",
+   "status": "QUEUED_NOT_AUTHORED",
+   "directorAccepted": false,
+   "productionAuthorized": false
+  },
+  {
+   "rosterIndex": 24,
+   "stableId": "building.mar.settlement_station",
+   "displayName": "Settlement Station",
+   "faction": "Martians",
+   "footprint": "Huge",
+   "sourceClassification": "COMPOSITE-ADAPTATION",
+   "sourceSets": [
+    "7317"
+   ],
+   "batch": "Batch04Martians",
+   "t082Packet": "Docs/Development/M85SuperScout/Packets/building_mar_settlement_station.md",
+   "status": "QUEUED_NOT_AUTHORED",
+   "directorAccepted": false,
+   "productionAuthorized": false
+  },
+  {
+   "rosterIndex": 25,
+   "stableId": "building.mar.mechanical_workshop",
+   "displayName": "Mechanical Workshop",
+   "faction": "Martians",
+   "footprint": "Huge",
+   "sourceClassification": "COMPOSITE-ADAPTATION",
+   "sourceSets": [
+    "7313",
+    "7314",
+    "7316"
+   ],
+   "batch": "Batch04Martians",
+   "t082Packet": "Docs/Development/M85SuperScout/Packets/building_mar_mechanical_workshop.md",
+   "status": "QUEUED_NOT_AUTHORED",
+   "directorAccepted": false,
+   "productionAuthorized": false
+  },
+  {
+   "rosterIndex": 26,
+   "stableId": "building.mar.pressure_generator",
+   "displayName": "Pressure Generator",
+   "faction": "Martians",
+   "footprint": "Small",
+   "sourceClassification": "OFFICIAL-ADAPTED",
+   "sourceSets": [
+    "7317"
+   ],
+   "batch": "Batch04Martians",
+   "t082Packet": "Docs/Development/M85SuperScout/Packets/building_mar_pressure_generator.md",
+   "status": "QUEUED_NOT_AUTHORED",
+   "directorAccepted": false,
+   "productionAuthorized": false
+  },
+  {
+   "rosterIndex": 27,
+   "stableId": "building.mar.routing_laboratory",
+   "displayName": "Routing Laboratory",
+   "faction": "Martians",
+   "footprint": "Large",
+   "sourceClassification": "COMPOSITE-ADAPTATION",
+   "sourceSets": [
+    "7317"
+   ],
+   "batch": "Batch04Martians",
+   "t082Packet": "Docs/Development/M85SuperScout/Packets/building_mar_routing_laboratory.md",
+   "status": "QUEUED_NOT_AUTHORED",
+   "directorAccepted": false,
+   "productionAuthorized": false
+  },
+  {
+   "rosterIndex": 28,
+   "stableId": "building.mar.excavation_plant",
+   "displayName": "Excavation Plant",
+   "faction": "Martians",
+   "footprint": "Large",
+   "sourceClassification": "COMPOSITE-ADAPTATION",
+   "sourceSets": [
+    "7316"
+   ],
+   "batch": "Batch04Martians",
+   "t082Packet": "Docs/Development/M85SuperScout/Packets/building_mar_excavation_plant.md",
+   "status": "QUEUED_NOT_AUTHORED",
+   "directorAccepted": false,
+   "productionAuthorized": false
+  },
+  {
+   "rosterIndex": 29,
+   "stableId": "building.mar.deflector_arm",
+   "displayName": "Deflector Arm",
+   "faction": "Martians",
+   "footprint": "Small",
+   "sourceClassification": "NEW GAME CONTENT",
+   "sourceSets": [
+    "7313",
+    "7316"
+   ],
+   "batch": "Batch04Martians",
+   "t082Packet": "Docs/Development/M85SuperScout/Packets/building_mar_deflector_arm.md",
+   "status": "QUEUED_NOT_AUTHORED",
+   "directorAccepted": false,
+   "productionAuthorized": false
+  },
+  {
+   "rosterIndex": 30,
+   "stableId": "building.mar.aero_guard_tower",
+   "displayName": "Aero Guard Tower",
+   "faction": "Martians",
+   "footprint": "Small",
+   "sourceClassification": "NEW GAME CONTENT",
+   "sourceSets": [
+    "7314",
+    "7317"
+   ],
+   "batch": "Batch04Martians",
+   "t082Packet": "Docs/Development/M85SuperScout/Packets/building_mar_aero_guard_tower.md",
+   "status": "QUEUED_NOT_AUTHORED",
+   "directorAccepted": false,
+   "productionAuthorized": false
+  },
+  {
+   "rosterIndex": 31,
+   "stableId": "building.mar.aero_tube_link",
+   "displayName": "Aero Tube Link",
+   "faction": "Martians",
+   "footprint": "Tiny",
+   "sourceClassification": "OFFICIAL-ADAPTED",
+   "sourceSets": [
+    "7317",
+    "3750"
+   ],
+   "batch": "Batch04Martians",
+   "t082Packet": "Docs/Development/M85SuperScout/Packets/building_mar_aero_tube_link.md",
+   "status": "QUEUED_NOT_AUTHORED",
+   "directorAccepted": false,
+   "productionAuthorized": false
+  }
+ ]
+}

@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "task": "T085",
+  "stableId": "building.rock_raiders.hq",
+  "revision": "2026-09-26-v1",
+  "kind": "PROJECT_AUTHORED_COMPOSITION_RENDERS",
+  "authority": "Review aid for the ADAPTED Production Design Target proposal. Not official LEGO imagery and not source evidence. Module bricks, colours and connections remain SOURCE-LOCKED to the official LEGO 4990 instructions.",
+  "generator": "tools/generate-m85-t085-rock-raiders-hq-target.py",
+  "renderer": "ArtSource/M85/T085/RockRaidersHQV1/render/composition_renderer.html",
+  "sceneSha256": "c3fccc1b66b843612706abba06a175fcd9f418f3a24388036a64be567f2be03e",
+  "units": {
+    "studMetres": 0.4,
+    "plateMetres": 0.16,
+    "plinthStuds": 40,
+    "footprintCells": 8,
+    "cellMetres": 2
+  },
+  "camera": "Gameplay views reproduce RtsCameraController framing: perspective FOV 36 deg vertical, pitch 58 deg, yaw 45 deg (camera south-east of target), 16:9, width = zoom cells x 2 m.",
+  "renders": [
+    {
+      "file": "ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_composition_target_hero.png",
+      "view": "hero",
+      "state": "operational",
+      "sha256": "9e3caf28eef15aca38ed386cd456e773f72c82bca9e269c9b86a3e0a5c315406",
+      "description": "ADAPTED composition target: operational HQ, neutral three-quarter inspection view from the default camera diagonal (south-east)."
+    },
+    {
+      "file": "ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_plan_top.png",
+      "view": "plan",
+      "state": "operational",
+      "sha256": "82b084c3877e0f7a1057a314a01bf17a8bc11c68c1135e0076c129ce0b1e5216",
+      "description": "Top plan on the authoritative 8x8-cell footprint (2 m cells) with the 2x2 production exit south of centre."
+    },
+    {
+      "file": "ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_state_operational.png",
+      "view": "state",
+      "state": "operational",
+      "sha256": "aca5adb0587af8201a674c3794af4cac716b3867611f1c86e1860c2d895a58b0",
+      "description": "Operational (Healthy 70–100%)"
+    },
+    {
+      "file": "ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_state_construction_30.png",
+      "view": "state",
+      "state": "construction_30",
+      "sha256": "feefa538a8211b0940803730fda8fc2a88a991ac69830349fe524ec3aa5d171c",
+      "description": "Construction ~30%: foundation and module seats"
+    },
+    {
+      "file": "ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_state_construction_70.png",
+      "view": "state",
+      "state": "construction_70",
+      "sha256": "8813e9160c5bbc3503ae6f13577d9c08f590a3a570b9ab8ee09746ec81143967",
+      "description": "Construction ~70%: tower frame, housings, crane mast"
+    },
+    {
+      "file": "ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_state_brownout.png",
+      "view": "state",
+      "state": "brownout",
+      "sha256": "44810e255567fe5cc659f3bb7cf8b230aab653743e70fb5d0a66091df29ba29f",
+      "description": "Brownout: command silhouette kept, lamps and crystal dimmed"
+    },
+    {
+      "file": "ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_state_damaged.png",
+      "view": "state",
+      "state": "damaged",
+      "sha256": "0442cd9fb772d0877cbd1ddfeefd10da578497f1d64ae867a041b828c5ed80e2",
+      "description": "Damaged 35–69%: displaced parts, one lamp out"
+    },
+    {
+      "file": "ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_state_heavily_damaged.png",
+      "view": "state",
+      "state": "heavily_damaged",
+      "sha256": "212a5a5d7031cb20ba43c872a605691270b568037365e3d6190d175c32414662",
+      "description": "Heavily damaged 20–34%: crane boom drops, hopper tilts, head lamp dark"
+    },
+    {
+      "file": "ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_state_critical.png",
+      "view": "state",
+      "state": "critical",
+      "sha256": "40ca839743500e19fccf8dd109688a5eb747aab022c6dd478df7b65a0c3ed4e3",
+      "description": "Critical <20%: upper tower leans, boom detached, hopper falls"
+    },
+    {
+      "file": "ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_state_destroyed.png",
+      "view": "state",
+      "state": "destroyed",
+      "sha256": "bdccdea1c581f7588484273070f3d55bceccab2aba4bd383deea783022f85a32",
+      "description": "Destroyed: readable non-blocking rubble on the plinth"
+    },
+    {
+      "file": "ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_camera_24.png",
+      "view": "camera_24",
+      "state": "operational",
+      "sha256": "01058897216a0aca010db83ba0f9db5312d19e9f8353276faf5935afeea8c959",
+      "description": "Canonical gameplay camera framing (FOV 36, pitch 58, yaw 45, 16:9) at 24 horizontal cells; composition preview, not a production-model capture."
+    },
+    {
+      "file": "ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_camera_44.png",
+      "view": "camera_44",
+      "state": "operational",
+      "sha256": "da95d22311209986a85782f7ccb50c53fb938e6583d2874cba8a30c24d3a1a83",
+      "description": "Canonical gameplay camera framing (FOV 36, pitch 58, yaw 45, 16:9) at 44 horizontal cells; composition preview, not a production-model capture."
+    },
+    {
+      "file": "ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_camera_72.png",
+      "view": "camera_72",
+      "state": "operational",
+      "sha256": "fd69fb001aff07c6b052dad5e63af0f34dbcea6ad766e940aeac1aaab7203baa",
+      "description": "Canonical gameplay camera framing (FOV 36, pitch 58, yaw 45, 16:9) at 72 horizontal cells; composition preview, not a production-model capture."
+    },
+    {
+      "file": "ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_silhouette_24.png",
+      "view": "silhouette_24",
+      "state": "operational_nofigure",
+      "sha256": "d65445f02991efb8ddd0b9c58738869667351df6207e8434a05f81d05e1b7d56",
+      "description": "Black silhouette at the 24-cell canonical camera framing."
+    },
+    {
+      "file": "ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_silhouette_44.png",
+      "view": "silhouette_44",
+      "state": "operational_nofigure",
+      "sha256": "6429f115e564e82953a264d1cd8491f3602752ebe686dd1f7f252baa27fa6c3e",
+      "description": "Black silhouette at the 44-cell canonical camera framing."
+    },
+    {
+      "file": "ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_silhouette_72.png",
+      "view": "silhouette_72",
+      "state": "operational_nofigure",
+      "sha256": "3a980e549f0553dd0e9f9cc8bbd0cb27ee26483c4761c85f9f3b887154e03c31",
+      "description": "Black silhouette at the 72-cell canonical camera framing."
+    },
+    {
+      "file": "ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_rotation_045.png",
+      "view": "rotation_045",
+      "state": "operational_nofigure",
+      "sha256": "52754e279ecc1ad40d880ca6deb224ae66463bb0057fb60443d6a07ad4bec941",
+      "description": "Gameplay pitch at camera yaw 45 degrees (90-degree rotation steps)."
+    },
+    {
+      "file": "ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_rotation_135.png",
+      "view": "rotation_135",
+      "state": "operational_nofigure",
+      "sha256": "7ecb70e2d0aff25db3a808491b35b0101bfca825541aba12ecbd65a074e16bf1",
+      "description": "Gameplay pitch at camera yaw 135 degrees (90-degree rotation steps)."
+    },
+    {
+      "file": "ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_rotation_225.png",
+      "view": "rotation_225",
+      "state": "operational_nofigure",
+      "sha256": "49be2b5fc8a9fa974cfab1029a66c9158023b5235c917014da3a999562db5ba2",
+      "description": "Gameplay pitch at camera yaw 225 degrees (90-degree rotation steps)."
+    },
+    {
+      "file": "ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_rotation_315.png",
+      "view": "rotation_315",
+      "state": "operational_nofigure",
+      "sha256": "ea7f3ab172d6818632d2d95f9354963cfdb6a64b7ceca2b91f085f7d3a6b3f01",
+      "description": "Gameplay pitch at camera yaw 315 degrees (90-degree rotation steps)."
+    }
+  ]
+}

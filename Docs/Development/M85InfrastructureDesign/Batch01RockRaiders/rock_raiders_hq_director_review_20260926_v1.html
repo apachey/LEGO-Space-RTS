@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rock Raiders HQ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans+Extra+Condensed:wght@600;700&family=JetBrains+Mono:wght@400;500&family=Onest:wght@400;500;600&display=swap">
+<style>
+:root{
+  color-scheme:dark;
+  --ground:#0e1416;--panel:#152023;--panel-2:#1b292c;--line:#2c3d41;
+  --ink:#edf1ee;--muted:#9fb0ad;--faint:#6f817e;
+  --turq:#20b2bc;--turq-ink:#bfeff2;--hazard:#f2cd37;--hazard-ink:#2a2305;
+  --limit:#e8894a;--limit-bg:#2a1c13;--team:#2f6fd6;
+  --display:"Fira Sans Extra Condensed","Arial Narrow","Roboto Condensed",sans-serif;
+  --body:"Onest",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{background:var(--ground)}
+body{margin:0;background:var(--ground);color:var(--ink);font:15px/1.5 var(--body);-webkit-font-smoothing:antialiased}
+main{max-width:1440px;margin:0 auto;padding-inline:clamp(16px,3vw,32px);padding-block:22px 40px;display:grid;gap:22px}
+a{color:var(--turq-ink);text-decoration-thickness:1px;text-underline-offset:3px}
+a:hover{color:#fff}
+a:focus-visible,summary:focus-visible{outline:2px solid var(--hazard);outline-offset:3px;border-radius:2px}
+img{max-width:100%;height:auto;display:block}
+h1,h2,h3{font-family:var(--display);font-weight:700;letter-spacing:.01em;text-wrap:balance;margin:0}
+h2{font-size:22px;line-height:1.1}
+h3{font-size:17px}
+p{margin:0}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--turq)}
+code,.mono{font-family:var(--mono);font-size:.86em;color:var(--turq-ink);overflow-wrap:anywhere}
+
+/* header */
+.top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:14px 24px;align-items:flex-end;border-bottom:1px solid var(--line);padding-bottom:16px}
+.top h1{font-size:clamp(34px,5vw,54px);line-height:.95;margin-top:6px}
+.identity{display:flex;flex-wrap:wrap;gap:4px 18px;color:var(--muted);font-size:13px;margin-top:10px}
+.identity b{color:var(--ink);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.04em;padding:6px 10px;border-radius:3px;border:1px solid var(--line);white-space:nowrap}
+.chip.proposed{border-color:#7a6a2a;background:#2a2410;color:#f5e39a}
+.chip.mode{border-color:#1f6e74;background:#10292c;color:var(--turq-ink)}
+.chip.hold{color:var(--muted)}
+
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(300px,.8fr);gap:16px}
+.frame{background:var(--panel);border:1px solid var(--line);border-radius:4px;overflow:hidden;display:flex;flex-direction:column}
+.frame-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:10px 14px;border-bottom:1px solid var(--line)}
+.frame-head h2{font-size:17px}
+.frame-head .eyebrow{color:var(--muted)}
+.target{background:#e6e1d6}
+.caption{padding:9px 14px;font-size:12.5px;color:var(--muted);border-top:1px solid var(--line)}
+.caption strong{color:var(--ink);font-weight:600}
+.decide{padding:16px 18px;display:grid;gap:14px;align-content:start}
+.decide ol{margin:0;padding:0;list-style:none;display:grid;gap:12px;counter-reset:q}
+.decide li{counter-increment:q;display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start}
+.decide li::before{content:counter(q);font-family:var(--display);font-weight:700;font-size:18px;line-height:26px;text-align:center;border-radius:3px;background:var(--hazard);color:var(--hazard-ink)}
+.decide li b{display:block;font-weight:600;margin-bottom:2px}
+.decide li span{color:var(--muted);font-size:13.5px}
+.status-line{border-top:1px solid var(--line);padding-top:12px;font-size:13px;color:var(--ink)}
+.status-line span{color:var(--muted)}
+
+/* limitation */
+.limit{display:grid;grid-template-columns:auto 1fr;gap:12px 16px;background:var(--limit-bg);border:1px solid #5e3c25;border-left:4px solid var(--limit);border-radius:4px;padding:14px 16px}
+.limit .tag{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--limit);padding-top:2px;white-space:nowrap}
+.limit p{max-width:95ch;font-size:14px}
+.limit p+p{margin-top:6px;color:var(--muted);font-size:13px}
+
+/* composition */
+.comp{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:16px;align-items:start}
+.plan-wrap{position:relative;background:#e4e0d6}
+.marker{position:absolute;transform:translate(-50%,-50%);width:26px;height:26px;border-radius:50%;background:#10181a;color:#fff;border:2px solid var(--hazard);font:700 13px/22px var(--display);text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.45)}
+.compass{position:absolute;left:10px;top:10px;font:600 11px/1.3 var(--mono);color:#1d2629;background:rgba(255,255,255,.72);padding:4px 7px;border-radius:3px}
+.legend{display:grid;gap:0;border:1px solid var(--line);border-radius:4px;background:var(--panel);overflow:hidden}
+.row{display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px;padding:10px 14px;border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.num{font:700 15px/24px var(--display);text-align:center;border:2px solid var(--hazard);border-radius:50%;width:26px;height:26px;color:var(--ink)}
+.row h3{font-size:16px;margin-bottom:3px}
+.row p{font-size:13.5px;color:var(--muted)}
+.row p b{color:var(--ink);font-weight:600}
+.src{display:inline-block;font-family:var(--mono);font-size:10.5px;padding:1px 6px;border-radius:2px;margin-right:6px;vertical-align:1px}
+.src.official{background:#10292c;color:var(--turq-ink);border:1px solid #1f6e74}
+.src.adapted{background:#2a2410;color:#f5e39a;border:1px solid #7a6a2a}
+.src.game{background:#121e33;color:#bcd2ff;border:1px solid #2d4f8a}
+
+/* state grid */
+.section-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 16px}
+.section-head p{color:var(--muted);font-size:13px;max-width:80ch}
+.states{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:4px;overflow:hidden;display:flex;flex-direction:column}
+.card .img{background:#e6e1d6}
+.card .txt{padding:8px 11px 10px;display:grid;gap:2px}
+.card .txt b{font-weight:600;font-size:13.5px}
+.card .txt span{font-size:12.5px;color:var(--muted)}
+.card .band{font-family:var(--mono);font-size:10.5px;color:var(--turq)}
+
+/* camera */
+.cams{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.pair{display:grid;gap:6px}
+.pair .img{background:#c9c3b4;border-radius:3px;overflow:hidden}
+.pair .sil{background:#fff;border-radius:3px;overflow:hidden}
+.pair span{font-size:12.5px;color:var(--muted)}
+.pair b{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:500}
+.rots{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+
+/* sources */
+.sources{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 24px;font-size:13.5px}
+.sources li{list-style:none;display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--line)}
+.sources ul{margin:0;padding:0;display:contents}
+details{border:1px solid var(--line);border-radius:4px;background:var(--panel);padding:10px 14px}
+summary{cursor:pointer;font-weight:600}
+details ul{margin:10px 0 2px;padding-left:18px;display:grid;gap:6px;color:var(--muted);font-size:13.5px}
+details li b{color:var(--ink);font-weight:600}
+
+@media (max-width:980px){
+  .hero,.comp{grid-template-columns:1fr}
+  .states,.rots{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cams{grid-template-columns:1fr}
+  .sources{grid-template-columns:1fr}
+}
+@media (max-width:520px){
+  .states,.rots{grid-template-columns:1fr}
+  .limit{grid-template-columns:1fr}
+  .marker{width:22px;height:22px;font-size:12px;line-height:18px}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<main>
+
+<header class="top">
+  <div>
+    <div class="eyebrow">Rock Raiders · інфраструктура 1 з 31 · T085</div>
+    <h1>Rock Raiders HQ</h1>
+    <div class="identity">
+      <span><b>Роль</b> · стартовий штаб і вузол Worksite</span>
+      <span><b>Футпринт</b> · 8×8 клітинок (16×16 м), без повороту</span>
+      <span><b>Джерело</b> · LEGO 4990 (1999)</span>
+    </div>
+  </div>
+  <div class="chips" aria-label="Стан пакета">
+    <span class="chip proposed">ЗАПРОПОНОВАНО · НЕ ПРИЙНЯТО</span>
+    <span class="chip mode">ADAPTED</span>
+    <span class="chip hold">T086 НЕ РОЗПОЧАТО</span>
+  </div>
+</header>
+
+<section class="hero" aria-label="Цільовий вигляд і рішення">
+  <article class="frame">
+    <div class="frame-head"><h2>Production Design Target</h2><span class="eyebrow">композиція · робочий стан</span></div>
+    <div class="target"><img src="../../../../ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_composition_target_hero.png" width="1600" height="1000" alt="Проєктна ілюстрація Rock Raiders HQ у ракурсі три чверті з південного сходу: квадратна світло-сіра кам'яна плита з рельєфом; на північному заході висока вежа з бірюзовими кільцями й довгою темно-сірою світловою балкою нагорі; праворуч жовтий кран над жовтим бункером на рамі; спереду бірюзовий енергоблок зі світним зеленим кристалом і розколювачем; у центрі майданчик екіпажу з пандусом на південь і маленька фігура масштабу."></div>
+    <p class="caption"><strong>Проєктна ілюстрація композиції, не фото LEGO.</strong> Розміщення модулів і адаптації — пропозиція на рішення. Точний вигляд кожного модуля береться з офіційної інструкції 4990. Біла фігура ≈ 2 м показує масштаб і не є частиною будівлі.</p>
+  </article>
+  <aside class="frame decide" aria-label="Рішення директора">
+    <h2>Що потрібно вирішити</h2>
+    <ol>
+      <li><div><b>Композиція</b><span>Уся база 4990 на одній плиті 8×8: вежа на північному заході, кран на сході над бункером прийому, енергоблок на південному сході, майданчик екіпажу в центрі з пандусом до виходу. Прийняти, змінити розміщення чи відхилити?</span></div></li>
+      <li><div><b>Світлова балка на вежі</b><span>Лазер із набору стає обертовим робочим прожектором без пострілів, як уже прийнято для Chrome Crusher. Так чи інакше?</span></div></li>
+      <li><div><b>Порядок фіналізації</b><span>Прийняти композицію зараз, а точний вигляд модулів зафіксувати після звірки з офіційною інструкцією? Чи нічого не приймати до звірки?</span></div></li>
+    </ol>
+    <p class="status-line">Нічого не прийнято. <span>T086 не авторизовано й не розпочато.</span></p>
+  </aside>
+</section>
+
+<section class="limit" aria-label="Обмеження джерел">
+  <span class="tag">Обмеження</span>
+  <div>
+    <p>Офіційні зображення LEGO 4990 у цій хмарній сесії недоступні: мережева політика заблокувала lego.com, Rebrickable, Brickset, BrickLink та інші сайти з фото. Склад набору підтверджено текстовими джерелами, тому форма, колір і висота модулів на рендерах поки що заготовка.</p>
+    <p>Щоб завершити звірку, дозвольте в налаштуваннях середовища <span class="mono">www.lego.com</span> і бажано <span class="mono">cdn.rebrickable.com</span> або <span class="mono">images.brickset.com</span>, або надішліть фото зібраного набору.</p>
+  </div>
+</section>
+
+<section aria-label="Компонування" class="comp">
+  <article class="frame">
+    <div class="frame-head"><h2>План на футпринті</h2><span class="eyebrow">1 клітинка = 2 м</span></div>
+    <div class="plan-wrap">
+      <img src="../../../../ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_plan_top.png" width="1000" height="1000" alt="Вигляд згори на плиту 8×8 клітинок: вежа в північно-західному куті, бункер на рамі в північно-східному, кран на східному плечі, енергоблок із кристалом у південно-східному, майданчик у центрі, пандус на південь до жовтого виходу 2×2 за межею плити, відкрите кам'яне гніздо на південному заході.">
+      <span class="compass">Пн ↑</span>
+      <span class="marker" style="left:28.3%;top:20%">1</span>
+      <span class="marker" style="left:71.7%;top:41.7%">2</span>
+      <span class="marker" style="left:71.7%;top:21.7%">3</span>
+      <span class="marker" style="left:70.8%;top:61.7%">4</span>
+      <span class="marker" style="left:50%;top:41.7%">5</span>
+      <span class="marker" style="left:50%;top:65%">6</span>
+      <span class="marker" style="left:50%;top:83.3%">7</span>
+      <span class="marker" style="left:28.3%;top:63.3%">8</span>
+    </div>
+  </article>
+  <div class="legend" role="list">
+    <div class="row" role="listitem"><span class="num">1</span><div><h3>Вежа зі світловою балкою</h3><p><span class="src official">4990</span>Обертовий світловий «Mining Laser» на найвищій частині бази: темно-сіра деталь 30346c01, 4×12×2 шипи. <span class="src adapted">адаптація</span><b>Не стріляє</b>, повільно обертається як прожектор; верх ≈ 9,3 м для читабельності.</p></div></div>
+    <div class="row" role="listitem"><span class="num">2</span><div><h3>Кран</h3><p><span class="src official">4990</span>Секція крана, що піднімає й переносить валуни. <span class="src adapted">адаптація</span>Стоїть на східному плечі й дістає до бункера та розколювача.</p></div></div>
+    <div class="row" role="listitem"><span class="num">3</span><div><h3>Бункер прийому руди</h3><p><span class="src official">4990</span>Перекидач, що скидає валун у машину. <span class="src adapted">адаптація</span>Аварійний прийом руди HQ; точка прийому на східному краї.</p></div></div>
+    <div class="row" role="listitem"><span class="num">4</span><div><h3>Енергоблок і розколювач</h3><p><span class="src official">4990</span>Верх Power Station: сховище енергетичного кристала й малий лазер для валунів. <span class="src adapted">адаптація</span>Світіння показує живлення HQ і сирі кристали.</p></div></div>
+    <div class="row" role="listitem"><span class="num">5</span><div><h3>Майданчик екіпажу</h3><p><span class="src official">4990</span>Teleport Pad, у наборі стоянка ховеркрафта. <span class="src adapted">адаптація</span>Місце появи Crew; плитка команди на південному краї.</p></div></div>
+    <div class="row" role="listitem"><span class="num">6</span><div><h3>Пандус</h3><p><span class="src adapted">адаптація</span>Візуально з’єднує майданчик із виходом виробництва.</p></div></div>
+    <div class="row" role="listitem"><span class="num">7</span><div><h3>Вихід виробництва</h3><p><span class="src game">гра</span>2×2 клітинки за південним краєм по центру, як у SimCore.</p></div></div>
+    <div class="row" role="listitem"><span class="num">8</span><div><h3>Відкрите кам’яне гніздо</h3><p><span class="src adapted">адаптація</span>П’ятої офіційної секції немає, тож кут лишається відкритою породою без вигаданого модуля.</p></div></div>
+    <div class="row" role="listitem"><span class="num">·</span><div><h3>Плита</h3><p><span class="src official">4990</span>Піднята світло-сіра плита 30271px3 з чотирма кутовими заглибленнями й кам’яним принтом. <span class="src adapted">адаптація</span>Квадрат 16×16 м; площа майже та сама, тож модулі зберігають масштаб. Не входять: машини, мініфігурки, Rock Monster.</p></div></div>
+  </div>
+</section>
+
+<section aria-label="Стани будівлі" style="display:grid;gap:12px">
+  <div class="section-head"><h2>Будівництво, робота, пошкодження</h2><p>Лише презентація авторитетного стану. Пороги пошкоджень канонічні й не знижують функції.</p></div>
+  <div class="states">
+    <figure class="card" style="margin:0"><div class="img"><img src="../../../../ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_state_construction_30.png" width="800" height="560" alt="Будівництво близько 30 відсотків: плита з рельєфом, фундамент вежі, основи модулів і стоси доставлених секцій."></div><figcaption class="txt"><span class="band">0–30 %</span><b>Фундамент</b><span>Плита, гнізда, основи модулів, доставлені секції.</span></figcaption></figure>
+    <figure class="card" style="margin:0"><div class="img"><img src="../../../../ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_state_construction_70.png" width="800" height="560" alt="Будівництво близько 70 відсотків: каркас вежі з палубою, корпус енергоблока, рама бункера, щогла крана без стріли."></div><figcaption class="txt"><span class="band">30–70 %</span><b>Каркас і корпуси</b><span>Вежа до палуби, рама бункера, щогла крана.</span></figcaption></figure>
+    <figure class="card" style="margin:0"><div class="img"><img src="../../../../ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_state_operational.png" width="800" height="560" alt="Робочий стан: усі модулі на місці, балка на вежі, кран несе валун, кристал світиться."></div><figcaption class="txt"><span class="band">70–100 % · 100 %</span><b>Робота</b><span>Балка обертається, кран несе валун, кристал світиться.</span></figcaption></figure>
+    <figure class="card" style="margin:0"><div class="img"><img src="../../../../ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_state_brownout.png" width="800" height="560" alt="Brownout: силует той самий, лампи й кристал приглушені, балка зупинена."></div><figcaption class="txt"><span class="band">brownout</span><b>Без живлення допоміжних систем</b><span>Балка стоїть, світло приглушене, силует той самий.</span></figcaption></figure>
+    <figure class="card" style="margin:0"><div class="img"><img src="../../../../ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_state_damaged.png" width="800" height="560" alt="Пошкоджено: зміщені деталі на плиті, частина розкосів зникла, одна лампа згасла."></div><figcaption class="txt"><span class="band">35–69 %</span><b>Пошкоджено</b><span>Зміщені деталі, одна лампа згасла.</span></figcaption></figure>
+    <figure class="card" style="margin:0"><div class="img"><img src="../../../../ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_state_heavily_damaged.png" width="800" height="560" alt="Сильно пошкоджено: стріла крана впала в смугу, бункер перекошено, балка згасла, поручні зникли."></div><figcaption class="txt"><span class="band">20–34 %</span><b>Сильно пошкоджено</b><span>Стріла впала, бункер перекошений, балка згасла.</span></figcaption></figure>
+    <figure class="card" style="margin:0"><div class="img"><img src="../../../../ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_state_critical.png" width="800" height="560" alt="Критично: верх вежі нахилений на другому кільці, стрілу відірвано, бункер упав, багато уламків."></div><figcaption class="txt"><span class="band">&lt; 20 %</span><b>Критично</b><span>Верх вежі нахилений, стрілу відірвано, бункер упав.</span></figcaption></figure>
+    <figure class="card" style="margin:0"><div class="img"><img src="../../../../ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_state_destroyed.png" width="800" height="560" alt="Зруйновано: на плиті лежать секції вежі, щогла й стріла крана та дрібні уламки."></div><figcaption class="txt"><span class="band">0 HP</span><b>Зруйновано</b><span>Читабельні уламки на плиті; прохід не блокують.</span></figcaption></figure>
+  </div>
+</section>
+
+<section aria-label="Ігрова камера" style="display:grid;gap:12px">
+  <div class="section-head"><h2>Ігрова камера</h2><p>Кадрування як у грі: FOV 36°, нахил 58°, поворот 45°, 16:9. Це перевірка композиції, а не знімок виробничої моделі; справжня перевірка камери й LOD — у T086.</p></div>
+  <div class="cams">
+    <div class="pair"><div class="img"><img src="../../../../ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_camera_24.png" width="1280" height="720" alt="Ігрова камера 24 клітинки: HQ повністю в кадрі, усі модулі видно."></div><div class="sil"><img src="../../../../ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_silhouette_24.png" width="1280" height="720" alt="Чорний силует HQ на камері 24 клітинки."></div><span><b>24 клітинки</b> · увесь HQ у кадрі</span></div>
+    <div class="pair"><div class="img"><img src="../../../../ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_camera_44.png" width="1280" height="720" alt="Ігрова камера 44 клітинки: окремо видно вежу, кран із бункером, зелений кристал і майданчик."></div><div class="sil"><img src="../../../../ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_silhouette_44.png" width="1280" height="720" alt="Чорний силует HQ на камері 44 клітинки."></div><span><b>44 клітинки</b> · вежа, кран, кристал, майданчик</span></div>
+    <div class="pair"><div class="img"><img src="../../../../ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_camera_72.png" width="1280" height="720" alt="Ігрова камера 72 клітинки: велика квадратна плита з високою вежею."></div><div class="sil"><img src="../../../../ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_silhouette_72.png" width="1280" height="720" alt="Чорний силует HQ на камері 72 клітинки: ромб плити з однією вежею."></div><span><b>72 клітинки</b> · велика плита й одна вежа</span></div>
+  </div>
+  <div class="section-head"><h3>Повороти камери по 90°</h3><p>З північного заходу вежа частково затуляє центр; лампи майданчика й вихід лишаються видимими.</p></div>
+  <div class="rots">
+    <figure class="pair" style="margin:0"><div class="img"><img src="../../../../ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_rotation_045.png" width="640" height="360" alt="Камера з південного сходу, поворот 45 градусів."></div><figcaption><span><b>45°</b> · за замовчуванням</span></figcaption></figure>
+    <figure class="pair" style="margin:0"><div class="img"><img src="../../../../ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_rotation_135.png" width="640" height="360" alt="Камера з північного сходу, поворот 135 градусів."></div><figcaption><span><b>135°</b></span></figcaption></figure>
+    <figure class="pair" style="margin:0"><div class="img"><img src="../../../../ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_rotation_225.png" width="640" height="360" alt="Камера з північного заходу, поворот 225 градусів: вежа на передньому плані частково затуляє центр."></div><figcaption><span><b>225°</b> · вежа попереду</span></figcaption></figure>
+    <figure class="pair" style="margin:0"><div class="img"><img src="../../../../ArtSource/M85/T085/RockRaidersHQV1/renders/rock_raiders_hq_rotation_315.png" width="640" height="360" alt="Камера з південного заходу, поворот 315 градусів."></div><figcaption><span><b>315°</b></span></figcaption></figure>
+  </div>
+</section>
+
+<section aria-label="Джерела" style="display:grid;gap:10px">
+  <h2>Джерела</h2>
+  <ul class="sources">
+    <li><span class="src official">офіційне</span><span><a href="https://www.lego.com/en-us/service/building-instructions/4990">LEGO · інструкції 4990</a> · <a href="https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4129017.pdf">PDF 4129017, 43 с.</a> · у сесії заблоковано</span></li>
+    <li><span class="src adapted">текст</span><span><a href="https://brickipedia.fandom.com/wiki/4990_Rock_Raiders_HQ">Brickipedia · 4990</a>: секції, 402 деталі, основні кольори</span></li>
+    <li><span class="src adapted">текст</span><span><a href="https://kb.rockraidersunited.com/4990_Rock_Raiders_HQ">Rock Raiders United KB · 4990</a> · <a href="https://kb.rockraidersunited.com/Teleport_Pad">Teleport Pad</a></span></li>
+    <li><span class="src adapted">текст</span><span><a href="https://www.bricklink.com/v2/catalog/catalogitem.page?P=30271px3">BrickLink · плита 30271px3</a> · <a href="https://www.bricklink.com/v2/catalog/catalogitem.page?P=30346c01">світлова деталь 30346c01</a></span></li>
+  </ul>
+</section>
+
+<details>
+  <summary>Технічні деталі — якщо цікаво</summary>
+  <ul>
+    <li><b>Масштаб:</b> 1 шип = 0,4 м; плита 40×40 шипів = 16×16 м = 8×8 клітинок; площа 1600 шипів² проти оригінальних 1536, тож модулі не зменшуються відносно мініфігурки.</li>
+    <li><b>Уточнення T082:</b> старий пакет описує «вежу живлення», кран на ній, гантрі та конвеєр. Текстові джерела називають лазер, окремий кран, Teleport Pad, верх Power Station і перекидач. Конвеєр не підтверджено й не додано. Пакет T082 не змінено.</li>
+    <li><b>Сокети й півоти:</b> <code>Socket_CrewExit</code> біля підніжжя пандуса, <code>Socket_OreReceive</code> на східному краї, <code>Socket_LampTower</code> на лінзі балки, <code>Pivot_BeamYaw</code>, <code>Pivot_CraneYaw</code>/<code>Boom</code>/<code>Hook</code>, <code>Pivot_DumperTip</code>. Повний перелік — у Design Spec.</li>
+    <li><b>Межі для сусідів:</b> Cutter Mast не повторює світлову балку й каркас вежі; Power Station, Ore Processing Plant, Vehicle Service Bay і Crystal Vault не беруть модулі HQ як головну форму.</li>
+    <li><b>Файли:</b> <a href="rock_raiders_hq_design_spec_20260926_v1.md">Design Spec</a> · <a href="../../../../ArtSource/M85/T085/RockRaidersHQV1/source_evidence_manifest.json">маніфест джерел</a> · <a href="../../../../ArtSource/M85/T085/RockRaidersHQV1/composition_render_manifest.json">маніфест рендерів</a> · <a href="../registry.json">реєстр T085</a>.</li>
+    <li><b>Перевірки:</b> <code>./tools/verify.sh --targeted design-package</code>, <code>python3 tools/validate-m85-t085-rock-raiders-hq-package.py</code>, <code>python3 tools/generate-m85-t085-rock-raiders-hq-target.py --check</code>.</li>
+    <li><b>Git:</b> гілка <code>codex/m85-t085</code> від прийнятої <code>codex/m85-t082</code> (PR #16); не злито.</li>
+  </ul>
+</details>
+
+</main>
+</body>
+</html>
