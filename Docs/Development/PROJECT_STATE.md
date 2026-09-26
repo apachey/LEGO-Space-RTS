@@ -188,6 +188,10 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 
 - Rock Raiders Crew T083 was director-accepted on 2026-09-26 via its SOURCE_LOCKED 4930 Production Design Target covering all five source-specific Crew looks. T084 is authorized for Crew only and has not started.
 
+- Red Planet Protector T083 is director-accepted via the `SOURCE_LOCKED` LEGO
+  7313 appearance and official instruction-cover pose; no visible adaptations.
+  T084 remains not started and not authorized.
+
 ## Blockers and deferred gates
 
 - `BLOCKING_NOW`: each T083 asset needs explicit director design acceptance
@@ -199,7 +203,7 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   MX-41 Switch Fighter, Mobile Mining Platform, MX-71 Recon Dropship, MT-51
   Claw-Tank, MT-101 Armored Drilling Unit, MT-201 Ultra-Drill Walker,
   ETX Servitor, Alien Jet, Razor Skimmer, Worker Robot, Jet Scooter, Red Planet
-  Cruiser, T3-Trike and Recon-Mech RP have explicit director acceptance; T084 is authorized
+  Cruiser, Red Planet Protector, T3-Trike and Recon-Mech RP have explicit director acceptance; T084 is authorized
   only for specifically
   authorized units. Double Hover, Jet Scooter and Recon-Mech RP are not authorized; no
   production model has started.
@@ -218,8 +222,8 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 
 ## Next approved action
 
-Recon-Mech RP T083 design acceptance is recorded. T084 remains not started and
-not authorized; no additional unit was started. Wait for the next director
+Red Planet Protector T083 design acceptance is recorded. T084 remains not
+started and not authorized; no additional unit was started. Wait for the next director
 instruction before advancing. Design-only packages use the targeted
 `design-package` profile; no game export, M6 networking or M7 exploration stack
 is required.

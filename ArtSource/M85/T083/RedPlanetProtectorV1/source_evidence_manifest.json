@@ -1,0 +1,65 @@
+{
+  "stableId": "unit.martians.red_planet_protector",
+  "task": "T083",
+  "targetMode": "SOURCE_LOCKED",
+  "state": "DIRECTOR_ACCEPTED",
+  "sourceSets": [
+    {
+      "set": "7313-1",
+      "name": "Red Planet Protector",
+      "year": 2001,
+      "authority": "LEGO official",
+      "instructionPage": "https://www.lego.com/en-us/service/building-instructions/7313",
+      "instructionPdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4160158.pdf",
+      "officialPieceCount": 194
+    }
+  ],
+  "sourceEvidence": [
+    {
+      "kind": "official_instruction_cover_illustration",
+      "url": "https://legcdn.nyc3.cdn.digitaloceanspaces.com/images/7313-red-planet-protector/4160158/page-1.jpg",
+      "officialInstruction": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4160158.pdf",
+      "page": 1,
+      "provenance": "Скан ілюстрації обкладинки офіційної інструкції LEGO 7313; поза є візуальною ціллю, а не доказом конкретного механічного ходу шарнірів."
+    },
+    {
+      "kind": "completed_model_photo",
+      "url": "https://cdn.rebrickable.com/media/thumbs/sets/7313-1/76633.jpg/1000x800p.jpg",
+      "provenance": "Rebrickable set image 76633, completed source-model view; secondary image host, source appearance only. The image is linked remotely in the HTML because network retrieval from the shell was unavailable during package authoring."
+    },
+    {
+      "kind": "completed_model_photo",
+      "url": "https://www.bobshop.co.za/original-12001-lego-space-7313-red-planet-protector-no-box-with-manual/p/622374312",
+      "provenance": "Collector/seller photo of completed model with windscreen raised; secondary evidence for articulation only, not color authority."
+    },
+    {
+      "kind": "parts_catalog",
+      "url": "https://bricker.info/sets/7313/",
+      "provenance": "Independent set parts list identifies the 8 x 4 x 2 curved windscreen in Trans-Black; secondary evidence cross-checked against official product photography."
+    },
+    {
+      "kind": "set_catalog",
+      "url": "https://www.bricklink.com/v2/catalog/catalogitem.page?id=6089",
+      "provenance": "Independent 7313-1 release and set identity cross-check. No alternate set number or reissue was found in the focused search."
+    }
+  ],
+  "directlyObserved": [
+    "The completed model has the source 7313 blue/gray wedge body, pilot, source-left large disk weapon, shorter source-right emitter, paired fan pods, two thin orange-tipped side lances, two legs, and flat feet.",
+    "Official LEGO instructions show the construction and a hand-separated/reassembled low-flight alternate configuration; this is not evidence of continuous gameplay transformation.",
+    "A completed collector photo shows the source windscreen raised; the set target image shows it shut.",
+    "Source inventory listings identify the windscreen as Trans-Black."
+  ],
+  "inferences": [
+    "Обкладинка використовує широку зігнуту позу одного й того самого LEGO 7313; фінальні кроки та завершене фото уточнюють фактичну геометрію."
+  ],
+  "unknowns": [
+    "Точний діапазон руху шарнірів і механічний спосіб відтворити ілюстровану позу не визначаються з обкладинки; виробничі з’єднання мають спиратися на інструкцію та завершену модель."
+  ],
+  "adaptations": [],
+  "targetImage": {
+    "url": "https://legcdn.nyc3.cdn.digitaloceanspaces.com/images/7313-red-planet-protector/4160158/page-1.jpg",
+    "kind": "official_instruction_cover_illustration",
+    "page": 1,
+    "provenance": "Ілюстрація офіційної інструкції як SOURCE_LOCKED Production Design Target; source geometry звіряється із завершеним фото та інструкцією."
+  }
+}
