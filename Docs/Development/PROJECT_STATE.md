@@ -125,8 +125,8 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   not started.
 - MX-81 Hypersonic Operations Aircraft is director-accepted on 2026-09-25 via
   its SOURCE_LOCKED LEGO 7644 target with the native tail transporter docked;
-  T084 is authorized for MX-81 only and remains unstarted. The remaining 15
-  packages (1 Astronaut, 6 Aliens, 8 Martians) are queued, not authored. T084
+  T084 is authorized for MX-81 only and remains unstarted. The remaining 14
+  packages (1 Astronaut, 6 Aliens, 7 Martians) are queued, not authored. T084
   modeling has not started; no production model is approved.
 - ETX Servitor was director-accepted on 2026-09-25 via its `ORIGINAL_EXTENDED`
   target: low black Alien hover worker with paired shell valves, protected
@@ -164,6 +164,11 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 - Jet Scooter T083 was director-accepted on 2026-09-26 via its unchanged
   SOURCE_LOCKED LEGO 7303 Production Design Target. No visible adaptations. T084
   is not authorized for Jet Scooter and remains unstarted.
+- Aero Skiff T083 was director-accepted on 2026-09-26 via its symmetric
+  `SOURCE_LOCKED` LEGO 1195 Production Design Target: rear perforated radial
+  shield with centered green beacon box, central black tube, triangular pilot
+  platform with paired cone lamps, and operator at the front. No visible
+  adaptations. T084 is not authorized or started.
 - Workflow cleanup is merged and synchronized locally. This synchronization
   preserves all prior T083 content; it does not continue design or infer approval.
 
@@ -197,12 +202,12 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 
 ## Next approved action
 
-Jet Scooter T083 `SOURCE_LOCKED` was director-accepted on 2026-09-26 using
-the unchanged completed LEGO 7303 appearance. T084 is not authorized for Jet
-Scooter and remains unstarted. Do not start another unit or begin T084 in this
-checkpoint; select any next unit only in a separate bounded task. Design-only
-packages use the targeted `design-package` profile; no game export, M6 networking
-or M7 exploration stack is required.
+Aero Skiff T083 was director-accepted on 2026-09-26 as the symmetric
+`SOURCE_LOCKED` LEGO 1195 appearance. T084 is not authorized and remains
+unstarted. Do not start another unit or begin T084 in this checkpoint; select
+any next unit only in a separate bounded task. Design-only packages use the
+targeted `design-package` profile; no game export, M6 networking or M7
+exploration stack is required.
 
 ## Detailed records and historical evidence
 
