@@ -1,8 +1,8 @@
 {
   "task": "T083",
   "target": 35,
-  "authoredProposals": 34,
-  "directorAccepted": 34,
+  "authoredProposals": 35,
+  "directorAccepted": 35,
   "productionModels": 0,
   "assets": [
     {
@@ -1015,9 +1015,31 @@
     },
     {
       "stableId": "unit.martians.excavation_searcher",
-      "status": "QUEUED_NOT_AUTHORED",
-      "directorAccepted": false,
-      "productionAuthorized": false
+      "file": "Batch04Martians/excavation_searcher_design_spec_20260926_v1.md",
+      "status": "DESIGN_ACCEPTED",
+      "directorAccepted": true,
+      "productionAuthorized": false,
+      "sourceEvidence": {
+        "manifest": "ArtSource/M85/T083/ExcavationSearcherV1/source_evidence_manifest.json",
+        "reference": "ArtSource/M85/T083/ExcavationSearcherV1/excavation_searcher_source_target_20260926_v1.png",
+        "provenance": "Rebrickable completed-set image 76627, unretouched framing crop; primary structure and set boundary cross-checked against official LEGO 7316 instructions."
+      },
+      "designSpec": "Batch04Martians/excavation_searcher_design_spec_20260926_v1.md",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch04Martians/excavation_searcher_director_review_20260926_v1.html",
+        "rationale": "The completed LEGO 7316 main walker is the intended appearance; no visible game geometry adaptation is proposed.",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch04Martians/excavation_searcher_design_spec_20260926_v1.md",
+        "sourceImage": "ArtSource/M85/T083/ExcavationSearcherV1/excavation_searcher_source_target_20260926_v1.png",
+        "reviewReady": true,
+        "appearanceSummary": "Four-legged tan/brown Martian walker with central cockpit and meteorite compartment, unlike front claw and orange-dish tools, small flyer mounted below, and raised articulated rear crane with orange handling head. The separate docking bay is excluded."
+      },
+      "review": "Batch04Martians/excavation_searcher_director_review_20260926_v1.html",
+      "gameAdaptations": [],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-26",
+      "acceptanceNote": "Директор схвалив 2026-09-26 незмінений SOURCE_LOCKED Production Design Target LEGO 7316 Excavation Searcher. Видимих адаптацій немає. T084 не авторизовано й не розпочато."
     }
   ]
 }

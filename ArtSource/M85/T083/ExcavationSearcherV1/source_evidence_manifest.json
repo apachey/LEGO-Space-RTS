@@ -1,0 +1,142 @@
+{
+  "packageId": "unit.martians.excavation_searcher",
+  "revision": "2026-09-26-v1",
+  "targetMode": "SOURCE_LOCKED",
+  "reviewState": "DIRECTOR_ACCEPTED",
+  "productionAuthorized": false,
+  "sources": [
+    {
+      "id": "lego-instructions-page",
+      "authority": "PRIMARY_OFFICIAL",
+      "url": "https://www.lego.com/en-us/service/building-instructions/7316",
+      "directlyVerified": "LEGO archive identifies set 7316 as Excavation Searcher, Space, year 2001, and provides the official instruction PDF.",
+      "use": "Set identity and primary source entry."
+    },
+    {
+      "id": "lego-instructions-pdf",
+      "authority": "PRIMARY_OFFICIAL",
+      "url": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130811.pdf",
+      "pages": [
+        1,
+        2,
+        3,
+        20,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33
+      ],
+      "directlyVerified": "Page 1 is box-cover art, not a finished-model photograph. Pages 27-30 show the completed four-leg Searcher assembly and crane relationships. The next pages build and place the small flyer under the central meteorite compartment. Pages 2-5 show source-presented detachable configurations; these are excluded from the base target.",
+      "use": "Primary construction and configuration evidence."
+    },
+    {
+      "id": "completed-set-photo",
+      "authority": "SECONDARY_COMPLETED_MODEL_PHOTO",
+      "url": "https://cdn.rebrickable.com/media/thumbs/sets/7316-1/76627.jpg/1000x800p.jpg",
+      "localFile": "ArtSource/M85/T083/ExcavationSearcherV1/References/rebrickable_7316_completed_set.jpg",
+      "sha256": "f886668fe088e40d0102d12db5379610574a7dda7cde869a7a0734eae9f9bd18",
+      "targetCrop": {
+        "file": "ArtSource/M85/T083/ExcavationSearcherV1/excavation_searcher_source_target_20260926_v1.png",
+        "sha256": "814c989e8c7bcd0d46e8fd3da3be6521586606637959a63fe6c40f24ac1d7d80",
+        "sourcePixelsLTRB": [
+          350,
+          210,
+          895,
+          680
+        ],
+        "method": "Unretouched rectangular crop for framing. No geometry, color, lighting, or part placement was changed.",
+        "limitation": "The original full-set image includes the separate bay and flyer; the crop focuses the main walker but retains a small edge of the adjacent bay at its far left. Use the official manual for build boundaries."
+      },
+      "use": "Completed physical appearance; not the authority for construction steps."
+    },
+    {
+      "id": "eurobricks-collector-review",
+      "authority": "SECONDARY_COLLECTOR_PHOTOS_AND_REVIEW",
+      "url": "https://www.eurobricks.com/forum/forums/topic/174930-review-7316-excavation-searcher/",
+      "author": "Farseer Petriel / Farseer Eldar",
+      "published": "2019-12-27",
+      "relevantViews": [
+        {
+          "view": "Completed set overview",
+          "url": "https://www.flickr.com/photos/155036173@N02/49217820192/"
+        },
+        {
+          "view": "Completed four-leg Searcher",
+          "url": "https://www.flickr.com/photos/155036173@N02/49217820072/"
+        },
+        {
+          "view": "Rear view",
+          "url": "https://www.flickr.com/photos/155036173@N02/49217586706/"
+        },
+        {
+          "view": "Front cockpit and two different arms",
+          "url": "https://www.flickr.com/photos/155036173@N02/49217819732/"
+        },
+        {
+          "view": "Body, legs and tail crane",
+          "url": "https://www.flickr.com/photos/155036173@N02/49217819372/"
+        },
+        {
+          "view": "Meteorite compartment and underbody flyer",
+          "url": "https://www.flickr.com/photos/155036173@N02/49217819302/"
+        }
+      ],
+      "directlyVerified": "The review shows the front and rear relationships, four legs, a rock-holding claw arm, a distinct orange-dish arm, a rear tail crane, the central meteorite compartment, and the separate flyer mounted below it. It also distinguishes the bay, flyer and walker as separate set elements.",
+      "use": "Secondary photographic cross-check for front, rear, attachment and component boundaries."
+    },
+    {
+      "id": "independent-review",
+      "authority": "SECONDARY_REVIEW",
+      "url": "https://thetripleoption.wordpress.com/2014/08/07/lego-7316-excavation-searcher-life-on-mars-review/",
+      "directlyVerified": "Independent review describes the front claw and dish-ended arm, a tail used as a crane, the underbody flyer, and the separate bay.",
+      "use": "Cross-check of collector review terminology and component relationships."
+    },
+    {
+      "id": "video-review",
+      "authority": "SECONDARY_VIDEO_REVIEW",
+      "url": "https://www.youtube.com/watch?v=xFEwrb4m2hs",
+      "directlyVerified": "Opened the review and inspected the opening turntable view. No transcript was available; no claim about hidden geometry or movement relies on the video.",
+      "use": "Additional assembled-model orientation check."
+    },
+    {
+      "id": "set-catalogue",
+      "authority": "SECONDARY_CATALOGUE",
+      "url": "https://www.bricklink.com/v2/catalog/catalogitem.page?S=7316-1",
+      "directlyVerified": "Catalog identity is 7316-1 Excavation Searcher. No alternate/reissue set number was found in the focused search.",
+      "use": "Set-number cross-check; not a design authority."
+    }
+  ],
+  "findings": {
+    "directlyShown": [
+      "The completed Searcher is a four-legged walker with a central operator cockpit.",
+      "Two different articulated arms flank the forward cockpit: a pincer claw and an orange-dish-ended tool.",
+      "A raised segmented tail crane ends in an orange handling head; the main body contains the meteorite compartment.",
+      "A small separate flyer mounts beneath that compartment in the source configuration.",
+      "The independent bay/docking structure and minifigures are separate set elements, not geometry of the Searcher unit.",
+      "The source uses tan/brown structural masses with orange tools, gray connections, and Sand Purple pneumatic elements."
+    ],
+    "inferred": [
+      "The uploaded cropped photograph is an image-framing derivative of a secondary completed-set photograph; it does not alter the source model."
+    ],
+    "unknownOrDisputed": [
+      "The exact fictional purpose of the orange-dish-ended front tool is not established consistently by the official instructions and independent commentary. Preserve its source-visible shape; do not name it a drill or add mechanics to the model target.",
+      "The manual does not prescribe a game gait or the game's stationary siege/clamp animation. Those are not part of this visual approval."
+    ],
+    "correctionsToEarlierT082Draft": [
+      "Replace the claim of a long drill and paired front claws: the source shows one pincer claw arm and a distinct orange-dish-ended arm; the dish tool's exact purpose remains unverified.",
+      "Replace the claimed underslung material sled/container with the central meteorite compartment and the separate small flyer mounted below it.",
+      "Do not describe the walker as asymmetrical as a whole. The source confirms four legs; its unlike tools and rear crane are separate functional forms, not proof of generalized left/right chassis asymmetry.",
+      "Use the 7316 source palette (tan/brown with orange and Sand Purple mechanisms); blue/sand-red/trans-neon-green is not the 7316 main walker palette."
+    ]
+  },
+  "imageIntegrity": {
+    "targetCropOnly": true,
+    "unmodifiedSourceRetained": true,
+    "hashAlgorithm": "SHA-256"
+  },
+  "acceptanceDate": "2026-09-26",
+  "acceptanceNote": "Директор схвалив SOURCE_LOCKED Production Design Target LEGO 7316 без видимих адаптацій. T084 не авторизовано й не розпочато."
+}

@@ -222,9 +222,10 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 
 ## Next approved action
 
-Red Planet Protector T083 design acceptance is recorded. T084 remains not
-started and not authorized; no additional unit was started. Wait for the next director
-instruction before advancing. Design-only packages use the targeted
+Excavation Searcher T083 `SOURCE_LOCKED` Production Design Target was accepted
+by the director on 2026-09-26. T084 remains not started and is not authorized.
+No additional unit was started; stop and wait for the next director instruction.
+No production model has started. Design-only packages use the targeted
 `design-package` profile; no game export, M6 networking or M7 exploration stack
 is required.
 
