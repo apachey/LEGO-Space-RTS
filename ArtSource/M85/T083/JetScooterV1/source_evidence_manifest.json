@@ -1,0 +1,74 @@
+{
+  "schema": 1,
+  "stableId": "unit.martians.jet_scooter",
+  "status": "DIRECTOR_ACCEPTED",
+  "targetMode": "SOURCE_LOCKED",
+  "sourceSets": [
+    "7303",
+    "1415"
+  ],
+  "primaryAuthority": {
+    "name": "LEGO 7303 Jet Scooter building instructions",
+    "setPage": "https://www.lego.com/en-us/service/building-instructions/7303",
+    "pdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130291.pdf",
+    "officialFacts": "LEGO identifies set 7303, 24 pieces, year 2001; page 1 contains the completed appearance on the cover and final build step."
+  },
+  "displayedProductionTarget": {
+    "url": "https://lego.brickinstructions.com/instructions/07000/7303/001.jpg",
+    "view": "Page 1, final completed build at step 7; shown as a close crop in the HTML review.",
+    "provenance": "Third-party hosted scan of the official LEGO instruction page. The official LEGO PDF remains the authority and is linked in the review.",
+    "sha256": null
+  },
+  "officialSources": [
+    {
+      "url": "https://www.lego.com/en-us/service/building-instructions/7303",
+      "supports": "Set identity and official availability of instructions."
+    },
+    {
+      "url": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4130291.pdf",
+      "supports": "Official construction sequence and completed model on page 1, step 7."
+    }
+  ],
+  "secondaryCrossChecks": [
+    {
+      "url": "https://www.bricklink.com/catalogList.asp?catID=172",
+      "supports": "Catalog lists both 7303 and 1415 as Jet Scooter sets in Life on Mars."
+    },
+    {
+      "url": "https://www.brickeconomy.com/set/7303-1/lego-life-on-mars-jet-scooter",
+      "supports": "Identifies 1415 as the same Jet Scooter issued in a different package; secondary catalog evidence."
+    },
+    {
+      "url": "https://rebrickable.com/sets/7303-1/jet-scooter/",
+      "supports": "Independent completed-model image, cross-checked against the official instruction sequence."
+    },
+    {
+      "url": "https://www.brickset.com/sets/7303-1/Jet-Scooter",
+      "supports": "Independent set identity/catalog reference."
+    }
+  ],
+  "previousComparativeReference": {
+    "file": "ArtSource/M85/Preproduction/JetScooterSourceRebuildV1/jet_scooter_source_rebuild_rev1.png",
+    "authority": "Director-selected for comparative appearance review only; not a production target, exact piece topology approval, source color approval, or production authorization."
+  },
+  "directlyShown": [
+    "One exposed Martian rider sits on a narrow, elongated open deck.",
+    "Two long side tubes frame the central deck.",
+    "Two small translucent orange cones face forward at the nose.",
+    "Blue and gray body elements and rounded blue rear equipment remain visible above the thin deck."
+  ],
+  "inferredFromComparingViews": [
+    "The instruction sequence shows the side tubes joined to the nose and rear assemblies around the central deck; preserve them as separate visible structural masses rather than enclosing them in a hull."
+  ],
+  "unresolved": [
+    "The available completed view is a three-quarter view. A full rear, underside, and directly opposed left/right photo pair were not located; no left/right asymmetry is claimed.",
+    "The static model and instructions do not establish hover height, nozzle motion, propulsion cycle, or which element is a gameplay attack emitter."
+  ],
+  "adaptation": "None. Keep all game motion, hover presentation, attack effects, and sockets outside this static appearance decision.",
+  "directorDecision": {
+    "date": "2026-09-26",
+    "decision": "Директор прийняв незмінений SOURCE_LOCKED Production Design Target LEGO 7303 Jet Scooter.",
+    "productionAuthorized": false,
+    "t084": "NOT_STARTED"
+  }
+}

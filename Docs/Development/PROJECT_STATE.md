@@ -161,6 +161,9 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   rider and rear dish, and control panel in front. No visible adaptations. The
   earlier asymmetry claim was corrected as a perspective-reading error. T084 is
   not authorized for Double Hover and remains unstarted.
+- Jet Scooter T083 was director-accepted on 2026-09-26 via its unchanged
+  SOURCE_LOCKED LEGO 7303 Production Design Target. No visible adaptations. T084
+  is not authorized for Jet Scooter and remains unstarted.
 - Workflow cleanup is merged and synchronized locally. This synchronization
   preserves all prior T083 content; it does not continue design or infer approval.
 
@@ -175,10 +178,10 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   Rover, Hover Scout, Granite Grinder, Drill Craft, Rapid Rider, Loader Dozer,
   Chrome Crusher, Tunnel Transport, Mono Jet, Solar Explorer, Mission Fighter,
   MX-41 Switch Fighter, Mobile Mining Platform, MX-71 Recon Dropship, MT-51
-  Claw-Tank, MT-101 Armored Drilling Unit, MT-201 Ultra-Drill Walker, ETX Servitor, Alien Jet, Razor Skimmer, Worker Robot and T3-Trike
+  Claw-Tank, MT-101 Armored Drilling Unit, MT-201 Ultra-Drill Walker, ETX Servitor, Alien Jet, Razor Skimmer, Worker Robot, Jet Scooter and T3-Trike
   have explicit director acceptance; T084 is authorized only for specifically
-  authorized units. Double Hover is not authorized; no production model has
-  started.
+  authorized units. Double Hover and Jet Scooter are not authorized; no
+  production model has started.
 - `BLOCKING_LATER`: actual gameplay-camera/model-LOD review belongs to
   T084/T086 after production geometry exists; final animation belongs to T087.
 - Martian sources 1195/3750 retain bounded archival evidence gaps. Do not invent
@@ -194,9 +197,9 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 
 ## Next approved action
 
-Double Hover T083 `SOURCE_LOCKED` was director-accepted on 2026-09-26 using
-the unchanged completed LEGO 7300 appearance. T084 is not authorized for Double
-Hover and remains unstarted. Do not start another unit or begin T084 in this
+Jet Scooter T083 `SOURCE_LOCKED` was director-accepted on 2026-09-26 using
+the unchanged completed LEGO 7303 appearance. T084 is not authorized for Jet
+Scooter and remains unstarted. Do not start another unit or begin T084 in this
 checkpoint; select any next unit only in a separate bounded task. Design-only
 packages use the targeted `design-package` profile; no game export, M6 networking
 or M7 exploration stack is required.

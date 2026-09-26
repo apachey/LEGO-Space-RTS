@@ -1,8 +1,8 @@
 {
   "task": "T083",
   "target": 35,
-  "authoredProposals": 29,
-  "directorAccepted": 29,
+  "authoredProposals": 30,
+  "directorAccepted": 30,
   "productionModels": 0,
   "assets": [
     {
@@ -865,9 +865,34 @@
     },
     {
       "stableId": "unit.martians.jet_scooter",
-      "status": "QUEUED_NOT_AUTHORED",
-      "directorAccepted": false,
-      "productionAuthorized": false
+      "file": "Batch04Martians/jet_scooter_design_spec_20260926_v1.md",
+      "status": "DESIGN_ACCEPTED",
+      "directorAccepted": true,
+      "productionAuthorized": false,
+      "sourceEvidence": {
+        "manifest": "ArtSource/M85/T083/JetScooterV1/source_evidence_manifest.json",
+        "sourceSets": [
+          "7303",
+          "1415"
+        ],
+        "provenance": "Офіційна інструкція LEGO 7303; 1415 звірено за вторинними каталогами як дубльований випуск."
+      },
+      "designSpec": "Batch04Martians/jet_scooter_design_spec_20260926_v1.md",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch04Martians/jet_scooter_director_review_20260926_v1.html",
+        "rationale": "Завершений LEGO 7303 уже відповідає потрібному зовнішньому вигляду; видимих адаптацій не запропоновано.",
+        "designSpec": "Batch04Martians/jet_scooter_design_spec_20260926_v1.md",
+        "targetImage": "https://lego.brickinstructions.com/instructions/07000/7303/001.jpg",
+        "reviewReady": true,
+        "appearanceSummary": "Незмінений Jet Scooter LEGO 7303: довга відкрита палуба, один райдер, парні бокові труби, два помаранчеві носові конуси та синя задня збірка."
+      },
+      "review": "Batch04Martians/jet_scooter_director_review_20260926_v1.html",
+      "gameAdaptations": [],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-26",
+      "acceptanceNote": "Директор прийняв незмінений SOURCE_LOCKED Production Design Target LEGO 7303 Jet Scooter 2026-09-26. T084 не авторизовано й не розпочато."
     },
     {
       "stableId": "unit.martians.aero_skiff",
