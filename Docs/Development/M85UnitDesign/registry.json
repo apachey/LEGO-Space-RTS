@@ -1,8 +1,8 @@
 {
   "task": "T083",
   "target": 35,
-  "authoredProposals": 27,
-  "directorAccepted": 27,
+  "authoredProposals": 28,
+  "directorAccepted": 28,
   "productionModels": 0,
   "assets": [
     {
@@ -802,9 +802,34 @@
     },
     {
       "stableId": "unit.martians.worker_robot",
-      "status": "QUEUED_NOT_AUTHORED",
-      "directorAccepted": false,
-      "productionAuthorized": false
+      "file": "Batch04Martians/worker_robot_design_spec_20260926_v1.md",
+      "status": "DESIGN_ACCEPTED_T084_AUTHORIZED",
+      "directorAccepted": true,
+      "productionAuthorized": true,
+      "sourceEvidence": {
+        "manifest": "ArtSource/M85/T083/MartianWorkerRobotV1/source_evidence_manifest.json",
+        "sourceSets": [
+          "7302",
+          "1416"
+        ],
+        "provenance": "Офіційна інструкція LEGO 7302, візуально перевірена в межах T082; 1416 є дубльованим випуском. Незалежні каталоги підтверджують ідентичність набору."
+      },
+      "designSpec": "Batch04Martians/worker_robot_design_spec_20260926_v1.md",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch04Martians/worker_robot_director_review_20260926_v1.html",
+        "rationale": "Незмінена завершена модель LEGO 7302 уже є цільовим виглядом; додані ігрові деталі не потрібні.",
+        "designSpec": "Batch04Martians/worker_robot_design_spec_20260926_v1.md",
+        "targetImage": "ArtSource/M85/T083/MartianWorkerRobotV1/lego_7302_official_completed_model.jpg",
+        "reviewReady": true,
+        "appearanceSummary": "Низький трохи широкий симетричний відкритий двоногий робот з оператором, коротким бірюзовим важелем панелі керування, короткими ногами й широкими трикутними стопами; без рук, затискачів і маніпуляторів."
+      },
+      "review": "Batch04Martians/worker_robot_director_review_20260926_v1.html",
+      "gameAdaptations": [],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-26",
+      "acceptanceNote": "Директор схвалив 2026-09-26 незмінений SOURCE_LOCKED Production Design Target офіційного LEGO 7302: низький трохи широкий симетричний робот із відкритим оператором, коротким бірюзовим важелем панелі керування та короткими ногами з широкими трикутними стопами. Видимих адаптацій немає. T084 дозволено лише для Worker Robot, але не розпочато."
     },
     {
       "stableId": "unit.martians.double_hover",

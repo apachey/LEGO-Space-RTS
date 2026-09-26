@@ -151,6 +151,11 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   SOURCE_LOCKED official LEGO 7691 target in both shown states: assembled carrier
   and central hull with three detached craft. No visible adaptations. T084 is
   authorized for Alien Mothership only and remains unstarted.
+- Worker Robot T083 was director-accepted on 2026-09-26 via its unchanged
+  SOURCE_LOCKED LEGO 7302 target: low, slightly wide symmetric walker, open
+  operator, short turquoise control-panel lever, short legs and broad
+  triangular-outline feet. No visible adaptations. T084 is authorized for
+  Worker Robot only and remains unstarted.
 - Workflow cleanup is merged and synchronized locally. This synchronization
   preserves all prior T083 content; it does not continue design or infer approval.
 
@@ -165,7 +170,7 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   Rover, Hover Scout, Granite Grinder, Drill Craft, Rapid Rider, Loader Dozer,
   Chrome Crusher, Tunnel Transport, Mono Jet, Solar Explorer, Mission Fighter,
   MX-41 Switch Fighter, Mobile Mining Platform, MX-71 Recon Dropship, MT-51
-  Claw-Tank, MT-101 Armored Drilling Unit, MT-201 Ultra-Drill Walker, ETX Servitor, Alien Jet, Razor Skimmer and T3-Trike
+  Claw-Tank, MT-101 Armored Drilling Unit, MT-201 Ultra-Drill Walker, ETX Servitor, Alien Jet, Razor Skimmer, Worker Robot and T3-Trike
   have explicit director acceptance; T084 is authorized for those units only and
   has not started.
 - `BLOCKING_LATER`: actual gameplay-camera/model-LOD review belongs to
@@ -183,11 +188,11 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 
 ## Next approved action
 
-Alien Mothership T083 `SOURCE_LOCKED` was accepted on 2026-09-26 in its
-assembled and separated LEGO 7691 configurations. T084 is authorized for this
-unit only and remains unstarted. Do not start another unit or begin T084.
-Design-only packages use the targeted `design-package` profile; no game export,
-M6 networking or M7 exploration stack is required.
+Worker Robot T083 `SOURCE_LOCKED` was director-accepted on 2026-09-26 using
+the unchanged official LEGO 7302 appearance. T084 is authorized for Worker Robot
+only and remains unstarted. Do not start another unit or begin T084. Design-only
+packages use the targeted `design-package` profile; no game export, M6 networking
+or M7 exploration stack is required.
 
 ## Detailed records and historical evidence
 
