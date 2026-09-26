@@ -1,8 +1,8 @@
 {
   "task": "T083",
   "target": 35,
-  "authoredProposals": 28,
-  "directorAccepted": 28,
+  "authoredProposals": 29,
+  "directorAccepted": 29,
   "productionModels": 0,
   "assets": [
     {
@@ -833,9 +833,35 @@
     },
     {
       "stableId": "unit.martians.double_hover",
-      "status": "QUEUED_NOT_AUTHORED",
-      "directorAccepted": false,
-      "productionAuthorized": false
+      "file": "Batch04Martians/double_hover_design_spec_20260926_v1.md",
+      "status": "DESIGN_ACCEPTED",
+      "directorAccepted": true,
+      "productionAuthorized": false,
+      "sourceEvidence": {
+        "manifest": "ArtSource/M85/T083/DoubleHoverV1/source_evidence_manifest.json",
+        "sourceSets": [
+          "7300",
+          "7308",
+          "1414"
+        ],
+        "provenance": "Офіційна інструкція LEGO 7300/7308 і директорське чітке фото завершеної моделі; 7308 та 1414 є дублями того самого дизайну. Додаткові директорські ракурси збережено окремо; походження їхнього початкового URL не надано."
+      },
+      "designSpec": "Batch04Martians/double_hover_design_spec_20260926_v1.md",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch04Martians/double_hover_director_review_20260926_v1.html",
+        "rationale": "Завершений LEGO 7300 є бажаною ціллю. Перевірка чіткого фото та фронтального, бокового й верхньо-заднього ракурсів показала симетричне компонування; попереднє трактування двох модулів як бокових було перспективною помилкою.",
+        "designSpec": "Batch04Martians/double_hover_design_spec_20260926_v1.md",
+        "targetImage": "ArtSource/M85/T083/DoubleHoverV1/lego_7300_director_supplied_completed_photo.png",
+        "reviewReady": true,
+        "appearanceSummary": "Мала відкрита Martian-розвідмашина LEGO 7300: симетричні паралельні лижі й помаранчеві ґратки; оператор і круглий друкований диск розміщені по центральній осі, панель керування — перед оператором."
+      },
+      "review": "Batch04Martians/double_hover_director_review_20260926_v1.html",
+      "gameAdaptations": [],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-26",
+      "acceptanceNote": "Директор схвалив 2026-09-26 незмінений SOURCE_LOCKED Production Design Target LEGO 7300: симетричні паралельні лижі й помаранчеві ґратки, відкриту платформу, оператора та круглий диск на центральній осі, панель керування перед оператором. Видимих адаптацій немає. Попереднє твердження про асиметрію виправлено як помилку перспективи. T084 не авторизовано й не розпочато."
     },
     {
       "stableId": "unit.martians.jet_scooter",

@@ -1,0 +1,47 @@
+{
+  "stableId": "unit.martians.double_hover",
+  "sourceSets": ["7300", "7308", "1414"],
+  "sourceArtifact": {
+    "title": "LEGO 7300 / 7308 official building instructions, page 1",
+    "officialPdfUrl": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/4156313.pdf",
+    "officialPdfSha256": "0186c956e8d273dc85f11cb2c5b6745e68716a71c73445ee9077ab2806eda22f",
+    "page": 1,
+    "pageImageUrl": "https://lego.brickinstructions.com/instructions/07000/7300/001.jpg",
+    "pageImageFile": "lego_7300_official_instruction_page_1.jpg",
+    "pageImageSha256": "acb45b06c90d60be0cce9740f045acdb66b11df44327e447614478e064cdb3f1",
+    "completedTargetCropFile": "lego_7300_completed_target_crop.jpg",
+    "completedTargetCropSha256": "765db7c925a81e5b85e6f838c706f5b29ca9bb39f0f001faf33405b38d541841",
+    "cropNote": "Prior low-resolution instruction crop retained for provenance; superseded in the review by the director-supplied 700x700 completed-model photo."
+  },
+  "directorSuppliedVisualEvidence": {
+    "completedModelPhoto": {
+      "file": "lego_7300_director_supplied_completed_photo.png",
+      "sha256": "1f280f00d3eb0b4e437c9f8c9556051ad50a91e3a468bbc65f2e49f2186827bc",
+      "dimensions": "700x700",
+      "provenance": "Image supplied by the director in the review conversation on 2026-09-26; original publisher URL not present in the supplied file. Used as the higher-quality completed-model target; source authenticity is cross-checked against LEGO instructions, not inferred from the attachment."
+    },
+    "videoViews": [
+      {"file": "References/director_video_context.png", "sha256": "a580004c889e1276596fd3e772eb67b2ffb175455ffa9738086a21ee2548a436", "dimensions": "1866x1480", "use": "Director-supplied video screenshot; context and front-facing view."},
+      {"file": "References/director_video_angle_01.png", "sha256": "3e04151dfaa95b19102ba22e5f27ad3151460f60e84c48bb9039336d80824ea7", "dimensions": "1304x926", "use": "Director-supplied three-quarter view; confirms centered rider controls and paired runners."},
+      {"file": "References/director_video_angle_02.png", "sha256": "cc851d345b0670cbc2f90fe7ea783e8cb00bb176d26bdbc76d2dcad3197cba81", "dimensions": "680x760", "use": "Director-supplied head-on view; confirms lateral symmetry."},
+      {"file": "References/director_video_angle_03.png", "sha256": "286d897cecf4dbf6641d74d2d0d216b88489be3ce53d340799f10f983d1b3232", "dimensions": "1170x648", "use": "Director-supplied side view; resolves front/rear ordering of controls and round rear dish."},
+      {"file": "References/director_video_angle_04.png", "sha256": "543223e737d2c687bcf03f1da8ef27a1c29ea54f461e7d5c0dd2e3646bb87672", "dimensions": "796x814", "use": "Director-supplied rear/top view; confirms centered round module and paired runner layout."}
+    ],
+    "resolution": "Multi-angle inspection disproves the earlier asymmetry claim: the round printed dish is centered behind the rider; the compact printed control panel is in front of the rider, not a second rear-side module. The two runners and orange grilles form a laterally paired layout. The apparent offset in the low-resolution instruction crop is perspective."
+  },
+  "crossChecks": [
+    {"source": "LEGO official set 7300 instructions", "url": "https://www.lego.com/en-us/service/building-instructions/7300", "use": "Official instruction source and model identity."},
+    {"source": "T082 Martians source audit", "file": "Docs/Development/M85SuperScout/Matrices/martians_source_audit.md", "use": "Construction and view coverage audit."},
+    {"source": "BrickLink 7300-1 inventory", "url": "https://www.bricklink.com/catalogItemInv.asp?S=7300-1", "use": "Independent set identity and part inventory."},
+    {"source": "LEGO 7308/1414 duplicate source families", "url": "https://www.bricklink.com/v2/catalog/catalogitem.page?S=7300", "use": "Duplicate-family cross-check; not an additional design donor."}
+  ],
+  "verifiedSourceFeatures": [
+    "Two long, parallel forward runners with blunt separated ends.",
+    "Open central deck with one exposed rider.",
+    "A round printed dish centered behind the rider and a separate compact printed control panel in front of the rider; they are not a left/right pair."
+  ],
+  "evidenceLimits": [
+    "Director-supplied stills resolve front, side, rear and overhead symmetry; source video URL was not included, so the screenshots are retained as supplied references.",
+    "The static instructions do not verify propulsion, underside lift, or a separate mechanical hover mechanism."
+  ]
+}
