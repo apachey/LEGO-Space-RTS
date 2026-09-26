@@ -178,6 +178,11 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   two-stage-pedestal description; the T082 record is preserved. T084 is
   authorized for this unit only and remains unstarted. The review PNG capture is
   still missing; the HTML decision screen and source images remain available.
+- Recon-Mech RP T083 was director-accepted on 2026-09-26 via its unchanged
+  `SOURCE_LOCKED` completed LEGO 7314 target. No visible adaptations. T084
+  remains not started and not authorized. The T082 `drill/lance` wording is
+  corrected in this package against the official completed model and secondary
+  views; the older T082 packet remains unchanged.
 - Workflow cleanup is merged and synchronized locally. This synchronization
   preserves all prior T083 content; it does not continue design or infer approval.
 
@@ -194,9 +199,9 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
   MX-41 Switch Fighter, Mobile Mining Platform, MX-71 Recon Dropship, MT-51
   Claw-Tank, MT-101 Armored Drilling Unit, MT-201 Ultra-Drill Walker,
   ETX Servitor, Alien Jet, Razor Skimmer, Worker Robot, Jet Scooter, Red Planet
-  Cruiser and T3-Trike have explicit director acceptance; T084 is authorized
+  Cruiser, T3-Trike and Recon-Mech RP have explicit director acceptance; T084 is authorized
   only for specifically
-  authorized units. Double Hover and Jet Scooter are not authorized; no
+  authorized units. Double Hover, Jet Scooter and Recon-Mech RP are not authorized; no
   production model has started.
 - `BLOCKING_LATER`: actual gameplay-camera/model-LOD review belongs to
   T084/T086 after production geometry exists; final animation belongs to T087.
@@ -213,10 +218,9 @@ The complete M8 data roster alone is not M9 Skirmish Alpha presentation.
 
 ## Next approved action
 
-Red Planet Cruiser T083 was director-accepted on 2026-09-26. Its review PNG
-capture remains missing; use a policy-compliant capture flow if available.
-T084 is authorized for this unit only and remains unstarted. Do not begin
-another unit automatically. Design-only packages use the targeted
+Recon-Mech RP T083 design acceptance is recorded. T084 remains not started and
+not authorized; no additional unit was started. Wait for the next director
+instruction before advancing. Design-only packages use the targeted
 `design-package` profile; no game export, M6 networking or M7 exploration stack
 is required.
 

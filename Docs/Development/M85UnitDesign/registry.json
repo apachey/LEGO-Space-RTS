@@ -1,8 +1,8 @@
 {
   "task": "T083",
   "target": 35,
-  "authoredProposals": 32,
-  "directorAccepted": 32,
+  "authoredProposals": 33,
+  "directorAccepted": 33,
   "productionModels": 0,
   "assets": [
     {
@@ -957,9 +957,31 @@
     },
     {
       "stableId": "unit.martians.recon_mech_rp",
-      "status": "QUEUED_NOT_AUTHORED",
-      "directorAccepted": false,
-      "productionAuthorized": false
+      "file": "Batch04Martians/recon_mech_rp_design_spec_20260926_v1.md",
+      "status": "DESIGN_ACCEPTED",
+      "directorAccepted": true,
+      "productionAuthorized": false,
+      "sourceEvidence": {
+        "manifest": "ArtSource/M85/T083/ReconMechRPV1/source_evidence_manifest.json",
+        "sourceSets": ["7314-1"],
+        "provenance": "Офіційна LEGO інструкція, завершена модель на друкованій сторінці 30; фронтальний, задній та верхній ракурси звірені з незалежним фотооглядом."
+      },
+      "designSpec": "Batch04Martians/recon_mech_rp_design_spec_20260926_v1.md",
+      "review": "Batch04Martians/recon_mech_rp_director_review_20260926_v1.html",
+      "productionDesignTarget": {
+        "mode": "SOURCE_LOCKED",
+        "state": "DIRECTOR_ACCEPTED",
+        "artifact": "Docs/Development/M85UnitDesign/Batch04Martians/recon_mech_rp_director_review_20260926_v1.html",
+        "rationale": "Офіційна завершена модель LEGO 7314 без видимих геометричних адаптацій відповідає цільовому розвідувальному крокоходу. Джерельні асиметричні руки збережені; нової сенсорної геометрії не додано.",
+        "designSpec": "Docs/Development/M85UnitDesign/Batch04Martians/recon_mech_rp_design_spec_20260926_v1.md",
+        "targetImage": "ArtSource/M85/T083/ReconMechRPV1/lego_7314_completed_target_page30_crop.png",
+        "reviewReady": true,
+        "appearanceSummary": "Високий двоногий червоно-сірий відкритий крокохід із широким корпусом-кабіною, високим заднім баком, двома шланговими асиметричними руками: ліворуч чорний затискач, праворуч довга червона рука з помаранчевим наконечником; короткі ноги та широкі стопи."
+      },
+      "gameAdaptations": [],
+      "acceptanceGate": "PRODUCTION_DESIGN_TARGET_GATE",
+      "acceptanceDate": "2026-09-26",
+      "acceptanceNote": "Директор прийняв незмінений SOURCE_LOCKED Production Design Target завершеного LEGO 7314: відкритий широкий корпус, високий задній бак, коротке двоноге шасі й асиметричні руки у джерельному розташуванні. Видимих адаптацій немає. T084 не розпочато й не авторизовано."
     },
     {
       "stableId": "unit.martians.red_planet_protector",
